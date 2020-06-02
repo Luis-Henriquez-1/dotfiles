@@ -1,0 +1,4 @@
+* About
+
+These are my dotfiles. Most of the configuration is in Emacs which I use as my
+window manager.
