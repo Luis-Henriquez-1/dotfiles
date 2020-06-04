@@ -2211,7 +2211,7 @@ abstractions for manipulating lists.
 transform functions into other functions.
 
 #+begin_src emacs-lisp
-(use-package! dash-functional)
+(leaf dash-functional :require t)
 #+end_src
 
 *** anaphora                                                               :ewc:
@@ -2223,7 +2223,7 @@ transform functions into other functions.
 the condition of some if or while statement.
 
 #+begin_src emacs-lisp
-(use-package! anaphora (:require t))
+(leaf anaphora :require t)
 #+end_src
 
 *** s
@@ -2231,26 +2231,8 @@ the condition of some if or while statement.
 :ID: 4b82deb0-bbe1-452c-8b60-ef734efb86d8
 :END:
 
-**** s
-:PROPERTIES:
-:ID: ec9d4d5b-4038-4bf8-b5ec-d7d55bbf0bc4
-:END:
-
 #+begin_src emacs-lisp
-(use-package! s
-  (:require t))
-#+end_src
-
-**** s-match-all
-:PROPERTIES:
-:ID: d2304c4f-5cce-469a-bf1f-3c53ff13e124
-:END:
-
-#+begin_src emacs-lisp
-(defun s:match-all (regexp string)
-  ""
-  (--map (s-match regexp string (car it))
-         (s-matched-positions-all regexp string)))
+(leaf s :require t)
 #+end_src
 
 *** a
@@ -2263,7 +2245,7 @@ important function for me in this library is =a-update=, a function that updates
 an element of an alist.
 
 #+begin_src emacs-lisp
-(use-package! a)
+(leaf a)
 #+end_src
 
 *** shut-up                                                                :ewc:
@@ -2274,7 +2256,7 @@ an element of an alist.
 Macro that silences output.
 
 #+begin_src emacs-lisp
-(use-package! shut-up
+(leaf shut-up
   (:macros shut-up)
   (:now
    (defalias 'shut-up! 'shut-up)
@@ -2287,7 +2269,7 @@ Macro that silences output.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! noflet
+(leaf noflet
   (:macros noflet)
   (:now (defalias 'noflet! 'noflet)))
 #+end_src
@@ -2301,7 +2283,7 @@ This library contains elisp function wrappers for various git commands.
 Essentially it provides an elisp api around many common git commands.
 
 #+begin_src emacs-lisp
-(use-package! git)
+(leaf git)
 #+end_src
 
 ** void specific funtions
