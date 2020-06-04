@@ -1083,11 +1083,9 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 
 #+begin_src emacs-lisp
 (funcall void:pacman-init-fn)
-(dolist (package '(dash dash-functional anaphora noflet mmt))
+(dolist (package '(leaf-keywords leaf))
   (funcall void:pacman-install-fn package)
   (require package))
-(defalias 'with-gensyms! 'mmt-with-gensyms)
-(defalias 'once-only! 'mmt-once-only)
 #+end_src
 
 * Library
