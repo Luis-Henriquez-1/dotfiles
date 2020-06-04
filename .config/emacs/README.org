@@ -2057,23 +2057,12 @@ on. And with [[][evil]] which [[id:73366b3e-7438-4abf-a661-ed1553b1b8df][I use]]
 handle all bindings. [[][general]] provides such a function ([[helpfn:general-define-key][general-define-key]]).
 
 #+begin_src emacs-lisp
-(use-package! general
-  (:recipe (:host github :repo "noctuid/general.el"))
-  (:require t)
-  (:after-load
-   (eval-and-compile (defalias 'define-key! 'general-def))))
-#+end_src
-
-**** auto unbind
-:PROPERTIES:
-:ID: 451ae477-b221-46d9-bf5a-7c2dc654c975
-:END:
-
-I prefer to auto-unbind keys. Auto-unbinding is when a key is bound to something.
-It is an opinionated decision because.
-
-#+begin_src emacs-lisp
-(general-auto-unbind-keys)
+(leaf general
+  :require t
+  :straight (general :type git :host github :repo "noctuid/general.el")
+  :defer-config
+  (general-auto-unbind-keys)
+  (defalias 'define-key! 'general-def))
 #+end_src
 
 **** prefix bindings
