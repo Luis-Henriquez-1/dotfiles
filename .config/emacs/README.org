@@ -2148,7 +2148,7 @@ make a difference. That's why.
               :non-normal-prefix void:localleader-short-alt-key))))
 #+end_src
 
-**** which-key
+*** which-key
 :PROPERTIES:
 :ID: 79d530ab-ab32-459e-853c-b1ec9eee37ef
 :END:
@@ -2162,23 +2162,23 @@ them ([[][]] and [[][]] are screenshots of this in action). By doing this
 you can "discover" the commands as you go along.
 
 #+begin_src emacs-lisp
-(use-package! which-key
-  (:after-hook pre-command-hook)
-  (:setq
-   (which-key-sort-order #'which-key-prefix-then-key-order)
-   (which-key-sort-uppercase-first nil)
-   (which-key-add-column-padding 1)
-   (which-key-max-display-columns nil)
-   (which-key-min-display-lines 6)
-   (which-key-side-window-slot -10)
-   (which-key-popup-type 'minibuffer))
-  (:after-load
-   (defhook! which:key-set-line-spacing-h ()
-     (:hook which-key-init-buffer-hook)
-     (setq line-spacing 3))
-   (which-key-add-key-based-replacements void:leader-key "<leader>")
-   (which-key-add-key-based-replacements void:localleader-key "<localleader>")
-   (which-key-mode 1)))
+(leaf which-key
+  :hook pre-command-hook
+  ;; :straight (which-key :type git :host github :repo "justbur/emacs-which-key" :commit "8b49ae9")
+  :setq
+  (which-key-sort-uppercase-first . nil)
+  (which-key-max-display-columns  . nil)
+  (which-key-add-column-padding   .   1)
+  (which-key-min-display-lines    .   6)
+  (which-key-side-window-slot     . -10)
+  (which-key-sort-order           . #'which-key-prefix-then-key-order)
+  (which-key-popup-type           . 'minibuffer)
+  :defer-config
+  (defhook! which:key-set-line-spacing-h ()
+    (:hook which-key-init-buffer-hook)
+    (setq line-spacing 3))
+  (which-key-add-key-based-replacements void:leader-key "<leader>")
+  (which-key-add-key-based-replacements void:localleader-key "<localleader>"))
 #+end_src
 
 *** dash
