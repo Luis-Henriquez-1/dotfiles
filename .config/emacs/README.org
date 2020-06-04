@@ -1086,6 +1086,16 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 (dolist (package '(leaf-keywords leaf))
   (funcall void:pacman-install-fn package)
   (require package))
+(leaf-keywords-init)
+#+end_src
+
+** leaf
+
+#+begin_src emacs-lisp
+(leaf leaf
+  :setq
+  (leaf-defaults . '(:straight t))
+  (leaf-aliases  . '((:ensure . :package))))
 #+end_src
 
 * Library
@@ -2164,7 +2174,6 @@ you can "discover" the commands as you go along.
 #+begin_src emacs-lisp
 (leaf which-key
   :hook pre-command-hook
-  ;; :straight (which-key :type git :host github :repo "justbur/emacs-which-key" :commit "8b49ae9")
   :setq
   (which-key-sort-uppercase-first . nil)
   (which-key-max-display-columns  . nil)
