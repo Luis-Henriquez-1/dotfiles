@@ -2189,41 +2189,17 @@ you can "discover" the commands as you go along.
 Dash is a library that provides functional (sometimes clojure-esque) like
 abstractions for manipulating lists.
 
-**** dash
-:PROPERTIES:
-:ID: fd0ec16e-c388-4b14-9982-a7fc657cb53f
-:END:
-
 #+begin_src emacs-lisp
-(use-package! dash
-  (:require t))
-#+end_src
-
-**** extending let
-:PROPERTIES:
-:ID: 0d152040-0b31-420b-a1e2-7cc91a86d84a
-:END:
-
-***** destructive
-:PROPERTIES:
-:ID: 0911ee75-5c43-4dbc-aded-b5ba625a06c5
-:END:
-
-#+begin_src emacs-lisp
-(defun dash-expand:&alist* (key source)
-  "Generate extracting KEY from SOURCE for &alist destructuring."
-  `(prog1 (alist-get ,key ,source)
-     (setq ,source (--remove-first (equal (car it) ,key) ,source))))
-#+end_src
-
-***** alists with lists
-:PROPERTIES:
-:ID: 4632141a-9225-4708-a26d-9a418e108c67
-:END:
-
-#+begin_src emacs-lisp
-(defun dash-expand:&llist (key source)
-  `(car (alist-get ,key ,source)))
+(leaf dash
+  ;; :straight (dash :type git :host github :repo "magnars/dash.el")
+  :require t
+  :defer-config
+  (defun dash-expand:&llist (key source)
+    `(car (alist-get ,key ,source)))
+  (defun dash-expand:&alist* (key source)
+    "Generate extracting KEY from SOURCE for &alist destructuring."
+    `(prog1 (alist-get ,key ,source)
+       (setq ,source (--remove-first (equal (car it) ,key) ,source)))))
 #+end_src
 
 *** dash-functional
