@@ -1361,9 +1361,7 @@ Macro that silences output.
 :END:
 
 #+begin_src emacs-lisp
-(leaf noflet
-  (:macros noflet)
-  (:now (defalias 'noflet! 'noflet)))
+(leaf noflet)
 #+end_src
 
 ** with-os!
@@ -2331,27 +2329,27 @@ be inserted and interactively completed.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! yasnippet
+(leaf yasnippet
   ;; (:hook (org-mode-hook . yas-minor-mode-on))
   ;; (add-hook 'org-mode-hook #'yas-minor-mode-on)
-  (:setq
-   (yas-snippet-dirs (list yasnippet:dir))
-   (yas-verbosity (if void:debug-mode 3 0))
-   (yas-indent-line 'auto)
-   (yas-prompt-functions '(yas-completing-prompt yas-ido-prompt))
-   (yas-use-menu nil)
-   (yas-triggers-in-field t))
-  (:after-load
-   ;; Give a name to the main (and only for now) yas-snippet directory.
-   (defvar yasnippet:dir (concat void:data-dir "snippets/")
-     "Main yasnippet directory.")
-   (unless (file-exists-p yasnippet:dir)
-     (mkdir yasnippet:dir))
-   ;; Remove GUI dropdown prompt (prefer ivy/helm)
-   (delq #'yas-dropdown-prompt yas-prompt-functions)
-   (after! smartparens
-     ;; tell smartparens overlays not to interfere with yasnippet keybinds
-     (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay))))
+  :setq
+  (yas-snippet-dirs (list yasnippet:dir))
+  (yas-verbosity (if void:debug-mode 3 0))
+  (yas-indent-line 'auto)
+  (yas-prompt-functions '(yas-completing-prompt yas-ido-prompt))
+  (yas-use-menu nil)
+  (yas-triggers-in-field t)
+  :defer-config
+  ;; Give a name to the main (and only for now) yas-snippet directory.
+  (defvar yasnippet:dir (concat void:data-dir "snippets/")
+    "Main yasnippet directory.")
+  (unless (file-exists-p yasnippet:dir)
+    (mkdir yasnippet:dir))
+  ;; Remove GUI dropdown prompt (prefer ivy/helm)
+  (delq #'yas-dropdown-prompt yas-prompt-functions)
+  (after! smartparens
+    ;; tell smartparens overlays not to interfere with yasnippet keybinds
+    (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)))
 #+end_src
 
 ** frameworks
@@ -2735,16 +2733,16 @@ provide a more informative interface to ivy commands.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! ivy-rich
-  (:before-call ivy-switch-buffer counsel-switch-buffer)
-  (:setq (ivy-rich-display-transformers-list nil))
-  (:after-load
-   (ivy-rich-mode)
-   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line)))
+(leaf ivy-rich
+  ;; (:before-call ivy-switch-buffer counsel-switch-buffer)
+  :setq (ivy-rich-display-transformers-list . nil)
+  :defer-config
+  (ivy-rich-mode)
+  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
-(use-package! all-the-icons-ivy
-  (:after ivy-rich)
-  (:require t))
+(leaf all-the-icons-ivy
+  :after ivy-rich
+  :require t)
 #+end_src
 
 ***** icons
@@ -2916,12 +2914,12 @@ existing completing-read-using commands.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! selectrum-prescient
-  (:recipe (:host github :repo "raxod502/prescient.el"
-            :files ("selectrum-prescient.el")))
-  (:after selectrum)
-  (:require t)
-  (:after-load (selectrum-prescient-mode 1)))
+(leaf selectrum-prescient
+  :ensure (:host github :repo "raxod502/prescient.el"
+           :files ("selectrum-prescient.el"))
+  :after selectrum
+  :require t
+  :defer-config (selectrum-prescient-mode 1))
 #+end_src
 
 **** jump to line
@@ -3506,10 +3504,10 @@ Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-fro
 color in the frame title.
 
 #+begin_src emacs-lisp
-(use-package! ns-auto-titlebar
-  (:os mac)
-  (:when (or (daemonp) (display-graphic-p)))
-  (:require t))
+(leaf ns-auto-titlebar
+  ;; :os mac
+  :when (or (daemonp) (display-graphic-p))
+  :require t)
 #+end_src
 
 **** osx-clipboard
@@ -4486,13 +4484,13 @@ emails.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! notmuch
-  (:commands notmuch)
-  (:setq
-   (notmuch-search-oldest-first nil)
-   ;; Don't show notmuch logo.
-   (notmuch-show-logo nil)
-   (notmuch-show-mark-read-tags '("-unread"))))
+(leaf notmuch
+  :commands notmuch
+  :setq
+  (notmuch-search-oldest-first . nil)
+  ;; Don't show notmuch logo.
+  (notmuch-show-logo . nil)
+  (notmuch-show-mark-read-tags . '("-unread")))
 #+end_src
 
 *** accounts
@@ -5005,7 +5003,7 @@ my description of problems with pictures.
 *** escr
 
 #+begin_src emacs-lisp
-(leaf escr :ensure (escr :host github :repo "atykhonov/escr"))
+(leaf escr :straight t)
 #+end_src
 
 *** scrot
@@ -5509,7 +5507,7 @@ file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
 it. It's pretty smart and very convenient.
 
 #+begin_src emacs-lisp
-(use-package! aggressive-indent (:hook emacs-lisp-mode))
+(leaf aggressive-indent :hook emacs-lisp-mode)
 #+end_src
 
 *** electric indent
@@ -5530,10 +5528,10 @@ it. It's pretty smart and very convenient.
 
 #+begin_src emacs-lisp
 (use-package! ws-butler
-  (:hook prog-mode-hook org-mode-hook)
-  (:after-load
-   (append! ws-butler-global-exempt-modes
-     '(special-mode comint-mode term-mode eshell-mode))))
+  :hook prog-mode-hook org-mode-hook
+  :defer-config
+  (append! ws-butler-global-exempt-modes
+    '(special-mode comint-mode term-mode eshell-mode)))
 #+end_src
 
 *** ialign
@@ -5563,21 +5561,21 @@ Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regul
 :END:
 
 #+begin_src emacs-lisp
-(use-package! smartparens
-  (:hook emacs-lisp-mode prog-mode eshell-mode ielm-mode)
-  (:setq
-   (sp-highlight-pair-overlay nil)
-   (sp-highlight-wrap-overlay nil)
-   (sp-highlight-wrap-tag-overlay nil)
-   (sp-show-pair-from-inside t)
-   (sp-cancel-autoskip-on-backward-movement nil)
-   (sp-show-pair-delay 0.1)
-   (sp-max-pair-length 4)
-   (sp-max-prefix-length 50)
-   (sp-escape-quotes-after-insert nil))
-  (:after-load
-   (require 'smartparens-config)
-   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)))
+(leaf smartparens
+  :hook emacs-lisp-mode prog-mode eshell-mode ielm-mode
+  :setq
+  (sp-highlight-pair-overlay . nil)
+  (sp-highlight-wrap-overlay . nil)
+  (sp-highlight-wrap-tag-overlay . nil)
+  (sp-show-pair-from-inside . t)
+  (sp-cancel-autoskip-on-backward-movement . nil)
+  (sp-show-pair-delay . 0.1)
+  (sp-max-pair-length . 4)
+  (sp-max-prefix-length . 50)
+  (sp-escape-quotes-after-insert . nil)
+  :defer-config
+  (require 'smartparens-config)
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
 #+end_src
 
 **** disable =smartparens-navigate-skip-match=
@@ -6391,52 +6389,11 @@ Package [[https://github.com/Dewdrops/evil-exchange][evil-exchange]] lets me swa
 [[https://github.com/bling/evil-visualstar][evil-visualstar]]
 
 #+begin_src emacs-lisp
-(use-package! evil-visualstar
-  (:commands evil-visualstar/begin-search-backward
-   evil-visualstar/begin-search-forward)
-  (:now
-   (general-def 'visual
-     "#" #'evil-visualstar/begin-search-backward
-     "*" #'evil-visualstar/begin-search-forward)))
-#+end_src
-
-*** evil-escape
-:PROPERTIES:
-:ID: 8d8fe3ae-8fa8-4605-8bb7-23d8f9e76cb8
-:END:
-
-[[https://github.com/syl20bnr/evil-escape][evil-escape]] allows me to have a set of keys that, pressed quickly in succession,
-simulates escaping. The keys I use are =j= an =k=. This package is particularly
-handy when using emacs from another machine where you haven't had the chance (or
-maybe you aren't allowed to) bind caps-lock to escape.
-
-One caveat: pressing =j= followed by another key is slower. Instead of enabling
-this mode on startup I've opted to bind it to =SPC t e= so I can toggle escape
-mode when needed (e.g. when the escape key is not available).
-
-#+begin_src emacs-lisp
-(use-package! evil-escape
-  (:now
-   (define-leader-key!
-     :infix "t"
-     "e" (list :def #'evil-escape-mode :wk "evil-escape")))
-  (:setq
-   ;; states were `evil-escape-key-sequence' will not have an effect.
-   (evil-escape-excluded-states '(normal visual motion))
-   ;; key sequence, that when pressed acts as `escape'.
-   (evil-escape-key-sequence "jk")
-   ;; If non-nil then the key sequence can also be entered with the second
-   ;; key first.
-   (evil-escape-unordered-key-sequence t)
-   ;; max time delay between key presses of `evil-escape-key-sequence'.
-   (evil-escape-delay 0.25))
-  (:after-load
-   (defadvice! evil:escape-func ()
-     "Make `evil:escape-a' trigger on `evil-escape-key-sequence'."
-     (:override evil-escape-func)
-     (if (bound-and-true-p lispyville-mode)
-         #'lispyville-normal-state
-       #'evil-force-normal-state))))
+(leaf evil-visualstar
+  :commands (evil-visualstar/begin-search-backward evil-visualstar/begin-search-forward)
+  :bind (:evil-visual-state-map
+         ("#" . evil-visualstar/begin-search-backward)
+         ("*" . evil-visualstar/begin-search-forward)))
 #+end_src
 
 ** expand-region
@@ -6587,30 +6544,31 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! eshell
-  (:commands eshell)
-  (:load-incrementally
-   em-alias em-banner em-basic em-cmpl
-   em-dirs em-glob em-hist em-ls em-prompt
-   em-script em-term em-unix)
-  (:setq
-   (eshell-directory-name (concat void:data-dir "eshell/"))
-   (eshell-history-file-name (concat eshell-directory-name "history"))
-   (eshell-prefer-lisp-functions nil)
-   (eshell-scroll-to-bottom-on-input 'all)
-   (eshell-scroll-to-bottom-on-output 'all)
-   (eshell-buffer-shorthand t)
-   (eshell-kill-processes-on-exit t)
-   (eshell-hist-ignoredups t)
-   (eshell-input-filter #'eshell-input-filter-initial-space)
-   (eshell-glob-case-insensitive t)
-   (eshell-error-if-no-glob t)
-   (eshell-banner-message
-    '(format "%s %s\n\n"
-      (propertize (format " %s " (string-trim (buffer-name)))
-       'face 'mode-line-highlight)
-      (propertize (current-time-string)
-       'face 'font-lock-keyword-face))))
+(leaf eshell
+  :ensure nil
+  :commands eshell
+  :load-incrementally
+  em-alias em-banner em-basic em-cmpl
+  em-dirs em-glob em-hist em-ls em-prompt
+  em-script em-term em-unix
+  :setq
+  (eshell-directory-name (concat void:data-dir "eshell/"))
+  (eshell-history-file-name (concat eshell-directory-name "history"))
+  (eshell-prefer-lisp-functions . nil)
+  (eshell-scroll-to-bottom-on-input . 'all)
+  (eshell-scroll-to-bottom-on-output . 'all)
+  (eshell-buffer-shorthand . t)
+  (eshell-kill-processes-on-exit . t)
+  (eshell-hist-ignoredups . t)
+  (eshell-input-filter . #'eshell-input-filter-initial-space)
+  (eshell-glob-case-insensitive . t)
+  (eshell-error-if-no-glob . t)
+  (eshell-banner-message
+   '(format "%s %s\n\n"
+     (propertize (format " %s " (string-trim (buffer-name)))
+      'face 'mode-line-highlight)
+     (propertize (current-time-string)
+      'face 'font-lock-keyword-face)))
   (:after-load
    (remove-hook 'eshell-output-filter-functions
                 'eshell-postoutput-scroll-to-bottom)))
@@ -6978,12 +6936,12 @@ HEADLINE-PATH is the path to a headline and POINT is the start of the headline."
 you on a side window.
 
 #+begin_src emacs-lisp
-(use-package! command-log-mode
-  (:commands command-log-mode global-command-log-mode)
-  (:setq
-   (command-log-mode-auto-show t)
-   (command-log-mode-open-log-turns-on-mode nil)
-   (command-log-mode-is-global t)))
+(leaf command-log-mode
+  :commands command-log-mode global-command-log-mode
+  :setq
+  (command-log-mode-auto-show . t)
+  (command-log-mode-open-log-turns-on-mode . nil)
+  (command-log-mode-is-global . t))
 #+end_src
 
 ** recentf                                                           :built-in:
