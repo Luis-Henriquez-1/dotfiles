@@ -3485,17 +3485,17 @@ Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-fro
 
 #+begin_src emacs-lisp
 (use-package! exec-path-from-shell
-  (:os mac)
-  (:when (or (daemonp) (display-graphic-p)))
-  (:require t)
-  (:setq
-   (exec-path-from-shell-check-startup-files nil)
-   (exec-path-from-shell-arguments (delete "-i" exec-path-from-shell-arguments))
-   (exec-path-from-shell-debug void:debug-mode))
-  (:now
-   (nconc! exec-path-from-shell-variables
-     '("LC_CTYPE" "LC_ALL" "LANG"))
-   (exec-path-from-shell-initialize)))
+  ;; (:os mac)
+  :when (or (daemonp) (display-graphic-p))
+  :require t
+  :setq
+  (exec-path-from-shell-check-startup-files . nil)
+  (exec-path-from-shell-arguments . (delete "-i" exec-path-from-shell-arguments))
+  (exec-path-from-shell-debug . void:debug-mode)
+  :init
+  (nconc! exec-path-from-shell-variables
+    '("LC_CTYPE" "LC_ALL" "LANG"))
+  (exec-path-from-shell-initialize))
 #+end_src
 
 **** ns-auto-titlebar
