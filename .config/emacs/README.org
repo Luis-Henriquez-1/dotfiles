@@ -4954,15 +4954,14 @@ Youtube contains a *huge* library of videos.
 :END:
 
 #+begin_src emacs-lisp
-(after! emms
-  (defhook! emms:quit-h ()
-    "Shut down EMMS."
-    (:hook kill-emacs-hook)
-    (when emms-player-playing-p (emms-pause))
-    (emms-stop)
-    ;; kill any existing mpd processes
-    (when (member 'emms-player-mpd emms-player-list)
-      (call-process "killall" nil nil nil "mpd"))))
+(defhook! emms:quit-h ()
+  "Shut down EMMS."
+  :hook kill-emacs-hook
+  (when emms-player-playing-p (emms-pause))
+  (emms-stop)
+  ;; kill any existing mpd processes
+  (when (member 'emms-player-mpd emms-player-list)
+    (call-process "killall" nil nil nil "mpd")))
 #+end_src
 
 *** connect to mpd
