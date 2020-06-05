@@ -1261,12 +1261,12 @@ you can "discover" the commands as you go along.
   :hook pre-command-hook
   :setq
   (which-key-sort-uppercase-first . nil)
-  (which-key-max-display-columns  . nil)
-  (which-key-add-column-padding   .   1)
-  (which-key-min-display-lines    .   6)
-  (which-key-side-window-slot     . -10)
-  (which-key-sort-order           . #'which-key-prefix-then-key-order)
-  (which-key-popup-type           . 'minibuffer)
+  (which-key-max-display-columns . nil)
+  (which-key-add-column-padding . 1)
+  (which-key-min-display-lines . 6)
+  (which-key-side-window-slot . -10)
+  (which-key-sort-order . which-key-prefix-then-key-order)
+  (which-key-popup-type . 'minibuffer)
   :defer-config
   (defhook! which:key-set-line-spacing-h ()
     :hook which-key-init-buffer-hook
