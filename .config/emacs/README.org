@@ -5030,8 +5030,8 @@ Like [[][screenshot]], [[https://github.com/dakra/scrot.el][scrot]] is screensho
 has a function that can capture a screenshot of a particular emacs window.
 
 #+begin_src emacs-lisp
-(use-package! scrot
-  (:recipe (:host github :repo "dakra/scrot.el")))
+(leaf scrot
+  :ensure (:host github :repo "dakra/scrot.el"))
 #+end_src
 
 ** gifs
@@ -5054,9 +5054,9 @@ This package allows for the creation of gifs from within emacs.
 necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypression/images/screencast.gif][looks]] pretty professional!
 
 #+begin_src emacs-lisp
-(use-package! keypression
-  (:recipe (:host github :repo "chuntaro/emacs-keypression"))
-  (:setq (keypression-frame-justify 'keypression-right-justified)))
+(leaf keypression
+  :ensure (:host github :repo "chuntaro/emacs-keypression")
+  :setq (keypression-frame-justify 'keypression-right-justified))
 #+end_src
 
 * Text Editing
@@ -5072,13 +5072,9 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
 What [[https://github.com/Fanael/highlight-numbers][highlight-numbers]] does is pretty self explanatory: it highlights numbers.
 
 #+begin_src emacs-lisp
-(use-package! highlight-numbers
-  (:hook prog-mode conf-mode)
-  (:setq (highlight-numbers-generic-regexp
-          (eval-when-compile
-            (rx (seq symbol-start (one-or-more digit)
-                     (opt "." (zero-or-more (any "0-9")))
-                     symbol-end))))))
+(leaf highlight-numbers
+  :hook (prog-mode conf-mode)
+  :setq (highlight-numbers-generic-regexp . "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
 #+end_src
 
 ** highlight-escape-sequences                                         :disabled:
@@ -6370,8 +6366,8 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(use-package! evil-surround
-  (:hook prog-mode-hook text-mode-hook))
+(leaf evil-surround
+  :hook prog-mode-hook text-mode-hook)
 #+end_src
 
 *** evil-matchit
@@ -6380,7 +6376,7 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(use-package! evil-matchit (:hook prog-mode))
+(leaf evil-matchit :hook prog-mode)
 #+end_src
 
 *** evil-exchange
@@ -6492,24 +6488,24 @@ larger text objects. It's saves me keystrokes.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! avy
-  (:commands avy-jump)
-  (:setq
-   (avy-background t)
-   ;; Jump only on current window.
-   (avy-all-windows nil)
-   ;; Use avy keys.
-   (avy-keys-alist nil)
-   (avy-keys (list
-              ;; homerow keys in alternating order.
-              ?a ?j ?s ?k ?d ?l ?f ?\;
-              ;; middle homerow keys
-              ?g ?h
-              ;; keys above homerow in alternating order
-              ?t ?y ?r ?u ?e ?i ?w ?o ?q ?p
-              ;; keys below homerow
-              ?b ?n ?v ?m ?c ?, ?x ?. ?z ?/))
-   (avy-style 'at)))
+(leaf avy
+  :commands avy-jump
+  :setq
+  (avy-background . t)
+  ;; Jump only on current window.
+  (avy-all-windows . nil)
+  ;; Use avy keys.
+  (avy-keys-alist . nil)
+  (avy-keys . (list
+               ;; homerow keys in alternating order.
+               ?a ?j ?s ?k ?d ?l ?f ?\;
+               ;; middle homerow keys
+               ?g ?h
+               ;; keys above homerow in alternating order
+               ?t ?y ?r ?u ?e ?i ?w ?o ?q ?p
+               ;; keys below homerow
+               ?b ?n ?v ?m ?c ?, ?x ?. ?z ?/))
+  (avy-style . 'at))
 #+end_src
 
 *** avy-command-helper
