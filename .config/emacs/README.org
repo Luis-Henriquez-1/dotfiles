@@ -1113,6 +1113,18 @@ evaluated.
       leaf-normalize)
 #+end_src
 
+*** straight keyword
+
+The straight keyword require's the package's name.
+
+#+begin_src emacs-lisp
+(push `((or (memq leaf--key '(:straight))
+            (eq (alist-get leaf-key leaf-alias-keyword-alist) :straight))
+        (if (keywordp (car leaf--key))
+            (cons leaf)))
+      leaf-normalize)
+#+end_src
+
 * Library
 :PROPERTIES:
 :ID: 3e9e5e7a-9f9b-4e92-b569-b5e8ba93820f
@@ -3519,10 +3531,10 @@ color in the frame title.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! osx-clipboard
-  (:os mac)
-  (:when (or (daemonp) (not (display-graphic-p))))
-  (:hook void:start-emacs-hook))
+(leaf osx-clipboard
+  ;; :os mac
+  :when (or (daemonp) (not (display-graphic-p)))
+  :hook void:start-emacs-hook)
 #+end_src
 
 *** linux
@@ -4172,10 +4184,11 @@ therefore, has the most support (in the form of setup blogs and packages).
 
 #+begin_src emacs-lisp
 (use-package! mu4e
-  (:recipe (:files (:defaults "mu4e/*.el")))
-  (:commands mu4e)
-  (:setq (mail-user-agent 'mu4e-user-agent))
-  (:after-load (mu4e:init-accounts)))
+  :ensure (:files (:defaults "mu4e/*.el"))
+  :commands mu4e
+  :setq
+  (mail-user-agent . 'mu4e-user-agent)
+  :after-load (mu4e:init-accounts))
 #+end_src
 
 *** defaults
@@ -4893,8 +4906,8 @@ Youtube contains a *huge* library of videos.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-youtube
-  (:commands helm-youtube))
+(leaf helm-youtube
+  :commands helm-youtube)
 #+end_src
 
 *** ivy-youtube
@@ -4903,8 +4916,8 @@ Youtube contains a *huge* library of videos.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! ivy-youtube
-  (:setq (ivy-youtube-history-file (concat void:data-dir "ivy-youtube-history"))))
+(leaf ivy-youtube
+  :setq (ivy-youtube-history-file . (concat void:data-dir "ivy-youtube-history")))
 #+end_src
 
 ** emms
@@ -4920,20 +4933,20 @@ Youtube contains a *huge* library of videos.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! emms
-  (:commands emms)
-  (:setq
-   (emms-directory (concat void:data-dir "emms/"))
-   (emms-seek-seconds 5)
-   (emms-player-list '(emms-player-mpd))
-   (emms-volume-change-function 'emms-volume-mpd-change)
-   (emms-player-mpd-music-directory (file-truename "~/Music"))
-   (emms-player-mpd-server-name "127.0.0.1")
-   (emms-player-mpd-server-port "6600")
-   (emms-source-file-default-directory (expand-file-name "~/Music"))
-   (emms-source-file-directory-tree-function 'emms-source-file-directory-tree-find)
-   (emms-playlist-buffer-name "*Music*")
-   (mpc-host "127.0.0.1:6600")))
+(leaf emms
+  :commands emms
+  :setq
+  (emms-directory                           . (concat void:data-dir "emms/"))
+  (emms-seek-seconds                        . 5)
+  (emms-player-list                         . '(emms-player-mpd))
+  (emms-volume-change-function              . 'emms-volume-mpd-change)
+  (emms-player-mpd-music-directory          . (file-truename "~/Music"))
+  (emms-player-mpd-server-name              . "127.0.0.1")
+  (emms-player-mpd-server-port              . "6600")
+  (emms-source-file-default-directory       . (expand-file-name "~/Music"))
+  (emms-source-file-directory-tree-function . 'emms-source-file-directory-tree-find)
+  (emms-playlist-buffer-name                . "*Music*")
+  (mpc-host                                 . "127.0.0.1:6600"))
 #+end_src
 
 *** quitting
@@ -4999,13 +5012,13 @@ my description of problems with pictures.
 [[][]] is another emacs screenshot package that.
 
 #+begin_src emacs-lisp
-(use-package! screenshot (:commands screenshot))
+(leaf screenshot :commands screenshot)
 #+end_src
 
 *** escr
 
 #+begin_src emacs-lisp
-(use-package! escr (:recipe (:host github :repo "atykhonov/escr")))
+(leaf escr :ensure (escr :host github :repo "atykhonov/escr"))
 #+end_src
 
 *** scrot
@@ -5029,7 +5042,7 @@ has a function that can capture a screenshot of a particular emacs window.
 This package allows for the creation of gifs from within emacs.
 
 #+begin_src emacs-lisp
-(use-package! gif-screencast)
+(leaf gif-screencast)
 #+end_src
 
 ** keypression
