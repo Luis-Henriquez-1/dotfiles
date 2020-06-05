@@ -1517,12 +1517,7 @@ STRUCTURE can be an alist, a plist, or a hash table."
               (advice-add advice ,key #',name)))))
 #+end_src
 
-** helpers                                                                 :eac:
-:PROPERTIES:
-:ID: 228f3913-3bb5-4d5d-8cb1-fe2ff2414b43
-:END:
-
-*** symbols
+** symbols
 :PROPERTIES:
 :ID: 2cdf8ab1-4e59-4128-a8a4-e5519ca0f4bf
 :END:
@@ -1531,7 +1526,7 @@ Here I have convenience functions for primarily used for writing macros. They
 help me convert a combinations of strings and symbols or numbers into another
 type without any manual hassle.
 
-**** symbol intern
+*** symbol intern
 :PROPERTIES:
 :ID: 659e8389-84c5-4ac4-a9ba-7dd40599191d
 :END:
@@ -1543,7 +1538,7 @@ type without any manual hassle.
   (intern (apply #'void:make-string args)))
 #+end_src
 
-**** keyword intern
+*** keyword intern
 :PROPERTIES:
 :ID: f2668044-13b2-46e7-bf84-fcf998591e37
 :END:
@@ -1555,7 +1550,7 @@ type without any manual hassle.
   (apply #'void:symbol-intern ":" args))
 #+end_src
 
-**** keyword name
+*** keyword name
 :PROPERTIES:
 :ID: fb867938-d62b-42fc-bf07-092f10b64f22
 :END:
@@ -1567,7 +1562,7 @@ type without any manual hassle.
   (substring-no-properties (void:make-string key) 1))
 #+end_src
 
-**** make string
+*** make string
 :PROPERTIES:
 :ID: 4ef52875-4ce6-4940-8b7e-13c96bedcb3d
 :END:
@@ -1994,7 +1989,7 @@ to waste time loading ~void:main-elisp-file~.
            " tangling `void:readme-file'."))))))
 #+end_src
 
-* Window Management
+* Window Management                                                   :disabled:
 :PROPERTIES:
 :ID: 29dbf899-17cd-4b00-aacb-090ccd20e133
 :END:
@@ -2174,7 +2169,7 @@ There are benefits and drawbacks to making emacs your window manager. One
 benefit is that you get a super consistent window management experience. If you
 use a typical window manager, you have to.
 
-*** lazy enable exwm
+*** exwm
 :PROPERTIES:
 :ID: 18ee4dd8-445b-4101-adfb-ba8e18a71bb4
 :END:
