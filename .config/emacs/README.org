@@ -2065,6 +2065,7 @@ makes emacs feel like a window manager with gaps.
 
 #+begin_src emacs-lisp
 (leaf frame
+  :ensure nil
   :custom
   (window-divider-default-places       . t)
   (window-divider-default-bottom-width . 10)
