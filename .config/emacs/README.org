@@ -2588,19 +2588,19 @@ does have isn't good enough.
 [[https://github.com/cute-jumper/ace-jump-helm-line/issues][ace-jump-helm-line]] allows me to jump to helm candidates using [[https://github.com/abo-abo/avy][avy]].
 
 #+begin_src emacs-lisp
-(use-package! ace-jump-helm-line
-  (:commands ace-jump-helm-line)
-  (:setq
-   (ace-jump-helm-line-idle-delay 0)
-   (ace-jump-helm-line-default-action 'select)
-   (ace-jump-helm-line-style 'pre)
-   (ace-jump-helm-line-select-key ?e) ;; this line is not needed
-   ;; Set the move-only and persistent keys
-   (ace-jump-helm-line-move-only-key ?o)
-   (ace-jump-helm-line-persistent-key ?p))
-  (:now
-   (after! helm
-     (general-def helm-map "C-'" #'ace-jump-helm-line))))
+(leaf ace-jump-helm-line
+  :commands ace-jump-helm-line
+  :setq
+  (ace-jump-helm-line-idle-delay     . 0)
+  (ace-jump-helm-line-default-action . 'select)
+  (ace-jump-helm-line-style          . 'pre)
+  (ace-jump-helm-line-select-key     . ?e)
+  (ace-jump-helm-line-move-only-key  . ?o)
+  (ace-jump-helm-line-persistent-key . ?p)
+  ;; (:now
+  ;;  (after! helm
+  ;;    (general-def helm-map "C-'" #'ace-jump-helm-line)))
+  )
 #+end_src
 
 *** ivy
@@ -2651,19 +2651,18 @@ of the next ivy selection. Most of us only use a subset of commands. A recent
 command is likely to be.
 
 #+begin_src emacs-lisp
-(use-package! ivy-prescient
-  (:hook ivy-mode-hook)
-  (:hook (ivy-prescient-mode . prescient-persist-mode))
-  (:now
-   (setq prescient-filter-method '(literal regexp initialism fuzzy)))
-  (:after-load
-   (setq prescient-save-file (concat void:data-dir "prescient-save.el"))
-   (setq ivy-prescient-sort-commands
-         '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
-           counsel-git-grep counsel-ag counsel-rg counsel-imenu
-           counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
-   (setq ivy-prescient-retain-classic-highlighting t)
-   (prescient-persist-mode 1)))
+(leaf ivy-prescient
+  :hook ivy-mode-hook
+  :hook (ivy-prescient-mode . prescient-persist-mode)
+  (setq prescient-filter-method '(literal regexp initialism fuzzy))
+  (setq prescient-save-file (concat void:data-dir "prescient-save.el"))
+  (setq ivy-prescient-sort-commands
+        '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
+          counsel-git-grep counsel-ag counsel-rg counsel-imenu
+          counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
+  (setq ivy-prescient-retain-classic-highlighting t)
+  :defer-config
+  (prescient-persist-mode 1))
 #+end_src
 
 **** counsel
@@ -2675,18 +2674,18 @@ command is likely to be.
 of stock emacs functions with a version that using =ivy= for completion.
 
 #+begin_src emacs-lisp
-(use-package! counsel
-  (:hook ivy-mode)
-  (:commands counsel-org-goto)
-  (:setq
-   (counsel-find-file-ignore-regexp "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
-   (counsel-describe-function-function #'helpful-callable)
-   (counsel-describe-variable-function #'helpful-variable)
-   ;; Add smart-casing and compressed archive searching (-zS) to default
-   ;; command arguments:
-   (counsel-rg-base-command "rg -zS --no-heading --line-number --color never %s .")
-   (counsel-ag-base-command "ag -zS --nocolor --nogroup %s")
-   (counsel-pt-base-command "pt -zS --nocolor --nogroup -e %s")))
+(leaf counsel
+  :hook ivy-mode
+  :commands counsel-org-goto
+  :setq
+  (counsel-find-file-ignore-regexp . "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
+  (counsel-describe-function-function . #'helpful-callable)
+  (counsel-describe-variable-function . #'helpful-variable)
+  ;; Add smart-casing and compressed archive searching (-zS) to default
+  ;; command arguments:
+  (counsel-rg-base-command . "rg -zS --no-heading --line-number --color never %s .")
+  (counsel-ag-base-command . "ag -zS --nocolor --nogroup %s")
+  (counsel-pt-base-command . "pt -zS --nocolor --nogroup -e %s"))
 #+end_src
 
 **** swiper
@@ -3046,11 +3045,11 @@ This is where abbrev can fill in.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! abbrev
-  (:hook prog-mode org-mode)
-  (:after-load
-   (add-hook 'kill-emacs-hook #'write-abbrev-file)
-   (setq-default abbrev-file-name (concat void:data-dir "abbrev.el"))))
+(leaf abbrev
+  :hook prog-mode org-mode
+  :defer-config
+  (add-hook 'kill-emacs-hook #'write-abbrev-file)
+  (setq-default abbrev-file-name (concat void:data-dir "abbrev.el")))
 #+end_src
 
 *** abbreviation algorithm
