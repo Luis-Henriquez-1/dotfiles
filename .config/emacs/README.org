@@ -1366,18 +1366,6 @@ Macro that silences output.
   (:now (defalias 'noflet! 'noflet)))
 #+end_src
 
-*** git                                                               :disabled:
-:PROPERTIES:
-:ID: 177427a0-ba5a-4358-bbcb-2041661c198f
-:END:
-
-This library contains elisp function wrappers for various git commands.
-Essentially it provides an elisp api around many common git commands.
-
-#+begin_src emacs-lisp
-(leaf git)
-#+end_src
-
 ** with-os!
 :PROPERTIES:
 :ID: 1a645745-11ce-4cfb-8c5f-63470f0a61c3
