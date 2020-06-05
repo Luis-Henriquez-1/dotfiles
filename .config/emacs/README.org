@@ -1098,6 +1098,18 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
   (leaf-aliases  . '((:ensure . :package))))
 #+end_src
 
+** customize setq
+
+leaf's setq does not correctly handle setting variables to forms that need to be
+evaluated.
+
+#+begin_src emacs-lisp
+(push '((memq leaf--key '(:setq))
+        (mapcar (lambda (it) (cons (car it) (cdr it)))
+         (mapcan #'identity leaf--value)))
+      leaf-normalize)
+#+end_src
+
 * Library
 :PROPERTIES:
 :ID: 3e9e5e7a-9f9b-4e92-b569-b5e8ba93820f
