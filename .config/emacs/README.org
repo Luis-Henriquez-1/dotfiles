@@ -7503,8 +7503,7 @@ As it's name suggests [[https://github.com/iqbalansari/restart-emacs][restart-em
 that restarts emacs. I haven't tested this in EXWM mode.
 
 #+begin_src emacs-lisp
-(use-package! restart-emacs
-  (:commands restart-emacs))
+(leaf restart-emacs :commands restart-emacs)
 #+end_src
 
 ** version control
@@ -7663,10 +7662,9 @@ Quoting =DOOM=:
 :END:
 
 #+begin_src emacs-lisp
-(use-package! pass
-  (:commands pass)
-  (:setq
-   (pass-username-field "username")))
+(leaf pass
+  :commands pass
+  :setq (pass-username-field . "username"))
 #+end_src
 
 **** get password
