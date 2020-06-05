@@ -5099,10 +5099,10 @@ Hiding text can be extremely useful. It is something that's used extensively in
 Org Mode. The feature responsible for doing this is [[][hideshow]].
 
 #+begin_src emacs-lisp
-(use-feature! hideshow
-  (:hook (prog-mode . hs-minor-mode))
-  (:commands hs-minor-mode hs-toggle-hiding hs-already-hidden-p)
-  (:setq (hs-hide-comments-when-hiding-all nil)))
+(leaf hideshow
+  :hook (prog-mode-hook . hs-minor-mode)
+  :commands hs-minor-mode hs-toggle-hiding hs-already-hidden-p
+  :setq (hs-hide-comments-when-hiding-all . nil))
 #+end_src
 
 ** rainbow-delimiters
@@ -5114,9 +5114,9 @@ Org Mode. The feature responsible for doing this is [[][hideshow]].
 great idea! It makes it really easy to see which parentheses go together.
 
 #+begin_src emacs-lisp
-(use-package! rainbow-delimiters
-  (:hook prog-mode reb-mode)
-  (:setq (rainbow-delimiters-max-face-count 9)))
+(leaf rainbow-delimiters
+  :hook prog-mode-hook reb-mode-hook
+  (:setq (rainbow-delimiters-max-face-count . 9)))
 #+end_src
 
 ** edit-indirect
@@ -6048,9 +6048,10 @@ press =jk= really quickly to invoke escape.
 This is better than evil escape as it only binds in insert.
 
 #+begin_src emacs-lisp
-(use-package! key-chord
-  (:now (add-hook 'evil-mode-hook (lambda () (quiet! (key-chord-mode 1)))))
-  (:after-load
+(leaf key-chord
+  (:hook evil-mode-hook)
+  ;; (:now (add-hook 'evil-mode-hook (lambda () (quiet! (key-chord-mode 1)))))
+  (:defer-config
    (general-define-key :states '(visual insert)
                        (general-chord "jk") 'evil-force-normal-state
                        (general-chord "kj") 'evil-force-normal-state)
@@ -6387,13 +6388,13 @@ Why not just go to the end of the ="= like any other around operator?
 Package [[https://github.com/Dewdrops/evil-exchange][evil-exchange]] lets me swap two regions of text.
 
 #+begin_src emacs-lisp
-(use-package! evil-exchange
-  (:commands evil-exchange)
-  (:now
-   (general-def 'normal
-     :prefix "g"
-     "X" (list :def #'evil-exchange-cancel :wk "cancel")
-     "x" (list :def #'evil-exchange :wk "exchange"))))
+(leaf evil-exchange
+  :commands evil-exchange
+  :init
+  (general-def 'normal
+    :prefix "g"
+    "X" (list :def #'evil-exchange-cancel :wk "cancel")
+    "x" (list :def #'evil-exchange :wk "exchange")))
 #+end_src
 
 *** evil-visualstar
@@ -6461,18 +6462,17 @@ mode when needed (e.g. when the escape key is not available).
 larger text objects. It's saves me keystrokes.
 
 #+begin_src emacs-lisp
-(use-package! expand-region
-  (:commands er/expand-region er/contract-region er/mark-symbol er/mark-word)
-  (:now
-   (general-def 'visual
-     "V" #'er/contract-region
-     "v" #'er/expand-region))
-  (:after-load
-   (defadvice! void:quit-expand-region-a ()
-     "Properly abort an expand-region region."
-     (:before evil-escape evil:escape-a)
-     (when (memq last-command '(er/expand-region er/contract-region))
-       (er/contract-region 0)))))
+(leaf expand-region
+  :commands er/expand-region er/contract-region er/mark-symbol er/mark-word
+  :bind (:evil-visual-state-map
+         ("V" . er/contract-region)
+         ("v" . er/expand-region))
+  :defer-config
+  (defadvice! void:quit-expand-region-a ()
+    "Properly abort an expand-region region."
+    (:before evil-escape evil:escape-a)
+    (when (memq last-command '(er/expand-region er/contract-region))
+      (er/contract-region 0))))
 #+end_src
 
 ** avy
@@ -6690,13 +6690,12 @@ This replaces the default popup window at the bottom of eshell. By using the
 :END:
 
 #+begin_src emacs-lisp
-(use-package! eshell-z
-  (:after eshell)
-  (:commands eshell/z)
-  (:setq
-   (eshell:z-file (expand-file-name "z" eshell-directory-name)))
-  (:after-load
-   (defalias 'eshell:z-file 'eshell-z-freq-dir-hash-table-file-name)))
+(leaf eshell-z
+  :after eshell
+  :commands eshell/z
+  :setq (eshell:z-file . (expand-file-name "z" eshell-directory-name))
+  :defer-config
+  (defalias 'eshell:z-file 'eshell-z-freq-dir-hash-table-file-name))
 #+end_src
 
 **** eshell-up
