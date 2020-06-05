@@ -1156,9 +1156,8 @@ handle all bindings. [[][general]] provides such a function ([[helpfn:general-de
 #+begin_src emacs-lisp
 (leaf general
   :require t
-  :defer-config
-  (general-auto-unbind-keys)
-  (defalias 'define-key! 'general-def))
+  :config
+  (general-auto-unbind-keys))
 #+end_src
 
 **** prefix bindings
