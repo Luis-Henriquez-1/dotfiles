@@ -6664,13 +6664,13 @@ This is an Emacs package for quickly navigating to a specific parent directory
 in ~eshell~ without having to repeatedly typing ~cd ..~.
 
 #+begin_src emacs-lisp
-(use-package! eshell-up
-  (:after eshell)
-  (:commands eshell-up eshell-up-peek)
-  (:now
-   (defalias 'eshell/up 'eshell-up)
-   (defalias 'eshell/pk 'eshell-up-peek)
-   (defalias 'eshell/peek 'eshell-up-peek)))
+(leaf eshell-up
+  :after eshell
+  :commands eshell-up eshell-up-peek
+  :now
+  (defalias 'eshell/up 'eshell-up)
+  (defalias 'eshell/pk 'eshell-up-peek)
+  (defalias 'eshell/peek 'eshell-up-peek))
 #+end_src
 
 **** eshell-clear
