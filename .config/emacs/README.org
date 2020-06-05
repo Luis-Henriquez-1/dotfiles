@@ -2618,21 +2618,19 @@ minimal and more predictable than helm.
 query to narrow the list, and then selecting one of the remaining candidates.
 
 #+begin_src emacs-lisp
-(use-package! ivy
-  (:after-hook pre-command-hook)
-  (:after-load (ivy-mode 1)
-   (autoload #'ivy-avy "ivy-avy"))
-  (:setq
-   (ivy-height 18)
-   (ivy-wrap t)
-   (ivy-fixed-height-minibuffer t)
-   (ivy-use-selectable-prompt t)
-   (ivy-use-virtual-buffers t)
-   (ivy-virtual-abbreviate 'full)
-   (ivy-on-delete-error-function nil)
-   (ivy-use-selectable-prompt t)
-   (ivy-initial-inputs-alist nil)
-   (ivy-count-format "")))
+(leaf ivy
+  :hook pre-command-hook
+  :setq
+  (ivy-height . 18)
+  (ivy-wrap                     . t)
+  (ivy-fixed-height-minibuffer  . t)
+  (ivy-use-selectable-prompt    . t)
+  (ivy-use-virtual-buffers      . t)
+  (ivy-virtual-abbreviate       . 'full)
+  (ivy-on-delete-error-function . nil)
+  (ivy-use-selectable-prompt    . t)
+  (ivy-initial-inputs-alist     . nil)
+  (ivy-count-format             . ""))
 #+end_src
 
 **** ivy prescient
