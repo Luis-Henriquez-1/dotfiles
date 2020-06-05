@@ -2066,9 +2066,9 @@ makes emacs feel like a window manager with gaps.
 #+begin_src emacs-lisp
 (use-feature! frame
   :custom
-  (window-divider-default-places t)
-  (window-divider-default-bottom-width 10)
-  (window-divider-default-right-width 10)
+  (window-divider-default-places       . t)
+  (window-divider-default-bottom-width . 10)
+  (window-divider-default-right-width  . 10)
   :defer-config
   (set-face-foreground 'window-divider "black")
   (window-divider-mode 1))
