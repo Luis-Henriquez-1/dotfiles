@@ -1118,974 +1118,6 @@ evaluated.
 :ID: 3e9e5e7a-9f9b-4e92-b569-b5e8ba93820f
 :END:
 
-This is the library of functions and macros that I use to help me customize
-Void.
-
-** with-os!
-:PROPERTIES:
-:ID: 1a645745-11ce-4cfb-8c5f-63470f0a61c3
-:END:
-
-Emacs is for the most part operating system agnostic. Packages written in elisp
-should work across operating systems. Nevertheless, there are a handful of
-settings that should favors particular operating systems over others.
-
-#+begin_src emacs-lisp
-(defmacro with-os! (os &rest body)
-  "If OS is current system's operating system, execute body.
-OS can be either `mac', `linux' or `windows'(unquoted)."
-  (declare (indent defun))
-  (setq os (if (listp os) os (list os)))
-  (when (funcall (cond ((eq :not (car-safe os)) (lambda (a b) (not (member a b))))
-                       (t #'member))
-                 (cond ((eq system-type 'darwin) 'mac)
-                       ((eq system-type 'gnu/linux) 'linux)
-                       ((member system-type '(cygwin windows-nt ms-dos)) 'windows)
-                       (t nil))
-                 os)
-    `(progn ,@body)))
-#+end_src
-
-** macros
-:PROPERTIES:
-:ID: 9d65f3e2-a6d2-4f84-8150-9f9df7d3a513
-:END:
-
-*** append!
-:PROPERTIES:
-:ID: f314672c-f9f3-4630-9402-a9a65215c153
-:END:
-
-#+begin_src emacs-lisp
-(defmacro append! (sym &rest lists)
-  "Append LISTS to SYM.
-SYM is a symbol that stores a list."
-  (declare (indent 1))
-  `(setq ,sym (append ,sym ,@lists)))
-#+end_src
-
-*** prepend!
-:PROPERTIES:
-:ID: 3395dec3-0915-49cd-9445-d3db2b1ffe7f
-:END:
-
-#+begin_src emacs-lisp
-(defmacro prepend! (sym &rest lists)
-  (declare (indent defun))
-  `(setq ,sym (append ,@lists ,sym)))
-#+end_src
-
-*** nconc!
-:PROPERTIES:
-:ID: b24d1d8f-f3e1-4dca-afdb-8fb73d5299c3
-:END:
-
-#+begin_src emacs-lisp
-(defmacro nconc! (sym &rest lists)
-  "Append LISTS to SYM by altering them in place."
-  (declare (indent 1))
-  `(setq ,sym (nconc ,sym ,@lists)))
-#+end_src
-
-*** pair value extraction
-:PROPERTIES:
-:ID: e546a63f-eb75-4b72-9392-2a6041f87f50
-:END:
-
-The [[https://github.com/magnars/dash.el][dash library]] provides [[https://github.com/magnars/dash.el#-let-varlist-rest-body][special keywords]] to complement [[helpfn:let][let bindings]] that help
-us easily extract values from a data structure and assign them to a variable
-value. However, sometimes even that is not concise enough. For each variable you
-assign to an element of the data structure, you have to. Using [[helpfn:let-alist][let-alist]] is an
-option but it it is specific to alists and it's "dot" notation is a bad choice
-of notation because it.
-
-**** with structure
-:PROPERTIES:
-:ID: c88dac35-9345-49f5-bdb5-e856071e6764
-:END:
-
-This macro capitalizes the data structure support that dash's let binding
-already has.
-
-#+begin_src emacs-lisp
-(defmacro with-structure! (structure type &rest body)
-  "Access items from STRUCTURE.
-STRUCTURE can be an alist, a plist, or a hash table."
-  (declare (indent 1))
-  (let* ((symbols (--filter (and (symbolp it) (string-prefix-p "$" (symbol-name it)))
-                            (-flatten body)))
-         (keywords (--map (void:symbol-intern ":" (-second-item (s-match (rx "$" (group (* anything)))
-                                                                         (symbol-name it))))
-                          symbols)))
-    `(-let [(,type ,@(-interleave keywords symbols)) ,structure]
-       ,@body)))
-#+end_src
-
-**** with plist
-:PROPERTIES:
-:ID: f84e30a9-b725-415e-b1df-7b4489913d2c
-:END:
-
-#+begin_src emacs-lisp
-(defmacro with-plist! (plist &rest body)
-  (declare (indent 1))
-  `(with-structure! ,plist &plist ,@body))
-#+end_src
-
-**** with-alist
-:PROPERTIES:
-:ID: d594c666-0ec1-4c72-9159-5ddea9702d03
-:END:
-
-#+begin_src emacs-lisp
-(defmacro with-alist! (alist &rest body)
-  (declare (indent 1))
-  `(with-structure! ,alist &alist ,@body))
-#+end_src
-
-*** defhook!
-
-#+begin_src emacs-lisp
-(defmacro defhook! (name args &rest body)
-  "Add hooks."
-  (let* ((docstring (when (stringp (car body)) (pop body)))
-         (key (pop body))
-         (hooks (-list (pop body)))
-         (append (eq key :append))
-         (local (eq key :local)))
-    `(progn (defun ,name ,args ,docstring ,@body)
-            (dolist (hook ',hooks)
-              (add-hook hook #'name append local)))))
-#+end_src
-
-*** defadvice!
-
-#+begin_src emacs-lisp
-(defmacro defadvice! ()
-  "Add advice."
-  (let* ((docstring (when (stringp (car body)) (pop body)))
-         (key (pop body))
-         (advices (-list (pop body))))
-    `(progn (defun ,name ,args ,docstring ,@body)
-            (dolist (advice ,advices)
-              (advice-add advice ,key #',name)))))
-#+end_src
-
-** helpers                                                                 :eac:
-:PROPERTIES:
-:ID: 228f3913-3bb5-4d5d-8cb1-fe2ff2414b43
-:END:
-
-*** symbols
-:PROPERTIES:
-:ID: 2cdf8ab1-4e59-4128-a8a4-e5519ca0f4bf
-:END:
-
-Here I have convenience functions for primarily used for writing macros. They
-help me convert a combinations of strings and symbols or numbers into another
-type without any manual hassle.
-
-**** symbol intern
-:PROPERTIES:
-:ID: 659e8389-84c5-4ac4-a9ba-7dd40599191d
-:END:
-
-#+begin_src emacs-lisp
-(defun void:symbol-intern (&rest args)
-  "Return ARGS as a symbol."
-  (declare (pure t) (side-effect-free t))
-  (intern (apply #'void:make-string args)))
-#+end_src
-
-**** keyword intern
-:PROPERTIES:
-:ID: f2668044-13b2-46e7-bf84-fcf998591e37
-:END:
-
-#+begin_src emacs-lisp
-(defun void:keyword-intern (&rest args)
-  "Return ARGS as a keyword."
-  (declare (pure t) (side-effect-free t))
-  (apply #'void:symbol-intern ":" args))
-#+end_src
-
-**** keyword name
-:PROPERTIES:
-:ID: fb867938-d62b-42fc-bf07-092f10b64f22
-:END:
-
-#+begin_src emacs-lisp
-(defun void:keyword-name (key)
-  "Return the name of the key without the prepended :."
-  (declare (pure t) (side-effect-free t))
-  (substring-no-properties (void:make-string key) 1))
-#+end_src
-
-**** make string
-:PROPERTIES:
-:ID: 4ef52875-4ce6-4940-8b7e-13c96bedcb3d
-:END:
-
-#+begin_src emacs-lisp
-(defun void:make-string (&rest args)
-  "Return ARGS as a string."
-  (declare (pure t) (side-effect-free t))
-  (with-output-to-string
-    (dolist (a args) (princ a))))
-#+end_src
-
-*** emacs
-:PROPERTIES:
-:ID: eff84166-48b4-406e-a658-004c2246e156
-:END:
-
-**** hook combinators
-:PROPERTIES:
-:ID: af88c3f4-791c-41f4-89fb-23fe110f1dfb
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:hook-keywords '(:hook :append :local)
-  "Types of hooks you can have.")
-#+end_src
-
-**** advice combinators
-:PROPERTIES:
-:ID: acebd7ea-2252-4842-b2f3-68564e5f4072
-:END:
-
-[[info:elisp#Advice combinators][Advice combinators]] are the possible keywords used to specify what kind of
-advice you want. I keep a list of these so it's convenient to use them for
-snippets.
-
-#+begin_src emacs-lisp
-(defvar void:advice-keywords
-  '(:before :after :override
-    :around :before-while :before-until
-    :after-while :after-until :filter-args
-    :filter-return)
-  "List of advice combinators.")
-#+end_src
-
-**** void:to-mode
-:PROPERTIES:
-:ID: 35d823d6-4332-44d2-b7e9-8bf57560b482
-:END:
-
-#+begin_src emacs-lisp
-(defun void:to-mode (sym)
-  "Convert symbol to a mode symbol."
-  (if (string-match-p "-mode\\'" (symbol-name sym))
-      sym
-    (void:symbol-intern sym '-mode)))
-#+end_src
-
-**** void:to-hook
-:PROPERTIES:
-:ID: e366169e-55c3-4aea-b549-47f5837e063e
-:END:
-
-#+begin_src emacs-lisp
-(defun void:to-hook (sym)
-  "Convert symbol to a hook symbol."
-  (if (string-match-p "-hook\\'" (symbol-name sym))
-      sym
-    (void:symbol-intern sym '-hook)))
-#+end_src
-
-** macro skeleton                                                          :ewc:
-:PROPERTIES:
-:ID: d849833e-4e21-4140-994c-f77dac3bd514
-:END:
-
-While I don't like =cl-loop=, I think that the concept of having a macro that can
-be extended by keywords like =use-package= or =leaf= is a good idea. =leaf= and
-=use-package= are primarily designed for package management. However I think a
-package that provided a framework for which to build an easily-customizable
-keyword macro would be very useful. This is what =skeleton= is. The goals I had in
-mind when creating =skeleton= are reusability and easy customizability.
-
-*** expand-key
-:PROPERTIES:
-:ID: a1b5c355-32d7-4498-b2d5-17dfd8d72188
-:END:
-
-Any specific macro created by =skeleton= will have keys that take a value and
-expand into code depending on the value they were "passed in". They keys will be
-located in a list specific to that macro.
-
-#+begin_src emacs-lisp
-(defun skeleton:expand-key (pair seed list)
-  "Return the expansion of PAIR applied to SEED.
-Pair has the seed (key value)."
-  (-let [(key . value) pair]
-    (funcall (alist-get key list) key value seed)))
-#+end_src
-
-*** expand form
-:PROPERTIES:
-:ID: f9c619d6-597d-47ec-a14c-00d3da45e411
-:END:
-
-#+begin_src emacs-lisp
-(defun skeleton:expand-form (pairs seed list)
-  "Return expansion of PAIRS applied to FORM."
-  ;; to allow pairs to be modified.
-  (-reduce-r-from (-rpartial #'skeleton:expand-key list) seed pairs))
-#+end_src
-
-*** skeleton-key!
-:PROPERTIES:
-:ID: 66845a52-a365-4da9-86a7-ce1e65c1fd6b
-:END:
-
-=skeleton-key!= generates a function that takes three arguments, =$key=, =$value= and
-=$form=. This function is what will be invoked by =skeleton-expand-key=.
-
-#+begin_src emacs-lisp
-(defmacro skeleton-key! (name args &rest body)
-  "Return a skeleton-key named NAME.
-A skeleton-key is a function with three arguments: $key, $value and $form."
-  (declare (indent defun))
-  (-let* ((value-name (pop args))
-          (plural-p (string-match-p (rx (opt "e") "s" eos)
-                                    (symbol-name value-name)))
-          (placeholders (--map (void:symbol-intern "$" it) args)))
-    `(defun ,name ($key $value $form)
-       (-let ((,value-name ,(if plural-p '$value '(car $value)))
-              (($seed &as ,@placeholders) (car $form))
-              ($form (cdr $form)))
-         (ignore $key $value $form)
-         ,@body
-         (cons (list ,@placeholders) $form)))))
-#+end_src
-
-*** skeleton-key-define!
-:PROPERTIES:
-:ID: e246f1aa-e13a-4211-b4c6-91aadd026e7a
-:END:
-
-Define
-
-#+begin_src emacs-lisp
-(defmacro skeleton-key-define! (macro args)
-  "Return a macro definer based on MACRO with args ARGS.
-The definer takes.
-This function defines three things. The first is a list. DEFINER is the macro
-used to define new keywords for MACRO."
-  (-let* ((name (alet (symbol-name macro)
-                  (string-match (rx (group (* nonl)) "!" eos) it)
-                  (match-string 1 it)))
-          (key (void:keyword-intern name))
-          ((keylist expand apply-fn)
-           (--map (intern (format (concat "skeleton:" it) name))
-                  (list "%s-keys"
-                        "expand-%s-form"
-                        "%s-apply-%%s")))
-          (definer (intern (format "define-%s-key!" name))))
-    `(progn
-       (defvar ,keylist nil
-         ,(format "Keys used by `%s'." macro))
-       (defun ,expand (pairs seed)
-         ,(format "Expand keys used by `%s'." macro)
-         (skeleton:expand-form pairs seed ,keylist ))
-       (defmacro ,definer (name value &rest body)
-         ,(format "Define keyword for `%s'." macro)
-         (declare (indent defun))
-         (let ((fname (intern (format ,(symbol-name apply-fn) name))))
-           `(alet (skeleton-key! ,fname (,(car value) ,@',args)
-                    ,@body)
-              (push (cons ,(void:keyword-intern name) it) ,',keylist)))))))
-#+end_src
-
-** defun!                                                                  :ewc:
-:PROPERTIES:
-:ID: 6c106967-ddc0-44df-a407-50c104ea7ad8
-:END:
-
-Often we want to do more things with a function we define. For example we'd like
-to add it to a hook, or use it as an advice. The =defun!= macro is.
-
-*** defun definer
-:PROPERTIES:
-:ID: b2345775-ab37-4942-8d06-1d457f7defee
-:END:
-
-#+begin_src emacs-lisp
-(skeleton-key-define! defun! (name args docstring keys body))
-#+end_src
-
-*** defun!
-:PROPERTIES:
-:ID: 7c5f9900-47b6-4ef4-b042-54a852022aa3
-:END:
-
-The same as =defun= but accepts keyword pairs.
-
-#+begin_src emacs-lisp
-(defmacro defun! (name args &rest body)
-  "The same as `defun' but accepts keyword pairs in BODY.
-Keyword pairs have the value."
-  (declare (indent defun))
-  (-let* ((docstring (when (stringp (car body)) (pop body)))
-          ((keys body) (--separate (keywordp (car-safe it)) body))
-          (seed `((,name ,args ,docstring ,keys ,body))))
-    `(progn
-       ,@(alet (skeleton:expand-defun-form keys seed)
-           (car it)
-           (cons `(defun ,@(-take 3 (car it)) ,@(-last-item (car it)))
-                 (cdr it))))))
-#+end_src
-
-*** defadvice!
-:PROPERTIES:
-:ID: fafc6df4-8e98-4ced-a03a-1ebef105f3e2
-:END:
-
-This macro and it's counterpart ~defhook!~ are just wrappers around ~defun!~. The
-only difference is that they are specifically geared towards defining and advice
-and adding a hook respectively. This is to enhance readability of code.
-
-#+begin_src emacs-lisp
-(defmacro defadvice! (name args &rest body)
-  "Define a named advice.
-This function is wrapper around `defun' used specifically for advice."
-  (declare (indent defun))
-  `(defun! ,name ,args ,@body))
-#+end_src
-
-*** defhook!
-:PROPERTIES:
-:ID: 141a4da6-683a-4fdf-919b-fd1d55be3e25
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defhook! (name args &rest body)
-  "Defines a named hook.
-This function is a wrapper around `defun!' used specifically for defining hooks."
-  (declare (indent defun))
-  `(defun! ,name ,args ,@body))
-#+end_src
-
-*** keys
-:PROPERTIES:
-:ID: de024394-1a6a-46a8-b9a6-59a8610ea2e4
-:END:
-
-Here are the definitions that tell =defun!= what to do when given a certain
-keyword. As you will see, defining keywords--even ones that do complex
-things--is super easy. This is the main goal of my =skeleton-key= design.
-
-**** eval-and-compile
-:PROPERTIES:
-:ID: 8068186c-e016-4456-83e9-c17adab2e081
-:END:
-
-#+begin_src emacs-lisp
-(define-defun-key! eval-and-compile (bool)
-  (when bool
-    (setq $form `((eval-and-compile ,@$form)))))
-#+end_src
-
-**** disable
-:PROPERTIES:
-:ID: 2d4fa7db-2026-41a5-a987-949676bd939f
-:END:
-
-#+begin_src emacs-lisp
-(define-defun-key! disable (bool)
-  ;; "Ignore any forms."
-  (when bool (setq $form nil)))
-#+end_src
-
-**** after!
-:PROPERTIES:
-:ID: de5bfe63-4efc-4f61-a44e-b77642de50f5
-:END:
-
-#+begin_src emacs-lisp
-(define-defun-key! after! (features)
-  (setq $form `((after! ,features ,@$form))))
-#+end_src
-
-**** hook
-:PROPERTIES:
-:ID: 80128c92-9281-47cf-80ed-6b0236cd5750
-:END:
-
-#+begin_src emacs-lisp
-(define-defun-key! append (hooks)
-  ;; "Hook the current."
-  (append! $form
-    `((general-add-hook ',hooks #',$name ,(eq $key :append) ,(eq $key :local)))))
-
-(--each void:hook-keywords
-  (push (cons it #'skeleton:defun-apply-append) skeleton:defun-keys))
-#+end_src
-
-**** before
-:PROPERTIES:
-:ID: 6d28d798-3ef6-4e96-9fcf-0acd47de5f70
-:END:
-
-#+begin_src emacs-lisp
-(define-defun-key! before (advisors)
-  (append! $form
-    `((general-add-advice ',advisors ,$key #',$name))))
-
-(--each void:advice-keywords
-  (push (cons it #'skeleton:defun-apply-before) skeleton:defun-keys))
-#+end_src
-
-**** expire
-:PROPERTIES:
-:ID: b8ef16fa-9085-4a45-900e-9711e7846401
-:END:
-
-#+begin_src emacs-lisp
-(define-defun-key! expire (pred)
-  (append! $body
-    `((when ,pred
-        ,@(--map `(advice-remove #',it #',$name)
-                 (--mapcat (alist-get it $keys) void:advice-keywords))
-        ,@(--map `(remove-hook ',it #',$name)
-                 (--mapcat (alist-get it $keys) void:hook-keywords))
-        ;; (void:log "%s expired..." ',$name)
-        (void:log "%s expired" ,(symbol-name $name))
-        (fmakunbound #',$name)))))
-#+end_src
-
-** use-package!                                                            :ewc:
-:PROPERTIES:
-:ID: 04560da8-1e8a-4bcc-bdeb-574d8bfc984d
-:END:
-
-This macro is akin to the ever-popular =use-package=. =use-package= is a package
-made by John Wiegly to simplify package configuration by mapping key-value pairs
-to corresponding elisp configuration forms. Incidentally, this also allows for
-an immediate application of changes to emacs package configuration. For example,
-if you want to customize how packages are deferred, you can customize the =:defer=
-keyword and now every package that is configured with that key word will be
-deferred in the new way you wanted.
-
-If it's so good, why'd I make my own version? Well, I did not enjoy the process
-of adding custom keywords with =use-package=. I felt that it was overly
-complicated and excessively tied to =use-package='s own API. To add my own keyword
-I had to create two separate functions which were complicated with =use-package='s
-api specification. I found myself spending over an hour trying to implement a
-new keyword.
-
-My code is shorter. It is easier to customize. And it does not provide a
-confusing API you must learn. I create new keywords in minutes.
-
-*** save-load-path
-:PROPERTIES:
-:ID: 16a99700-977a-470a-9fb1-b296a1d636e4
-:END:
-
-In typical emacs configurations the bulk of startup time is consumed by
-installing packages
-
-The [[helpvar:load-path][load-path]] is the variable that stores the paths to all the files that Emacs
-loads--both from built in and external packages. If we could assume all external
-packages have been installed, populating =load-path= with paths to external
-packages we use would all that we need to do during emacs startup. Populating
-the load path is a simple matter of prepending items to a list which is a very
-fast, O(1) operation.
-
-This macro is designed to help compile away package installation. Once we assume
-the packages are installed, we just need the load-paths. Each package manager
-updates the load path in their own way. So I use a generic macro to get the
-differences made to the load-path.
-
-Essentially, I what I want is the installation of a package to compile away to
-adding packages to the load-path.
-
- Each package should look like ~(push (eval-when-compile
-(save-load-path! ...install package...))) load-path)~. When this is compiled.
-
-#+begin_src emacs-lisp
-(defmacro save-load-path! (&rest body)
-  "Evaluate BODY, returning any new elements added to `load-path'.
-The original `load-path' is left unchanged."
-  (with-gensyms! (old-load-path difference)
-    `(let ((,old-load-path load-path)
-           (load-path load-path)
-           (,difference nil))
-       ,@body
-       (while (not (string= (car load-path) (car ,old-load-path)))
-         (push (pop load-path) ,difference))
-       (nreverse ,difference))))
-#+end_src
-
-*** define definer
-:PROPERTIES:
-:ID: 78ed11e3-bd99-40bf-aa21-a8d791580176
-:END:
-
-#+begin_src emacs-lisp
-(skeleton-key-define! use-package! (package body))
-#+end_src
-
-*** use-package!
-:PROPERTIES:
-:ID: d54fc79a-4a92-4794-9546-43de34ee13bc
-:END:
-
-#+begin_src emacs-lisp
-(defmacro use-package! (package &rest keys)
-  (declare (indent defun))
-  ;; Recipe is the only keyword whose order I care about. I want it to be after
-  ;; the conditional keywords such as :when :unless :os.
-  (unless (assoc :recipe keys)
-    (setq keys
-          (alet (--partition-by (member (car it) '(:os :when)) keys)
-            (apply #'append (-butlast it))
-            (append (apply #'append (-butlast it))
-                    (cons '(:recipe t) (-last-item it))))))
-  (let ((seed `((,package ,@keys))))
-    `(progn
-       ,@(cdr (skeleton:expand-use-package-form keys seed)))))
-#+end_src
-
-*** keys
-:PROPERTIES:
-:ID: 29fc849e-67aa-4630-9ecd-7d19f4f4b5c4
-:END:
-
-**** deferment
-:PROPERTIES:
-:ID: 52bc7271-97ee-4974-a7e0-e91b30950108
-:END:
-
-These keywords defer the loading of packages in some way to preserve startup
-time.
-
-***** after
-:PROPERTIES:
-:ID: bb969633-a53d-4766-a9d5-bfbe0c18fc7a
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! after (features)
-  (setq $form `((after! ,features (require ',$package) ,@$form))))
-#+end_src
-
-***** after-hook
-:PROPERTIES:
-:ID: 9729767d-6bd4-49c6-a07c-3579643e8cae
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! after-hook (hooks)
-  "Load package after any HOOKS have been run.
-Hooks are"
-  (push `(defhook! ,(intern (format "use-package-%s--load-%s-h" (gensym) $package)) (&rest _)
-           ,(format "Load `%s'" $package)
-           (:hook ,@hooks)
-           (:expire t)
-           (require ',$package nil t))
-        $form))
-#+end_src
-
-***** after-load
-:PROPERTIES:
-:ID: 4209b77a-491d-421f-b9b9-ea1c0f4e3c3d
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! after-load (forms)
-  "Evaluate FORMS after package has been loaded."
-  (push `(after! ,$package ,@forms) $form))
-#+end_src
-
-***** load-incrementally
-:PROPERTIES:
-:ID: 231080e4-62d9-4112-be77-17d79b69b452
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! load-incrementally (packages)
-  "Load packages incrementally.
-For what incrementally means see `void:load-incrementally'."
-  (prepend! $form
-    (--map `(push ',it void:incremental-packages) packages)))
-#+end_src
-
-***** after-call
-:PROPERTIES:
-:ID: 463d9571-c57c-43cb-aec2-ea9145e0b88d
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! after-call (functions)
-  "Load package after any function in FUNCTIONS has been called.
-FUNCTION is a list of functions."
-  (let ((name (intern (format "use-package--load-%s:after-call-a" $package))))
-    (push `(defadvice! ,name (&rest _)
-             (:expire t)
-             (:after ,@functions)
-             (void:log "Loading %S..." ',$package)
-             (require ',$package nil t))
-          $form)))
-#+end_src
-
-***** before-call
-:PROPERTIES:
-:ID: 05a58e83-fd6e-49c0-b757-9c767846099a
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! before-call (functions)
-  "Load package before any function in FUNCTIONS is called.
-FUNCTIONS is a list of functions."
-  (let ((name (intern (format "use-package--load-%s:before-call-a" $package))))
-    (push `(defadvice! ,name (&rest _)
-             (:expire t)
-             (:before ,@functions)
-             (void:log "Loading %S..." ',$package)
-             (require ',$package nil t))
-          $form)))
-#+end_src
-
-**** executable
-:PROPERTIES:
-:ID: d68dc50b-beba-406c-8a93-08a80dc4fcd7
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! exec (executables)
-  (setq $form
-        `((when (eval-when-compile (--all-p #'executable-find ,executables))
-            ,@$form))))
-#+end_src
-
-**** eval-when-compile
-:PROPERTIES:
-:ID: 9329df1b-8cd8-471d-a28d-8a9ac94e9c3b
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! eval-when-compile (bool)
-  (when bool
-    (setq $form `((eval-when-compile ,@$form)))))
-#+end_src
-
-**** recipe
-:PROPERTIES:
-:ID: 0a7764c3-2eee-434d-b0f1-b7d9792fc9b6
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! recipe (recipe)
-  (when recipe
-    (push `(--each-r ',(save-load-path!
-                        (funcall void:pacman-install-fn $package
-                                 (when (listp recipe) (macroexp-quote recipe))))
-             ,@(when (string-match-p "-themes?\\'" (symbol-name $package))
-                 `((when (string-match-p "-themes?\\'" it)
-                     (push it custom-theme-load-path))))
-             (push it load-path))
-          $form)))
-#+end_src
-
-**** autoloading
-:PROPERTIES:
-:ID: 13c36b21-109e-4cc9-82fe-5647a17b5c3d
-:END:
-
-***** helper for autoload
-:PROPERTIES:
-:ID: 7504866e-79ac-445c-b58a-337ccb97ad0b
-:END:
-
-#+begin_src emacs-lisp
-(defun use-package--generate-autoloads (package interactive-p macro-p callables)
-  "Return form that autoloads."
-  (let ((path (make-symbol "path")))
-    `((if-let (,path ,(symbol-name package))
-          (progn ,@(--map `(autoload #',it ,path nil ,interactive-p ,macro-p) (-list callables)))
-        (error "Path not found in load-path.")))))
-#+end_src
-
-***** functions
-:PROPERTIES:
-:ID: 9377742a-84db-4f75-b8d3-6cae7f31c283
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! functions (funs)
-  (append! $form
-    (use-package--generate-autoloads $package nil nil funs)))
-#+end_src
-
-***** commands
-:PROPERTIES:
-:ID: 99316b95-051a-4924-8346-7570f932f8e6
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! commands (commands)
-  (append! $form
-    (use-package--generate-autoloads $package t nil commands)))
-#+end_src
-
-***** macros
-:PROPERTIES:
-:ID: b81723be-c2cb-42f6-b4da-3c9b6d97fa55
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! macros (macros)
-  (append! $form
-    (use-package--generate-autoloads $package nil t macros)))
-#+end_src
-
-**** when
-:PROPERTIES:
-:ID: be6a1198-eab8-4d4b-80af-72159854a9ed
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! when (pred)
-  (setq $form `((when ,pred ,@$form))))
-#+end_src
-
-**** os
-:PROPERTIES:
-:ID: cbc68656-2cf3-4074-9556-9aadb8582ec6
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! os (oses)
-  (setq $form `((with-os! ,oses ,@$form))))
-#+end_src
-
-**** pre-setq
-:PROPERTIES:
-:ID: 687c9236-a1c3-416a-b21c-86b69d016014
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! pre-setq (pairs)
-  (prepend! $form
-    (--map `(setq ,(-first-item it) ,(-second-item it)) pairs)))
-#+end_src
-
-**** setq
-:PROPERTIES:
-:ID: a1291a25-a906-417b-ba77-946192a6dc67
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! setq (pairs)
-  (prepend! $form
-    `((after! ,$package
-        ,@(--map `(setq ,(-first-item it) ,(-second-item it)) pairs)))))
-#+end_src
-
-**** now
-:PROPERTIES:
-:ID: 250293f0-48ef-46cc-9185-7d2caee4ddc4
-:END:
-
-This is a better named version of use-package's =:init= keyword.
-
-#+begin_src emacs-lisp
-(define-use-package-key! now (forms)
-  (prepend! $form forms))
-#+end_src
-
-**** require
-:PROPERTIES:
-:ID: 15e7c59b-da86-40e2-a75c-ecc37b6804e3
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! require (bool)
-  (when bool
-    (push `(require ',$package) $form)))
-#+end_src
-
-**** bind
-:PROPERTIES:
-:ID: 211fdb9d-acc2-4b21-a92a-fd2bc2720bc4
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! bind (bindings)
-  (push `(define-key! ,@bindings) $form))
-#+end_src
-
-**** hook
-:PROPERTIES:
-:ID: 55800532-0ff9-4a7b-a902-2287f4a3e175
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! hook (hooks)
-  (prepend! $form
-    (->> hooks
-      (--map-when (not (-cons-pair-p it)) (cons it (void:to-mode $package)))
-      (--map (cons (void:to-hook (car it)) (cdr it)))
-      (-mapcat (-lambda ((hook . mode))
-                 `((add-hook ',hook #',mode nil nil)
-                   ,@(use-package--generate-autoloads $package t nil (-list mode))))))))
-#+end_src
-
-**** disable
-:PROPERTIES:
-:ID: 4e74109e-e088-410c-af34-287bf40de146
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! disable (bool)
-  (when bool
-    (setq $form (ignore! ,@$form))))
-#+end_src
-
-**** custom
-:PROPERTIES:
-:ID: 7f21e98e-de2d-47f2-afaa-bcc9c5c245c1
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! custom (pairs)
-  (prepend! $form
-    (-map (-lambda ((var val))
-            `(funcall (or (get ',var 'custom-set) #'set) ',var ,val))
-          pairs)))
-#+end_src
-
-**** mode
-:PROPERTIES:
-:ID: 402e8579-d6a4-4c68-92bb-53b1e66e283e
-:END:
-
-#+begin_src emacs-lisp
-(define-use-package-key! mode (pair)
-  (when (stringp pair)
-    (setq pair (cons pair (void:to-mode $package))))
-  (-let [(regexp . mode) pair]
-    (setq mode (or mode (void:to-mode $package)))
-    (prepend! $form
-      `((push (cons ,regexp ',mode) auto-mode-alist)
-        ,@(use-package--generate-autoloads $package t nil (-list mode))))))
-#+end_src
-
-*** use-feature!
-:PROPERTIES:
-:ID: 651a3843-5ebe-4b97-967f-9c42156c8873
-:END:
-
-#+begin_src emacs-lisp
-(defmacro use-feature! (package &rest body)
-  (declare (indent defun))
-  `(use-package! ,package
-     (:recipe nil)
-     ,@body))
-#+end_src
-
 ** external libraries
 :PROPERTIES:
 :ID: 6e4be80e-8149-424d-a801-d7871bfe8fc8
@@ -2243,7 +1275,6 @@ abstractions for manipulating lists.
 
 #+begin_src emacs-lisp
 (leaf dash
-  ;; :straight (dash :type git :host github :repo "magnars/dash.el")
   :require t
   :defer-config
   (defun dash-expand:&llist (key source)
@@ -2300,7 +1331,7 @@ an element of an alist.
 (leaf a)
 #+end_src
 
-*** shut-up                                                                :ewc:
+*** shut-up                                                       :ewc:disabled:
 :PROPERTIES:
 :ID: aaf02960-925b-4a67-b06b-5819e68d0c4d
 :END:
@@ -2309,13 +1340,12 @@ Macro that silences output.
 
 #+begin_src emacs-lisp
 (leaf shut-up
-  (:macros shut-up)
-  (:now
-   (defalias 'shut-up! 'shut-up)
-   (defalias 'quiet! 'shut-up)))
+  :init
+  (defalias 'shut-up! 'shut-up)
+  (defalias 'quiet! 'shut-up))
 #+end_src
 
-*** noflet                                                                 :ewc:
+*** noflet                                                        :ewc:disabled:
 :PROPERTIES:
 :ID: e89b1560-bb57-4c97-94e5-4ff78ab5bdde
 :END:
@@ -2326,7 +1356,7 @@ Macro that silences output.
   (:now (defalias 'noflet! 'noflet)))
 #+end_src
 
-*** git
+*** git                                                               :disabled:
 :PROPERTIES:
 :ID: 177427a0-ba5a-4358-bbcb-2041661c198f
 :END:
@@ -2336,6 +1366,219 @@ Essentially it provides an elisp api around many common git commands.
 
 #+begin_src emacs-lisp
 (leaf git)
+#+end_src
+
+** with-os!
+:PROPERTIES:
+:ID: 1a645745-11ce-4cfb-8c5f-63470f0a61c3
+:END:
+
+Emacs is for the most part operating system agnostic. Packages written in elisp
+should work across operating systems. Nevertheless, there are a handful of
+settings that should favors particular operating systems over others.
+
+#+begin_src emacs-lisp
+(defmacro with-os! (os &rest body)
+  "If OS is current system's operating system, execute body.
+OS can be either `mac', `linux' or `windows'(unquoted)."
+  (declare (indent defun))
+  (setq os (if (listp os) os (list os)))
+  (when (funcall (cond ((eq :not (car-safe os)) (lambda (a b) (not (member a b))))
+                       (t #'member))
+                 (cond ((eq system-type 'darwin) 'mac)
+                       ((eq system-type 'gnu/linux) 'linux)
+                       ((member system-type '(cygwin windows-nt ms-dos)) 'windows)
+                       (t nil))
+                 os)
+    `(progn ,@body)))
+#+end_src
+
+** macros
+:PROPERTIES:
+:ID: 9d65f3e2-a6d2-4f84-8150-9f9df7d3a513
+:END:
+
+*** append!
+:PROPERTIES:
+:ID: f314672c-f9f3-4630-9402-a9a65215c153
+:END:
+
+#+begin_src emacs-lisp
+(defmacro append! (sym &rest lists)
+  "Append LISTS to SYM.
+SYM is a symbol that stores a list."
+  (declare (indent 1))
+  `(setq ,sym (append ,sym ,@lists)))
+#+end_src
+
+*** prepend!
+:PROPERTIES:
+:ID: 3395dec3-0915-49cd-9445-d3db2b1ffe7f
+:END:
+
+#+begin_src emacs-lisp
+(defmacro prepend! (sym &rest lists)
+  (declare (indent defun))
+  `(setq ,sym (append ,@lists ,sym)))
+#+end_src
+
+*** nconc!
+:PROPERTIES:
+:ID: b24d1d8f-f3e1-4dca-afdb-8fb73d5299c3
+:END:
+
+#+begin_src emacs-lisp
+(defmacro nconc! (sym &rest lists)
+  "Append LISTS to SYM by altering them in place."
+  (declare (indent 1))
+  `(setq ,sym (nconc ,sym ,@lists)))
+#+end_src
+
+*** pair value extraction
+:PROPERTIES:
+:ID: e546a63f-eb75-4b72-9392-2a6041f87f50
+:END:
+
+The [[https://github.com/magnars/dash.el][dash library]] provides [[https://github.com/magnars/dash.el#-let-varlist-rest-body][special keywords]] to complement [[helpfn:let][let bindings]] that help
+us easily extract values from a data structure and assign them to a variable
+value. However, sometimes even that is not concise enough. For each variable you
+assign to an element of the data structure, you have to. Using [[helpfn:let-alist][let-alist]] is an
+option but it it is specific to alists and it's "dot" notation is a bad choice
+of notation because it.
+
+**** with structure
+:PROPERTIES:
+:ID: c88dac35-9345-49f5-bdb5-e856071e6764
+:END:
+
+This macro capitalizes the data structure support that dash's let binding
+already has.
+
+#+begin_src emacs-lisp
+(defmacro with-structure! (structure type &rest body)
+  "Access items from STRUCTURE.
+STRUCTURE can be an alist, a plist, or a hash table."
+  (declare (indent 1))
+  (let* ((symbols (--filter (and (symbolp it) (string-prefix-p "$" (symbol-name it)))
+                            (-flatten body)))
+         (keywords (--map (void:symbol-intern ":" (-second-item (s-match (rx "$" (group (* anything)))
+                                                                         (symbol-name it))))
+                          symbols)))
+    `(-let [(,type ,@(-interleave keywords symbols)) ,structure]
+       ,@body)))
+#+end_src
+
+**** with plist
+:PROPERTIES:
+:ID: f84e30a9-b725-415e-b1df-7b4489913d2c
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-plist! (plist &rest body)
+  (declare (indent 1))
+  `(with-structure! ,plist &plist ,@body))
+#+end_src
+
+**** with-alist
+:PROPERTIES:
+:ID: d594c666-0ec1-4c72-9159-5ddea9702d03
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-alist! (alist &rest body)
+  (declare (indent 1))
+  `(with-structure! ,alist &alist ,@body))
+#+end_src
+
+*** defhook!
+
+#+begin_src emacs-lisp
+(defmacro defhook! (name args &rest body)
+  "Define a hook function."
+  (let* ((docstring (when (stringp (car body)) (pop body)))
+         (key (pop body))
+         (hooks (-list (pop body)))
+         (append (eq key :append))
+         (local (eq key :local)))
+    `(progn (defun ,name ,args ,docstring ,@body)
+            (dolist (hook ',hooks)
+              (add-hook hook #',name ,append ,local)))))
+#+end_src
+
+*** defadvice!
+
+#+begin_src emacs-lisp
+(defmacro defadvice! ()
+  "Add advice."
+  (let* ((docstring (when (stringp (car body)) (pop body)))
+         (key (pop body))
+         (advices (-list (pop body))))
+    `(progn (defun ,name ,args ,docstring ,@body)
+            (dolist (advice ,advices)
+              (advice-add advice ,key #',name)))))
+#+end_src
+
+** helpers                                                                 :eac:
+:PROPERTIES:
+:ID: 228f3913-3bb5-4d5d-8cb1-fe2ff2414b43
+:END:
+
+*** symbols
+:PROPERTIES:
+:ID: 2cdf8ab1-4e59-4128-a8a4-e5519ca0f4bf
+:END:
+
+Here I have convenience functions for primarily used for writing macros. They
+help me convert a combinations of strings and symbols or numbers into another
+type without any manual hassle.
+
+**** symbol intern
+:PROPERTIES:
+:ID: 659e8389-84c5-4ac4-a9ba-7dd40599191d
+:END:
+
+#+begin_src emacs-lisp
+(defun void:symbol-intern (&rest args)
+  "Return ARGS as a symbol."
+  (declare (pure t) (side-effect-free t))
+  (intern (apply #'void:make-string args)))
+#+end_src
+
+**** keyword intern
+:PROPERTIES:
+:ID: f2668044-13b2-46e7-bf84-fcf998591e37
+:END:
+
+#+begin_src emacs-lisp
+(defun void:keyword-intern (&rest args)
+  "Return ARGS as a keyword."
+  (declare (pure t) (side-effect-free t))
+  (apply #'void:symbol-intern ":" args))
+#+end_src
+
+**** keyword name
+:PROPERTIES:
+:ID: fb867938-d62b-42fc-bf07-092f10b64f22
+:END:
+
+#+begin_src emacs-lisp
+(defun void:keyword-name (key)
+  "Return the name of the key without the prepended :."
+  (declare (pure t) (side-effect-free t))
+  (substring-no-properties (void:make-string key) 1))
+#+end_src
+
+**** make string
+:PROPERTIES:
+:ID: 4ef52875-4ce6-4940-8b7e-13c96bedcb3d
+:END:
+
+#+begin_src emacs-lisp
+(defun void:make-string (&rest args)
+  "Return ARGS as a string."
+  (declare (pure t) (side-effect-free t))
+  (with-output-to-string
+    (dolist (a args) (princ a))))
 #+end_src
 
 ** void specific funtions
@@ -2540,13 +1783,12 @@ Wait until idle time to garbage collect while staving off garbage collector
 while the user is working.
 
 #+begin_src emacs-lisp
-(use-package! gcmh
-  (:after-hook pre-command-hook)
-  (:setq
-   (gcmh-idle-delay 10)
-   (gcmh-verbose void:debug-mode)
-   (gcmh-high-cons-threshold (* 16 1024 1024)))
-  (:after-load (gcmh-mode 1)))
+(leaf gcmh
+  :hook pre-command-hook
+  :setq
+  (gcmh-idle-delay          . 10)
+  (gcmh-verbose             . void:debug-mode)
+  (gcmh-high-cons-threshold . (* 16 1024 1024)))
 #+end_src
 
 ** hooks
