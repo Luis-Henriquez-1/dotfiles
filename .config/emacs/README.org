@@ -2015,14 +2015,12 @@ is that the characters used for switching to a window are *really* easy to see,
 but you can't see the buffer contents. That's a no-go for me I need to see them.
 
 #+begin_src emacs-lisp
-(use-package! ace-window
-  (:commands ace-window ace-swap-window)
-  (:now (general-def [remap other-window] #'ace-window))
-  (:setq
-   ;; Keys for selecting window.
-   (aw-keys '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
-   ;; When t, ace-window will dim out all buffers temporarily when used.
-   (aw-background t)))
+(leaf ace-window
+  :commands ace-window ace-swap-window
+  :bind ([remap other-window] . #'ace-window)
+  :setq
+  (aw-keys . '(?a ?s ?d ?f ?g ?h ?j ?k ?l))
+  (aw-background . t))
 #+end_src
 
 ** eyebrowse
@@ -2040,9 +2038,9 @@ your previous workspace now with [[helpfn:eyebrowse-prev-window-config][eyebrows
 [[helpfn:eyebrowse-switch-to-window-config][eyebrowse-switch-to-window-config]].
 
 #+begin_src emacs-lisp
-(use-package! eyebrowse
-  (:hook void:start-emacs-hook)
-  (:setq (eyebrowse-wrap-around t)))
+(leaf eyebrowse
+  :hook void:start-emacs-hook
+  :setq (eyebrowse-wrap-around . t))
 #+end_src
 
 ** window divider
@@ -2067,13 +2065,13 @@ makes emacs feel like a window manager with gaps.
 
 #+begin_src emacs-lisp
 (use-feature! frame
-  (:custom
-   (window-divider-default-places t)
-   (window-divider-default-bottom-width 10)
-   (window-divider-default-right-width 10))
-  (:now
-   (set-face-foreground 'window-divider "black")
-   (window-divider-mode 1)))
+  :custom
+  (window-divider-default-places t)
+  (window-divider-default-bottom-width 10)
+  (window-divider-default-right-width 10)
+  :defer-config
+  (set-face-foreground 'window-divider "black")
+  (window-divider-mode 1))
 #+end_src
 
 *** update on theme change
@@ -2129,9 +2127,12 @@ Somtimes I might want to adjust this.
 https://www.emacswiki.org/emacs/TransposeFrame
 
 #+begin_src emacs-lisp
-(use-package! transpose-frame
-  (:commands transpose-frame flip-frame flop-frame
-   rotate-frame rotate-frame-clockwise))
+(leaf transpose-frame
+  :commands (transpose-frame
+             flip-frame
+             flop-frame
+             rotate-frame
+             rotate-frame-clockwise))
 #+end_src
 
 ** windows
@@ -2185,20 +2186,18 @@ startup time. Instead of loading =EXWM= immediately, I add advises to the
 functions which open external linux applications.
 
 #+begin_src emacs-lisp
-(use-package! exwm
-  (:recipe (:host github :repo "ch11ng/exwm"))
-  (:os linux)
-  (:hook (exwm-mode-hook . hide-mode-line-mode))
-  (:before-call void/open-qutebrowser counsel-linux-app void/open-emacs-instance)
-  (:setq (exwm-replace nil))
-  (:after-load
-   (exwm-init)
-   ;; Enable the clipboard.
-   (require 'exwm-systemtray)
-   (exwm-systemtray-enable)))
+(leaf exwm
+  :hook (exwm-mode-hook . hide-mode-line-mode)
+  ;; (:before-call void/open-qutebrowser counsel-linux-app void/open-emacs-instance)
+  :setq (exwm-replace nil)
+  :defer-config
+  (exwm-init)
+  ;; Enable the clipboard.
+  (require 'exwm-systemtray)
+  (exwm-systemtray-enable))
 
 (defhook! exwm:setup-hide-mode-line-h ()
-  (:hook exwm-mode-hook)
+  :hook exwm-mode-hook
   (add-hook 'exwm-floating-setup-hook #'exwm-layout-hide-mode-line)
   (add-hook 'exwm-floating-exit-hook #'exwm-layout-show-mode-line))
 #+end_src
@@ -2211,7 +2210,7 @@ functions which open external linux applications.
 #+begin_src emacs-lisp
 (defhook! exwm:rename-buffer-to-title-h ()
   "Rename buffer to title."
-  (:hook exwm-update-title-hook)
+  :hook exwm-update-title-hook
   (exwm-workspace-rename-buffer exwm-title))
 #+end_src
 
@@ -2228,7 +2227,7 @@ windows).
 #+begin_src emacs-lisp
 (defhook! exwm:start-in-char-mode-h ()
   "Decide whether to start program in char mode."
-  (:hook exwm-manage-finish-hook)
+  :hook exwm-manage-finish-hook
   (when (-any (-rpartial #'string-prefix-p exwm-instance-name)
               (list "emacs"))
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
@@ -2277,7 +2276,7 @@ saying that when the text is in an emacs buffer, you can use the full-force of
 Emacs's text editing capabilities on it.
 
 #+begin_src emacs-lisp
-(use-package! exwm-edit (:after exwm))
+(leaf exwm-edit :after exwm)
 #+end_src
 
 ** buffer expose
@@ -2286,28 +2285,32 @@ Emacs's text editing capabilities on it.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! buffer-expose
-  (:commands buffer-expose buffer-expose-no-stars buffer-expose-major-mode
-   buffer-expose-dired-buffers buffer-expose-stars buffer-expose-current-mode)
-  (:setq
-   (buffer-expose-show-current-buffer t)
-   (buffer-expose-rescale-factor 0.5)
-   (buffer-expose-highlight-selected nil)
-   (buffer-expose-max-num-windows 8)
-   (buffer-expose-auto-init-aw t)
-   (buffer-expose-hide-modelines nil)
-   (buffer-expose-key-hint ""))
-  (:after-load
-   (general-def buffer-expose-grid-map
-     "l" #'buffer-expose-next-window
-     "h" #'buffer-expose-prev-window
-     "L" #'buffer-expose-next-page
-     "H" #'buffer-expose-prev-page
-     "j" #'buffer-expose-down-window
-     "k" #'buffer-expose-up-window)))
+(leaf buffer-expose
+  :commands (buffer-expose
+             buffer-expose-no-stars
+             buffer-expose-major-mode
+             buffer-expose-dired-buffers
+             buffer-expose-stars
+             buffer-expose-current-mode)
+  :setq
+  (buffer-expose-show-current-buffer . t)
+  (buffer-expose-rescale-factor      . 0.5)
+  (buffer-expose-highlight-selected  . nil)
+  (buffer-expose-max-num-windows     . 8)
+  (buffer-expose-auto-init-aw        . t)
+  (buffer-expose-hide-modelines      . nil)
+  (buffer-expose-key-hint            . "")
+  :defer-config
+  (general-def buffer-expose-grid-map
+    "l" #'buffer-expose-next-window
+    "h" #'buffer-expose-prev-window
+    "L" #'buffer-expose-next-page
+    "H" #'buffer-expose-prev-page
+    "j" #'buffer-expose-down-window
+    "k" #'buffer-expose-up-window))
 #+end_src
 
-* Completion
+* Completion                                                          :disabled:
 :PROPERTIES:
 :ID: 056384d1-a95a-4dcb-bc9d-ffe95bbb52a8
 :END:
