@@ -1243,6 +1243,22 @@ STRUCTURE can be an alist, a plist, or a hash table."
   `(with-structure! ,alist &alist ,@body))
 #+end_src
 
+*** defhook!
+
+#+begin_src emacs-lisp
+(defmacro defhook! (name args &rest body)
+  "Add hooks."
+  (let* ((docstring (when (stringp (car body)) (pop body)))
+         (key (pop body))
+         (hooks (pop body))
+         (append (eq key :append))
+         (local (eq key :local)))
+    ;; (cl-assert)
+    `(progn (defun ,name ,args ,@(cons docstring body))
+            (dolist (hook ,hooks)
+              (add-hook hook #'name append local)))))
+#+end_src
+
 ** helpers                                                                 :eac:
 :PROPERTIES:
 :ID: 228f3913-3bb5-4d5d-8cb1-fe2ff2414b43
