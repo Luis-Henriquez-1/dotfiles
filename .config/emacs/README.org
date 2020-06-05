@@ -1098,8 +1098,8 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 #+begin_src emacs-lisp
 (leaf leaf
   :setq
-  (leaf-defaults . '(:straight t))
-  (leaf-aliases  . '((:ensure . :package))))
+  (leaf-defaults . '(:ensure t))
+  (leaf-aliases  . '((:ensure . :straight))))
 #+end_src
 
 *** customize setq
