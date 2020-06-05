@@ -2697,7 +2697,8 @@ of stock emacs functions with a version that using =ivy= for completion.
 [[https://github.com/abo-abo/swiper][Swiper]] is a package that interactively search items.
 
 #+begin_src emacs-lisp
-(use-package! swiper (:commands swiper swiper-isearch))
+(leaf swiper
+  :commands swiper swiper-isearch)
 #+end_src
 
 **** minibuffer bindings
