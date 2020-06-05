@@ -2396,19 +2396,19 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-core
-  (:commands helm-M-x)
-  (:pre-setq
-   (helm-default-display-buffer-functions '(display-buffer-in-side-window))
-   (helm-display-buffer-height .6)
-   (helm-display-buffer-default-height 0.6)
-   (helm-candidate-number-limit 50)
-   (helm-display-header-line nil)
-   (helm-find-files-doc-header nil)
-   (helm-imenu-execute-action-at-once-if-one nil)
-   (helm-ff-lynx-style-map nil)
-   (helm-mode-line-string nil)
-   (helm-ff-auto-update-initial-value nil)))
+(leaf helm-core
+  :commands helm-M-x
+  :pre-setq
+  (helm-default-display-buffer-functions . '(display-buffer-in-side-window))
+  (helm-display-buffer-height . .6)
+  (helm-display-buffer-default-height . 0.6)
+  (helm-candidate-number-limit . 50)
+  (helm-display-header-line . nil)
+  (helm-find-files-doc-header . nil)
+  (helm-imenu-execute-action-at-once-if-one . nil)
+  (helm-ff-lynx-style-map . nil)
+  (helm-mode-line-string . nil)
+  (helm-ff-auto-update-initial-value . nil))
 #+end_src
 
 **** helm-mode
@@ -2441,14 +2441,14 @@ about Helm is that it's too bloated and slow.
 [[https://github.com/emacsorphanage/helm-swoop][helm-swoop]] is an helm version of swiper. It gives me an overview of searches.
 
 #+begin_src emacs-lisp
-(use-package! helm-swoop
-  (:commands helm-swoop)
-  (:setq
-   (helm-swoop-speed-or-color nil)
-   (helm-swoop-move-to-line-cycle t)
-   (helm-swoop-use-line-number-face nil)
-   (helm-swoop-pre-input-function (lambda () ""))
-   (helm-swoop-use-fuzzy-match t)))
+(leaf helm-swoop
+  :commands helm-swoop
+  :setq
+  (helm-swoop-pre-input-function   . (lambda () ""))
+  (helm-swoop-use-line-number-face . nil)
+  (helm-swoop-move-to-line-cycle   . t)
+  (helm-swoop-speed-or-color       . nil)
+  (helm-swoop-use-fuzzy-match      . t))
 #+end_src
 
 **** helm descbinds
