@@ -1119,9 +1119,10 @@ The straight keyword require's the package's name.
 
 #+begin_src emacs-lisp
 (push `((or (memq leaf--key '(:straight))
-            (eq (alist-get leaf-key leaf-alias-keyword-alist) :straight))
-        (if (keywordp (car leaf--key))
-            (cons leaf)))
+            (eq (alist-get leaf--key leaf-alias-keyword-alist) :straight))
+        (if (ignore-errors (keywordp (caar leaf--value)))
+            (list (cons leaf--name (car leaf--value)))
+          leaf--value))
       leaf-normalize)
 *** TODO =:on-hook= keyword                                             :disabled:
 
