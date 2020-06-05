@@ -1259,6 +1259,19 @@ STRUCTURE can be an alist, a plist, or a hash table."
               (add-hook hook #'name append local)))))
 #+end_src
 
+*** defadvice!
+
+#+begin_src emacs-lisp
+(defmacro defadvice! ()
+  "Add advice."
+  (let* ((docstring (when (stringp (car body)) (pop body)))
+         (key (pop body))
+         (advices (-list (pop body))))
+    `(progn (defun ,name ,args ,docstring ,@body)
+            (dolist (advice ,advices)
+              (advice-add advice ,key #',name)))))
+#+end_src
+
 ** helpers                                                                 :eac:
 :PROPERTIES:
 :ID: 228f3913-3bb5-4d5d-8cb1-fe2ff2414b43
