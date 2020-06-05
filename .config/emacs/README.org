@@ -1300,7 +1300,7 @@ abstractions for manipulating lists.
 #+begin_src emacs-lisp
 (leaf dash
   :require t
-  :defer-config
+  :config
   (defun dash-expand:&llist (key source)
     `(car (alist-get ,key ,source)))
   (defun dash-expand:&alist* (key source)
