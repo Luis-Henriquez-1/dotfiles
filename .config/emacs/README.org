@@ -1072,7 +1072,9 @@ This code initializes straight if it's not already installed.
        (void:log "✕ failed to install %s because of %s" package err)))))
 #+end_src
 
-** required packages
+** leaf
+
+*** required packages
 :PROPERTIES:
 :ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
 :END:
@@ -1089,7 +1091,7 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 (leaf-keywords-init)
 #+end_src
 
-** leaf
+*** leaf
 
 #+begin_src emacs-lisp
 (leaf leaf
@@ -1098,15 +1100,14 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
   (leaf-aliases  . '((:ensure . :package))))
 #+end_src
 
-** customize setq
+*** customize setq
 
 leaf's setq does not correctly handle setting variables to forms that need to be
 evaluated.
 
 #+begin_src emacs-lisp
 (push '((memq leaf--key '(:setq))
-        (mapcar (lambda (it) (cons (car it) (cdr it)))
-         (mapcan #'identity leaf--value)))
+        (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
       leaf-normalize)
 #+end_src
 
