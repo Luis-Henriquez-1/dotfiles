@@ -3371,7 +3371,7 @@ worth quoting here:
 #+begin_src emacs-lisp
 (defhook! company:close-tooltip-h ()
   "Close company tooltip."
-  (:hook void:escape-hook)
+  :hook void:escape-hook
   (when (and (boundp 'company-mode)
              (eq company-mode t))
     (company-abort)
