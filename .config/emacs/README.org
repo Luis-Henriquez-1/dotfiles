@@ -3251,27 +3251,18 @@ WORDS is a string containing one or more words."
 [[https://github.com/company-mode/company-mode][company]] offers code completion.
 
 #+begin_src emacs-lisp
-(use-package! company
-  (:hook prog-mode)
+(leaf company
+  :hook prog-mode
   (:setq
-   ;; Make completions display twice as soon.
-   (company-idle-delay 0.15)
-   ;; At max show 14 candidates.
-   (company-tooltip-limit 14)
-   ;; Make completions display when you have only typed one character,
-   ;; instead of three.
-   (company-minimum-prefix-length 1)
-   ;; improve the UX when working with domain-specific words that have
-   ;; particular casing.
-   (company-dabbrev-downcase nil)
-   ;; When candidates in the autocompletion tooltip have additional
-   ;; metadata, like a type signature, align that information to the
-   ;; right-hand side. This usually makes it look neater.
-   (company-tooltip-align-annotations t)
-   (company-require-match 'never)
-   (company-frontends '(company-pseudo-tooltip-frontend))
-   (company-show-numbers t)
-   (company-minimum-prefix-length 1))
+   (company-frontends                 . '(company-pseudo-tooltip-frontend))
+   (company-tooltip-align-annotations . t)
+   (company-show-numbers              . t)
+   (company-dabbrev-downcase          . nil)
+   (company-idle-delay                . 0.15)
+   (company-tooltip-limit             . 14)
+   (company-minimum-prefix-length     . 1)
+   (company-minimum-prefix-length     . 1)
+   (company-require-match             . 'never))
   (:after-load
    (general-def company-active-map
      ;; "TAB" #'company-select-next
