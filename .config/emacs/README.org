@@ -2064,7 +2064,7 @@ window ends and another begins (see [[helpfn:window-divider-mode][window-divider
 makes emacs feel like a window manager with gaps.
 
 #+begin_src emacs-lisp
-(use-feature! frame
+(leaf frame
   :custom
   (window-divider-default-places       . t)
   (window-divider-default-bottom-width . 10)
@@ -2300,14 +2300,14 @@ Emacs's text editing capabilities on it.
   (buffer-expose-auto-init-aw        . t)
   (buffer-expose-hide-modelines      . nil)
   (buffer-expose-key-hint            . "")
-  :defer-config
-  (general-def buffer-expose-grid-map
-    "l" #'buffer-expose-next-window
-    "h" #'buffer-expose-prev-window
-    "L" #'buffer-expose-next-page
-    "H" #'buffer-expose-prev-page
-    "j" #'buffer-expose-down-window
-    "k" #'buffer-expose-up-window))
+  :bind
+  (:buffer-expose-grid-map
+   ("l" . buffer-expose-next-window)
+   ("h" . buffer-expose-prev-window)
+   ("L" . buffer-expose-next-page)
+   ("H" . buffer-expose-prev-page)
+   ("j" . buffer-expose-down-window)
+   ("k" . buffer-expose-up-window)))
 #+end_src
 
 * Completion                                                          :disabled:
