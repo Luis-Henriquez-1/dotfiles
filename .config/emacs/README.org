@@ -4800,11 +4800,10 @@ javascript code.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! w3m
+(leaf w3m
   (:os linux)
-  (:commands w3m)
-  (:after-load
-   (setq w3m-search-default-engine "google")))
+  :commands w3m
+  :setq (w3m-search-default-engine . "google"))
 #+end_src
 
 *** traversing
