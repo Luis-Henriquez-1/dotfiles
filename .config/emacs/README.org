@@ -2907,21 +2907,20 @@ existing completing-read-using commands.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! selectrum
-  (:after-hook pre-command-hook)
-  (:setq
-   (selectrum-count-style nil)
-   (selectrum-show-indices nil)
-   (selectrum-fix-minibuffer-height t)
-   (selectrum-num-candidates-displayed 15))
-  (:after-load
-   (append! selectrum-minibuffer-bindings
-     '(([tab] . selectrum-next-candidate)
-       ([backtab] . selectrum-previous-candidate)
-       ("C-SPC" . selectrum-insert-current-candidate)
-       ("C-j" . selectrum-next-candidate)
-       ("C-k" . selectrum-previous-candidate)))
-   (selectrum-mode)))
+(leaf selectrum
+  :hook pre-command-hook
+  :setq
+  (selectrum-count-style              . nil)
+  (selectrum-show-indices             . nil)
+  (selectrum-fix-minibuffer-height    . t)
+  (selectrum-num-candidates-displayed . 15)
+  :config-load
+  (append! selectrum-minibuffer-bindings
+    '(([tab]     . selectrum-next-candidate)
+      ([backtab] . selectrum-previous-candidate)
+      ("C-SPC"   . selectrum-insert-current-candidate)
+      ("C-j"     . selectrum-next-candidate)
+      ("C-k"     . selectrum-previous-candidate))))
 #+end_src
 
 **** selectrum prescient
