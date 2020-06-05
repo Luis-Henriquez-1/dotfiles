@@ -2081,7 +2081,7 @@ makes emacs feel like a window manager with gaps.
 
 #+begin_src emacs-lisp
 (defhook! frame:update-divider-h ()
-  (:hook void:after-load-theme-hook)
+  :hook void:after-load-theme-hook
   (unless (bound-and-true-p window-divider-mode)
     (window-divider-mode 1)))
 #+end_src
@@ -2457,8 +2457,8 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-descbinds
-  (:hook (helm-mode . helm-descbinds-mode)))
+(leaf helm-descbinds
+  :hook (helm-mode . helm-descbinds-mode))
 #+end_src
 
 **** helm-mode-map
@@ -2489,8 +2489,8 @@ about Helm is that it's too bloated and slow.
 [[https://github.com/emacs-helm/helm-system-packages][helm-system-packages]] incorporates helm with your operating system's package manager.
 
 #+begin_src emacs-lisp
-(use-package! helm-system-packages
-  (:commands helm-system-packages))
+(leaf helm-system-packages
+  :commands helm-system-packages)
 #+end_src
 
 **** helm-exwm                                                        :disabled:
@@ -2499,7 +2499,7 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-exwm)
+(leaf helm-exwm)
 #+end_src
 
 **** hide helm modeline
