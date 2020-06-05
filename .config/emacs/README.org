@@ -926,7 +926,7 @@ cursor without having it blink.
 (setq-default frame-resize-pixelwise t)
 #+end_src
 
-* Package Management                                                       :ewc:
+* Package Management
 :PROPERTIES:
 :ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
 :END:
@@ -1098,8 +1098,9 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 #+begin_src emacs-lisp
 (leaf leaf
   :setq
-  (leaf-defaults . '(:ensure t))
-  (leaf-aliases  . '((:ensure . :straight))))
+  (leaf-defaults . '(:straight t))
+  ;; (leaf-aliases  . '((:ensure . :straight)))
+  )
 #+end_src
 
 *** customize setq
@@ -1272,14 +1273,15 @@ you can "discover" the commands as you go along.
 
 #+begin_src emacs-lisp
 (leaf which-key
-  :hook pre-command-hook
+  ;; :hook pre-command-hook
+  :hook emacs-startup-hook
   :setq
   (which-key-sort-uppercase-first . nil)
   (which-key-max-display-columns . nil)
   (which-key-add-column-padding . 1)
   (which-key-min-display-lines . 6)
   (which-key-side-window-slot . -10)
-  (which-key-sort-order . which-key-prefix-then-key-order)
+  (which-key-sort-order . #'which-key-prefix-then-key-order)
   (which-key-popup-type . 'minibuffer)
   :defer-config
   (defhook! which:key-set-line-spacing-h ()
