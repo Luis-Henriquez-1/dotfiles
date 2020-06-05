@@ -2227,7 +2227,7 @@ you can "discover" the commands as you go along.
   (which-key-popup-type           . 'minibuffer)
   :defer-config
   (defhook! which:key-set-line-spacing-h ()
-    (:hook which-key-init-buffer-hook)
+    :hook which-key-init-buffer-hook
     (setq line-spacing 3))
   (which-key-add-key-based-replacements void:leader-key "<leader>")
   (which-key-add-key-based-replacements void:localleader-key "<localleader>"))
@@ -2502,7 +2502,7 @@ This hook triggers incremental loading to start.
 (defhook! void:load-packages-incrementally-h ()
   "Begin incrementally loading packages in `void:incremental-packages'.
 If this is a daemon session, load them all immediately instead."
-  (:hook void:start-emacs-hook)
+  :hook void:start-emacs-hook
   (cond
    ((daemonp)
     (mapc #'require (cdr void:incremental-packages)))
@@ -2526,7 +2526,7 @@ When running emacs in terminal tty is *tremendously* slow.
 (unless (display-graphic-p)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
   (defhook! void:init-tty-h ()
-    (:hook window-setup-hook)
+    :hook window-setup-hook
     (advice-remove #'tty-run-terminal-initialization #'ignore)
     (tty-run-terminal-initialization (selected-frame) nil t)))
 #+end_src
@@ -2602,7 +2602,7 @@ This hook happens during `emacs-startup-hook'.")
 
 (defhook! void:run-start-emacs-hook-h ()
   "Run all hooks in `void:start-emacs-hook-list'."
-  (:hook emacs-startup-hook)
+  :hook emacs-startup-hook
   ;; In case I want more hooks in future use a loop.
   (--each '(void:start-emacs-hook)
     (void:log "Executing %s" it)
@@ -2630,7 +2630,7 @@ clearer and easier to read I alias [[helpvar:kill-emacs-hook][kill-emacs-hook]] 
 
 (defhook! void:run-quit-emacs-hook-h ()
   "Run hooks in `void:quit-emacs-hook'."
-  (:append kill-emacs-hook)
+  :append kill-emacs-hook
   (let ((gc-cons-threshold void:gc-cons-threshold-max)
         (gc-cons-percentage void:gc-cons-percentage-max))
     (run-hooks 'void:quit-emacs-hook)))
@@ -2651,7 +2651,7 @@ natural, then, that I want to keep a close eye on it. The hook
 
 (defhook! void:set-init-time-h ()
   "Hook that computes `void:init-time'."
-  (:append emacs-startup-hook)
+  :append emacs-startup-hook
   (setq void:init-time
         (float-time (time-subtract after-init-time before-init-time)))
   (when void:debug-mode
@@ -2686,12 +2686,12 @@ hook variables use action verbs in their names not nouns. So the =exit= in
 
 (defhook! void:boost-garbage-collection-h ()
   "Boost garbage collection settings to `void:gc-cons-threshold-max'."
-  (:hook minibuffer-enter-hook)
+  :hook minibuffer-enter-hook
   (setq gc-cons-threshold void:gc-cons-threshold-max))
 
 (defhook! void:defer-garbage-collection-h ()
   "Reset garbage collection settings to `void:gc-cons-threshold' after delay."
-  (:append minibuffer-exit-hook)
+  :append minibuffer-exit-hook
   (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold void:gc-cons-threshold))))
 #+end_src
 
@@ -2713,7 +2713,7 @@ be.
 #+begin_src emacs-lisp
 (defhook! void:tangle-on-quit-maybe-h ()
   "Tangle if `void:needs-tangling-p' returns t."
-  (:append void:quit-emacs-hook)
+  :append void:quit-emacs-hook
   (when (void:needs-tangling-p)
     (void/tangle-org-file)))
 #+end_src
@@ -2732,7 +2732,7 @@ to waste time loading ~void:main-elisp-file~.
 #+begin_src emacs-lisp
 (defhook! void:tangle-on-save-h ()
   "Tangle `void:readme-file' asynchronously when it is saved."
-  (:hook after-save-hook)
+  :hook after-save-hook
   (when (and (require 'async nil t)
              (string= (file-truename void:readme-file)
                       (or (buffer-file-name (current-buffer)) ""))
