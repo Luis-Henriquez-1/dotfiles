@@ -5883,34 +5883,33 @@ and provides facilities for writing custom extensions. Also see our page on
 :END:
 
 #+begin_src emacs-lisp
-(use-package! evil
-  (:require t)
-  (:custom
-   (evil-want-C-u-scroll t)
-   (evil-want-C-d-scroll t)
-   (evil-want-C-w-delete t)
-   (evil-want-Y-yank-to-eol t)
-   (evil-overriding-maps nil)
-   (evil-want-minibuffer t))
-  (:setq
-   (evil-want-C-w-in-emacs-state nil)
-   (evil-want-keybinding nil)
-   (evil-want-visual-char-semi-exclusive t)
-   ;; Whether the cursor can move past the end of the line.
-   (evil-move-beyond-eol nil)
-   (evil-magic t)
-   (evil-echo-state nil)
-   (evil-indent-convert-tabs t)
-   (evil-ex-search-vim-style-regexp t)
-   (evil-ex-substitute-global t)
-   (evil-ex-visual-char-range t)
-   (evil-insert-skip-empty-lines t)
-   (evil-mode-line-format nil)
-   (evil-respect-visual-line-mode t)
-   (evil-symbol-word-search t)
-   (shift-select-mode nil)))
-
-(add-hook 'window-setup-hook #'evil-mode)
+(leaf evil
+  :require t
+  :hook window-setup-hook
+  :custom
+  (evil-want-C-u-scroll    . t)
+  (evil-want-C-d-scroll    . t)
+  (evil-want-C-w-delete    . t)
+  (evil-want-Y-yank-to-eol . t)
+  (evil-overriding-maps    . nil)
+  (evil-want-minibuffer    . t)
+  :setq
+  (evil-want-C-w-in-emacs-state         . nil)
+  (evil-want-keybinding                 . nil)
+  (evil-want-visual-char-semi-exclusive . t)
+  ;; Whether the cursor can move past the end of the line.
+  (evil-move-beyond-eol                 . nil)
+  (evil-magic                           . t)
+  (evil-echo-state                      . nil)
+  (evil-indent-convert-tabs             . t)
+  (evil-ex-search-vim-style-regexp      . t)
+  (evil-ex-substitute-global            . t)
+  (evil-ex-visual-char-range            . t)
+  (evil-insert-skip-empty-lines         . t)
+  (evil-mode-line-format                . nil)
+  (evil-respect-visual-line-mode        . t)
+  (evil-symbol-word-search              . t)
+  (shift-select-mode                    . nil))
 #+end_src
 
 **** cursors
