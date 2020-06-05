@@ -6614,7 +6614,7 @@ This replaces the default popup window at the bottom of eshell. By using the
 =completion-in-region= backend, it triggers ivy/helm for completion.
 
 #+begin_src emacs-lisp
-(defun! eshell/pcomplete ()
+(defun eshell/pcomplete ()
   "Use pcomplete with completion-in-region backend."
   (interactive)
   (require 'pcomplete)
@@ -6627,7 +6627,7 @@ This replaces the default popup window at the bottom of eshell. By using the
 :END:
 
 #+begin_src emacs-lisp
-(defun! eshell:goto-prompt-on-insert-h ()
+(defun eshell:goto-prompt-on-insert-h ()
   "Move cursor to the prompt when switching to insert mode."
   (when (< (point) eshell-last-output-end)
     (goto-char
@@ -6743,7 +6743,7 @@ Eshell prompt function finds eshell section functions specified by
 generate the body of the eshell prompt.
 
 #+begin_src emacs-lisp
-(defun! eshell:acc (acc x)
+(defun eshell:acc (acc x)
   "Accumulator for evaluating and concatenating `eshell:enabled-sections'."
   (--if-let (funcall x)
       (if (s-blank? acc)
@@ -6751,7 +6751,7 @@ generate the body of the eshell prompt.
         (concat acc eshell:sep it))
     acc))
 
-(defun! eshell:prompt-func ()
+(defun eshell:prompt-func ()
   "Generate the eshell prompt.
 This function generates the eshell prompt by concatenating `eshell:header' with
 valid `eshell:enabled-sections' and the `eshell-prompt-string'."
@@ -7214,7 +7214,7 @@ I might consider doing this asynchronously.
 :END:
 
 #+begin_src emacs-lisp
-(defun! dired:create-non-existent-directory-h ()
+(defun dired:create-non-existent-directory-h ()
   "Automatically create missing directories when creating new file."
   (let ((parent-directory (file-name-directory buffer-file-name)))
     (when (and (not (file-exists-p parent-directory))
@@ -7496,7 +7496,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
 :END:
 
 #+begin_src emacs-lisp
-(defun! magit/quit ()
+(defun magit/quit ()
   "Clean up magit buffers after quitting `magit-status'."
   (interactive)
   (let ((buffers (magit-mode-get-buffers)))
@@ -8211,7 +8211,7 @@ when headline contents begin.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org/dwim-return ()
+(defun org/dwim-return ()
   "Do what I mean."
   (interactive)
   (cond
@@ -8276,7 +8276,7 @@ headline in view.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org:heading-folded-p ()
+(defun org:heading-folded-p ()
   "Return t if an current heading is folded."
   (outline-invisible-p (line-end-position)))
 #+end_src
@@ -8287,7 +8287,7 @@ headline in view.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org:heading-name ()
+(defun org:heading-name ()
   "Return the headline of the current heading."
   (interactive)
   (save-excursion
@@ -8305,7 +8305,7 @@ headline in view.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org:beginning-of-headline (&optional end)
+(defun org:beginning-of-headline (&optional end)
   "Return the character position at the end of the headline."
   (let (case-fold-search)
     (save-excursion
@@ -8320,7 +8320,7 @@ headline in view.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org:end-of-headline ()
+(defun org:end-of-headline ()
   "Return the character position at the end of the headline."
   (interactive)
   (org:beginning-of-headline t))
@@ -8332,10 +8332,10 @@ headline in view.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org:heading-end-of-heading ()
+(defun org:heading-end-of-heading ()
   "Return point at end of heading.")
 
-(defun! org:heading-block-lang ()
+(defun org:heading-block-lang ()
   "Return the language of the current language's source block."
   (save-excursion
     (org-back-to-heading)
@@ -8447,7 +8447,7 @@ see if it's gone farther than it should have and in that case goes back.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org/dwim-next-line (&optional backward)
+(defun org/dwim-next-line (&optional backward)
   "Go to the start of the next heading.
 If DIR is a negative integer, go the opposite direction: the start of the
   previous heading."
@@ -8463,7 +8463,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
 :END:
 
 #+begin_src emacs-lisp
-(defun! org/dwim-previous-line (&optional forward)
+(defun org/dwim-previous-line (&optional forward)
   (interactive)
   (funcall #'org/dwim-next-line (not forward)))
 #+end_src
@@ -8474,7 +8474,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
 :END:
 
 #+begin_src emacs-lisp
-(defun! org/dwim-up-heading ()
+(defun org/dwim-up-heading ()
   ""
   (interactive)
   (condition-case nil
@@ -8494,7 +8494,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
 :END:
 
 #+begin_src emacs-lisp
-(defun! org/avy-jump-to-heading ()
+(defun org/avy-jump-to-heading ()
   "Jump to the beginning of a visible heading using `avy'."
   (interactive)
   (org-back-to-heading)
@@ -8550,7 +8550,7 @@ options. For this reason I wrote my own insert heading functions.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org/insert-heading-above (&optional below)
+(defun org/insert-heading-above (&optional below)
   "Insert a heading above the current heading."
   (interactive)
   (funcall #'org/insert-heading-below (not below)))
@@ -8562,7 +8562,7 @@ options. For this reason I wrote my own insert heading functions.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org/insert-heading-below (&optional above)
+(defun org/insert-heading-below (&optional above)
   "Insert heading below."
   (interactive)
   (let* ((on-heading-p (ignore-errors (org-back-to-heading)))
@@ -8587,7 +8587,7 @@ options. For this reason I wrote my own insert heading functions.
 :END:
 
 #+begin_src emacs-lisp
-(defun! org/insert-subheading ()
+(defun org/insert-subheading ()
   "Insert subheading below current heading."
   (interactive)
   (org/insert-heading-below)
@@ -9098,10 +9098,10 @@ defining all links in org mode.
 it's installed, otherwise it defaults to bringing up an regular emacs help buffer.
 
 #+begin_src emacs-lisp
-(defun! org-link--helpvar-face (link)
+(defun org-link--helpvar-face (link)
   (if (boundp (intern link)) 'org-link 'error))
 
-(defun! org-link--helpvar-follow (link)
+(defun org-link--helpvar-follow (link)
   (let ((var (intern link)))
     (if (require 'helpful nil :noerror)
         (helpful-variable var)
@@ -9488,7 +9488,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   (:n "a" #'outline-show-all)
   (:n "m" #'outline:hide-all-sublevels))
 
-(defun! outline:hide-all-sublevels ()
+(defun outline:hide-all-sublevels ()
   (interactive)
   (outline-hide-sublevels 1))
 #+end_src
