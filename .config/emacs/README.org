@@ -1250,12 +1250,11 @@ STRUCTURE can be an alist, a plist, or a hash table."
   "Add hooks."
   (let* ((docstring (when (stringp (car body)) (pop body)))
          (key (pop body))
-         (hooks (pop body))
+         (hooks (-list (pop body)))
          (append (eq key :append))
          (local (eq key :local)))
-    ;; (cl-assert)
-    `(progn (defun ,name ,args ,@(cons docstring body))
-            (dolist (hook ,hooks)
+    `(progn (defun ,name ,args ,docstring ,@body)
+            (dolist (hook ',hooks)
               (add-hook hook #'name append local)))))
 #+end_src
 
