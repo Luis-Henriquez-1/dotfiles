@@ -2412,20 +2412,19 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-mode
-  (:after-hook pre-command-hook)
-  (:now
-   (general-def
-     [remap apropos]                  #'helm-apropos
-     [remap find-library]             #'helm-locate-library
-     [remap execute-extended-command] #'helm-M-x
-     [remap find-file]                #'helm-find-files
-     [remap locate]                   #'helm-locate
-     [remap imenu]                    #'helm-semantic-or-imenu
-     [remap noop-show-kill-ring]      #'helm-show-kill-ring
-     [remap recentf]                  #'helm-recentf
-     [remap switch-to-buffer]         #'helm-mini))
-  (:after-load (helm-mode 1)))
+(leaf helm-mode
+  ;; (:after-hook pre-command-hook)
+  :bind
+  ([remap apropos]                  . helm-apropos)
+  ([remap find-library]             . helm-locate-library)
+  ([remap execute-extended-command] . helm-M-x)
+  ([remap find-file]                . helm-find-files)
+  ([remap locate]                   . helm-locate)
+  ([remap imenu]                    . helm-semantic-or-imenu)
+  ([remap noop-show-kill-ring]      . helm-show-kill-ring)
+  ([remap recentf]                  . helm-recentf)
+  ([remap switch-to-buffer]         . helm-mini)
+  :defer-config (helm-mode 1))
 #+end_src
 
 **** helm swoop
@@ -2518,11 +2517,11 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-dash
-  (:commands helm-dash)
-  (:setq
-   (helm-dash-docsets-path (concat void:data-dir "/dash-docsets"))
-   (helm-dash-browser-func (if (executable-find "w3m") #'w3m #'browse-url))))
+(leaf helm-dash
+  :commands helm-dash
+  :setq
+  (helm-dash-docsets-path . (concat void:data-dir "/dash-docsets"))
+  (helm-dash-browser-func . (if (executable-find "w3m") #'w3m #'browse-url)))
 #+end_src
 
 **** helm-org
@@ -2562,7 +2561,7 @@ does have isn't good enough.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-org)
+(leaf helm-org)
 #+end_src
 
 **** helm pass
@@ -2571,8 +2570,7 @@ does have isn't good enough.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-pass
-  (:commands helm-pass))
+(leaf helm-pass :commands helm-pass)
 #+end_src
 
 **** ace-helm-jump-line
@@ -2585,17 +2583,14 @@ does have isn't good enough.
 #+begin_src emacs-lisp
 (leaf ace-jump-helm-line
   :commands ace-jump-helm-line
+  :bind (:helm-map ("C-'" . ace-jump-helm-line))
   :setq
   (ace-jump-helm-line-idle-delay     . 0)
   (ace-jump-helm-line-default-action . 'select)
   (ace-jump-helm-line-style          . 'pre)
   (ace-jump-helm-line-select-key     . ?e)
   (ace-jump-helm-line-move-only-key  . ?o)
-  (ace-jump-helm-line-persistent-key . ?p)
-  ;; (:now
-  ;;  (after! helm
-  ;;    (general-def helm-map "C-'" #'ace-jump-helm-line)))
-  )
+  (ace-jump-helm-line-persistent-key . ?p))
 #+end_src
 
 *** ivy
