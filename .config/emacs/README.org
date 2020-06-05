@@ -1144,7 +1144,6 @@ handle all bindings. [[][general]] provides such a function ([[helpfn:general-de
 #+begin_src emacs-lisp
 (leaf general
   :require t
-  :straight (general :type git :host github :repo "noctuid/general.el")
   :defer-config
   (general-auto-unbind-keys)
   (defalias 'define-key! 'general-def))
