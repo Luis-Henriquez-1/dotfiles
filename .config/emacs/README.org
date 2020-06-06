@@ -3260,23 +3260,21 @@ WORDS is a string containing one or more words."
 #+begin_src emacs-lisp
 (leaf company
   :hook prog-mode
-  (:setq
-   (company-frontends                 . '(company-pseudo-tooltip-frontend))
-   (company-tooltip-align-annotations . t)
-   (company-show-numbers              . t)
-   (company-dabbrev-downcase          . nil)
-   (company-idle-delay                . 0.15)
-   (company-tooltip-limit             . 14)
-   (company-minimum-prefix-length     . 1)
-   (company-minimum-prefix-length     . 1)
-   (company-require-match             . 'never))
-  (:after-load
-   (general-def company-active-map
-     ;; "TAB" #'company-select-next
-     [tab] #'company-select-next
-     [backtab] #'company-select-previous
-     "C-k"     #'company-select-previous
-     "C-j"     #'company-select-next)))
+  :bind (:company-active-map
+         ([tab] . company-select-next)
+         ([backtab] . company-select-previous)
+         ("C-k"     . company-select-previous)
+         ("C-j"     . company-select-next))
+  :setq
+  (company-frontends . '(company-pseudo-tooltip-frontend))
+  (company-tooltip-align-annotations . t)
+  (company-show-numbers . t)
+  (company-dabbrev-downcase . nil)
+  (company-idle-delay . 0.15)
+  (company-tooltip-limit . 14)
+  (company-minimum-prefix-length . 1)
+  (company-minimum-prefix-length . 1)
+  (company-require-match . 'never))
 #+end_src
 
 *** backends
@@ -3311,7 +3309,7 @@ worth quoting here:
 #+begin_src emacs-lisp
 (defhook! company:init-backends-h ()
   "Set `company-backends' for the current buffer."
-  (:hook company-mode-hook)
+  :hook company-mode-hook
   (require 'company)
   (unless (eq major-mode 'fundamental-mode)
     (set (make-local-variable 'company-backends) (company--backends+)))
@@ -3324,7 +3322,7 @@ worth quoting here:
 :END:
 
 #+begin_src emacs-lisp
-(defun! company--backends+ ()
+(defun company--backends+ ()
   "Compute company backends."
   (or
    (-when-let ((mode type backends)
@@ -3699,7 +3697,7 @@ By default start emacs as fullscreen.
 
 (defhook! void:init-ui-h ()
   "Run hooks in `void:init-ui-hook'."
-  (:hook window-setup-hook)
+  :hook window-setup-hook
   (void:log "Executing void:init-ui-h hook")
   (if (null void:init-ui-hook)
       (void:log "- `void:init-ui-hook' is empty")
@@ -3739,7 +3737,7 @@ By default start emacs as fullscreen.
 #+begin_src emacs-lisp
 (defadvice! void:run-switch-buffer-hooks-a (orig-fn buffer-or-name &rest args)
   "Run `void:after-switch-buffer-hook'."
-  (:around switch-to-buffer display-buffer)
+  :around (switch-to-buffer display-buffer)
   (let ((gc-cons-threshold most-positive-fixnum))
     (if (or void:inhibit-switch-buffer-hooks
             (eq (current-buffer) (get-buffer buffer-or-name))
@@ -3761,7 +3759,7 @@ By default start emacs as fullscreen.
 
 #+begin_src emacs-lisp
 (defadvice! void:run-prev-or-next-buffer-hooks-a (orig-fn &rest args)
-  (:around switch-to-next-buffer switch-to-previous-buffer)
+  :around (switch-to-next-buffer switch-to-previous-buffer)
   (let ((gc-cons-threshold most-positive-fixnum))
     (if void:inhibit-switch-buffer-hooks
         (apply orig-fn args)
@@ -3823,7 +3821,7 @@ frame. So here I'm making the default font for all Emacs frames =void:font=.
   "Try `void:font' followed each of `void:backup-fonts' until success.
 If none of the fonts work, just use the default system font."
   ;; :when (display-graphic-p)
-  (:around frame-notice-user-settings)
+  :around frame-notice-user-settings
   (condition-case err
       (progn (apply orig-fn args)
              (void:log "Font is: %s" (face-attribute 'default :font)))
@@ -3916,7 +3914,7 @@ is called.")
 (defhook! void:init-theme-h ()
   "Set the theme and load the font, in that order."
   ;; :unless (daemonp)
-  (:hook void:init-ui-hook)
+  :hook void:init-ui-hook
   (when (and void:theme (not (memq void:theme custom-enabled-themes)))
     (let ((void:-prefer-theme-elc t))
       (condition-case nil
@@ -3938,7 +3936,7 @@ example, if I'm using evil I need to update the cursor color.
 
 (defadvice! void:run-after-load-theme-hook-a (theme &rest _)
   "Set up `void:load-theme-hook' to run after `load-theme' is called."
-  (:after load-theme)
+  :after load-theme
   (setq void:theme theme)
   (run-hooks 'void:after-load-theme-hook))
 #+end_src
@@ -3956,7 +3954,7 @@ example, if I'm using evil I need to update the cursor color.
 (defadvice! void:prefer-compiled-theme-a (orig-fn &rest args)
   "Make `load-theme' prioritize the byte-compiled theme.
 This advice has no effect if `void:-prefer-theme-elc' is nil."
-  (:around load-theme)
+  :around load-theme
   (if (or (null after-init-time) void:-prefer-theme-elc)
       (cl-letf* ((old-locate-file (symbol-function 'locate-file))
                  ((symbol-function 'locate-file)
@@ -3978,7 +3976,7 @@ a new theme.
 #+begin_src emacs-lisp
 (defadvice! void:disable-old-themes-first-a (orig-fn &rest args)
   "Disable old themes before loading new ones."
-  (:around load-theme)
+  :around load-theme
   (mapc #'disable-theme custom-enabled-themes)
   (apply orig-fn args))
 #+end_src
@@ -3991,7 +3989,7 @@ a new theme.
 #+begin_src emacs-lisp
 (defhook! void:reload-theme-in-frame-maybe-h (frame)
   "Reload the theme in new daemon or tty frames."
-  (:hook after-make-frame-functions-hook)
+  :hook after-make-frame-functions-hook
   (when (and void:theme
              (framep frame)
              (not (eq void:last-window-system (framep-on-display frame))))
@@ -4001,7 +3999,7 @@ a new theme.
 
 (defhook! void:reload-theme-maybe-h (_frame)
   "Reload the theme after closing the last frame of a type."
-  (:hook after-delete-frame-functions-hook)
+  :hook after-delete-frame-functions-hook
   (unless (cl-find void:last-window-system (frame-list) :key #'framep-on-display)
     (setq void:last-window-system nil)
     (void:reload-theme-in-frame-h (selected-frame))))
@@ -4104,7 +4102,7 @@ is read-only.")
 If the buffer size exceeds `void:large-file-size' ask for confirmation to open
 it literally (read-only, disabled undo and in fundamental-mode) for performance
 sake."
-  (:hook find-file-hook)
+  :hook find-file-hook
   (let* ((filename (buffer-file-name))
          (size (nth 7 (file-attributes filename))))
     (when (and (not (memq major-mode void:large-file-modes-list))
