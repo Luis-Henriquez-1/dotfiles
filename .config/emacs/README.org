@@ -1081,7 +1081,7 @@ leaf's setq does not correctly handle setting variables to forms that need to be
 evaluated.
 
 #+begin_src emacs-lisp
-(push '((memq leaf--key '(:setq))
+(push '((memq leaf--key '(:setq :custom))
         (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
       leaf-normalize)
 #+end_src
@@ -5027,7 +5027,7 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
   (keypression-frame-justify . 'keypression-right-justified))
 #+end_src
 
-* Text Editing
+* Text Editing                                                        :disabled:
 :PROPERTIES:
 :ID: 42e0838f-f72a-43f3-8db2-a406d2d89adb
 :END:
@@ -5041,7 +5041,7 @@ What [[https://github.com/Fanael/highlight-numbers][highlight-numbers]] does is 
 
 #+begin_src emacs-lisp
 (leaf highlight-numbers
-  :hook (prog-mode conf-mode)
+  :hook (prog-mode-hook conf-mode-hook)
   :setq (highlight-numbers-generic-regexp . "\\_<[[:digit:]]+\\(?:\\.[0-9]*\\)?\\_>"))
 #+end_src
 
@@ -5546,7 +5546,7 @@ Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regul
 
 #+begin_src emacs-lisp
 (leaf smartparens
-  :hook emacs-lisp-mode prog-mode eshell-mode ielm-mode
+  :hook (emacs-lisp-mode-hook prog-mode-hook eshell-mode-hook ielm-mode-hook)
   :setq
   (sp-highlight-pair-overlay . nil)
   (sp-highlight-wrap-overlay . nil)
@@ -6505,7 +6505,7 @@ larger text objects. It's saves me keystrokes.
   (global-undo-tree-mode -1))
 #+end_src
 
-* Utility                                                             :disabled:
+* Utility
 :PROPERTIES:
 :ID: 15266577-fc6e-4ec7-8277-3a94b6f4f926
 :END:
@@ -6550,9 +6550,9 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
                               'face 'mode-line-highlight)
                              (propertize (current-time-string)
                               'face 'font-lock-keyword-face)))
-  (:after-load
-   (remove-hook 'eshell-output-filter-functions
-                'eshell-postoutput-scroll-to-bottom)))
+  :defer-config
+  (remove-hook 'eshell-output-filter-functions
+               'eshell-postoutput-scroll-to-bottom))
 #+end_src
 
 *** visual commands
@@ -6945,6 +6945,7 @@ have to set out to look for a file with =dired=.
 (leaf recentf
   ;; :before-call find-file
   ;; (:load-incrementally easymenu tree-widget timer)
+  :ensure nil
   :commands recentf-open-files
   :defer-config
   (advice-add #'recentf-save-list :before #'recentf-cleanup)
@@ -7117,7 +7118,7 @@ I might consider doing this asynchronously.
   (play-sound-file sound))
 #+end_src
 
-** file browsing
+** file browsing                                                      :disabled:
 :PROPERTIES:
 :ID: a8a9edfe-a4c0-4531-92d5-a59991f4af92
 :END:
@@ -9335,7 +9336,7 @@ hindsight, using this function is even easier than using ~window-beg~ and
 
 #+begin_src emacs-lisp
 (leaf org-fancy-priorities
-  :hook org-mode
+  :hook org-mode-hook
   :setq
   (org-fancy-priorities-list . (list (all-the-icons-material "priority_high")
                                      (all-the-icons-octicon "arrow-up")
@@ -9468,7 +9469,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 (leaf lua-mode :mode "\\.lua\\'")
 #+end_src
 
-* User Interface
+* User Interface                                                      :disabled:
 :PROPERTIES:
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
 :END:
@@ -9507,7 +9508,7 @@ understanding of a verbally terse and dry command description.
   :init (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-* Asthetic
+* Asthetic                                                            :disabled:
 :PROPERTIES:
 :ID: bd21a69a-794c-4ff1-97d0-9e5911a26ad7
 :END:
@@ -9692,14 +9693,14 @@ see dark on light better than light on dark.
 
 #+begin_src emacs-lisp
 (leaf humanoid-themes
-  (:init (setq humanoid-org-bold nil)))
+  :pre-setq (humanoid-org-bold . nil))
 
 (leaf spacemacs-theme
-  (:pre-setq
-   (spacemacs-theme-org-bold nil)
-   (spacemacs-theme-comment-italic t)
-   (spacemacs-theme-org-bold nil)
-   (spacemacs-theme-org-height nil)))
+  :pre-setq
+  (spacemacs-theme-org-bold . nil)
+  (spacemacs-theme-comment-italic . t)
+  (spacemacs-theme-org-bold . nil)
+  (spacemacs-theme-org-height . nil))
 
 (leaf tao-theme)
 
@@ -9712,7 +9713,7 @@ see dark on light better than light on dark.
 (leaf one-themes)
 
 (leaf solarized-theme
-  (:pre-setq (solarized-use-variable-pitch nil)))
+  :pre-setq (solarized-use-variable-pitch . nil))
 #+end_src
 
 * Keybindings
