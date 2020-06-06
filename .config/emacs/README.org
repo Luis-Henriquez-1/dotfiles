@@ -4543,8 +4543,8 @@ mean 2000 which is not a lot by today's standard).
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! gnus
-  (:setq (gnus-select-method '(nnnil))))
+(leaf gnus
+  :setq (gnus-select-method   '(nnnil)))
 
 (setq user-mail-address "luis.henriquez@snhu.edu")
 (setq user-full-name "Luis Henriquez")
@@ -5052,9 +5052,9 @@ What [[https://github.com/Fanael/highlight-numbers][highlight-numbers]] does is 
 Also pretty self explanatory is [[https://github.com/dgutov/highlight-escape-sequences][highlight-escape-sequences]].
 
 #+begin_src emacs-lisp
-(use-package! highlight-escape-sequences
-  (:recipe (:host github :repo "hlissner/highlight-escape-sequences"))
-  (:hook prog-mode conf-mode))
+(leaf highlight-escape-sequences
+  :ensure (:host github :repo "hlissner/highlight-escape-sequences")
+  :hook (prog-mode-hook conf-mode-hook))
 #+end_src
 
 ** hideshow
@@ -5107,9 +5107,10 @@ mainly for consistency.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! edit-indirect
-  (:after org)
-  (:before-call org/edit:description-at-point org/dwim-edit-source-block))
+(leaf edit-indirect
+  :after org
+  ;; (:before-call org/edit:description-at-point org/dwim-edit-source-block)
+  )
 #+end_src
 
 *** popups for edit indirect buffers
@@ -5320,7 +5321,7 @@ However, I'll address this later. For now I just want things working well.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! org-link-minor-mode
+(leaf org-link-minor-mode
   :commands org-link-minor-mode)
 #+end_src
 
@@ -5424,7 +5425,7 @@ edit indirect buffers. Interestingly, it can also edit source blocks inside
 comments.
 
 #+begin_src emacs-lisp
-(use-package! separedit)
+(leaf separedit)
 #+end_src
 
 **** disable separedit header line
@@ -7099,7 +7100,7 @@ There is a slight lag in emacs when I play a sound with ~(play-sound-file sound)
 I might consider doing this asynchronously.
 
 #+begin_src emacs-lisp
-(use-package! pomodoro
+(leaf pomodoro
   :commands pomodoro-start
   :setq
   (pomodoro-play-sounds       . t)
@@ -7145,7 +7146,7 @@ I might consider doing this asynchronously.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! dired)
+(leaf dired)
 
 (general-def dired-mode-map
   [remap quit-window] (lambda nil (interactive) (quit-window t)))
@@ -7159,7 +7160,7 @@ I might consider doing this asynchronously.
 #+begin_src emacs-lisp
 (defhook! dired:sort-directories-first-h ()
   "List directories first in dired buffers."
-  (:hook dired-after-readin-hook)
+  :hook dired-after-readin-hook
   (save-excursion
     (let (buffer-read-only)
       (forward-line 2) ;; beyond dir. header
@@ -7366,7 +7367,7 @@ which only some files are hidden. That's wierd, so I get rid of it.
 #+begin_src emacs-lisp
 (defadvice! ranger:toggle-dotfiles-a ()
   "Show/hide dot-files."
-  (:override ranger-toggle-dotfiles)
+  :override ranger-toggle-dotfiles
   (interactive)
   (setq ranger-show-hidden
         (cl-case ranger-show-hidden
@@ -7603,10 +7604,10 @@ Quoting =DOOM=:
 :END:
 
 #+begin_src emacs-lisp
-(use-package! epa
-  (:setq
-   (epg-gpg-program "gpg2")
-   (epa-pinentry-mode 'loopback)))
+(leaf epa
+  :setq
+  (epg-gpg-program . "gpg2")
+  (epa-pinentry-mode . 'loopback))
 #+end_src
 
 *** password-generator
@@ -7718,12 +7719,12 @@ on the buffer you'd like to edit.
   (magit-status "/yadm::"))
 #+end_src
 
-* Programming Languages                                               :disabled:
+* Programming Languages
 :PROPERTIES:
 :ID: 51e3b9b1-0e74-431e-a113-fe6f86a4b22a
 :END:
 
-** lisp                                                                   :lisp:
+** lisp                                                          :lisp:disabled:
 :PROPERTIES:
 :ID: 9b7ec12e-e62b-447a-90dd-2fef0cc952ad
 :END:
@@ -7748,7 +7749,7 @@ on the buffer you'd like to edit.
 [[https://github.com/clojure-emacs/cider][cider]] is a repl for clojure.
 
 #+begin_src emacs-lisp
-(use-package! cider (:commands cider))
+(leaf cider :commands cider)
 #+end_src
 
 *** emacs lisp
@@ -7800,7 +7801,7 @@ of the problem. You can check out a more in-depth explanation looking at my
 (defadvice! void:calculate-lisp-indent-a (&optional parse-start)
   "Add better indentation for quoted and backquoted lists.
 The change to this function."
-  (:override calculate-lisp-indent)
+  :override calculate-lisp-indent
   (defvar calculate-lisp-indent-last-sexp)
   (save-excursion
     (beginning-of-line)
@@ -7967,8 +7968,8 @@ The change to this function."
 [[https://github.com/Fanael/highlight-quoted][highlight-quoted]] highlights quotes, backticks and.
 
 #+begin_src emacs-lisp
-(use-package! highlight-quoted
-  (:hook emacs-lisp-mode))
+(leaf highlight-quoted
+  :hook emacs-lisp-mode-hook)
 #+end_src
 
 **** buttercup
@@ -7979,7 +7980,7 @@ The change to this function."
 [[https://github.com/jorgenschaefer/emacs-buttercup][buttercup]] is an emacs debugging suite.
 
 #+begin_src emacs-lisp
-(use-package! buttercup)
+(leaf buttercup)
 #+end_src
 
 **** outorg
@@ -7991,9 +7992,9 @@ Outorg adds overlays to make an org buffer look more readable. I do not want
 these overlays.
 
 #+begin_src emacs-lisp
-(use-package! outorg
+(leaf outorg
   ;; TODO: should be changed to `:functions'
-  (:functions outorg-convert-back-to-code outorg-convert-to-org))
+  :commands outorg-convert-back-to-code outorg-convert-to-org)
 
 (defadvice! outorg:do-not-add-overlays-a (orig-fn &rest args)
   :around outorg-wrap-source-in-block
@@ -8011,11 +8012,11 @@ It colors certain comments like org headings, and adds function for convertion
 from elisp to org. My [[helpvar:void-init-file][void:init-file]] is written with =outshine= in mind.
 
 #+begin_src emacs-lisp
-(use-package! outshine
-  (:hook emacs-lisp-mode)
-  (:after-load
-   (general-def '(normal) emacs-lisp-mode-map
-     "TAB" #'outline-toggle-children)))
+(leaf outshine
+  :hook emacs-lisp-mode-hook
+  :defer-config
+  (general-def '(normal) emacs-lisp-mode-map
+    "TAB" #'outline-toggle-children))
 #+end_src
 
 **** macrostep
@@ -8026,14 +8027,14 @@ from elisp to org. My [[helpvar:void-init-file][void:init-file]] is written with
 [[https://github.com/joddie/macrostep][macrostep]]
 
 #+begin_src emacs-lisp
-(use-package! macrostep
-  (:commands macrostep-expand macrostep-collapse macrostep-collapse-all)
-  (:init (define-localleader-key!
-           :infix "m"
-           :keymaps 'emacs-lisp-mode-map
-           "e" (list :def #'macrostep-expand :wk "expand")
-           "c" (list :def #'macrostep-collapse :wk "collapse")
-           "C" (list :def #'macrostep-collapse-all :wk "collapse all"))))
+(leaf macrostep
+  :commands macrostep-expand macrostep-collapse macrostep-collapse-all
+  :init (define-localleader-key!
+          :infix "m"
+          :keymaps 'emacs-lisp-mode-map
+          "e" (list :def #'macrostep-expand :wk "expand")
+          "c" (list :def #'macrostep-collapse :wk "collapse")
+          "C" (list :def #'macrostep-collapse-all :wk "collapse all")))
 #+end_src
 
 *** hy
@@ -8042,8 +8043,7 @@ from elisp to org. My [[helpvar:void-init-file][void:init-file]] is written with
 :END:
 
 #+begin_src emacs-lisp
-(use-package! hy-mode
-  (:mode "\\.hy\\'"))
+(leaf hy-mode :mode "\\.hy\\'")
 #+end_src
 
 ** markdown
@@ -8090,16 +8090,16 @@ files, or even converting an org mode document into another format. As the name
   ;; org-faces org-entities org-list org-pcomplete org-src org-footnote
   ;; org-macro ob org org-agenda org-capture
   :setq
-  (org-adapt-indentation nil)
-  (org-cycle-separator-lines 2)
-  (outline-blank-line t)
-  (org-directory (file-truename "~/Documents/org/"))
-  (org-archive-location (concat org-directory "archive.org::"))
-  (org-default-notes-file (concat org-directory "notes.org"))
-  (org-enforce-todo-dependencies t)
-  (org-use-fast-tag-selection nil)
-  (org-tags-column -80)
-  (org-tag-alist nil))
+  (org-adapt-indentation . nil)
+  (org-cycle-separator-lines . 2)
+  (outline-blank-line . t)
+  (org-directory . (file-truename "~/Documents/org/"))
+  (org-archive-location . (concat org-directory "archive.org::"))
+  (org-default-notes-file . (concat org-directory "notes.org"))
+  (org-enforce-todo-dependencies . t)
+  (org-use-fast-tag-selection . nil)
+  (org-tags-column . -80)
+  (org-tag-alist . nil))
 #+end_src
 
 **** structures
@@ -8171,10 +8171,10 @@ when headline contents begin.
   "Do what I mean."
   (interactive)
   (cond
-   ((and (org-at-heading-p)
-         (looking-at-p (rx (* (or "\s" "\t"))
-                           (opt (1+ ":" (1+ letter)) ":") eol)))
-    (org/insert-heading-below))
+   (and (org-at-heading-p)
+        (looking-at-p (rx (* (or "\s" "\t"))
+                          (opt (1+ ":" (1+ letter)) ":") eol)))
+   (org/insert-heading-below)
    (t
     (call-interactively #'org-return))))
 #+end_src
@@ -8208,7 +8208,7 @@ headline in view.
 
 #+begin_src emacs-lisp
 (defadvice! org-adjust-nearby-headlines-a (&rest _)
-  (:after org/jump-to-headline)
+  :after org/jump-to-headline
   (save-excursion
     (while (org-up-heading-safe)
       (outline-show-children)))
@@ -8317,7 +8317,7 @@ It looks nice if when I'm on a heading when I first enter an org file.
 #+begin_src emacs-lisp
 (defhook! org:goto-first-heading-h ()
   "Go to first heading when entering an org-mode file."
-  (:hook org-mode-hook)
+  :hook org-mode-hook
   (when (org-at-heading-p)
     (beginning-of-line)
     (org:heading-goto-start)))
@@ -8348,7 +8348,7 @@ see if it's gone farther than it should have and in that case goes back.
 #+begin_src emacs-lisp
 (defadvice! org:end-at-start-of-headline-a (&rest _)
   "After running body end at headline start."
-  (:after org-refile org-cut-subtree org-copy-subtree org/jump-to-headline)
+  :after org-refile org-cut-subtree org-copy-subtree org/jump-to-headline
   (when (org-at-heading-p) (org:heading-goto-start)))
 #+end_src
 
@@ -8562,33 +8562,32 @@ use =edit-indirect= to edit source blocks.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! org-src
-  (:setq
-   ;; Non-nil means show persistent exit help message while editing src examples.
-   (org-edit-src-persistent-message nil)
-   ;; How the source code edit buffer should be displayed.
-   (org-src-window-setup 'current-window)
-   ;; When non-nil, fontify code in code blocks.
-   (org-src-fontify-natively t)
-   ;; Don't ask me about returning to edit buffer, just do it.
-   ;; Non-nil means ask before switching to an existing edit buffer.
-   (org-src-ask-before-returning-to-edit-buffer nil)
-   ;; If non-nil preserve leading whitespace characters on export.
-   (org-src-preserve-indentation t)
-   ;; If non-nil, the effect of TAB in a code block is as if it were
-   (org-src-tab-acts-natively t)
-   ;; Confirm before evaluation.
-   (org-confirm-babel-evaluate nil)
-   ;; Executing a source block should not insert text into the buffer by default.
-   ;; Default arguments to use when evaluating a source block.
-   (org-babel-default-header-args
-    '((:session . "none")
-      (:results . "silent")
-      (:exports . "code")
-      (:cache . "no")
-      (:initeb . "no")
-      (:hlines . "no")
-      (:tangle . "yes")))))
+(leaf org-src
+  :setq
+  ;; Non-nil means show persistent exit help message while editing src examples.
+  (org-edit-src-persistent-message . nil)
+  ;; How the source code edit buffer should be displayed.
+  (org-src-window-setup . 'current-window)
+  ;; When non-nil, fontify code in code blocks.
+  (org-src-fontify-natively . t)
+  ;; Don't ask me about returning to edit buffer, just do it.
+  ;; Non-nil means ask before switching to an existing edit buffer.
+  (org-src-ask-before-returning-to-edit-buffer . nil)
+  ;; If non-nil preserve leading whitespace characters on export.
+  (org-src-preserve-indentation . t)
+  ;; If non-nil, the effect of TAB in a code block is as if it were
+  (org-src-tab-acts-natively . t)
+  ;; Confirm before evaluation.
+  (org-confirm-babel-evaluate . nil)
+  ;; Executing a source block should not insert text into the buffer by default.
+  ;; Default arguments to use when evaluating a source block.
+  (org-babel-default-header-args . '((:session . "none")
+                                     (:results . "silent")
+                                     (:exports . "code")
+                                     (:cache . "no")
+                                     (:initeb . "no")
+                                     (:hlines . "no")
+                                     (:tangle . "yes"))))
 #+end_src
 
 **** evil org state                                                       :evil:
@@ -8790,13 +8789,13 @@ current file or some other file.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! org-refile
-  (:setq
-   (org-refile-use-outline-path 'file)
-   (org-refile-allow-creating-parent-nodes t)
-   (org-reverse-note-order t)
-   ;; Non-nil means complete the outline path in hierarchical steps.
-   (org-outline-path-complete-in-steps nil)))
+(leaf org-refile
+  :setq
+  (org-refile-use-outline-path . 'file)
+  (org-refile-allow-creating-parent-nodes . t)
+  (org-reverse-note-order . t)
+  ;; Non-nil means complete the outline path in hierarchical steps.
+  (org-outline-path-complete-in-steps . nil))
 #+end_src
 
 **** refile targets
@@ -8862,9 +8861,9 @@ completing-read-using replacement for [[helpfn:org-capture][org-capture]] called
 [[helpfn:counsel-org-capture-string][counsel-org-capture-string]].
 
 #+begin_src emacs-lisp
-(use-package! counsel-org-capture-string
-  (:after org ivy)
-  (:commands counsel-org-capture-string))
+(leaf counsel-org-capture-string
+  :after org ivy
+  :commands counsel-org-capture-string)
 #+end_src
 
 **** remove capture headerline
@@ -8877,7 +8876,7 @@ This was the answer to [[https://emacs.stackexchange.com/questions/53648/elimina
 #+begin_src emacs-lisp
 (defhook! org:capture-turn-off-header-line-h ()
   "Turn of the header line message."
-  (:hook org-capture-mode-hook)
+  :hook org-capture-mode-hook
   (setq-local header-line-format nil))
 #+end_src
 
@@ -8893,7 +8892,7 @@ it easy to forget what a certain element meant or to accidentally omit a capture
 template element as you're writing it.
 
 #+begin_src emacs-lisp
-(use-package! doct (:after org-capture))
+(leaf doct :after org-capture)
 #+end_src
 
 **** capture templates
@@ -9163,8 +9162,8 @@ though is in need of an update. It didn't work out of the box (see [[id:b358f324
 [[id:a3e62e0a-452b-429c-9558-139e7b83cf80][hl overlay fix]]).
 
 #+begin_src emacs-lisp
-(use-package! hide-lines
-  (:commands hide-lines hide-lines-matching))
+(leaf hide-lines
+  :commands hide-lines hide-lines-matching)
 #+end_src
 
 ****** =hl= overlay fix
@@ -9180,7 +9179,7 @@ depreciated.
 (defadvice! hide:lines-fix-add-overlay-a (start end)
   "Add an overlay from `start' to `end' in the current buffer.
 Push the overlay into `hide-lines-invisible-areas'."
-  (:override hide-lines-add-overlay)
+  :override hide-lines-add-overlay
   (let ((overlay (make-overlay start end)))
     (setq hide-lines-invisible-areas (cons overlay hide-lines-invisible-areas))
     (overlay-put overlay 'invisible t)))
@@ -9196,7 +9195,7 @@ lines. Only the property block body was hidden. This advice fixes this.
 
 #+begin_src emacs-lisp
 (defadvice! hide:lines-fix-hide-matching-a  (search-text)
-  (:override hide-lines-matching)
+  :override hide-lines-matching
   "Hide lines matching the specified regexp."
   (interactive "MHide lines matching regexp: ")
   (set (make-local-variable 'line-move-ignore-invisible) t)
@@ -9250,7 +9249,7 @@ Unless I explicitly ask for properties I don't want to see them.
 
 (defadvice! org:set-startup-visibility-h ()
   "Completely hide all text properties."
-  (:override org-set-startup-visibility)
+  :override org-set-startup-visibility
   ;; Hide property drawers on startup.
   (org/hide-property-drawers)
   (org-overview))
@@ -9266,7 +9265,7 @@ Sometimes the heading inserted doesn't remain visible.
 #+begin_src emacs-lisp
 (defhook! org:ensure-heading-visible-h ()
   "Ensure that heading remains visible."
-  (:hook org-insert-heading-hook)
+  :hook org-insert-heading-hook
   (-when-let (o (cdr (get-char-property-and-overlay (point) 'invisible)))
     (move-overlay o (overlay-start o) (line-end-position 0))))
 #+end_src
@@ -9321,7 +9320,7 @@ hindsight, using this function is even easier than using ~window-beg~ and
 #+begin_src emacs-lisp
 (defadvice! org:ensure-children-visible-a ()
   "Ensure children are visible after toggling."
-  (:after outline-toggle-children)
+  :after outline-toggle-children
   (unless (org:heading-folded-p)
     (org:display-children-in-window)))
 #+end_src
@@ -9334,14 +9333,13 @@ hindsight, using this function is even easier than using ~window-beg~ and
 [[package:org-fancy-priorities][org-fancy-priorities]] is a package that displays org priorities with an icon.
 
 #+begin_src emacs-lisp
-(use-package! org-fancy-priorities
-  (:hook org-mode)
-  (:after-load
-   (setq org-fancy-priorities-list
-         (list (all-the-icons-material "priority_high")
-               (all-the-icons-octicon "arrow-up")
-               (all-the-icons-octicon "arrow-down")
-               (all-the-icons-material "low_priority")))))
+(leaf org-fancy-priorities
+  :hook org-mode
+  :setq
+  (org-fancy-priorities-list . (list (all-the-icons-material "priority_high")
+                                     (all-the-icons-octicon "arrow-up")
+                                     (all-the-icons-octicon "arrow-down")
+                                     (all-the-icons-material "low_priority"))))
 #+end_src
 
 **** org superstar
@@ -9352,11 +9350,11 @@ hindsight, using this function is even easier than using ~window-beg~ and
 [[package:org-superstar][org-superstar]] is a an =org-bullets= remake redesigned from the ground up.
 
 #+begin_src emacs-lisp
-(use-package! org-superstar
-  (:hook org-mode-hook)
-  (:setq
-   (org-superstar-special-todo-items t)
-   (org-superstar-leading-bullet ?\s)))
+(leaf org-superstar
+  :hook org-mode-hook
+  :setq
+  (org-superstar-special-todo-items . t)
+  (org-superstar-leading-bullet . ?\s))
 #+end_src
 
 **** defaults
