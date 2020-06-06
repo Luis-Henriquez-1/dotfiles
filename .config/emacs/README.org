@@ -4471,7 +4471,7 @@ think you want to use =smtp=.
 
 #+begin_src emacs-lisp
 (defhook! mu4e:wrap-text-in-message ()
-  (:hook mu4e-view-mode-hook)
+  :hook mu4e-view-mode-hook
   (setq-local truncate-lines nil))
 #+end_src
 
