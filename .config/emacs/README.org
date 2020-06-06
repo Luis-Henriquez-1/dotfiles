@@ -5977,11 +5977,9 @@ be nice to have a state that could be dedicated to.
 
 (defadvice! evil:treat-motion-as-normal-state (orig-fn &rest args)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
-  :override evil-make-overriding-map
+  :around evil-make-overriding-map
   (-let [(keymap state copy) args]
-    (when (eq 'motion state)
-      (setq state 'normal))
-    (funcall orig-fn keymap state copy)))
+    (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 #+end_src
 
 **** escape                                                           :disabled:
