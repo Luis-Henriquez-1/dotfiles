@@ -937,26 +937,6 @@ packages add important features to Emacs which the Emacs devel team may not have
 had time to add, or didn't foresee. Packages are what allow Emacs the ability to
 compete (and win IMO) against other "modern" text editors.
 
-** default install fn
-:PROPERTIES:
-:ID: 2708466d-b42f-4408-b46d-0978c65cc93b
-:END:
-
-There are some really good emacs packages that are only available on github, or
-whose github repo more up to date than the [[https://melpa.org/#/][melpa]] version. This is why it's
-become increasingly more important to have a package manager that can install
-packages from git repos. Perhaps the most promising package manager that has
-come out is [[straight.el]].
-
-I want to use =straight.el= when git is available, but if it's not available I want
-Void to default to =package.el=.
-
-#+begin_src emacs-lisp
-(defvar void:pacman 'straight)
-(defvar void:pacman-init-fn #'straight:init-fn)
-(defvar void:pacman-install-fn #'straight:install-fn)
-#+end_src
-
 ** straight.el
 :PROPERTIES:
 :ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
@@ -6035,7 +6015,7 @@ This is better than evil escape as it only binds in insert.
 #+begin_src emacs-lisp
 (leaf key-chord
   :hook evil-mode-hook
-  ;; (:now (add-hook 'evil-mode-hook (lambda () (quiet! (key-chord-mode 1)))))
+  ;; (:init (add-hook 'evil-mode-hook (lambda () (quiet! (key-chord-mode 1)))))
   :defer-config
   (general-define-key :states '(visual insert)
                       (general-chord "jk") 'evil-force-normal-state
@@ -8606,7 +8586,7 @@ use =edit-indirect= to edit source blocks.
       (:results . "silent")
       (:exports . "code")
       (:cache . "no")
-      (:noweb . "no")
+      (:initeb . "no")
       (:hlines . "no")
       (:tangle . "yes")))))
 #+end_src
@@ -9489,7 +9469,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 (leaf lua-mode :mode "\\.lua\\'")
 #+end_src
 
-* User Interface                                                      :disabled:
+* User Interface
 :PROPERTIES:
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
 :END:
@@ -9528,7 +9508,7 @@ understanding of a verbally terse and dry command description.
   :init (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-* Asthetic                                                            :disabled:
+* Asthetic
 :PROPERTIES:
 :ID: bd21a69a-794c-4ff1-97d0-9e5911a26ad7
 :END:
@@ -9536,7 +9516,7 @@ understanding of a verbally terse and dry command description.
 It's easy to underestimate how much of a difference having an asthetically
 pleasing Emacs configuration can have. Ugliness really can take its toll.
 
-** TODO dashboard
+** TODO dashboard                                                     :disabled:
 :PROPERTIES:
 :ID: 20926522-b78b-4bca-b70e-9ef4213c4344
 :END:
@@ -9564,7 +9544,7 @@ dashboard.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! dashboard
+(leaf dashboard
   :straight (:host github
              :repo "Luis-Henriquez-Perez/emacs-dashboard"
              :files (:defaults "banners" "dashboard-pkg.el")
@@ -9574,9 +9554,9 @@ dashboard.
   (dashboard-items . nil)
   (dashboard-startup-banner . 2)
   (dashboard-center-content . t)
-  (dashboard-footer-messages '("Happy Coding!"))
+  (dashboard-footer-messages . '("Happy Coding!"))
   (dashboard-set-navigator . t)
-  (initial-buffer-choice (lambda () (get-buffer-create dashboard-buffer-name)))
+  (initial-buffer-choice . (lambda () (get-buffer-create dashboard-buffer-name)))
   :init
   (defvar dashboard-buffer-name "*dashboard*" "Name of the dashboard buffer.")
   (add-hook 'void:init-ui-hook #'dashboard-insert-startupify-lists 0))
@@ -9592,7 +9572,7 @@ dashboard.
 #+begin_src emacs-lisp
 (defadvice! dashboard:set-init-info-a (&rest _)
   "Use `void:init-time' dashboard."
-  (:before dashboard-insert-startupify-lists)
+  :before dashboard-insert-startupify-lists
   (setq dashboard-init-info
         (format "%d packages loaded in %.2f seconds"
                 (eval-when-compile
@@ -9610,7 +9590,7 @@ dashboard.
 #+begin_src emacs-lisp
 (defadvice! dashboard:custom-banner-path-a (&rest _)
   "Use the Void text banner."
-  (:override dashboard-get-banner-path)
+  :override dashboard-get-banner-path
   (concat void:local-dir "void-banner.txt"))
 #+end_src
 
@@ -9673,13 +9653,13 @@ VOID install. For writing this code I referenced the body of
 :END:
 
 #+begin_src emacs-lisp
-(use-package! all-the-icons
-  (:commands all-the-icons-octicon
-   all-the-icons-faicon
-   all-the-icons-fileicon
-   all-the-icons-wicon
-   all-the-icons-material
-   all-the-icons-alltheicon))
+(leaf all-the-icons
+  :commands (all-the-icons-octicon
+             all-the-icons-faicon
+             all-the-icons-fileicon
+             all-the-icons-wicon
+             all-the-icons-material
+             all-the-icons-alltheicon))
 #+end_src
 
 *** disable in tty
@@ -9693,13 +9673,12 @@ graphical interface but.
 #+begin_src emacs-lisp
 (defadvice! void:disable-all-the-icons-in-tty-a (orig-fn &rest args)
   "Disable icons in tty."
-  (:around
-   all-the-icons-octicon
-   all-the-icons-material
-   all-the-icons-faicon
-   all-the-icons-fileicon
-   all-the-icons-wicon
-   all-the-icons-alltheicon)
+  :around (all-the-icons-octicon
+           all-the-icons-material
+           all-the-icons-faicon
+           all-the-icons-fileicon
+           all-the-icons-wicon
+           all-the-icons-alltheicon)
   (if (display-graphic-p) (apply orig-fn args) ""))
 #+end_src
 
@@ -9713,31 +9692,31 @@ themes more readable. And if I had to guess, I'd guess humans have evolved to
 see dark on light better than light on dark.
 
 #+begin_src emacs-lisp
-(use-package! humanoid-themes
-  (:now (setq humanoid-org-bold nil)))
+(leaf humanoid-themes
+  (:init (setq humanoid-org-bold nil)))
 
-(use-package! spacemacs-theme
+(leaf spacemacs-theme
   (:pre-setq
    (spacemacs-theme-org-bold nil)
    (spacemacs-theme-comment-italic t)
    (spacemacs-theme-org-bold nil)
    (spacemacs-theme-org-height nil)))
 
-(use-package! tao-theme)
+(leaf tao-theme)
 
-(use-package! zenburn-theme)
+(leaf zenburn-theme)
 
-(use-package! color-theme-sanityinc-tomorrow)
+(leaf color-theme-sanityinc-tomorrow)
 
-(use-package! gruvbox-theme)
+(leaf gruvbox-theme)
 
-(use-package! one-themes)
+(leaf one-themes)
 
-(use-package! solarized-theme
+(leaf solarized-theme
   (:pre-setq (solarized-use-variable-pitch nil)))
 #+end_src
 
-* Keybindings                                                         :disabled:
+* Keybindings
 :PROPERTIES:
 :ID: 226e2c5b-2b81-483a-9942-d0ca0fc80f1f
 :END:
