@@ -1098,11 +1098,14 @@ The straight keyword require's the package's name.
 
 (push `((or (memq leaf--key '(:void-straight))
             (eq (alist-get leaf--key leaf-alias-keyword-alist) :void-straight))
-        (cond ((listp (car-safe leaf--value))
-               (cons leaf--name (car leaf--value)))
-              ((eq t (car leaf--value))
-               (list leaf--name))
-              (t (car leaf--value))))
+        (message "leaf--value: %S" leaf--value)
+        (list
+         (cond ((listp (car-safe leaf--value))
+                (cons leaf--name (car leaf--value)))
+               ((eq t (car leaf--value))
+                leaf--name)
+               (t
+                (car leaf--value)))))
       leaf-normalize)
 #+end_src
 
@@ -1757,7 +1760,7 @@ while the user is working.
 
 #+begin_src emacs-lisp
 (leaf gcmh
-  :hook pre-command-hook
+  :hook emacs-startup-hook
   :setq
   (gcmh-idle-delay . 10)
   (gcmh-verbose . void:debug-mode)
@@ -2425,7 +2428,7 @@ about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (leaf helm-descbinds
-  :hook (helm-mode . helm-descbinds-mode))
+  :hook (helm-mode-hook . helm-descbinds-mode))
 #+end_src
 
 **** helm-mode-map
@@ -2587,9 +2590,7 @@ query to narrow the list, and then selecting one of the remaining candidates.
 
 #+begin_src emacs-lisp
 (leaf ivy
-  :hook pre-command-hook
-  ;; :bind (:ivy-minibuffer-map
-  ;;        )
+  :hook emacs-startup-hook
   :setq
   (ivy-height . 18)
   (ivy-wrap                     . t)
@@ -2638,7 +2639,7 @@ of stock emacs functions with a version that using =ivy= for completion.
 
 #+begin_src emacs-lisp
 (leaf counsel
-  :hook ivy-mode
+  :hook ivy-mode-hook
   :commands counsel-org-goto
   :setq
   (counsel-find-file-ignore-regexp . "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
@@ -3009,7 +3010,7 @@ This is where abbrev can fill in.
 
 #+begin_src emacs-lisp
 (leaf abbrev
-  :hook prog-mode org-mode
+  :hook (prog-mode-hook org-mode-hook)
   :defer-config
   (add-hook 'kill-emacs-hook #'write-abbrev-file)
   (setq-default abbrev-file-name (concat void:data-dir "abbrev.el")))
@@ -3227,7 +3228,7 @@ WORDS is a string containing one or more words."
 
 #+begin_src emacs-lisp
 (leaf company
-  :hook prog-mode
+  :hook prog-mode-hook
   :bind (:company-active-map
          ([tab] . company-select-next)
          ([backtab] . company-select-previous)
@@ -9514,7 +9515,7 @@ understanding of a verbally terse and dry command description.
 It's easy to underestimate how much of a difference having an asthetically
 pleasing Emacs configuration can have. Ugliness really can take its toll.
 
-** TODO dashboard                                                     :disabled:
+** TODO dashboard
 :PROPERTIES:
 :ID: 20926522-b78b-4bca-b70e-9ef4213c4344
 :END:
@@ -9543,10 +9544,10 @@ dashboard.
 
 #+begin_src emacs-lisp
 (leaf dashboard
-  :straight (:host github
-             :repo "Luis-Henriquez-Perez/emacs-dashboard"
-             :files (:defaults "banners" "dashboard-pkg.el")
-             :branch "everything")
+  :ensure (:host github
+           :repo "Luis-Henriquez-Perez/emacs-dashboard"
+           :files (:defaults "banners" "dashboard-pkg.el")
+           :branch "everything")
   :require t
   :setq
   (dashboard-items . nil)
@@ -9573,10 +9574,10 @@ dashboard.
   :before dashboard-insert-startupify-lists
   (setq dashboard-init-info
         (format "%d packages loaded in %.2f seconds"
-                (eval-when-compile
-                  (cl-case void:pacman
-                    (straight (hash-table-size straight--profile-cache))
-                    (package (length package-activated-list))))
+                (cond ((featurep 'straight)
+                       (hash-table-size straight--profile-cache))
+                      (t
+                       (package (length package-activated-list))))
                 void:init-time)))
 #+end_src
 
