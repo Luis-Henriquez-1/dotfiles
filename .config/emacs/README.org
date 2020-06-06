@@ -4132,11 +4132,15 @@ ways to read and send emails in Emacs.
 :END:
 
 #+begin_src emacs-lisp
-(setq send-mail-function #'sendmail-send-it)
-(setq sendmail-program (executable-find "msmtp"))
-(setq mail-specify-envelope-from t)
-(setq message-sendmail-envelope-from 'header)
-(setq mail-envelope-from 'header)
+(leaf loaddefs
+  :setq
+  (send-mail-function . #'sendmail-send-it)
+  (mail-specify-envelope-from . t)
+  (message-sendmail-envelope-from . header)
+  ;; (mail-envelope-from . header)
+  ;; (sendmail-program (executable-find "msmtp"))
+  )
+
 #+end_src
 
 ** sending mail                                                       :disabled:
