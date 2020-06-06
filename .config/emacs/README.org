@@ -1099,8 +1099,7 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 (leaf leaf
   :setq
   (leaf-defaults . '(:straight t))
-  ;; (leaf-aliases  . '((:ensure . :straight)))
-  )
+  (leaf-alias-keyword-alist  . '((:ensure . :straight))))
 #+end_src
 
 *** customize setq
