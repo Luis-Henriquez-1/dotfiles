@@ -965,26 +965,6 @@ Void to default to =package.el=.
 [[straight][straight.el]] is a package manager that strives to make emacs configurations
 completely reproducable.
 
-*** settings
-:PROPERTIES:
-:ID: ec0c89f6-26d4-4499-aed5-8acb5da9cef3
-:END:
-
-These settings were taken from [[github:noctuid/dotfiles/tree/master/emacs/.emacs.d][noctuid's emacs config]]. [[straight][straight.el]] needs to
-know about them before loading.
-
-Check for modifications (to determine whether a package needs to be
-rebuilt) using [[helpvar:after-save-hook][after-save-hook]] instead of during startup or always
-rebuilding packages (see [[https://github.com/raxod502/straight.el/issues/41][this issue]]).
-
-#+begin_src emacs-lisp
-(setq straight-disable-autoloads nil)
-(setq straight-cache-autoloads t)
-(setq straight-check-for-modifications nil)
-(setq straight-enable-package-integration nil)
-(setq straight-recipes-emacsmirror-use-mirror t)
-#+end_src
-
 *** customize straight directory
 :PROPERTIES:
 :ID: 843cc8b9-edff-42f7-a767-65a59aa38fbc
@@ -1061,16 +1041,17 @@ This code initializes straight if it's not already installed.
 :END:
 
 #+begin_src emacs-lisp
-(defun straight:install-fn (package &optional recipe)
+(defun straight:install-package (package-or-recipe)
   "Install PACKAGE with optional RECIPE."
-  (let* ((recipe (if recipe (cons package recipe) package))
-         (straight-fn #'straight-use-package))
+  (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
     (condition-case err
-        (progn (funcall straight-fn recipe)
+        (progn (straight-use-package package-or-recipe)
                (void:log "✓ installed %s" package))
       (error
        (void:log "✕ failed to install %s because of %s" package err)))))
 #+end_src
+
+** package.el
 
 ** leaf
 
@@ -1086,11 +1067,24 @@ packages. I could write this macro with just plain Emacs libraries but I prefer
 using nice libraries. In byte compiled Void, they don't need to be installed.
 
 #+begin_src emacs-lisp
-(funcall void:pacman-init-fn)
+(straight:init-fn)
 (dolist (package '(leaf-keywords leaf))
-  (funcall void:pacman-install-fn package)
+  (funcall #'straight:install-package package)
   (require package))
 (leaf-keywords-init)
+#+end_src
+
+*** straight
+
+#+begin_src emacs-lisp
+(leaf straight
+  :require t
+  :setq
+  (straight-disable-autoloads . nil)
+  (straight-cache-autoloads . t)
+  (straight-check-for-modifications . nil)
+  (straight-enable-package-integration . nil)
+  (straight-recipes-emacsmirror-use-mirror . t))
 #+end_src
 
 *** leaf
@@ -1098,8 +1092,7 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 #+begin_src emacs-lisp
 (leaf leaf
   :setq
-  (leaf-defaults . '(:straight t))
-  (leaf-alias-keyword-alist  . '((:ensure . :straight))))
+  (leaf-defaults . '(:ensure t)))
 #+end_src
 
 *** customize setq
@@ -1113,30 +1106,24 @@ evaluated.
       leaf-normalize)
 #+end_src
 
-*** TODO straight keyword                                             :disabled:
+*** TODO straight keyword
 
 The straight keyword require's the package's name.
 
 #+begin_src emacs-lisp
-(push `((or (memq leaf--key '(:straight))
-            (eq (alist-get leaf--key leaf-alias-keyword-alist) :straight))
-        (if (ignore-errors (keywordp (caar leaf--value)))
-            (list (cons leaf--name (car leaf--value)))
-          leaf--value))
+(let ((form '(:void-straight `(,@(mapcar (lambda (elm) `(straight:install-package ',elm)) leaf--value) ,@leaf--body))))
+  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :straight form)))
+
+(push '(:ensure . :void-straight) leaf-alias-keyword-alist)
+
+(push `((or (memq leaf--key '(:void-straight))
+            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void-straight))
+        (cond ((listp (car-safe leaf--value))
+               (cons leaf--name (car leaf--value)))
+              ((eq t (car leaf--value))
+               (list leaf--name))
+              (t (car leaf--value))))
       leaf-normalize)
-*** TODO =:on-hook= keyword                                             :disabled:
-
-This keyword is for loading packages when a hook is first run.
-
-#+begin_src emacs-lisp
-(defun leaf::load-,package ()
-  "An internal leaf function that loads"
-  (require ',package)
-  (remove-hook ',hook #'leaf::load-,package))
-
-(leaf-insert-list-after)
-#+end_src
-
 #+end_src
 
 * Library
@@ -2001,7 +1988,7 @@ to waste time loading ~void:main-elisp-file~.
            " tangling `void:readme-file'."))))))
 #+end_src
 
-* Window Management                                                   :disabled:
+* Window Management
 :PROPERTIES:
 :ID: 29dbf899-17cd-4b00-aacb-090ccd20e133
 :END:
@@ -2071,7 +2058,7 @@ makes emacs feel like a window manager with gaps.
 
 #+begin_src emacs-lisp
 (leaf frame
-  :straight nil
+  :ensure nil
   :hook (window-setup-hook . window-divider-mode)
   :custom
   (window-divider-default-places       . t)
@@ -2317,7 +2304,7 @@ Emacs's text editing capabilities on it.
    ("k" . buffer-expose-up-window)))
 #+end_src
 
-* Completion                                                          :disabled:
+* Completion
 :PROPERTIES:
 :ID: 056384d1-a95a-4dcb-bc9d-ffe95bbb52a8
 :END:
@@ -2621,6 +2608,8 @@ query to narrow the list, and then selecting one of the remaining candidates.
 #+begin_src emacs-lisp
 (leaf ivy
   :hook pre-command-hook
+  ;; :bind (:ivy-minibuffer-map
+  ;;        )
   :setq
   (ivy-height . 18)
   (ivy-wrap                     . t)
@@ -3450,7 +3439,7 @@ Some command line options aren't necessary.
     (setenv "GIT_ASKPASS" "git-gui--askpass")))
 #+end_src
 
-*** mac
+*** mac                                                               :disabled:
 :PROPERTIES:
 :ID: e502d7e6-8b19-4300-a4fd-9a797df98402
 :END:
@@ -3488,7 +3477,7 @@ environment, so envvars will be wrong. That includes the path
 Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] fixes this.
 
 #+begin_src emacs-lisp
-(use-package! exec-path-from-shell
+(leaf exec-path-from-shell
   ;; (:os mac)
   :when (or (daemonp) (display-graphic-p))
   :require t
@@ -4136,7 +4125,7 @@ ways to read and send emails in Emacs.
   :setq
   (send-mail-function . #'sendmail-send-it)
   (mail-specify-envelope-from . t)
-  (message-sendmail-envelope-from . header)
+  (message-sendmail-envelope-from . 'header)
   ;; (mail-envelope-from . header)
   ;; (sendmail-program (executable-find "msmtp"))
   )
@@ -4149,14 +4138,14 @@ ways to read and send emails in Emacs.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! smtpmail
+(leaf smtpmail
   :disabled t
   :setq
-  (message-send-mail-function #'smtpmail-send-it)
-  (smtp-default-mail-server "mail.example.com")
-  (smtp-smtp-server "mail.example.com")
-  (smtpmail-smtp-service 587)
-  (smtpmail-debug-info t))
+  (message-send-mail-function . #'smtpmail-send-it)
+  (smtp-default-mail-server . "mail.example.com")
+  (smtp-smtp-server . "mail.example.com")
+  (smtpmail-smtp-service . 587)
+  (smtpmail-debug-info . t))
 #+end_src
 
 ** mu4e
@@ -4173,18 +4162,19 @@ it's [[explicit support]] for multiple accounts. =mu4e= comes bundled with =mu=.
 significant advantage of using it is it's the most popular option and,
 therefore, has the most support (in the form of setup blogs and packages).
 
-*** bootstrap
+*** mu4e
 :PROPERTIES:
 :ID: 565eff90-8626-4ec8-a576-4ff3dfb307ae
 :END:
 
 #+begin_src emacs-lisp
-(use-package! mu4e
+(leaf mu4e
   :ensure (:files (:defaults "mu4e/*.el"))
   :commands mu4e
   :setq
   (mail-user-agent . 'mu4e-user-agent)
-  :after-load (mu4e:init-accounts))
+  :defer-config
+  (mu4e:init-accounts))
 #+end_src
 
 *** defaults
@@ -4306,16 +4296,17 @@ before sending--very interesting indeed. I have yet to explore this feature but
 it is definitely on my list of things to try out.
 
 #+begin_src emacs-lisp
-(use-package! org-mu4e
-  (:hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode))
-  (:after-load
-   (setq org-mu4e-link-query-in-headers-mode nil
-         org-mu4e-convert-to-html t)
-
-   ;; Only render to html once. If the first send fails for whatever reason,
-   ;; org-mu4e would do so each time you try again.
-   (add-hook 'message-send-hook
-             (lambda () (setq-local org-mu4e-convert-to-html nil)))))
+(leaf org-mu4e
+  :disabled t
+  :hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode)
+  :setq
+  (org-mu4e-link-query-in-headers-mode . nil)
+  (org-mu4e-convert-to-html . t)
+  :defer-config
+  ;; Only render to html once. If the first send fails for whatever reason,
+  ;; org-mu4e would do so each time you try again.
+  (add-hook 'message-send-hook
+            (lambda () (setq-local org-mu4e-convert-to-html nil))))
 #+end_src
 
 *** multiple accounts
@@ -4475,7 +4466,7 @@ think you want to use =smtp=.
   (setq-local truncate-lines nil))
 #+end_src
 
-** notmuch                                                            :disabled:
+** notmuch
 :PROPERTIES:
 :ID: 9bc1dad1-e2ec-4699-b471-a25b28aaaf26
 :END:
@@ -4655,27 +4646,27 @@ mean 2000 which is not a lot by today's standard).
 :END:
 
 #+begin_src emacs-lisp
-(use-package! gnus-art
-  (:after gnus)
-  (:setq
-   (gnus-article-browse-delete-temp 'ask)
-   (gnus-article-over-scroll nil)
-   (gnus-article-show-cursor t)
-   (gnus-article-sort-functions
-    '(gnus-article-sort-by-most-recent-number
-      gnus-article-sort-by-most-recent-date))
-   (gnus-article-truncate-lines nil)
-   ;; (gnus-html-frame-width 80)
-   ;; (gnus-html-image-automatic-caching t)
-   (gnus-inhibit-images t)
-   (gnus-max-image-proportion 0.3)
-   (gnus-treat-display-smileys nil)
-   ;; (gnus-article-mode-line-format "%G %S %m")
-   (gnus-visible-headers
-    '("^From:" "^To:" "^Cc:" "^Newsgroups:" "^Subject:" "^Date:"
-      "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
-      "^X-Mailer:"))
-   (gnus-sorted-header-list gnus-visible-headers))
+(leaf gnus-art
+  :after gnus
+  :setq
+  (gnus-article-browse-delete-temp . 'ask)
+  (gnus-article-over-scroll . nil)
+  (gnus-article-show-cursor . t)
+  (gnus-article-sort-functions
+   '(gnus-article-sort-by-most-recent-number
+     gnus-article-sort-by-most-recent-date))
+  (gnus-article-truncate-lines . nil)
+  ;; (gnus-html-frame-width 80)
+  ;; (gnus-html-image-automatic-caching t)
+  (gnus-inhibit-images . t)
+  (gnus-max-image-proportion . 0.3)
+  (gnus-treat-display-smileys . nil)
+  ;; (gnus-article-mode-line-format "%G %S %m")
+  (gnus-visible-headers
+   '("^From:" "^To:" "^Cc:" "^Newsgroups:" "^Subject:" "^Date:"
+     "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
+     "^X-Mailer:"))
+  (gnus-sorted-header-list . gnus-visible-headers)
   ;; :bind (:map gnus-article-mode-map
   ;;        ("s" . gnus-mime-save-part)
   ;;        ("o" . gnus-mime-copy-part))
@@ -4810,7 +4801,7 @@ javascript code.
 
 #+begin_src emacs-lisp
 (leaf w3m
-  (:os linux)
+  ;; :os linux
   :commands w3m
   :setq (w3m-search-default-engine . "google"))
 #+end_src
@@ -4875,10 +4866,11 @@ The optional argument NEW-WINDOW is not used."
 :END:
 
 #+begin_src emacs-lisp
-(use-package! xwwp-follow-link
-  (:recipe (:host github :repo "canatella/xwwp"))
-  (:setq (xwwp-follow-link-completion-system 'ivy))
-  (:now (general-def xwidget-webkit-mode-map "v" #'xwwp-follow-link)))
+(leaf xwwp-follow-link
+  :straight (:host github :repo "canatella/xwwp")
+  :bind (:xwidget-webkit-mode-map
+         ("v" . #'xwwp-follow-link))
+  :setq (xwwp-follow-link-completion-system . 'ivy))
 #+end_src
 
 * Multimedia
@@ -4932,20 +4924,20 @@ Youtube contains a *huge* library of videos.
 (leaf emms
   :commands emms
   :setq
-  (emms-directory                           . (concat void:data-dir "emms/"))
-  (emms-seek-seconds                        . 5)
-  (emms-player-list                         . '(emms-player-mpd))
-  (emms-volume-change-function              . 'emms-volume-mpd-change)
-  (emms-player-mpd-music-directory          . (file-truename "~/Music"))
-  (emms-player-mpd-server-name              . "127.0.0.1")
-  (emms-player-mpd-server-port              . "6600")
-  (emms-source-file-default-directory       . (expand-file-name "~/Music"))
+  (emms-directory . (concat void:data-dir "emms/"))
+  (emms-seek-seconds . 5)
+  (emms-player-list . '(emms-player-mpd))
+  (emms-volume-change-function . 'emms-volume-mpd-change)
+  (emms-player-mpd-music-directory . (file-truename "~/Music"))
+  (emms-player-mpd-server-name . "127.0.0.1")
+  (emms-player-mpd-server-port . "6600")
+  (emms-source-file-default-directory . (expand-file-name "~/Music"))
   (emms-source-file-directory-tree-function . 'emms-source-file-directory-tree-find)
-  (emms-playlist-buffer-name                . "*Music*")
-  (mpc-host                                 . "127.0.0.1:6600"))
+  (emms-playlist-buffer-name . "*Music*")
+  (mpc-host . "127.0.0.1:6600"))
 #+end_src
 
-*** quitting
+*** quitting                                                          :disabled:
 :PROPERTIES:
 :ID: 545e6534-f289-4a89-838a-2a65ac74fe72
 :END:
@@ -5013,7 +5005,7 @@ my description of problems with pictures.
 *** escr
 
 #+begin_src emacs-lisp
-(leaf escr :straight t)
+(leaf escr)
 #+end_src
 
 *** scrot
@@ -5025,8 +5017,7 @@ Like [[][screenshot]], [[https://github.com/dakra/scrot.el][scrot]] is screensho
 has a function that can capture a screenshot of a particular emacs window.
 
 #+begin_src emacs-lisp
-(leaf scrot
-  :ensure (:host github :repo "dakra/scrot.el"))
+(leaf scrot (:host github :repo "dakra/scrot.el"))
 #+end_src
 
 ** gifs
@@ -5050,8 +5041,9 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
 
 #+begin_src emacs-lisp
 (leaf keypression
-  :ensure (:host github :repo "chuntaro/emacs-keypression")
-  :setq (keypression-frame-justify 'keypression-right-justified))
+  ;; :straight (:host github :repo "chuntaro/emacs-keypression")
+  :setq
+  (keypression-frame-justify . 'keypression-right-justified))
 #+end_src
 
 * Text Editing
@@ -5111,10 +5103,10 @@ great idea! It makes it really easy to see which parentheses go together.
 #+begin_src emacs-lisp
 (leaf rainbow-delimiters
   :hook prog-mode-hook reb-mode-hook
-  (:setq (rainbow-delimiters-max-face-count . 9)))
+  :setq (rainbow-delimiters-max-face-count . 9))
 #+end_src
 
-** edit-indirect
+** edit-indirect                                                      :disabled:
 :PROPERTIES:
 :ID: 82e6a83b-f238-46e1-bcc2-a23bddf412be
 :END:
@@ -5349,7 +5341,7 @@ However, I'll address this later. For now I just want things working well.
 
 #+begin_src emacs-lisp
 (use-package! org-link-minor-mode
-  (:commands org-link-minor-mode))
+  :commands org-link-minor-mode)
 #+end_src
 
 *** editing source blocks
@@ -5537,7 +5529,7 @@ it. It's pretty smart and very convenient.
 [[https://github.com/lewang/ws-butler][ws-butler]] cleans up whitespace.
 
 #+begin_src emacs-lisp
-(use-package! ws-butler
+(leaf ws-butler
   :hook prog-mode-hook org-mode-hook
   :defer-config
   (append! ws-butler-global-exempt-modes
@@ -5552,7 +5544,7 @@ it. It's pretty smart and very convenient.
 Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regular expressions to align text.
 
 #+begin_src emacs-lisp
-(use-package! ialign (:commands ialign))
+(leaf ialign :commands ialign)
 #+end_src
 
 ** lisp editing
@@ -5596,7 +5588,7 @@ Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regul
 #+begin_src emacs-lisp
 (defhook! smartparens:disable-smartparens-navigate-skip-match-h ()
   "Disable smartparents skip match feature."
-  (:hook after-change-major-mode-hook)
+  :hook after-change-major-mode-hook
   (setq sp-navigate-skip-match nil)
   (setq sp-navigate-consider-sgml-tags nil))
 #+end_src
@@ -5610,7 +5602,7 @@ Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regul
 (defhook! smartparens:init-in-eval-expression-h ()
   "Enable `smartparens-mode' in the minibuffer, during `eval-expression' or
 `evil-ex'."
-  (:hook minibuffer-setup-hook)
+  :hook minibuffer-setup-hook
   (when (memq this-command '(eval-expression evil-ex))
     (smartparens-mode)))
 #+end_src
@@ -5623,7 +5615,7 @@ Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regul
 #+begin_src emacs-lisp
 (defhook! smartparens:init-in-minibuffer-h ()
   "Enable smartparens for `eval-expression' and `evil-ex'."
-  (:hook minibuffer-setup-hook)
+  :hook minibuffer-setup-hook
   (when (memq this-command '(eval-expression evil-ex))
     (smartparens-mode 1)))
 #+end_src
@@ -5642,9 +5634,9 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :END:
 
 #+begin_src emacs-lisp
-(use-package! lispyville
-  (:commands lispyville-comment-or-uncomment-line)
-  (:hook emacs-lisp-mode))
+(leaf lispyville
+  :commands lispyville-comment-or-uncomment-line
+  :hook emacs-lisp-mode)
 #+end_src
 
 **** operators
@@ -5759,26 +5751,26 @@ For learning how to use lispy. [[https://github.com/abo-abo/lispy][the README]] 
 very useful to me.
 
 #+begin_src emacs-lisp
-(use-package! lispy
-  (:commands lispy-mode)
-  (:after-load
-   ;; You'll get void variable if you don't do this.
-   (after! avy (setq lispy-avy-keys avy-keys)))
-  (:setq
-   (lispy-avy-style-paren 'at-full)
-   (lispy-eval-display-style 'overlay)
-   (lispy-safe-delete t)
-   (lispy-safe-copy t)
-   (lispy-safe-paste t)
-   (lispy-safe-actions-no-pull-delimiters-into-comments t)
-   (lispy-delete-sexp-from-within t)
-   (lispy-parens-only-left-in-string-or-comment nil)
-   ;; TODO see how performant is at larger thresholds and optimize
-   (lispy-safe-threshold 5000)
-   (lispy-use-sly t)
-   ;; allow space before asterisk for headings (e.g. ";; *")
-   (lispy-outline "^;;\\(?:;[^#]\\|[[:space:]]*\\*+\\)")
-   (lispy-key-theme nil)))
+(leaf lispy
+  :commands lispy-mode
+  :setq
+  (lispy-avy-style-paren . 'at-full)
+  (lispy-eval-display-style . 'overlay)
+  (lispy-safe-delete . t)
+  (lispy-safe-copy . t)
+  (lispy-safe-paste . t)
+  (lispy-safe-actions-no-pull-delimiters-into-comments . t)
+  (lispy-delete-sexp-from-within . t)
+  (lispy-parens-only-left-in-string-or-comment . nil)
+  ;; TODO see how performant is at larger thresholds and optimize
+  (lispy-safe-threshold . 5000)
+  (lispy-use-sly . t)
+  ;; allow space before asterisk for headings (e.g. ";; *")
+  (lispy-outline . "^;;\\(?:;[^#]\\|[[:space:]]*\\*+\\)")
+  (lispy-key-theme . nil)
+  :defer-config
+  ;; You'll get void variable if you don't do this.
+  (after! avy (setq lispy-avy-keys avy-keys)))
 #+end_src
 
 ** writing
@@ -5792,12 +5784,12 @@ very useful to me.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! spell-number
-  (:setq
-   (spelln-language 'english-us)
-   (spelln-country 'united-states)
-   (spelln-period-character ?,)
-   (spelln-decimal-character ?.)))
+(leaf spell-number
+  :setq
+  (spelln-language . 'english-us)
+  (spelln-country . 'united-states)
+  (spelln-period-character . ?,)
+  (spelln-decimal-character . ?.))
 #+end_src
 
 *** fill paragraph
@@ -5806,19 +5798,19 @@ very useful to me.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! aggressive-fill-paragraph)
+(leaf aggressive-fill-paragraph)
 #+end_src
 
-*** spell check
+*** spell check                                                       :disabled:
 :PROPERTIES:
 :ID: fc68d949-246f-43bf-85c2-7fbb947af7e9
 :END:
 
 #+begin_src emacs-lisp
-(use-package! spell-fu
-  (:recipe (:host gitlab :repo "ideasman42/emacs-spell-fu"))
-  (:commands spell-fu-mode)
-  (:setq (spell-fu-directory (concat void:data-dir "spell-fu/"))))
+(leaf spell-fu
+  :ensure (:host gitlab :repo "ideasman42/emacs-spell-fu")
+  :commands spell-fu-mode
+  :setq (spell-fu-directory . (concat void:data-dir "spell-fu/")))
 #+end_src
 
 *** autocapitalize
@@ -5830,8 +5822,8 @@ very useful to me.
 It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capitalize-words]].
 
 #+begin_src emacs-lisp
-(use-package! auto-capitalize
-  (:setq (auto-capitalize-words '("I" "English"))))
+(leaf auto-capitalize
+  :setq (auto-capitalize-words . '("I" "English")))
 #+end_src
 
 *** thesaurus                                                         :disabled:
@@ -5840,9 +5832,8 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
 :END:
 
 #+begin_src emacs-lisp
-(use-package! powerthesaurus
-  (:commands powerthesaurus-lookup-word-at-point
-   power-thesaurus-lookup-word-dwim))
+(leaf powerthesaurus
+  :commands (powerthesaurus-lookup-word-at-point power-thesaurus-lookup-word-dwim))
 #+end_src
 
 *** dictionary
@@ -5851,11 +5842,11 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
 :END:
 
 #+begin_src emacs-lisp
-(use-package! define-it
-  (:commands define-it define-it-at-point)
-  (:setq
-   (define-it-output-choice 'view)
-   (define-it-show-google-translate nil)))
+(leaf define-it
+  :commands define-it define-it-at-point
+  :setq
+  (define-it-output-choice . 'view)
+  (define-it-show-google-translate . nil))
 #+end_src
 
 ** evil
@@ -5928,7 +5919,7 @@ Evil differentiates what state you're in based on the cursor color.
 #+begin_src emacs-lisp
 (defhook! evil:init-cursors-h ()
   "Initialize the default cursor shape and size."
-  (:hook evil-mode-hook)
+  :hook evil-mode-hook
   (setq evil-insert-state-cursor   '((bar . 3)   "chartreuse3"))
   (setq evil-emacs-state-cursor    '((bar . 3)   "SkyBlue2"))
   (setq evil-normal-state-cursor   '( box        "DarkGoldenrod2"))
@@ -5950,7 +5941,7 @@ cursor color will update.
 #+begin_src emacs-lisp
 (defhook! evil:enable-cursor-refresh-h ()
   "Enable cursor refreshing after theme change."
-  (:hook evil-mode-hook)
+  :hook evil-mode-hook
   (if (bound-and-true-p evil-mode)
       (add-hook 'void:after-load-theme-hook #'evil-refresh-cursor 100)
     (remove-hook 'void:after-load-theme-hook #'evil-refresh-cursor)))
@@ -5974,7 +5965,7 @@ the correct one.
 This variable will be nil when the minibuffer is closed.")
 
 (defhook! evil:enable-insert-state-in-minibuffer ()
-  (:hook evil-mode-hook)
+  :hook evil-mode-hook
   (let ((fn (if (bound-and-true-p evil-mode) #'add-hook #'remove-hook)))
     (funcall fn 'minibuffer-enter-hook #'evil:save-state-before-minibuffer-h)
     (funcall fn 'minibuffer-exit-hook #'evil:restore-state-after-minibuffer-h)))
@@ -5997,21 +5988,21 @@ be nice to have a state that could be dedicated to.
 
 #+begin_src emacs-lisp
 (defhook! evil:make-normal-state-default-state-h ()
-  (:hook evil-mode-hook)
+  :hook evil-mode-hook
   (setq evil-normal-state-modes (append evil-emacs-state-modes evil-normal-state-modes))
   (setq evil-emacs-state-modes nil)
   (setq evil-motion-state-modes nil))
 
 (defadvice! evil:treat-motion-as-normal-state (orig-fn &rest args)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
+  :override evil-make-overriding-map
   (-let [(keymap state copy) args]
-    (when (eq 'motion state) (setq state 'normal))
+    (when (eq 'motion state)
+      (setq state 'normal))
     (funcall orig-fn keymap state copy)))
-
-(advice-add #'evil-motion-state :override #'evil-normal-state)
 #+end_src
 
-**** escape
+**** escape                                                           :disabled:
 
 ***** escape
 :PROPERTIES:
@@ -6025,7 +6016,7 @@ We want escape to be a general "quit everything".
 
 (defadvice! evil:dwim-abort-after-escape-a ()
   "Exits out of whatever is happening after escape."
-  (:after evil-force-normal-state)
+  :after evil-force-normal-state
   (cond ((minibuffer-window-active-p (minibuffer-window))
          (abort-recursive-edit))
         ((run-hook-with-args-until-success 'void:escape-hook))
@@ -6043,16 +6034,16 @@ This is better than evil escape as it only binds in insert.
 
 #+begin_src emacs-lisp
 (leaf key-chord
-  (:hook evil-mode-hook)
+  :hook evil-mode-hook
   ;; (:now (add-hook 'evil-mode-hook (lambda () (quiet! (key-chord-mode 1)))))
-  (:defer-config
-   (general-define-key :states '(visual insert)
-                       (general-chord "jk") 'evil-force-normal-state
-                       (general-chord "kj") 'evil-force-normal-state)
-   (general-define-key :states '(insert)
-                       :keymaps 'org-mode-map
-                       (general-chord "jk")
-                       #'evil-org-state)))
+  :defer-config
+  (general-define-key :states '(visual insert)
+                      (general-chord "jk") 'evil-force-normal-state
+                      (general-chord "kj") 'evil-force-normal-state)
+  (general-define-key :states '(insert)
+                      :keymaps 'org-mode-map
+                      (general-chord "jk")
+                      #'evil-org-state))
 #+end_src
 
 **** saving
@@ -6194,28 +6185,28 @@ Why not just go to the end of the ="= like any other around operator?
     (add-hook 'org-capture-mode-hook #'evil-insert-state)))
 #+end_src
 
-***** Info
+***** Info                                                            :disabled:
 :PROPERTIES:
 :ID: c6c401dc-a7cf-460d-9188-1ee8bb2dad24
 :END:
 
 #+begin_src emacs-lisp
-(define-key!
-  (:map Info-mode-map)
-  (:m "h"   #'Info-backward-node)
-  (:m "l"   #'Info-forward-node)
-  (:m "H"   #'Info-history-back)
-  (:m "L"   #'Info-history-forward)
-  (:m "r"   #'Info-history)
-  (:m "J"   #'evil-scroll-page-down)
-  (:m "K"   #'evil-scroll-page-up)
-  (:m "f"   #'ace-link-info)
-  (:m "u"   #'Info-up)
-  (:m "U"   #'Info-top-node)
-  (:m "m"   #'Info-menu)
-  (:m "s"   #'Info-search)
-  (:m "RET" #'Info-follow-nearest-node)
-  (:m "q"   #'quit-window))
+(general-define-key
+ (:map Info-mode-map)
+ (:m "h"   #'Info-backward-node)
+ (:m "l"   #'Info-forward-node)
+ (:m "H"   #'Info-history-back)
+ (:m "L"   #'Info-history-forward)
+ (:m "r"   #'Info-history)
+ (:m "J"   #'evil-scroll-page-down)
+ (:m "K"   #'evil-scroll-page-up)
+ (:m "f"   #'ace-link-info)
+ (:m "u"   #'Info-up)
+ (:m "U"   #'Info-top-node)
+ (:m "m"   #'Info-menu)
+ (:m "s"   #'Info-search)
+ (:m "RET" #'Info-follow-nearest-node)
+ (:m "q"   #'quit-window))
 #+end_src
 
 ***** eshell
@@ -6328,9 +6319,9 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(use-package! auto-yasnippet
-  (:after-load (advice-add #'aya-expand :after #'evil-insert-state))
-  (:setq (aya-persist-snippets-dir (concat void:local-dir "auto-snippets/"))))
+(leaf auto-yasnippet
+  :defer-config (advice-add #'aya-expand :after #'evil-insert-state)
+  :setq (aya-persist-snippets-dir . (concat void:local-dir "auto-snippets/")))
 #+end_src
 
 ***** yasnippet
@@ -6361,8 +6352,7 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(leaf evil-surround
-  :hook prog-mode-hook text-mode-hook)
+(leaf evil-surround :hook prog-mode-hook text-mode-hook)
 #+end_src
 
 *** evil-matchit
@@ -6416,7 +6406,7 @@ larger text objects. It's saves me keystrokes.
 
 #+begin_src emacs-lisp
 (leaf expand-region
-  :commands er/expand-region er/contract-region er/mark-symbol er/mark-word
+  :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
   :bind (:evil-visual-state-map
          ("V" . er/contract-region)
          ("v" . er/expand-region))
@@ -6533,7 +6523,7 @@ larger text objects. It's saves me keystrokes.
   (global-undo-tree-mode -1))
 #+end_src
 
-* Utility
+* Utility                                                             :disabled:
 :PROPERTIES:
 :ID: 15266577-fc6e-4ec7-8277-3a94b6f4f926
 :END:
@@ -6557,13 +6547,13 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 (leaf eshell
   :ensure nil
   :commands eshell
-  :load-incrementally
-  em-alias em-banner em-basic em-cmpl
-  em-dirs em-glob em-hist em-ls em-prompt
-  em-script em-term em-unix
+  ;; :load-incrementally
+  ;; em-alias em-banner em-basic em-cmpl
+  ;; em-dirs em-glob em-hist em-ls em-prompt
+  ;; em-script em-term em-unix
   :setq
-  (eshell-directory-name (concat void:data-dir "eshell/"))
-  (eshell-history-file-name (concat eshell-directory-name "history"))
+  (eshell-directory-name . (concat void:data-dir "eshell/"))
+  (eshell-history-file-name . (concat eshell-directory-name "history"))
   (eshell-prefer-lisp-functions . nil)
   (eshell-scroll-to-bottom-on-input . 'all)
   (eshell-scroll-to-bottom-on-output . 'all)
@@ -6573,12 +6563,11 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   (eshell-input-filter . #'eshell-input-filter-initial-space)
   (eshell-glob-case-insensitive . t)
   (eshell-error-if-no-glob . t)
-  (eshell-banner-message
-   '(format "%s %s\n\n"
-     (propertize (format " %s " (string-trim (buffer-name)))
-      'face 'mode-line-highlight)
-     (propertize (current-time-string)
-      'face 'font-lock-keyword-face)))
+  (eshell-banner-message . '(format "%s %s\n\n"
+                             (propertize (format " %s " (string-trim (buffer-name)))
+                              'face 'mode-line-highlight)
+                             (propertize (current-time-string)
+                              'face 'font-lock-keyword-face)))
   (:after-load
    (remove-hook 'eshell-output-filter-functions
                 'eshell-postoutput-scroll-to-bottom)))
@@ -6664,7 +6653,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 (leaf eshell-up
   :after eshell
   :commands eshell-up eshell-up-peek
-  :now
+  :init
   (defalias 'eshell/up 'eshell-up)
   (defalias 'eshell/pk 'eshell-up-peek)
   (defalias 'eshell/peek 'eshell-up-peek))
@@ -6799,7 +6788,7 @@ Each element of the list is an abbreviated.")
 #+begin_src emacs-lisp
 (defhook! eshell:enable-text-wrapping-h ()
   "Enable text wrapping."
-  (:hook eshell-mode-hook)
+  :hook eshell-mode-hook
   (visual-line-mode +1)
   (set-display-table-slot standard-display-table 0 ?\ ))
 #+end_src
@@ -6812,7 +6801,7 @@ Each element of the list is an abbreviated.")
 #+begin_src emacs-lisp
 (defhook! eshell:remove-fringes-h ()
   "Remove fringes for eshell."
-  (:hook eshell-mode-hook)
+  :hook eshell-mode-hook
   (set-window-fringes nil 0 0)
   (set-window-margins nil 1 nil))
 #+end_src
@@ -6867,7 +6856,7 @@ aliases.
 
 (defhook! eshell:init-aliases-h ()
   "Initialize eshell aliases."
-  (:hook eshell-alias-load-hook)
+  :hook eshell-alias-load-hook
   (setq eshell--default:aliases eshell-command-aliases-list
         eshell-command-aliases-list
         (append eshell-command-aliases-list
@@ -6882,8 +6871,8 @@ aliases.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! shrink-path
-  (:commands shrink-path-file))
+(leaf shrink-path
+  :commands shrink-path-file)
 #+end_src
 
 ** TODO org goto heading
@@ -6971,20 +6960,20 @@ have to set out to look for a file with =dired=.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! recentf
-  (:before-call find-file)
-  (:load-incrementally easymenu tree-widget timer)
-  (:commands recentf-open-files)
-  (:after-load
-   (advice-add #'recentf-save-list :before #'recentf-cleanup)
-   (recentf-mode 1))
-  (:setq
-   (recentf-max-menu-items 0)
-   (recentf-max-saved-items 700))
-  (:custom
-   (recentf-save-file (concat void:data-dir "recentf"))
-   (recentf-auto-cleanup 'never)
-   (recentf-filename-handlers '(file-truename abbreviate-file-name))))
+(leaf recentf
+  ;; :before-call find-file
+  ;; (:load-incrementally easymenu tree-widget timer)
+  :commands recentf-open-files
+  :defer-config
+  (advice-add #'recentf-save-list :before #'recentf-cleanup)
+  (recentf-mode 1)
+  :setq
+  (recentf-max-menu-items . 0)
+  (recentf-max-saved-items . 700)
+  :custom
+  (recentf-save-file . (concat void:data-dir "recentf"))
+  (recentf-auto-cleanup . 'never)
+  (recentf-filename-handlers . '(file-truename abbreviate-file-name)))
 #+end_src
 
 *** silence recentf
@@ -6995,7 +6984,7 @@ have to set out to look for a file with =dired=.
 #+begin_src emacs-lisp
 (defadvice! recentf:shut-up-a (orig-fn &rest args)
   "Shut up recentf."
-  (:around recentf-mode)
+  :around recentf-mode
   (shut-up! (apply orig-fn args)))
 #+end_src
 
@@ -7025,14 +7014,15 @@ location you left off at in a particular buffer. When you visit that buffer
 again, you are taken to the location you left off. This is very convenient.
 
 #+begin_src emacs-lisp
-(use-feature! save-place
-  (:after-call after-find-file)
-  (:setq (save-place-file (concat void:data-dir "saveplace"))))
+(leaf save-place
+  :ensure nil
+  ;; (:after-call after-find-file)
+  :setq (save-place-file . (concat void:data-dir "saveplace")))
 
 (defadvice! void:recenter-on-load-saveplace-a (&rest _)
   "Recenter on cursor when loading a saved place."
-  (:after-while save-place-find-file-hook)
-  (if buffer-file-name (ignore-errors (recenter))))
+  :after-while save-place-find-file-hook
+  (when buffer-file-name (ignore-errors (recenter))))
 #+end_src
 
 ** savehist                                                          :built-in:
@@ -7041,24 +7031,24 @@ again, you are taken to the location you left off. This is very convenient.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! savehist
-  (:load-incrementally custom)
-  (:hook void:start-emacs-hook)
-  (:setq
-   (savehist-save-minibuffer-history t)
-   (savehist-autosave-interval nil)
-   (savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
-   (savehist-file (concat void:data-dir "savehist"))))
+(leaf savehist
+  ;; (:load-incrementally custom)
+  :hook void:start-emacs-hook
+  :setq
+  (savehist-save-minibuffer-history . t)
+  (savehist-autosave-interval       . nil)
+  (savehist-additional-variables    . '(kill-ring search-ring regexp-search-ring))
+  (savehist-file                    . (concat void:data-dir "savehist")))
 
 (defhook! void:unpropertize-kill-ring-h ()
   "Remove text properties from `kill-ring'."
-  (:append void:quit-emacs-hook)
+  :append void:quit-emacs-hook
   (setq kill-ring
         (--map (when (stringp it) (substring-no-properties it))
                (-non-nil kill-ring))))
 #+end_src
 
-** bookmarks
+** bookmarks                                                          :disabled:
 :PROPERTIES:
 :ID: e1a569f8-d27a-4e0c-924a-3b123c62b6a2
 :END:
@@ -7070,11 +7060,11 @@ of topics on his site, check out the [[http://ergoemacs.org/emacs/bookmark.html 
 read this [[https://emacs.stackexchange.com/questions/51853/retracing-steps-with-emacs-when-programming-exploring — search - Retracing steps with emacs (When programming /exploring) - Emacs Stack Exchange][question]].
 
 #+begin_src emacs-lisp
-(use-package! bookmark-plus)
-(use-package! bookmark
-  (:setq
-   (bookmark-default-file (concat void:data-dir "bookmarks"))
-   (bookmark-save-flag t)))
+(leaf bookmark-plus)
+(leaf bookmark
+  :setq
+  (bookmark-default-file . (concat void:data-dir "bookmarks"))
+  (bookmark-save-flag    . t))
 #+end_src
 
 ** elfeed
@@ -7092,21 +7082,16 @@ case-sensitive so consider this if your tags (like me) capitalized. The
 posts. So if you have some infrequent blogs, you might have to go further back
 in time to see older posts.
 
-*** bootstrap
-:PROPERTIES:
-:ID: 1a178560-aeea-4559-b07b-dd51cb89163a
-:END:
-
 #+begin_src emacs-lisp
-(use-package! elfeed
-  (:commands elfeed)
-  (:setq
-   (elfeed-search-filter "@1-year-old")
-   (elfeed-db-directory (concat void:data-dir "elfeed/db/"))
-   (elfeed-enclosure-default-dir (concat void:data-dir "elfeed/enclosures/"))
-   (elfeed-show-entry-switch #'pop-to-buffer)
-   (elfeed-show-entry-delete #'elfeed-kill-buffer)
-   (shr-max-image-proportion 0.8)))
+(leaf elfeed
+  :commands elfeed
+  :setq
+  (elfeed-search-filter         . "@1-year-old")
+  (elfeed-db-directory          . (concat void:data-dir "elfeed/db/"))
+  (elfeed-enclosure-default-dir . (concat void:data-dir "elfeed/enclosures/"))
+  (elfeed-show-entry-switch     . #'pop-to-buffer)
+  (elfeed-show-entry-delete     . #'elfeed-kill-buffer)
+  (shr-max-image-proportion     . 0.8))
 #+end_src
 
 ** elfeed org
@@ -7115,13 +7100,13 @@ in time to see older posts.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! elfeed-org
-  (:after elfeed)
-  (:setq
-   (rmh-elfeed-org-files (list (concat void:org-dir "elfeed.org")))
-   (rmh-elfeed-org-tree-id "ELFEED")
-   (rmh-elfeed-org-ignore-tag "IGNORE"))
-  (:require t))
+(leaf elfeed-org
+  :after elfeed
+  :require t
+  :setq
+  (rmh-elfeed-org-files      . (list (concat void:org-dir "elfeed.org")))
+  (rmh-elfeed-org-tree-id    . "ELFEED")
+  (rmh-elfeed-org-ignore-tag . "IGNORE"))
 #+end_src
 
 ** pomodoro
@@ -7135,18 +7120,18 @@ I might consider doing this asynchronously.
 
 #+begin_src emacs-lisp
 (use-package! pomodoro
-  (:commands pomodoro-start)
-  (:setq
-   (pomodoro-play-sounds t)
-   (pomodoro-work-start-sound "~/Music/beeps/A-Tone-His_Self-1266414414.wav")
-   (pomodoro-break-start-sound "~/Music/beeps/A-Tone-His_Self-1266414414.wav")
-   (pomodoro-work-time 25)
-   (pomodoro-break-time 5)
-   (pomodoro-long-break-time 15)))
+  :commands pomodoro-start
+  :setq
+  (pomodoro-play-sounds       . t)
+  (pomodoro-work-start-sound  . "~/Music/beeps/A-Tone-His_Self-1266414414.wav")
+  (pomodoro-break-start-sound . "~/Music/beeps/A-Tone-His_Self-1266414414.wav")
+  (pomodoro-work-time         . 25)
+  (pomodoro-break-time        . 5)
+  (pomodoro-long-break-time   . 15))
 
 (defadvice! pomodoro:play-sound-a (sound)
   "Play sound without using the call-process."
-  (:override play-pomodoro-sound)
+  :override play-pomodoro-sound
   (play-sound-file sound))
 #+end_src
 
@@ -7372,19 +7357,19 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! ranger
-  (:commands deer ranger)
-  (:setq
-   (ranger-override-dired-mode t)
-   (ranger-cleanup-eagerly t)
-   (ranger-cleanup-on-disable t)
-   (ranger-omit-regexp "^\.DS_Store$")
-   (ranger-excluded-extensions '("mkv" "iso" "mp4"))
-   (ranger-deer-show-details nil)
-   (ranger-max-preview-size 10)
-   (ranger-modify-header t)
-   (ranger-hide-cursor t)
-   (ranger-dont-show-binary t)))
+(leaf ranger
+  :commands deer ranger
+  :setq
+  (ranger-override-dired-mode . t)
+  (ranger-cleanup-eagerly . t)
+  (ranger-cleanup-on-disable . t)
+  (ranger-omit-regexp . "^\.DS_Store$")
+  (ranger-excluded-extensions . '("mkv" "iso" "mp4"))
+  (ranger-deer-show-details . nil)
+  (ranger-max-preview-size . 10)
+  (ranger-modify-header . t)
+  (ranger-hide-cursor . t)
+  (ranger-dont-show-binary . t))
 
 (setq image-dired-dir (concat void:data-dir "image-dir"))
 (setq dired-omit-verbose nil)
@@ -7418,7 +7403,7 @@ which only some files are hidden. That's wierd, so I get rid of it.
 #+begin_src emacs-lisp
 (defadvice! ranger:window-check-shutup-a (orig-fn &rest args)
   "Silence `ranger-window-check'."
-  (:around ranger-window-check)
+  :around ranger-window-check
   (quiet! (apply orig-fn args)))
 #+end_src
 
@@ -7429,8 +7414,7 @@ which only some files are hidden. That's wierd, so I get rid of it.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! all-the-icons-dired
-  (:hook dired-mode))
+(leaf all-the-icons-dired :hook dired-mode)
 #+end_src
 
 ** restart emacs
@@ -7456,12 +7440,12 @@ that restarts emacs. I haven't tested this in EXWM mode.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! transient
-  (:setq
-   (transient-default-level 5)
-   (transient-levels-file  (concat void:data-dir "transient/levels"))
-   (transient-values-file  (concat void:data-dir "transient/values"))
-   (transient-history-file (concat void:data-dir "transient/history"))))
+(leaf transient
+  :setq
+  (transient-default-level . 5)
+  (transient-levels-file   . (concat void:data-dir "transient/levels"))
+  (transient-values-file   . (concat void:data-dir "transient/values"))
+  (transient-history-file  . (concat void:data-dir "transient/history")))
 #+end_src
 
 *** magit
@@ -7470,21 +7454,21 @@ that restarts emacs. I haven't tested this in EXWM mode.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! magit
-  (:commands magit-status magit-get-current-branch)
-  (:load-incrementally f s with-editor git-commit package eieio lv transient)
-  (:setq
-   (magit-completing-read-function
-    (if (featurep 'ivy)
-        #'ivy-completing-read
-      #'magit-builtin-completing-read))
-   (magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
-   (magit-diff-refine-hunk t)
-   (magit-auto-revert-mode nil))
-  (:after-load
-   (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
-   (general-def magit-status-mode-map
-     [remap magit-mode-bury-buffer] #'magit/quit)))
+(leaf magit
+  :commands magit-status magit-get-current-branch
+  ;; (:load-incrementally f s with-editor git-commit package eieio lv transient)
+  :setq
+  (magit-completing-read-function
+   (if (featurep 'ivy)
+       #'ivy-completing-read
+     #'magit-builtin-completing-read))
+  (magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
+  (magit-diff-refine-hunk t)
+  (magit-auto-revert-mode nil)
+  :defer-config
+  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
+  (general-def magit-status-mode-map
+    [remap magit-mode-bury-buffer] #'magit/quit))
 #+end_src
 
 *** quitting
@@ -7507,14 +7491,12 @@ that restarts emacs. I haven't tested this in EXWM mode.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! evil-magit
-  (:before-call magit-status)
-  (:functions evil-magit-init)
-  (:after-load
-   (message "Set up evil magit.")
-   (shut-up! (evil-magit-init))
-   (setq evil-magit-state 'normal)
-   (require 'evil-magit nil :no-error)))
+(leaf evil-magit
+  ;; :before-call magit-status
+  :defer-config
+  (shut-up! (evil-magit-init))
+  (setq evil-magit-state 'normal)
+  (require 'evil-magit nil :no-error))
 #+end_src
 
 *** git-gutter
@@ -7523,8 +7505,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! git-gutter
-  (:commands git-gutter-mode))
+(leaf git-gutter :commands git-gutter-mode)
 #+end_src
 
 ** server                                                             :built-in:
@@ -7557,32 +7538,31 @@ Quoting =DOOM=:
  changes when we switch to a buffer or when we focus the Emacs frame."
 
 #+begin_src emacs-lisp
-(use-feature! autorevert
-  (:after-call switch-to-buffer find-file)
-  (:setq
-   (auto-revert-verbose t) ; let us know when it happens
-   (auto-revert-use-notify nil)
-   (auto-revert-stop-on-user-input nil)
-   ;; Only prompts for confirmation when buffer is unsaved.
-   (revert-without-query (list ".")))
-  (:after-load
-   (void:log "adding autorevert hooks")
-   ;; (add-hook 'void:after-switch-window-hook #')
-   (add-hook 'focus-in-hook #'void:auto:revert-visible-buffers-h)
-   (add-hook 'after-save-hook #'void:auto:revert-visible-buffers-h)
-   (add-hook 'void:after-switch-buffer-hook #'void:auto:revert-buffer-h)
+(leaf autorevert
+  ;; :after-call switch-to-buffer find-file
+  :setq
+  (auto-revert-verbose . t)
+  (auto-revert-use-notify . nil)
+  (auto-revert-stop-on-user-input . nil)
+  (revert-without-query . (list "."))
+  :defer-config
+  (void:log "adding autorevert hooks")
 
-   (defun void:auto:revert-buffer-h ()
-     "Auto revert current buffer, if necessary."
-     (unless (or (bound-and-true-p auto-revert-mode)
-                 (active-minibuffer-window))
-       (auto-revert-handler)))
+  (add-hook 'focus-in-hook #'void:auto:revert-visible-buffers-h)
+  (add-hook 'after-save-hook #'void:auto:revert-visible-buffers-h)
+  (add-hook 'void:after-switch-buffer-hook #'void:auto:revert-buffer-h)
 
-   (defun void:auto:revert-visible-buffers-h ()
-     "Auto revert stale buffers in visible windows, if necessary."
-     (--each (-uniq (-map #'window-buffer (window-list)))
-       (with-current-buffer it
-         (void:auto:revert-buffer-h))))))
+  (defun void:auto:revert-buffer-h ()
+    "Auto revert current buffer, if necessary."
+    (unless (or (bound-and-true-p auto-revert-mode)
+                (active-minibuffer-window))
+      (auto-revert-handler)))
+
+  (defun void:auto:revert-visible-buffers-h ()
+    "Auto revert stale buffers in visible windows, if necessary."
+    (--each (-uniq (-map #'window-buffer (window-list)))
+      (with-current-buffer it
+        (void:auto:revert-buffer-h)))))
 #+end_src
 
 ** security
@@ -7629,13 +7609,12 @@ Quoting =DOOM=:
 :END:
 
 #+begin_src emacs-lisp
-(use-package! auth-source-pass
-  (:after-hook pre-command-hook)
-  (:setq
-   (auth-source-pass-filename "~/.password-store")
-   (auth-source-pass-port-separator ":"))
-  (:after-load
-   (auth-source-pass-enable)))
+(leaf auth-source-pass
+  ;; (:after-hook pre-command-hook)
+  :setq
+  (auth-source-pass-filename . "~/.password-store")
+  (auth-source-pass-port-separator . ":")
+  :defer-config (auth-source-pass-enable))
 #+end_src
 
 **** epa
@@ -7659,8 +7638,8 @@ I'm sure that =pass= can generate custom passwords with some options or other, b
 I do not like dealing with the command line. I want real elisp code please.
 
 #+begin_src emacs-lisp
-(use-package! password-generator
-  (:commands password-generator-simple password-generator-paranoid))
+(leaf password-generator
+  :commands password-generator-simple password-generator-paranoid)
 #+end_src
 
 ** uuidgen
@@ -7669,7 +7648,7 @@ I do not like dealing with the command line. I want real elisp code please.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! uuidgen)
+(leaf uuidgen)
 #+end_src
 
 ** xr
@@ -7681,7 +7660,9 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 =rx= representation.
 
 #+begin_src emacs-lisp
-(use-package! xr (:functions xr xr-pp))
+(leaf xr
+  ;; :functions xr xr-pp
+  )
 #+end_src
 
 ** pdf-tools
@@ -7690,12 +7671,11 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 :END:
 
 #+begin_src emacs-lisp
-(use-package! pdf-tools
-  (:mode ("\\.pdf\\'" . pdf-view-mode))
-  (:after-load
-   (general-def pdf-view-mode-map
-     "j" #'pdf-view-next-line-or-next-page
-     "k" #'pdf-view-previous-line-or-previous-page)))
+(leaf pdf-tools
+  :mode ("\\.pdf\\'" . pdf-view-mode)
+  :bind (:pdf-view-mode-map
+         ("j" . pdf-view-next-line-or-next-page)
+         ("k" . pdf-view-previous-line-or-previous-page)))
 #+end_src
 
 ** circe
@@ -7704,7 +7684,7 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 :END:
 
 #+begin_src emacs-lisp
-(use-package! circe)
+(leaf circe)
 #+end_src
 
 ** peristent scratch
@@ -7713,9 +7693,9 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 :END:
 
 #+begin_src emacs-lisp
-(use-package! persistent-scratch
-  (:commands persistent-scratch-restore)
-  (:setq (persistent-scratch-save-file (concat void:data-dir "scratch"))))
+(leaf persistent-scratch
+  :commands persistent-scratch-restore
+  :setq (persistent-scratch-save-file . (concat void:data-dir "scratch")))
 #+end_src
 
 ** alert
@@ -7726,10 +7706,10 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 Notifications are very important. Messages from the =*Messages*= buffer are not enough.
 
 #+begin_src emacs-lisp
-(use-package! alert
-  (:setq
-   (alert-default-style 'libnotify)
-   (alert-log-messages t)))
+(leaf alert
+  :setq
+  (alert-default-style . 'libnotify)
+  (alert-log-messages . t))
 #+end_src
 
 ** sudo-edit
@@ -7739,7 +7719,7 @@ a file from another user (=root= by default). To use it you just call [[helpfn:s
 on the buffer you'd like to edit.
 
 #+begin_src emacs-lisp
-(use-package! sudo-edit (:commands sudo-edit))
+(leaf sudo-edit :commands sudo-edit)
 #+end_src
 
 ** yadm
@@ -7758,7 +7738,7 @@ on the buffer you'd like to edit.
   (magit-status "/yadm::"))
 #+end_src
 
-* Programming Languages
+* Programming Languages                                               :disabled:
 :PROPERTIES:
 :ID: 51e3b9b1-0e74-431e-a113-fe6f86a4b22a
 :END:
@@ -7776,8 +7756,8 @@ on the buffer you'd like to edit.
 [[https://github.com/joaotavora/sly][sly]] is an alternative to [[https://github.com/slime/slime][slime]].
 
 #+begin_src emacs-lisp
-(use-package! sly
-  (:setq (inferior-lisp-program "/usr/bin/sbcl")))
+(leaf sly
+  :setq (inferior-lisp-program . "/usr/bin/sbcl"))
 #+end_src
 
 *** clojure
@@ -8036,7 +8016,7 @@ these overlays.
   (:functions outorg-convert-back-to-code outorg-convert-to-org))
 
 (defadvice! outorg:do-not-add-overlays-a (orig-fn &rest args)
-  (:around outorg-wrap-source-in-block)
+  :around outorg-wrap-source-in-block
   (noflet ((overlay-put (&rest _) nil))
     (apply orig-fn args)))
 #+end_src
@@ -8068,13 +8048,12 @@ from elisp to org. My [[helpvar:void-init-file][void:init-file]] is written with
 #+begin_src emacs-lisp
 (use-package! macrostep
   (:commands macrostep-expand macrostep-collapse macrostep-collapse-all)
-  (:now
-   (define-localleader-key!
-     :infix "m"
-     :keymaps 'emacs-lisp-mode-map
-     "e" (list :def #'macrostep-expand :wk "expand")
-     "c" (list :def #'macrostep-collapse :wk "collapse")
-     "C" (list :def #'macrostep-collapse-all :wk "collapse all"))))
+  (:init (define-localleader-key!
+           :infix "m"
+           :keymaps 'emacs-lisp-mode-map
+           "e" (list :def #'macrostep-expand :wk "expand")
+           "c" (list :def #'macrostep-collapse :wk "collapse")
+           "C" (list :def #'macrostep-collapse-all :wk "collapse all"))))
 #+end_src
 
 *** hy
@@ -8095,7 +8074,7 @@ from elisp to org. My [[helpvar:void-init-file][void:init-file]] is written with
 I'm adding [[https://github.com/jrblevin/markdown-mode][markdown-mode]] so I can see =README= files.
 
 #+begin_src emacs-lisp
-(use-package! markdown-mode (:mode "\\.md\\'"))
+(leaf markdown-mode :mode "\\.md\\'")
 #+end_src
 
 ** org                                                                     :org:
@@ -8125,22 +8104,22 @@ files, or even converting an org mode document into another format. As the name
 #+begin_src emacs-lisp
 (setq org-directory "~/Documents/org/")
 (defvar void:todo-file (concat org-directory "todo.org"))
-(use-package! org
-  (:load-incrementally
-   calendar find-func format-spec org-macs org-compat
-   org-faces org-entities org-list org-pcomplete org-src org-footnote
-   org-macro ob org org-agenda org-capture)
-  (:setq
-   (org-adapt-indentation nil)
-   (org-cycle-separator-lines 2)
-   (outline-blank-line t)
-   (org-directory (file-truename "~/Documents/org/"))
-   (org-archive-location (concat org-directory "archive.org::"))
-   (org-default-notes-file (concat org-directory "notes.org"))
-   (org-enforce-todo-dependencies t)
-   (org-use-fast-tag-selection nil)
-   (org-tags-column -80)
-   (org-tag-alist nil)))
+(leaf org
+  ;; :load-incrementally
+  ;; calendar find-func format-spec org-macs org-compat
+  ;; org-faces org-entities org-list org-pcomplete org-src org-footnote
+  ;; org-macro ob org org-agenda org-capture
+  :setq
+  (org-adapt-indentation nil)
+  (org-cycle-separator-lines 2)
+  (outline-blank-line t)
+  (org-directory (file-truename "~/Documents/org/"))
+  (org-archive-location (concat org-directory "archive.org::"))
+  (org-default-notes-file (concat org-directory "notes.org"))
+  (org-enforce-todo-dependencies t)
+  (org-use-fast-tag-selection nil)
+  (org-tags-column -80)
+  (org-tag-alist nil))
 #+end_src
 
 **** structures
@@ -8376,7 +8355,7 @@ see if it's gone farther than it should have and in that case goes back.
 #+begin_src emacs-lisp
 (defadvice! outline:dont-end-at-eob-a (orig-fn &rest args)
   "Fix bug where the next heading moves past last visible heading."
-  (:around outline-next-visible-heading)
+  :around outline-next-visible-heading
   (apply orig-fn args)
   (when (eobp) (apply #'outline-previous-visible-heading args)))
 #+end_src
@@ -8781,7 +8760,6 @@ I checked out
   "Y" #'org-copy-subtree
   "J" #'org-metadown
   "K" #'org-metaup
-  "n" #'org-toggle-narrow-to-subtree
   "U" #'org/dwim-up-heading)
 #+end_src
 
@@ -8800,18 +8778,19 @@ Org Agenda provides a neat method of displaying todo information.
 [[helpfn:org-agenda-list][org-agenda-list]] is the function that actually takes you to the agenda for the current week.
 
 #+begin_src emacs-lisp
-(use-feature! org-agenda
-  (:commands org-agenda-list)
-  (:setq
-   (org-agenda-files (--map (concat org-directory it)
-                            '("todo.org" "emacs.org")))
-   (org-agenda-start-on-weekday 0)
-   (org-agenda-timegrid-use-ampm nil)
-   (org-agenda-skip-unavailable-files nil)
-   (org-agenda-time-leading-zero t)
-   (org-agenda-text-search-extra-files '(agenda-archives))
-   (org-agenda-dim-blocked-tasks nil)
-   (org-agenda-inhibit-startup t)))
+(leaf org-agenda
+  :ensure nil
+  :commands org-agenda-list
+  :setq
+  (org-agenda-files . (--map (concat org-directory it)
+                             '("todo.org" "emacs.org")))
+  (org-agenda-start-on-weekday . 0)
+  (org-agenda-timegrid-use-ampm . nil)
+  (org-agenda-skip-unavailable-files . nil)
+  (org-agenda-time-leading-zero . t)
+  (org-agenda-text-search-extra-files . '(agenda-archives))
+  (org-agenda-dim-blocked-tasks . nil)
+  (org-agenda-inhibit-startup . t))
 #+end_src
 
 *** refile
@@ -9507,11 +9486,10 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 :END:
 
 #+begin_src emacs-lisp
-(use-package! lua-mode
-  (:mode "\\.lua\\'"))
+(leaf lua-mode :mode "\\.lua\\'")
 #+end_src
 
-* User Interface
+* User Interface                                                      :disabled:
 :PROPERTIES:
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
 :END:
@@ -9526,18 +9504,12 @@ Emacs help facility which provides much more contextual information
 in a better format.
 
 #+begin_src emacs-lisp
-(use-package! helpful
-  (:commands
-   helpful-callable
-   helpful-command
-   helpful-variable
-   helpful-key)
-  (:now
-   (general-def
-     [remap describe-function] #'helpful-callable
-     [remap describe-command]  #'helpful-command
-     [remap describe-variable] #'helpful-variable
-     [remap describe-key]      #'helpful-key)))
+(leaf helpful
+  :bind
+  ([remap describe-function] . helpful-callable)
+  ([remap describe-command]  . helpful-command)
+  ([remap describe-variable] . helpful-variable)
+  ([remap describe-key]      . helpful-key))
 #+end_src
 
 ** elisp demos
@@ -9550,13 +9522,13 @@ a function or macro. It seems simple but having examples can really ease the
 understanding of a verbally terse and dry command description.
 
 #+begin_src emacs-lisp
-(use-package! elisp-demos
-  (:functions elisp-demos-advice-helpful-update)
-  (:commands elisp-demos-add-demo)
-  (:now (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update)))
+(leaf elisp-demos
+  ;; :functions elisp-demos-advice-helpful-update
+  :commands elisp-demos-add-demo
+  :init (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-* Asthetic
+* Asthetic                                                            :disabled:
 :PROPERTIES:
 :ID: bd21a69a-794c-4ff1-97d0-9e5911a26ad7
 :END:
@@ -9593,21 +9565,21 @@ dashboard.
 
 #+begin_src emacs-lisp
 (use-package! dashboard
-  (:recipe (:host github
-            :repo "Luis-Henriquez-Perez/emacs-dashboard"
-            :files (:defaults "banners" "dashboard-pkg.el")
-            :branch "everything"))
-  (:require t)
-  (:setq
-   (dashboard-items nil)
-   (dashboard-startup-banner 2)
-   (dashboard-center-content t)
-   (dashboard-footer-messages '("Happy Coding!"))
-   (dashboard-set-navigator t)
-   (initial-buffer-choice (lambda () (get-buffer-create dashboard-buffer-name))))
-  (:now
-   (defvar dashboard-buffer-name "*dashboard*" "Name of the dashboard buffer.")
-   (add-hook 'void:init-ui-hook #'dashboard-insert-startupify-lists 0)))
+  :straight (:host github
+             :repo "Luis-Henriquez-Perez/emacs-dashboard"
+             :files (:defaults "banners" "dashboard-pkg.el")
+             :branch "everything")
+  :require t
+  :setq
+  (dashboard-items . nil)
+  (dashboard-startup-banner . 2)
+  (dashboard-center-content . t)
+  (dashboard-footer-messages '("Happy Coding!"))
+  (dashboard-set-navigator . t)
+  (initial-buffer-choice (lambda () (get-buffer-create dashboard-buffer-name)))
+  :init
+  (defvar dashboard-buffer-name "*dashboard*" "Name of the dashboard buffer.")
+  (add-hook 'void:init-ui-hook #'dashboard-insert-startupify-lists 0))
 #+end_src
 
 *** dashboard-init-info
@@ -9651,8 +9623,8 @@ dashboard.
 the mode line.
 
 #+begin_src emacs-lisp
-(use-package! hide-mode-line
-  (:hook Man-mode completion-list-mode))
+(leaf hide-mode-line
+  :hook Man-mode completion-list-mode)
 #+end_src
 
 ** all-the-icons
@@ -9765,7 +9737,7 @@ see dark on light better than light on dark.
   (:pre-setq (solarized-use-variable-pitch nil)))
 #+end_src
 
-* Keybindings
+* Keybindings                                                         :disabled:
 :PROPERTIES:
 :ID: 226e2c5b-2b81-483a-9942-d0ca0fc80f1f
 :END:
