@@ -1114,7 +1114,7 @@ evaluated.
       leaf-normalize)
 #+end_src
 
-*** straight keyword
+*** TODO straight keyword                                             :disabled:
 
 The straight keyword require's the package's name.
 
@@ -1323,7 +1323,7 @@ transform functions into other functions.
 (leaf dash-functional :require t)
 #+end_src
 
-*** anaphora                                                               :ewc:
+*** anaphora
 :PROPERTIES:
 :ID: 0d0cd8ff-775d-4f45-876c-855815cf49d8
 :END:
@@ -1357,7 +1357,7 @@ an element of an alist.
 (leaf a)
 #+end_src
 
-*** shut-up                                                       :ewc:disabled:
+*** shut-up
 :PROPERTIES:
 :ID: aaf02960-925b-4a67-b06b-5819e68d0c4d
 :END:
@@ -1371,7 +1371,7 @@ Macro that silences output.
   (defalias 'quiet! 'shut-up))
 #+end_src
 
-*** noflet                                                        :ewc:disabled:
+*** noflet
 :PROPERTIES:
 :ID: e89b1560-bb57-4c97-94e5-4ff78ab5bdde
 :END:
@@ -1793,8 +1793,8 @@ while the user is working.
 (leaf gcmh
   :hook pre-command-hook
   :setq
-  (gcmh-idle-delay          . 10)
-  (gcmh-verbose             . void:debug-mode)
+  (gcmh-idle-delay . 10)
+  (gcmh-verbose . void:debug-mode)
   (gcmh-high-cons-threshold . (* 16 1024 1024)))
 #+end_src
 
@@ -2046,7 +2046,7 @@ your previous workspace now with [[helpfn:eyebrowse-prev-window-config][eyebrows
 
 #+begin_src emacs-lisp
 (leaf eyebrowse
-  :hook void:start-emacs-hook
+  :commands eyebrowse-create-window-config
   :setq (eyebrowse-wrap-around . t))
 #+end_src
 
@@ -2072,14 +2072,14 @@ makes emacs feel like a window manager with gaps.
 
 #+begin_src emacs-lisp
 (leaf frame
-  :ensure nil
+  :straight nil
+  :hook (window-setup-hook . window-divider-mode)
   :custom
   (window-divider-default-places       . t)
   (window-divider-default-bottom-width . 10)
   (window-divider-default-right-width  . 10)
   :defer-config
-  (set-face-foreground 'window-divider "black")
-  (window-divider-mode 1))
+  (set-face-foreground 'window-divider "black"))
 #+end_src
 
 *** update on theme change
