@@ -5027,7 +5027,7 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
   (keypression-frame-justify . 'keypression-right-justified))
 #+end_src
 
-* Text Editing                                                        :disabled:
+* Text Editing
 :PROPERTIES:
 :ID: 42e0838f-f72a-43f3-8db2-a406d2d89adb
 :END:
@@ -9467,7 +9467,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 (leaf lua-mode :mode "\\.lua\\'")
 #+end_src
 
-* User Interface                                                      :disabled:
+* User Interface
 :PROPERTIES:
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
 :END:
@@ -9506,7 +9506,7 @@ understanding of a verbally terse and dry command description.
   :init (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-* Asthetic                                                            :disabled:
+* Asthetic
 :PROPERTIES:
 :ID: bd21a69a-794c-4ff1-97d0-9e5911a26ad7
 :END:
