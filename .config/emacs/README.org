@@ -1520,13 +1520,13 @@ STRUCTURE can be an alist, a plist, or a hash table."
 *** defadvice!
 
 #+begin_src emacs-lisp
-(defmacro defadvice! ()
+(defmacro defadvice! (name args &rest body)
   "Add advice."
   (let* ((docstring (when (stringp (car body)) (pop body)))
          (key (pop body))
          (advices (-list (pop body))))
     `(progn (defun ,name ,args ,docstring ,@body)
-            (dolist (advice ,advices)
+            (dolist (advice ',advices)
               (advice-add advice ,key #',name)))))
 #+end_src
 
