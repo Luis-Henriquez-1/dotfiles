@@ -5076,11 +5076,7 @@ mainly for consistency.
 
 #+begin_src emacs-lisp
 (leaf edit-indirect
-  :after org
-  :require t
-  ;; :before-call (org/edit:description-at-point
-  ;;               org/dwim-edit-source-block)
-  )
+  :before-call (org/edit:description-at-point org/dwim-edit-source-block))
 #+end_src
 
 *** popups for edit indirect buffers
