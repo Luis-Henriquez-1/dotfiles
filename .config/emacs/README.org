@@ -1027,9 +1027,66 @@ emacs and home directory with garbage.
 :END:
 
 #+begin_src emacs-lisp
-(after! url-cache
-  (setq url-cache-directory         (concat void:data-dir "url/cache/"))
-  (setq url-configuration-directory (concat void:data-dir "url/configuration/")))
+(straight:init-fn)
+(dolist (package '(leaf-keywords leaf))
+  (funcall #'straight:install-package package)
+  (require package))
+(leaf-keywords-init)
+#+end_src
+
+*** straight
+
+#+begin_src emacs-lisp
+(leaf straight
+  :require t
+  :setq
+  (straight-disable-autoloads . nil)
+  (straight-cache-autoloads . t)
+  (straight-check-for-modifications . nil)
+  (straight-enable-package-integration . nil)
+  (straight-recipes-emacsmirror-use-mirror . t))
+#+end_src
+
+*** leaf
+
+#+begin_src emacs-lisp
+(leaf leaf
+  :setq
+  (leaf-defaults . '(:ensure t)))
+#+end_src
+
+*** customize setq
+
+leaf's setq does not correctly handle setting variables to forms that need to be
+evaluated.
+
+#+begin_src emacs-lisp
+(push '((memq leaf--key '(:setq))
+        (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
+      leaf-normalize)
+#+end_src
+
+*** TODO straight keyword
+
+The straight keyword require's the package's name.
+
+#+begin_src emacs-lisp
+(let ((form '(:void-straight `(,@(mapcar (lambda (elm) `(straight:install-package ',elm)) leaf--value) ,@leaf--body))))
+  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :straight form)))
+
+(push '(:ensure . :void-straight) leaf-alias-keyword-alist)
+
+(push `((or (memq leaf--key '(:void-straight))
+            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void-straight))
+        (message "leaf--value: %S" leaf--value)
+        (list
+         (cond ((listp (car-safe leaf--value))
+                (cons leaf--name (car leaf--value)))
+               ((eq t (car leaf--value))
+                leaf--name)
+               (t
+                (car leaf--value)))))
+      leaf-normalize)
 #+end_src
 
 *** defaults
@@ -1724,7 +1781,24 @@ When running emacs in terminal tty is *tremendously* slow.
     (tty-run-terminal-initialization (selected-frame) nil t)))
 #+end_src
 
-**** hooks
+** gc
+:PROPERTIES:
+:ID: 4f1477b7-7b28-4a20-9a31-cc34a10f5878
+:END:
+
+Wait until idle time to garbage collect while staving off garbage collector
+while the user is working.
+
+#+begin_src emacs-lisp
+(leaf gcmh
+  :hook emacs-startup-hook
+  :setq
+  (gcmh-idle-delay . 10)
+  (gcmh-verbose . void:debug-mode)
+  (gcmh-high-cons-threshold . (* 16 1024 1024)))
+#+end_src
+
+** hooks
 :PROPERTIES:
 :ID: 45c5b1a1-4dea-4a3f-8b77-06526554fb27
 :END:
@@ -2438,9 +2512,14 @@ SYM is a symbol that stores a list."
 :END:
 
 #+begin_src emacs-lisp
+<<<<<<< HEAD
 (defmacro prepend! (sym &rest lists)
   (declare (indent defun))
   `(setq ,sym (append ,@lists ,sym)))
+=======
+(leaf helm-descbinds
+  :hook (helm-mode-hook . helm-descbinds-mode))
+>>>>>>> 3d5a7835c635aac68d47d9056bd703dced70bc43
 #+end_src
 
 **** nconc!
@@ -2583,9 +2662,25 @@ In Emacs, messages. The messages buffer is where messages displayed at the botto
 of the Emacs frame are recorded after they expire.
 
 #+begin_src emacs-lisp
+<<<<<<< HEAD
 (defun void/switch-to-messages ()
   (interactive)
   (select-window (display-buffer (get-buffer "*Messages*"))))
+=======
+(leaf ivy
+  :hook emacs-startup-hook
+  :setq
+  (ivy-height . 18)
+  (ivy-wrap                     . t)
+  (ivy-fixed-height-minibuffer  . t)
+  (ivy-use-selectable-prompt    . t)
+  (ivy-use-virtual-buffers      . t)
+  (ivy-virtual-abbreviate       . 'full)
+  (ivy-on-delete-error-function . nil)
+  (ivy-use-selectable-prompt    . t)
+  (ivy-initial-inputs-alist     . nil)
+  (ivy-count-format             . ""))
+>>>>>>> 3d5a7835c635aac68d47d9056bd703dced70bc43
 #+end_src
 
 **** main org file
@@ -2605,9 +2700,24 @@ of the Emacs frame are recorded after they expire.
 :END:
 
 #+begin_src emacs-lisp
+<<<<<<< HEAD
 (defun void/switch-to-todo-file ()
   (interactive)
   (switch-to-buffer (find-file void:todo-file)))
+=======
+(leaf counsel
+  :hook ivy-mode-hook
+  :commands counsel-org-goto
+  :setq
+  (counsel-find-file-ignore-regexp . "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
+  (counsel-describe-function-function . #'helpful-callable)
+  (counsel-describe-variable-function . #'helpful-variable)
+  ;; Add smart-casing and compressed archive searching (-zS) to default
+  ;; command arguments:
+  (counsel-rg-base-command . "rg -zS --no-heading --line-number --color never %s .")
+  (counsel-ag-base-command . "ag -zS --nocolor --nogroup %s")
+  (counsel-pt-base-command . "pt -zS --nocolor --nogroup -e %s"))
+>>>>>>> 3d5a7835c635aac68d47d9056bd703dced70bc43
 #+end_src
 
 **** turn on debug-mode
@@ -2835,12 +2945,20 @@ Somtimes I might want to adjust this.
 https://www.emacswiki.org/emacs/TransposeFrame
 
 #+begin_src emacs-lisp
+<<<<<<< HEAD
 (leaf transpose-frame
   :commands (transpose-frame
              flip-frame
              flop-frame
              rotate-frame
              rotate-frame-clockwise))
+=======
+(leaf abbrev
+  :hook (prog-mode-hook org-mode-hook)
+  :defer-config
+  (add-hook 'kill-emacs-hook #'write-abbrev-file)
+  (setq-default abbrev-file-name (concat void:data-dir "abbrev.el")))
+>>>>>>> 3d5a7835c635aac68d47d9056bd703dced70bc43
 #+end_src
 
 ** windows
@@ -3084,12 +3202,32 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
+<<<<<<< HEAD
 (push (list (rx "*helm")
             '(display-buffer-in-side-window)
             '(window-height . 0.5)
             '(side . bottom)
             '(slot . 99))
       display-buffer-alist)
+=======
+(leaf company
+  :hook prog-mode-hook
+  :bind (:company-active-map
+         ([tab] . company-select-next)
+         ([backtab] . company-select-previous)
+         ("C-k"     . company-select-previous)
+         ("C-j"     . company-select-next))
+  :setq
+  (company-frontends . '(company-pseudo-tooltip-frontend))
+  (company-tooltip-align-annotations . t)
+  (company-show-numbers . t)
+  (company-dabbrev-downcase . nil)
+  (company-idle-delay . 0.15)
+  (company-tooltip-limit . 14)
+  (company-minimum-prefix-length . 1)
+  (company-minimum-prefix-length . 1)
+  (company-require-match . 'never))
+>>>>>>> 3d5a7835c635aac68d47d9056bd703dced70bc43
 #+end_src
 
 **** helm-core
