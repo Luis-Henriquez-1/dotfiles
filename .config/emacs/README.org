@@ -694,11 +694,11 @@ If none of the fonts work, just use the default system font."
 :ID: 4bf24b65-6f23-4e42-930e-4d43f766545c
 :END:
 
- Face attribute height is a magnitude of 10 greater than what we typically
- use as font sizes (eg. font-size 14 corresponds to a face-height of 140).
- I want to make sure I don't input 14 thinking about font size (it's
- happened before and it's a huge pain resetting the font-size when the
- font is super small). Therefore, I check the code.
+Face attribute height is a magnitude of 10 greater than what we typically
+use as font sizes (eg. font-size 14 corresponds to a face-height of 140).
+I want to make sure I don't input 14 thinking about font size (it's
+happened before and it's a huge pain resetting the font-size when the
+font is super small). Therefore, I check the code.
 
 #+begin_src emacs-lisp
 (defun void/set-font-size ()
