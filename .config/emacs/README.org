@@ -5990,7 +5990,7 @@ We want escape to be a general "quit everything".
         (t (keyboard-quit))))
 #+end_src
 
-***** TODO keychord integration                                       :disabled:
+***** TODO keychord integration
 
 Sometimes we don't have access to a convenient escape key--I mean that caps-lock
 is not bound to escape. Or, perhaps, we might find it faster or preferable to
@@ -6000,9 +6000,9 @@ This is better than evil escape as it only binds in insert.
 
 #+begin_src emacs-lisp
 (leaf key-chord
-  :hook evil-mode-hook
-  ;; (:init (add-hook 'evil-mode-hook (lambda () (quiet! (key-chord-mode 1)))))
+  :after-call (evil-insert-state evil-emacs-state)
   :defer-config
+  (quiet! (key-chord-mode 1))
   (general-define-key :states '(visual insert)
                       (general-chord "jk") 'evil-force-normal-state
                       (general-chord "kj") 'evil-force-normal-state)
