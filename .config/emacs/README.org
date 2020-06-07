@@ -2095,6 +2095,7 @@ evaluated.
                `((defadvice! ,fname (&rest _)
                    :before ,leaf--value
                    (void:log "Loading %S..." ',leaf--name)
+                   (require ',leaf--name)
                    ,@(mapcar (lambda (fn) `(advice-remove ',fn #',fname)) leaf--value)
                    (fmakunbound #',fname))
                  ,@leaf--body)))))
