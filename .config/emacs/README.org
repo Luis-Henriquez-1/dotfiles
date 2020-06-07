@@ -722,7 +722,6 @@ font is super small). Therefore, I check the code.
                      font-size)))
         (progn
           (set-face-attribute 'default nil :height font-size)
-          (setq void:font-size font-size)
           (message "Your Font Size was %s. Font size is now: %s"
                    old-font-size
                    font-size))
