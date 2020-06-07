@@ -1086,6 +1086,28 @@ evaluated.
       leaf-normalize)
 #+end_src
 
+*** TODO =before-call= keyword
+
+#+begin_src emacs-lisp
+(let ((form '(:before-call
+              (let ((fname (intern (concat "leaf:load-" (symbol-name leaf--name)))))
+               `((defun ,fname (&rest _)
+                  (void:log "Loading %S..." ',leaf--name)
+                  (require ',leaf--name)
+                  ,@(mapcar (lambda (fn) `(advice-remove ',fn #',fname)) leaf--value)
+                  (fmakunbound #',fname))
+                 ,@(mapcar (lambda (fn) `(advice-add #',fn :before #',fname))
+                    leaf--value)
+                 ,@leaf--body)))))
+  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :hook form)))
+
+(push '((eq leaf--key :before-call)
+        (if (listp (car leaf--value))
+            (car leaf--value)
+          leaf--value))
+      leaf-normalize)
+#+end_src
+
 *** TODO straight keyword
 
 The straight keyword require's the package's name.
@@ -2165,8 +2187,8 @@ functions which open external linux applications.
 #+begin_src emacs-lisp
 (leaf exwm
   :hook (exwm-mode-hook . hide-mode-line-mode)
-  ;; (:before-call void/open-qutebrowser counsel-linux-app void/open-emacs-instance)
-  :setq (exwm-replace nil)
+  :before-call (void/open-qutebrowser counsel-linux-app void/open-emacs-instance)
+  :setq (exwm-replace . nil)
   :defer-config
   (exwm-init)
   ;; Enable the clipboard.
@@ -6941,7 +6963,7 @@ have to set out to look for a file with =dired=.
 
 #+begin_src emacs-lisp
 (leaf recentf
-  ;; :before-call find-file
+  :before-call find-file
   ;; (:load-incrementally easymenu tree-widget timer)
   :ensure nil
   :commands recentf-open-files
@@ -7473,7 +7495,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
 
 #+begin_src emacs-lisp
 (leaf evil-magit
-  ;; :before-call magit-status
+  :before-call magit-status
   :defer-config
   (shut-up! (evil-magit-init))
   (setq evil-magit-state 'normal)
