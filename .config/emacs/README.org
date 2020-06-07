@@ -706,10 +706,7 @@ font is super small). Therefore, I check the code.
   (interactive)
   (let* ((old-font-size (face-attribute 'default :height))
          (prompt "The font size is %d. What do you want to change it to? ")
-         (font-size (->> old-font-size
-                         (format prompt)
-                         (read-string)
-                         (string-to-number)))
+         (font-size (string-to-number (read-string (format prompt old-font-size))))
          (digits (+ 1 (floor (log font-size 10)))))
 
     ;; Make the font-size be 3 digits (Do what I mean not what I say).
