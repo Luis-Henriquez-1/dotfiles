@@ -5053,7 +5053,7 @@ great idea! It makes it really easy to see which parentheses go together.
   :setq (rainbow-delimiters-max-face-count . 9))
 #+end_src
 
-** edit-indirect                                                      :disabled:
+** edit-indirect
 :PROPERTIES:
 :ID: 82e6a83b-f238-46e1-bcc2-a23bddf412be
 :END:
@@ -5076,7 +5076,9 @@ mainly for consistency.
 #+begin_src emacs-lisp
 (leaf edit-indirect
   :after org
-  ;; (:before-call org/edit:description-at-point org/dwim-edit-source-block)
+  :require t
+  ;; :before-call (org/edit:description-at-point
+  ;;               org/dwim-edit-source-block)
   )
 #+end_src
 
