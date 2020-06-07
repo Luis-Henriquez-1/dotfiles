@@ -1727,10 +1727,10 @@ This hook happens during `emacs-startup-hook'.")
   "Run all hooks in `void:start-emacs-hook-list'."
   :hook emacs-startup-hook
   ;; In case I want more hooks in future use a loop.
-  (--each '(void:start-emacs-hook)
-    (void:log "Executing %s" it)
-    (unless it (void:log "%s is nil!" it))
-    (run-hook-wrapped it #'void:try-run-hook)))
+  (dolist (hook '(void:start-emacs-hook))
+    (void:log "Executing %s" hook)
+    (unless hook (void:log "%s is nil!" hook))
+    (run-hook-wrapped hook #'void:try-run-hook)))
 #+end_src
 
 ****** quit
@@ -5425,7 +5425,7 @@ file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
 it. It's pretty smart and very convenient.
 
 #+begin_src emacs-lisp
-(leaf aggressive-indent :hook emacs-lisp-mode)
+(leaf aggressive-indent :hook emacs-lisp-mode-hook)
 #+end_src
 
 *** electric indent
