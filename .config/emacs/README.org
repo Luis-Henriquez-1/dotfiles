@@ -2093,7 +2093,7 @@ evaluated.
 (let ((form '(:before-call
               (let ((fname (intern (concat "leaf:load-" (symbol-name leaf--name)))))
                `((defadvice! ,fname (&rest _)
-                   :before ,@leaf--value
+                   :before ,leaf--value
                    (void:log "Loading %S..." ',leaf--name)
                    ,@(mapcar (lambda (fn) `(advice-remove ',fn #',fname)) leaf--value)
                    (fmakunbound #',fname))
