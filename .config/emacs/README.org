@@ -7460,18 +7460,17 @@ that restarts emacs. I haven't tested this in EXWM mode.
 (leaf magit
   :commands magit-status magit-get-current-branch
   ;; (:load-incrementally f s with-editor git-commit package eieio lv transient)
+  :bind (:magit-status-mode-map
+         ([remap magit-mode-bury-buffer] . magit/quit))
   :setq
-  (magit-completing-read-function
-   (if (featurep 'ivy)
-       #'ivy-completing-read
-     #'magit-builtin-completing-read))
-  (magit-revision-show-gravatars '("^Author:     " . "^Commit:     "))
-  (magit-diff-refine-hunk t)
-  (magit-auto-revert-mode nil)
+  (magit-completing-read-function . (if (featurep 'ivy)
+                                        #'ivy-completing-read
+                                      #'magit-builtin-completing-read))
+  (magit-revision-show-gravatars . '("^Author:     " . "^Commit:     "))
+  (magit-diff-refine-hunk . t)
+  (magit-auto-revert-mode . nil)
   :defer-config
-  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode)
-  (general-def magit-status-mode-map
-    [remap magit-mode-bury-buffer] #'magit/quit))
+  (add-hook 'magit-popup-mode-hook #'hide-mode-line-mode))
 #+end_src
 
 *** quitting
