@@ -668,7 +668,7 @@ frame. So here I'm making the default font for all Emacs frames =void:font=.
 If none of the fonts work, just use the default system font."
   ;; :when (display-graphic-p)
   :around frame-notice-user-settings
-  (condition-case err
+  (condition-case nil
       (progn (apply orig-fn args)
              (void:log "Font is: %s" (face-attribute 'default :font)))
     (error
