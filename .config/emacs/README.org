@@ -9841,6 +9841,7 @@ to open another emacs instance.
 (define-leader-key!
   :infix "a"
   ""  (list :ignore t                       :wk "app")
+  "a" (list :def #'counsel-linux-app :wk "open app")
   "E" (list :def #'elfeed                   :wk "elfeed")
   "d" (list :def #'deer                     :wk "deer")
   "r" (list :def #'ranger                   :wk "ranger")
