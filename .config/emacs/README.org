@@ -2108,6 +2108,27 @@ evaluated.
       leaf-normalize)
 #+end_src
 
+**** =:after-call= keyword
+
+#+begin_src emacs-lisp
+(let ((form '(:after-call
+              (let ((fname (intern (concat "leaf:load-" (symbol-name leaf--name)))))
+               `((defadvice! ,fname (&rest _)
+                   :after ,leaf--value
+                   (void:log "Loading %S..." ',leaf--name)
+                   (require ',leaf--name)
+                   ,@(mapcar (lambda (fn) `(advice-remove ',fn #',fname)) leaf--value)
+                   (fmakunbound #',fname))
+                 ,@leaf--body)))))
+  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :hook form)))
+
+(push '((eq leaf--key :after-call)
+        (if (listp (car leaf--value))
+            (car leaf--value)
+          leaf--value))
+      leaf-normalize)
+#+end_src
+
 **** TODO straight keyword
 
 The straight keyword require's the package's name.
