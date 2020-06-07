@@ -758,10 +758,9 @@ is called.")
   ;; :unless (daemonp)
   :hook void:init-ui-hook
   (when (and void:theme (not (memq void:theme custom-enabled-themes)))
-    (let ((void:-prefer-theme-elc t))
-      (condition-case nil
-          (load-theme void:theme t)
-        (error (void:log "Could not load %s" void:theme))))))
+    (condition-case nil
+        (load-theme void:theme t)
+      (error (void:log "Could not load %s" void:theme)))))
 #+end_src
 
 ***** loading theme
@@ -783,29 +782,6 @@ example, if I'm using evil I need to update the cursor color.
   (run-hooks 'void:after-load-theme-hook))
 #+end_src
 
-***** prefer compiled theme
-:PROPERTIES:
-:ID: 8cec5f61-80c0-46bd-9cd4-8a9d3df5a6a2
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:-prefer-theme-elc nil
-  "If non-nil, `load-theme' will prefer the compiled theme.
- Do not set this directly, this is let-bound in `void:init-theme-h'.")
-
-(defadvice! void:prefer-compiled-theme-a (orig-fn &rest args)
-  "Make `load-theme' prioritize the byte-compiled theme.
-This advice has no effect if `void:-prefer-theme-elc' is nil."
-  :around load-theme
-  (if (or (null after-init-time) void:-prefer-theme-elc)
-      (cl-letf* ((old-locate-file (symbol-function 'locate-file))
-                 ((symbol-function 'locate-file)
-                  (lambda (filename path &optional _suffixes predicate)
-                    (funcall old-locate-file filename path '("c" "") predicate))))
-        (apply orig-fn args))
-    (apply orig-fn args)))
-#+end_src
-
 ***** disable old themes first
 :PROPERTIES:
 :ID: 9d2f985b-8b0f-497f-982b-6f69c62179a9
@@ -821,30 +797,6 @@ a new theme.
   :around load-theme
   (mapc #'disable-theme custom-enabled-themes)
   (apply orig-fn args))
-#+end_src
-
-***** reloading
-:PROPERTIES:
-:ID: b1acf723-444b-4392-96e8-c7ee85f7dbf3
-:END:
-
-#+begin_src emacs-lisp
-(defhook! void:reload-theme-in-frame-maybe-h (frame)
-  "Reload the theme in new daemon or tty frames."
-  :hook after-make-frame-functions-hook
-  (when (and void:theme
-             (framep frame)
-             (not (eq void:last-window-system (framep-on-display frame))))
-    (with-selected-frame frame
-      (load-theme void:theme t))
-    (setq void:last-window-system (framep-on-display frame))))
-
-(defhook! void:reload-theme-maybe-h (_frame)
-  "Reload the theme after closing the last frame of a type."
-  :hook after-delete-frame-functions-hook
-  (unless (cl-find void:last-window-system (frame-list) :key #'framep-on-display)
-    (setq void:last-window-system nil)
-    (void:reload-theme-in-frame-h (selected-frame))))
 #+end_src
 
 *** logging                                                                :eac:
