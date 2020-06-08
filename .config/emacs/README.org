@@ -1885,7 +1885,7 @@ I like to view Emacs as a program that has the lisp interpreter as well as other
 core functionality which is meant to be extended by external packages. External
 packages add important features to Emacs which the Emacs devel team may not have
 had time to add, or didn't foresee. Packages are what allow Emacs the ability to
-compete (and win IMO) against other "modern" text editors.
+compete and win against other "modern" text editors.
 
 *** straight.el
 :PROPERTIES:
