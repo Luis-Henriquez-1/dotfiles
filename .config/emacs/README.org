@@ -2240,7 +2240,6 @@ you can "discover" the commands as you go along.
 
 #+begin_src emacs-lisp
 (leaf which-key
-  ;; :hook pre-command-hook
   :hook emacs-startup-hook
   :setq
   (which-key-sort-uppercase-first . nil)
@@ -5865,6 +5864,29 @@ cursor color will update.
     (remove-hook 'void:after-load-theme-hook #'evil-refresh-cursor)))
 #+end_src
 
+**** normal state everywhere
+
+#+begin_src emacs-lisp
+(defhook! evil:make-normal-state-default-state-h ()
+  :hook evil-mode-hook
+  (setq evil-normal-state-modes (append evil-emacs-state-modes evil-normal-state-modes))
+  (setq evil-emacs-state-modes nil)
+  (setq evil-motion-state-modes nil))
+
+(defadvice! evil:treat-motion-as-normal-state (orig-fn &rest args)
+  "Advice for `evil-make-overriding-map' that inhibits motion state."
+  :around evil-make-overriding-map
+  (-let [(keymap state copy) args]
+    (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
+
+(defadvice! evil:set-initial-state (orig-fn &rest args)
+  :around evil-set-initial-state
+  (-let [(mode state) args]
+    (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
+
+(advice-add #'evil-motion-state :override #'evil-normal-state)
+#+end_src
+
 **** insert state in minibuffer
 :PROPERTIES:
 :ID: a23137c5-62a0-4e77-9e51-6a7372dac703
@@ -5897,25 +5919,6 @@ This variable will be nil when the minibuffer is closed.")
   "Restore state after minibuffer."
   (evil-change-state evil:state-before-minibuffer)
   (setq evil:state-before-minibuffer nil))
-#+end_src
-
-**** normal state everywhere
-
-It is more complicated having motion state around. At first I thought it would
-be nice to have a state that could be dedicated to.
-
-#+begin_src emacs-lisp
-(defhook! evil:make-normal-state-default-state-h ()
-  :hook evil-mode-hook
-  (setq evil-normal-state-modes (append evil-emacs-state-modes evil-normal-state-modes))
-  (setq evil-emacs-state-modes nil)
-  (setq evil-motion-state-modes nil))
-
-(defadvice! evil:treat-motion-as-normal-state (orig-fn &rest args)
-  "Advice for `evil-make-overriding-map' that inhibits motion state."
-  :around evil-make-overriding-map
-  (-let [(keymap state copy) args]
-    (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 #+end_src
 
 **** escape
