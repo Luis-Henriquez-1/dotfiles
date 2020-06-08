@@ -6332,7 +6332,7 @@ larger text objects. It's saves me keystrokes.
   :defer-config
   (defadvice! void:quit-expand-region-a ()
     "Properly abort an expand-region region."
-    (:before evil-escape evil:escape-a)
+    :before evil-escape evil:escape-a
     (when (memq last-command '(er/expand-region er/contract-region))
       (er/contract-region 0))))
 #+end_src
