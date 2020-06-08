@@ -2030,7 +2030,9 @@ leaf's setq does not correctly handle setting variables to forms that need to be
 evaluated.
 
 #+begin_src emacs-lisp
-(push '((memq leaf--key '(:setq :custom))
+(push '((memq leaf--key (list :setq :pre-setq :setq-default
+                              :custom :custom*
+                              :pl-setq :pl-pre-setq :pl-setq-default :pl-custom))
         (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
       leaf-normalize)
 #+end_src
