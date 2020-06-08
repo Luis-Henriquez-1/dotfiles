@@ -7334,7 +7334,7 @@ which only some files are hidden. That's wierd, so I get rid of it.
 :END:
 
 #+begin_src emacs-lisp
-(leaf all-the-icons-dired :hook dired-mode)
+(leaf all-the-icons-dired :hook ranger-mode-hook)
 #+end_src
 
 ** restart emacs
