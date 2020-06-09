@@ -1841,7 +1841,7 @@ be.
     (void/tangle-org-file)))
 #+end_src
 
-****** tangle asynchronously upon saving
+****** tangle asynchronously upon saving                              :disabled:
 :PROPERTIES:
 :ID: 00298d4e-6b18-4203-874f-f5a877a5cabf
 :END:
@@ -3699,6 +3699,7 @@ This is where abbrev can fill in.
 
 #+begin_src emacs-lisp
 (leaf abbrev
+  :ensure nil
   ;; :tag "built-in"
   ;; :hook (prog-mode-hook org-mode-hook)
   :pre-setq (abbrev-file-name . (concat VOID-DATA-DIR "abbrev.el"))
