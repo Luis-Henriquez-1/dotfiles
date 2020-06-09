@@ -3691,9 +3691,9 @@ This is where abbrev can fill in.
 #+begin_src emacs-lisp
 (leaf abbrev
   :hook (prog-mode-hook org-mode-hook)
+  :pre-setq (abbrev-file-name . (concat VOID-DATA-DIR "abbrev.el"))
   :defer-config
   (add-hook 'kill-emacs-hook #'write-abbrev-file)
-  (setq-default abbrev-file-name (concat VOID-DATA-DIR "abbrev.el")))
 #+end_src
 
 *** abbreviation algorithm
