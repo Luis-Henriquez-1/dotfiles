@@ -6968,7 +6968,7 @@ again, you are taken to the location you left off. This is very convenient.
                (-non-nil kill-ring))))
 #+end_src
 
-** bookmarks                                                          :disabled:
+** bookmarks
 :PROPERTIES:
 :ID: e1a569f8-d27a-4e0c-924a-3b123c62b6a2
 :END:
@@ -6980,11 +6980,12 @@ of topics on his site, check out the [[http://ergoemacs.org/emacs/bookmark.html 
 read this [[https://emacs.stackexchange.com/questions/51853/retracing-steps-with-emacs-when-programming-exploring — search - Retracing steps with emacs (When programming /exploring) - Emacs Stack Exchange][question]].
 
 #+begin_src emacs-lisp
-(leaf bookmark-plus)
 (leaf bookmark
-  :setq
+  :ensure nil
+  :tag "built-in"
+  :pre-setq
   (bookmark-default-file . (concat VOID-DATA-DIR "bookmarks"))
-  (bookmark-save-flag    . t))
+  (bookmark-save-flag . t))
 #+end_src
 
 ** elfeed
