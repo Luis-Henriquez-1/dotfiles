@@ -2045,7 +2045,8 @@ evaluated.
                `((defadvice! ,fname (&rest _)
                    :before ,leaf--value
                    (void-log "Loading %S..." ',leaf--name)
-                   (require ',leaf--name)
+                   (unless (require ',leaf--name t nil)
+                    (message "Error loading %S" ',leaf--name))
                    ,@(mapcar (lambda (fn) `(advice-remove ',fn #',fname)) leaf--value)
                    (fmakunbound #',fname))
                  ,@leaf--body)))))
@@ -2066,7 +2067,8 @@ evaluated.
                `((defadvice! ,fname (&rest _)
                    :after ,leaf--value
                    (void-log "Loading %S..." ',leaf--name)
-                   (require ',leaf--name)
+                   (unless (require ',leaf--name t nil)
+                    (message "Error loading %S" ',leaf--name))
                    ,@(mapcar (lambda (fn) `(advice-remove ',fn #',fname)) leaf--value)
                    (fmakunbound #',fname))
                  ,@leaf--body)))))
