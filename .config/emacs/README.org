@@ -854,29 +854,29 @@ one large org file.
 :END:
 
 These are important files and directories that I end up referring to often in my
-code. Well, not so much =void-readme-file= and =void-todo-file= but the others are
+code. Well, not so much =VOID-README-FILE= and =VOID-TODO-FILE= but the others are
 referenced alot.
 
 #+begin_src emacs-lisp
-(defvar void-emacs-dir (file-truename user-emacs-directory)
+(defconst VOID-EMACS-DIR (file-truename user-emacs-directory)
   "Path to `user-emacs-directory'.")
 
-(defconst void-init-file (concat void-emacs-dir "init.el")
+(defconst VOID-INIT-FILE (concat VOID-EMACS-DIR "init.el")
   "Path to the elisp file that bootstraps Void startup.")
 
-(defconst void-readme-file (concat void-emacs-dir "README.org")
+(defconst VOID-README-FILE (concat VOID-EMACS-DIR "README.org")
   "Path to the Org file that when that Void.")
 
-(defconst void-org-dir (concat void-emacs-dir "org/")
+(defconst VOID-ORG-DIR (concat VOID-EMACS-DIR "org/")
   "Path where Void's org files go.")
 
-(defconst void-screenshot-dir (concat void-emacs-dir "screenshots/")
+(defconst VOID-SCREENSHOT-DIR (concat VOID-EMACS-DIR "screenshots/")
   "Path where any screenshots I take with Void go.")
 
-(defconst void-test-file (concat void-emacs-dir "test.org")
+(defconst VOID-TEST-FILE (concat VOID-EMACS-DIR "test.org")
   "Path to the file that contains all of Void's tests.")
 
-(defconst void-todo-file (concat void-org-dir "emacs.org")
+(defconst VOID-TODO-FILE (concat VOID-ORG-DIR "emacs.org")
   "Path where all of Void's emacs related todos go.")
 #+end_src
 
@@ -886,14 +886,14 @@ referenced alot.
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-local-dir (concat void-emacs-dir ".local/")
+(defconst VOID-LOCAL-DIR (concat VOID-EMACS-DIR ".local/")
   "Path to the directory for local Emacs files.
 Files that need to exist, but I don't typically want to see go here.")
 
-(defvar void-data-dir (concat void-local-dir "data/")
+(defconst VOID-DATA-DIR (concat VOID-LOCAL-DIR "data/")
   "Path to the directory where Void data files are stored.")
 
-(defvar void-packages-dir (concat void-local-dir "packages/")
+(defconst VOID-PACKAGES-DIR (concat VOID-LOCAL-DIR "packages/")
   "Path to the directory where packages are stored.")
 #+end_src
 
@@ -906,7 +906,7 @@ I create the directories that don't exist. But I assume they already exist if
 Void is compiled.
 
 #+begin_src emacs-lisp
-(dolist (dir (list void-local-dir void-data-dir void-org-dir))
+(dolist (dir (list VOID-LOCAL-DIR VOID-DATA-DIR VOID-ORG-DIR))
   (make-directory dir t))
 #+end_src
 
@@ -915,7 +915,7 @@ Void is compiled.
 :ID: 40367976-12a0-4ccd-9aff-4df144a73edf
 :END:
 
-**** don't litter =void-emacs-dir=
+**** don't litter =VOID-EMACS-DIR=
 :PROPERTIES:
 :ID: 3ddeb65c-9df6-4ede-9644-eb106b3ba1dd
 :END:
@@ -926,13 +926,13 @@ emacs and home directory with garbage.
 
 #+begin_src emacs-lisp
 ;; File name in which to write a list of all auto save file names.
-(setq auto-save-list-file-name (concat void-data-dir "autosave"))
+(setq auto-save-list-file-name (concat VOID-DATA-DIR "autosave"))
 ;; Directory for server authentication files.
 (after! server
-  (setq server-auth-dir (concat void-data-dir "server/")))
+  (setq server-auth-dir (concat VOID-DATA-DIR "server/")))
 
 ;; Directory of score files for games which come with GNU Emacs.
-(setq shared-game-score-directory (concat void-data-dir "shared-game-score/"))
+(setq shared-game-score-directory (concat VOID-DATA-DIR "shared-game-score/"))
 #+end_src
 
 **** tramp
@@ -943,8 +943,8 @@ emacs and home directory with garbage.
 #+begin_src emacs-lisp
 (after! tramp
   (setq tramp-backup-directory-alist backup-directory-alist)
-  (setq tramp-auto-save-directory (concat void-data-dir "tramp-auto-save/"))
-  (setq tramp-persistency-file-name (concat void-data-dir "tramp-persistency.el")))
+  (setq tramp-auto-save-directory (concat VOID-DATA-DIR "tramp-auto-save/"))
+  (setq tramp-persistency-file-name (concat VOID-DATA-DIR "tramp-persistency.el")))
 #+end_src
 
 **** desktop
@@ -954,7 +954,7 @@ emacs and home directory with garbage.
 
 #+begin_src emacs-lisp
 (after! desktop
-  (setq desktop-dirname (concat void-data-dir "desktop"))
+  (setq desktop-dirname (concat VOID-DATA-DIR "desktop"))
   (setq desktop-base-file-name "autosave")
   (setq desktop-base-lock-name "autosave-lock"))
 #+end_src
@@ -965,8 +965,8 @@ emacs and home directory with garbage.
 :END:
 
 #+begin_src emacs-lisp
-(setq custom-file (concat void-data-dir "custom.el"))
-(setq custom-theme-directory (concat void-local-dir "themes/"))
+(setq custom-file (concat VOID-DATA-DIR "custom.el"))
+(setq custom-theme-directory (concat VOID-LOCAL-DIR "themes/"))
 #+end_src
 
 **** url cache
@@ -976,8 +976,8 @@ emacs and home directory with garbage.
 
 #+begin_src emacs-lisp
 (after! url-cache
-  (setq url-cache-directory         (concat void-data-dir "url/cache/"))
-  (setq url-configuration-directory (concat void-data-dir "url/configuration/")))
+  (setq url-cache-directory         (concat VOID-DATA-DIR "url/cache/"))
+  (setq url-configuration-directory (concat VOID-DATA-DIR "url/configuration/")))
 #+end_src
 
 *** defaults
@@ -1011,22 +1011,22 @@ usually too low for modern machines.
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-gc-cons-threshold-max (eval-when-compile (* 256 1024 1024))
+(defconst VOID-GC-CONS-THRESHOLD-MAX (eval-when-compile (* 256 1024 1024))
   "The upper limit for `gc-cons-threshold'.
 When VOID is performing computationally intensive operations,
 `gc-cons-threshold' is set to this value.")
 
-(defvar void-gc-cons-threshold (eval-when-compile (* 16 1024 1024))
+(defconst VOID-GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
   "The default value for `gc-cons-threshold'.
 If you experience freezing, decrease this. If you experience stuttering,
 increase this.")
 
-(defvar void-gc-cons-percentage-max 0.6
+(defconst VOID-GC-CONS-PERCENTAGE-MAX 0.6
   "The upper limit for `gc-cons-percentage'.
 When VOID is performing computationally intensive operations,
 `gc-cons-percentage' is set to this value.")
 
-(defvar void-gc-cons-percentage 0.1
+(defconst VOID-GC-CONS-PERCENTAGE 0.1
   "The default value for `gc-cons-percentage'.")
 #+end_src
 
@@ -1036,8 +1036,8 @@ When VOID is performing computationally intensive operations,
 :END:
 
 #+begin_src emacs-lisp
-(setq gc-cons-threshold void-gc-cons-threshold-max
-      gc-cons-percentage void-gc-cons-percentage-max)
+(setq gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX
+      gc-cons-percentage VOID-GC-CONS-PERCENTAGE-MAX)
 #+end_src
 
 ****** TODO Restore GC after delay
@@ -1053,11 +1053,11 @@ packages are still being incrementally loaded (see [[file:main.org::*Load Increm
 (defun void-restore-gc-cons-threshold ()
   (void-log "Restoring...gc-cons-threshold: %d -> %d | gc-cons-percentage %.2f -> %.2f"
             gc-cons-threshold
-            void-gc-cons-threshold
+            VOID-GC-CONS-THRESHOLD
             gc-cons-percentage
-            void-gc-cons-percentage)
-  (setq gc-cons-threshold void-gc-cons-threshold
-        gc-cons-percentage void-gc-cons-percentage))
+            VOID-GC-CONS-PERCENTAGE)
+  (setq gc-cons-threshold VOID-GC-CONS-THRESHOLD)
+  (setq gc-cons-percentage VOID-GC-CONS-PERCENTAGE))
 
 (run-with-idle-timer 7 nil #'void-restore-gc-cons-threshold)
 #+end_src
@@ -1184,7 +1184,7 @@ Emacs starts up with a default screen setup. No, thanks. I want to mention that
 #+begin_src emacs-lisp
 ;; Alist of filename patterns and backup directory names.
 ;; Non-nil means make a backup of a file the first time it is saved.
-(setq-default backup-directory-alist (list (cons ".*" (concat void-data-dir "backup/"))))
+(setq-default backup-directory-alist (list (cons ".*" (concat VOID-DATA-DIR "backup/"))))
 (setq-default make-backup-files nil)
 ;; Control use of version numbers for backup files.
 (setq-default version-control nil)
@@ -1613,8 +1613,8 @@ Set this to nil to disable incremental loading.")
 This function tries to load a package from PACKAGES, a list of packages. It then
   calls itself on the rest of PACKAGES in `void-incremental-loading-interval'
   idle seconds."
-  (let ((gc-cons-threshold void-gc-cons-threshold-max)
-        (gc-cons-percentage void-gc-cons-percentage-max)
+  (let ((gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX)
+        (gc-cons-percentage VOID-GC-CONS-PERCENTAGE-MAX)
         (file-name-handler-alist nil)
         (package (car packages))
         (rest (cdr packages)))
@@ -1754,8 +1754,8 @@ clearer and easier to read I alias [[helpvar:kill-emacs-hook][kill-emacs-hook]] 
 (defhook! void-run-quit-emacs-hook-h ()
   "Run hooks in `void-quit-emacs-hook'."
   :append kill-emacs-hook
-  (let ((gc-cons-threshold void-gc-cons-threshold-max)
-        (gc-cons-percentage void-gc-cons-percentage-max))
+  (let ((gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX)
+        (gc-cons-percentage VOID-GC-CONS-PERCENTAGE-MAX))
     (run-hooks 'void-quit-emacs-hook)))
 #+end_src
 
@@ -1808,9 +1808,9 @@ hook variables use action verbs in their names not nouns. So the =exit= in
 (defvaralias 'minibuffer-enter-hook 'minibuffer-setup-hook)
 
 (defhook! void-boost-garbage-collection-h ()
-  "Boost garbage collection settings to `void-gc-cons-threshold-max'."
+  "Boost garbage collection settings to `VOID-GC-CONS-THRESHOLD-MAX'."
   :hook minibuffer-enter-hook
-  (setq gc-cons-threshold void-gc-cons-threshold-max))
+  (setq gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX))
 
 (defhook! void-defer-garbage-collection-h ()
   "Reset garbage collection settings to `void-gc-cons-threshold' after delay."
@@ -1847,17 +1847,17 @@ be.
 :END:
 
 This is another attempt to keep my =main.el= file in sync as much as possible with
-[[helpvar:void-readme-file][void-main-org-file]]. ~void-tangle-on-save-h~ is called whenever a buffer is being
+[[helpvar:VOID-README-FILE][void-main-org-file]]. ~void-tangle-on-save-h~ is called whenever a buffer is being
 saved to a file. The reason why I use ~cl-letf~ to temporarily override [[helpfn:load][load]] is
-because ~void-init-file~ already contains all the code I need so I don't want it
+because ~VOID-INIT-FILE~ already contains all the code I need so I don't want it
 to waste time loading ~void-main-elisp-file~.
 
 #+begin_src emacs-lisp
 (defhook! void-tangle-on-save-h ()
-  "Tangle `void-readme-file' asynchronously when it is saved."
+  "Tangle `VOID-README-FILE' asynchronously when it is saved."
   :hook after-save-hook
   (when (and (require 'async nil t)
-             (string= (file-truename void-readme-file)
+             (string= (file-truename VOID-README-FILE)
                       (or (buffer-file-name (current-buffer)) ""))
              (void-needs-tangling-p))
     (async-start
@@ -1873,7 +1873,7 @@ to waste time loading ~void-main-elisp-file~.
      #'(lambda (_)
          (void-log
           (concat (if (void-needs-tangling-p) "✕ failed" "✓ succeeded")
-           " tangling `void-readme-file'."))))))
+           " tangling `VOID-README-FILE'."))))))
 #+end_src
 
 ** Package Management
@@ -1901,15 +1901,15 @@ completely reproducable.
 :END:
 
 The path of the straight directory within emacs is hardcoded into
-straight so we need to trick it into thinking =void-packages-dir= is the
+straight so we need to trick it into thinking =VOID-PACKAGES-DIR= is the
 our emacs directory. This needs to be done before bootstraping
 straight, else the straight directory will be created anyway. I got
 this from Doom's straight branch.
 
 #+begin_src emacs-lisp
 (defun straight:use-packages-dir-a (orig-fn &rest args)
-  "Use `void-packages-dir' for straight directory."
-  (let ((user-emacs-directory void-packages-dir))
+  "Use `VOID-PACKAGES-DIR' for straight directory."
+  (let ((user-emacs-directory VOID-PACKAGES-DIR))
     (apply orig-fn args)))
 
 (advice-add #'straight--emacs-dir :around #'straight:use-packages-dir-a)
@@ -1949,8 +1949,8 @@ This code initializes straight if it's not already installed.
 (defvar boostrap-version 5 "Bootstrap version for straight.el")
 (defun straight:init-fn ()
   "Initialize `straight.el'."
-  (let* ((user-emacs-directory void-packages-dir)
-         (straight-dir (concat void-packages-dir "straight/"))
+  (let* ((user-emacs-directory VOID-PACKAGES-DIR)
+         (straight-dir (concat VOID-PACKAGES-DIR "straight/"))
          (bootstrap-file (concat straight-dir
                                  "repos/straight.el/straight.el")))
     (unless (featurep 'straight)
@@ -2545,7 +2545,7 @@ of the Emacs frame are recorded after they expire.
 #+begin_src emacs-lisp
 (defun void/switch-to-main-org-file ()
   (interactive)
-  (find-file (concat void-emacs-dir "README.org")))
+  (find-file (concat VOID-EMACS-DIR "README.org")))
 #+end_src
 
 **** main todo file
@@ -2556,7 +2556,7 @@ of the Emacs frame are recorded after they expire.
 #+begin_src emacs-lisp
 (defun void/switch-to-todo-file ()
   (interactive)
-  (switch-to-buffer (find-file void-todo-file)))
+  (switch-to-buffer (find-file VOID-TODO-FILE)))
 #+end_src
 
 **** turn on debug-mode
@@ -2579,7 +2579,7 @@ of the Emacs frame are recorded after they expire.
 (defun void/switch-to-init-org-file ()
   "Switch to Void's init.el file."
   (interactive)
-  (switch-to-buffer void-init-file))
+  (switch-to-buffer VOID-INIT-FILE))
 #+end_src
 
 **** quit emacs no prompt
@@ -3000,7 +3000,7 @@ be inserted and interactively completed.
   (yas-triggers-in-field . t)
   :defer-config
   ;; Give a name to the main (and only for now) yas-snippet directory.
-  (defvar yasnippet:dir (concat void-data-dir "snippets/")
+  (defvar yasnippet:dir (concat VOID-DATA-DIR "snippets/")
     "Main yasnippet directory.")
   (unless (file-exists-p yasnippet:dir)
     (mkdir yasnippet:dir))
@@ -3176,7 +3176,7 @@ about Helm is that it's too bloated and slow.
 (leaf helm-dash
   :commands helm-dash
   :setq
-  (helm-dash-docsets-path . (concat void-data-dir "/dash-docsets"))
+  (helm-dash-docsets-path . (concat VOID-DATA-DIR "/dash-docsets"))
   (helm-dash-browser-func . (if (executable-find "w3m") #'w3m #'browse-url)))
 #+end_src
 
@@ -3300,7 +3300,7 @@ command is likely to be.
   :hook (ivy-prescient-mode . prescient-persist-mode)
   :setq
   (prescient-filter-method . '(literal regexp initialism fuzzy))
-  (prescient-save-file . (concat void-data-dir "prescient-save.el"))
+  (prescient-save-file . (concat VOID-DATA-DIR "prescient-save.el"))
   (ivy-prescient-sort-commands . '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
                                    counsel-git-grep counsel-ag counsel-rg counsel-imenu
                                    counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
@@ -3594,7 +3594,7 @@ a file.
   "Search for a line and jump to it."
   (interactive)
   (let* ((selectrum-should-sort-p nil)
-         (gc-cons-threshold void-gc-cons-threshold-max)
+         (gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX)
          (line-choices (let ((minimum-line-number (line-number-at-pos (point-min) t))
                              (buffer-text-lines (split-string (buffer-string) "\n")))
                          (--map-indexed (format "%d\t%s" it-index it) buffer-text-lines)))
@@ -3693,7 +3693,7 @@ This is where abbrev can fill in.
   :hook (prog-mode-hook org-mode-hook)
   :defer-config
   (add-hook 'kill-emacs-hook #'write-abbrev-file)
-  (setq-default abbrev-file-name (concat void-data-dir "abbrev.el")))
+  (setq-default abbrev-file-name (concat VOID-DATA-DIR "abbrev.el")))
 #+end_src
 
 *** abbreviation algorithm
@@ -4823,7 +4823,7 @@ Youtube contains a *huge* library of videos.
 
 #+begin_src emacs-lisp
 (leaf ivy-youtube
-  :setq (ivy-youtube-history-file . (concat void-data-dir "ivy-youtube-history")))
+  :setq (ivy-youtube-history-file . (concat VOID-DATA-DIR "ivy-youtube-history")))
 #+end_src
 
 ** emms
@@ -4842,7 +4842,7 @@ Youtube contains a *huge* library of videos.
 (leaf emms
   :commands emms
   :setq
-  (emms-directory . (concat void-data-dir "emms/"))
+  (emms-directory . (concat VOID-DATA-DIR "emms/"))
   (emms-seek-seconds . 5)
   (emms-player-list . '(emms-player-mpd))
   (emms-volume-change-function . 'emms-volume-mpd-change)
@@ -5727,7 +5727,7 @@ very useful to me.
 (leaf spell-fu
   :ensure (:host gitlab :repo "ideasman42/emacs-spell-fu")
   :commands spell-fu-mode
-  :setq (spell-fu-directory . (concat void-data-dir "spell-fu/")))
+  :setq (spell-fu-directory . (concat VOID-DATA-DIR "spell-fu/")))
 #+end_src
 
 *** autocapitalize
@@ -6240,7 +6240,7 @@ Why not just go to the end of the ="= like any other around operator?
 #+begin_src emacs-lisp
 (leaf auto-yasnippet
   :defer-config (advice-add #'aya-expand :after #'evil-insert-state)
-  :setq (aya-persist-snippets-dir . (concat void-local-dir "auto-snippets/")))
+  :setq (aya-persist-snippets-dir . (concat VOID-LOCAL-DIR "auto-snippets/")))
 #+end_src
 
 ***** yasnippet
@@ -6471,7 +6471,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   ;; em-dirs em-glob em-hist em-ls em-prompt
   ;; em-script em-term em-unix
   :setq
-  (eshell-directory-name . (concat void-data-dir "eshell/"))
+  (eshell-directory-name . (concat VOID-DATA-DIR "eshell/"))
   (eshell-history-file-name . (concat eshell-directory-name "history"))
   (eshell-prefer-lisp-functions . nil)
   (eshell-scroll-to-bottom-on-input . 'all)
@@ -6891,7 +6891,7 @@ have to set out to look for a file with =dired=.
   (recentf-max-menu-items . 0)
   (recentf-max-saved-items . 700)
   :custom
-  (recentf-save-file . (concat void-data-dir "recentf"))
+  (recentf-save-file . (concat VOID-DATA-DIR "recentf"))
   (recentf-auto-cleanup . 'never)
   (recentf-filename-handlers . '(file-truename abbreviate-file-name)))
 #+end_src
@@ -6921,7 +6921,7 @@ have to set out to look for a file with =dired=.
             ;; ignore private Void temp files (but not all of them)
             #'(lambda (file)
                 (-any-p (-partial #'file-in-directory-p file)
-                 (list void-data-dir)))))
+                 (list VOID-DATA-DIR)))))
 #+end_src
 
 ** saveplace                                                         :built-in:
@@ -6937,7 +6937,7 @@ again, you are taken to the location you left off. This is very convenient.
 (leaf save-place
   :ensure nil
   ;; (:after-call after-find-file)
-  :setq (save-place-file . (concat void-data-dir "saveplace")))
+  :setq (save-place-file . (concat VOID-DATA-DIR "saveplace")))
 
 (defadvice! void-recenter-on-load-saveplace-a (&rest _)
   "Recenter on cursor when loading a saved place."
@@ -6958,7 +6958,7 @@ again, you are taken to the location you left off. This is very convenient.
   (savehist-save-minibuffer-history . t)
   (savehist-autosave-interval       . nil)
   (savehist-additional-variables    . '(kill-ring search-ring regexp-search-ring))
-  (savehist-file                    . (concat void-data-dir "savehist")))
+  (savehist-file                    . (concat VOID-DATA-DIR "savehist")))
 
 (defhook! void-unpropertize-kill-ring-h ()
   "Remove text properties from `kill-ring'."
@@ -6983,7 +6983,7 @@ read this [[https://emacs.stackexchange.com/questions/51853/retracing-steps-with
 (leaf bookmark-plus)
 (leaf bookmark
   :setq
-  (bookmark-default-file . (concat void-data-dir "bookmarks"))
+  (bookmark-default-file . (concat VOID-DATA-DIR "bookmarks"))
   (bookmark-save-flag    . t))
 #+end_src
 
@@ -7007,8 +7007,8 @@ in time to see older posts.
   :commands elfeed
   :setq
   (elfeed-search-filter         . "@1-year-old")
-  (elfeed-db-directory          . (concat void-data-dir "elfeed/db/"))
-  (elfeed-enclosure-default-dir . (concat void-data-dir "elfeed/enclosures/"))
+  (elfeed-db-directory          . (concat VOID-DATA-DIR "elfeed/db/"))
+  (elfeed-enclosure-default-dir . (concat VOID-DATA-DIR "elfeed/enclosures/"))
   (elfeed-show-entry-switch     . #'pop-to-buffer)
   (elfeed-show-entry-delete     . #'elfeed-kill-buffer)
   (shr-max-image-proportion     . 0.8))
@@ -7024,7 +7024,7 @@ in time to see older posts.
   :after elfeed
   :require t
   :setq
-  (rmh-elfeed-org-files      . (list (concat void-org-dir "elfeed.org")))
+  (rmh-elfeed-org-files      . (list (concat VOID-ORG-DIR "elfeed.org")))
   (rmh-elfeed-org-tree-id    . "ELFEED")
   (rmh-elfeed-org-ignore-tag . "IGNORE"))
 #+end_src
@@ -7291,7 +7291,7 @@ inspired file manager]] of also called =ranger=.
   (ranger-hide-cursor . t)
   (ranger-dont-show-binary . t))
 
-(setq image-dired-dir (concat void-data-dir "image-dir"))
+(setq image-dired-dir (concat VOID-DATA-DIR "image-dir"))
 (setq dired-omit-verbose nil)
 #+end_src
 
@@ -7363,9 +7363,9 @@ that restarts emacs. I haven't tested this in EXWM mode.
 (leaf transient
   :setq
   (transient-default-level . 5)
-  (transient-levels-file   . (concat void-data-dir "transient/levels"))
-  (transient-values-file   . (concat void-data-dir "transient/values"))
-  (transient-history-file  . (concat void-data-dir "transient/history")))
+  (transient-levels-file   . (concat VOID-DATA-DIR "transient/levels"))
+  (transient-values-file   . (concat VOID-DATA-DIR "transient/values"))
+  (transient-history-file  . (concat VOID-DATA-DIR "transient/history")))
 #+end_src
 
 *** magit
@@ -7614,7 +7614,7 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 #+begin_src emacs-lisp
 (leaf persistent-scratch
   :commands persistent-scratch-restore
-  :setq (persistent-scratch-save-file . (concat void-data-dir "scratch")))
+  :setq (persistent-scratch-save-file . (concat VOID-DATA-DIR "scratch")))
 #+end_src
 
 ** alert
@@ -7947,7 +7947,7 @@ these overlays.
 
 [[https://github.com/alphapapa/outshine][outshine]] is a clever package that tries to make elisp mode more like org mode.
 It colors certain comments like org headings, and adds function for convertion
-from elisp to org. My [[helpvar:void-init-file][void-init-file]] is written with =outshine= in mind.
+from elisp to org. My [[helpvar:VOID-INIT-FILE][void-init-file]] is written with =outshine= in mind.
 
 #+begin_src emacs-lisp
 (leaf outshine
@@ -8021,7 +8021,7 @@ files, or even converting an org mode document into another format. As the name
 
 #+begin_src emacs-lisp
 (setq org-directory "~/Documents/org/")
-(defvar void-todo-file (concat org-directory "todo.org"))
+(defvar VOID-TODO-FILE (concat org-directory "todo.org"))
 (leaf org
   ;; :load-incrementally
   ;; calendar find-func format-spec org-macs org-compat
@@ -8753,8 +8753,8 @@ the full outline path as opposed to just the headlines.
 #+begin_src emacs-lisp
 (after! org
   (setq-default org-refile-targets
-                `((,void-readme-file . (:maxlevel . 10))
-                  (,void-todo-file . (:maxlevel . 1)))))
+                `((,VOID-README-FILE . (:maxlevel . 10))
+                  (,VOID-TODO-FILE . (:maxlevel . 1)))))
 #+end_src
 
 **** refile to specific buffer
@@ -8848,7 +8848,7 @@ template element as you're writing it.
   (prepend! org-capture-templates
     (doct (list "Emacs"
                 :keys "e"
-                :file (lambda nil (concat void-org-dir "emacs.org"))
+                :file (lambda nil (concat VOID-ORG-DIR "emacs.org"))
                 :prepend t
                 :empty-lines 1
                 :ID (lambda () (require 'uuidgen) (uuidgen-4))
@@ -8876,7 +8876,7 @@ in the future. I use this template for this.
   (prepend! org-capture-templates
     (doct (list "Notes"
                 :keys "n"
-                :file (lambda nil (concat void-org-dir "notes.org"))
+                :file (lambda nil (concat VOID-ORG-DIR "notes.org"))
                 :prepend t
                 :empty-lines 1
                 :ID (lambda () (require 'uuidgen) (uuidgen-4))
@@ -8896,7 +8896,7 @@ in the future. I use this template for this.
 (prepend! org-capture-templates
   (doct (list "TEST"
               :keys "t"
-              :file (lambda nil (concat void-org-dir "test.org"))
+              :file (lambda nil (concat VOID-ORG-DIR "test.org"))
               :empty-lines 1
               :contexts '((:when #'org-at-heading-p))
               :ID #'uuidgen-4
@@ -9338,7 +9338,7 @@ hindsight, using this function is even easier than using ~window-beg~ and
 :END:
 
 #+begin_src emacs-lisp
-(setq org-id-locations-file (concat void-data-dir "org-id-locations"))
+(setq org-id-locations-file (concat VOID-DATA-DIR "org-id-locations"))
 #+end_src
 
 *** keybindings                                                        :binding:
@@ -9529,7 +9529,7 @@ dashboard.
 (defadvice! dashboard:custom-banner-path-a (&rest _)
   "Use the Void text banner."
   :override dashboard-get-banner-path
-  (concat void-local-dir "void-banner.txt"))
+  (concat VOID-LOCAL-DIR "void-banner.txt"))
 #+end_src
 
 ** hide-mode-line
