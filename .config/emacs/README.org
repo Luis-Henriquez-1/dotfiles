@@ -105,13 +105,13 @@ advantage of it fully. But if it's possible.
 :ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
 :END:
 
-[[helpvar:void-debug-mode][void-debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
+[[helpvar:void-debug-p][void-debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
 is to serve as an indicator of whether the current Void instance is run for
 debugging. When Void is set up for debugging it prints out many messages about
 what its doing via [[hfn:void-log][void-log]].
 
 #+begin_src emacs-lisp
-(defvar void-debug-mode (or (getenv "DEBUG") init-file-debug)
+(defvar void-debug-p (or (getenv "DEBUG") init-file-debug)
   "When non-nil Void will log more with `log!'.
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
@@ -342,7 +342,7 @@ Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-fro
   :setq
   (exec-path-from-shell-check-startup-files . nil)
   (exec-path-from-shell-arguments . (delete "-i" exec-path-from-shell-arguments))
-  (exec-path-from-shell-debug . void-debug-mode)
+  (exec-path-from-shell-debug . void-debug-p)
   :init
   (nconc! exec-path-from-shell-variables
     '("LC_CTYPE" "LC_ALL" "LANG"))
@@ -811,12 +811,12 @@ buffer.
 
 #+begin_src emacs-lisp
 (defun void-log (format-string &rest args)
-  "Log to *Messages* if `void-debug-mode' is on.
+  "Log to *Messages* if `void-debug-p' is on.
 Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
 Accepts the same arguments as `message'."
-  (when void-debug-mode
+  (when void-debug-p
     (let ((inhibit-message (active-minibuffer-window)))
-      (when void-debug-mode
+      (when void-debug-p
         (apply #'message (concat (propertize "VOID " 'face 'font-lock-comment-face)
                                  format-string)
                args)))))
@@ -1172,7 +1172,7 @@ Emacs starts up with a default screen setup. No, thanks. I want to mention that
 (setq initial-major-mode 'fundamental-mode)
 (setq initial-scratch-message nil)
 (setq initial-buffer-choice
-      (if void-debug-mode (lambda () (get-buffer "*Messages*")) t))
+      (if void-debug-p (lambda () (get-buffer "*Messages*")) t))
 (fset #'display-startup-echo-area-message #'ignore)
 #+end_src
 
@@ -1272,7 +1272,7 @@ to abbreviate it at this point.
 ;; Non-nil to scroll the *compilation* buffer window as output appears.
 (setq-default compilation-scroll-output 'first-error)
 ;; Non-nil means print messages describing progress of byte-compiler.
-(setq-default byte-compile-verbose void-debug-mode)
+(setq-default byte-compile-verbose void-debug-p)
 ;; List of warnings that the byte-compiler should issue (t for all).
 (setq-default byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
 #+end_src
@@ -1777,7 +1777,7 @@ natural, then, that I want to keep a close eye on it. The hook
   :append emacs-startup-hook
   (setq void-init-time
         (float-time (time-subtract after-init-time before-init-time)))
-  (when void-debug-mode
+  (when void-debug-p
     (void-log "init-time: %f seconds" void-init-time)))
 #+end_src
 
@@ -2359,7 +2359,7 @@ while the user is working.
   :hook emacs-startup-hook
   :setq
   (gcmh-idle-delay . 10)
-  (gcmh-verbose . void-debug-mode)
+  (gcmh-verbose . void-debug-p)
   (gcmh-high-cons-threshold . (* 16 1024 1024)))
 #+end_src
 
@@ -2567,7 +2567,7 @@ of the Emacs frame are recorded after they expire.
 #+begin_src emacs-lisp
 (defun void/enable-debug-mode ()
   (interactive)
-  (setq void-debug-mode t))
+  (setq void-debug-p t))
 #+end_src
 
 **** switch to init file
@@ -2993,7 +2993,7 @@ be inserted and interactively completed.
   ;; (:hook (org-mode-hook . yas-minor-mode-on))
   ;; (add-hook 'org-mode-hook #'yas-minor-mode-on)
   :setq
-  (yas-verbosity . (if void-debug-mode 3 0))
+  (yas-verbosity . (if void-debug-p 3 0))
   (yas-indent-line . 'auto)
   (yas-prompt-functions . '(yas-completing-prompt yas-ido-prompt))
   (yas-use-menu . nil)
