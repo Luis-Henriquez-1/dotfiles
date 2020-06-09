@@ -7663,7 +7663,7 @@ on the buffer you'd like to edit.
 :ID: 51e3b9b1-0e74-431e-a113-fe6f86a4b22a
 :END:
 
-** lisp                                                          :lisp:disabled:
+** lisp
 :PROPERTIES:
 :ID: 9b7ec12e-e62b-447a-90dd-2fef0cc952ad
 :END:
