@@ -1815,7 +1815,7 @@ hook variables use action verbs in their names not nouns. So the =exit= in
 (defhook! void-defer-garbage-collection-h ()
   "Reset garbage collection settings to `void-gc-cons-threshold' after delay."
   :append minibuffer-exit-hook
-  (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold void-gc-cons-threshold))))
+  (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold VOID-GC-CONS-THRESHOLD))))
 #+end_src
 
 ***** tangling
