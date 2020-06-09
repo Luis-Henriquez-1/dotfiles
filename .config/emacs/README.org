@@ -8439,23 +8439,13 @@ use =edit-indirect= to edit source blocks.
 #+begin_src emacs-lisp
 (leaf org-src
   :setq
-  ;; Non-nil means show persistent exit help message while editing src examples.
   (org-edit-src-persistent-message . nil)
-  ;; How the source code edit buffer should be displayed.
   (org-src-window-setup . 'current-window)
-  ;; When non-nil, fontify code in code blocks.
   (org-src-fontify-natively . t)
-  ;; Don't ask me about returning to edit buffer, just do it.
-  ;; Non-nil means ask before switching to an existing edit buffer.
   (org-src-ask-before-returning-to-edit-buffer . nil)
-  ;; If non-nil preserve leading whitespace characters on export.
   (org-src-preserve-indentation . t)
-  ;; If non-nil, the effect of TAB in a code block is as if it were
   (org-src-tab-acts-natively . t)
-  ;; Confirm before evaluation.
   (org-confirm-babel-evaluate . nil)
-  ;; Executing a source block should not insert text into the buffer by default.
-  ;; Default arguments to use when evaluating a source block.
   (org-babel-default-header-args . '((:session . "none")
                                      (:results . "silent")
                                      (:exports . "code")
