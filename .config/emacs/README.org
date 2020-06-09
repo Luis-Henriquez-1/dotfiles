@@ -7661,7 +7661,7 @@ on the buffer you'd like to edit.
   (magit-status "/yadm::"))
 #+end_src
 
-* Programming Languages
+* Languages
 :PROPERTIES:
 :ID: 51e3b9b1-0e74-431e-a113-fe6f86a4b22a
 :END:
