@@ -6945,7 +6945,7 @@ again, you are taken to the location you left off. This is very convenient.
   (when buffer-file-name (ignore-errors (recenter))))
 #+end_src
 
-** savehist                                                          :built-in:
+** savehist
 :PROPERTIES:
 :ID: 23867595-32fd-4270-97bd-3101cc681f00
 :END:
