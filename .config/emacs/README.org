@@ -7024,12 +7024,7 @@ I might consider doing this asynchronously.
 :END:
 
 #+begin_src emacs-lisp
-(after! dired
-  (setq dired-recursive-copies  'always)
-  (setq dired-recursive-deletes 'top)
-  (setq global-auto-revert-non-file-buffers t)
-  (setq auto-revert-verbose nil)
-  (setq dired-hide-details-hide-symlink-targets nil))
+
 #+end_src
 
 **** dired
@@ -7038,10 +7033,12 @@ I might consider doing this asynchronously.
 :END:
 
 #+begin_src emacs-lisp
-(leaf dired)
-
-(general-def dired-mode-map
-  [remap quit-window] (lambda nil (interactive) (quit-window t)))
+(leaf dired
+  :ensure nil
+  :setq
+  (dired-recursive-copies . 'always)
+  (dired-recursive-deletes . 'top)
+  (dired-hide-details-hide-symlink-targets . nil))
 #+end_src
 
 **** sort directories first
