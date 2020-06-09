@@ -2607,60 +2607,14 @@ Window management is one of the most important things to get right if you're
 going to be efficient in emacs (that is unless you're using primarily frames
 instead of windows).
 
-** popup management
-:PROPERTIES:
-:ID: 7c569b2d-28c5-463d-8aa7-63c99a5563c8
-:END:
-
-*** popup types
-:PROPERTIES:
-:ID: b4bdb42b-825c-4f8a-972e-bd72a3e49eb4
-:END:
+** shackle                                                            :disabled:
 
 #+begin_src emacs-lisp
-(defmacro defpopup! (matcher &rest properties)
-  (declare (indent defun))
-  `(push (list ,matcher ,@(-map #'macroexp-quote properties))
-         display-buffer-alist))
-#+end_src
-
-*** eshell
-:PROPERTIES:
-:ID: 30241402-b1b5-4a9b-9180-c144303f7c7c
-:END:
-
-#+begin_src emacs-lisp
-(defpopup! (rx "*" (opt "e") "shell")
-  (display-buffer-in-side-window)
-  (window-height . 0.40)
-  (side . bottom)
-  (slot . 1))
-#+end_src
-
-*** help
-:PROPERTIES:
-:ID: d4fb343e-9b59-4224-af4b-9a80219ceaa9
-:END:
-
-#+begin_src emacs-lisp
-(defpopup! (rx "*" (or "H" "h") "elp" (opt "full"))
-  (display-buffer-in-side-window)
-  (window-height . 0.5)
-  (side . bottom)
-  (slot . 25))
-#+end_src
-
-*** messages
-:PROPERTIES:
-:ID: 79e0cafc-a780-432d-9085-942ccf8250a9
-:END:
-
-#+begin_src emacs-lisp
-(defpopup! (rx "*Messages")
-  (display-buffer-in-side-window)
-  (window-height 0.4)
-  (side . bottom)
-  (slot . 10))
+(leaf shackle
+  :hook emacs-startup-hook
+  :defer-config
+  (push (list (rx "*" (opt "e") "shell") :regexp t :align t :size 0.4))
+  (setq shackle-rules '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :size 0.4)))
 #+end_src
 
 ** ace-window
@@ -5060,22 +5014,6 @@ mainly for consistency.
 #+begin_src emacs-lisp
 (leaf edit-indirect
   :before-call (org/edit:description-at-point org/dwim-edit-source-block))
-#+end_src
-
-*** popups for edit indirect buffers
-:PROPERTIES:
-:ID: 4dfef630-7943-47b1-92d8-df70fc86c554
-:END:
-
-In general edit indirect buffers should show up at the bottom of my display at
-about 50% of the frame width.
-
-#+begin_src emacs-lisp
-(defpopup! (rx "*edit-indirect")
-  (display-buffer-in-side-window)
-  (window-height . 0.50)
-  (side . bottom)
-  (slot . 0))
 #+end_src
 
 *** list of headline elements
