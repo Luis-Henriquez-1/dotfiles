@@ -2084,20 +2084,21 @@ evaluated.
 The straight keyword require's the package's name.
 
 #+begin_src emacs-lisp
-(let ((form '(:void-straight `(,@(mapcar (lambda (elm) `(straight:install-package ',elm)) leaf--value) ,@leaf--body))))
+(let ((form '(:void-straight
+              `(,@(mapcar (lambda (elm) `(straight:install-package ',elm)) leaf--value)
+                ,@leaf--body))))
   (setq leaf-keywords (leaf-insert-list-before leaf-keywords :straight form)))
 
 (push '(:ensure . :void-straight) leaf-alias-keyword-alist)
 
 (push `((or (memq leaf--key '(:void-straight))
             (eq (alist-get leaf--key leaf-alias-keyword-alist) :void-straight))
-        (list
-         (cond ((listp (car-safe leaf--value))
-                (cons leaf--name (car leaf--value)))
-               ((eq t (car leaf--value))
-                leaf--name)
-               (t
-                (car leaf--value)))))
+        (cond ((eq t (car leaf--value))
+               (list leaf--name))
+              ((eq nil (car leaf--value))
+               nil)
+              ((listp (car-safe leaf--value))
+               (list (cons leaf--name (car leaf--value))))))
       leaf-normalize)
 #+end_src
 
