@@ -226,7 +226,7 @@ from pulling (or failing to pull) in autoloaded macros/features.
 (defalias 'disable! 'ignore!)
 #+end_src
 
-*** OS                                                                :disabled:
+*** OS
 :PROPERTIES:
 :ID: e3d140d2-77c3-46bd-b94d-ab7196190a67
 :END:
@@ -7008,7 +7008,7 @@ I might consider doing this asynchronously.
   (play-sound-file sound))
 #+end_src
 
-** file browsing                                                      :disabled:
+** file browsing
 :PROPERTIES:
 :ID: a8a9edfe-a4c0-4531-92d5-a59991f4af92
 :END:
@@ -8420,7 +8420,7 @@ options. For this reason I wrote my own insert heading functions.
   (org-demote))
 #+end_src
 
-***** source blocks                                                      :block:
+***** source blocks
 :PROPERTIES:
 :ID: 2bb1b8ef-f41c-4dfa-8e47-549326f7ce05
 :END:
