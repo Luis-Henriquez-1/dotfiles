@@ -2081,7 +2081,7 @@ evaluated.
       leaf-normalize)
 #+end_src
 
-**** TODO straight keyword
+**** straight keyword
 
 The straight keyword require's the package's name.
 
@@ -5488,7 +5488,7 @@ Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regul
     (smartparens-mode 1)))
 #+end_src
 
-*** lispyville                                                           :lispy:
+*** lispyville
 :PROPERTIES:
 :ID: 9d22714a-086d-49a1-9f8b-66da3b646110
 :END:
@@ -6888,7 +6888,7 @@ again, you are taken to the location you left off. This is very convenient.
 #+begin_src emacs-lisp
 (leaf save-place
   :ensure nil
-  ;; (:after-call after-find-file)
+  :after-call after-find-file
   :setq (save-place-file . (concat VOID-DATA-DIR "saveplace")))
 
 (defadvice! void-recenter-on-load-saveplace-a (&rest _)
