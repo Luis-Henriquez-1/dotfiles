@@ -3310,6 +3310,14 @@ command is likely to be.
   (prescient-persist-mode 1))
 #+end_src
 
+**** amx
+
+#+begin_src emacs-lisp
+(leaf amx
+  :hook ivy-mode-hook
+  :pre-setq (amx-save-file . (concat VOID-DATA-DIR "amx-save-file")))
+#+end_src
+
 **** counsel
 :PROPERTIES:
 :ID: f1f77877-1cbc-40c4-b62c-4239a0c338e6
