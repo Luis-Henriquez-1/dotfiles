@@ -7453,44 +7453,31 @@ that restarts emacs. I haven't tested this in EXWM mode.
       (server-start))))
 #+end_src
 
-** TODO autorevert                                                         :built-in:
+** TODO autorevert
 :PROPERTIES:
 :ID: 1d7c8bac-e523-4251-bb3c-b85f592fbfc3
 :END:
 
-Quoting =DOOM=:
-
-"Instead of using `auto-revert-mode' or `global-auto-revert-mode` we employ lazy
- autoreverting...
-
- This is because autorevert abuses the heck out of inotify handles which can
- grind Emacs to a halt if you do expensive IO (outside of Emacs) on the
- files you have open (like compression). We only really need to revert
- changes when we switch to a buffer or when we focus the Emacs frame."
-
 #+begin_src emacs-lisp
 (leaf autorevert
   ;; :after-call switch-to-buffer find-file
+  :ensure nil
   :setq
   (auto-revert-verbose . t)
   (auto-revert-use-notify . nil)
   (auto-revert-stop-on-user-input . nil)
   (revert-without-query . (list "."))
   :defer-config
-  (void-log "adding autorevert hooks")
-
-  (add-hook 'focus-in-hook #'void-auto:revert-visible-buffers-h)
-  (add-hook 'after-save-hook #'void-auto:revert-visible-buffers-h)
-  (add-hook 'void-after-switch-buffer-hook #'void-auto:revert-buffer-h)
-
   (defun void-auto:revert-buffer-h ()
     "Auto revert current buffer, if necessary."
+    :hook void-after-switch-buffer-hook
     (unless (or (bound-and-true-p auto-revert-mode)
                 (active-minibuffer-window))
       (auto-revert-handler)))
 
-  (defun void-auto:revert-visible-buffers-h ()
+  (defhook! void-auto:revert-visible-buffers-h ()
     "Auto revert stale buffers in visible windows, if necessary."
+    :hook (focus-in-hook after-save-hook)
     (--each (-uniq (-map #'window-buffer (window-list)))
       (with-current-buffer it
         (void-auto:revert-buffer-h)))))
