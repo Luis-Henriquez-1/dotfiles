@@ -5620,7 +5620,7 @@ very useful to me.
 
 #+begin_src emacs-lisp
 (leaf lispy
-  :commands lispy-mode
+  :hook emacs-lisp-mode-hook
   :setq
   (lispy-avy-style-paren . 'at-full)
   (lispy-eval-display-style . 'overlay)
