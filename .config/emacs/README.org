@@ -5601,7 +5601,7 @@ Sometimes =evil-normal-state= enters visual state.
   "M-v" #'lispy-convolute-sexp)
 #+end_src
 
-*** TODO lispy                                                           :lispy:
+*** lispy
 :PROPERTIES:
 :ID: 4b4bfc73-e4e3-44f0-9553-61ac5182c946
 :END:
