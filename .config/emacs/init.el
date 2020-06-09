@@ -34,9 +34,9 @@
 (defun void-needs-tangling-p ()
   "Whether `void-main-org-file' needs to be tangled.
 Tangling needs to occur when either `void-main-elisp-file' does not exist or
-`void-main-org-file' is newer than `void:main-elisp-file'."
+`void-main-org-file' is newer than `void-main-elisp-file'."
   (or (not (file-exists-p void-main-elisp-file))
-      (file-newer-than-file-p void-main-org-file void:main-elisp-file)))
+      (file-newer-than-file-p void-main-org-file void-main-elisp-file)))
 
 ;; *** write to a file
 
@@ -144,7 +144,7 @@ Tangling needs to occur when either `void-main-elisp-file' does not exist or
   (declare (indent defun))
   `(let* ((case-fold-search nil)
           (heading-or-block-regexp
-           ,(concat void-headline-regexp "\\|" void:source-block-regexp))
+           ,(concat void-headline-regexp "\\|" void-source-block-regexp))
           (last-level nil)
           (stars) (level 1) (todo-keyword) (priority-cookie)
           (headline) (curr-tags) (all-tags) (indentation) (lang)
@@ -189,7 +189,7 @@ Tangling needs to occur when either `void-main-elisp-file' does not exist or
                         (concat "\n" (void-wrap-string-form '(eval-and-compile) body)))
                        ((member "disabled" tags) nil)
                        (t (concat "\n" body)))))))
-    (void-write-file void:main-elisp-file (concat ";; -*- lexical-binding: t; -*-\n" code))))
+    (void-write-file void-main-elisp-file (concat ";; -*- lexical-binding: t; -*-\n" code))))
 
 (when (void-needs-tangling-p)
   (void/tangle-org-file))
