@@ -7957,20 +7957,15 @@ files, or even converting an org mode document into another format. As the name
 :END:
 
 #+begin_src emacs-lisp
-(setq org-directory "~/Documents/org/")
-(defvar VOID-TODO-FILE (concat org-directory "todo.org"))
 (leaf org
-  ;; :load-incrementally
-  ;; calendar find-func format-spec org-macs org-compat
-  ;; org-faces org-entities org-list org-pcomplete org-src org-footnote
-  ;; org-macro ob org org-agenda org-capture
+  :pre-setq
+  (org-directory . (file-truename "~/Documents/org/"))
+  (org-archive-location . (concat org-directory "archive.org::"))
+  (org-default-notes-file . (concat org-directory "notes.org"))
   :setq
   (org-adapt-indentation . nil)
   (org-cycle-separator-lines . 2)
   (outline-blank-line . t)
-  (org-directory . (file-truename "~/Documents/org/"))
-  (org-archive-location . (concat org-directory "archive.org::"))
-  (org-default-notes-file . (concat org-directory "notes.org"))
   (org-enforce-todo-dependencies . t)
   (org-use-fast-tag-selection . nil)
   (org-tags-column . -80)
