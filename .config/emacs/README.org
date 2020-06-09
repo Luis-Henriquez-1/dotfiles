@@ -8696,11 +8696,10 @@ Org Agenda provides a neat method of displaying todo information.
 
 #+begin_src emacs-lisp
 (leaf org-agenda
-  :ensure nil
-  :commands org-agenda-list
+  :after org
+  :commands (org-agenda org-agenda-list)
   :setq
-  (org-agenda-files . (--map (concat org-directory it)
-                             '("todo.org" "emacs.org")))
+  (org-agenda-files . (--map (concat org-directory it) '("todo.org" "emacs.org")))
   (org-agenda-start-on-weekday . 0)
   (org-agenda-timegrid-use-ampm . nil)
   (org-agenda-skip-unavailable-files . nil)
