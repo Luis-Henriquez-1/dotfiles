@@ -3998,6 +3998,15 @@ have 20,000+ emails in a particular account. Unsurprisingly, when we're getting
 so many emails, it's easy to become overwhelmed. Fortunately, there are numerous
 ways to read and send emails in Emacs.
 
+** sendmail
+
+#+begin_src emacs-lisp
+(leaf sendmail
+  :setq
+  (send-mail-function . #'sendmail-send-it)
+  (mail-specify-envelope-from . t))
+#+end_src
+
 ** loaddefs
 
 These are *extremely* important lines if you use an external program as I do
@@ -4009,10 +4018,6 @@ think you want to use =smtp=.
   :ensure nil
   :setq
   ;; very important if you're using msmtp
-  (send-mail-function . #'sendmail-send-it)
-  (mail-specify-envelope-from . t)
-  (message-sendmail-envelope-from . 'header)
-  ;; (mail-envelope-from . header)
   ;; (sendmail-program (executable-find "msmtp"))
   )
 #+end_src
@@ -4029,7 +4034,7 @@ think you want to use =smtp=.
   (mail-user-agent . 'mu4e-user-agent))
 #+end_src
 
-** sending mail                                                       :disabled:
+** smtpmail
 :PROPERTIES:
 :ID: 4dc1e0a6-5441-4b3e-8b75-ed3626a59154
 :END:
@@ -4051,9 +4056,9 @@ think you want to use =smtp=.
 (leaf message
   :ensure nil
   :setq
+  (message-sendmail-envelope-from . 'header)
   (message-send-mail-function . #'smtpmail-send-it)
-  (message-kill-buffer-on-exit . t)
-  (message-send-mail-function . #'smtpmail-send-it))
+  (message-kill-buffer-on-exit . t))
 #+end_src
 
 ** mu4e
