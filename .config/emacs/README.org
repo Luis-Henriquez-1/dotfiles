@@ -5435,7 +5435,7 @@ Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regul
 
 #+begin_src emacs-lisp
 (leaf smartparens
-  :hook (emacs-lisp-mode-hook prog-mode-hook eshell-mode-hook ielm-mode-hook)
+  :hook (prog-mode-hook eshell-mode-hook ielm-mode-hook)
   :setq
   (sp-highlight-pair-overlay . nil)
   (sp-highlight-wrap-overlay . nil)
