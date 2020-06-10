@@ -5572,8 +5572,7 @@ to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]]
 Sometimes =evil-normal-state= enters visual state.
 
 #+begin_src emacs-lisp
-(general-def '(emacs insert) lispyville-mode-map
-  [escape] #'lispyville-normal-state)
+(general-def '(emacs insert) lispyville-mode-map [escape] #'lispyville-normal-state)
 (advice-add #'lispyville-normal-state :after #'evil:dwim-abort-after-escape-a)
 #+end_src
 
