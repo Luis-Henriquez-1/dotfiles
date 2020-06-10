@@ -2950,21 +2950,16 @@ be inserted and interactively completed.
 
 #+begin_src emacs-lisp
 (leaf yasnippet
-  ;; (:hook (org-mode-hook . yas-minor-mode-on))
-  ;; (add-hook 'org-mode-hook #'yas-minor-mode-on)
+  :hook (prog-mode-hook . yas-minor-mode-on)
   :setq
+  (yas-snippet-dir . (concat VOID-DATA-DIR "snippets/"))
   (yas-verbosity . (if void-debug-p 3 0))
   (yas-indent-line . 'auto)
   (yas-prompt-functions . '(yas-completing-prompt yas-ido-prompt))
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :defer-config
-  ;; Give a name to the main (and only for now) yas-snippet directory.
-  (defvar yasnippet:dir (concat VOID-DATA-DIR "snippets/")
-    "Main yasnippet directory.")
-  (unless (file-exists-p yasnippet:dir)
-    (mkdir yasnippet:dir))
-  ;; Remove GUI dropdown prompt (prefer ivy/helm)
+  (unless (file-exists-p yasnippet:dir) (mkdir yasnippet:dir))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
