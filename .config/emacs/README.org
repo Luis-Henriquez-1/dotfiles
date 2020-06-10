@@ -2606,16 +2606,6 @@ Window management is one of the most important things to get right if you're
 going to be efficient in emacs (that is unless you're using primarily frames
 instead of windows).
 
-** shackle                                                            :disabled:
-
-#+begin_src emacs-lisp
-(leaf shackle
-  :hook emacs-startup-hook
-  :defer-config
-  (push (list (rx "*" (opt "e") "shell") :regexp t :align t :size 0.4))
-  (setq shackle-rules '(("\\`\\*helm.*?\\*\\'" :regexp t :align t :size 0.4)))
-#+end_src
-
 ** ace-window
 :PROPERTIES:
 :ID: b7cb25b4-ede8-4350-846c-d5c243a4a937
