@@ -4003,21 +4003,35 @@ have 20,000+ emails in a particular account. Unsurprisingly, when we're getting
 so many emails, it's easy to become overwhelmed. Fortunately, there are numerous
 ways to read and send emails in Emacs.
 
-** settings
-:PROPERTIES:
-:ID: 89df102a-a2c9-4ece-9acc-ed90e8064ed8
-:END:
+** loaddefs
+
+These are *extremely* important lines if you use an external program as I do
+([[https://wiki.archlinux.org/index.php/Msmtp][msmtp]]) to send your email. If you don't set these variables, emacs will
+think you want to use =smtp=.
 
 #+begin_src emacs-lisp
 (leaf loaddefs
+  :ensure nil
   :setq
+  ;; very important if you're using msmtp
   (send-mail-function . #'sendmail-send-it)
   (mail-specify-envelope-from . t)
   (message-sendmail-envelope-from . 'header)
   ;; (mail-envelope-from . header)
   ;; (sendmail-program (executable-find "msmtp"))
   )
+#+end_src
 
+** simple
+:PROPERTIES:
+:ID: 89df102a-a2c9-4ece-9acc-ed90e8064ed8
+:END:
+
+#+begin_src emacs-lisp
+(leaf simple
+  :ensure nil
+  :setq
+  (mail-user-agent . 'mu4e-user-agent))
 #+end_src
 
 ** sending mail                                                       :disabled:
@@ -4028,12 +4042,23 @@ ways to read and send emails in Emacs.
 #+begin_src emacs-lisp
 (leaf smtpmail
   :disabled t
+  :ensure nil
   :setq
-  (message-send-mail-function . #'smtpmail-send-it)
   (smtp-default-mail-server . "mail.example.com")
   (smtp-smtp-server . "mail.example.com")
   (smtpmail-smtp-service . 587)
   (smtpmail-debug-info . t))
+#+end_src
+
+** message
+
+#+begin_src emacs-lisp
+(leaf message
+  :ensure nil
+  :setq
+  (message-send-mail-function . #'smtpmail-send-it)
+  (message-kill-buffer-on-exit . t)
+  (message-send-mail-function . #'smtpmail-send-it))
 #+end_src
 
 ** mu4e
@@ -4126,8 +4151,9 @@ it is definitely on my list of things to try out.
   :defer-config
   ;; Only render to html once. If the first send fails for whatever reason,
   ;; org-mu4e would do so each time you try again.
-  (add-hook 'message-send-hook
-            (lambda () (setq-local org-mu4e-convert-to-html nil))))
+  (defhook! org-mu4e-render-html-only-once-h ()
+    :hook message-send-hook
+    (setq-local org-mu4e-convert-to-html nil)))
 #+end_src
 
 *** multiple accounts
@@ -4141,18 +4167,6 @@ my mail. The subdirectories of =~/.mail= correspond to my individual email
 accounts. Until I set multiple accounts correctly it keeps prompting me to
 create folders (such as =sent/=) in the =~/.mail= directory. I think part of the
 reason I spent so much time setting this up is because.
-
-**** context
-:PROPERTIES:
-:ID: 2c9ba42f-d7f1-4fe3-bd7c-12cff2eaaf12
-:END:
-
-#+begin_src emacs-lisp
-;; start with the first (default) context;
-(setq mu4e-context-policy 'pick-first)
-;; compose with the current context, or ask
-(setq mu4e-compose-context-policy 'ask-if-none)
-#+end_src
 
 **** email accounts
 :PROPERTIES:
