@@ -5746,9 +5746,10 @@ and provides facilities for writing custom extensions. Also see our page on
   (evil-want-Y-yank-to-eol . t)
   (evil-overriding-maps    . nil)
   (evil-want-minibuffer    . t)
+  :pre-setq
+  (evil-want-keybinding                 . nil)
   :setq
   (evil-want-C-w-in-emacs-state         . nil)
-  (evil-want-keybinding                 . nil)
   (evil-want-visual-char-semi-exclusive . t)
   ;; Whether the cursor can move past the end of the line.
   (evil-move-beyond-eol                 . nil)
