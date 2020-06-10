@@ -231,7 +231,7 @@ from pulling (or failing to pull) in autoloaded macros/features.
 :ID: e3d140d2-77c3-46bd-b94d-ab7196190a67
 :END:
 
-**** =abbreviated-home-dir=                                            :windows:
+**** =abbreviated-home-dir=
 :PROPERTIES:
 :ID: 345958e8-fb62-4b27-b30e-c4e8b69804cd
 :END:
