@@ -4057,124 +4057,57 @@ therefore, has the most support (in the form of setup blogs and packages).
 
 #+begin_src emacs-lisp
 (leaf mu4e
-  :ensure (:files (:defaults "mu4e/*.el"))
+  :load-path "/usr/share/emacs/site-lisp/mu4e/"
   :commands mu4e
   :setq
-  (mail-user-agent . 'mu4e-user-agent)
-  :defer-config
-  (mu4e:init-accounts))
+  (mu4e-completing-read-function . #'completing-read)
+  (mu4e-view-show-addresses . t)
+  (mu4e-view-show-images . t)
+  (mu4e-view-image-max-width . 800)
+  (mu4e-compose-signature-auto-include . t)
+  (mu4e-compose-format-flowed . t)
+  (mu4e-get-mail-command . "mbsync -a")
+  (mu4e-index-cleanup . t)
+  (mu4e-index-lazy-check . nil)
+  (mu4e-update-interval . 180)
+  (mu4e-headers-auto-update . t)
+  (mu4e-context-policy . 'pick-first)
+  (mu4e-compose-context-policy . 'ask-if-none)
+  (mu4e-confirm-quit . nil)
+  (mu4e-header-fields . '((:human-date . 12)
+                          (:flags . 4)
+                          (:from . 25)
+                          (:subject)))
+  (mu4e-html2text-command . (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text))
+  ;; :defer-config
+  ;; (mu4e:init-accounts)
+  )
 #+end_src
 
-*** defaults
+*** mu4e headers
 :PROPERTIES:
 :ID: 8b59c5bb-180c-461e-9b1a-4a0c95cb7671
 :END:
 
-**** updating mail
-:PROPERTIES:
-:ID: 2296db4d-358e-4fbe-9051-9a0a39113436
-:END:
-
 #+begin_src emacs-lisp
-(setq mu4e-get-mail-command "mbsync -a")
-(setq mu4e-index-cleanup t)
-(setq mu4e-index-lazy-check nil)
-(setq mu4e-update-interval 180)
-(setq mu4e-headers-auto-update t)
+(leaf mu4e-headers
+  :after mu4e
+  :setq
+  (mu4e-use-fancy-chars . t)
+  (mu4e-headers-draft-mark     . (cons "D" (all-the-icons-faicon "pencil")))
+  (mu4e-headers-flagged-mark   . (cons "F" (all-the-icons-faicon "flag")))
+  (mu4e-headers-new-mark       . (cons "N" (all-the-icons-material "fiber_new")))
+  (mu4e-headers-passed-mark    . (cons "P" (all-the-icons-faicon "arrow-right")))
+  (mu4e-headers-seen-mark      . (cons "S" (all-the-icons-faicon "eye")))
+  (mu4e-headers-attach-mark    . (cons "a" (all-the-icons-material "attach_file")))
+  (mu4e-headers-replied-mark   . (cons "R" (all-the-icons-faicon "reply")))
+  (mu4e-headers-unread-mark    . (cons "u" (all-the-icons-faicon "eye-slash")))
+  (mu4e-headers-encrypted-mark . (cons "x" (all-the-icons-octicon "lock")))
+  (mu4e-headers-signed-mark    . (cons "s" (all-the-icons-faicon "certificate")))
+  (mu4e-headers-trash-mark     . (cons "T" (all-the-icons-faicon "trash"))))
 #+end_src
 
-**** html emails
-:PROPERTIES:
-:ID: a6e143db-0bf4-419c-b363-c2739996b281
-:END:
-
-#+begin_src emacs-lisp
-(setq mu4e-view-prefer-html nil)
-(setq mu4e-html2text-command
-      (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text))
-#+end_src
-
-**** composing mail
-:PROPERTIES:
-:ID: e4e18ab4-de03-4db7-9a1d-3d4f36633ece
-:END:
-
-#+begin_src emacs-lisp
-(setq mu4e-compose-signature-auto-include t)
-(setq mu4e-compose-format-flowed t)
-#+end_src
-
-**** get mail
-:PROPERTIES:
-:ID: 52c7b72a-0f3c-4798-b970-452dd6363ec9
-:END:
-
-#+begin_src emacs-lisp
-(after! mu4e
-  (setq mu4e-bookmarks nil)
-  (setq mu4e-maildir "~/.mail")
-  (setq mu4e-attachment-dir "~/.mail/.attachments")
-  (setq mu4e-change-filenames-when-moving t)
-  (setq mu4e-view-show-addresses t))
-#+end_src
-
-**** mark for headers
-:PROPERTIES:
-:ID: be60ff7c-bd77-4cdd-b59c-d0dad0483019
-:END:
-
-#+begin_src emacs-lisp
-(after! mu4e
-  (setq mu4e-use-fancy-chars t)
-  (setq mu4e-headers-draft-mark     (cons "D" (all-the-icons-faicon "pencil")))
-  (setq mu4e-headers-flagged-mark   (cons "F" (all-the-icons-faicon "flag")))
-  (setq mu4e-headers-new-mark       (cons "N" (all-the-icons-material "fiber_new")))
-  (setq mu4e-headers-passed-mark    (cons "P" (all-the-icons-faicon "arrow-right")))
-  (setq mu4e-headers-seen-mark      (cons "S" (all-the-icons-faicon "eye")))
-  (setq mu4e-headers-attach-mark    (cons "a" (all-the-icons-material "attach_file")))
-  (setq mu4e-headers-replied-mark   (cons "R" (all-the-icons-faicon "reply")))
-  (setq mu4e-headers-unread-mark    (cons "u" (all-the-icons-faicon "eye-slash")))
-  (setq mu4e-headers-encrypted-mark (cons "x" (all-the-icons-octicon "lock")))
-  (setq mu4e-headers-signed-mark    (cons "s" (all-the-icons-faicon "certificate")))
-  (setq mu4e-headers-trash-mark     (cons "T" (all-the-icons-faicon "trash"))))
-#+end_src
-
-*** header fields
-:PROPERTIES:
-:ID: 7523c254-350a-45c9-b8a6-64127f3d764d
-:END:
-
-#+begin_src emacs-lisp
-(setq mu4e-headers-fields
-      '((:human-date . 12)
-        (:flags . 4)
-        (:from . 25)
-        (:subject)))
-#+end_src
-
-*** miscellaneous defaults
-:PROPERTIES:
-:ID: dbf55a6c-6f60-4fc9-8fb6-089d10eb8980
-:END:
-
-#+begin_src emacs-lisp
-(setq mu4e-completing-read-function #'selectrum-read)
-;; visual-line-mode + auto-fill upon sending
-(setq mu4e-view-show-addresses t)
-(setq mu4e-sent-messages-behavior 'sent)
-(setq mu4e-hide-index-messages t)
-;; try to show images
-(setq mu4e-view-show-images t)
-(setq mu4e-view-image-max-width 800)
-;; configuration for sending mail
-(setq message-send-mail-function #'smtpmail-send-it)
-(setq smtpmail-stream-type 'starttls)
-(setq message-kill-buffer-on-exit t)
-;; no need to ask
-(setq mu4e-confirm-quit nil)
-#+end_src
-
-*** org integration                                                   :disabled:
+*** org mu4e
 :PROPERTIES:
 :ID: 9045b0f5-af8c-481e-914e-a19c4bbf2941
 :END:
