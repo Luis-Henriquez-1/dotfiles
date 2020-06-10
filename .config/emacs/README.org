@@ -2036,44 +2036,38 @@ evaluated.
       leaf-normalize)
 #+end_src
 
-**** TODO =before-call= keyword
+**** leaf-handler-straight!
+
+**** leaf-handler-advice-call!
 
 #+begin_src emacs-lisp
-(let ((form '(:before-call
-              (let ((fname (intern (concat "leaf:load-" (symbol-name leaf--name)))))
-               `((defadvice! ,fname (&rest _)
-                   :before ,leaf--value
-                   (void-log "Loading %S..." ',leaf--name)
-                   (unless (require ',leaf--name nil t)
-                    (message "Error loading %S" ',leaf--name))
-                   ,@(mapcar (lambda (fn) `(advice-remove ',fn #',fname)) leaf--value)
-                   (fmakunbound #',fname))
-                 ,@leaf--body)))))
-  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :hook form)))
-
-(push '((eq leaf--key :before-call)
-        (if (listp (car leaf--value))
-            (car leaf--value)
-          leaf--value))
-      leaf-normalize)
+(defmacro leaf-handler-advice-call! (package where fns)
+  "Generate the code for advising."
+  (let ((fname (intern (concat "leaf-load-" (symbol-name package) "-a"))))
+    `(progn
+       (defun ,fname (&rest _)
+         (void-log "Loading %S..." ',package)
+         (unless (require ',package nil t)
+           (message "Error loading %S" ',package))
+         ,@(mapcar (lambda (fn) `(advice-remove #',fn #',fname)) fns)
+         (fmakunbound #',fname))
+       ,@(mapcar (lambda (fn) `(advice-add #',fn ,where #',fname)) fns))))
 #+end_src
 
-**** =:after-call= keyword
+**** =before-call= and =after-call= keyword
 
 #+begin_src emacs-lisp
-(let ((form '(:after-call
-              (let ((fname (intern (concat "leaf:load-" (symbol-name leaf--name)))))
-               `((defadvice! ,fname (&rest _)
-                   :after ,leaf--value
-                   (void-log "Loading %S..." ',leaf--name)
-                   (unless (require ',leaf--name nil t)
-                    (message "Error loading %S" ',leaf--name))
-                   ,@(mapcar (lambda (fn) `(advice-remove ',fn #',fname)) leaf--value)
-                   (fmakunbound #',fname))
-                 ,@leaf--body)))))
-  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :hook form)))
+(let ((before '(:before-call `((leaf-handler-advice-call! ,leaf--name :before ,leaf--value)
+                               ,@leaf--body)))
+      (after '(:after-call `((leaf-handler-advice-call! ,leaf--name :after ,leaf--value)
+                             ,@leaf--body))))
+  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :hook before))
+  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :hook after)))
 
-(push '((eq leaf--key :after-call)
+(push :after-call leaf-defer-keywords)
+(push :before-call leaf-defer-keywords)
+
+(push '((member leaf--key '(:after-call :before-call))
         (if (listp (car leaf--value))
             (car leaf--value)
           leaf--value))
