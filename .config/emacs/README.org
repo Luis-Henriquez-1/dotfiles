@@ -5545,15 +5545,6 @@ Sometimes =evil-normal-state= enters visual state.
 :ID: 4b4bfc73-e4e3-44f0-9553-61ac5182c946
 :END:
 
-[[https://github.com/abo-abo/lispy][lispy]] is a very opinionated. But abo-abo, a prolific writer and maintainer of
-emacs packages, really put thought into it--and it sure does show. =lispy=
-operates by using position-based bindings, or bindings that are active depending
-on the position your cursor is on. The main drawback to this approach is it's
-very /tricky/ at first because you end up accidentally evaling or doing wierd
-things to lisp forms. However, I can't imagine these kind of mistakes will
-persist as you learn the mechanics of lispy. The benefit is massive: short
-evil-like bindings.
-
 For learning how to use lispy. [[https://github.com/abo-abo/lispy][the README]] and the [[http://oremacs.com/lispy/#lispy-different][lispy function reference]] were
 very useful to me.
 
