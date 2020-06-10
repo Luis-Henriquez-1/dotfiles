@@ -8450,7 +8450,7 @@ use =edit-indirect= to edit source blocks.
                                      (:tangle . "yes"))))
 #+end_src
 
-**** evil org state                                                       :evil:
+**** evil org state                                                   :disabled:
 :PROPERTIES:
 :ID: c2d2b823-aa0d-4ba4-bd3d-dc761a131ee2
 :END:
