@@ -597,7 +597,7 @@ Emacs/the OS decide what encoding to use.
 :ID: 0f1da89a-2278-4493-ba62-e2a334204be6
 :END:
 
-**** incremental loading                                              :disabled:
+**** incremental loading
 :PROPERTIES:
 :ID: c93aefa6-80ff-420d-86ae-a0c06c5c0e76
 :END:
@@ -620,7 +620,7 @@ Later in my config I will add packages to [[helpvar:void-incremental-packages][v
 ~nconc!~). But no incremental loading will happen until after Void is done loading.
 
 #+begin_src emacs-lisp
-(defvar void-incremental-package-alist nil
+(defvar void-incremental-packages nil
   "A list of packages to load incrementally after startup.")
 #+end_src
 
@@ -6199,10 +6199,10 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 (leaf eshell
   :ensure nil
   :commands eshell
-  ;; :load-incrementally
-  ;; em-alias em-banner em-basic em-cmpl
-  ;; em-dirs em-glob em-hist em-ls em-prompt
-  ;; em-script em-term em-unix
+  :load-incrementally
+  em-alias em-banner em-basic em-cmpl
+  em-dirs em-glob em-hist em-ls em-prompt
+  em-script em-term em-unix
   :setq
   (eshell-directory-name . (concat VOID-DATA-DIR "eshell/"))
   (eshell-history-file-name . (concat eshell-directory-name "history"))
@@ -6614,7 +6614,7 @@ have to set out to look for a file with =dired=.
 #+begin_src emacs-lisp
 (leaf recentf
   :before-call find-file
-  ;; (:load-incrementally easymenu tree-widget timer)
+  :load-incrementally easymenu tree-widget timer
   :ensure nil
   :commands recentf-open-files
   :defer-config
@@ -6678,7 +6678,7 @@ again, you are taken to the location you left off. This is very convenient.
 
 #+begin_src emacs-lisp
 (leaf savehist
-  ;; (:load-incrementally custom)
+  :load-incrementally custom
   :hook void-start-emacs-hook
   :setq
   (savehist-save-minibuffer-history . t)
@@ -7091,7 +7091,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
 #+begin_src emacs-lisp
 (leaf magit
   :commands magit-status magit-get-current-branch
-  ;; (:load-incrementally f s with-editor git-commit package eieio lv transient)
+  :load-incrementally f s with-editor git-commit package eieio lv transient
   :bind (:magit-status-mode-map
          ([remap magit-mode-bury-buffer] . magit/quit))
   :setq
