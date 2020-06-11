@@ -2831,7 +2831,7 @@ through on our own. It's not much different in Emacs. We're constantly sifting
 though files, buffers, commands, words--all to try to get through to the subset
 of things that we actually want at this moment.
 
-** yasnippet
+** yasnippet                                                          :disabled:
 :PROPERTIES:
 :ID: 1f362298-2b47-4929-9484-ce7f26f80adf
 :END:
