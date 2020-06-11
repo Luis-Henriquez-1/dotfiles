@@ -7163,7 +7163,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
 
 #+begin_src emacs-lisp
 (leaf autorevert
-  ;; :after-call switch-to-buffer find-file
+  :after-call switch-to-buffer find-file
   :ensure nil
   :setq
   (auto-revert-verbose . t)
