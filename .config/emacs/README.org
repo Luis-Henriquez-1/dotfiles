@@ -1023,7 +1023,6 @@ Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-fro
 #+begin_src emacs-lisp
 (leaf exec-path-from-shell
   :os mac
-  ;; :disabled t
   :when (or (daemonp) (display-graphic-p))
   :require t
   :setq
@@ -1295,30 +1294,6 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 (leaf-keywords-init)
 #+end_src
 
-**** straight
-
-#+begin_src emacs-lisp
-(leaf straight
-  :require t
-  :setq
-  (straight-disable-autoloads . nil)
-  (straight-cache-autoloads . t)
-  (straight-check-for-modifications . nil)
-  (straight-enable-package-integration . nil)
-  (straight-recipes-emacsmirror-use-mirror . t))
-#+end_src
-
-**** package.el
-
-#+begin_src emacs-lisp
-(leaf package
-  :ensure nil
-  :init (advice-add #'package--ensure-init-file :override #'ignore)
-  :setq (package-archives . `(("gnu"   . "https://elpa.gnu.org/packages/")
-                              ("melpa" . "https://melpa.org/packages/")
-                              ("org"   . "https://orgmode.org/elpa/"))))
-#+end_src
-
 **** leaf
 
 #+begin_src emacs-lisp
@@ -1338,8 +1313,6 @@ evaluated.
         (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
       leaf-normalize)
 #+end_src
-
-**** leaf-handler-package-install-fn!
 
 **** leaf-handler-advice-call!
 
@@ -1415,6 +1388,30 @@ The straight keyword require's the package's name.
 #+begin_src emacs-lisp
 (let ((it '(:os (when leaf--body `((with-os! ,leaf--value ,@leaf--body))))))
   (setq leaf-keywords (leaf-insert-list-before leaf-keywords :when it)))
+#+end_src
+
+**** straight
+
+#+begin_src emacs-lisp
+(leaf straight
+  :require t
+  :setq
+  (straight-disable-autoloads . nil)
+  (straight-cache-autoloads . t)
+  (straight-check-for-modifications . nil)
+  (straight-enable-package-integration . nil)
+  (straight-recipes-emacsmirror-use-mirror . t))
+#+end_src
+
+**** package.el
+
+#+begin_src emacs-lisp
+(leaf package
+  :ensure nil
+  :init (advice-add #'package--ensure-init-file :override #'ignore)
+  :setq (package-archives . `(("gnu"   . "https://elpa.gnu.org/packages/")
+                              ("melpa" . "https://melpa.org/packages/")
+                              ("org"   . "https://orgmode.org/elpa/"))))
 #+end_src
 
 ** Library
@@ -1499,9 +1496,10 @@ Emacs starts up with a default screen setup. No, thanks.
 (leaf startup
   :ensure nil
   :setq
+  ;; (user-mail-address . t)
   (inhibit-startup-screen . t)
   (inhibit-default-init . t)
-  (inhibit-default-init . t)
+  (inhibit-startup-buffer-menu . t)
   (initial-major-mode . 'fundamental-mode)
   (initial-scratch-message . nil)
   (initial-buffer-choice . (if void-debug-p (lambda () (get-buffer "*Messages*")) t))
@@ -1567,7 +1565,6 @@ Don't ping things that look like domain names.
 :END:
 
 #+begin_src emacs-lisp
-;; Directory for server authentication files.
 (leaf server
   :ensure nil
   :setq
@@ -1691,7 +1688,11 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (leaf paragraphs
   :ensure nil)
+#+end_src
 
+**** indent
+
+#+begin_src emacs-lisp
 (leaf indent
   :ensure nil
   :setq-default
@@ -4485,7 +4486,6 @@ javascript code.
 
 #+begin_src emacs-lisp
 (leaf w3m
-  ;; :os linux
   :commands w3m
   :setq (w3m-search-default-engine . "google"))
 #+end_src
@@ -5185,7 +5185,9 @@ it. It's pretty smart and very convenient.
 :END:
 
 #+begin_src emacs-lisp
-(electric-indent-mode -1)
+(leaf electric
+  :config
+  (electric-indent-mode -1))
 #+end_src
 
 *** ws-bulter
