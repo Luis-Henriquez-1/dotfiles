@@ -5813,9 +5813,6 @@ Why not just go to the end of the ="= like any other around operator?
 #+begin_src emacs-lisp
 (after! (evil helpful)
   (evil-set-initial-state 'helpful-mode 'normal))
-
-(general-def 'normal helpful-mode-map
-  "q" #'kill-buffer-and-window)
 #+end_src
 
 ***** magit
@@ -7213,7 +7210,8 @@ that restarts emacs. I haven't tested this in EXWM mode.
 #+begin_src emacs-lisp
 (leaf pass
   :commands pass
-  :setq (pass-username-field . "username"))
+  :setq
+  (pass-username-field . "username"))
 #+end_src
 
 **** get password
@@ -8428,33 +8426,15 @@ current file or some other file.
 #+begin_src emacs-lisp
 (leaf org-refile
   :ensure nil
+  :after org
   :setq
+  (org-refile-targets . `((,VOID-README-FILE . (:maxlevel . 10))
+                          (,VOID-TODO-FILE . (:maxlevel . 1))))
   (org-refile-use-outline-path . 'file)
   (org-refile-allow-creating-parent-nodes . t)
   (org-reverse-note-order . t)
   ;; Non-nil means complete the outline path in hierarchical steps.
   (org-outline-path-complete-in-steps . nil))
-#+end_src
-
-**** refile targets
-:PROPERTIES:
-:ID: ace374db-f0a7-462c-a421-637c427fc240
-:END:
-
-
-[[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][Aaron Bieber's blog post]] is a good introduction into refiling.
-[[helpvar:org-refile-targets][org-refile-targets]] tells Org how to find the possible targets.
-
-By default =org-refile-targets= shows just the headlines as potential refiling
-targets. However, I can't remember every headline I've made and where in the
-tree it is. The variable [[helpvar:org-refile-use-outline-path][org-refile-use-outline-path]] tells ~org-refile~ to show
-the full outline path as opposed to just the headlines.
-
-#+begin_src emacs-lisp
-(after! org
-  (setq-default org-refile-targets
-                `((,VOID-README-FILE . (:maxlevel . 10))
-                  (,VOID-TODO-FILE . (:maxlevel . 1)))))
 #+end_src
 
 **** refile to specific buffer
@@ -8486,6 +8466,14 @@ You can resolve to make note of it later but then you might forget. Capturing is
 designed to confront this problem. While in the middle of a task you can quickly
 jump into a small org buffer and write down an idea that you have, then close
 it.
+
+**** org capture
+
+#+begin_src emacs-lisp
+(leaf org-capture
+  :after org
+  :commands org-capture)
+#+end_src
 
 **** completing read for templates
 :PROPERTIES:
