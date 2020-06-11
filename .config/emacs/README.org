@@ -1424,6 +1424,27 @@ The straight keyword require's the package's name.
 :ID: 40367976-12a0-4ccd-9aff-4df144a73edf
 :END:
 
+**** startup
+:PROPERTIES:
+:ID: 9725b7e0-54b8-4ab4-aa00-d950345d0aea
+:END:
+
+Emacs starts up with a default screen setup. No, thanks.
+
+#+begin_src emacs-lisp
+(leaf startup
+  :ensure nil
+  :setq
+  ;; (user-mail-address . t)
+  (inhibit-startup-screen . t)
+  (inhibit-default-init . t)
+  (inhibit-startup-buffer-menu . t)
+  (initial-major-mode . 'fundamental-mode)
+  (initial-scratch-message . nil)
+  (initial-buffer-choice . (if void-debug-p (lambda () (get-buffer "*Messages*")) t))
+  (inhibit-startup-echo-area-message . user-login-name))
+#+end_src
+
 **** paren
 :PROPERTIES:
 :ID: 8ba80d6f-292e-4d44-acfe-d7b7ba939fa4
@@ -1483,27 +1504,6 @@ think you want to use =smtp=.
   ;; very important if you're using msmtp
   ;; (sendmail-program (executable-find "msmtp"))
   )
-#+end_src
-
-**** startup
-:PROPERTIES:
-:ID: 9725b7e0-54b8-4ab4-aa00-d950345d0aea
-:END:
-
-Emacs starts up with a default screen setup. No, thanks.
-
-#+begin_src emacs-lisp
-(leaf startup
-  :ensure nil
-  :setq
-  ;; (user-mail-address . t)
-  (inhibit-startup-screen . t)
-  (inhibit-default-init . t)
-  (inhibit-startup-buffer-menu . t)
-  (initial-major-mode . 'fundamental-mode)
-  (initial-scratch-message . nil)
-  (initial-buffer-choice . (if void-debug-p (lambda () (get-buffer "*Messages*")) t))
-  (inhibit-startup-echo-area-message . user-login-name))
 #+end_src
 
 **** files
