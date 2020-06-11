@@ -1022,8 +1022,8 @@ Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-fro
 
 #+begin_src emacs-lisp
 (leaf exec-path-from-shell
-  ;; :os mac
-  :disabled t
+  :os mac
+  ;; :disabled t
   :when (or (daemonp) (display-graphic-p))
   :require t
   :setq
@@ -1046,8 +1046,7 @@ color in the frame title.
 
 #+begin_src emacs-lisp
 (leaf ns-auto-titlebar
-  :disabled t
-  ;; :os mac
+  :os mac
   :when (or (daemonp) (display-graphic-p))
   :require t)
 #+end_src
@@ -1059,8 +1058,7 @@ color in the frame title.
 
 #+begin_src emacs-lisp
 (leaf osx-clipboard
-  ;; :os mac
-  :disabled t
+  :os mac
   :when (or (daemonp) (not (display-graphic-p)))
   :hook void-start-emacs-hook)
 #+end_src
@@ -1412,11 +1410,11 @@ The straight keyword require's the package's name.
     '(:defer-incrementally (push (,leaf-package . ,@leaf-value) void-incremental-package-alist)))
 #+end_src
 
-**** TODO os
+**** os
 
 #+begin_src emacs-lisp
-(let ((it '(:os `(with-os! ,leaf--value ,@leaf--body))))
-  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :if it)))
+(let ((it '(:os (when leaf--body `((with-os! ,leaf--value ,@leaf--body))))))
+  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :when it)))
 #+end_src
 
 ** Library
@@ -1450,9 +1448,8 @@ The straight keyword require's the package's name.
 
 #+begin_src emacs-lisp
 (leaf select
-  :disabled t
   :ensure nil
-  ;; :os linux
+  :os linux
   :setq
   (select-enable-clipboard . t)
   (select-enable-primary . t)
