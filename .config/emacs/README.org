@@ -443,7 +443,6 @@ Void is compiled.
 :END:
 
 #+begin_src emacs-lisp
-(setq-default print-escape-newlines t)
 (setq-default fill-column 80)
 (setq-default sentence-end-double-space nil)
 (setq-default tab-width 4)
@@ -501,6 +500,7 @@ to abbreviate it at this point.
 (setq-default print-length nil)
 (setq-default print-level nil)
 (setq-default print-quoted t)
+(setq-default print-escape-newlines t)
 #+end_src
 
 *** gc cons threshold
