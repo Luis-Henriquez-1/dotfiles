@@ -1698,6 +1698,15 @@ Don't ping things that look like domain names.
   (tab-always-indent . t))
 #+end_src
 
+**** mouse
+
+#+begin_src emacs-lisp
+(leaf mouse
+  :ensure nil
+  :setq-default
+  (mouse-yank-at-point . t))
+#+end_src
+
 *** external libraries
 :PROPERTIES:
 :ID: 6e4be80e-8149-424d-a801-d7871bfe8fc8
@@ -8198,6 +8207,7 @@ use =edit-indirect= to edit source blocks.
 
 #+begin_src emacs-lisp
 (leaf org-src
+  :ensure nil
   :setq
   (org-edit-src-persistent-message . nil)
   (org-src-window-setup . 'current-window)
@@ -8385,6 +8395,7 @@ Org Agenda provides a neat method of displaying todo information.
 
 #+begin_src emacs-lisp
 (leaf org-agenda
+  :ensure nil
   :after org
   :commands (org-agenda org-agenda-list)
   :setq
@@ -8416,6 +8427,7 @@ current file or some other file.
 
 #+begin_src emacs-lisp
 (leaf org-refile
+  :ensure nil
   :setq
   (org-refile-use-outline-path . 'file)
   (org-refile-allow-creating-parent-nodes . t)
