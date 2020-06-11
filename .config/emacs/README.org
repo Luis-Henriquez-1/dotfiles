@@ -1373,14 +1373,13 @@ The straight keyword require's the package's name.
       leaf-normalize)
 #+end_src
 
-**** :defer-incrementally                                             :disabled:
+**** :defer-incrementally
 
 #+begin_src emacs-lisp
-(push :defer-incrementally leaf-defer-keywords)
+(push :load-incrementally leaf-defer-keywords)
 
-`(append! void-incremental-packages ,@leaf--value)
-(leaf-insert-list-before
-    '(:defer-incrementally (push (,leaf-package . ,@leaf-value) void-incremental-package-alist)))
+(let ((it '(:load-incrementally `((append! void-incremental-packages ',leaf--value) ,@leaf--body))))
+  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :before-call it)))
 #+end_src
 
 **** os
