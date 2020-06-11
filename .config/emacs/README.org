@@ -6659,12 +6659,15 @@ again, you are taken to the location you left off. This is very convenient.
 (leaf saveplace
   :ensure nil
   :after-call after-find-file
-  :setq (save-place-file . (concat VOID-DATA-DIR "saveplace")))
-
-(defadvice! save-place-recenter-on-load-saveplace-a (&rest _)
-  "Recenter on cursor when loading a saved place."
-  :after-while save-place-find-file-hook
-  (when buffer-file-name (ignore-errors (recenter))))
+  :setq
+  (save-place-file . (concat VOID-DATA-DIR "saveplace"))
+  (save-place-limit nil)
+  :config
+  (save-place-mode)
+  (defadvice! save-place-recenter-on-load-saveplace-a (&rest _)
+    "Recenter on cursor when loading a saved place."
+    :after-while save-place-find-file-hook
+    (when buffer-file-name (ignore-errors (recenter)))))
 #+end_src
 
 ** savehist
