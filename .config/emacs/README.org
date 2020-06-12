@@ -647,8 +647,8 @@ Set this to nil to disable incremental loading.")
 (defun void-load-incrementally (packages)
   "Load PACKAGES incrementally.
 This function tries to load a package from PACKAGES, a list of packages. It then
-  calls itself on the rest of PACKAGES in `void-incremental-loading-interval'
-  idle seconds."
+calls itself on the rest of PACKAGES in `void-incremental-loading-interval'
+idle seconds."
   (let ((gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX)
         (gc-cons-percentage VOID-GC-CONS-PERCENTAGE-MAX)
         (file-name-handler-alist nil)
