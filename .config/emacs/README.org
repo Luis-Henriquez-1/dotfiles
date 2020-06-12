@@ -3125,6 +3125,12 @@ query to narrow the list, and then selecting one of the remaining candidates.
   (ivy-count-format             . ""))
 #+end_src
 
+**** ivy-avy
+
+#+begin_src emacs-lisp
+(leaf ivy-avy :commands ivy-avy)
+#+end_src
+
 **** ivy prescient
 :PROPERTIES:
 :ID: ec8cd466-c6cf-4b25-9624-07e9d0e0fd0c
