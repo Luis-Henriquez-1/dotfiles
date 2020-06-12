@@ -4235,7 +4235,7 @@ see my inbox, no questions asked.
 #+end_src
 
 
-** gnus
+** gnus                                                               :disabled:
 :PROPERTIES:
 :ID: d9ce252d-5f33-469b-a88c-84131f6f0eaa
 :END:
