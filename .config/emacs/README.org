@@ -4234,7 +4234,7 @@ see my inbox, no questions asked.
 #+end_src
 
 
-** gnus                                                       :disabled:
+** gnus
 :PROPERTIES:
 :ID: d9ce252d-5f33-469b-a88c-84131f6f0eaa
 :END:
@@ -4257,10 +4257,56 @@ mean 2000 which is not a lot by today's standard).
 
 #+begin_src emacs-lisp
 (leaf gnus
-  :setq (gnus-select-method   '(nnnil)))
+  :ensure nil
+  :command gnus
+  :setq
+  (gnus-summary-line-format "%U%R%z %-16,16&user-date; %-30,30f  %B%S\n")
+  (gnus-select-method . '(nnnil))
+  (gnus-agent . t)
+  (gnus-agent-article-alist-save-format . 1)
+  (gnus-agent-cache . t)
+  (gnus-agent-confirmation-function . 'y-or-n-p)
+  (gnus-agent-consider-all-articles .  nil)
+  (gnus-agent-directory . "~/News/agent/")
+  (gnus-agent-enable-expiration . 'ENABLE)
+  (gnus-agent-expire-all . nil)
+  (gnus-agent-expire-days . 30)
+  (gnus-agent-mark-unread-after-downloaded . t)
+  (gnus-agent-queue-mail . t)
+  (gnus-agent-synchronize-flags . nil))
+#+end_src
 
-(setq user-mail-address "luis.henriquez@snhu.edu")
-(setq user-full-name "Luis Henriquez")
+*** gnus start
+:PROPERTIES:
+:ID: fe201237-301d-4b52-b24e-b16eb37aa31d
+:END:
+
+#+begin_src emacs-lisp
+(leaf gnus-start
+  :ensure nil
+  :after gnus
+  :setq
+  (gnus-use-dribble-file . nil)
+  (gnus-always-read-dribble-file . nil))
+#+end_src
+
+*** gnus sum
+:PROPERTIES:
+:ID: e16c4665-d404-49df-9cee-fec2a159e1c1
+:END:
+
+#+begin_src emacs-lisp
+(leaf gnus-sum
+  :setq
+  (gnus-user-date-format-alist . '(((gnus-seconds-today) . "Today at %R")
+                                   ((+ 86400 (gnus-seconds-today)) . "Yest. at %R")
+                                   (t . "%m-%d %R")))
+  (gnus-sum-thread-tree-false-root . "")
+  (gnus-sum-thread-tree-indent . " ")
+  (gnus-sum-thread-tree-leaf-with-other . "├─➤ ")
+  (gnus-sum-thread-tree-root . "")
+  (gnus-sum-thread-tree-single-leaf . "└─➤ ")
+  (gnus-sum-thread-tree-vertical . "│"))
 #+end_src
 
 *** accounts
@@ -4318,22 +4364,19 @@ mean 2000 which is not a lot by today's standard).
     (nnimap-log-command "pass")))
 #+end_src
 
-*** TODO groups
-:PROPERTIES:
-:ID: d0f50a09-44bb-473e-839e-94eb03168633
-:END:
-
-**** TODO group line format
+*** gnus group
 :PROPERTIES:
 :ID: 1f022c0d-6157-4ba3-9676-860ef8c00258
 :END:
 
 #+begin_src emacs-lisp
-(setq gnus-group-line-format
-      "%M\ %S\ %p\ %P\ %5y:%B%(%g%)\n")
+(leaf gnus-group
+  :ensure nil
+  :setq
+  (gnus-group-line-format "%M\ %S\ %p\ %P\ %5y:%B%(%g%)\n"))
 #+end_src
 
-*** articles
+*** gnus art
 :PROPERTIES:
 :ID: 1642c04a-5332-484b-81e5-36bd16ca69a0
 :END:
@@ -4359,109 +4402,8 @@ mean 2000 which is not a lot by today's standard).
    '("^From:" "^To:" "^Cc:" "^Newsgroups:" "^Subject:" "^Date:"
      "Followup-To:" "Reply-To:" "^Organization:" "^X-Newsreader:"
      "^X-Mailer:"))
-  (gnus-sorted-header-list . gnus-visible-headers)
-  ;; :bind (:map gnus-article-mode-map
-  ;;        ("s" . gnus-mime-save-part)
-  ;;        ("o" . gnus-mime-copy-part))
-  )
+  (gnus-sorted-header-list . gnus-visible-headers))
 #+end_src
-
-*** TODO summary
-:PROPERTIES:
-:ID: 677a36d3-5d45-42e5-83b0-3579ac6c1db0
-:END:
-
-**** TODO summary line
-:PROPERTIES:
-:ID: 65abfeb4-aac8-4887-8ac2-4d5f28edf713
-:END:
-
-#+begin_src emacs-lisp
-(setq gnus-summary-line-format "%U%R%z %-16,16&user-date; %-30,30f  %B%S\n")
-#+end_src
-
-**** TODO date
-:PROPERTIES:
-:ID: b1cd420a-dcbb-40a0-9ac4-3a692e9c6e8b
-:END:
-
-#+begin_src emacs-lisp
-(setq gnus-user-date-format-alist
-      '(((gnus-seconds-today) . "Today at %R")
-        ((+ 86400 (gnus-seconds-today)) . "Yest. at %R")
-        (t . "%m-%d %R")))
-#+end_src
-
-**** TODO thread display
-:PROPERTIES:
-:ID: b8c18029-8de1-4371-bdd2-44ecfcbeecce
-:END:
-
-#+begin_src emacs-lisp
-(setq gnus-sum-thread-tree-false-root "─┬➤ ")
-(setq gnus-sum-thread-tree-indent " ")
-(setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
-;; (setq gnus-sum-thread-tree-leaf-with-other "├► ")
-(setq gnus-sum-thread-tree-root "")
-(setq gnus-sum-thread-tree-single-leaf "└─➤ ")
-;; (setq gnus-sum-thread-tree-single-leaf "╰► ")
-(setq gnus-sum-thread-tree-vertical "│")
-#+end_src
-
-*** mail sources
-:PROPERTIES:
-:ID: dedef901-99df-4cc0-a737-100e6f38100d
-:END:
-
-#+begin_src emacs-lisp
-(setq message-signature "Luis Henriquez")
-#+end_src
-
-*** variables
-:PROPERTIES:
-:ID: 89923206-cbbe-4034-b8a4-367713528231
-:END:
-
-#+begin_src emacs-lisp
-(setq gnus-agent t)
-(setq gnus-agent-article-alist-save-format 1)  ; uncompressed
-(setq gnus-agent-cache t)
-(setq gnus-agent-confirmation-function 'y-or-n-p)
-(setq gnus-agent-consider-all-articles nil)
-(setq gnus-agent-directory "~/News/agent/")
-(setq gnus-agent-enable-expiration 'ENABLE)
-(setq gnus-agent-expire-all nil)
-(setq gnus-agent-expire-days 30)
-(setq gnus-agent-mark-unread-after-downloaded t)
-(setq gnus-agent-queue-mail t)        ; queue if unplugged
-(setq gnus-agent-synchronize-flags nil)
-#+end_src
-
-*** settings
-:PROPERTIES:
-:ID: e16c4665-d404-49df-9cee-fec2a159e1c1
-:END:
-
-#+begin_src emacs-lisp
-(setq gnus-sum-thread-tree-false-root "")
-(setq gnus-sum-thread-tree-indent " ")
-(setq gnus-sum-thread-tree-leaf-with-other "├─➤ ")
-(setq gnus-sum-thread-tree-root "")
-(setq gnus-sum-thread-tree-single-leaf "└─➤ ")
-(setq gnus-sum-thread-tree-vertical "│")
-#+end_src
-
-*** dribble file
-:PROPERTIES:
-:ID: fe201237-301d-4b52-b24e-b16eb37aa31d
-:END:
-
-#+begin_src emacs-lisp
-(setq gnus-use-dribble-file nil)
-(setq gnus-always-read-dribble-file nil)
-#+end_src
-
-
 
 * Web Browsing
 :PROPERTIES:
