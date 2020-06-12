@@ -663,7 +663,7 @@ idle seconds."
                  (void-log "Incrementally loading %s" package)
                  (require package nil t))
              (error
-              (void-log "Failed to load '%s' incrementally, because %s" package e)))
+              (message "Failed to load '%s' incrementally, because %s" package e)))
            (run-with-idle-timer
             void-incremental-loading-interval nil #'void-load-incrementally rest)))))
 #+end_src
