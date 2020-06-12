@@ -4259,7 +4259,7 @@ mean 2000 which is not a lot by today's standard).
 #+begin_src emacs-lisp
 (leaf gnus
   :ensure nil
-  :command gnus
+  :commands gnus
   :setq
   (gnus-summary-line-format "%U%R%z %-16,16&user-date; %-30,30f  %B%S\n")
   (gnus-select-method . '(nnnil))
@@ -4374,7 +4374,7 @@ mean 2000 which is not a lot by today's standard).
 (leaf gnus-group
   :ensure nil
   :setq
-  (gnus-group-line-format "%M\ %S\ %p\ %P\ %5y:%B%(%g%)\n"))
+  (gnus-group-line-format . "%M\ %S\ %p\ %P\ %5y:%B%(%g%)\n"))
 #+end_src
 
 *** gnus art
@@ -6611,7 +6611,7 @@ again, you are taken to the location you left off. This is very convenient.
   :after-call after-find-file
   :setq
   (save-place-file . (concat VOID-DATA-DIR "saveplace"))
-  (save-place-limit nil)
+  (save-place-limit . nil)
   :config
   (save-place-mode)
   (defadvice! save-place-recenter-on-load-saveplace-a (&rest _)
