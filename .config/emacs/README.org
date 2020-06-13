@@ -2945,6 +2945,12 @@ about Helm is that it's too bloated and slow.
 #+begin_src emacs-lisp
 (leaf helm-core
   :commands helm-M-x
+  :popup
+  ("\\*Helm"
+   (display-buffer-at-bottom)
+   (side . bottom)
+   (slot . 1)
+   (window-height . 0.5))
   :pre-setq
   (helm-default-display-buffer-functions . '(display-buffer-in-side-window))
   (helm-display-buffer-height . .6)
