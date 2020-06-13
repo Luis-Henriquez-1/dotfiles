@@ -2941,25 +2941,30 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
-(leaf helm-core
+(leaf helm
   :commands helm-M-x
   :popup
   ("\\*Helm"
    (display-buffer-at-bottom)
    (side . bottom)
    (slot . 1)
-   (window-height . 0.5))
+   (window-height . 0.5)
+   (window-parameters . ((no-other-window . t))))
   :pre-setq
-  (helm-default-display-buffer-functions . '(display-buffer-in-side-window))
+  (helm-default-display-buffer-functions . '(pop-to-buffer))
   (helm-display-buffer-height . .6)
   (helm-display-buffer-default-height . 0.6)
   (helm-candidate-number-limit . 50)
   (helm-display-header-line . nil)
-  (helm-find-files-doc-header . nil)
-  (helm-imenu-execute-action-at-once-if-one . nil)
-  (helm-ff-lynx-style-map . nil)
   (helm-mode-line-string . nil)
-  (helm-ff-auto-update-initial-value . nil))
+  :defer-config
+  (helm-mode 1))
+
+(leaf helm-files
+  :setq
+  (helm-ff-auto-update-initial-value . nil)
+  (helm-ff-lynx-style-map . nil)
+  (helm-find-files-doc-header . nil))
 #+end_src
 
 **** helm-mode
