@@ -2984,7 +2984,7 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
-(leaf helm-mode
+(leaf helm-files
   ;; (:after-hook pre-command-hook)
   :bind
   ([remap apropos]                  . helm-apropos)
