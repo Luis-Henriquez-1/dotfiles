@@ -2849,6 +2849,17 @@ Emacs's text editing capabilities on it.
 (leaf exwm-edit :after exwm)
 #+end_src
 
+*** exwm firefox
+
+#+begin_src emacs-lisp
+(leaf exwm-firefox-evil
+  :after exwm
+  :hook (exwm-manage-finish-hook . exwm-firefox-evil-activate-if-firefox)
+  :config
+  (dolist (k `(escape))
+    (cl-pushnew k exwm-input-prefix-keys)))
+#+end_src
+
 ** buffer expose
 :PROPERTIES:
 :ID: df46e75c-0613-41e4-a4e4-a477f112adcb
