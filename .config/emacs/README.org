@@ -1146,7 +1146,6 @@ I've never had to use this. But better be safe than sorry.
 
 #+begin_src emacs-lisp
 (defun void/kill-emacs-processes ()
-  ""
   (interactive)
   (let ((count 1) (process "emacs"))
     (kill-process process)
