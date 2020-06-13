@@ -2995,8 +2995,7 @@ about Helm is that it's too bloated and slow.
   ([remap imenu]                    . helm-semantic-or-imenu)
   ([remap noop-show-kill-ring]      . helm-show-kill-ring)
   ([remap recentf]                  . helm-recentf)
-  ([remap switch-to-buffer]         . helm-mini)
-  :defer-config (helm-mode 1))
+  ([remap switch-to-buffer]         . helm-mini))
 #+end_src
 
 **** helm swoop
