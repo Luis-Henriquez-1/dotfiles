@@ -4756,7 +4756,7 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
 
 #+begin_src emacs-lisp
 (leaf keypression
-  ;; :straight (:host github :repo "chuntaro/emacs-keypression")
+  :ensure (:host github :repo "chuntaro/emacs-keypression")
   :setq
   (keypression-frame-justify . 'keypression-right-justified))
 #+end_src
