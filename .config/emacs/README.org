@@ -1429,7 +1429,6 @@ specific packages.
 #+begin_src emacs-lisp
 (+leaf-define-keyword
  :popup '(before :mode)
- ;; :normalizer #'+leaf-normalizer-commands
  :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
           ,@leaf--body))
 #+end_src
@@ -1437,9 +1436,6 @@ specific packages.
 **** os
 
 #+begin_src emacs-lisp
-;; (leaf-define-keyword! os (before :when)
-;;   '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
-
 (+leaf-define-keyword :os '(before :when)
                       :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
 #+end_src
@@ -1489,7 +1485,6 @@ Emacs starts up with a default screen setup. No, thanks.
 (leaf startup
   :ensure nil
   :setq
-  ;; (user-mail-address . t)
   (inhibit-startup-screen . t)
   (inhibit-default-init . t)
   (inhibit-startup-buffer-menu . t)
