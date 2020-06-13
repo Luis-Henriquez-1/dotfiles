@@ -1422,15 +1422,17 @@ The straight keyword require's the package's name.
                                ,@leaf--body))
 #+end_src
 
-**** =:popup=                                                           :disabled:
+**** =:popup=
 
 The point of this keyword is to let me configure the display of buffers for
 specific packages.
 
 #+begin_src emacs-lisp
-(+leaf-define-keyword :popup '(before :mode)
-                      :defer t
-                      :form '`((push ,leaf--value popup-buffer-alist) ,@leaf--body))
+(+leaf-define-keyword
+ :popup '(before :popup)
+ ;; :normalizer #'+leaf-normalizer-commands
+ :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
+          ,@leaf--body))
 #+end_src
 
 **** os
