@@ -1536,6 +1536,9 @@ Emacs starts up with a default screen setup. No, thanks.
 #+begin_src emacs-lisp
 (leaf simple
   :ensure nil
+  :popup ("\\*Messages"
+          (display-buffer-at-bottom)
+          (window-height . 0.4))
   :setq-default
   (idle-update-delay . 1)
   (blink-matching-paren . t)
