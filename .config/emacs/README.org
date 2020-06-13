@@ -6214,6 +6214,11 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   em-alias em-banner em-basic em-cmpl
   em-dirs em-glob em-hist em-ls em-prompt
   em-script em-term em-unix
+  :popup ("\\*eshell"
+          (display-buffer-at-bottom)
+          (window-height . 0.5)
+          (side . bottom)
+          (slot . 2))
   :setq
   (eshell-directory-name . (concat VOID-DATA-DIR "eshell/"))
   (eshell-history-file-name . (concat eshell-directory-name "history"))
