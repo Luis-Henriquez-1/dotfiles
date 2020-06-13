@@ -9140,6 +9140,12 @@ in a better format.
 
 #+begin_src emacs-lisp
 (leaf helpful
+  :popup
+  ("\\*Help.*"
+   (display-buffer-at-bottom)
+   (window-width . 0.40)
+   (side . bottom)
+   (slot . 4))
   :bind
   ([remap describe-function] . helpful-callable)
   ([remap describe-command]  . helpful-command)
