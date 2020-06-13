@@ -1301,6 +1301,45 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
   :setq (leaf-defaults . '(:ensure t)))
 #+end_src
 
+**** define leaf keyword
+
+Leaf is very minimal and for the most part this is good. However, it does mean
+defining leaf keywords is a bit of a pain. There are many low-level parts of
+doing so that could be automated.
+
+#+begin_src emacs-lisp
+(cl-defun +leaf-define-keyword (keyword place &key normalizer defer alias form)
+  "Define leaf KEYWORD at PLACE.
+PLACE is a list whose car is the symbol `before' or `after' and whose cadr is
+one of leaf's available keywords. DEFER specifies whether the keyword is a
+deferring keyword. ALIAS is an alias or a list of aliases for the keyword. FORM
+is the form that will be added to."
+
+  ;; Defer it if necessary.
+  (when defer
+    (push keyword leaf-defer-keywords))
+
+  ;; Set up aliases.
+  (let ((aliases alias))
+    (dolist (alias aliases)
+      (push (cons alias keyword) leaf-alias-keyword-alist)))
+
+  ;; Add a normalizer.
+  (when normalizer
+    (push `((eq leaf--key ,keyword)
+            (funcall #',normalizer))
+          leaf-normalize))
+
+  ;; Insert it in proper place.
+  (let* ((where (car place))
+         (place (cadr place))
+         (target-form (list keyword form))
+         (insert-fn (cond ((eq where 'after) #'leaf-insert-list-after)
+                          ((eq where 'before) #'leaf-insert-list-before)
+                          (t (error)))))
+    (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
+#+end_src
+
 **** customize setq
 
 leaf's setq does not correctly handle setting variables to forms that need to be
@@ -1308,10 +1347,17 @@ evaluated.
 
 #+begin_src emacs-lisp
 (push '((memq leaf--key (list :setq :pre-setq :setq-default
-                              :custom :custom*
-                              :pl-setq :pl-pre-setq :pl-setq-default :pl-custom))
+                         :custom :custom*
+                         :pl-setq :pl-pre-setq :pl-setq-default :pl-custom))
         (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
       leaf-normalize)
+
+(defun +leaf-normalizer-commands ()
+  (mapcar (lambda (elm)
+            (cond ((memq leaf--key '(:after))
+                   (if (eq elm t) leaf--name elm))
+                  (t elm)))
+          (delete-dups (delq nil (leaf-flatten leaf--value)))))
 #+end_src
 
 **** leaf-handler-advice-call!
@@ -1333,21 +1379,15 @@ evaluated.
 **** =before-call= and =after-call= keyword
 
 #+begin_src emacs-lisp
-(let ((before '(:before-call `((leaf-handler-advice-call! ,leaf--name :before ,leaf--value)
-                               ,@leaf--body)))
-      (after '(:after-call `((leaf-handler-advice-call! ,leaf--name :after ,leaf--value)
-                             ,@leaf--body))))
-  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :hook before))
-  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :hook after)))
+(+leaf-define-keyword :before-call '(before :hook)
+                      :defer t
+                      :normalizer #'+leaf-normalizer-commands
+                      :form '`((leaf-handler-advice-call! ,leaf--name :before ,leaf--value) ,@leaf--body))
 
-(push :after-call leaf-defer-keywords)
-(push :before-call leaf-defer-keywords)
-
-(push '((member leaf--key '(:after-call :before-call))
-        (if (listp (car leaf--value))
-            (car leaf--value)
-          leaf--value))
-      leaf-normalize)
+(+leaf-define-keyword :after-call '(before :hook)
+                      :defer t
+                      :normalizer #'+leaf-normalizer-commands
+                      :form '`((leaf-handler-advice-call! ,leaf--name :after ,leaf--value) ,@leaf--body))
 #+end_src
 
 **** straight keyword
@@ -1355,14 +1395,13 @@ evaluated.
 The straight keyword require's the package's name.
 
 #+begin_src emacs-lisp
-(let ((form '(:void-straight
-              `(,@(mapcar (lambda (elm) `(straight:install-package ',elm)) leaf--value)
-                ,@leaf--body))))
-  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :straight form)))
+(+leaf-define-keyword :+straight '(before :straight)
+                      :alias (list :ensure)
+                      :form
+                      '`(,@(mapcar (lambda (elm) `(straight:install-package ',elm)) leaf--value)
+                         ,@leaf--body))
 
-(push '(:ensure . :void-straight) leaf-alias-keyword-alist)
-
-(push `((or (memq leaf--key '(:void-straight))
+(push `((or (memq leaf--key '(:+straight))
             (eq (alist-get leaf--key leaf-alias-keyword-alist) :void-straight))
         (cond ((eq t (car leaf--value))
                (list leaf--name))
@@ -1376,17 +1415,32 @@ The straight keyword require's the package's name.
 **** :defer-incrementally
 
 #+begin_src emacs-lisp
-(push :load-incrementally leaf-defer-keywords)
+(+leaf-define-keyword :load-incrementally '(before :before-call)
+                      :defer t
+                      :normalizer #'+leaf-normalizer-commands
+                      :form '`((append! void-incremental-packages ',leaf--value)
+                               ,@leaf--body))
+#+end_src
 
-(let ((it '(:load-incrementally `((append! void-incremental-packages ',leaf--value) ,@leaf--body))))
-  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :before-call it)))
+**** =:popup=                                                           :disabled:
+
+The point of this keyword is to let me configure the display of buffers for
+specific packages.
+
+#+begin_src emacs-lisp
+(+leaf-define-keyword :popup '(before :mode)
+                      :defer t
+                      :form '`((push ,leaf--value popup-buffer-alist) ,@leaf--body))
 #+end_src
 
 **** os
 
 #+begin_src emacs-lisp
-(let ((it '(:os (when leaf--body `((with-os! ,leaf--value ,@leaf--body))))))
-  (setq leaf-keywords (leaf-insert-list-before leaf-keywords :when it)))
+;; (leaf-define-keyword! os (before :when)
+;;   '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
+
+(+leaf-define-keyword :os '(before :when)
+                      :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
 #+end_src
 
 **** straight
