@@ -1380,17 +1380,29 @@ evaluated.
                       :normalizer #'+leaf-normalizer-+setq
                       :alias (list :setq)
                       :form (plist-get leaf-keywords :setq))
+#+end_src
 
+**** +pre-setq
+
+#+begin_src emacs-lisp
 (+leaf-define-keyword :+pre-setq '(before :pre-setq)
                       :normalizer #'+leaf-normalizer-+setq
                       :alias (list :pre-setq)
                       :form (plist-get leaf-keywords :pre-setq))
+#+end_src
 
+**** +custom
+
+#+begin_src emacs-lisp
 (+leaf-define-keyword :+custom '(before :custom)
                       :normalizer #'+leaf-normalizer-+setq
                       :alias (list :custom)
                       :form (plist-get leaf-keywords :custom))
+#+end_src
 
+**** +setq-default
+
+#+begin_src emacs-lisp
 (+leaf-define-keyword :+setq-default '(before :setq-default)
                       :normalizer #'+leaf-normalizer-+setq
                       :alias (list :setq-default)
