@@ -1325,7 +1325,8 @@ is the form that will be added to."
 
   ;; Add a normalizer.
   (when normalizer
-    (push `((eq leaf--key ,keyword)
+    (push `((or (eq leaf--key ,keyword)
+                (eq ,keyword (alist-get leaf--key leaf-alias-keyword-alist)))
             (funcall #',normalizer))
           leaf-normalize))
 
