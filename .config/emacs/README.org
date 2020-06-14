@@ -1617,7 +1617,7 @@ think you want to use =smtp=.
   (confirm-kill-emacs . #'y-or-n-p)
   (require-final-newline . nil)
   (trash-directory . (expand-file-name "Trash" "~"))
-  (auto-save-default . t)
+  (auto-save-default . nil)
   (auto-save-interval . 300)
   (auto-save-timeout . 30)
   (backup-directory-alist . (list (cons ".*" (concat VOID-DATA-DIR "backup/"))))
