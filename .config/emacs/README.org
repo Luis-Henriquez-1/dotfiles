@@ -2896,6 +2896,7 @@ Emacs's text editing capabilities on it.
 
 #+begin_src emacs-lisp
 (leaf exwm-firefox-evil
+  :disabled t
   :after exwm
   :hook (exwm-manage-finish-hook . exwm-firefox-evil-activate-if-firefox)
   :config
