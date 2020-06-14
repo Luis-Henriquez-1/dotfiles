@@ -1272,11 +1272,7 @@ This code initializes straight if it's not already installed.
 
 *** package.el
 
-*** leaf
-
-Like =use-package=, leaf is a macro that fascilitates package configuration.
-
-**** required packages
+*** required packages
 :PROPERTIES:
 :ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
 :END:
@@ -1292,6 +1288,10 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
   (require package))
 (leaf-keywords-init)
 #+end_src
+
+*** leaf
+
+Like =use-package=, leaf is a macro that fascilitates package configuration.
 
 **** leaf
 
@@ -1340,26 +1340,6 @@ is the form that will be added to."
     (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
 #+end_src
 
-**** customize setq
-
-leaf's setq does not correctly handle setting variables to forms that need to be
-evaluated.
-
-#+begin_src emacs-lisp
-(push '((memq leaf--key (list :setq :pre-setq :setq-default
-                         :custom :custom*
-                         :pl-setq :pl-pre-setq :pl-setq-default :pl-custom))
-        (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
-      leaf-normalize)
-
-(defun +leaf-normalizer-commands ()
-  (mapcar (lambda (elm)
-            (cond ((memq leaf--key '(:after))
-                   (if (eq elm t) leaf--name elm))
-                  (t elm)))
-          (delete-dups (delq nil (leaf-flatten leaf--value)))))
-#+end_src
-
 **** leaf-handler-advice-call!
 
 #+begin_src emacs-lisp
@@ -1376,7 +1356,48 @@ evaluated.
        ,@(mapcar (lambda (fn) `(advice-add #',fn ,where #',fname)) fns))))
 #+end_src
 
-**** =before-call= and =after-call= keyword
+**** normalizers
+
+leaf's setq does not correctly handle setting variables to forms that need to be
+evaluated.
+
+#+begin_src emacs-lisp
+(defun +leaf-normalizer-+setq ()
+  (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
+
+(defun +leaf-normalizer-commands ()
+  (mapcar (lambda (elm)
+            (cond ((memq leaf--key '(:after))
+                   (if (eq elm t) leaf--name elm))
+                  (t elm)))
+          (delete-dups (delq nil (leaf-flatten leaf--value)))))
+#+end_src
+
+**** +setq
+
+#+begin_src emacs-lisp
+(+leaf-define-keyword :+setq '(before :setq)
+                      :normalizer #'+leaf-normalizer-+setq
+                      :alias (list :setq)
+                      :form (plist-get leaf-keywords :setq))
+
+(+leaf-define-keyword :+pre-setq '(before :pre-setq)
+                      :normalizer #'+leaf-normalizer-+setq
+                      :alias (list :pre-setq)
+                      :form (plist-get leaf-keywords :pre-setq))
+
+(+leaf-define-keyword :+custom '(before :custom)
+                      :normalizer #'+leaf-normalizer-+setq
+                      :alias (list :custom)
+                      :form (plist-get leaf-keywords :custom))
+
+(+leaf-define-keyword :+setq-default '(before :setq-default)
+                      :normalizer #'+leaf-normalizer-+setq
+                      :alias (list :setq-default)
+                      :form (plist-get leaf-keywords :setq-default))
+#+end_src
+
+**** before-call and after-call
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :before-call '(before :hook)
