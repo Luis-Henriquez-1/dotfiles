@@ -1412,7 +1412,7 @@ The straight keyword require's the package's name.
       leaf-normalize)
 #+end_src
 
-**** :defer-incrementally
+**** defer-incrementally
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :load-incrementally '(before :before-call)
