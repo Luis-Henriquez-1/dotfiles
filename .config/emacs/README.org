@@ -1465,10 +1465,9 @@ The point of this keyword is to let me configure the display of buffers for
 specific packages.
 
 #+begin_src emacs-lisp
-(+leaf-define-keyword
- :popup '(before :mode)
- :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
-          ,@leaf--body))
+(+leaf-define-keyword :popup '(before :mode)
+                      :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
+                               ,@leaf--body))
 #+end_src
 
 **** os
