@@ -1340,22 +1340,6 @@ is the form that will be added to."
     (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
 #+end_src
 
-**** leaf-handler-advice-call!
-
-#+begin_src emacs-lisp
-(defmacro leaf-handler-advice-call! (package where fns)
-  "Generate the code for advising."
-  (let ((fname (intern (concat "leaf-load-" (symbol-name package) "-a"))))
-    `(progn
-       (defun ,fname (&rest _)
-         (void-log "Loading %S..." ',package)
-         (unless (require ',package nil t)
-           (message "Error loading %S" ',package))
-         ,@(mapcar (lambda (fn) `(advice-remove #',fn #',fname)) fns)
-         (fmakunbound #',fname))
-       ,@(mapcar (lambda (fn) `(advice-add #',fn ,where #',fname)) fns))))
-#+end_src
-
 **** normalizers
 
 leaf's setq does not correctly handle setting variables to forms that need to be
@@ -1373,7 +1357,9 @@ evaluated.
           (delete-dups (delq nil (leaf-flatten leaf--value)))))
 #+end_src
 
-**** +setq
+**** custom setting keywords
+
+***** +setq
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :+setq '(before :setq)
@@ -1382,7 +1368,7 @@ evaluated.
                       :form (plist-get leaf-keywords :setq))
 #+end_src
 
-**** +pre-setq
+***** +pre-setq
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :+pre-setq '(before :pre-setq)
@@ -1391,7 +1377,7 @@ evaluated.
                       :form (plist-get leaf-keywords :pre-setq))
 #+end_src
 
-**** +custom
+***** +custom
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :+custom '(before :custom)
@@ -1400,7 +1386,7 @@ evaluated.
                       :form (plist-get leaf-keywords :custom))
 #+end_src
 
-**** +setq-default
+***** +setq-default
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :+setq-default '(before :setq-default)
@@ -1409,7 +1395,25 @@ evaluated.
                       :form (plist-get leaf-keywords :setq-default))
 #+end_src
 
-**** before-call
+**** defer keywords
+
+***** leaf-handler-advice-call!
+
+#+begin_src emacs-lisp
+(defmacro leaf-handler-advice-call! (package where fns)
+  "Generate the code for advising."
+  (let ((fname (intern (concat "leaf-load-" (symbol-name package) "-a"))))
+    `(progn
+       (defun ,fname (&rest _)
+         (void-log "Loading %S..." ',package)
+         (unless (require ',package nil t)
+           (message "Error loading %S" ',package))
+         ,@(mapcar (lambda (fn) `(advice-remove #',fn #',fname)) fns)
+         (fmakunbound #',fname))
+       ,@(mapcar (lambda (fn) `(advice-add #',fn ,where #',fname)) fns))))
+#+end_src
+
+***** before-call
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :before-call '(before :hook)
@@ -1418,13 +1422,24 @@ evaluated.
                       :form '`((leaf-handler-advice-call! ,leaf--name :before ,leaf--value) ,@leaf--body))
 #+end_src
 
-**** after-call
+***** after-call
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :after-call '(before :hook)
                       :defer t
                       :normalizer #'+leaf-normalizer-commands
                       :form '`((leaf-handler-advice-call! ,leaf--name :after ,leaf--value) ,@leaf--body))
+#+end_src
+
+
+***** defer-incrementally
+
+#+begin_src emacs-lisp
+(+leaf-define-keyword :load-incrementally '(before :before-call)
+                      :defer t
+                      :normalizer #'+leaf-normalizer-commands
+                      :form '`((append! void-incremental-packages ',leaf--value)
+                               ,@leaf--body))
 #+end_src
 
 **** straight keyword
@@ -1447,16 +1462,6 @@ The straight keyword require's the package's name.
               ((listp (car-safe leaf--value))
                (list (cons leaf--name (car leaf--value))))))
       leaf-normalize)
-#+end_src
-
-**** defer-incrementally
-
-#+begin_src emacs-lisp
-(+leaf-define-keyword :load-incrementally '(before :before-call)
-                      :defer t
-                      :normalizer #'+leaf-normalizer-commands
-                      :form '`((append! void-incremental-packages ',leaf--value)
-                               ,@leaf--body))
 #+end_src
 
 **** popup
