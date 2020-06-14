@@ -1304,7 +1304,8 @@ Like =use-package=, leaf is a macro that fascilitates package configuration.
 
 Leaf is very minimal and for the most part this is good. However, it does mean
 defining leaf keywords is a bit of a pain. There are many low-level parts of
-doing so that could be automated.
+doing so that could be automated. This is my attempt to automate defining a leaf
+keyword.
 
 #+begin_src emacs-lisp
 (cl-defun +leaf-define-keyword (keyword place &key normalizer defer alias form)
