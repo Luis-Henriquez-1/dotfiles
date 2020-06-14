@@ -1409,14 +1409,18 @@ evaluated.
                       :form (plist-get leaf-keywords :setq-default))
 #+end_src
 
-**** before-call and after-call
+**** before-call
 
 #+begin_src emacs-lisp
 (+leaf-define-keyword :before-call '(before :hook)
                       :defer t
                       :normalizer #'+leaf-normalizer-commands
                       :form '`((leaf-handler-advice-call! ,leaf--name :before ,leaf--value) ,@leaf--body))
+#+end_src
 
+**** after-call
+
+#+begin_src emacs-lisp
 (+leaf-define-keyword :after-call '(before :hook)
                       :defer t
                       :normalizer #'+leaf-normalizer-commands
