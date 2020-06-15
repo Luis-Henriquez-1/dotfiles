@@ -3401,7 +3401,7 @@ more sense to me than this "dispatching" and "immediate" "done" stuff.
 [[https://github.com/Yevgnen/ivy-rich][ivy-rich]] provides an easy way (the plist [[helpvar:ivy-rich-display-transformers-list][ivy-rich-display-transformers-list]]) to
 provide a more informative interface to ivy commands.
 
-***** boostrap
+***** ivy rich
 :PROPERTIES:
 :ID: 4b4cd57a-2812-4f47-91a8-4c1be0934f27
 :END:
