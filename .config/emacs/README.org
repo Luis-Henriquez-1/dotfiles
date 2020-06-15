@@ -1948,7 +1948,7 @@ you can "discover" the commands as you go along.
 
 #+begin_src emacs-lisp
 (leaf which-key
-  :hook emacs-startup-hook
+  :on-hook pre-command-hook
   :setq
   (which-key-sort-uppercase-first . nil)
   (which-key-max-display-columns . nil)
