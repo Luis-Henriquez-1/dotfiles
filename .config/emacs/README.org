@@ -1398,49 +1398,66 @@ evaluated.
 
 **** defer keywords
 
-***** leaf-handler-advice-call!
+***** leaf-generate-load-fn
 
 #+begin_src emacs-lisp
-(defmacro leaf-handler-advice-call! (package where fns)
-  "Generate the code for advising."
-  (let ((fname (intern (concat "leaf-load-" (symbol-name package) "-a"))))
+(defun +leaf--generate-load-form (package &optional hooks advice-place advices)
+  "Return form that evals into function that loads the package."
+  (let ((load-fn (intern (concat "+leaf--load-" (symbol-name package)))))
     `(progn
-       (defun ,fname (&rest _)
+       (defun ,load-fn (&rest _)
          (void-log "Loading %S..." ',package)
          (unless (require ',package nil t)
            (message "Error loading %S" ',package))
-         ,@(mapcar (lambda (fn) `(advice-remove #',fn #',fname)) fns)
-         (fmakunbound #',fname))
-       ,@(mapcar (lambda (fn) `(advice-add #',fn ,where #',fname)) fns))))
+         ,@(mapcar (lambda (hook) `(remove-hook ',hook #',load-fn)) hooks)
+         ,@(mapcar (lambda (advice) `(advice-remove #',advice #',load-fn)) advices)
+         (fmakunbound #',load-fn))
+       ,@(mapcar (lambda (hook) `(add-hook ',hook #',load-fn)) hooks)
+       ,@(mapcar (lambda (advice) `(advice-add #',advice ,advice-place #',load-fn)) advices))))
 #+end_src
 
 ***** before-call
 
 #+begin_src emacs-lisp
-(+leaf-define-keyword :before-call '(before :hook)
-                      :defer t
-                      :normalizer #'+leaf-normalizer-commands
-                      :form '`((leaf-handler-advice-call! ,leaf--name :before ,leaf--value) ,@leaf--body))
+(+leaf-define-keyword
+ :before-call '(before :hook)
+ :defer t
+ :normalizer #'+leaf-normalizer-commands
+ :form '`(,(+leaf--generate-load-form leaf--name nil :after leaf--value)
+          ,@leaf--body))
 #+end_src
 
 ***** after-call
 
 #+begin_src emacs-lisp
-(+leaf-define-keyword :after-call '(before :hook)
-                      :defer t
-                      :normalizer #'+leaf-normalizer-commands
-                      :form '`((leaf-handler-advice-call! ,leaf--name :after ,leaf--value) ,@leaf--body))
+(+leaf-define-keyword
+ :after-call '(before :hook)
+ :defer t
+ :normalizer #'+leaf-normalizer-commands
+ :form '`(,(+leaf--generate-load-form leaf--name nil :before leaf--value)
+          ,@leaf--body))
 #+end_src
 
+
+***** on-hook
+
+#+begin_src emacs-lisp
+(+leaf-define-keyword
+ :on-hook '(before :hook)
+ :defer t
+ :form '`(,(+leaf--generate-load-form leaf--name leaf--value)
+          ,@leaf--body))
+#+end_src
 
 ***** defer-incrementally
 
 #+begin_src emacs-lisp
-(+leaf-define-keyword :load-incrementally '(before :before-call)
-                      :defer t
-                      :normalizer #'+leaf-normalizer-commands
-                      :form '`((append! void-incremental-packages ',leaf--value)
-                               ,@leaf--body))
+(+leaf-define-keyword
+ :load-incrementally '(before :before-call)
+ :defer t
+ :normalizer #'+leaf-normalizer-commands
+ :form '`((append! void-incremental-packages ',leaf--value)
+          ,@leaf--body))
 #+end_src
 
 **** straight keyword
