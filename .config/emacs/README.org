@@ -3497,12 +3497,6 @@ provide a more informative interface to ivy commands.
         (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face)))))))
 #+end_src
 
-**** remaps
-
-#+begin_src emacs-lisp
-
-#+end_src
-
 **** customizing specific functions
 
 ***** no sort
