@@ -3393,7 +3393,7 @@ more sense to me than this "dispatching" and "immediate" "done" stuff.
   (if (ivy--marked-p) (ivy-unmark) (ivy-mark)))
 #+end_src
 
-**** ivy rich                                                         :disabled:
+**** ivy rich
 :PROPERTIES:
 :ID: 83df9e3a-d384-4b59-b3f2-7d57ee46b25e
 :END:
