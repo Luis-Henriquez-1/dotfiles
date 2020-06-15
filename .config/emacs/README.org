@@ -4900,7 +4900,11 @@ mainly for consistency.
 
 #+begin_src emacs-lisp
 (leaf edit-indirect
-  :before-call (org/edit:description-at-point org/dwim-edit-source-block))
+  :before-call (org/edit:description-at-point org/dwim-edit-source-block)
+  :popup ("\\*edit-indirect"
+          (display-buffer-at-bottom)
+          (window-height . 0.4)
+          (slot . 10)))
 #+end_src
 
 *** list of headline elements
