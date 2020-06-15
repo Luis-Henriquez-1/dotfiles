@@ -3408,9 +3408,9 @@ provide a more informative interface to ivy commands.
 
 #+begin_src emacs-lisp
 (leaf ivy-rich
-  :before-call (ivy-switch-buffer counsel-switch-buffer)
+  :after ivy
   :setq (ivy-rich-display-transformers-list . nil)
-  :defer-config
+  :init
   (ivy-rich-mode)
   (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
 
