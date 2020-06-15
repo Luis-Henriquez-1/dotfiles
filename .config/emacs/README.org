@@ -1235,22 +1235,22 @@ this from Doom's straight branch.
 This code initializes straight if it's not already installed.
 
 #+begin_src emacs-lisp
-(defvar boostrap-version 5 "Bootstrap version for straight.el")
-(defun straight:init-fn ()
+(defun +straight-init-fn ()
   "Initialize `straight.el'."
+  (defvar boostrap-version 5 "Bootstrap version for straight.el")
   (let* ((user-emacs-directory VOID-PACKAGES-DIR)
          (straight-dir (concat VOID-PACKAGES-DIR "straight/"))
-         (bootstrap-file (concat straight-dir
-                                 "repos/straight.el/straight.el")))
-    (unless (featurep 'straight)
-      (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
-        (with-current-buffer
-            (url-retrieve-synchronously
-             "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-             'silent 'inhibit-cookies)
-          (goto-char (point-max))
-          (eval-print-last-sexp)))
-      (load bootstrap-file nil t)))
+         (bootstrap-file (concat straight-dir "repos/straight.el/straight.el")))
+    (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
+      (void-log "Installing straight.el...")
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (void-log "Loading straight.el...")
+    (load bootstrap-file nil t))
   (mapc #'straight-use-recipes void-core-package-sources))
 #+end_src
 
@@ -1262,6 +1262,7 @@ This code initializes straight if it's not already installed.
 #+begin_src emacs-lisp
 (defun straight:install-package (package-or-recipe)
   "Install PACKAGE with optional RECIPE."
+  (unless (featurep 'straight) (+straight-init-fn))
   (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
     (condition-case err
         (progn (straight-use-package package-or-recipe)
@@ -1282,7 +1283,6 @@ packages. I could write this macro with just plain Emacs libraries but I prefer
 using nice libraries. In byte compiled Void, they don't need to be installed.
 
 #+begin_src emacs-lisp
-(straight:init-fn)
 (dolist (package '(leaf-keywords leaf))
   (funcall #'straight:install-package package)
   (require package))
