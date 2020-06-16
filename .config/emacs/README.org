@@ -4789,7 +4789,7 @@ Like [[][screenshot]], [[https://github.com/dakra/scrot.el][scrot]] is screensho
 has a function that can capture a screenshot of a particular emacs window.
 
 #+begin_src emacs-lisp
-(leaf scrot (:host github :repo "dakra/scrot.el"))
+(leaf scrot :ensure (:host github :repo "dakra/scrot.el"))
 #+end_src
 
 ** gifs
