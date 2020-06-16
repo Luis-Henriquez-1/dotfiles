@@ -4777,7 +4777,7 @@ my description of problems with pictures.
 *** escr
 
 #+begin_src emacs-lisp
-(leaf escr)
+(leaf escr :disabled t)
 #+end_src
 
 *** scrot
