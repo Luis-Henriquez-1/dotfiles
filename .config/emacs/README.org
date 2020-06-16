@@ -1271,8 +1271,6 @@ This code initializes straight if it's not already installed.
        (void-log "✕ failed to install %s because of %s" package err)))))
 #+end_src
 
-*** package.el
-
 *** required packages
 :PROPERTIES:
 :ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
