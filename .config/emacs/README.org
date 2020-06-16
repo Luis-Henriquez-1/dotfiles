@@ -1423,7 +1423,7 @@ evaluated.
  :before-call '(before :hook)
  :defer t
  :normalizer #'+leaf-normalizer-commands
- :form '`(,(+leaf--generate-load-form leaf--name nil :after leaf--value)
+ :form '`(,(+leaf--generate-load-form leaf--name nil :before leaf--value)
           ,@leaf--body))
 #+end_src
 
@@ -1434,7 +1434,7 @@ evaluated.
  :after-call '(before :hook)
  :defer t
  :normalizer #'+leaf-normalizer-commands
- :form '`(,(+leaf--generate-load-form leaf--name nil :before leaf--value)
+ :form '`(,(+leaf--generate-load-form leaf--name nil :after leaf--value)
           ,@leaf--body))
 #+end_src
 
