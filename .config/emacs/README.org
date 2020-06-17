@@ -9398,6 +9398,8 @@ see dark on light better than light on dark.
 
 (use-package! solarized-theme
   :pre-setq (solarized-use-variable-pitch . nil))
+
+(use-package! avk-emacs-themes)
 #+end_src
 
 * Keybindings
