@@ -1291,7 +1291,10 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 
 Like =use-package=, leaf is a macro that fascilitates package configuration.
 
-**** leaf
+**** naming
+
+The name =leaf= is not descriptive about what I'm doing which is configuring a
+package.
 
 #+begin_src emacs-lisp
 (defalias 'use-package! 'leaf)
@@ -1299,7 +1302,11 @@ Like =use-package=, leaf is a macro that fascilitates package configuration.
 (defmacro use-feature! (feature &rest args)
   (declare (indent defun))
   `(leaf ,feature :ensure nil ,@args))
+#+end_src
 
+**** leaf
+
+#+begin_src emacs-lisp
 (use-package! leaf
   :setq (leaf-defaults . '(:ensure t)))
 #+end_src
