@@ -105,13 +105,13 @@ advantage of it fully. But if it's possible.
 :ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
 :END:
 
-[[helpvar:void-debug-p][void-debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
+[[helpvar:void-debug-p][void:debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
 is to serve as an indicator of whether the current Void instance is run for
 debugging. When Void is set up for debugging it prints out many messages about
-what its doing via [[hfn:void-log][void-log]].
+what its doing via [[hfn:void-log][void:log]].
 
 #+begin_src emacs-lisp
-(defvar void-debug-p (or (getenv "DEBUG") init-file-debug)
+(defvar void:debug-p (or (getenv "DEBUG") init-file-debug)
   "When non-nil Void will log more with `log!'.
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
@@ -121,19 +121,19 @@ The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 :ID: 84ded5f7-382e-4f59-af9e-ccb157ef5c42
 :END:
 
-The purpose of ~void-log~ is to distinguish regular messages from messages that
+The purpose of ~void:log~ is to distinguish regular messages from messages that
 pertain specifically to Void, and to help debug Void functionality. When Void is
-=void-debug= is non-nil, void-specific messages are logged in the =*messages*=
+=void:debug= is non-nil, void:specific messages are logged in the =*messages*=
 buffer.
 
 #+begin_src emacs-lisp
-(defun void-log (format-string &rest args)
-  "Log to *Messages* if `void-debug-p' is on.
+(defun void:log (format-string &rest args)
+  "Log to *Messages* if `void:debug-p' is on.
 Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
 Accepts the same arguments as `message'."
-  (when void-debug-p
+  (when void:debug-p
     (let ((inhibit-message (active-minibuffer-window)))
-      (when void-debug-p
+      (when void:debug-p
         (apply #'message (concat (propertize "VOID " 'face 'font-lock-comment-face)
                                  format-string)
                args)))))
@@ -270,29 +270,29 @@ one large org file.
 :END:
 
 These are important files and directories that I end up referring to often in my
-code. Well, not so much =VOID-README-FILE= and =VOID-TODO-FILE= but the others are
+code. Well, not so much =VOID:README-FILE= and =VOID:TODO-FILE= but the others are
 referenced alot.
 
 #+begin_src emacs-lisp
-(defconst VOID-EMACS-DIR (file-truename user-emacs-directory)
+(defconst VOID:EMACS-DIR (file-truename user-emacs-directory)
   "Path to `user-emacs-directory'.")
 
-(defconst VOID-INIT-FILE (concat VOID-EMACS-DIR "init.el")
+(defconst VOID:INIT-FILE (concat VOID:EMACS-DIR "init.el")
   "Path to the elisp file that bootstraps Void startup.")
 
-(defconst VOID-README-FILE (concat VOID-EMACS-DIR "README.org")
+(defconst VOID:README-FILE (concat VOID:EMACS-DIR "README.org")
   "Path to the Org file that when that Void.")
 
-(defconst VOID-ORG-DIR (concat VOID-EMACS-DIR "org/")
+(defconst VOID:ORG-DIR (concat VOID:EMACS-DIR "org/")
   "Path where Void's org files go.")
 
-(defconst VOID-SCREENSHOT-DIR (concat VOID-EMACS-DIR "screenshots/")
+(defconst VOID:SCREENSHOT-DIR (concat VOID:EMACS-DIR "screenshots/")
   "Path where any screenshots I take with Void go.")
 
-(defconst VOID-TEST-FILE (concat VOID-EMACS-DIR "test.org")
+(defconst VOID:TEST-FILE (concat VOID:EMACS-DIR "test.org")
   "Path to the file that contains all of Void's tests.")
 
-(defconst VOID-TODO-FILE (concat VOID-ORG-DIR "emacs.org")
+(defconst VOID:TODO-FILE (concat VOID:ORG-DIR "emacs.org")
   "Path where all of Void's emacs related todos go.")
 #+end_src
 
@@ -302,14 +302,14 @@ referenced alot.
 :END:
 
 #+begin_src emacs-lisp
-(defconst VOID-LOCAL-DIR (concat VOID-EMACS-DIR ".local/")
+(defconst VOID:LOCAL-DIR (concat VOID:EMACS-DIR ".local/")
   "Path to the directory for local Emacs files.
 Files that need to exist, but I don't typically want to see go here.")
 
-(defconst VOID-DATA-DIR (concat VOID-LOCAL-DIR "data/")
+(defconst VOID:DATA-DIR (concat VOID:LOCAL-DIR "data/")
   "Path to the directory where Void data files are stored.")
 
-(defconst VOID-PACKAGES-DIR (concat VOID-LOCAL-DIR "packages/")
+(defconst VOID:PACKAGES-DIR (concat VOID:LOCAL-DIR "packages/")
   "Path to the directory where packages are stored.")
 #+end_src
 
@@ -322,7 +322,7 @@ I create the directories that don't exist. But I assume they already exist if
 Void is compiled.
 
 #+begin_src emacs-lisp
-(dolist (dir (list VOID-LOCAL-DIR VOID-DATA-DIR VOID-ORG-DIR))
+(dolist (dir (list VOID:LOCAL-DIR VOID:DATA-DIR VOID:ORG-DIR))
   (make-directory dir t))
 #+end_src
 
@@ -386,9 +386,9 @@ Void is compiled.
 
 #+begin_src emacs-lisp
 ;; File name in which to write a list of all auto save file names.
-(setq auto-save-list-file-name (concat VOID-DATA-DIR "autosave"))
+(setq auto-save-list-file-name (concat VOID:DATA-DIR "autosave"))
 ;; Directory of score files for games which come with GNU Emacs.
-(setq shared-game-score-directory (concat VOID-DATA-DIR "shared-game-score/"))
+(setq shared-game-score-directory (concat VOID:DATA-DIR "shared-game-score/"))
 
 (setq-default cursor-in-non-selected-windows nil)
 
@@ -521,22 +521,22 @@ usually too low for modern machines.
 :END:
 
 #+begin_src emacs-lisp
-(defconst VOID-GC-CONS-THRESHOLD-MAX (eval-when-compile (* 256 1024 1024))
+(defconst VOID:GC-CONS-THRESHOLD-MAX (eval-when-compile (* 256 1024 1024))
   "The upper limit for `gc-cons-threshold'.
 When VOID is performing computationally intensive operations,
 `gc-cons-threshold' is set to this value.")
 
-(defconst VOID-GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
+(defconst VOID:GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
   "The default value for `gc-cons-threshold'.
 If you experience freezing, decrease this. If you experience stuttering,
 increase this.")
 
-(defconst VOID-GC-CONS-PERCENTAGE-MAX 0.6
+(defconst VOID:GC-CONS-PERCENTAGE-MAX 0.6
   "The upper limit for `gc-cons-percentage'.
 When VOID is performing computationally intensive operations,
 `gc-cons-percentage' is set to this value.")
 
-(defconst VOID-GC-CONS-PERCENTAGE 0.1
+(defconst VOID:GC-CONS-PERCENTAGE 0.1
   "The default value for `gc-cons-percentage'.")
 #+end_src
 
@@ -546,8 +546,8 @@ When VOID is performing computationally intensive operations,
 :END:
 
 #+begin_src emacs-lisp
-(setq gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX
-      gc-cons-percentage VOID-GC-CONS-PERCENTAGE-MAX)
+(setq gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX
+      gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
 #+end_src
 
 **** TODO Restore GC after delay
@@ -560,16 +560,16 @@ Instead of just doing this immediately, we give it 3 extra seconds because
 packages are still being incrementally loaded (see [[file:main.org::*Load Incrementally][incremental loading]]).
 
 #+begin_src emacs-lisp
-(defun void-restore-gc-cons-threshold ()
-  (void-log "Restoring...gc-cons-threshold: %d -> %d | gc-cons-percentage %.2f -> %.2f"
+(defun void:restore-gc-cons-threshold ()
+  (void:log "Restoring...gc-cons-threshold: %d -> %d | gc-cons-percentage %.2f -> %.2f"
             gc-cons-threshold
-            VOID-GC-CONS-THRESHOLD
+            VOID:GC-CONS-THRESHOLD
             gc-cons-percentage
-            VOID-GC-CONS-PERCENTAGE)
-  (setq gc-cons-threshold VOID-GC-CONS-THRESHOLD)
-  (setq gc-cons-percentage VOID-GC-CONS-PERCENTAGE))
+            VOID:GC-CONS-PERCENTAGE)
+  (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD)
+  (setq gc-cons-percentage VOID:GC-CONS-PERCENTAGE))
 
-(run-with-idle-timer 7 nil #'void-restore-gc-cons-threshold)
+(run-with-idle-timer 7 nil #'void:restore-gc-cons-threshold)
 #+end_src
 
 *** UTF-8 for everything
@@ -605,22 +605,22 @@ Emacs/the OS decide what encoding to use.
 Some packages like =org= are really big. When loading such packages, we can
 notice a pause. To keep the experience in emacs snappy and avoid noticeable
 pauses, I load many small packages pre-emptively. I got this idea form reading
-[[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L355][Doom source code]]. Packages added to [[helpvar:void-incremental-packages][void-incremental-packages]] will be
+[[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L355][Doom source code]]. Packages added to [[helpvar:void-incremental-packages][void:incremental-packages]] will be
 incrementally. After Void has finished loading it will wait for
-[[helpvar:void-initial-incremental-loading-delay][void-initial-incremental-loading-delay]] and then load one package from
-~void-incremental-packages~ intervals of =N= idle seconds, where =N= is
-[[helpvar:void-incremental-loading-interval][void-incremental-loading-interval]].
+[[helpvar:void-initial-incremental-loading-delay][void:initial-incremental-loading-delay]] and then load one package from
+~void:incremental-packages~ intervals of =N= idle seconds, where =N= is
+[[helpvar:void-incremental-loading-interval][void:incremental-loading-interval]].
 
 ***** packages
 :PROPERTIES:
 :ID: 41201902-db03-4acb-9c03-953f1720d494
 :END:
 
-Later in my config I will add packages to [[helpvar:void-incremental-packages][void-incremental-packages]] (using
+Later in my config I will add packages to [[helpvar:void-incremental-packages][void:incremental-packages]] (using
 ~nconc!~). But no incremental loading will happen until after Void is done loading.
 
 #+begin_src emacs-lisp
-(defvar void-incremental-packages nil
+(defvar void:incremental-packages nil
   "A list of packages to load incrementally after startup.")
 #+end_src
 
@@ -630,11 +630,11 @@ Later in my config I will add packages to [[helpvar:void-incremental-packages][v
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-initial-incremental-loading-delay 6
+(defvar void:initial-incremental-loading-delay 6
   "How long (in idle seconds) until incremental loading starts.
 Set this to nil to disable incremental loading.")
 
-(defvar void-incremental-loading-interval 5
+(defvar void:incremental-loading-interval 5
   "How long (in idle seconds) in between incrementally loading packages.")
 #+end_src
 
@@ -644,28 +644,28 @@ Set this to nil to disable incremental loading.")
 :END:
 
 #+begin_src emacs-lisp
-(defun void-load-incrementally (packages)
+(defun void:load-incrementally (packages)
   "Load PACKAGES incrementally.
 This function tries to load a package from PACKAGES, a list of packages. It then
-calls itself on the rest of PACKAGES in `void-incremental-loading-interval'
+calls itself on the rest of PACKAGES in `void:incremental-loading-interval'
 idle seconds."
-  (let ((gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX)
-        (gc-cons-percentage VOID-GC-CONS-PERCENTAGE-MAX)
+  (let ((gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
+        (gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
         (file-name-handler-alist nil)
         (package (car packages))
         (rest (cdr packages)))
     (cond ((null package) nil)
           ((featurep package)
-           (void-load-incrementally rest))
+           (void:load-incrementally rest))
           (t
            (condition-case e
                (progn
-                 (void-log "Incrementally loading %s" package)
+                 (void:log "Incrementally loading %s" package)
                  (require package nil t))
              (error
               (message "Failed to load '%s' incrementally, because %s" package e)))
            (run-with-idle-timer
-            void-incremental-loading-interval nil #'void-load-incrementally rest)))))
+            void:incremental-loading-interval nil #'void:load-incrementally rest)))))
 #+end_src
 
 ***** incremental load hook
@@ -676,19 +676,19 @@ idle seconds."
 This hook triggers incremental loading to start.
 
 #+begin_src emacs-lisp
-(defhook! void-load-packages-incrementally-h ()
-  "Begin incrementally loading packages in `void-incremental-packages'.
+(defhook! void:load-packages-incrementally-h ()
+  "Begin incrementally loading packages in `void:incremental-packages'.
 If this is a daemon session, load them all immediately instead."
-  :hook void-start-emacs-hook
+  :hook void:start-emacs-hook
   (cond
    ((daemonp)
-    (mapc #'require (cdr void-incremental-packages)))
-   ((numberp void-incremental-loading-interval)
+    (mapc #'require (cdr void:incremental-packages)))
+   ((numberp void:incremental-loading-interval)
     (run-with-idle-timer
-     void-initial-incremental-loading-delay
+     void:initial-incremental-loading-delay
      nil
-     #'void-load-incrementally
-     void-incremental-packages))
+     #'void:load-incrementally
+     void:incremental-packages))
    (t nil)))
 #+end_src
 
@@ -702,7 +702,7 @@ When running emacs in terminal tty is *tremendously* slow.
 #+begin_src emacs-lisp
 (unless (display-graphic-p)
   (advice-add #'tty-run-terminal-initialization :override #'ignore)
-  (defhook! void-init-tty-h ()
+  (defhook! void:init-tty-h ()
     :hook window-setup-hook
     (advice-remove #'tty-run-terminal-initialization #'ignore)
     (tty-run-terminal-initialization (selected-frame) nil t)))
@@ -726,17 +726,17 @@ I set up Void's fundamental hooks.
 :END:
 
 It may be that some error happens running a hook. This function will catch any
-such error and signal a =void-hook-error.=
+such error and signal a =void:hook-error.=
 
 #+begin_src emacs-lisp
-(defun void-try-run-hook (hook)
+(defun void:try-run-hook (hook)
   "Run HOOK, but handle errors better.
 Meant to be used with `run-hook-wrapped'."
-  (void-log "Running hook function: %s" hook)
+  (void:log "Running hook function: %s" hook)
   (condition-case e
       (funcall hook)
     ((debug error)
-     (signal 'void-hook-error (list hook e))))
+     (signal 'void:hook-error (list hook e))))
   ;; return nil so `run-hook-wrapped' won't short circuit
   nil)
 #+end_src
@@ -746,27 +746,27 @@ Meant to be used with `run-hook-wrapped'."
 :ID: 09560208-c8eb-4a70-a143-ba52d1b0dbb4
 :END:
 
-Why have a =void-start-emacs-hook= when there is already an [[helpvar:emacs-startup-hook][emacs-startup-hook]]?
+Why have a =void:start-emacs-hook= when there is already an [[helpvar:emacs-startup-hook][emacs-startup-hook]]?
 One reason is I want to be able to control how the hooks run inside of it are
 run using [[helpfn:run-hook-wrapped][run-hook-wrapped]]. I can't do this easily with ~emacs-startup-hook~
 because Emacs runs that hook. Another reason I want counter variable names to be easy to
 predict based on knowing one of them. What I mean is I think that the names
-=void-start-emacs-hook= and =void-quit-emacs-hook= are more intuitive and easier to
+=void:start-emacs-hook= and =void:quit-emacs-hook= are more intuitive and easier to
 guess one given the other than the names =emacs-startup-hook= and =kill-emacs-hook=.
 
 #+begin_src emacs-lisp
-(defvar void-start-emacs-hook nil
+(defvar void:start-emacs-hook nil
   "A hook run when Void startup is complete.
 This hook happens during `emacs-startup-hook'.")
 
-(defhook! void-run-start-emacs-hook-h ()
-  "Run all hooks in `void-start-emacs-hook-list'."
+(defhook! void:run-start-emacs-hook-h ()
+  "Run all hooks in `void:start-emacs-hook-list'."
   :hook emacs-startup-hook
   ;; In case I want more hooks in future use a loop.
-  (dolist (hook '(void-start-emacs-hook))
-    (void-log "Executing %s" hook)
-    (unless hook (void-log "%s is nil!" hook))
-    (run-hook-wrapped hook #'void-try-run-hook)))
+  (dolist (hook '(void:start-emacs-hook))
+    (void:log "Executing %s" hook)
+    (unless hook (void:log "%s is nil!" hook))
+    (run-hook-wrapped hook #'void:try-run-hook)))
 #+end_src
 
 ****** quit
@@ -774,7 +774,7 @@ This hook happens during `emacs-startup-hook'.")
 :ID: 250736cb-5596-4515-a1e4-197b9864b30b
 :END:
 
-[[helpvar:void-quit-emacs-hook][void-quit-emacs-hook]] will contains all the things that should be taken care of
+[[helpvar:void-quit-emacs-hook][void:quit-emacs-hook]] will contains all the things that should be taken care of
 just before I quit emacs. I made my own hook for quitting emacs for the same
 reasons as I made a hook for starting emacs. I should mention that emacs (and
 linux in general) uses the word "kill" to describe quitting an application. The
@@ -784,15 +784,15 @@ clearer and easier to read I alias [[helpvar:kill-emacs-hook][kill-emacs-hook]] 
 #+begin_src emacs-lisp
 (defvaralias 'quit-emacs-hook 'kill-emacs-hook)
 
-(defvar void-quit-emacs-hook nil
+(defvar void:quit-emacs-hook nil
   "A List of run when killing Void.")
 
-(defhook! void-run-quit-emacs-hook-h ()
-  "Run hooks in `void-quit-emacs-hook'."
+(defhook! void:run-quit-emacs-hook-h ()
+  "Run hooks in `void:quit-emacs-hook'."
   :append kill-emacs-hook
-  (let ((gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX)
-        (gc-cons-percentage VOID-GC-CONS-PERCENTAGE-MAX))
-    (run-hooks 'void-quit-emacs-hook)))
+  (let ((gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
+        (gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX))
+    (run-hooks 'void:quit-emacs-hook)))
 #+end_src
 
 ****** record init time
@@ -802,19 +802,19 @@ clearer and easier to read I alias [[helpvar:kill-emacs-hook][kill-emacs-hook]] 
 
 As mentioned in my [[file:~/.emacs.d/README.org][README]], a fast init time is one of the goals of Void. It is
 natural, then, that I want to keep a close eye on it. The hook
-[[helpfn:void-set-init-time-h][void-set-init-time-h]] will give me a more accurate measure of my startup time than
-[[helpfn:emacs-init-time][emacs-init-time]]. It's called right after [[helpvar:void-start-emacs-hook][void-start-emacs-hook]].
+[[helpfn:void-set-init-time-h][void:set-init-time-h]] will give me a more accurate measure of my startup time than
+[[helpfn:emacs-init-time][emacs-init-time]]. It's called right after [[helpvar:void-start-emacs-hook][void:start-emacs-hook]].
 
 #+begin_src emacs-lisp
-(defvar void-init-time nil "Time in seconds it takes Void to load.")
+(defvar void:init-time nil "Time in seconds it takes Void to load.")
 
-(defhook! void-set-init-time-h ()
-  "Hook that computes `void-init-time'."
+(defhook! void:set-init-time-h ()
+  "Hook that computes `void:init-time'."
   :append emacs-startup-hook
-  (setq void-init-time
+  (setq void:init-time
         (float-time (time-subtract after-init-time before-init-time)))
-  (when void-debug-p
-    (void-log "init-time: %f seconds" void-init-time)))
+  (when void:debug-p
+    (void:log "init-time: %f seconds" void:init-time)))
 #+end_src
 
 ***** minibuffer
@@ -843,15 +843,15 @@ hook variables use action verbs in their names not nouns. So the =exit= in
 #+begin_src emacs-lisp
 (defvaralias 'minibuffer-enter-hook 'minibuffer-setup-hook)
 
-(defhook! void-boost-garbage-collection-h ()
-  "Boost garbage collection settings to `VOID-GC-CONS-THRESHOLD-MAX'."
+(defhook! void:boost-garbage-collection-h ()
+  "Boost garbage collection settings to `VOID:GC-CONS-THRESHOLD-MAX'."
   :hook minibuffer-enter-hook
-  (setq gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX))
+  (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX))
 
-(defhook! void-defer-garbage-collection-h ()
-  "Reset garbage collection settings to `void-gc-cons-threshold' after delay."
+(defhook! void:defer-garbage-collection-h ()
+  "Reset garbage collection settings to `void:gc-cons-threshold' after delay."
   :append minibuffer-exit-hook
-  (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold VOID-GC-CONS-THRESHOLD))))
+  (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD))))
 #+end_src
 
 ***** tangling
@@ -864,16 +864,16 @@ hook variables use action verbs in their names not nouns. So the =exit= in
 :ID: 549999d7-901b-4ab4-bdbe-81514b756ced
 :END:
 
-Void tangles itself just before quitting if [[helpfn:void-needs-tangling-p][void-needs-tangling-p]] returns true.
+Void tangles itself just before quitting if [[helpfn:void-needs-tangling-p][void:needs-tangling-p]] returns true.
 I tangle before quitting so I don't have to do it before startup. It's
 preferable for quitting emacs to be slightly slower than for emacs startup to
 be.
 
 #+begin_src emacs-lisp
-(defhook! void-tangle-on-quit-maybe-h ()
-  "Tangle if `void-needs-tangling-p' returns t."
-  :append void-quit-emacs-hook
-  (when (void-needs-tangling-p)
+(defhook! void:tangle-on-quit-maybe-h ()
+  "Tangle if `void:needs-tangling-p' returns t."
+  :append void:quit-emacs-hook
+  (when (void:needs-tangling-p)
     (void/tangle-org-file)))
 #+end_src
 
@@ -883,19 +883,19 @@ be.
 :END:
 
 This is another attempt to keep my =main.el= file in sync as much as possible with
-[[helpvar:VOID-README-FILE][void-main-org-file]]. ~void-tangle-on-save-h~ is called whenever a buffer is being
+[[helpvar:VOID-README-FILE][void:main-org-file]]. ~void:tangle-on-save-h~ is called whenever a buffer is being
 saved to a file. The reason why I use ~cl-letf~ to temporarily override [[helpfn:load][load]] is
-because ~VOID-INIT-FILE~ already contains all the code I need so I don't want it
-to waste time loading ~void-main-elisp-file~.
+because ~VOID:INIT-FILE~ already contains all the code I need so I don't want it
+to waste time loading ~void:main-elisp-file~.
 
 #+begin_src emacs-lisp
-(defhook! void-tangle-on-save-h ()
-  "Tangle `VOID-README-FILE' asynchronously when it is saved."
+(defhook! void:tangle-on-save-h ()
+  "Tangle `VOID:README-FILE' asynchronously when it is saved."
   :hook after-save-hook
   (when (and (require 'async nil t)
-             (string= (file-truename VOID-README-FILE)
+             (string= (file-truename VOID:README-FILE)
                       (or (buffer-file-name (current-buffer)) ""))
-             (void-needs-tangling-p))
+             (void:needs-tangling-p))
     (async-start
      #'(lambda ()
          ;; Don't load `main.org'.
@@ -907,9 +907,9 @@ to waste time loading ~void-main-elisp-file~.
                         (apply old-fn file args)))))
            (load user-init-file))))
      #'(lambda (_)
-         (void-log
-          (concat (if (void-needs-tangling-p) "✕ failed" "✓ succeeded")
-           " tangling `VOID-README-FILE'."))))))
+         (void:log
+          (concat (if (void:needs-tangling-p) "✕ failed" "✓ succeeded")
+           " tangling `VOID:README-FILE'."))))))
 #+end_src
 
 *** OS                                                                :disabled:
@@ -1028,7 +1028,7 @@ Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-fro
   :setq
   (exec-path-from-shell-check-startup-files . nil)
   (exec-path-from-shell-arguments . (delete "-i" exec-path-from-shell-arguments))
-  (exec-path-from-shell-debug . void-debug-p)
+  (exec-path-from-shell-debug . void:debug-p)
   :init
   (nconc! exec-path-from-shell-variables
     '("LC_CTYPE" "LC_ALL" "LANG"))
@@ -1059,7 +1059,7 @@ color in the frame title.
 (use-package! osx-clipboard
   :os mac
   :when (or (daemonp) (not (display-graphic-p)))
-  :hook void-start-emacs-hook)
+  :hook void:start-emacs-hook)
 #+end_src
 
 **** linux
@@ -1191,16 +1191,16 @@ completely reproducable.
 :END:
 
 The path of the straight directory within emacs is hardcoded into
-straight so we need to trick it into thinking =VOID-PACKAGES-DIR= is the
+straight so we need to trick it into thinking =VOID:PACKAGES-DIR= is the
 our emacs directory. This needs to be done before bootstraping
 straight, else the straight directory will be created anyway. I got
 this from Doom's straight branch.
 
 #+begin_src emacs-lisp
 (defadvice! straight:use-packages-dir-a (orig-fn &rest args)
-  "Use `VOID-PACKAGES-DIR' for straight directory."
+  "Use `VOID:PACKAGES-DIR' for straight directory."
   :around straight--emacs-dir
-  (let ((user-emacs-directory VOID-PACKAGES-DIR))
+  (let ((user-emacs-directory VOID:PACKAGES-DIR))
     (apply orig-fn args)))
 #+end_src
 
@@ -1210,7 +1210,7 @@ this from Doom's straight branch.
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-core-package-sources
+(defvar void:core-package-sources
   '((org-elpa :local-repo nil)
     (melpa
      :type git :host github
@@ -1238,20 +1238,20 @@ This code initializes straight if it's not already installed.
 (defun +straight-init-fn ()
   "Initialize `straight.el'."
   (defvar boostrap-version 5 "Bootstrap version for straight.el")
-  (let* ((user-emacs-directory VOID-PACKAGES-DIR)
-         (straight-dir (concat VOID-PACKAGES-DIR "straight/"))
+  (let* ((user-emacs-directory VOID:PACKAGES-DIR)
+         (straight-dir (concat VOID:PACKAGES-DIR "straight/"))
          (bootstrap-file (concat straight-dir "repos/straight.el/straight.el")))
     (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
-      (void-log "Installing straight.el...")
+      (void:log "Installing straight.el...")
       (with-current-buffer
           (url-retrieve-synchronously
            "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
            'silent 'inhibit-cookies)
         (goto-char (point-max))
         (eval-print-last-sexp)))
-    (void-log "Loading straight.el...")
+    (void:log "Loading straight.el...")
     (load bootstrap-file nil t))
-  (mapc #'straight-use-recipes void-core-package-sources))
+  (mapc #'straight-use-recipes void:core-package-sources))
 #+end_src
 
 **** straight-installer
@@ -1266,9 +1266,9 @@ This code initializes straight if it's not already installed.
   (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
     (condition-case err
         (progn (straight-use-package package-or-recipe)
-               (void-log "✓ installed %s" package))
+               (void:log "✓ installed %s" package))
       (error
-       (void-log "✕ failed to install %s because of %s" package err)))))
+       (void:log "✕ failed to install %s because of %s" package err)))))
 #+end_src
 
 *** required packages
@@ -1410,7 +1410,7 @@ evaluated.
   (let ((load-fn (intern (concat "+leaf--load-" (symbol-name package)))))
     `(progn
        (defun ,load-fn (&rest _)
-         (void-log "Loading %S..." ',package)
+         (void:log "Loading %S..." ',package)
          (unless (require ',package nil t)
            (message "Error loading %S" ',package))
          ,@(mapcar (lambda (hook) `(remove-hook ',hook #',load-fn)) hooks)
@@ -1460,7 +1460,7 @@ evaluated.
  :load-incrementally '(before :before-call)
  :defer t
  :normalizer #'+leaf-normalizer-commands
- :form '`((append! void-incremental-packages ',leaf--value)
+ :form '`((append! void:incremental-packages ',leaf--value)
           ,@leaf--body))
 #+end_src
 
@@ -1476,7 +1476,7 @@ The straight keyword require's the package's name.
                          ,@leaf--body))
 
 (push `((or (memq leaf--key '(:+straight))
-            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void-straight))
+            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void:straight))
         (cond ((eq t (car leaf--value))
                (list leaf--name))
               ((eq nil (car leaf--value))
@@ -1552,7 +1552,7 @@ Emacs starts up with a default screen setup. No, thanks.
   (inhibit-startup-buffer-menu . t)
   (initial-major-mode . 'fundamental-mode)
   (initial-scratch-message . nil)
-  (initial-buffer-choice . (if void-debug-p (lambda () (get-buffer "*Messages*")) t))
+  (initial-buffer-choice . (if void:debug-p (lambda () (get-buffer "*Messages*")) t))
   (inhibit-startup-echo-area-message . user-login-name))
 #+end_src
 
@@ -1634,7 +1634,7 @@ think you want to use =smtp=.
   (auto-save-default . nil)
   (auto-save-interval . 300)
   (auto-save-timeout . 30)
-  (backup-directory-alist . (list (cons ".*" (concat VOID-DATA-DIR "backup/"))))
+  (backup-directory-alist . (list (cons ".*" (concat VOID:DATA-DIR "backup/"))))
   (make-backup-files . nil)
   (version-control . nil)
   (kept-old-versions . 2)
@@ -1674,7 +1674,7 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! server
   :setq
-  (server-auth-dir . (concat VOID-DATA-DIR "server/")))
+  (server-auth-dir . (concat VOID:DATA-DIR "server/")))
 #+end_src
 
 **** tramp
@@ -1686,8 +1686,8 @@ Don't ping things that look like domain names.
 (use-feature! tramp
   :setq
   (tramp-backup-directory-alist . backup-directory-alist)
-  (tramp-auto-save-directory . (concat VOID-DATA-DIR "tramp-auto-save/"))
-  (tramp-persistency-file-name . (concat VOID-DATA-DIR "tramp-persistency.el")))
+  (tramp-auto-save-directory . (concat VOID:DATA-DIR "tramp-auto-save/"))
+  (tramp-persistency-file-name . (concat VOID:DATA-DIR "tramp-persistency.el")))
 #+end_src
 
 **** desktop
@@ -1698,7 +1698,7 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! desktop
   :setq
-  (desktop-dirname . (concat VOID-DATA-DIR "desktop"))
+  (desktop-dirname . (concat VOID:DATA-DIR "desktop"))
   (desktop-base-file-name . "autosave")
   (desktop-base-lock-name . "autosave-lock"))
 #+end_src
@@ -1711,8 +1711,8 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! cus-edit
   :setq
-  (custom-file . (concat VOID-DATA-DIR "custom.el"))
-  (custom-theme-directory . (concat VOID-LOCAL-DIR "themes/")))
+  (custom-file . (concat VOID:DATA-DIR "custom.el"))
+  (custom-theme-directory . (concat VOID:LOCAL-DIR "themes/")))
 #+end_src
 
 **** url cache
@@ -1723,8 +1723,8 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! url
   :setq
-  (url-cache-directory . (concat VOID-DATA-DIR "url/cache/"))
-  (url-configuration-directory . (concat VOID-DATA-DIR "url/configuration/")))
+  (url-cache-directory . (concat VOID:DATA-DIR "url/cache/"))
+  (url-configuration-directory . (concat VOID:DATA-DIR "url/configuration/")))
 #+end_src
 
 **** bytecomp
@@ -1732,7 +1732,7 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! bytecomp
   :setq
-  (byte-compile-verbose . void-debug-p)
+  (byte-compile-verbose . void:debug-p)
   (byte-compile-warnings . '(not free-vars unresolved noruntime lexical make-local)))
 #+end_src
 
@@ -1845,10 +1845,10 @@ is to bind them in a tree-like fashion. [[][spacemacs]].
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-leader-key "SPC"
+(defvar void:leader-key "SPC"
   "The evil leader prefix key.")
 
-(defvar void-leader-alt-key "M-SPC"
+(defvar void:leader-alt-key "M-SPC"
   "The leader prefix key used for Insert and Emacs states.")
 #+end_src
 
@@ -1858,17 +1858,17 @@ is to bind them in a tree-like fashion. [[][spacemacs]].
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-localleader-key "SPC m"
+(defvar void:localleader-key "SPC m"
   "The localleader prefix key for major-mode specific commands.")
 
-(defvar void-localleader-alt-key "C-SPC m"
+(defvar void:localleader-alt-key "C-SPC m"
   "The localleader prefix key for major-mode specific commands.")
 
-(defvar void-localleader-short-key ","
-  "A shorter alternative `void-localleader-key'.")
+(defvar void:localleader-short-key ","
+  "A shorter alternative `void:localleader-key'.")
 
-(defvar void-localleader-short-alt-key "M-,"
-  "A short non-normal  `void-localleader-key'.")
+(defvar void:localleader-short-alt-key "M-,"
+  "A short non-normal  `void:localleader-key'.")
 #+end_src
 
 ****** definers
@@ -1883,8 +1883,8 @@ this is binding =leader= or =localleader= keys like [[https://github.com/syl20bn
 
 #+begin_src emacs-lisp
 (general-create-definer define-leader-key!
-  :prefix void-leader-key
-  :non-normal-prefix void-leader-alt-key
+  :prefix void:leader-key
+  :non-normal-prefix void:leader-alt-key
   :keymaps 'override
   :states '(normal motion insert emacs))
 #+end_src
@@ -1905,13 +1905,13 @@ make a difference. That's why.
     `(progn (general-def
               ,@args
               ,@shared-args
-              :prefix void-localleader-key
-              :non-normal-prefix void-localleader-alt-key)
+              :prefix void:localleader-key
+              :non-normal-prefix void:localleader-alt-key)
             (general-def
               ,@args
               ,@shared-args
-              :prefix void-localleader-short-key
-              :non-normal-prefix void-localleader-short-alt-key))))
+              :prefix void:localleader-short-key
+              :non-normal-prefix void:localleader-short-alt-key))))
 #+end_src
 
 **** which-key
@@ -1942,8 +1942,8 @@ you can "discover" the commands as you go along.
   (defhook! which:key-set-line-spacing-h ()
     :hook which-key-init-buffer-hook
     (setq line-spacing 3))
-  (which-key-add-key-based-replacements void-leader-key "<leader>")
-  (which-key-add-key-based-replacements void-localleader-key "<localleader>"))
+  (which-key-add-key-based-replacements void:leader-key "<leader>")
+  (which-key-add-key-based-replacements void:localleader-key "<localleader>"))
 #+end_src
 
 **** dash
@@ -2048,7 +2048,7 @@ while the user is working.
   :hook emacs-startup-hook
   :setq
   (gcmh-idle-delay . 10)
-  (gcmh-verbose . void-debug-p)
+  (gcmh-verbose . void:debug-p)
   (gcmh-high-cons-threshold . (* 16 1024 1024)))
 #+end_src
 
@@ -2151,7 +2151,7 @@ STRUCTURE can be an alist, a plist, or a hash table."
   (declare (indent 1))
   (let* ((symbols (--filter (and (symbolp it) (string-prefix-p "$" (symbol-name it)))
                             (-flatten body)))
-         (keywords (--map (void-symbol-intern ":" (-second-item (s-match (rx "$" (group (* anything)))
+         (keywords (--map (void:symbol-intern ":" (-second-item (s-match (rx "$" (group (* anything)))
                                                                          (symbol-name it))))
                           symbols)))
     `(-let [(,type ,@(-interleave keywords symbols)) ,structure]
@@ -2195,10 +2195,10 @@ type without any manual hassle.
 :END:
 
 #+begin_src emacs-lisp
-(defun void-symbol-intern (&rest args)
+(defun void:symbol-intern (&rest args)
   "Return ARGS as a symbol."
   (declare (pure t) (side-effect-free t))
-  (intern (apply #'void-make-string args)))
+  (intern (apply #'void:make-string args)))
 #+end_src
 
 ***** keyword intern
@@ -2207,10 +2207,10 @@ type without any manual hassle.
 :END:
 
 #+begin_src emacs-lisp
-(defun void-keyword-intern (&rest args)
+(defun void:keyword-intern (&rest args)
   "Return ARGS as a keyword."
   (declare (pure t) (side-effect-free t))
-  (apply #'void-symbol-intern ":" args))
+  (apply #'void:symbol-intern ":" args))
 #+end_src
 
 ***** keyword name
@@ -2219,10 +2219,10 @@ type without any manual hassle.
 :END:
 
 #+begin_src emacs-lisp
-(defun void-keyword-name (key)
+(defun void:keyword-name (key)
   "Return the name of the key without the prepended :."
   (declare (pure t) (side-effect-free t))
-  (substring-no-properties (void-make-string key) 1))
+  (substring-no-properties (void:make-string key) 1))
 #+end_src
 
 ***** make string
@@ -2231,7 +2231,7 @@ type without any manual hassle.
 :END:
 
 #+begin_src emacs-lisp
-(defun void-make-string (&rest args)
+(defun void:make-string (&rest args)
   "Return ARGS as a string."
   (declare (pure t) (side-effect-free t))
   (with-output-to-string
@@ -2265,7 +2265,7 @@ of the Emacs frame are recorded after they expire.
 #+begin_src emacs-lisp
 (defun void/switch-to-main-org-file ()
   (interactive)
-  (find-file (concat VOID-EMACS-DIR "README.org")))
+  (find-file (concat VOID:EMACS-DIR "README.org")))
 #+end_src
 
 ***** main todo file
@@ -2276,7 +2276,7 @@ of the Emacs frame are recorded after they expire.
 #+begin_src emacs-lisp
 (defun void/switch-to-todo-file ()
   (interactive)
-  (switch-to-buffer (find-file VOID-TODO-FILE)))
+  (switch-to-buffer (find-file VOID:TODO-FILE)))
 #+end_src
 
 ***** turn on debug-mode
@@ -2287,7 +2287,7 @@ of the Emacs frame are recorded after they expire.
 #+begin_src emacs-lisp
 (defun void/enable-debug-mode ()
   (interactive)
-  (setq void-debug-p t))
+  (setq void:debug-p t))
 #+end_src
 
 ***** switch to init file
@@ -2299,7 +2299,7 @@ of the Emacs frame are recorded after they expire.
 (defun void/switch-to-init-org-file ()
   "Switch to Void's init.el file."
   (interactive)
-  (switch-to-buffer VOID-INIT-FILE))
+  (switch-to-buffer VOID:INIT-FILE))
 #+end_src
 
 ***** quit emacs no prompt
@@ -2358,16 +2358,16 @@ By default start emacs as fullscreen.
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-init-ui-hook nil
+(defvar void:init-ui-hook nil
   "List of hooks to run when the UI has been initialized.")
 
-(defhook! void-init-ui-h ()
-  "Run hooks in `void-init-ui-hook'."
+(defhook! void:init-ui-h ()
+  "Run hooks in `void:init-ui-hook'."
   :hook window-setup-hook
-  (void-log "Executing void-init-ui-h hook")
-  (if (null void-init-ui-hook)
-      (void-log "- `void-init-ui-hook' is empty")
-    (run-hook-wrapped 'void-init-ui-hook #'void-try-run-hook)))
+  (void:log "Executing void:init-ui-h hook")
+  (if (null void:init-ui-hook)
+      (void:log "- `void:init-ui-hook' is empty")
+    (run-hook-wrapped 'void:init-ui-hook #'void:try-run-hook)))
 #+end_src
 
 **** switching buffers
@@ -2381,7 +2381,7 @@ By default start emacs as fullscreen.
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-after-switch-buffer-hook nil
+(defvar void:after-switch-buffer-hook nil
   "A list of hooks run after changing the current buffer.")
 #+end_src
 
@@ -2391,7 +2391,7 @@ By default start emacs as fullscreen.
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-inhibit-switch-buffer-hooks nil
+(defvar void:inhibit-switch-buffer-hooks nil
   "When non-nil, switch buffer hooks are inhibited.")
 #+end_src
 
@@ -2401,20 +2401,20 @@ By default start emacs as fullscreen.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! void-run-switch-buffer-hooks-a (orig-fn buffer-or-name &rest args)
-  "Run `void-after-switch-buffer-hook'."
+(defadvice! void:run-switch-buffer-hooks-a (orig-fn buffer-or-name &rest args)
+  "Run `void:after-switch-buffer-hook'."
   :around (switch-to-buffer display-buffer)
   (let ((gc-cons-threshold most-positive-fixnum))
-    (if (or void-inhibit-switch-buffer-hooks
+    (if (or void:inhibit-switch-buffer-hooks
             (eq (current-buffer) (get-buffer buffer-or-name))
             (and (eq orig-fn #'switch-to-buffer) (car args)))
         (apply orig-fn buffer-or-name args)
-      (let ((void-inhibit-switch-buffer-hooks t))
+      (let ((void:inhibit-switch-buffer-hooks t))
         (when-let (buffer (apply orig-fn buffer-or-name args))
           (with-current-buffer (if (windowp buffer)
                                    (window-buffer buffer)
                                  buffer)
-            (run-hooks 'void-after-switch-buffer-hook))
+            (run-hooks 'void:after-switch-buffer-hook))
           buffer)))))
 #+end_src
 
@@ -2424,15 +2424,15 @@ By default start emacs as fullscreen.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! void-run-prev-or-next-buffer-hooks-a (orig-fn &rest args)
+(defadvice! void:run-prev-or-next-buffer-hooks-a (orig-fn &rest args)
   :around (switch-to-next-buffer switch-to-previous-buffer)
   (let ((gc-cons-threshold most-positive-fixnum))
-    (if void-inhibit-switch-buffer-hooks
+    (if void:inhibit-switch-buffer-hooks
         (apply orig-fn args)
-      (let ((void-inhibit-switch-buffer-hooks t))
+      (let ((void:inhibit-switch-buffer-hooks t))
         (when-let (buffer (apply orig-fn args))
           (with-current-buffer buffer
-            (run-hooks 'void-after-switch-buffer-hook)))))))
+            (run-hooks 'void:after-switch-buffer-hook)))))))
 #+end_src
 
 *** font
@@ -2446,8 +2446,8 @@ By default start emacs as fullscreen.
 :END:
 
 I want Void to be flexible when choosing a font. I create a list of my preferred
-fonts in =void-backup-fonts=. They are in order of most preferred to least
-preferred. To compute the value of =void-font=, Void checks each of these fonts
+fonts in =void:backup-fonts=. They are in order of most preferred to least
+preferred. To compute the value of =void:font=, Void checks each of these fonts
 in turn for the first available font. If none is availabe it just uses the
 system font.
 
@@ -2455,26 +2455,26 @@ This process is time consuming (at least relative to the total emacs startup
 time). But it benefits from byte-compilation.
 
 #+begin_src emacs-lisp
-(defvar void-backup-fonts
+(defvar void:backup-fonts
   '("Inconsolata-18" "Fira Code-18" "DejaVu Sans Mono-18"))
 
-(defvar void-font "Courier 10 Pitch-18"
+(defvar void:font "Courier 10 Pitch-18"
   "Default font for Void Emacs.
-The font for Void is the first font in `void-backup-fonts' that's found in the
-computer. If no font in `void-backup-fonts' is found then it uses the default
+The font for Void is the first font in `void:backup-fonts' that's found in the
+computer. If no font in `void:backup-fonts' is found then it uses the default
 system font.")
 #+end_src
 
-**** specify =void-font= as default
+**** specify =void:font= as default
 :PROPERTIES:
 :ID: 911e25ba-0893-487f-9f6b-8a574faf6f7d
 :END:
 
 The =default-frame-alist= is an alist of the default values for creating a
-frame. So here I'm making the default font for all Emacs frames =void-font=.
+frame. So here I'm making the default font for all Emacs frames =void:font=.
 
 #+begin_src emacs-lisp
-(add-to-list 'default-frame-alist (cons 'font void-font))
+(add-to-list 'default-frame-alist (cons 'font void:font))
 #+end_src
 
 **** catch undefined fonts
@@ -2483,29 +2483,29 @@ frame. So here I'm making the default font for all Emacs frames =void-font=.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! void-frame-notice-user-settings-a (orig-fn &rest args)
-  "Try `void-font' followed each of `void-backup-fonts' until success.
+(defadvice! void:frame-notice-user-settings-a (orig-fn &rest args)
+  "Try `void:font' followed each of `void:backup-fonts' until success.
 If none of the fonts work, just use the default system font."
   ;; :when (display-graphic-p)
   :around frame-notice-user-settings
   (condition-case nil
       (progn (apply orig-fn args)
-             (void-log "Font is: %s" (face-attribute 'default :font)))
+             (void:log "Font is: %s" (face-attribute 'default :font)))
     (error
-     (if void-backup-fonts
+     (if void:backup-fonts
          (progn
-           ;; (push (cons err nil) void-init-errors)
-           (void-log "Setting %s failed. Trying %s..." void-font (car void-backup-fonts))
-           (setq void-font (pop void-backup-fonts))
+           ;; (push (cons err nil) void:init-errors)
+           (void:log "Setting %s failed. Trying %s..." void:font (car void:backup-fonts))
+           (setq void:font (pop void:backup-fonts))
            (setq default-frame-alist
                  (--remove-first (eq (car it) 'font) default-frame-alist))
-           (add-to-list 'default-frame-alist (cons 'font void-font))
+           (add-to-list 'default-frame-alist (cons 'font void:font))
            ;; I want to call the function with advice in it.
            (apply #'frame-notice-user-settings args))
-       (setq void-font (face-attribute 'default :font))
-       (void-log "None of the backup-fonts worked, defaulting to: %s"
-                 void-font)
-       (add-to-list 'default-frame-alist (cons 'font void-font))
+       (setq void:font (face-attribute 'default :font))
+       (void:log "None of the backup-fonts worked, defaulting to: %s"
+                 void:font)
+       (add-to-list 'default-frame-alist (cons 'font void:font))
        (apply #'frame-notice-user-settings args)))))
 #+end_src
 
@@ -2559,7 +2559,7 @@ font is super small). Therefore, I check the code.
 :END:
 
 #+begin_src emacs-lisp
-(defvar void-theme 'one-light
+(defvar void:theme 'one-light
   "The theme to load on startup.
 The value of this variable is updated to the current theme whenever `load-theme'
 is called.")
@@ -2573,14 +2573,14 @@ is called.")
 :END:
 
 #+begin_src emacs-lisp
-(defhook! void-init-theme-h ()
+(defhook! void:init-theme-h ()
   "Set the theme and load the font, in that order."
   ;; :unless (daemonp)
-  :hook void-init-ui-hook
-  (when (and void-theme (not (memq void-theme custom-enabled-themes)))
+  :hook void:init-ui-hook
+  (when (and void:theme (not (memq void:theme custom-enabled-themes)))
     (condition-case nil
-        (load-theme void-theme t)
-      (error (void-log "Could not load %s" void-theme)))))
+        (load-theme void:theme t)
+      (error (void:log "Could not load %s" void:theme)))))
 #+end_src
 
 **** loading theme
@@ -2592,14 +2592,14 @@ Sometimes there are things that need tidying up after loading a theme. For
 example, if I'm using evil I need to update the cursor color.
 
 #+begin_src emacs-lisp
-(defvar void-after-load-theme-hook nil
+(defvar void:after-load-theme-hook nil
   "Hook run after the theme is loaded with `load-theme'.")
 
-(defadvice! void-run-after-load-theme-hook-a (theme &rest _)
-  "Set up `void-load-theme-hook' to run after `load-theme' is called."
+(defadvice! void:run-after-load-theme-hook-a (theme &rest _)
+  "Set up `void:load-theme-hook' to run after `load-theme' is called."
   :after load-theme
-  (setq void-theme theme)
-  (run-hooks 'void-after-load-theme-hook))
+  (setq void:theme theme)
+  (run-hooks 'void:after-load-theme-hook))
 #+end_src
 
 **** disable old themes first
@@ -2612,7 +2612,7 @@ one. For this reason, I make sure to disable any enabled themes before applying
 a new theme.
 
 #+begin_src emacs-lisp
-(defadvice! void-disable-old-themes-first-a (orig-fn &rest args)
+(defadvice! void:disable-old-themes-first-a (orig-fn &rest args)
   "Disable old themes before loading new ones."
   :around load-theme
   (mapc #'disable-theme custom-enabled-themes)
@@ -2706,7 +2706,7 @@ makes emacs feel like a window manager with gaps.
 
 #+begin_src emacs-lisp
 (defhook! frame:update-divider-h ()
-  :hook void-after-load-theme-hook
+  :hook void:after-load-theme-hook
   (unless (bound-and-true-p window-divider-mode)
     (window-divider-mode 1)))
 #+end_src
@@ -2957,8 +2957,8 @@ be inserted and interactively completed.
 (use-package! yasnippet
   :hook (prog-mode-hook . yas-minor-mode-on)
   :setq
-  (yas-snippet-dir . (concat VOID-DATA-DIR "snippets/"))
-  (yas-verbosity . (if void-debug-p 3 0))
+  (yas-snippet-dir . (concat VOID:DATA-DIR "snippets/"))
+  (yas-verbosity . (if void:debug-p 3 0))
   (yas-indent-line . 'auto)
   (yas-prompt-functions . '(yas-completing-prompt yas-ido-prompt))
   (yas-use-menu . nil)
@@ -3132,7 +3132,7 @@ about Helm is that it's too bloated and slow.
 (use-package! helm-dash
   :commands helm-dash
   :setq
-  (helm-dash-docsets-path . (concat VOID-DATA-DIR "/dash-docsets"))
+  (helm-dash-docsets-path . (concat VOID:DATA-DIR "/dash-docsets"))
   (helm-dash-browser-func . (if (executable-find "w3m") #'w3m #'browse-url)))
 #+end_src
 
@@ -3264,7 +3264,7 @@ command is likely to be.
   :hook (ivy-prescient-mode . prescient-persist-mode)
   :setq
   (prescient-filter-method . '(literal regexp initialism fuzzy))
-  (prescient-save-file . (concat VOID-DATA-DIR "prescient-save.el"))
+  (prescient-save-file . (concat VOID:DATA-DIR "prescient-save.el"))
   (ivy-prescient-sort-commands . '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
                                    counsel-git-grep counsel-ag counsel-rg counsel-imenu
                                    counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
@@ -3278,7 +3278,7 @@ command is likely to be.
 #+begin_src emacs-lisp
 (use-package! amx
   :hook ivy-mode-hook
-  :pre-setq (amx-save-file . (concat VOID-DATA-DIR "amx-save-file")))
+  :pre-setq (amx-save-file . (concat VOID:DATA-DIR "amx-save-file")))
 #+end_src
 
 **** counsel
@@ -3489,8 +3489,8 @@ provide a more informative interface to ivy commands.
 
 #+begin_src emacs-lisp
 (after! ivy
-  (ivy-set-actions #'counsel-fonts (list (list "o" #'void-set-font "set font")))
-  (defun void-set-font (font)
+  (ivy-set-actions #'counsel-fonts (list (list "o" #'void:set-font "set font")))
+  (defun void:set-font (font)
     (set-face-attribute 'default nil :font font)))
 #+end_src
 
@@ -3554,20 +3554,20 @@ This is a replacement for swiper. It lets me fuzzy jump to a particular line in
 a file.
 
 #+begin_src emacs-lisp
-(defvar void-jump-to-line-history nil
+(defvar void:jump-to-line-history nil
   "Submission history for `selectrum/jump-to-line'.")
 
 (defun void/jump-to-line ()
   "Search for a line and jump to it."
   (interactive)
   (let* ((selectrum-should-sort-p nil)
-         (gc-cons-threshold VOID-GC-CONS-THRESHOLD-MAX)
+         (gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
          (line-choices (let ((minimum-line-number (line-number-at-pos (point-min) t))
                              (buffer-text-lines (split-string (buffer-string) "\n")))
                          (--map-indexed (format "%d\t%s" it-index it) buffer-text-lines)))
          ;; Get the matching line.
          (chosen-line (completing-read "Jump to matching line: " line-choices
-                                       nil t nil 'void-jump-to-line-history))
+                                       nil t nil 'void:jump-to-line-history))
          ;; Get the corresponding line number.
          (chosen-line-number (progn (string-match "\\([[:digit:]]+\\)[[:space:]]\\(?:.\\|\n\\)*" chosen-line)
                                     (string-to-number (match-string-no-properties 1 chosen-line))))
@@ -3659,7 +3659,7 @@ This is where abbrev can fill in.
 (use-feature! abbrev
   ;; :tag "built-in"
   ;; :hook (prog-mode-hook org-mode-hook)
-  :pre-setq (abbrev-file-name . (concat VOID-DATA-DIR "abbrev.el"))
+  :pre-setq (abbrev-file-name . (concat VOID:DATA-DIR "abbrev.el"))
   :defer-config
   (add-hook 'kill-emacs-hook #'write-abbrev-file))
 #+end_src
@@ -3972,7 +3972,7 @@ worth quoting here:
 #+begin_src emacs-lisp
 (defhook! company:close-tooltip-h ()
   "Close company tooltip."
-  :hook void-escape-hook
+  :hook void:escape-hook
   (when (and (boundp 'company-mode)
              (eq company-mode t))
     (company-abort)
@@ -4649,7 +4649,7 @@ Youtube contains a *huge* library of videos.
 
 #+begin_src emacs-lisp
 (use-package! ivy-youtube
-  :setq (ivy-youtube-history-file . (concat VOID-DATA-DIR "ivy-youtube-history")))
+  :setq (ivy-youtube-history-file . (concat VOID:DATA-DIR "ivy-youtube-history")))
 #+end_src
 
 ** emms
@@ -4668,7 +4668,7 @@ Youtube contains a *huge* library of videos.
 (use-package! emms
   :commands emms
   :setq
-  (emms-directory . (concat VOID-DATA-DIR "emms/"))
+  (emms-directory . (concat VOID:DATA-DIR "emms/"))
   (emms-seek-seconds . 5)
   (emms-player-list . '(emms-player-mpd))
   (emms-volume-change-function . 'emms-volume-mpd-change)
@@ -4720,7 +4720,7 @@ Youtube contains a *huge* library of videos.
     (emms-player-mpd-connect)
     (emms-cache-set-from-mpd-all)
     (emms-add-directory-tree emms-source-file-default-directory)
-    (void-log "Set up emms"))
+    (void:log "Set up emms"))
   (funcall #'emms))
 #+end_src
 
@@ -5427,7 +5427,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :ID: b355e1a1-6242-47f5-b357-5c3f5adbd200
 :END:
 
-=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =void-escape-hook=
+=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =void:escape-hook=
 to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]] as advice to
 =lispyville-normal-state=.
 
@@ -5523,7 +5523,7 @@ very useful to me.
 (use-package! spell-fu
   :ensure (:host gitlab :repo "ideasman42/emacs-spell-fu")
   :commands spell-fu-mode
-  :setq (spell-fu-directory . (concat VOID-DATA-DIR "spell-fu/")))
+  :setq (spell-fu-directory . (concat VOID:DATA-DIR "spell-fu/")))
 #+end_src
 
 *** autocapitalize
@@ -5649,7 +5649,7 @@ Evil differentiates what state you're in based on the cursor color.
 :END:
 
 After a theme is loaded, the cursor color won't automatically update. Therefore,
-I add a hook in [[helpvar:void-after-load-theme-hook][void-after-load-theme-hook]]. Now after a new theme is loaded, the
+I add a hook in [[helpvar:void-after-load-theme-hook][void:after-load-theme-hook]]. Now after a new theme is loaded, the
 cursor color will update.
 
 #+begin_src emacs-lisp
@@ -5657,8 +5657,8 @@ cursor color will update.
   "Enable cursor refreshing after theme change."
   :hook evil-mode-hook
   (if (bound-and-true-p evil-mode)
-      (add-hook 'void-after-load-theme-hook #'evil-refresh-cursor 100)
-    (remove-hook 'void-after-load-theme-hook #'evil-refresh-cursor)))
+      (add-hook 'void:after-load-theme-hook #'evil-refresh-cursor 100)
+    (remove-hook 'void:after-load-theme-hook #'evil-refresh-cursor)))
 #+end_src
 
 **** normal state everywhere
@@ -5735,7 +5735,7 @@ We want escape to be a general "quit everything".
   :after evil-force-normal-state
   (cond ((minibuffer-window-active-p (minibuffer-window))
          (abort-recursive-edit))
-        ((run-hook-with-args-until-success 'void-escape-hook))
+        ((run-hook-with-args-until-success 'void:escape-hook))
         ((or defining-kbd-macro executing-kbd-macro) nil)
         (t (keyboard-quit))))
 #+end_src
@@ -6034,7 +6034,7 @@ Why not just go to the end of the ="= like any other around operator?
 #+begin_src emacs-lisp
 (use-package! auto-yasnippet
   :defer-config (advice-add #'aya-expand :after #'evil-insert-state)
-  :setq (aya-persist-snippets-dir . (concat VOID-LOCAL-DIR "auto-snippets/")))
+  :setq (aya-persist-snippets-dir . (concat VOID:LOCAL-DIR "auto-snippets/")))
 #+end_src
 
 ***** yasnippet
@@ -6125,7 +6125,7 @@ larger text objects. It's saves me keystrokes.
     "V" #'er/contract-region
     "v" #'er/expand-region)
   :defer-config
-  (defadvice! void-quit-expand-region-a ()
+  (defadvice! void:quit-expand-region-a ()
     "Properly abort an expand-region region."
     :before evil-escape evil:escape-a
     (when (memq last-command '(er/expand-region er/contract-region))
@@ -6224,7 +6224,7 @@ larger text objects. It's saves me keystrokes.
 
 #+begin_src emacs-lisp
 (use-package! undo-fu
-  :after-hook void-after-switch-buffer-hook
+  :after-hook void:after-switch-buffer-hook
   :before-call after-find-file
   :setq
   (undo-limit . 400000)
@@ -6270,7 +6270,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
           (side . bottom)
           (slot . 2))
   :setq
-  (eshell-directory-name . (concat VOID-DATA-DIR "eshell/"))
+  (eshell-directory-name . (concat VOID:DATA-DIR "eshell/"))
   (eshell-history-file-name . (concat eshell-directory-name "history"))
   (eshell-prefer-lisp-functions . nil)
   (eshell-scroll-to-bottom-on-input . 'all)
@@ -6461,7 +6461,7 @@ This function generates the eshell prompt by concatenating `eshell:header' with
 valid `eshell:enabled-sections' and the `eshell-prompt-string'."
   (concat eshell:header
           (->> eshell:enabled-sections
-               (--map (void-symbol-intern 'eshell-prompt-- it))
+               (--map (void:symbol-intern 'eshell-prompt-- it))
                (-filter #'fboundp)
                (-reduce-from #'eshell:acc ""))
           eshell-prompt-string))
@@ -6633,7 +6633,7 @@ HEADLINE-PATH is the path to a headline and POINT is the start of the headline."
     (goto-char (point-min))
     (let ((case-fold-search nil))
       (--unfold
-       (when (re-search-forward void-headline-regexp nil t nil)
+       (when (re-search-forward void:headline-regexp nil t nil)
          (let ((last-level (length it))
                (level (length (match-string 1)))
                (headline (match-string-no-properties 4))
@@ -6691,11 +6691,11 @@ have to set out to look for a file with =dired=.
                            ;; ignore private Void temp files (but not all of them)
                            #'(lambda (file)
                                (-any-p (-partial #'file-in-directory-p file)
-                                (list VOID-DATA-DIR)))))
+                                (list VOID:DATA-DIR)))))
   (recentf-max-menu-items . 0)
   (recentf-max-saved-items . 700)
   :custom
-  (recentf-save-file . (concat VOID-DATA-DIR "recentf"))
+  (recentf-save-file . (concat VOID:DATA-DIR "recentf"))
   (recentf-auto-cleanup . 'never)
   (recentf-filename-handlers . '(file-truename abbreviate-file-name)))
 #+end_src
@@ -6725,7 +6725,7 @@ again, you are taken to the location you left off. This is very convenient.
 (use-feature! saveplace
   :after-call after-find-file
   :setq
-  (save-place-file . (concat VOID-DATA-DIR "saveplace"))
+  (save-place-file . (concat VOID:DATA-DIR "saveplace"))
   (save-place-limit . nil)
   :config
   (save-place-mode)
@@ -6743,16 +6743,16 @@ again, you are taken to the location you left off. This is very convenient.
 #+begin_src emacs-lisp
 (use-package! savehist
   :load-incrementally custom
-  :hook void-start-emacs-hook
+  :hook void:start-emacs-hook
   :setq
   (savehist-save-minibuffer-history . t)
   (savehist-autosave-interval       . nil)
   (savehist-additional-variables    . '(kill-ring search-ring regexp-search-ring))
-  (savehist-file                    . (concat VOID-DATA-DIR "savehist")))
+  (savehist-file                    . (concat VOID:DATA-DIR "savehist")))
 
-(defhook! void-unpropertize-kill-ring-h ()
+(defhook! void:unpropertize-kill-ring-h ()
   "Remove text properties from `kill-ring'."
-  :append void-quit-emacs-hook
+  :append void:quit-emacs-hook
   (setq kill-ring
         (--map (when (stringp it) (substring-no-properties it))
                (-non-nil kill-ring))))
@@ -6773,7 +6773,7 @@ read this [[https://emacs.stackexchange.com/questions/51853/retracing-steps-with
 (use-feature! bookmark
   :tag "built-in"
   :pre-setq
-  (bookmark-default-file . (concat VOID-DATA-DIR "bookmarks"))
+  (bookmark-default-file . (concat VOID:DATA-DIR "bookmarks"))
   (bookmark-save-flag . t))
 #+end_src
 
@@ -6797,8 +6797,8 @@ in time to see older posts.
   :commands elfeed
   :setq
   (elfeed-search-filter         . "@1-year-old")
-  (elfeed-db-directory          . (concat VOID-DATA-DIR "elfeed/db/"))
-  (elfeed-enclosure-default-dir . (concat VOID-DATA-DIR "elfeed/enclosures/"))
+  (elfeed-db-directory          . (concat VOID:DATA-DIR "elfeed/db/"))
+  (elfeed-enclosure-default-dir . (concat VOID:DATA-DIR "elfeed/enclosures/"))
   (elfeed-show-entry-switch     . #'pop-to-buffer)
   (elfeed-show-entry-delete     . #'elfeed-kill-buffer)
   (shr-max-image-proportion     . 0.8))
@@ -6814,7 +6814,7 @@ in time to see older posts.
   :after elfeed
   :require t
   :setq
-  (rmh-elfeed-org-files      . (list (concat VOID-ORG-DIR "elfeed.org")))
+  (rmh-elfeed-org-files      . (list (concat VOID:ORG-DIR "elfeed.org")))
   (rmh-elfeed-org-tree-id    . "ELFEED")
   (rmh-elfeed-org-ignore-tag . "IGNORE"))
 #+end_src
@@ -7068,7 +7068,7 @@ inspired file manager]] of also called =ranger=.
   (ranger-hide-cursor . t)
   (ranger-dont-show-binary . t))
 
-(setq image-dired-dir (concat VOID-DATA-DIR "image-dir"))
+(setq image-dired-dir (concat VOID:DATA-DIR "image-dir"))
 (setq dired-omit-verbose nil)
 #+end_src
 
@@ -7140,9 +7140,9 @@ that restarts emacs. I haven't tested this in EXWM mode.
 (use-package! transient
   :setq
   (transient-default-level . 5)
-  (transient-levels-file   . (concat VOID-DATA-DIR "transient/levels"))
-  (transient-values-file   . (concat VOID-DATA-DIR "transient/values"))
-  (transient-history-file  . (concat VOID-DATA-DIR "transient/history")))
+  (transient-levels-file   . (concat VOID:DATA-DIR "transient/levels"))
+  (transient-values-file   . (concat VOID:DATA-DIR "transient/values"))
+  (transient-history-file  . (concat VOID:DATA-DIR "transient/history")))
 #+end_src
 
 *** magit
@@ -7232,19 +7232,19 @@ that restarts emacs. I haven't tested this in EXWM mode.
   (auto-revert-stop-on-user-input . nil)
   (revert-without-query . (list "."))
   :defer-config
-  (defun void-auto:revert-buffer-h ()
+  (defun void:auto:revert-buffer-h ()
     "Auto revert current buffer, if necessary."
-    :hook void-after-switch-buffer-hook
+    :hook void:after-switch-buffer-hook
     (unless (or (bound-and-true-p auto-revert-mode)
                 (active-minibuffer-window))
       (auto-revert-handler)))
 
-  (defhook! void-auto:revert-visible-buffers-h ()
+  (defhook! void:auto:revert-visible-buffers-h ()
     "Auto revert stale buffers in visible windows, if necessary."
     :hook (focus-in-hook after-save-hook)
     (--each (-uniq (-map #'window-buffer (window-list)))
       (with-current-buffer it
-        (void-auto:revert-buffer-h)))))
+        (void:auto:revert-buffer-h)))))
 #+end_src
 
 ** security
@@ -7378,7 +7378,7 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 #+begin_src emacs-lisp
 (use-package! persistent-scratch
   :commands persistent-scratch-restore
-  :setq (persistent-scratch-save-file . (concat VOID-DATA-DIR "scratch")))
+  :setq (persistent-scratch-save-file . (concat VOID:DATA-DIR "scratch")))
 #+end_src
 
 ** alert
@@ -7500,7 +7500,7 @@ of the problem. You can check out a more in-depth explanation looking at my
 [[https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of_quoted_lists/][reddit-post]] or looking at an answer I gave to [[https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned][this question]].
 
 #+begin_src emacs-lisp
-(defadvice! void-calculate-lisp-indent-a (&optional parse-start)
+(defadvice! void:calculate-lisp-indent-a (&optional parse-start)
   "Add better indentation for quoted and backquoted lists.
 The change to this function."
   :override calculate-lisp-indent
@@ -7711,7 +7711,7 @@ these overlays.
 
 [[https://github.com/alphapapa/outshine][outshine]] is a clever package that tries to make elisp mode more like org mode.
 It colors certain comments like org headings, and adds function for convertion
-from elisp to org. My [[helpvar:VOID-INIT-FILE][void-init-file]] is written with =outshine= in mind.
+from elisp to org. My [[helpvar:VOID-INIT-FILE][void:init-file]] is written with =outshine= in mind.
 
 #+begin_src emacs-lisp
 (use-package! outshine
@@ -7885,7 +7885,7 @@ I need this function for some org actions. Evil has this as
 [[helpfn:evil-scroll-line-to-top][evil-scroll-line-to-top]] but I didn't want to depend on evil.
 
 #+begin_src emacs-lisp
-(defun void-scroll-window-to-top ()
+(defun void:scroll-window-to-top ()
   (let ((line (line-number-at-pos (point)))
         (col (current-column)))
     (goto-char (point-min))
@@ -8173,7 +8173,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
     (if (and (org/avy-jump-to-heading)
              (org:heading-folded-p))
         (progn (outline-toggle-children)
-               (void-scroll-window-to-top))
+               (void:scroll-window-to-top))
       (goto-char origin))))
 #+end_src
 
@@ -8480,8 +8480,8 @@ current file or some other file.
 (use-feature! org-refile
   :after org
   :setq
-  (org-refile-targets . `((,VOID-README-FILE . (:maxlevel . 10))
-                          (,VOID-TODO-FILE . (:maxlevel . 1))))
+  (org-refile-targets . `((,VOID:README-FILE . (:maxlevel . 10))
+                          (,VOID:TODO-FILE . (:maxlevel . 1))))
   (org-refile-use-outline-path . 'file)
   (org-refile-allow-creating-parent-nodes . t)
   (org-reverse-note-order . t)
@@ -8588,7 +8588,7 @@ template element as you're writing it.
   (prepend! org-capture-templates
     (doct (list "Emacs"
                 :keys "e"
-                :file (lambda nil (concat VOID-ORG-DIR "emacs.org"))
+                :file (lambda nil (concat VOID:ORG-DIR "emacs.org"))
                 :prepend t
                 :empty-lines 1
                 :ID (lambda () (require 'uuidgen) (uuidgen-4))
@@ -8616,7 +8616,7 @@ in the future. I use this template for this.
   (prepend! org-capture-templates
     (doct (list "Notes"
                 :keys "n"
-                :file (lambda nil (concat VOID-ORG-DIR "notes.org"))
+                :file (lambda nil (concat VOID:ORG-DIR "notes.org"))
                 :prepend t
                 :empty-lines 1
                 :ID (lambda () (require 'uuidgen) (uuidgen-4))
@@ -8636,7 +8636,7 @@ in the future. I use this template for this.
 (prepend! org-capture-templates
   (doct (list "TEST"
               :keys "t"
-              :file (lambda nil (concat VOID-ORG-DIR "test.org"))
+              :file (lambda nil (concat VOID:ORG-DIR "test.org"))
               :empty-lines 1
               :contexts '((:when #'org-at-heading-p))
               :ID #'uuidgen-4
@@ -8707,7 +8707,7 @@ defining all links in org mode.
          (props (mapcan
                  (-lambda ((key form))
                    (if (not (eq (car-safe form) 'function))
-                       (-let [name (void-symbol-intern "org-link--" link key)]
+                       (-let [name (void:symbol-intern "org-link--" link key)]
                          (push `(fset ',name (-- ,form)) fset-forms)
                          (list key `(function ,name)))
                      (list key form)))
@@ -9078,7 +9078,7 @@ hindsight, using this function is even easier than using ~window-beg~ and
 :END:
 
 #+begin_src emacs-lisp
-(setq org-id-locations-file (concat VOID-DATA-DIR "org-id-locations"))
+(setq org-id-locations-file (concat VOID:DATA-DIR "org-id-locations"))
 #+end_src
 
 *** keybindings                                                        :binding:
@@ -9218,8 +9218,8 @@ So I need to explain my choice of startup. Instead of switching to a blank
 dashboard buffer like and then adding widgets and texts to it in
 [[helpfn:dashboard-setup-startup-hook][dashboard-setup-startup-hook]], I just adopt an approach more like doom's and use
 [[helpvar:initial-buffer-choice][initial-buffer-choice]]. I call [[helpfn:dashboard-insert-startupify-lists][dashboard-insert-startupify-lists]] during the
-[[helpvar:void-init-ui-hook][void-init-ui-hook]]. As a precaution, I append =dashboard-insert-startupify-lists=
-to the end of =void-init-ui-hook= so that there are not wierd font changes for the
+[[helpvar:void-init-ui-hook][void:init-ui-hook]]. As a precaution, I append =dashboard-insert-startupify-lists=
+to the end of =void:init-ui-hook= so that there are not wierd font changes for the
 dashboard.
 
 *** dashboard
@@ -9243,7 +9243,7 @@ dashboard.
   (initial-buffer-choice . (lambda () (get-buffer-create dashboard-buffer-name)))
   :init
   (defvar dashboard-buffer-name "*dashboard*" "Name of the dashboard buffer.")
-  (add-hook 'void-init-ui-hook #'dashboard-insert-startupify-lists 0))
+  (add-hook 'void:init-ui-hook #'dashboard-insert-startupify-lists 0))
 #+end_src
 
 *** dashboard-init-info
@@ -9251,11 +9251,11 @@ dashboard.
 :ID: 92c199ad-5862-4fe3-be04-44c94d4286b6
 :END:
 
-[[helpvar:void-init-time][void-init-time]] is more accurate than dashboard's init time measure. So I use it instead.
+[[helpvar:void-init-time][void:init-time]] is more accurate than dashboard's init time measure. So I use it instead.
 
 #+begin_src emacs-lisp
 (defadvice! dashboard:set-init-info-a (&rest _)
-  "Use `void-init-time' dashboard."
+  "Use `void:init-time' dashboard."
   :before dashboard-insert-startupify-lists
   (setq dashboard-init-info
         (format "%d packages loaded in %.2f seconds"
@@ -9263,7 +9263,7 @@ dashboard.
                        (hash-table-size straight--profile-cache))
                       (t
                        (package (length package-activated-list))))
-                void-init-time)))
+                void:init-time)))
 #+end_src
 
 *** banner path
@@ -9275,7 +9275,7 @@ dashboard.
 (defadvice! dashboard:custom-banner-path-a (&rest _)
   "Use the Void text banner."
   :override dashboard-get-banner-path
-  (concat VOID-LOCAL-DIR "void-banner.txt"))
+  (concat VOID:LOCAL-DIR "void-banner.txt"))
 #+end_src
 
 ** hide-mode-line
@@ -9327,7 +9327,7 @@ VOID install. For writing this code I referenced the body of
                      "material-design-icons.ttf"
                      "octicons.ttf"
                      "weathericons.ttf"))
-    (void-log "No icons installed. Installing...")
+    (void:log "No icons installed. Installing...")
     (all-the-icons-install-fonts :ignore-prompt)))
 #+end_src
 
@@ -9355,7 +9355,7 @@ In terminals these icons will not display correctly. I usually use emacs as a
 graphical interface but.
 
 #+begin_src emacs-lisp
-(defadvice! void-disable-all-the-icons-in-tty-a (orig-fn &rest args)
+(defadvice! void:disable-all-the-icons-in-tty-a (orig-fn &rest args)
   "Disable icons in tty."
   :around (all-the-icons-octicon
            all-the-icons-material
