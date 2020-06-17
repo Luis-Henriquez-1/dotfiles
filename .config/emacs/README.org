@@ -1405,9 +1405,9 @@ evaluated.
 ***** leaf-generate-load-fn
 
 #+begin_src emacs-lisp
-(defun leaf:-generate-load-form (package &optional hooks advice-place advices)
+(defun leaf:generate-load-form (package &optional hooks advice-place advices)
   "Return form that evals into function that loads the package."
-  (let ((load-fn (intern (concat "leaf:-load-" (symbol-name package)))))
+  (let ((load-fn (intern (concat "leaf:load-" (symbol-name package)))))
     `(progn
        (defun ,load-fn (&rest _)
          (void:log "Loading %S..." ',package)
@@ -1427,7 +1427,7 @@ evaluated.
  :before-call '(before :hook)
  :defer t
  :normalizer #'leaf:normalizer-commands
- :form '`(,(leaf:-generate-load-form leaf--name nil :before leaf--value)
+ :form '`(,(leaf:generate-load-form leaf--name nil :before leaf--value)
           ,@leaf--body))
 #+end_src
 
@@ -1438,7 +1438,7 @@ evaluated.
  :after-call '(before :hook)
  :defer t
  :normalizer #'leaf:normalizer-commands
- :form '`(,(leaf:-generate-load-form leaf--name nil :after leaf--value)
+ :form '`(,(leaf:generate-load-form leaf--name nil :after leaf--value)
           ,@leaf--body))
 #+end_src
 
@@ -1449,7 +1449,7 @@ evaluated.
 (leaf:define-keyword
  :on-hook '(before :hook)
  :defer t
- :form '`(,(leaf:-generate-load-form leaf--name leaf--value)
+ :form '`(,(leaf:generate-load-form leaf--name leaf--value)
           ,@leaf--body))
 #+end_src
 
