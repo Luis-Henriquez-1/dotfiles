@@ -1946,6 +1946,7 @@ you can "discover" the commands as you go along.
   (which-key-sort-order . #'which-key-prefix-then-key-order)
   (which-key-popup-type . 'minibuffer)
   :defer-config
+  (which-key-mode)
   (defhook! which:key-set-line-spacing-h ()
     :hook which-key-init-buffer-hook
     (setq line-spacing 3))
