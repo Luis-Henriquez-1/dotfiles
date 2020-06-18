@@ -8985,10 +8985,10 @@ work in =org-mode= but I'd rather use the folding commands provided by =outline.
 The outline api actually seems pretty solid; better coded and simpler than the org api it seems.
 
 #+begin_src emacs-lisp
-(define-key!
-  (:leader "z")
-  (:n "a" #'outline-show-all)
-  (:n "m" #'outline:hide-all-sublevels))
+;; (define-key!
+;;   (:leader "z")
+;;   (:n "a" #'outline-show-all)
+;;   (:n "m" #'outline:hide-all-sublevels))
 
 (general-def 'normal org-mode-map
   [tab] #'outline-toggle-children
@@ -9024,9 +9024,9 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 :END:
 
 #+begin_src emacs-lisp
-(define-key!
-  (:map org-mode-map)
-  (:ei "RET" #'org/dwim-return))
+;; (define-key!
+;;   (:map org-mode-map)
+;;   (:ei "RET" #'org/dwim-return))
 #+end_src
 
 ** lua
