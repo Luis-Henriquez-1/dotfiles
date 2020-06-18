@@ -8773,7 +8773,8 @@ hindsight, using this function is even easier than using ~window-beg~ and
 #+begin_src emacs-lisp
 (use-feature! org-id
   :after org
-  :setq (org-id-locations-file . (concat VOID:DATA-DIR "org-id-locations")))
+  :setq (org-id-locations-file . (concat VOID:DATA-DIR "org-id-locations"))
+  :hook (org-insert-heading-hook . org-id-get-create))
 #+end_src
 
 *** keybindings
@@ -8781,7 +8782,7 @@ hindsight, using this function is even easier than using ~window-beg~ and
 :ID: ee444a86-1266-42dd-9fe8-40192db1fdde
 :END:
 
-**** narrowing and widening
+**** narrowing and widening                                           :disabled:
 :PROPERTIES:
 :ID: 72bd1c81-bd60-472f-8166-20bb2a16093d
 :END:
