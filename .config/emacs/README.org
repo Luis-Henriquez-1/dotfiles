@@ -7772,7 +7772,7 @@ when headline contents begin.
     (call-interactively #'org-return))))
 #+end_src
 
-***** TODO scroll window to top                                         :helper:
+***** TODO scroll window to top
 :PROPERTIES:
 :ID: 149e9f0c-e984-42e6-afb1-03502eda41ea
 :END:
@@ -7789,7 +7789,7 @@ I need this function for some org actions. Evil has this as
     (move-to-column col)))
 #+end_src
 
-***** TODO fix nearby line adjustment                                      :org:
+***** TODO fix nearby line adjustment
 :PROPERTIES:
 :ID: 6168590a-db23-4f0b-bdd9-9d9666624af6
 :END:
