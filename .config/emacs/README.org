@@ -8521,7 +8521,7 @@ the link if I'm using straight and (therefore) have all the cloned repos and
 their READMEs on my computer, I want the link to take me to my local copy
 instead of trying to go online.
 
-**** toggle link display                                      :display:disabled:
+**** toggle link display                                              :disabled:
 :PROPERTIES:
 :ID: 06d2b812-5d76-4bc4-bdce-3b6fcf5a9070
 :END:
