@@ -8798,11 +8798,6 @@ hindsight, using this function is even easier than using ~window-beg~ and
   (:wk "Widen"      :n "w" #'widen))
 #+end_src
 
-**** folding commands
-:PROPERTIES:
-:ID: 0e52b93f-ccb8-4478-8cc3-0f48d318f58d
-:END:
-
 **** replace evil folding commands to outline folding
 :PROPERTIES:
 :ID: b3a4908d-538e-4d4c-acc9-fbd822220f03
