@@ -8577,25 +8577,6 @@ in the future. I use this template for this.
                           ":END:"))))
 #+end_src
 
-***** email                                                           :disabled:
-:PROPERTIES:
-:ID: 41fb7583-ab3c-463e-9b39-bf9484fb1d20
-:END:
-
-#+begin_src emacs-lisp
-(capture-template! "Email"
-  :keys "t"
-  :file "~/Documents/org/todo.org"
-  :prepend t
-  :empty-lines 1
-  :ID #'org-id-uuid
-  :template '("* TODO %?"
-              ":PROPERTIES:"
-              ":ID: %{ID}"
-              ":Created: %U"
-              ":END:"))
-#+end_src
-
 *** links
 :PROPERTIES:
 :ID: dbc3d205-9831-41f0-95f8-1e8746e0be3a
@@ -9139,21 +9120,13 @@ dashboard.
 
 #+begin_src emacs-lisp
 (use-package! dashboard
-  :ensure (:host github
-           :repo "Luis-Henriquez-Perez/emacs-dashboard"
-           :files (:defaults "banners" "dashboard-pkg.el")
-           :branch "everything")
   :require t
+  :hook (window-setup-hook . dashboard-insert-startupify-lists)
   :setq
   (dashboard-items . nil)
   (dashboard-startup-banner . 2)
   (dashboard-center-content . t)
-  (dashboard-footer-messages . '("Happy Coding!"))
-  (dashboard-set-navigator . t)
-  (initial-buffer-choice . (lambda () (get-buffer-create dashboard-buffer-name)))
-  :init
-  (defvar dashboard-buffer-name "*dashboard*" "Name of the dashboard buffer.")
-  (add-hook 'void:init-ui-hook #'dashboard-insert-startupify-lists 0))
+  (initial-buffer-choice . (lambda () (get-buffer-create dashboard-buffer-name))))
 #+end_src
 
 *** dashboard-init-info
