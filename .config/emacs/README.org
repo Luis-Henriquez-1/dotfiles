@@ -8512,7 +8512,6 @@ template element as you're writing it.
     "Automatically add the template to capture templates."
     :around doct
     (alet (apply orig-fn args)
-      (void:log "Populate capture templates...")
       (prepend! org-capture-templates it))))
 #+end_src
 
