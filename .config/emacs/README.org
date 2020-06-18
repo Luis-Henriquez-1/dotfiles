@@ -912,7 +912,7 @@ to waste time loading ~void:main-elisp-file~.
            " tangling `VOID:README-FILE'."))))))
 #+end_src
 
-*** OS                                                                :disabled:
+*** OS
 :PROPERTIES:
 :ID: e3d140d2-77c3-46bd-b94d-ab7196190a67
 :END:
