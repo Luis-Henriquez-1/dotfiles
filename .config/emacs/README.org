@@ -7767,7 +7767,7 @@ I'm adding [[https://github.com/jrblevin/markdown-mode][markdown-mode]] so I can
 (use-package! markdown-mode :mode "\\.md\\'")
 #+end_src
 
-** org                                                                     :org:
+** org
 :PROPERTIES:
 :ID: 7fd3bb4f-354c-4427-914c-9de2223f5646
 :END:
@@ -7781,31 +7781,10 @@ things like executing (or evaluating) source blocks, moving headlines to other
 files, or even converting an org mode document into another format. As the name
 =org= suggests, org is tool that's used for organization of data.
 
-*** TODO init
+*** init
 :PROPERTIES:
 :ID: e3e6f7cd-0d76-47d2-90ed-88887144ad3f
 :END:
-
-**** org-mode
-:PROPERTIES:
-:ID: c1c5724e-028a-42a5-a982-28d57203b335
-:END:
-
-#+begin_src emacs-lisp
-(use-package! org
-  :pre-setq
-  (org-directory . (file-truename "~/Documents/org/"))
-  (org-archive-location . (concat org-directory "archive.org::"))
-  (org-default-notes-file . (concat org-directory "notes.org"))
-  :setq
-  (org-adapt-indentation . nil)
-  (org-cycle-separator-lines . 2)
-  (outline-blank-line . t)
-  (org-enforce-todo-dependencies . t)
-  (org-use-fast-tag-selection . nil)
-  (org-tags-column . -80)
-  (org-tag-alist . nil))
-#+end_src
 
 **** structures
 :PROPERTIES:
@@ -8255,7 +8234,9 @@ options. For this reason I wrote my own insert heading functions.
   (org-demote))
 #+end_src
 
-***** source blocks
+*** source blocks
+
+**** source blocks
 :PROPERTIES:
 :ID: 2bb1b8ef-f41c-4dfa-8e47-549326f7ce05
 :END:
@@ -8285,168 +8266,37 @@ use =edit-indirect= to edit source blocks.
                                      (:tangle . "yes"))))
 #+end_src
 
-**** evil org state
-:PROPERTIES:
-:ID: c2d2b823-aa0d-4ba4-bd3d-dc761a131ee2
-:END:
+**** editing source blocks
 
-In many ways =normal-mode= is inappropriate for editing org mode files. Many of
-it's bindings are just unhelpful or inadequate when it comes to editing headings
-and source blocks. And bindings for extremely common Org operations such as
-refiling, promoting, demoting, and evaluating a block are missing. =normal-mode=
-simply was not designed for editing org files. There is good reason to create an
-evil state for doing that.
-
-***** setup entry points
+*** org-mode
 :PROPERTIES:
-:ID: 5490b8de-3797-420d-a1e6-e8f6c308f0d8
-:END:
-
-****** state entry and exit
-:PROPERTIES:
-:ID: 847424cf-ba0b-4da8-866e-45b20df10b0b
+:ID: c1c5724e-028a-42a5-a982-28d57203b335
 :END:
 
 #+begin_src emacs-lisp
-(defun evil:org-state-entry (&rest _)
-  "Function called when entering `evil-org-state'."
-  (remove-hook 'activate-mark-hook #'evil-visual-activate-hook t))
-
-(defun evil:org-state-exit (&rest _)
-  "Function called when exiting `evil-org-state'."
-  (when (region-active-p) (deactivate-mark))
-  (add-hook 'activate-mark-hook #'evil-visual-activate-hook nil t))
+(use-package! org
+  :setq-default
+  (org-fontify-emphasized-text . t)
+  (org-hide-emphasis-markers . t)
+  :pre-setq
+  (org-directory . (file-truename "~/Org/"))
+  (org-archive-location . (concat org-directory "archive.org::"))
+  (org-default-notes-file . (concat org-directory "notes.org"))
+  :setq
+  (org-pretty-entities . t)
+  (org-fontify-whole-heading-line . t)
+  (org-fontify-done-headline . t)
+  (org-fontify-quote-and-verse-blocks . t)
+  (org-adapt-indentation . nil)
+  (org-cycle-separator-lines . 2)
+  (outline-blank-line . t)
+  (org-enforce-todo-dependencies . t)
+  (org-use-fast-tag-selection . nil)
+  (org-tags-column . -80)
+  (org-tag-alist . nil))
 #+end_src
-
-****** entry point from normal state
-:PROPERTIES:
-:ID: 3a8fbaa8-5e04-44de-977e-9c83904a8e9d
-:END:
-
-Editing a description will be done in =normal-state=. Pressing =H= will go back to
-the description's parent heading and re-enter =org-state=.
-
-#+begin_src emacs-lisp
-(general-def evil-org-state-mode-map
-  "H" #'org/up-to-heading-and-enter-org-state)
-#+end_src
-
-****** insert state entry point
-:PROPERTIES:
-:ID: 6d990ed7-0067-4185-b69a-9276af5aa8c5
-:END:
-
-#+begin_src emacs-lisp
-(defun evil-org/escape ()
-  "Escape from ‘evil-org-state’."
-  (interactive)
-  (evil-org-state 1))
-
-(general-def [escape] #'evil-org/escape)
-#+end_src
-
-***** cursor
-:PROPERTIES:
-:ID: 072a66af-47ef-400b-9064-da52e3c939a2
-:END:
-
-#+begin_src emacs-lisp
-(after! (evil org)
-  (defvar evil-org-state-cursor '(box "VioletRed1")))
-#+end_src
-
-***** main definition
-:PROPERTIES:
-:ID: bae454a5-dcae-4065-9df9-12c538fb27c8
-:END:
-
-I checked out
-
-#+begin_src emacs-lisp
-(after! (evil org)
-  (evil-define-state org
-    "An evil state for Lispy, a precision editing mode for Lisp."
-    :tag "<Z>"
-    :message "Entering evil-lispy state. Press ESC to get out and f1 for help."
-    :cursor evil-org-state-cursor
-    ;; Looks like this is what I need to do for true inheritence.
-    :enable (normal motion)
-    :suppress-keymap t
-    :entry-hook (evil:org-state-entry)
-    :exit-hook (evil:org-state-exit)
-    nil)
-  (evil-set-initial-state 'org-mode 'org))
-#+end_src
-
-***** bindings                                                         :binding:
-:PROPERTIES:
-:ID: 0e04af23-d563-4c87-aeb2-e703531caf1b
-:END:
-
-****** escape key
-
-#+begin_src emacs-lisp
-(after! (evil org)
-  (general-def 'insert org-mode-map [escape] #'evil-org-state))
-#+end_src
-
-****** dwim
-
-#+begin_src emacs-lisp
-(general-def evil-org-state-map
-  "j" #'org/dwim-next-line
-  "k" #'org/dwim-previous-line
-  "e" #'org/dwim-eval-block
-  "i" #'org/dwim-edit-description
-  "a" #'org/dwim-jump-to-heading
-  "b" #'org/dwim-insert-elisp-block)
-#+end_src
-
-****** insert below
-
-#+begin_src emacs-lisp
-(general-def 'evil-org-state-map
-  "o" #'org/insert-heading-below
-  "O" #'org/insert-heading-above)
-#+end_src
-
-****** keybindings
-:PROPERTIES:
-:ID: 9bdab133-8613-442d-9222-01aca614b7a3
-:END:
-
-#+begin_src emacs-lisp
-(general-def 'evil-org-state-map
-  [escape] #'ignore
-  [tab] #'outline-toggle-children
-  "TAB" #'outline-toggle-children
-  "h" #'org-do-promote
-  "l" #'org-do-demote
-  "H" #'org-promote-subtree
-  "L" #'org-demote-subtree
-  "t" #'org-set-tags-command
-  "r" #'org-capture
-  "s" #'org-schedule
-  "S" #'org-deadline
-  "R" #'org-refile
-  "T" #'org-todo
-  "D" #'org-cut-subtree
-  "Y" #'org-copy-subtree
-  "J" #'org-metadown
-  "K" #'org-metaup
-  "U" #'org/dwim-up-heading)
-#+end_src
-
-**** evil org
 
 *** agenda
-:PROPERTIES:
-:ID: 415c40ca-7b9e-4394-bd84-fc20f804a57f
-:END:
-
-Org Agenda provides a neat method of displaying todo information.
-
-**** bootstrap
 :PROPERTIES:
 :ID: 65b2885d-aca6-42b8-a8ad-e3ae077b9aae
 :END:
@@ -8473,17 +8323,6 @@ Org Agenda provides a neat method of displaying todo information.
 :ID: 0174a708-8043-403e-b024-8ae29868564d
 :END:
 
-Refiling is the org-mode term for moving a heading from one place to another.
-Typically not just one heading above or below, but to another subtree either in
-current file or some other file.
-
-[[https://blog.aaronbieber.com/2017/03/19/organizing-notes-with-refile.html][Aaron Bieber's Blog]] is a good place to learn about org-refile.
-
-**** refiling defaults
-:PROPERTIES:
-:ID: ec442ff0-53f0-4e4c-9292-ee2c84bf6d72
-:END:
-
 #+begin_src emacs-lisp
 (use-feature! org-refile
   :after org
@@ -8493,26 +8332,7 @@ current file or some other file.
   (org-refile-use-outline-path . 'file)
   (org-refile-allow-creating-parent-nodes . t)
   (org-reverse-note-order . t)
-  ;; Non-nil means complete the outline path in hierarchical steps.
   (org-outline-path-complete-in-steps . nil))
-#+end_src
-
-**** refile to specific buffer
-:PROPERTIES:
-:ID: 2a04e1ec-6d36-4cce-b2cc-54baa148050e
-:END:
-
-#+begin_src emacs-lisp
-(defun org/refile-to-other-buffer ()
-  "Refile current heading to other buffer."
-  (interactive)
-  (let (org-refile-targets)
-    (dolist (buf (-remove-item (current-buffer) (buffer-list)))
-      (with-current-buffer buff
-        (when (and buffer-file-name (eq major-mode 'org-mode))
-          (cl-pushnew (cons buffer-file-name (cons :maxlevel 10))
-                      org-refile-targets))))
-    (call-interactively #'org-refile)))
 #+end_src
 
 *** capture
@@ -8820,7 +8640,7 @@ beginning of a heading are ugly, org block end and begin lines are ugly,
 property drawers are ugly. For a nice-looking, minimal, and non-distracting
 appearance all this needs to be improved.
 
-**** visibility
+**** visibility                                                       :disabled:
 :PROPERTIES:
 :ID: 71462363-ddd0-4734-a074-7b00fde06e82
 :END:
@@ -9045,56 +8865,23 @@ hindsight, using this function is even easier than using ~window-beg~ and
   (org-superstar-leading-bullet . ?\s))
 #+end_src
 
-**** defaults
-:PROPERTIES:
-:ID: e83df952-5c8d-46f4-a0ad-c2bdcfd7e958
-:END:
-
-#+begin_src emacs-lisp
-(setq-default
- ;; Fontify text with emphasis markers around it.
- org-fontify-emphasized-text t
- ;; Don't show the actual emphasis markers.
- org-hide-emphasis-markers t)
-#+end_src
-
-**** TODO fontification
-:PROPERTIES:
-:ID: 2c492fa0-a9bd-4c10-825a-a1b6cda4af16
-:END:
-
-#+begin_src emacs-lisp
-(setq org-pretty-entities t)
-(setq org-fontify-whole-heading-line t)
-(setq org-fontify-done-headline t)
-(setq org-fontify-quote-and-verse-blocks t)
-#+end_src
-
-*** properties
-:PROPERTIES:
-:ID: a567f89f-3f11-461e-ac63-0752643b8da8
-:END:
-
-**** id
-:PROPERTIES:
-:ID: e8d35070-5c0d-489f-a628-c71431f3654b
-:END:
-
-***** org-id-locations
+*** org id
 :PROPERTIES:
 :ID: e7ecff83-7ba6-4620-ac05-ebac2f250b7a
 :END:
 
 #+begin_src emacs-lisp
-(setq org-id-locations-file (concat VOID:DATA-DIR "org-id-locations"))
+(use-feature! org-id
+  :after org
+  :setq (org-id-locations-file . (concat VOID:DATA-DIR "org-id-locations")))
 #+end_src
 
-*** keybindings                                                        :binding:
+*** keybindings
 :PROPERTIES:
 :ID: ee444a86-1266-42dd-9fe8-40192db1fdde
 :END:
 
-**** narrowing and widening                                           :disabled:
+**** narrowing and widening
 :PROPERTIES:
 :ID: 72bd1c81-bd60-472f-8166-20bb2a16093d
 :END:
@@ -9115,7 +8902,7 @@ hindsight, using this function is even easier than using ~window-beg~ and
 :ID: 0e52b93f-ccb8-4478-8cc3-0f48d318f58d
 :END:
 
-***** replace evil folding commands to outline folding                :disabled:
+**** replace evil folding commands to outline folding
 :PROPERTIES:
 :ID: b3a4908d-538e-4d4c-acc9-fbd822220f03
 :END:
@@ -9130,12 +8917,34 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   (:n "a" #'outline-show-all)
   (:n "m" #'outline:hide-all-sublevels))
 
+(general-def 'normal org-mode-map
+  [tab] #'outline-toggle-children
+  "TAB" #'outline-toggle-children)
+
 (defun outline:hide-all-sublevels ()
   (interactive)
   (outline-hide-sublevels 1))
+
+(general-def 'normal org-mode-map
+  "j" #'org/dwim-next-line
+  "k" #'org/dwim-previous-line
+  "o" #'org/insert-heading-below
+  "O" #'org/insert-heading-above
+  "l" #'org-do-demote
+  "H" #'org-promote-subtree
+  "L" #'org-demote-subtree
+  "t" #'org-set-tags-command
+  "r" #'org-capture
+  "s" #'org-schedule
+  "S" #'org-deadline
+  "R" #'org-refile
+  "T" #'org-todo
+  "D" #'org-cut-subtree
+  "Y" #'org-copy-subtree
+  "J" #'org-metadown)
 #+end_src
 
-**** return                                                           :disabled:
+**** return
 :PROPERTIES:
 :ID: 384d0adc-f3e0-4d16-95e2-23e2b9bf9783
 :END:
