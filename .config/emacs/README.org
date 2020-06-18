@@ -8892,7 +8892,7 @@ in a better format.
   :popup
   ("\\*Help.*"
    (display-buffer-at-bottom)
-   (window-width . 0.40)
+   (window-width . 0.50)
    (side . bottom)
    (slot . 4))
   :bind
