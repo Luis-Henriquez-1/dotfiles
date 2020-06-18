@@ -8502,7 +8502,18 @@ it easy to forget what a certain element meant or to accidentally omit a capture
 template element as you're writing it.
 
 #+begin_src emacs-lisp
-(use-package! doct :after org-capture)
+(use-package! doct
+  :after org-capture
+  :require t
+  :config
+  ;; (require 'doct)
+  ;; doct just returns the new template.
+  (defadvice! doct:add-to-capture-templates (orig-fn &rest args)
+    "Automatically add the template to capture templates."
+    :around doct
+    (alet (apply orig-fn args)
+      (void:log "Populate capture templates...")
+      (prepend! org-capture-templates it))))
 #+end_src
 
 **** capture templates
@@ -8517,21 +8528,20 @@ template element as you're writing it.
 
 #+begin_src emacs-lisp
 (after! org-capture
-  (prepend! org-capture-templates
-    (doct (list "Emacs"
-                :keys "e"
-                :file (lambda nil (concat VOID:ORG-DIR "emacs.org"))
-                :prepend t
-                :empty-lines 1
-                :ID (lambda () (require 'uuidgen) (uuidgen-4))
-                :template '("* %{todo-state} %?"
-                            ":PROPERTIES:"
-                            ":ID: %{ID}"
-                            ":CREATED: %U"
-                            ":END:")
-                :children
-                '(("Todo" :keys "1" :todo-state "TODO")
-                  ("Bug" :keys "2" :todo-state "BUG"))))))
+  (doct (list "Emacs"
+              :keys "e"
+              :file (lambda nil (concat VOID:ORG-DIR "emacs.org"))
+              :prepend t
+              :empty-lines 1
+              :ID (lambda () (require 'uuidgen) (uuidgen-4))
+              :template '("* %{todo-state} %?"
+                          ":PROPERTIES:"
+                          ":ID: %{ID}"
+                          ":CREATED: %U"
+                          ":END:")
+              :children
+              '(("Todo" :keys "1" :todo-state "TODO")
+                ("Bug" :keys "2" :todo-state "BUG")))))
 #+end_src
 
 ***** notes
@@ -8545,39 +8555,16 @@ in the future. I use this template for this.
 
 #+begin_src emacs-lisp
 (after! org-capture
-  (prepend! org-capture-templates
-    (doct (list "Notes"
-                :keys "n"
-                :file (lambda nil (concat VOID:ORG-DIR "notes.org"))
-                :prepend t
-                :empty-lines 1
-                :ID (lambda () (require 'uuidgen) (uuidgen-4))
-                :template '("* %?"
-                            ":PROPERTIES:"
-                            ":ID: %{ID}"
-                            ":CREATED: %U"
-                            ":END:")))))
-#+end_src
-
-***** test                                                            :disabled:
-:PROPERTIES:
-:ID: a9b10ce4-964a-46d6-8f0b-43ec18786fe1
-:END:
-
-#+begin_src emacs-lisp
-(prepend! org-capture-templates
-  (doct (list "TEST"
-              :keys "t"
-              :file (lambda nil (concat VOID:ORG-DIR "test.org"))
+  (doct (list "Notes"
+              :keys "n"
+              :file (lambda nil (concat VOID:ORG-DIR "notes.org"))
+              :prepend t
               :empty-lines 1
-              :contexts '((:when #'org-at-heading-p))
-              :ID #'uuidgen-4
-              :TESTID #'org-id-get
-              :template '("* testing "
+              :ID (lambda () (require 'uuidgen) (uuidgen-4))
+              :template '("* %?"
                           ":PROPERTIES:"
                           ":ID: %{ID}"
                           ":CREATED: %U"
-                          ":TESTING: %{TESTID}"
                           ":END:"))))
 #+end_src
 
