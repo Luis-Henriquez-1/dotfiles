@@ -8551,10 +8551,6 @@ appearance all this needs to be improved.
 
 ***** hide lines
 :PROPERTIES:
-:ID: 26e40dc0-c3ea-4db5-8bff-9e84bb472a66
-:END:
-
-:PROPERTIES:
 :ID: 533c108a-36d0-4686-9476-2588647402ed
 :END:
 =hide-lines= is a package which, as its name suggests, hides certain lines.
