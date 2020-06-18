@@ -1,5 +1,8 @@
 
 * Core
+:PROPERTIES:
+:ID:       d68434bf-be6a-471f-ab65-e151f4f1c111
+:END:
 
 ** Init
 :PROPERTIES:
@@ -55,6 +58,9 @@ before package installation, because I will use them during package
 installation.
 
 **** defadvice!
+:PROPERTIES:
+:ID:       cc161eaf-a8fb-4e24-853f-a76a49c28dcf
+:END:
 
 #+begin_src emacs-lisp
 (defmacro defadvice! (name args &rest body)
@@ -69,6 +75,9 @@ installation.
 #+end_src
 
 **** defhook!
+:PROPERTIES:
+:ID:       fb33eef6-d84e-4384-9241-73cde5e0e0d0
+:END:
 
 #+begin_src emacs-lisp
 (defmacro defhook! (name args &rest body)
@@ -233,6 +242,9 @@ Void is compiled.
 #+end_src
 
 *** defined in c source code
+:PROPERTIES:
+:ID:       873e6820-52f0-4b70-9992-ccb1610eb266
+:END:
 
 **** default settings
 :PROPERTIES:
@@ -289,6 +301,9 @@ Void is compiled.
 #+end_src
 
 **** all
+:PROPERTIES:
+:ID:       276d0193-5a46-4034-b145-f235178678d6
+:END:
 
 #+begin_src emacs-lisp
 ;; File name in which to write a list of all auto save file names.
@@ -1194,10 +1209,16 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 #+end_src
 
 *** leaf
+:PROPERTIES:
+:ID:       109f58d7-525e-43f4-b997-658b1d5da0a8
+:END:
 
 Like =use-package=, leaf is a macro that fascilitates package configuration.
 
 **** naming
+:PROPERTIES:
+:ID:       941ce3dc-9648-4133-864b-eae2542a2b54
+:END:
 
 The name =leaf= is not descriptive about what I'm doing which is configuring a
 package.
@@ -1211,6 +1232,9 @@ package.
 #+end_src
 
 **** leaf
+:PROPERTIES:
+:ID:       7d72aec8-5523-473d-860d-181ce3d484d7
+:END:
 
 #+begin_src emacs-lisp
 (use-package! leaf
@@ -1218,6 +1242,9 @@ package.
 #+end_src
 
 **** define leaf keyword
+:PROPERTIES:
+:ID:       5f480daa-4561-400f-bbe2-4396fc7877ff
+:END:
 
 Leaf is very minimal and for the most part this is good. However, it does mean
 defining leaf keywords is a bit of a pain. There are many low-level parts of
@@ -1259,6 +1286,9 @@ is the form that will be added to."
 #+end_src
 
 **** normalizers
+:PROPERTIES:
+:ID:       bcf96e13-f3bc-4b23-832f-f94b31dd48a5
+:END:
 
 leaf's setq does not correctly handle setting variables to forms that need to be
 evaluated.
@@ -1276,8 +1306,14 @@ evaluated.
 #+end_src
 
 **** custom setting keywords
+:PROPERTIES:
+:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
+:END:
 
 ***** +setq
+:PROPERTIES:
+:ID:       6f38c45b-9382-4d72-a7ae-6d7a8748d07f
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :+setq '(before :setq)
@@ -1287,6 +1323,9 @@ evaluated.
 #+end_src
 
 ***** +pre-setq
+:PROPERTIES:
+:ID:       aba01554-fa11-4120-9867-19e5e2025df4
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :+pre-setq '(before :pre-setq)
@@ -1296,6 +1335,9 @@ evaluated.
 #+end_src
 
 ***** +custom
+:PROPERTIES:
+:ID:       bfa61a7a-1660-4000-a80e-15851a32ffd5
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :+custom '(before :custom)
@@ -1305,6 +1347,9 @@ evaluated.
 #+end_src
 
 ***** +setq-default
+:PROPERTIES:
+:ID:       b8ab2bf6-2b4e-41db-93f8-ed5c86392c84
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :+setq-default '(before :setq-default)
@@ -1314,8 +1359,14 @@ evaluated.
 #+end_src
 
 **** defer keywords
+:PROPERTIES:
+:ID:       6a8189ab-9a7a-4670-aa7a-b6589c180011
+:END:
 
 ***** leaf-generate-load-fn
+:PROPERTIES:
+:ID:       41c05e4a-a0f1-45e7-bed6-7de7a439faa1
+:END:
 
 #+begin_src emacs-lisp
 (defun leaf:generate-load-form (package &optional hooks advice-place advices)
@@ -1334,6 +1385,9 @@ evaluated.
 #+end_src
 
 ***** before-call
+:PROPERTIES:
+:ID:       5378035c-206b-4479-8c60-4d57853e5754
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
@@ -1345,6 +1399,9 @@ evaluated.
 #+end_src
 
 ***** after-call
+:PROPERTIES:
+:ID:       36389857-c070-4221-8f76-b6b0da257b34
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
@@ -1357,6 +1414,9 @@ evaluated.
 
 
 ***** on-hook
+:PROPERTIES:
+:ID:       6b4696f3-2bc0-4646-ab68-e5e5b61b0624
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
@@ -1367,6 +1427,9 @@ evaluated.
 #+end_src
 
 ***** defer-incrementally
+:PROPERTIES:
+:ID:       c7ab7604-6e7c-42d1-b956-c58854948e8f
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
@@ -1378,6 +1441,9 @@ evaluated.
 #+end_src
 
 **** straight keyword
+:PROPERTIES:
+:ID:       cba57988-21b2-456b-aed2-27254febf873
+:END:
 
 The straight keyword require's the package's name.
 
@@ -1400,6 +1466,9 @@ The straight keyword require's the package's name.
 #+end_src
 
 **** popup
+:PROPERTIES:
+:ID:       30845314-ac19-49bb-9065-591c13e55489
+:END:
 
 The point of this keyword is to let me configure the display of buffers for
 specific packages.
@@ -1411,6 +1480,9 @@ specific packages.
 #+end_src
 
 **** os
+:PROPERTIES:
+:ID:       3335e409-b963-4504-b9fb-2faf4fb0be3d
+:END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :os '(before :when)
@@ -1418,6 +1490,9 @@ specific packages.
 #+end_src
 
 **** straight
+:PROPERTIES:
+:ID:       9dff9894-667c-4e74-9624-8aee533f8f70
+:END:
 
 #+begin_src emacs-lisp
 (use-package! straight
@@ -1431,6 +1506,9 @@ specific packages.
 #+end_src
 
 **** package.el
+:PROPERTIES:
+:ID:       550066df-89b4-4d4d-b8fd-daa1c28b1ceb
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! package
@@ -1515,6 +1593,9 @@ Emacs starts up with a default screen setup. No, thanks.
 #+end_src
 
 **** loaddefs
+:PROPERTIES:
+:ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
+:END:
 
 These are *extremely* important lines if you use an external program as I do
 ([[https://wiki.archlinux.org/index.php/Msmtp][msmtp]]) to send your email. If you don't set these variables, emacs will
@@ -1558,6 +1639,9 @@ think you want to use =smtp=.
 #+end_src
 
 **** subr
+:PROPERTIES:
+:ID:       61603f44-780e-4456-88c6-7ffe1e5c7197
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! subr
@@ -1641,6 +1725,9 @@ Don't ping things that look like domain names.
 #+end_src
 
 **** bytecomp
+:PROPERTIES:
+:ID:       6b375bfb-a8c3-473c-8dbd-530e692a15ab
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! bytecomp
@@ -1650,6 +1737,9 @@ Don't ping things that look like domain names.
 #+end_src
 
 **** compile
+:PROPERTIES:
+:ID:       913aa4f2-e42b-4b74-a2d4-e87b1738a5bd
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! compile
@@ -1660,6 +1750,9 @@ Don't ping things that look like domain names.
 #+end_src
 
 **** uniquify
+:PROPERTIES:
+:ID:       9ba2726b-3fef-4e9b-9387-a80ab09bdb7d
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! uniquify
@@ -1668,6 +1761,9 @@ Don't ping things that look like domain names.
 #+end_src
 
 **** ansi-color
+:PROPERTIES:
+:ID:       5feaab76-e5c1-450c-94a6-8fdfb95ddb94
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! ansi-color
@@ -1676,6 +1772,9 @@ Don't ping things that look like domain names.
 #+end_src
 
 **** image mode
+:PROPERTIES:
+:ID:       32e2118a-c92b-4e8d-b2db-048428462783
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! image-mode
@@ -1685,6 +1784,9 @@ Don't ping things that look like domain names.
 #+end_src
 
 **** window
+:PROPERTIES:
+:ID:       af27cd7e-2096-4f6d-a749-63e4c38d136c
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! window
@@ -1693,12 +1795,18 @@ Don't ping things that look like domain names.
 #+end_src
 
 **** paragraphs
+:PROPERTIES:
+:ID:       f289ade4-ad16-4f6a-8868-1f9b7af5ddca
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! paragraphs)
 #+end_src
 
 **** indent
+:PROPERTIES:
+:ID:       a5d97d4d-3af9-4fde-ae14-953ad4d28edd
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! indent
@@ -1707,6 +1815,9 @@ Don't ping things that look like domain names.
 #+end_src
 
 **** mouse
+:PROPERTIES:
+:ID:       d0d6de11-50fa-4ae2-ad4b-69712f3e2c54
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! mouse
@@ -1803,6 +1914,9 @@ this is binding =leader= or =localleader= keys like [[https://github.com/syl20bn
 #+end_src
 
 ****** localleader
+:PROPERTIES:
+:ID:       e4770eae-adf5-4216-9016-5ec4bc465e03
+:END:
 
 There's pros and cons to the =SPC m= binding. The main pro is that it's
 consistent with =SPC=. With the leader and the localleader, this means that you
@@ -1967,6 +2081,9 @@ while the user is working.
 #+end_src
 
 *** custom macros and functions
+:PROPERTIES:
+:ID:       4029d357-1309-4c7f-89eb-db93a3470c42
+:END:
 
 **** windows
 :PROPERTIES:
@@ -2626,8 +2743,14 @@ makes emacs feel like a window manager with gaps.
 #+end_src
 
 *** adjust window divider gap size
+:PROPERTIES:
+:ID:       5485c926-fac0-4e87-ae97-f7bf25d0a55c
+:END:
 
 **** TODO increase gap size
+:PROPERTIES:
+:ID:       867fad5c-b4d4-4cba-929e-0dc23f007c5b
+:END:
 
 Somtimes I might want to adjust this.
 
@@ -2641,6 +2764,9 @@ Somtimes I might want to adjust this.
 #+end_src
 
 **** increase
+:PROPERTIES:
+:ID:       ebd6b013-6213-42a1-9e95-fefc7e7da991
+:END:
 
 #+begin_src emacs-lisp
 (defun frame/increment-window-divider-size ()
@@ -2650,6 +2776,9 @@ Somtimes I might want to adjust this.
 #+end_src
 
 **** decrease
+:PROPERTIES:
+:ID:       6b1eb1cd-1cfd-4b82-a413-cb61fa13e0a4
+:END:
 
 #+begin_src emacs-lisp
 (defun frame/decrement-window-divider-size ()
@@ -2804,6 +2933,9 @@ Emacs's text editing capabilities on it.
 #+end_src
 
 *** exwm firefox
+:PROPERTIES:
+:ID:       a78eec54-687f-4a40-8c68-db096112ef52
+:END:
 
 #+begin_src emacs-lisp
 (use-package! exwm-firefox-evil
@@ -3051,8 +3183,14 @@ about Helm is that it's too bloated and slow.
 #+end_src
 
 **** helm-org
+:PROPERTIES:
+:ID:       1e19a081-d107-4593-8af4-e72c84bbaeff
+:END:
 
 ***** org capture
+:PROPERTIES:
+:ID:       a11e2fe3-8596-4a15-bed7-08a988c561a0
+:END:
 
 [[https://github.com/emacs-helm/helm-org][helm-org]] doesn't have everything I need for org mode--or rather what it
 does have isn't good enough.
@@ -3155,6 +3293,9 @@ query to narrow the list, and then selecting one of the remaining candidates.
 #+end_src
 
 **** ivy-avy
+:PROPERTIES:
+:ID:       ae043d9b-e057-4f3e-b0d7-a96624b307d4
+:END:
 
 #+begin_src emacs-lisp
 (use-package! ivy-avy
@@ -3188,6 +3329,9 @@ command is likely to be.
 #+end_src
 
 **** amx
+:PROPERTIES:
+:ID:       ae950812-773f-4f54-a1f5-d6777864adcf
+:END:
 
 #+begin_src emacs-lisp
 (use-package! amx
@@ -3254,6 +3398,9 @@ of stock emacs functions with a version that using =ivy= for completion.
 #+end_src
 
 **** minibuffer bindings
+:PROPERTIES:
+:ID:       5a21af24-4383-40dc-8c53-562f2cf68961
+:END:
 
 These bindings are partly influenced by helm. I strongly prefer the names helm
 chose for their minibuffer commands. Things like "persistent" action make much
@@ -3392,14 +3539,23 @@ provide a more informative interface to ivy commands.
 #+end_src
 
 **** customizing specific functions
+:PROPERTIES:
+:ID:       ee303d38-fb3a-4b31-a226-4c8e04a63d1a
+:END:
 
 ***** no sort
+:PROPERTIES:
+:ID:       3c1f1892-d9cb-4767-82a5-aa157de739de
+:END:
 
 #+begin_src emacs-lisp
 (after! ivy (push '(counsel-org-goto . nil) ivy-sort-functions-alist))
 #+end_src
 
 ***** make the default action setting the font
+:PROPERTIES:
+:ID:       17f2d06a-835c-4bba-960b-d0f8c028a91a
+:END:
 
 #+begin_src emacs-lisp
 (after! ivy
@@ -3409,6 +3565,9 @@ provide a more informative interface to ivy commands.
 #+end_src
 
 ***** don't include binding information
+:PROPERTIES:
+:ID:       50e3991d-8c46-4dcb-86d9-79c2bede4e50
+:END:
 
 #+begin_src emacs-lisp
 (advice-add #'counsel-M-x-transformer :override #'identity)
@@ -3463,6 +3622,9 @@ existing completing-read-using commands.
 #+end_src
 
 **** jump to line
+:PROPERTIES:
+:ID:       b4ccbc1d-b2fa-4bfa-95ef-3bde8ce57655
+:END:
 
 This is a replacement for swiper. It lets me fuzzy jump to a particular line in
 a file.
@@ -3497,6 +3659,9 @@ a file.
 #+end_src
 
 **** recent buffer
+:PROPERTIES:
+:ID:       9de994ec-e4f2-4375-9466-6ec7f5ea907e
+:END:
 
 #+begin_src emacs-lisp
 (defun void/buffer-or-recentf ()
@@ -3511,6 +3676,9 @@ a file.
 #+end_src
 
 **** tag headlines
+:PROPERTIES:
+:ID:       ae87e87d-3e58-4d8c-b495-0d61770d8d74
+:END:
 
 #+begin_src emacs-lisp
 (defun org/set-tag ()
@@ -3526,6 +3694,9 @@ a file.
 #+end_src
 
 **** TODO qutebrowser links                                           :disabled:
+:PROPERTIES:
+:ID:       e304a673-08fd-466f-bcb0-6b3f57acc60d
+:END:
 
 #+begin_src emacs-lisp
 (defun void/browser-links ()
@@ -3916,6 +4087,9 @@ so many emails, it's easy to become overwhelmed. Fortunately, there are numerous
 ways to read and send emails in Emacs.
 
 ** sendmail
+:PROPERTIES:
+:ID:       48c3332f-975d-4f22-94a8-4ccd394ca82a
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! sendmail
@@ -3940,6 +4114,9 @@ ways to read and send emails in Emacs.
 #+end_src
 
 ** message
+:PROPERTIES:
+:ID:       4cf38804-18d6-470c-a9c3-e3327f2bebf9
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! message
@@ -4661,6 +4838,9 @@ my description of problems with pictures.
 #+end_src
 
 *** escr
+:PROPERTIES:
+:ID:       06f23fc2-7f6b-4812-a14d-185b42a42976
+:END:
 
 #+begin_src emacs-lisp
 (use-package! escr :disabled t)
@@ -5576,6 +5756,9 @@ cursor color will update.
 #+end_src
 
 **** normal state everywhere
+:PROPERTIES:
+:ID:       e6126bd7-94b8-4ce0-b547-0536b59437ea
+:END:
 
 #+begin_src emacs-lisp
 (defhook! evil:make-normal-state-default-state-h ()
@@ -5633,6 +5816,9 @@ This variable will be nil when the minibuffer is closed.")
 #+end_src
 
 **** escape
+:PROPERTIES:
+:ID:       e4b9d33d-c64d-47ef-9bff-baa80d1b34b2
+:END:
 
 ***** escape
 :PROPERTIES:
@@ -5655,6 +5841,9 @@ We want escape to be a general "quit everything".
 #+end_src
 
 ***** TODO keychord integration
+:PROPERTIES:
+:ID:       33fa6402-f56e-4bea-a9b5-bd5a6f44792f
+:END:
 
 Sometimes we don't have access to a convenient escape key--I mean that caps-lock
 is not bound to escape. Or, perhaps, we might find it faster or preferable to
@@ -6080,6 +6269,9 @@ larger text objects. It's saves me keystrokes.
 #+end_src
 
 *** avy-command-helper
+:PROPERTIES:
+:ID:       814e98f9-5823-4e8f-9f89-49cdecf3d809
+:END:
 
 #+begin_src emacs-lisp
 (defun avy:jump-to-regexp (regexp)
@@ -7313,6 +7505,9 @@ Notifications are very important. Messages from the =*Messages*= buffer are not 
 #+end_src
 
 ** sudo-edit
+:PROPERTIES:
+:ID:       38a9aec6-f826-4ebc-82f1-08ace40c2287
+:END:
 
 Sometimes I'll want edit files with root privileges. This package let's you edit
 a file from another user (=root= by default). To use it you just call [[helpfn:sudo-edit][sudo-edit]]
@@ -7323,6 +7518,9 @@ on the buffer you'd like to edit.
 #+end_src
 
 ** yadm
+:PROPERTIES:
+:ID:       5783c785-cee0-4705-9b6b-eec5124f34a0
+:END:
 
 #+begin_src emacs-lisp
 (defun void/dotfile-status ()
@@ -8252,6 +8450,9 @@ jump into a small org buffer and write down an idea that you have, then close
 it.
 
 **** org capture
+:PROPERTIES:
+:ID:       8fc5d248-ff21-45e4-a48b-57cecd57b7a3
+:END:
 
 #+begin_src emacs-lisp
 (use-feature! org-capture
