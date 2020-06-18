@@ -1329,9 +1329,9 @@ evaluated.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :+pre-setq '(before :pre-setq)
-                      :normalizer #'leaf:normalizer-+setq
-                      :alias (list :pre-setq)
-                      :form (plist-get leaf-keywords :pre-setq))
+                     :normalizer #'leaf:normalizer-+setq
+                     :alias (list :pre-setq)
+                     :form (plist-get leaf-keywords :pre-setq))
 #+end_src
 
 ***** +custom
@@ -1341,9 +1341,9 @@ evaluated.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :+custom '(before :custom)
-                      :normalizer #'leaf:normalizer-+setq
-                      :alias (list :custom)
-                      :form (plist-get leaf-keywords :custom))
+                     :normalizer #'leaf:normalizer-+setq
+                     :alias (list :custom)
+                     :form (plist-get leaf-keywords :custom))
 #+end_src
 
 ***** +setq-default
@@ -1353,9 +1353,9 @@ evaluated.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :+setq-default '(before :setq-default)
-                      :normalizer #'leaf:normalizer-+setq
-                      :alias (list :setq-default)
-                      :form (plist-get leaf-keywords :setq-default))
+                     :normalizer #'leaf:normalizer-+setq
+                     :alias (list :setq-default)
+                     :form (plist-get leaf-keywords :setq-default))
 #+end_src
 
 **** defer keywords
@@ -1475,8 +1475,8 @@ specific packages.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :popup '(before :mode)
-                      :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
-                               ,@leaf--body))
+                     :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
+                              ,@leaf--body))
 #+end_src
 
 **** os
@@ -1486,7 +1486,7 @@ specific packages.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :os '(before :when)
-                      :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
+                     :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
 #+end_src
 
 **** straight
