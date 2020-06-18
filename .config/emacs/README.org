@@ -1317,9 +1317,9 @@ evaluated.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword :+setq '(before :setq)
-                      :normalizer #'leaf:normalizer-+setq
-                      :alias (list :setq)
-                      :form (plist-get leaf-keywords :setq))
+                     :normalizer #'leaf:normalizer-+setq
+                     :alias (list :setq)
+                     :form (plist-get leaf-keywords :setq))
 #+end_src
 
 ***** +pre-setq
