@@ -1825,6 +1825,16 @@ Don't ping things that look like domain names.
   (mouse-yank-at-point . t))
 #+end_src
 
+**** calendar
+:PROPERTIES:
+:ID:       4ad7e704-f490-40e4-b2bc-8a30a10a7bb7
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! calendar
+  :setq (diary-file . (concat VOID:DATA-DIR "diary")))
+#+end_src
+
 *** external libraries
 :PROPERTIES:
 :ID: 6e4be80e-8149-424d-a801-d7871bfe8fc8
