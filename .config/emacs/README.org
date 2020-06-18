@@ -8184,14 +8184,13 @@ use =edit-indirect= to edit source blocks.
 
 #+begin_src emacs-lisp
 (use-package! org
-  :setq-default
-  (org-fontify-emphasized-text . t)
-  (org-hide-emphasis-markers . t)
-  :pre-setq
+  ;; :pre-setq
+  :setq
   (org-directory . (file-truename "~/Org/"))
   (org-archive-location . (concat org-directory "archive.org::"))
   (org-default-notes-file . (concat org-directory "notes.org"))
-  :setq
+  (org-fontify-emphasized-text . t)
+  (org-hide-emphasis-markers . t)
   (org-pretty-entities . t)
   (org-fontify-whole-heading-line . t)
   (org-fontify-done-headline . t)
