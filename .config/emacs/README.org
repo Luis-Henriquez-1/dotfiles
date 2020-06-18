@@ -1505,7 +1505,7 @@ Emacs starts up with a default screen setup. No, thanks.
 (use-feature! simple
   :popup ("\\*Messages"
           (display-buffer-at-bottom)
-          (window-height . 0.4))
+          (window-height . 0.5))
   :setq-default
   (idle-update-delay . 1)
   (blink-matching-paren . t)
@@ -4789,7 +4789,7 @@ mainly for consistency.
   :before-call (org/edit:description-at-point org/dwim-edit-source-block)
   :popup ("\\*edit-indirect"
           (display-buffer-at-bottom)
-          (window-height . 0.4)
+          (window-height . 0.5)
           (slot . 10)))
 #+end_src
 
@@ -7068,6 +7068,9 @@ that restarts emacs. I haven't tested this in EXWM mode.
 (use-package! magit
   :commands magit-status magit-get-current-branch
   :load-incrementally f s with-editor git-commit package eieio lv transient
+  :popup ("magit:"
+          (display-buffer-at-bottom)
+          (window-height . 0.5))
   :bind (:magit-status-mode-map
          ([remap magit-mode-bury-buffer] . magit/quit))
   :setq
