@@ -8842,6 +8842,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   "l" #'org-do-demote
   "H" #'org-promote-subtree
   "L" #'org-demote-subtree
+  "C" #'org-capture
   "t" #'org-set-tags-command
   "r" #'org-capture
   "s" #'org-schedule
