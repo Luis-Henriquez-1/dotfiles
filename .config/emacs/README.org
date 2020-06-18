@@ -8144,8 +8144,6 @@ options. For this reason I wrote my own insert heading functions.
 #+end_src
 
 *** source blocks
-
-**** source blocks
 :PROPERTIES:
 :ID: 2bb1b8ef-f41c-4dfa-8e47-549326f7ce05
 :END:
@@ -8174,8 +8172,6 @@ use =edit-indirect= to edit source blocks.
                                      (:hlines . "no")
                                      (:tangle . "yes"))))
 #+end_src
-
-**** editing source blocks
 
 *** org-mode
 :PROPERTIES:
@@ -8404,7 +8400,7 @@ in the future. I use this template for this.
               ":END:"))
 #+end_src
 
-*** TODO [#B] links
+*** links
 :PROPERTIES:
 :ID: dbc3d205-9831-41f0-95f8-1e8746e0be3a
 :END:
