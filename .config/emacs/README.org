@@ -8378,7 +8378,6 @@ use =edit-indirect= to edit source blocks.
 
 #+begin_src emacs-lisp
 (use-package! org
-  ;; :pre-setq
   :setq
   (org-directory . (file-truename "~/Org/"))
   (org-archive-location . (concat org-directory "archive.org::"))
