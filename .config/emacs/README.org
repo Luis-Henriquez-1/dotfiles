@@ -1496,7 +1496,7 @@ VOID is compiled.
                     (gethash (symbol-name leaf--name) straight--recipe-cache))))))
     ,@leaf--body))
 
-(push `((or (memq leaf--key '(:+straight))
+(push `((or (memq leaf--key '(:void-straight))
             (eq (alist-get leaf--key leaf-alias-keyword-alist) :void:straight))
         (cond ((eq t (car leaf--value))
                (list leaf--name))
