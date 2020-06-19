@@ -21,7 +21,7 @@ what its doing via [[hfn:void-log][void:log]].
 
 #+begin_src emacs-lisp
 (defvar void:debug-p (or (getenv "DEBUG") init-file-debug)
-  "When non-nil Void will log more with `log!'.
+  "When non-nil print debug messages.
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
@@ -38,8 +38,8 @@ buffer.
 #+begin_src emacs-lisp
 (defun void:log (format-string &rest args)
   "Log to *Messages* if `void:debug-p' is on.
-Does not interrupt the minibuffer if it is in use, but still logs to *Messages*.
-Accepts the same arguments as `message'."
+Does not interrupt the minibuffer if it is in use, but still log to *Messages*.
+Accept the same arguments as `message'."
   (when void:debug-p
     (let ((inhibit-message (active-minibuffer-window)))
       (when void:debug-p
