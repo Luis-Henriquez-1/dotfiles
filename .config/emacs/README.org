@@ -1490,7 +1490,6 @@ Emacs starts up with a default screen setup. No, thanks.
 :END:
 
 #+begin_src emacs-lisp
-;; Time in seconds to delay before showing a matching paren.
 (use-feature! paren
   :hook (prog-mode-hook . show-paren-mode)
   :setq-default
