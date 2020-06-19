@@ -1252,33 +1252,33 @@ doing so that could be automated. This is my attempt to automate defining a leaf
 keyword.
 
 #+begin_src emacs-lisp
-(cl-defun leaf:define-keyword (keyword place &key normalizer defer alias form)
+(cl-defun leaf:define-keyword (&key name where target normalizer defer alias form)
   "Define leaf KEYWORD at PLACE.
 PLACE is a list whose car is the symbol `before' or `after' and whose cadr is
 one of leaf's available keywords. DEFER specifies whether the keyword is a
 deferring keyword. ALIAS is an alias or a list of aliases for the keyword. FORM
 is the form that will be added to."
-
+  (setq name (intern (concat ":" (symbol-name name))))
   ;; Defer it if necessary.
   (when defer
-    (push keyword leaf-defer-keywords))
+    (push name leaf-defer-keywords))
 
   ;; Set up aliases.
   (let ((aliases alias))
     (dolist (alias aliases)
-      (push (cons alias keyword) leaf-alias-keyword-alist)))
+      (push (cons alias name) leaf-alias-keyword-alist)))
 
   ;; Add a normalizer.
   (when normalizer
-    (push `((or (eq leaf--key ,keyword)
-                (eq ,keyword (alist-get leaf--key leaf-alias-keyword-alist)))
+    (push `((or (eq leaf--key ,name)
+                (eq ,name (alist-get leaf--key leaf-alias-keyword-alist)))
             (funcall #',normalizer))
           leaf-normalize))
 
   ;; Insert it in proper place.
-  (let* ((where (car place))
-         (place (cadr place))
-         (target-form (list keyword form))
+  (let* ((place (cadr where))
+         (where (car where))
+         (target-form (list name form))
          (insert-fn (cond ((eq where 'after) #'leaf-insert-list-after)
                           ((eq where 'before) #'leaf-insert-list-before)
                           (t (error)))))
@@ -1316,10 +1316,12 @@ evaluated.
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword :+setq '(before :setq)
-                     :normalizer #'leaf:normalizer-+setq
-                     :alias (list :setq)
-                     :form (plist-get leaf-keywords :setq))
+(leaf:define-keyword
+ :name '+setq
+ :where '(before :setq)
+ :normalizer #'leaf:normalizer-+setq
+ :alias (list :setq)
+ :form (plist-get leaf-keywords :setq))
 #+end_src
 
 ***** +pre-setq
@@ -1328,10 +1330,12 @@ evaluated.
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword :+pre-setq '(before :pre-setq)
-                     :normalizer #'leaf:normalizer-+setq
-                     :alias (list :pre-setq)
-                     :form (plist-get leaf-keywords :pre-setq))
+(leaf:define-keyword
+ :name '+pre-setq
+ :where '(before :pre-setq)
+ :normalizer #'leaf:normalizer-+setq
+ :alias (list :pre-setq)
+ :form (plist-get leaf-keywords :pre-setq))
 #+end_src
 
 ***** +custom
@@ -1340,10 +1344,12 @@ evaluated.
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword :+custom '(before :custom)
-                     :normalizer #'leaf:normalizer-+setq
-                     :alias (list :custom)
-                     :form (plist-get leaf-keywords :custom))
+(leaf:define-keyword
+ :name '+custom
+ :where '(before :custom)
+ :normalizer #'leaf:normalizer-+setq
+ :alias (list :custom)
+ :form (plist-get leaf-keywords :custom))
 #+end_src
 
 ***** +setq-default
@@ -1352,10 +1358,12 @@ evaluated.
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword :+setq-default '(before :setq-default)
-                     :normalizer #'leaf:normalizer-+setq
-                     :alias (list :setq-default)
-                     :form (plist-get leaf-keywords :setq-default))
+(leaf:define-keyword
+ :name '+setq-default
+ :where '(before :setq-default)
+ :normalizer #'leaf:normalizer-+setq
+ :alias (list :setq-default)
+ :form (plist-get leaf-keywords :setq-default))
 #+end_src
 
 **** defer keywords
@@ -1391,7 +1399,8 @@ evaluated.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :before-call '(before :hook)
+ :name 'before-call
+ :where '(before :hook)
  :defer t
  :normalizer #'leaf:normalizer-commands
  :form '`(,(leaf:generate-load-form leaf--name nil :before leaf--value)
@@ -1405,7 +1414,8 @@ evaluated.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :after-call '(before :hook)
+ :name 'after-call
+ :where '(before :hook)
  :defer t
  :normalizer #'leaf:normalizer-commands
  :form '`(,(leaf:generate-load-form leaf--name nil :after leaf--value)
@@ -1420,7 +1430,8 @@ evaluated.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :on-hook '(before :hook)
+ :name 'on-hook
+ :where '(before :hook)
  :defer t
  :form '`(,(leaf:generate-load-form leaf--name leaf--value)
           ,@leaf--body))
@@ -1433,7 +1444,8 @@ evaluated.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :load-incrementally '(before :before-call)
+ :name 'load-incrementally
+ :where '(before :before-call)
  :defer t
  :normalizer #'leaf:normalizer-commands
  :form '`((append! void:incremental-packages ',leaf--value)
@@ -1448,11 +1460,21 @@ evaluated.
 The straight keyword require's the package's name.
 
 #+begin_src emacs-lisp
-(leaf:define-keyword :+straight '(before :straight)
-                      :alias (list :ensure)
-                      :form
-                      '`(,@(mapcar (lambda (elm) `(straight:install-package ',elm)) leaf--value)
-                         ,@leaf--body))
+(leaf:define-keyword
+ :name '+straight
+ :where '(before :straight)
+ :alias (list :ensure)
+ :form
+ '`(,@(when (and leaf--value (car-safe leaf--value))
+        (mapcar (lambda (it) `(push ,it load-path))
+                (record-load-path-change!
+                 (unless after-init-time (straight:install-package (car leaf--value)))
+                 ;; Not all the load-paths are added during macro expansion
+                 ;; time. I don't yet know why. Until then, this seems to work.
+                 (ignore-errors
+                   (straight--add-package-to-load-path
+                    (gethash (symbol-name leaf--name) straight--recipe-cache))))))
+    ,@leaf--body))
 
 (push `((or (memq leaf--key '(:+straight))
             (eq (alist-get leaf--key leaf-alias-keyword-alist) :void:straight))
@@ -1474,9 +1496,11 @@ The point of this keyword is to let me configure the display of buffers for
 specific packages.
 
 #+begin_src emacs-lisp
-(leaf:define-keyword :popup '(before :mode)
-                     :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
-                              ,@leaf--body))
+(leaf:define-keyword
+ :name 'popup
+ :where '(before :mode)
+ :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
+          ,@leaf--body))
 #+end_src
 
 **** os
@@ -1485,8 +1509,10 @@ specific packages.
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword :os '(before :when)
-                     :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
+(leaf:define-keyword
+ :name 'os
+ :where '(before :when)
+ :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
 #+end_src
 
 **** straight
