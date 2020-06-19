@@ -1093,11 +1093,6 @@ I've never had to use this. But better be safe than sorry.
 :ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
 :END:
 
-I like to view Emacs as a program that has the lisp interpreter as well as other
-core functionality which is meant to be extended by external packages. External
-packages add important features to Emacs which the Emacs devel team may not have
-had time to add, or didn't foresee.
-
 *** straight.el
 :PROPERTIES:
 :ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
