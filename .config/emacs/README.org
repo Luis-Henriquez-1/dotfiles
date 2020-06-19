@@ -1296,7 +1296,14 @@ is the form that will be added to."
     (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
 #+end_src
 
-**** normalizers
+**** custom setting keywords
+:PROPERTIES:
+:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
+:END:
+
+Leaf keywords do not.
+
+***** normalizers
 :PROPERTIES:
 :ID:       bcf96e13-f3bc-4b23-832f-f94b31dd48a5
 :END:
@@ -1316,61 +1323,56 @@ evaluated.
           (delete-dups (delq nil (leaf-flatten leaf--value)))))
 #+end_src
 
-**** custom setting keywords
-:PROPERTIES:
-:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
-:END:
-
-***** +setq
+***** setq
 :PROPERTIES:
 :ID:       6f38c45b-9382-4d72-a7ae-6d7a8748d07f
 :END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :name '+setq
+ :name 'void-setq
  :where '(before :setq)
  :normalizer #'leaf:normalizer-+setq
  :alias (list :setq)
  :form (plist-get leaf-keywords :setq))
 #+end_src
 
-***** +pre-setq
+***** pre-setq
 :PROPERTIES:
 :ID:       aba01554-fa11-4120-9867-19e5e2025df4
 :END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :name '+pre-setq
+ :name 'void-pre-setq
  :where '(before :pre-setq)
  :normalizer #'leaf:normalizer-+setq
  :alias (list :pre-setq)
  :form (plist-get leaf-keywords :pre-setq))
 #+end_src
 
-***** +custom
+***** custom
 :PROPERTIES:
 :ID:       bfa61a7a-1660-4000-a80e-15851a32ffd5
 :END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :name '+custom
+ :name 'void-custom
  :where '(before :custom)
  :normalizer #'leaf:normalizer-+setq
  :alias (list :custom)
  :form (plist-get leaf-keywords :custom))
 #+end_src
 
-***** +setq-default
+***** setq-default
 :PROPERTIES:
 :ID:       b8ab2bf6-2b4e-41db-93f8-ed5c86392c84
 :END:
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :name '+setq-default
+ :name 'void-setq-default
  :where '(before :setq-default)
  :normalizer #'leaf:normalizer-+setq
  :alias (list :setq-default)
@@ -1381,6 +1383,9 @@ evaluated.
 :PROPERTIES:
 :ID:       6a8189ab-9a7a-4670-aa7a-b6589c180011
 :END:
+
+These keywords are meant to improve on the deferred loading options already
+provided by leaf. They are inspired from DOOM emacs.
 
 ***** leaf-generate-load-fn
 :PROPERTIES:
@@ -1468,11 +1473,13 @@ evaluated.
 :ID:       cba57988-21b2-456b-aed2-27254febf873
 :END:
 
-The straight keyword require's the package's name.
+This keyword is designed to be compiled away, leaving only forms adding package
+paths to the load-path. This is so that package installation isn't done after
+VOID is compiled.
 
 #+begin_src emacs-lisp
 (leaf:define-keyword
- :name '+straight
+ :name 'void-straight
  :where '(before :straight)
  :alias (list :ensure)
  :form
