@@ -600,7 +600,7 @@ This hook triggers incremental loading to start.
 (defhook! void:load-packages-incrementally-h ()
   "Begin incrementally loading packages in `void:incremental-packages'.
 If this is a daemon session, load them all immediately instead."
-  :hook void:start-emacs-hook
+  :hook emacs-startup-hook
   (cond
    ((daemonp)
     (mapc #'require (cdr void:incremental-packages)))
@@ -641,55 +641,6 @@ I set up Void's fundamental hooks.
 :ID: 2d3a2891-f986-4ac1-b015-5f736ac49391
 :END:
 
-****** try run
-:PROPERTIES:
-:ID: f0a3c091-58e2-4295-aa06-72b7e0824085
-:END:
-
-It may be that some error happens running a hook. This function will catch any
-such error and signal a =void:hook-error.=
-
-#+begin_src emacs-lisp
-(defun void:try-run-hook (hook)
-  "Run HOOK, but handle errors better.
-Meant to be used with `run-hook-wrapped'."
-  (void:log "Running hook function: %s" hook)
-  (condition-case e
-      (funcall hook)
-    ((debug error)
-     (signal 'void:hook-error (list hook e))))
-  ;; return nil so `run-hook-wrapped' won't short circuit
-  nil)
-#+end_src
-
-****** start
-:PROPERTIES:
-:ID: 09560208-c8eb-4a70-a143-ba52d1b0dbb4
-:END:
-
-Why have a =void:start-emacs-hook= when there is already an [[helpvar:emacs-startup-hook][emacs-startup-hook]]?
-One reason is I want to be able to control how the hooks run inside of it are
-run using [[helpfn:run-hook-wrapped][run-hook-wrapped]]. I can't do this easily with ~emacs-startup-hook~
-because Emacs runs that hook. Another reason I want counter variable names to be easy to
-predict based on knowing one of them. What I mean is I think that the names
-=void:start-emacs-hook= and =void:quit-emacs-hook= are more intuitive and easier to
-guess one given the other than the names =emacs-startup-hook= and =kill-emacs-hook=.
-
-#+begin_src emacs-lisp
-(defvar void:start-emacs-hook nil
-  "A hook run when Void startup is complete.
-This hook happens during `emacs-startup-hook'.")
-
-(defhook! void:run-start-emacs-hook-h ()
-  "Run all hooks in `void:start-emacs-hook-list'."
-  :hook emacs-startup-hook
-  ;; In case I want more hooks in future use a loop.
-  (dolist (hook '(void:start-emacs-hook))
-    (void:log "Executing %s" hook)
-    (unless hook (void:log "%s is nil!" hook))
-    (run-hook-wrapped hook #'void:try-run-hook)))
-#+end_src
-
 ****** quit
 :PROPERTIES:
 :ID: 250736cb-5596-4515-a1e4-197b9864b30b
@@ -714,28 +665,6 @@ clearer and easier to read I alias [[helpvar:kill-emacs-hook][kill-emacs-hook]] 
   (let ((gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
         (gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX))
     (run-hooks 'void:quit-emacs-hook)))
-#+end_src
-
-****** record init time
-:PROPERTIES:
-:ID: a0b57f0f-41a2-4c3c-9a34-633dbb2e15c1
-:END:
-
-As mentioned in my [[file:~/.emacs.d/README.org][README]], a fast init time is one of the goals of Void. It is
-natural, then, that I want to keep a close eye on it. The hook
-[[helpfn:void-set-init-time-h][void:set-init-time-h]] will give me a more accurate measure of my startup time than
-[[helpfn:emacs-init-time][emacs-init-time]]. It's called right after [[helpvar:void-start-emacs-hook][void:start-emacs-hook]].
-
-#+begin_src emacs-lisp
-(defvar void:init-time nil "Time in seconds it takes Void to load.")
-
-(defhook! void:set-init-time-h ()
-  "Hook that computes `void:init-time'."
-  :append emacs-startup-hook
-  (setq void:init-time
-        (float-time (time-subtract after-init-time before-init-time)))
-  (when void:debug-p
-    (void:log "init-time: %f seconds" void:init-time)))
 #+end_src
 
 ***** minibuffer
@@ -980,7 +909,7 @@ color in the frame title.
 (use-package! osx-clipboard
   :os mac
   :when (or (daemonp) (not (display-graphic-p)))
-  :hook void:start-emacs-hook)
+  :hook emacs-startup-hook)
 #+end_src
 
 **** linux
@@ -1088,7 +1017,7 @@ I've never had to use this. But better be safe than sorry.
   (start-process "qutebrowser" nil "qutebrowser"))
 #+end_src
 
-** Package Management
+** Package Management                                                      :ewc:
 :PROPERTIES:
 :ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
 :END:
@@ -2439,24 +2368,6 @@ By default start emacs as fullscreen.
 :ID: ede94ae4-1c73-4435-81ba-e28070225b99
 :END:
 
-**** initialize UI
-:PROPERTIES:
-:ID: 66aa3beb-f5f0-4fa0-bdd2-72772c2ee125
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:init-ui-hook nil
-  "List of hooks to run when the UI has been initialized.")
-
-(defhook! void:init-ui-h ()
-  "Run hooks in `void:init-ui-hook'."
-  :hook window-setup-hook
-  (void:log "Executing void:init-ui-h hook")
-  (if (null void:init-ui-hook)
-      (void:log "- `void:init-ui-hook' is empty")
-    (run-hook-wrapped 'void:init-ui-hook #'void:try-run-hook)))
-#+end_src
-
 **** switching buffers
 :PROPERTIES:
 :ID: 55b1e136-2271-42e8-bad6-9c13fff33c31
@@ -2662,8 +2573,7 @@ is called.")
 #+begin_src emacs-lisp
 (defhook! void:init-theme-h ()
   "Set the theme and load the font, in that order."
-  ;; :unless (daemonp)
-  :hook void:init-ui-hook
+  :hook window-setup-hook
   (when (and void:theme (not (memq void:theme custom-enabled-themes)))
     (condition-case nil
         (load-theme void:theme t)
@@ -6905,7 +6815,7 @@ again, you are taken to the location you left off. This is very convenient.
 #+begin_src emacs-lisp
 (use-package! savehist
   :load-incrementally custom
-  :hook void:start-emacs-hook
+  :hook emacs-startup-hook
   :setq
   (savehist-save-minibuffer-history . t)
   (savehist-autosave-interval       . nil)
@@ -9151,14 +9061,6 @@ buffer and I've wanted to have the scratch buffer start off with
 =emacs-lisp-mode=, but I don't want it to trigger =company=, =yasnippet=, etc. on
 startup. If I start my emacs with =dashboard= I can avoid this.
 
-So I need to explain my choice of startup. Instead of switching to a blank
-dashboard buffer like and then adding widgets and texts to it in
-[[helpfn:dashboard-setup-startup-hook][dashboard-setup-startup-hook]], I just adopt an approach more like doom's and use
-[[helpvar:initial-buffer-choice][initial-buffer-choice]]. I call [[helpfn:dashboard-insert-startupify-lists][dashboard-insert-startupify-lists]] during the
-[[helpvar:void-init-ui-hook][void:init-ui-hook]]. As a precaution, I append =dashboard-insert-startupify-lists=
-to the end of =void:init-ui-hook= so that there are not wierd font changes for the
-dashboard.
-
 *** dashboard
 :PROPERTIES:
 :ID: 9de45782-1683-40ef-aff2-95c0dbaa4ba7
@@ -9175,7 +9077,7 @@ dashboard.
   (initial-buffer-choice . (lambda () (get-buffer-create dashboard-buffer-name))))
 #+end_src
 
-*** dashboard-init-info
+*** dashboard-init-info                                               :disabled:
 :PROPERTIES:
 :ID: 92c199ad-5862-4fe3-be04-44c94d4286b6
 :END:
@@ -9192,7 +9094,7 @@ dashboard.
                        (hash-table-size straight--profile-cache))
                       (t
                        (package (length package-activated-list))))
-                void:init-time)))
+                (emacs-init-time))))
 #+end_src
 
 *** banner path
