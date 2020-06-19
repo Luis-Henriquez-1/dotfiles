@@ -1263,7 +1263,7 @@ doing so that could be automated. This is my attempt to automate defining a leaf
 keyword.
 
 #+begin_src emacs-lisp
-(cl-defun leaf:define-keyword (&key name where target normalizer defer alias form)
+(cl-defun leaf:define-keyword (&key name where normalizer defer alias form)
   "Define leaf KEYWORD at PLACE.
 PLACE is a list whose car is the symbol `before' or `after' and whose cadr is
 one of leaf's available keywords. DEFER specifies whether the keyword is a
