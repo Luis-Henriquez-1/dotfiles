@@ -629,45 +629,7 @@ When running emacs in terminal tty is *tremendously* slow.
     (tty-run-terminal-initialization (selected-frame) nil t)))
 #+end_src
 
-**** hooks
-:PROPERTIES:
-:ID: 45c5b1a1-4dea-4a3f-8b77-06526554fb27
-:END:
-
-I set up Void's fundamental hooks.
-
-***** init hooks
-:PROPERTIES:
-:ID: 2d3a2891-f986-4ac1-b015-5f736ac49391
-:END:
-
-****** quit
-:PROPERTIES:
-:ID: 250736cb-5596-4515-a1e4-197b9864b30b
-:END:
-
-[[helpvar:void-quit-emacs-hook][void:quit-emacs-hook]] will contains all the things that should be taken care of
-just before I quit emacs. I made my own hook for quitting emacs for the same
-reasons as I made a hook for starting emacs. I should mention that emacs (and
-linux in general) uses the word "kill" to describe quitting an application. The
-modern word used to describe exiting an application is =quit=. So to make this
-clearer and easier to read I alias [[helpvar:kill-emacs-hook][kill-emacs-hook]] to =quit-emacs-hook=.
-
-#+begin_src emacs-lisp
-(defvaralias 'quit-emacs-hook 'kill-emacs-hook)
-
-(defvar void:quit-emacs-hook nil
-  "A List of run when killing Void.")
-
-(defhook! void:run-quit-emacs-hook-h ()
-  "Run hooks in `void:quit-emacs-hook'."
-  :append kill-emacs-hook
-  (let ((gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
-        (gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX))
-    (run-hooks 'void:quit-emacs-hook)))
-#+end_src
-
-***** minibuffer
+**** minibuffer
 :PROPERTIES:
 :ID: 83f47b4d-a0e2-4275-9c1a-7e317fdc4e41
 :END:
@@ -704,12 +666,12 @@ hook variables use action verbs in their names not nouns. So the =exit= in
   (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD))))
 #+end_src
 
-***** tangling
+**** tangling
 :PROPERTIES:
 :ID: 3288c787-4b5c-4f0c-9d18-6f18afaf2b99
 :END:
 
-****** tangle hook
+***** tangle hook
 :PROPERTIES:
 :ID: 549999d7-901b-4ab4-bdbe-81514b756ced
 :END:
@@ -722,12 +684,12 @@ be.
 #+begin_src emacs-lisp
 (defhook! void:tangle-on-quit-maybe-h ()
   "Tangle if `void:needs-tangling-p' returns t."
-  :append void:quit-emacs-hook
+  :append kill-emacs-hook
   (when (void:needs-tangling-p)
     (void/tangle-org-file)))
 #+end_src
 
-****** tangle asynchronously upon saving                              :disabled:
+***** tangle asynchronously upon saving                               :disabled:
 :PROPERTIES:
 :ID: 00298d4e-6b18-4203-874f-f5a877a5cabf
 :END:
@@ -6824,7 +6786,7 @@ again, you are taken to the location you left off. This is very convenient.
 
 (defhook! void:unpropertize-kill-ring-h ()
   "Remove text properties from `kill-ring'."
-  :append void:quit-emacs-hook
+  :append kill-emacs-hook
   (setq kill-ring
         (--map (when (stringp it) (substring-no-properties it))
                (-non-nil kill-ring))))
