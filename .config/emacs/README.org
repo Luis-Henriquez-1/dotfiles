@@ -4884,7 +4884,7 @@ my description of problems with pictures.
 (use-package! screenshot :commands screenshot)
 #+end_src
 
-*** escr
+*** escr                                                              :disabled:
 :PROPERTIES:
 :ID:       06f23fc2-7f6b-4812-a14d-185b42a42976
 :END:
