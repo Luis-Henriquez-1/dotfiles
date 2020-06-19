@@ -1312,7 +1312,7 @@ leaf's setq does not correctly handle setting variables to forms that need to be
 evaluated.
 
 #+begin_src emacs-lisp
-(defun leaf:normalizer-+setq ()
+(defun leaf:normalizer-setq ()
   (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
 
 (defun leaf:normalizer-commands ()
@@ -1332,7 +1332,7 @@ evaluated.
 (leaf:define-keyword
  :name 'void-setq
  :where '(before :setq)
- :normalizer #'leaf:normalizer-+setq
+ :normalizer #'leaf:normalizer-setq
  :alias (list :setq)
  :form (plist-get leaf-keywords :setq))
 #+end_src
@@ -1346,7 +1346,7 @@ evaluated.
 (leaf:define-keyword
  :name 'void-pre-setq
  :where '(before :pre-setq)
- :normalizer #'leaf:normalizer-+setq
+ :normalizer #'leaf:normalizer-setq
  :alias (list :pre-setq)
  :form (plist-get leaf-keywords :pre-setq))
 #+end_src
@@ -1360,7 +1360,7 @@ evaluated.
 (leaf:define-keyword
  :name 'void-custom
  :where '(before :custom)
- :normalizer #'leaf:normalizer-+setq
+ :normalizer #'leaf:normalizer-setq
  :alias (list :custom)
  :form (plist-get leaf-keywords :custom))
 #+end_src
@@ -1374,7 +1374,7 @@ evaluated.
 (leaf:define-keyword
  :name 'void-setq-default
  :where '(before :setq-default)
- :normalizer #'leaf:normalizer-+setq
+ :normalizer #'leaf:normalizer-setq
  :alias (list :setq-default)
  :form (plist-get leaf-keywords :setq-default))
 #+end_src
