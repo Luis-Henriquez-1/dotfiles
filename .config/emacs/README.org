@@ -252,41 +252,23 @@ Void is compiled.
 :END:
 
 #+begin_src emacs-lisp
-;; Mapping from logical to physical fringe indicator bitmaps.
 (setq-default fringe-indicator-alist
               (delq (assq 'continuation fringe-indicator-alist)
                     fringe-indicator-alist))
-
-;; Non-nil means highlight region even in nonselected windows.
 (setq-default highlight-nonselected-windows nil)
-;; Visually indicate buffer boundaries and scrolling.
 (setq-default indicate-buffer-boundaries nil)
-;; If non-nil, don't compact font caches during GC.
 (setq-default inhibit-compacting-font-caches t)
-;; Maximum height for resizing mini-windows (the minibuffer and the echo area).
 (setq-default max-mini-window-height 0.3)
-;; Default help text for the mode line.
 (setq-default mode-line-default-help-echo nil)
-;; If non-nil, mouse yank commands yank at point instead of at click.
 (setq-default mouse-yank-at-point t)
-;; How to resize mini-windows (the minibuffer and the echo area).
 (setq-default resize-mini-windows 'grow-only)
-;; If non-nil, the function that implements the display of help.
 (setq-default show-help-function nil)
-;; How to construct unique buffer names for files with the same base name.
-;; Non-nil means mouse commands use dialog boxes to ask questions.
 (setq-default use-dialog-box nil)
-;; Non-nil means to make the cursor very visible.
 (setq-default visible-cursor t)
-;; Non-nil means draw block cursor as wide as the glyph under it.
 (setq-default x-stretch-cursor nil)
-;; Non-nil means call this function to ring the bell.
 (setq-default ring-bell-function #'ignore)
-;; Non-nil means try to flash the frame to represent a bell.
 (setq-default visible-bell nil)
-;; Non-nil means resize windows pixelwise.
 (setq-default window-resize-pixelwise t)
-;; Non-nil means resize frames pixelwise.
 (setq-default frame-resize-pixelwise t)
 #+end_src
 
@@ -4650,24 +4632,48 @@ information such as music, videos, images, and gifs.
 
 Youtube contains a *huge* library of videos.
 
-*** helm-youtube                                                      :disabled:
+*** TODO ytdl
 :PROPERTIES:
-:ID: a48a28e5-64d1-4fda-8803-ea92a21a6fc7
+:ID:       27739f6e-9104-4e2f-b8e5-c8f56e5bb69b
 :END:
 
+=ytdl= is an emacs interface to youtube-dl.
+
 #+begin_src emacs-lisp
-(use-package! helm-youtube
-  :commands helm-youtube)
+(use-package! ytdl
+  :setq
+  (ytdl-music-folder . (expand-file-name "~/Music"))
+  (ytdl-video-folder . (expand-file-name "~/Videos"))
+  (ytdl-always-query-default-filename . nil)
+  (ytdl-always-ask-delete-confirmation . t)
+  ;; :defer-config
+  ;; (ytdl-add-field-in-download-type-list "Music" "p" (expand-file-name "~/podcasts") nil)
+  )
 #+end_src
 
-*** ivy-youtube
+*** TODO ytel
 :PROPERTIES:
-:ID: 3305573c-49ba-40ff-9e2b-512ef68088e2
+:ID:       167bc712-5552-4cfe-83ce-d0bb9927fa6a
 :END:
 
+=ytel= is a YouTube search front-end. It is designed to let the user collect
+YouTube search results into a buffer and manipulate them with emacs lisp.
+
 #+begin_src emacs-lisp
-(use-package! ivy-youtube
-  :setq (ivy-youtube-history-file . (concat VOID:DATA-DIR "ivy-youtube-history")))
+(use-package! ytel
+  ;; depends on curl (executable-find "curl")
+  :commands ytel
+  :defer-config
+  (defun ytel/watch ()
+    "Stream video at point in mpv."
+    (interactive)
+    (let* ((video (ytel-get-current-video))
+     	   (id    (ytel-video-id video)))
+      (start-process "ytel mpv" nil
+		             "mpv"
+		             (concat "https://www.youtube.com/watch?v=" id))
+	  "--ytdl-format=bestvideo[height<=?720]+bestaudio/best")
+    (message "Starting streaming...")))
 #+end_src
 
 ** emms
