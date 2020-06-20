@@ -9,7 +9,12 @@
 :ID: 9022457f-609b-4d1c-b972-ceca19300cd3
 :END:
 
-*** debug mode                                                             :eac:
+*** message logging
+:PROPERTIES:
+:ID:       4d4f4b4a-4fc3-47fe-bed7-acc8e8103933
+:END:
+
+**** debug-p                                                               :eac:
 :PROPERTIES:
 :ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
 :END:
@@ -25,7 +30,7 @@ what its doing via [[hfn:void-log][void:log]].
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
-*** logging                                                                :eac:
+**** logging                                                               :eac:
 :PROPERTIES:
 :ID: 84ded5f7-382e-4f59-af9e-ccb157ef5c42
 :END:
@@ -238,7 +243,7 @@ Files that need to exist, but I don't typically want to see go here.")
   "Path to the directory where packages are stored.")
 #+end_src
 
-**** ensure directories exist
+**** ensure directories exist                                              :ewc:
 :PROPERTIES:
 :ID: 56e80dda-5d0e-4c7c-a225-00d0028d4995
 :END:
