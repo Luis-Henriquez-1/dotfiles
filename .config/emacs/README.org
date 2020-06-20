@@ -8899,6 +8899,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   "T" #'org-todo
   "D" #'org-cut-subtree
   "Y" #'org-copy-subtree
+  "K" #'org-metaup
   "J" #'org-metadown)
 #+end_src
 
