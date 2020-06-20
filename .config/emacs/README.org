@@ -8977,7 +8977,7 @@ understanding of a verbally terse and dry command description.
 It's easy to underestimate how much of a difference having an asthetically
 pleasing Emacs configuration can have. Ugliness really can take its toll.
 
-** TODO dashboard
+** dashboard
 :PROPERTIES:
 :ID: 20926522-b78b-4bca-b70e-9ef4213c4344
 :END:
@@ -9007,7 +9007,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
   (initial-buffer-choice . (lambda () (get-buffer-create dashboard-buffer-name))))
 #+end_src
 
-*** dashboard-init-info                                               :disabled:
+*** dashboard-init-info
 :PROPERTIES:
 :ID: 92c199ad-5862-4fe3-be04-44c94d4286b6
 :END:
