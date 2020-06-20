@@ -3193,6 +3193,8 @@ query to narrow the list, and then selecting one of the remaining candidates.
 #+begin_src emacs-lisp
 (use-package! ivy
   :hook emacs-startup-hook
+  :custom
+  (ivy-initial-inputs-alist     . nil)
   :setq
   (ivy-height . 18)
   (ivy-wrap                     . t)
@@ -3202,7 +3204,6 @@ query to narrow the list, and then selecting one of the remaining candidates.
   (ivy-virtual-abbreviate       . 'full)
   (ivy-on-delete-error-function . nil)
   (ivy-use-selectable-prompt    . t)
-  (ivy-initial-inputs-alist     . nil)
   (ivy-count-format             . ""))
 #+end_src
 
