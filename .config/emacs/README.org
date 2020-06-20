@@ -7284,19 +7284,19 @@ that restarts emacs. I haven't tested this in EXWM mode.
   (auto-revert-stop-on-user-input . nil)
   (revert-without-query . (list "."))
   :defer-config
-  (defun void:auto:revert-buffer-h ()
+  (defhook! auto-revert:buffer-h ()
     "Auto revert current buffer, if necessary."
     :hook void:after-switch-buffer-hook
     (unless (or (bound-and-true-p auto-revert-mode)
                 (active-minibuffer-window))
       (auto-revert-handler)))
 
-  (defhook! void:auto:revert-visible-buffers-h ()
+  (defhook! auto-revert:visible-buffers-h ()
     "Auto revert stale buffers in visible windows, if necessary."
     :hook (focus-in-hook after-save-hook)
     (--each (-uniq (-map #'window-buffer (window-list)))
       (with-current-buffer it
-        (void:auto:revert-buffer-h)))))
+        (auto-revert:buffer-h)))))
 #+end_src
 
 ** security
