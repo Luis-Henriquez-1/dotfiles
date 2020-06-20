@@ -9,6 +9,76 @@
 :ID: 9022457f-609b-4d1c-b972-ceca19300cd3
 :END:
 
+*** gc cons threshold
+:PROPERTIES:
+:ID: 27ad0de3-620d-48f3-aa32-dfdd0324a979
+:END:
+
+A big contributor to long startup times is the garbage collector. When
+performing a large number of calculations, it can make a big difference to
+increase the [[helpvar:gc-cons-threshold][gc-cons-threshold]], or the /number of bytes of consing between
+garbage collections/. If garbage collection is done too often between
+calculations it will affect the time they take. Besides, the default value is
+usually too low for modern machines.
+
+**** gc cons threshold
+:PROPERTIES:
+:ID: e15d257f-1b0f-421e-8b34-076b1d20e493
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:GC-CONS-THRESHOLD-MAX (eval-when-compile (* 256 1024 1024))
+  "The upper limit for `gc-cons-threshold'.
+When VOID is performing computationally intensive operations,
+`gc-cons-threshold' is set to this value.")
+
+(defconst VOID:GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
+  "The default value for `gc-cons-threshold'.
+If you experience freezing, decrease this. If you experience stuttering,
+increase this.")
+
+(defconst VOID:GC-CONS-PERCENTAGE-MAX 0.6
+  "The upper limit for `gc-cons-percentage'.
+When VOID is performing computationally intensive operations,
+`gc-cons-percentage' is set to this value.")
+
+(defconst VOID:GC-CONS-PERCENTAGE 0.1
+  "The default value for `gc-cons-percentage'.")
+#+end_src
+
+**** boost gc threshold
+:PROPERTIES:
+:ID: eac7cfbb-6576-4506-8118-5bfda151654b
+:END:
+
+#+begin_src emacs-lisp
+(setq gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX
+      gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
+#+end_src
+
+**** Restore GC after delay
+:PROPERTIES:
+:ID: d49bef67-0a1e-4026-838c-217b0d6ecad5
+:END:
+
+Restore gc cons threshold (after a 3 second delay). I got this from [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L283][doom]].
+Instead of just doing this immediately, we give it 3 extra seconds because
+packages are still being incrementally loaded (see [[file:main.org::*Load Incrementally][incremental loading]]).
+
+#+begin_src emacs-lisp
+(defun void:restore-gc-cons-threshold ()
+  "Restore `gc-cons-threshold' to `VOID:GC-CONS-PERCENTAGE' after 7 idle seconds."
+  (void:log "Restoring...gc-cons-threshold: %d -> %d | gc-cons-percentage %.2f -> %.2f"
+            gc-cons-threshold
+            VOID:GC-CONS-THRESHOLD
+            gc-cons-percentage
+            VOID:GC-CONS-PERCENTAGE)
+  (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD)
+  (setq gc-cons-percentage VOID:GC-CONS-PERCENTAGE))
+
+(run-with-idle-timer 7 nil #'void:restore-gc-cons-threshold)
+#+end_src
+
 *** message logging
 :PROPERTIES:
 :ID:       4d4f4b4a-4fc3-47fe-bed7-acc8e8103933
@@ -417,75 +487,6 @@ to abbreviate it at this point.
 (setq-default print-level nil)
 (setq-default print-quoted t)
 (setq-default print-escape-newlines t)
-#+end_src
-
-*** gc cons threshold
-:PROPERTIES:
-:ID: 27ad0de3-620d-48f3-aa32-dfdd0324a979
-:END:
-
-A big contributor to long startup times is the garbage collector. When
-performing a large number of calculations, it can make a big difference to
-increase the [[helpvar:gc-cons-threshold][gc-cons-threshold]], or the /number of bytes of consing between
-garbage collections/. If garbage collection is done too often between
-calculations it will affect the time they take. Besides, the default value is
-usually too low for modern machines.
-
-**** gc cons threshold
-:PROPERTIES:
-:ID: e15d257f-1b0f-421e-8b34-076b1d20e493
-:END:
-
-#+begin_src emacs-lisp
-(defconst VOID:GC-CONS-THRESHOLD-MAX (eval-when-compile (* 256 1024 1024))
-  "The upper limit for `gc-cons-threshold'.
-When VOID is performing computationally intensive operations,
-`gc-cons-threshold' is set to this value.")
-
-(defconst VOID:GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
-  "The default value for `gc-cons-threshold'.
-If you experience freezing, decrease this. If you experience stuttering,
-increase this.")
-
-(defconst VOID:GC-CONS-PERCENTAGE-MAX 0.6
-  "The upper limit for `gc-cons-percentage'.
-When VOID is performing computationally intensive operations,
-`gc-cons-percentage' is set to this value.")
-
-(defconst VOID:GC-CONS-PERCENTAGE 0.1
-  "The default value for `gc-cons-percentage'.")
-#+end_src
-
-**** boost gc threshold
-:PROPERTIES:
-:ID: eac7cfbb-6576-4506-8118-5bfda151654b
-:END:
-
-#+begin_src emacs-lisp
-(setq gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX
-      gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
-#+end_src
-
-**** TODO Restore GC after delay
-:PROPERTIES:
-:ID: d49bef67-0a1e-4026-838c-217b0d6ecad5
-:END:
-
-Restore gc cons threshold (after a 3 second delay). I got this from [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L283][doom]].
-Instead of just doing this immediately, we give it 3 extra seconds because
-packages are still being incrementally loaded (see [[file:main.org::*Load Incrementally][incremental loading]]).
-
-#+begin_src emacs-lisp
-(defun void:restore-gc-cons-threshold ()
-  (void:log "Restoring...gc-cons-threshold: %d -> %d | gc-cons-percentage %.2f -> %.2f"
-            gc-cons-threshold
-            VOID:GC-CONS-THRESHOLD
-            gc-cons-percentage
-            VOID:GC-CONS-PERCENTAGE)
-  (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD)
-  (setq gc-cons-percentage VOID:GC-CONS-PERCENTAGE))
-
-(run-with-idle-timer 7 nil #'void:restore-gc-cons-threshold)
 #+end_src
 
 *** UTF-8 for everything
