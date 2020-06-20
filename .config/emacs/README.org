@@ -213,7 +213,7 @@ referenced alot.
 (defconst VOID:README-FILE (concat VOID:EMACS-DIR "README.org")
   "Path to the Org file that when that Void.")
 
-(defconst VOID:ORG-DIR (concat VOID:EMACS-DIR "org/")
+(defconst VOID:ORG-DIR (expand-file-name "~/Documents/org/")
   "Path where Void's org files go.")
 
 (defconst VOID:SCREENSHOT-DIR (concat VOID:EMACS-DIR "screenshots/")
@@ -8321,7 +8321,7 @@ use =edit-indirect= to edit source blocks.
 #+begin_src emacs-lisp
 (use-package! org
   :setq
-  (org-directory . (file-truename "~/Org/"))
+  (org-directory . VOID:ORG-DIR)
   (org-archive-location . (concat org-directory "archive.org::"))
   (org-default-notes-file . (concat org-directory "notes.org"))
   (org-fontify-emphasized-text . t)
