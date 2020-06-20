@@ -8471,7 +8471,7 @@ template element as you're writing it.
 (after! org-capture
   (doct (list "Emacs"
               :keys "e"
-              :file (lambda nil (concat VOID:ORG-DIR "emacs.org"))
+              :file (lambda nil (concat VOID:ORG-DIR "todo.org"))
               :prepend t
               :empty-lines 1
               :ID (lambda () (require 'uuidgen) (uuidgen-4))
