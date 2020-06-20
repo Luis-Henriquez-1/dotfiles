@@ -8520,42 +8520,17 @@ commits is too juicy to pass up. Why in the 21st century do we still have to
 deal with such weak, plain text code documentation when we could use a more
 powerful markup language?
 
-**** defining new links
+**** org links
 :PROPERTIES:
 :ID: 21148ef5-0887-4560-9997-6059b3529a2d
 :END:
 
-To define a new link type. Whenever you create new link type, use the function
-[[helpfn:org-add-link-type][org-add-link-type]]. It takes the name of the link (as a string) and a follow and
-export function (these are optional). However, if you'd like to give the link
-more properties use [[helpfn:org-store-link-props][org-store-link-props]]. One gotcha, is that it seems as if you
-need to pass the follow function into =org-add-link-type= for it to work. If you
-leave it as =nil= and instead do ~(org-store-link-props :follow #'follow-fn)~ it
-doesn't work.
-
-See [[info:org#Adding%20hyperlink%20types][adding new hyperlink types]] for more information.
-
-The important variable to note of when creating new hyperlinks is
-[[helpvar:org-link-types][org-link-parameters]]. It's an alist
-defining all links in org mode.
-
 #+begin_src emacs-lisp
-(defmacro orglink! (name &rest props)
-  "Define org link."
-  (declare (indent 1))
-  (let* ((link (symbol-name name))
-         (fset-forms nil)
-         (props (mapcan
-                 (-lambda ((key form))
-                   (if (not (eq (car-safe form) 'function))
-                       (-let [name (void:symbol-intern "org-link--" link key)]
-                         (push `(fset ',name (-- ,form)) fset-forms)
-                         (list key `(function ,name)))
-                     (list key form)))
-                 (-partition 2 props))))
-    `(after! org
-       (shut-up! ,@(nreverse fset-forms)
-                 (org-link-set-parameters ,link ,@props)))))
+(use-feature! ol
+  :after org
+  :custom
+  (org-link-descriptive . t)
+  (org-link-use-indirect-buffer-for-internals . t))
 #+end_src
 
 **** custom link types
@@ -8572,22 +8547,17 @@ defining all links in org mode.
 it's installed, otherwise it defaults to bringing up an regular emacs help buffer.
 
 #+begin_src emacs-lisp
-(defun org-link--helpvar-face (link)
-  (if (boundp (intern link)) 'org-link 'error))
-
-(defun org-link--helpvar-follow (link)
-  (let ((var (intern link)))
-    (if (require 'helpful nil :noerror)
-        (helpful-variable var)
-      (describe-variable var))))
-
 (after! org
-  (org-link-set-parameters
-   "helpvar"
-   :face
-   #'org-link--helpvar:face
-   :follow
-   #'org-link--helpvar:follow))
+  (defun ol:helpvar-face (link)
+    (if (boundp (intern link)) 'org-link 'error))
+
+  (defun ol:helpvar-follow (link)
+    (let ((var (intern link)))
+      (if (require 'helpful nil :noerror)
+          (helpful-variable var)
+        (describe-variable var))))
+
+  (org-link-set-parameters "helpvar" :face #'ol:helpvar:face :follow #'ol:helpvar:follow))
 #+end_src
 
 ***** helpfn
@@ -8599,36 +8569,18 @@ it's installed, otherwise it defaults to bringing up an regular emacs help buffe
 
 #+begin_src emacs-lisp
 (after! org
-  (defun org-link--helpfn:face (link)
+  (defun ol:helpfn-face (link)
     (let ((fn (intern link)))
-      (if (fboundp fn)
-          'org-link
-        'error)))
+      (if (fboundp fn) 'org-link 'error)))
 
-  (defun org-link--helpfn:follow (link)
+  (defun ol:helpfn-follow (link)
     (let ((fn (intern link)))
       (if (require 'helpful nil :no-error)
           (helpful-callable fn)
         (describe-function fn))))
 
-  (org-link-set-parameters
-   "helpfn"
-   :face
-   #'org-link--helpfn:face
-   :follow
-   #'org-link--helpfn:follow))
+  (org-link-set-parameters "helpfn" :face #'ol:helpfn-face :follow #'ol:helpfn-follow))
 #+end_src
-
-***** dwim package link                                               :disabled:
-:PROPERTIES:
-:ID: e7b85e4b-ad36-45c0-a74d-a701cf78b5ee
-:END:
-
-Anything that I can do offline, I want to do offline. For each packages that I
-declare in Void I want to have a link to its github repository. When I click on
-the link if I'm using straight and (therefore) have all the cloned repos and
-their READMEs on my computer, I want the link to take me to my local copy
-instead of trying to go online.
 
 **** toggle link display                                              :disabled:
 :PROPERTIES:
