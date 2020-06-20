@@ -61,9 +61,9 @@ When VOID is performing computationally intensive operations,
 :ID: d49bef67-0a1e-4026-838c-217b0d6ecad5
 :END:
 
-Restore gc cons threshold (after a 3 second delay). I got this from [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L283][doom]].
-Instead of just doing this immediately, we give it 3 extra seconds because
-packages are still being incrementally loaded (see [[file:main.org::*Load Incrementally][incremental loading]]).
+Restore gc cons threshold (after a 7 second delay). I got this from [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L283][doom]]. We
+don't do it immediately because packages are still being lazy loaded at this
+time.
 
 #+begin_src emacs-lisp
 (defun void:restore-gc-cons-threshold ()
