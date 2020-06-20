@@ -1809,7 +1809,7 @@ you can "discover" the commands as you go along.
 
 #+begin_src emacs-lisp
 (use-package! which-key
-  :on-hook pre-command-hook
+  :hook emacs-startup-hook
   :setq
   (which-key-sort-uppercase-first . nil)
   (which-key-max-display-columns . nil)
@@ -1818,7 +1818,7 @@ you can "discover" the commands as you go along.
   (which-key-side-window-slot . -10)
   (which-key-sort-order . #'which-key-prefix-then-key-order)
   (which-key-popup-type . 'minibuffer)
-  :defer-config
+  :config
   (which-key-mode)
   (defhook! which:key-set-line-spacing-h ()
     :hook which-key-init-buffer-hook
