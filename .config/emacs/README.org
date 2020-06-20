@@ -4642,11 +4642,14 @@ Youtube contains a *huge* library of videos.
 #+begin_src emacs-lisp
 (use-package! ytdl
   :setq
+  (ytdl-downloads-folder . (expand-file-name "~/Downloads"))
   (ytdl-music-folder . (expand-file-name "~/Music"))
   (ytdl-video-folder . (expand-file-name "~/Videos"))
   (ytdl-always-query-default-filename . nil)
   (ytdl-always-ask-delete-confirmation . t)
-  ;; :defer-config
+  (ytdl-always-query-default-filename . nil)  ;; :defer-config
+  (ytdl-media-player . "mpv")
+  (ytdl-max-mini-buffer-download-type-entries . 0)
   ;; (ytdl-add-field-in-download-type-list "Music" "p" (expand-file-name "~/podcasts") nil)
   )
 #+end_src
