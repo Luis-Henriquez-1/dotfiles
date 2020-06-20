@@ -48,6 +48,16 @@ Accept the same arguments as `message'."
                args)))))
 #+end_src
 
+*** default coding system
+:PROPERTIES:
+:ID:       4c55a0d4-dbd7-4405-b944-3b68d8a069f2
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:DEFAULT-CODING-SYSTEM 'utf-8
+  "Default text encoding.")
+#+end_src
+
 *** macros
 :PROPERTIES:
 :ID: 71870763-2888-453e-842e-98804813350b
@@ -320,14 +330,12 @@ Void is compiled.
 
 ;; Template for displaying mode line for current buffer.
 (setq-default mode-line-format nil)
+
+(setq-default locale-coding-system VOID:DEFAULT-CODING-SYSTEM)
+(setq-default buffer-file-coding-system VOID:DEFAULT-CODING-SYSTEM)
 #+end_src
 
-**** UI
-:PROPERTIES:
-:ID: 4938c41e-7bb3-4208-8dc2-fe25f98eb2cd
-:END:
-
-***** scrolling
+**** scrolling
 :PROPERTIES:
 :ID: 21e56e37-5ff8-40d8-9f27-c3a3ab37dfb8
 :END:
@@ -487,12 +495,6 @@ Emacs/the OS decide what encoding to use.
 #+begin_src emacs-lisp
 (when (fboundp 'set-charset-priority)
   (set-charset-priority 'unicode))
-(prefer-coding-system 'utf-8)
-(setq-default locale-coding-system 'utf-8)
-(setq-default buffer-file-coding-system 'utf-8)
-(ignore!
- (with-os! (:not windows)
-   (setq selection-coding-system 'utf-8)))
 #+end_src
 
 *** post init
@@ -1484,9 +1486,10 @@ Emacs starts up with a default screen setup. No, thanks.
 :END:
 
 #+begin_src emacs-lisp
+;; Not windows.
 (use-feature! select
-  :os linux
   :setq
+  (selection-coding-system . 'utf-8)
   (select-enable-clipboard . t)
   (select-enable-primary . t)
   (x-select-request-type . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
@@ -1751,6 +1754,16 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! calendar
   :setq (diary-file . (concat VOID:DATA-DIR "diary")))
+#+end_src
+
+**** mule-cmds
+:PROPERTIES:
+:ID:       e48e925e-1f1e-4c79-8652-c92aafe06290
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! mule-cmds
+  :init (prefer-coding-system VOID:DEFAULT-CODING-SYSTEM))
 #+end_src
 
 *** external libraries
