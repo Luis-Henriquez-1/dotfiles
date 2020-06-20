@@ -9024,7 +9024,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
                        (hash-table-size straight--profile-cache))
                       (t
                        (package (length package-activated-list))))
-                (emacs-init-time))))
+                (string-to-number (emacs-init-time)))))
 #+end_src
 
 *** banner path
