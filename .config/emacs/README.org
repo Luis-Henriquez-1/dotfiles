@@ -3587,11 +3587,12 @@ a file.
   "Jump to buffer or recentf candidate."
   (interactive)
   (require 'recentf)
-  (let (selectrum-should-sort-p)
-    (--> (append (-map #'buffer-name (buffer-list)) recentf-list)
-         (completing-read "File: " it)
-         (or (get-buffer it) (find-file-noselect it))
-         (switch-to-buffer it))))
+  (let* ((selectrum-should-sort-p nil)
+         (live-buffers (--remove (string-match-p (rx bol white) it)
+                                 (-map #'buffer-name (buffer-list))))
+         (recentf-buffers (--map (propertize it 'face 'font-lock-comment-face) recentf-list)))
+    (alet (completing-read "File: " (append live-buffers recentf-buffers))
+      (switch-to-buffer (or (get-buffer it) (find-file-noselect it))))))
 #+end_src
 
 **** tag headlines
