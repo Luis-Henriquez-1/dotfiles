@@ -3517,6 +3517,7 @@ existing completing-read-using commands.
   :bind
   ([remap swiper] . selectrum/swiper)
   ([remap switch-to-buffer] . selectrum/buffer-or-recentf)
+  ([remap org-set-tags-command] . selectrum/org-set-tags)
   :config
   (append! selectrum-minibuffer-bindings
     '(([tab]     . selectrum-next-candidate)
@@ -3601,7 +3602,7 @@ a file.
 :END:
 
 #+begin_src emacs-lisp
-(defun org/set-tag ()
+(defun selectrum/org-set-tag ()
   "Add or remove tags from an org-mode headline."
   (interactive)
   (let* ((org-use-fast-tag-selection nil)
