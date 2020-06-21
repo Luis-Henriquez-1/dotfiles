@@ -3508,13 +3508,16 @@ existing completing-read-using commands.
 
 #+begin_src emacs-lisp
 (use-package! selectrum
-  :hook pre-command-hook
+  :hook emacs-startup-hook
   :setq
   (selectrum-count-style              . nil)
   (selectrum-show-indices             . nil)
   (selectrum-fix-minibuffer-height    . t)
   (selectrum-num-candidates-displayed . 15)
-  :config-load
+  :bind
+  ([remap swiper] . selectrum/swiper)
+  ([remap switch-to-buffer] . selectrum/buffer-or-recentf)
+  :config
   (append! selectrum-minibuffer-bindings
     '(([tab]     . selectrum-next-candidate)
       ([backtab] . selectrum-previous-candidate)
@@ -3546,10 +3549,10 @@ This is a replacement for swiper. It lets me fuzzy jump to a particular line in
 a file.
 
 #+begin_src emacs-lisp
-(defvar void:jump-to-line-history nil
+(defvar selectrum:swiper-jump-to-line-history nil
   "Submission history for `selectrum/jump-to-line'.")
 
-(defun void/jump-to-line ()
+(defun selectrum/swiper ()
   "Search for a line and jump to it."
   (interactive)
   (let* ((selectrum-should-sort-p nil)
@@ -3559,7 +3562,7 @@ a file.
                          (--map-indexed (format "%d\t%s" it-index it) buffer-text-lines)))
          ;; Get the matching line.
          (chosen-line (completing-read "Jump to matching line: " line-choices
-                                       nil t nil 'void:jump-to-line-history))
+                                       nil t nil 'selectrum:swiper-jump-to-line-history))
          ;; Get the corresponding line number.
          (chosen-line-number (progn (string-match "\\([[:digit:]]+\\)[[:space:]]\\(?:.\\|\n\\)*" chosen-line)
                                     (string-to-number (match-string-no-properties 1 chosen-line))))
@@ -3580,7 +3583,7 @@ a file.
 :END:
 
 #+begin_src emacs-lisp
-(defun void/buffer-or-recentf ()
+(defun selectrum/buffer-or-recentf ()
   "Jump to buffer or recentf candidate."
   (interactive)
   (require 'recentf)
