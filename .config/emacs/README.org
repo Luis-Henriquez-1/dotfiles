@@ -3196,6 +3196,8 @@ query to narrow the list, and then selecting one of the remaining candidates.
   :hook emacs-startup-hook
   :custom
   (ivy-initial-inputs-alist     . nil)
+  :bind
+  ([switch-to-buffer] . ivy-switch-buffer)
   :setq
   (ivy-height . 18)
   (ivy-wrap                     . t)
@@ -3269,7 +3271,6 @@ of stock emacs functions with a version that using =ivy= for completion.
   :commands counsel-org-goto
   :bind
   ([remap load-theme]               . counsel-load-theme)
-  ([remap switch-to-buffer]         . counsel-switch-buffer)
   ([remap apropos]                  . counsel-apropos)
   ([remap bookmark-jump]            . counsel-bookmark)
   ([remap describe-bindings]        . counsel-descbinds)
