@@ -8330,6 +8330,10 @@ use =edit-indirect= to edit source blocks.
 
 #+begin_src emacs-lisp
 (use-package! org
+  :load-incrementally
+  calendar find-func format-spec org-macs org-compat org-faces org-entities
+  org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
+  org-capture
   :setq
   (org-directory . VOID:ORG-DIR)
   (org-archive-location . (concat org-directory "archive.org::"))
