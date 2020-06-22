@@ -3591,9 +3591,11 @@ a file.
   (let* ((selectrum-should-sort-p nil)
          (live-buffers (--remove (string-match-p (rx bol white) it)
                                  (-map #'buffer-name (buffer-list))))
-         (recentf-buffers (--map (propertize (shrink-path-file it) 'face 'font-lock-comment-face)
+         (recentf-buffers (--map (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it)
                                  recentf-list)))
     (alet (completing-read "File: " (append live-buffers recentf-buffers))
+      (setq it (or (alist-get it recentf-buffers nil nil #'string=) it))
+      ;; (message "name %s|buffer: %s" it (get-buffer it))
       (switch-to-buffer (or (get-buffer it) (find-file-noselect it))))))
 #+end_src
 
