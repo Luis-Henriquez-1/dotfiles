@@ -8900,6 +8900,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 (general-def 'normal org-mode-map
   "j" #'org/dwim-next-line
   "k" #'org/dwim-previous-line
+  "b" #'org/dwim-insert-elisp-block
   "o" #'org/insert-heading-below
   "O" #'org/insert-heading-above
   "l" #'org-do-demote
