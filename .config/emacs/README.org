@@ -5810,11 +5810,7 @@ This is better than evil escape as it only binds in insert.
   (quiet! (key-chord-mode 1))
   (general-define-key :states '(visual insert)
                       (general-chord "jk") 'evil-force-normal-state
-                      (general-chord "kj") 'evil-force-normal-state)
-  (general-define-key :states '(insert)
-                      :keymaps 'org-mode-map
-                      (general-chord "jk")
-                      #'evil-org-state))
+                      (general-chord "kj") 'evil-force-normal-state))
 #+end_src
 
 **** saving
