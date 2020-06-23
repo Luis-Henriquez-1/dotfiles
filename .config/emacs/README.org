@@ -990,23 +990,6 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 (leaf-keywords-init)
 #+end_src
 
-*** record-load-path-change!
-
-#+begin_src emacs-lisp
-(defmacro record-load-path-change! (&rest body)
-  "Return new items added to load-path in BODY.
-Preserve the original load path."
-  (let ((old-load-path (make-symbol "old-load-path"))
-        (diff (make-symbol "diff")))
-    `(let ((,old-load-path load-path)
-           (load-path load-path)
-           (,diff nil))
-       ,@body
-       (while (not (string= (car load-path) (car ,old-load-path)))
-         (push (pop load-path) ,diff))
-       (nreverse ,diff))))
-#+end_src
-
 *** leaf
 
 :PROPERTIES:
@@ -1273,14 +1256,7 @@ VOID is compiled.
  :alias (list :ensure)
  :form
  '`(,@(when (and leaf--value (car-safe leaf--value))
-        (mapcar (lambda (it) `(push ,it load-path))
-                (record-load-path-change!
-                 (unless after-init-time (straight:install-package (car leaf--value)))
-                 ;; Not all the load-paths are added during macro expansion
-                 ;; time. I don't yet know why. Until then, this seems to work.
-                 (ignore-errors
-                   (straight--add-package-to-load-path
-                    (gethash (symbol-name leaf--name) straight--recipe-cache))))))
+        `((straight:install-package ',(car leaf--value))))
     ,@leaf--body))
 
 (push `((or (memq leaf--key '(:void-straight))
