@@ -4094,10 +4094,7 @@ therefore, has the most support (in the form of setup blogs and packages).
                           (:flags . 4)
                           (:from . 25)
                           (:subject)))
-  (mu4e-html2text-command . (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text))
-  ;; :defer-config
-  ;; (mu4e:init-accounts)
-  )
+  (mu4e-html2text-command . (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text)))
 #+end_src
 
 *** mu4e headers
@@ -4208,16 +4205,6 @@ Create an mu4e-context for each email account in `mu4e:email-accounts'."
            (cons `(smtpmail-smtp-service . ,(or $port 25)) it)
            (make-mu4e-context :name $name :vars it)
            (push it mu4e-contexts)))))
-#+end_src
-
-**** send variables
-:PROPERTIES:
-:ID: 73e30f45-053a-46b6-91c6-72aa98530794
-:END:
-
-#+begin_src emacs-lisp
-(setq message-send-mail-function #'sendmail-send-it)
-(setq send-mail-function #'sendmail-send-it)
 #+end_src
 
 **** shortcuts
