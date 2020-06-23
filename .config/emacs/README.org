@@ -7837,37 +7837,30 @@ things like executing (or evaluating) source blocks, moving headlines to other
 files, or even converting an org mode document into another format. As the name
 =org= suggests, org is tool that's used for organization of data.
 
-*** init
-:PROPERTIES:
-:ID: e3e6f7cd-0d76-47d2-90ed-88887144ad3f
-:END:
-
-**** structures
+*** structures
 :PROPERTIES:
 :ID: 85ac0a35-4e44-41e6-a1f1-54698cb86212
 :END:
 
-***** todo-keywords
+**** todo-keywords
 :PROPERTIES:
 :ID: a32da379-654e-4b1a-83f4-cf9e4003d578
 :END:
 
-****** todo keywords
+***** todo keywords
 :PROPERTIES:
 :ID: 2f0459d4-9afd-4fd9-bdba-c0a3dc993963
 :END:
 
-These todo keywords are based on [[http://cachestocaches.com/2016/9/my-workflow-org-agenda/][the todo keywords]] in the [[http://cachestocaches.com/2016/9/my-workflow-org-agenda/][Caches to Caches blog]].
-
 #+begin_src emacs-lisp
 (after! org
   (setq org-todo-keywords
-        '((sequence "TODO" "NEXT" "WAITING" "|" "DONE")
+        '((sequence "TODO(t)" "PROJ(p)" "NEXT" "WAITING" "|" "DONE")
           (sequence "|" "DUPLICATE")
           (sequence "|" "CANCELLED"))))
 #+end_src
 
-****** return todo-keywords
+***** return todo-keywords
 :PROPERTIES:
 :ID: 38385aee-1326-46d8-9eef-3bfa2e57c0cc
 :END:
@@ -7883,7 +7876,7 @@ when headline contents begin.
        (--filter (and (stringp it) (not (string= "|" it))))))
 #+end_src
 
-****** heading start
+***** heading start
 :PROPERTIES:
 :ID: 0ebf90e8-cd14-4364-b26a-da6676b29089
 :END:
@@ -7901,7 +7894,7 @@ when headline contents begin.
                        (line-end-position))))
 #+end_src
 
-***** return
+**** return
 :PROPERTIES:
 :ID: c161f1b0-dbc0-4240-8102-69e95f3fd62f
 :END:
@@ -7919,7 +7912,7 @@ when headline contents begin.
     (call-interactively #'org-return))))
 #+end_src
 
-***** TODO scroll window to top
+**** TODO scroll window to top
 :PROPERTIES:
 :ID: 149e9f0c-e984-42e6-afb1-03502eda41ea
 :END:
@@ -7928,7 +7921,7 @@ I need this function for some org actions. Evil has this as
 [[helpfn:evil-scroll-line-to-top][evil-scroll-line-to-top]] but I didn't want to depend on evil.
 
 #+begin_src emacs-lisp
-(defun void:scroll-window-to-top ()
+(defun org:scroll-window-to-top ()
   (let ((line (line-number-at-pos (point)))
         (col (current-column)))
     (goto-char (point-min))
@@ -7936,7 +7929,7 @@ I need this function for some org actions. Evil has this as
     (move-to-column col)))
 #+end_src
 
-***** TODO fix nearby line adjustment
+**** TODO fix nearby line adjustment
 :PROPERTIES:
 :ID: 6168590a-db23-4f0b-bdd9-9d9666624af6
 :END:
@@ -7961,12 +7954,12 @@ headline in view.
   (org:heading-goto-start))
 #+end_src
 
-***** helpers
+**** helpers
 :PROPERTIES:
 :ID: 50b79866-2905-459e-9723-6b822dde9127
 :END:
 
-****** org-heading-folded-p
+***** org-heading-folded-p
 :PROPERTIES:
 :ID: 919b2b6e-2c43-4fd5-87cc-cfc62cf75405
 :END:
@@ -7977,7 +7970,7 @@ headline in view.
   (outline-invisible-p (line-end-position)))
 #+end_src
 
-****** headline-name
+***** headline-name
 :PROPERTIES:
 :ID: 97ac2e07-9db1-43e4-a71b-1a4ed959c7b1
 :END:
@@ -7995,7 +7988,7 @@ headline in view.
     (match-string 4)))
 #+end_src
 
-****** beginning-of-headline
+***** beginning-of-headline
 :PROPERTIES:
 :ID: ac43317c-485e-4efb-aff7-36c3ab69ea79
 :END:
@@ -8010,7 +8003,7 @@ headline in view.
       (funcall (if end #'match-end #'match-beginning) 4))))
 #+end_src
 
-****** end-of-headline
+***** end-of-headline
 :PROPERTIES:
 :ID: b9f9115c-4f84-4894-b926-8c1b948c0246
 :END:
@@ -8022,7 +8015,7 @@ headline in view.
   (org:beginning-of-headline t))
 #+end_src
 
-****** heading
+***** heading
 :PROPERTIES:
 :ID: f6b74522-180a-485c-b946-f7fa2e18a826
 :END:
@@ -8038,7 +8031,7 @@ headline in view.
     (re-search-forward org-babel-src-block-regexp)))
 #+end_src
 
-***** preserve point
+**** preserve point
 :PROPERTIES:
 :ID: 52781cc9-e1ca-4618-aa1b-6845494b5dc6
 :END:
@@ -8047,7 +8040,7 @@ If possible org commands should preserve =point=. If this isn't possible (ie. wh
 deleting a subtree with), then should leave point at a place that is easy to
 predict and convenient (as opposed to a random location).
 
-****** start on beginning of first heading
+***** start on beginning of first heading
 :PROPERTIES:
 :ID: 81732dde-85f7-4336-a9fd-351d8f74671f
 :END:
@@ -8063,7 +8056,7 @@ It looks nice if when I'm on a heading when I first enter an org file.
     (org:heading-goto-start)))
 #+end_src
 
-****** fix bug with next visible heading
+***** fix bug with next visible heading
 :PROPERTIES:
 :ID: 9a3759e8-8928-47cb-97c9-9ce5ee673cba
 :END:
@@ -8080,7 +8073,7 @@ see if it's gone farther than it should have and in that case goes back.
   (when (eobp) (apply #'outline-previous-visible-heading args)))
 #+end_src
 
-****** go to proper point after refile
+***** go to proper point after refile
 :PROPERTIES:
 :ID: 591045df-8d3e-4ff7-b4bc-c949222a0717
 :END:
@@ -8092,17 +8085,17 @@ see if it's gone farther than it should have and in that case goes back.
   (when (org-at-heading-p) (org:heading-goto-start)))
 #+end_src
 
-***** commands
+**** commands
 :PROPERTIES:
 :ID: 86f0b9be-0033-46bd-8d02-7e506fe73ead
 :END:
 
-****** dwim
+***** dwim
 :PROPERTIES:
 :ID: 93a6e45c-b23b-4639-9e1c-9f1aef0fb95a
 :END:
 
-******* insert
+****** insert
 :PROPERTIES:
 :ID: 1b8ccbb8-2614-4d2e-ab7c-e8bd23c2c02d
 :END:
@@ -8123,7 +8116,7 @@ see if it's gone farther than it should have and in that case goes back.
     (forward-line -1)))
 #+end_src
 
-******* eval
+****** eval
 :PROPERTIES:
 :ID: e804805a-ba96-41d0-aa6f-6756c65e9abf
 :END:
@@ -8137,7 +8130,7 @@ see if it's gone farther than it should have and in that case goes back.
   (org-babel-execute-subtree))
 #+end_src
 
-******* next-line
+****** next-line
 :PROPERTIES:
 :ID: d8d118a7-78e8-4602-81b3-17fd1d8ab79c
 :END:
@@ -8153,7 +8146,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
     (org:heading-goto-start)))
 #+end_src
 
-******* previous-line
+****** previous-line
 :PROPERTIES:
 :ID: e7562921-77ca-4d90-be57-1d586ec26ee5
 :END:
@@ -8164,7 +8157,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
   (funcall #'org/dwim-next-line (not forward)))
 #+end_src
 
-******* up-heading
+****** up-heading
 :PROPERTIES:
 :ID: 1f25d3b0-7280-4012-94b5-b0fea2f686b3
 :END:
@@ -8184,7 +8177,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
      (org:heading-goto-start))))
 #+end_src
 
-****** jump to heading                                                     :avy:
+***** jump to heading                                                      :avy:
 :PROPERTIES:
 :ID: 3c396b33-437c-410f-aff6-2106ade42621
 :END:
@@ -8203,7 +8196,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
             :group 1))
 #+end_src
 
-****** dwim jump to heading
+***** dwim jump to heading
 :PROPERTIES:
 :ID: 7ad9d757-57ba-4537-821f-8beae57f39eb
 :END:
@@ -8216,11 +8209,11 @@ If DIR is a negative integer, go the opposite direction: the start of the
     (if (and (org/avy-jump-to-heading)
              (org:heading-folded-p))
         (progn (outline-toggle-children)
-               (void:scroll-window-to-top))
+               (org:scroll-window-to-top))
       (goto-char origin))))
 #+end_src
 
-****** inserting
+***** inserting
 :PROPERTIES:
 :ID: e99abeff-328b-48e4-aebb-00db34fa98e8
 :END:
@@ -8230,7 +8223,7 @@ need to perform a simple task (like inserting a heading) but lose their
 fundamental purpose in their inclusion of numerous obscure and opinionated
 options. For this reason I wrote my own insert heading functions.
 
-******* newlines between headings
+****** newlines between headings
 :PROPERTIES:
 :ID: e0dcf718-120c-488d-9d37-96243132bf0b
 :END:
@@ -8240,7 +8233,7 @@ options. For this reason I wrote my own insert heading functions.
   "Number of newlines between headings.")
 #+end_src
 
-******* heading above
+****** heading above
 :PROPERTIES:
 :ID: 6c227dea-e10b-4f86-a01b-5d223d18e3a4
 :END:
@@ -8252,7 +8245,7 @@ options. For this reason I wrote my own insert heading functions.
   (funcall #'org/insert-heading-below (not below)))
 #+end_src
 
-******* heading below
+****** heading below
 :PROPERTIES:
 :ID: b059a431-e29c-4f2c-ab5e-8d2d02636405
 :END:
@@ -8277,7 +8270,7 @@ options. For this reason I wrote my own insert heading functions.
     (run-hooks 'org-insert-heading-hook)))
 #+end_src
 
-******* subheading
+****** subheading
 :PROPERTIES:
 :ID: cf910dcf-6250-4b6a-80d5-63ac457d4a81
 :END:
@@ -8348,262 +8341,6 @@ use =edit-indirect= to edit source blocks.
   (org-use-fast-tag-selection . nil)
   (org-tags-column . -80)
   (org-tag-alist . nil))
-#+end_src
-
-*** agenda
-:PROPERTIES:
-:ID: 65b2885d-aca6-42b8-a8ad-e3ae077b9aae
-:END:
-
-[[helpfn:org-agenda-list][org-agenda-list]] is the function that actually takes you to the agenda for the current week.
-
-#+begin_src emacs-lisp
-(use-feature! org-agenda
-  :after org
-  :commands (org-agenda org-agenda-list)
-  :setq
-  (org-agenda-files . (--map (concat org-directory it) '("todo.org" "emacs.org")))
-  (org-agenda-start-on-weekday . 0)
-  (org-agenda-timegrid-use-ampm . nil)
-  (org-agenda-skip-unavailable-files . nil)
-  (org-agenda-time-leading-zero . t)
-  (org-agenda-text-search-extra-files . '(agenda-archives))
-  (org-agenda-dim-blocked-tasks . nil)
-  (org-agenda-inhibit-startup . t))
-#+end_src
-
-*** refile
-:PROPERTIES:
-:ID: 0174a708-8043-403e-b024-8ae29868564d
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! org-refile
-  :after org
-  :setq
-  (org-refile-targets . `((,VOID:README-FILE . (:maxlevel . 10))
-                          (,VOID:TODO-FILE . (:maxlevel . 1))))
-  (org-refile-use-outline-path . 'file)
-  (org-refile-allow-creating-parent-nodes . t)
-  (org-reverse-note-order . t)
-  (org-outline-path-complete-in-steps . nil))
-#+end_src
-
-*** capture
-:PROPERTIES:
-:ID: 81197df0-6744-4a63-a202-f7279d7b7119
-:END:
-
-Ever been in the middle of doing something when a thought in your head pops up
-about some thing else? You can stop what you're doing but then you lose focus.
-You can resolve to make note of it later but then you might forget. Capturing is
-designed to confront this problem. While in the middle of a task you can quickly
-jump into a small org buffer and write down an idea that you have, then close
-it.
-
-**** org capture
-:PROPERTIES:
-:ID:       8fc5d248-ff21-45e4-a48b-57cecd57b7a3
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! org-capture
-  :after org
-  :commands org-capture)
-#+end_src
-
-**** completing read for templates
-:PROPERTIES:
-:ID: 799ac569-85e8-43c0-93ae-a00cf982777f
-:END:
-
-The default Org capture templates use this ido-like popup for selecting capture
-templates. They shouldn't have made this popup. Org should have just left this
-for completing read. Fortunately, there's a package that provides a
-completing-read-using replacement for [[helpfn:org-capture][org-capture]] called
-[[helpfn:counsel-org-capture-string][counsel-org-capture-string]].
-
-#+begin_src emacs-lisp
-(use-package! counsel-org-capture-string
-  :after org ivy
-  :commands counsel-org-capture-string)
-#+end_src
-
-**** remove capture headerline
-:PROPERTIES:
-:ID: 7b8a8e1d-3c72-492f-9311-56a2428a1f1d
-:END:
-
-This was the answer to [[https://emacs.stackexchange.com/questions/53648/eliminate-org-capture-message][my question]]. I need to disable =org-capture's= header-line.
-
-#+begin_src emacs-lisp
-(defhook! org:capture-turn-off-header-line-h ()
-  "Turn of the header line message."
-  :hook org-capture-mode-hook
-  (setq-local header-line-format nil))
-#+end_src
-
-**** doct
-:PROPERTIES:
-:ID: 287fb9c7-110e-4758-aab2-71f74079ade2
-:END:
-
-[[https://github.com/progfolio/doct][doct]] is a package designed to ease writing and understanding capture templates
-by allowing you to write them in a declarative style (see [[][doct docstring]]).
-In org mode, capture templates are [[][represented as plain lists]]. This makes
-it easy to forget what a certain element meant or to accidentally omit a capture
-template element as you're writing it.
-
-#+begin_src emacs-lisp
-(use-package! doct
-  :after org-capture
-  :require t
-  :config
-  ;; (require 'doct)
-  ;; doct just returns the new template.
-  (defadvice! doct:add-to-capture-templates (orig-fn &rest args)
-    "Automatically add the template to capture templates."
-    :around doct
-    (alet (apply orig-fn args)
-      (prepend! org-capture-templates it))))
-#+end_src
-
-**** capture templates
-:PROPERTIES:
-:ID: aeb0bc04-84a1-4f85-89f9-c2e04cefce92
-:END:
-
-***** emacs
-:PROPERTIES:
-:ID: e6109a54-37af-44ba-852f-a1c34f910cb9
-:END:
-
-#+begin_src emacs-lisp
-(after! org-capture
-  (doct (list "Emacs"
-              :keys "e"
-              :file (lambda nil (concat VOID:ORG-DIR "todo.org"))
-              :prepend t
-              :empty-lines 1
-              :ID (lambda () (require 'uuidgen) (uuidgen-4))
-              :template '("* %{todo-state} %?"
-                          ":PROPERTIES:"
-                          ":ID: %{ID}"
-                          ":CREATED: %U"
-                          ":END:")
-              :children
-              '(("Todo" :keys "1" :todo-state "TODO")
-                ("Bug" :keys "2" :todo-state "BUG")))))
-#+end_src
-
-***** notes
-:PROPERTIES:
-:ID: b5af648e-d9fa-4d48-b68b-419c53dcd144
-:END:
-
-Sometimes there are things I want to capture that's not a =TODO=, but more like
-information I don't want to forget or that I feel like I might need to reference
-in the future. I use this template for this.
-
-#+begin_src emacs-lisp
-(after! org-capture
-  (doct (list "Notes"
-              :keys "n"
-              :file (lambda nil (concat VOID:ORG-DIR "notes.org"))
-              :prepend t
-              :empty-lines 1
-              :ID (lambda () (require 'uuidgen) (uuidgen-4))
-              :template '("* %?"
-                          ":PROPERTIES:"
-                          ":ID: %{ID}"
-                          ":CREATED: %U"
-                          ":END:"))))
-#+end_src
-
-*** links
-:PROPERTIES:
-:ID: dbc3d205-9831-41f0-95f8-1e8746e0be3a
-:END:
-
-To me links are one of the biggest drawing points to org-mode. The ability to
-have documentation that can link to websites, files, info docs and even github
-commits is too juicy to pass up. Why in the 21st century do we still have to
-deal with such weak, plain text code documentation when we could use a more
-powerful markup language?
-
-**** org links
-:PROPERTIES:
-:ID: 21148ef5-0887-4560-9997-6059b3529a2d
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! ol
-  :after org
-  :custom
-  (org-link-descriptive . t)
-  (org-link-use-indirect-buffer-for-internals . t))
-#+end_src
-
-**** custom link types
-:PROPERTIES:
-:ID: 76f86439-8ee3-4688-b117-a51d18d365ce
-:END:
-
-***** helpvar
-:PROPERTIES:
-:ID: 20f9629a-f145-44df-b8b4-69c5394dc773
-:END:
-
-=helpvar= I a new link type that when pressed, opens a help buffer from [[https://github.com/Wilfred/helpful][helpful]] if
-it's installed, otherwise it defaults to bringing up an regular emacs help buffer.
-
-#+begin_src emacs-lisp
-(after! org
-  (defun ol:helpvar-face (link)
-    (if (boundp (intern link)) 'org-link 'error))
-
-  (defun ol:helpvar-follow (link)
-    (let ((var (intern link)))
-      (if (require 'helpful nil :noerror)
-          (helpful-variable var)
-        (describe-variable var))))
-
-  (org-link-set-parameters "helpvar" :face #'ol:helpvar:face :follow #'ol:helpvar:follow))
-#+end_src
-
-***** helpfn
-:PROPERTIES:
-:ID: 449a3953-dce5-41a1-afdf-129fa6fae573
-:END:
-
-=helpfn= is the same as helpvar except with functions.
-
-#+begin_src emacs-lisp
-(after! org
-  (defun ol:helpfn-face (link)
-    (let ((fn (intern link)))
-      (if (fboundp fn) 'org-link 'error)))
-
-  (defun ol:helpfn-follow (link)
-    (let ((fn (intern link)))
-      (if (require 'helpful nil :no-error)
-          (helpful-callable fn)
-        (describe-function fn))))
-
-  (org-link-set-parameters "helpfn" :face #'ol:helpfn-face :follow #'ol:helpfn-follow))
-#+end_src
-
-**** toggle link display                                              :disabled:
-:PROPERTIES:
-:ID: 06d2b812-5d76-4bc4-bdce-3b6fcf5a9070
-:END:
-
-#+begin_src emacs-lisp
-(define-key!
-  (:localleader "t")
-  (:map org-mode-map)
-  ("l" #'org-toggle-link-display)
-  ("p" #'org/toggle-property-drawer-display))
 #+end_src
 
 *** asthetic
@@ -8837,16 +8574,342 @@ hindsight, using this function is even easier than using ~window-beg~ and
   (org-superstar-leading-bullet . ?\s))
 #+end_src
 
+*** links
+:PROPERTIES:
+:ID: dbc3d205-9831-41f0-95f8-1e8746e0be3a
+:END:
+
+To me links are one of the biggest drawing points to org-mode. The ability to
+have documentation that can link to websites, files, info docs and even github
+commits is too juicy to pass up. Why in the 21st century do we still have to
+deal with such weak, plain text code documentation when we could use a more
+powerful markup language?
+
+**** ol
+:PROPERTIES:
+:ID: 21148ef5-0887-4560-9997-6059b3529a2d
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! ol
+  :after org
+  :custom
+  (org-link-descriptive . t)
+  (org-link-use-indirect-buffer-for-internals . t))
+#+end_src
+
+**** custom link types
+:PROPERTIES:
+:ID: 76f86439-8ee3-4688-b117-a51d18d365ce
+:END:
+
+***** helpvar
+:PROPERTIES:
+:ID: 20f9629a-f145-44df-b8b4-69c5394dc773
+:END:
+
+=helpvar= I a new link type that when pressed, opens a help buffer from [[https://github.com/Wilfred/helpful][helpful]] if
+it's installed, otherwise it defaults to bringing up an regular emacs help buffer.
+
+#+begin_src emacs-lisp
+(after! org
+  (defun ol:helpvar-face (link)
+    (if (boundp (intern link)) 'org-link 'error))
+
+  (defun ol:helpvar-follow (link)
+    (let ((var (intern link)))
+      (if (require 'helpful nil :noerror)
+          (helpful-variable var)
+        (describe-variable var))))
+
+  (org-link-set-parameters "helpvar" :face #'ol:helpvar:face :follow #'ol:helpvar:follow))
+#+end_src
+
+***** helpfn
+:PROPERTIES:
+:ID: 449a3953-dce5-41a1-afdf-129fa6fae573
+:END:
+
+=helpfn= is the same as helpvar except with functions.
+
+#+begin_src emacs-lisp
+(after! org
+  (defun ol:helpfn-face (link)
+    (let ((fn (intern link)))
+      (if (fboundp fn) 'org-link 'error)))
+
+  (defun ol:helpfn-follow (link)
+    (let ((fn (intern link)))
+      (if (require 'helpful nil :no-error)
+          (helpful-callable fn)
+        (describe-function fn))))
+
+  (org-link-set-parameters "helpfn" :face #'ol:helpfn-face :follow #'ol:helpfn-follow))
+#+end_src
+
+**** toggle link display                                              :disabled:
+:PROPERTIES:
+:ID: 06d2b812-5d76-4bc4-bdce-3b6fcf5a9070
+:END:
+
+#+begin_src emacs-lisp
+(define-key!
+  (:localleader "t")
+  (:map org-mode-map)
+  ("l" #'org-toggle-link-display)
+  ("p" #'org/toggle-property-drawer-display))
+#+end_src
+
+*** org capture
+:PROPERTIES:
+:ID: 81197df0-6744-4a63-a202-f7279d7b7119
+:END:
+
+Ever been in the middle of doing something when a thought in your head pops up
+about some thing else? You can stop what you're doing but then you lose focus.
+You can resolve to make note of it later but then you might forget. Capturing is
+designed to confront this problem. While in the middle of a task you can quickly
+jump into a small org buffer and write down an idea that you have, then close
+it.
+
+**** org capture
+:PROPERTIES:
+:ID:       8fc5d248-ff21-45e4-a48b-57cecd57b7a3
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! org-capture
+  :after org
+  :commands org-capture)
+#+end_src
+
+**** completing read for templates
+:PROPERTIES:
+:ID: 799ac569-85e8-43c0-93ae-a00cf982777f
+:END:
+
+The default Org capture templates use this ido-like popup for selecting capture
+templates. They shouldn't have made this popup. Org should have just left this
+for completing read. Fortunately, there's a package that provides a
+completing-read-using replacement for [[helpfn:org-capture][org-capture]] called
+[[helpfn:counsel-org-capture-string][counsel-org-capture-string]].
+
+#+begin_src emacs-lisp
+(use-package! counsel-org-capture-string
+  :after org ivy
+  :commands counsel-org-capture-string)
+#+end_src
+
+**** remove capture headerline
+:PROPERTIES:
+:ID: 7b8a8e1d-3c72-492f-9311-56a2428a1f1d
+:END:
+
+This was the answer to [[https://emacs.stackexchange.com/questions/53648/eliminate-org-capture-message][my question]]. I need to disable =org-capture's= header-line.
+
+#+begin_src emacs-lisp
+(defhook! org:capture-turn-off-header-line-h ()
+  "Turn of the header line message."
+  :hook org-capture-mode-hook
+  (setq-local header-line-format nil))
+#+end_src
+
+**** doct
+:PROPERTIES:
+:ID: 287fb9c7-110e-4758-aab2-71f74079ade2
+:END:
+
+[[https://github.com/progfolio/doct][doct]] is a package designed to ease writing and understanding capture templates
+by allowing you to write them in a declarative style (see [[][doct docstring]]).
+In org mode, capture templates are [[][represented as plain lists]]. This makes
+it easy to forget what a certain element meant or to accidentally omit a capture
+template element as you're writing it.
+
+#+begin_src emacs-lisp
+(use-package! doct
+  :after org-capture
+  :require t
+  :config
+  ;; (require 'doct)
+  ;; doct just returns the new template.
+  (defadvice! doct:add-to-capture-templates (orig-fn &rest args)
+    "Automatically add the template to capture templates."
+    :around doct
+    (alet (apply orig-fn args)
+      (prepend! org-capture-templates it))))
+#+end_src
+
+**** capture templates
+:PROPERTIES:
+:ID: aeb0bc04-84a1-4f85-89f9-c2e04cefce92
+:END:
+
+***** emacs
+:PROPERTIES:
+:ID: e6109a54-37af-44ba-852f-a1c34f910cb9
+:END:
+
+#+begin_src emacs-lisp
+(after! org-capture
+  (doct (list "Emacs"
+              :keys "e"
+              :file (lambda nil (concat VOID:ORG-DIR "todo.org"))
+              :prepend t
+              :empty-lines 1
+              :ID (lambda () (require 'uuidgen) (uuidgen-4))
+              :template '("* %{todo-state} %?"
+                          ":PROPERTIES:"
+                          ":ID: %{ID}"
+                          ":CREATED: %U"
+                          ":END:")
+              :children
+              '(("Todo" :keys "1" :todo-state "TODO")
+                ("Bug" :keys "2" :todo-state "BUG")))))
+#+end_src
+
+***** notes
+:PROPERTIES:
+:ID: b5af648e-d9fa-4d48-b68b-419c53dcd144
+:END:
+
+Sometimes there are things I want to capture that's not a =TODO=, but more like
+information I don't want to forget or that I feel like I might need to reference
+in the future. I use this template for this.
+
+#+begin_src emacs-lisp
+(after! org-capture
+  (doct (list "Notes"
+              :keys "n"
+              :file (lambda nil (concat VOID:ORG-DIR "notes.org"))
+              :prepend t
+              :empty-lines 1
+              :ID (lambda () (require 'uuidgen) (uuidgen-4))
+              :template '("* %?"
+                          ":PROPERTIES:"
+                          ":ID: %{ID}"
+                          ":CREATED: %U"
+                          ":END:"))))
+#+end_src
+
+*** org agenda
+:PROPERTIES:
+:ID: 65b2885d-aca6-42b8-a8ad-e3ae077b9aae
+:END:
+
+[[helpfn:org-agenda-list][org-agenda-list]] is the function that actually takes you to the agenda for the current week.
+
+#+begin_src emacs-lisp
+(use-feature! org-agenda
+  :after org
+  :commands (org-agenda org-agenda-list)
+  :setq
+  (org-agenda-files . (--map (concat org-directory it) '("todo.org")))
+  (org-agenda-start-on-weekday . 0)
+  (org-agenda-timegrid-use-ampm . nil)
+  (org-agenda-skip-unavailable-files . nil)
+  (org-agenda-time-leading-zero . t)
+  (org-agenda-text-search-extra-files . '(agenda-archives))
+  (org-agenda-dim-blocked-tasks . nil)
+  (org-agenda-inhibit-startup . t))
+#+end_src
+
+*** org refile
+:PROPERTIES:
+:ID: 0174a708-8043-403e-b024-8ae29868564d
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! org-refile
+  :after org
+  :setq
+  (org-refile-targets . `((,VOID:README-FILE . (:maxlevel . 10))
+                          (,VOID:TODO-FILE . (:maxlevel . 1))))
+  (org-refile-use-outline-path . 'file)
+  (org-refile-allow-creating-parent-nodes . t)
+  (org-reverse-note-order . t)
+  (org-outline-path-complete-in-steps . nil))
+#+end_src
+
 *** org id
 :PROPERTIES:
 :ID: e7ecff83-7ba6-4620-ac05-ebac2f250b7a
 :END:
 
+=org-id= is a built-in package that creates that provides tools for creating and
+storing universally unique IDs. This is primarily used to disguish and
+referenance org headlines.
+
 #+begin_src emacs-lisp
 (use-feature! org-id
-  :after org
-  :setq (org-id-locations-file . (concat VOID:DATA-DIR "org-id-locations"))
+  :commands org-id-get-create
+  :setq
+  (org-id-locations-file . (concat VOID:DATA-DIR "org-id-locations"))
+  ;; Global ID state means we can have ID links anywhere. This is required for
+  ;; `org-brain', however.
+  (org-id-locations-file-relative . t)
   :hook (org-insert-heading-hook . org-id-get-create))
+#+end_src
+
+*** org clock
+:PROPERTIES:
+:ID:       d378471c-89df-48c9-a755-b79880f27308
+:END:
+
+=org-clock= is a built-in package that provides time logging functions for
+tracking the time you spend on a particular task.
+
+#+begin_src emacs-lisp
+(use-feature! org-clock
+  :commands org-clock-in
+  ;; :before-call ((org-clock-in org-clock-out org-clock-in-last org-clock-goto org-clock-cancel) . (org-clock-load))
+  :hook (kill-emacs-hook . org-clock-save)
+  :setq
+  ;; org-clock-sound
+  ;; org-show-notification-handler
+  (org-clock-persist . 'history)
+  (org-clock-persist-file . (concat VOID:DATA-DIR "org-clock-save.el"))
+  ;; Resume when clocking into task with open clock
+  (org-clock-in-resume . t)
+  :config
+  ;; set up hooks for persistence.
+  (org-clock-persistence-insinuate))
+#+end_src
+
+*** org crypt
+:PROPERTIES:
+:ID:       f5278890-8b84-43df-b5dc-0ef8074bfba9
+:END:
+
+#+begin_src emacs-lisp
+(use-package! org-crypt
+  :commands org-encrypt-entries org-encrypt-entry org-decrypt-entries org-decrypt-entry
+  :hook (org-reveal-start . org-decrypt-entry)
+  ;; :preface
+  ;; ;; org-crypt falls back to CRYPTKEY property then `epa-file-encrypt-to', which
+  ;; ;; is a better default than the empty string `org-crypt-key' defaults to.
+  ;; (defvar org-crypt-key nil)
+  ;; (after! org
+  ;;   (add-to-list 'org-tags-exclude-from-inheritance "crypt")
+  ;;   (add-hook! 'org-mode-hook
+  ;;              (add-hook 'before-save-hook 'org-encrypt-entries nil t)))
+  )
+#+end_src
+
+*** org-journal
+:PROPERTIES:
+:ID:       c3056303-5fa1-49f9-ae2d-294942e25f54
+:END:
+
+=org-journal= is a package that provides functions to maintain a simple
+diary/journal using =org-mode=.
+
+#+begin_src emacs-lisp
+(use-package! org-journal
+  :commands org-journal-new-entry
+  :setq
+  (org-journal-file-type . 'yearly)
+  (org-journal-dir . (concat VOID:ORG-DIR "journal/"))
+  (org-journal-find-file . 'find-file))
 #+end_src
 
 *** keybindings
@@ -8900,9 +8963,8 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   "o" #'org/insert-heading-below
   "O" #'org/insert-heading-above
   "l" #'org-do-demote
-  "H" #'org-promote-subtree
+  "h" #'org-promote-subtree
   "L" #'org-demote-subtree
-  "C" #'org-capture
   "t" #'org-set-tags-command
   "r" #'org-capture
   "s" #'org-schedule
@@ -8913,17 +8975,6 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   "Y" #'org-copy-subtree
   "K" #'org-metaup
   "J" #'org-metadown)
-#+end_src
-
-**** return
-:PROPERTIES:
-:ID: 384d0adc-f3e0-4d16-95e2-23e2b9bf9783
-:END:
-
-#+begin_src emacs-lisp
-;; (define-key!
-;;   (:map org-mode-map)
-;;   (:ei "RET" #'org/dwim-return))
 #+end_src
 
 ** lua
