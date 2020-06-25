@@ -135,7 +135,6 @@ possible. And also to generate repetative code.
 
 #+begin_src emacs-lisp
 (defun conf:string (input &rest args)
-  ""
   (format "%S" (apply #'format input args)))
 #+end_src
 
@@ -194,21 +193,25 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp :tangle no :var email="main"
-(let ((ho))
+(let ((mail (concat "email/" mail))
+      ($account (password-store-get-field mail "account"))
+      ($in-host (password-store-get-field mail "out-host"))
+      ($in-port (password-store-get-field mail "out-port"))
+      ($email (password-store-get-field mail "email")))
   (conf:convert-to-string
-   :IMAPAccount account
-   :Host host
-   :User email
-   :PassCmd (format "pass email/%s" email)
+   :IMAPAccount $account
+   :Host $host
+   :User $email
+   :PassCmd (conf:string "pass email/%s" $email)
    :SSLType 'IMAPS
    :CertificateFile '/etc/ssl/certs/ca-certificates.crt
-   :Port in-port
-   :IMAPStore (void:symbol-intern )
-   :Account account
+   :Port $in-port
+   :IMAPStore
+   :Account $account
    :MaildirStore (format "")
    :Subfolders 'Verbatim
-   :Path (intern (format "~/mail/%s" email))
-   :Inbox (intern (format "~/mail/%s/inbox" email ))))
+   :Path (format "~/mail/%s" $email)
+   :Inbox (format "~/mail/%s/inbox" $email)))
 #+end_src
 
 *** all
