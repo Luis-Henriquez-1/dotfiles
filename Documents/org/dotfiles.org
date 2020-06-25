@@ -192,7 +192,7 @@ account-default main
 :ID:       1e503ace-8af6-46a1-9ec0-62cef1372adf
 :END:
 
-#+name:mbsync-account-setup
+#+name:mbsync-imap-account-setup
 #+begin_src emacs-lisp :tangle no :var email="main"
 (let ((mail (concat "email/" mail))
       ($account (password-store-get-field mail "account"))
@@ -201,12 +201,25 @@ account-default main
       ($email (password-store-get-field mail "email")))
   (conf:convert-to-string
    :IMAPAccount $account
-   :Host $host
+   :Host $in-host
    :User $email
    :PassCmd (conf:string "pass email/%s" $email)
    :SSLType 'IMAPS
    :CertificateFile '/etc/ssl/certs/ca-certificates.crt
-   :Port $in-port
+   :Port $in-port))
+#+end_src
+
+*** account store
+:PROPERTIES:
+:ID:       946e1645-c0e9-4f31-97bc-a54a4936d7b3
+:END:
+
+#+name:mbsync-imap-store-setup
+#+begin_src emacs-lisp :tangle no :noweb tangle
+(let ((mail (concat "email/" mail))
+      ($account (password-store-get-field mail "account"))
+      ($email (password-store-get-field mail "email")))
+  (conf:convert-to-string
    :IMAPStore (format "%s-remote" $account)
    :Account $account
    :MaildirStore (format "%s-local" $account)
@@ -223,10 +236,7 @@ account-default main
 #+name:mbsync-sync-all
 #+begin_src emacs-lisp :var mail="mail" :tangle no
 (let* ((mail (concat "email/" mail))
-       ($account (password-store-get-field mail "account"))
-       ($in-host (password-store-get-field mail "out-host"))
-       ($in-port (password-store-get-field mail "out-port"))
-       ($email (password-store-get-field mail "email")))
+       ($account (password-store-get-field mail "account")))
   (conf:convert-to-string
    :Channel $account
    :Master (format $account ":-remote:")
@@ -242,11 +252,19 @@ account-default main
 :END:
 
 #+begin_src conf :noweb tangle :tangle ~/.mbsyncrc
-<<mbsync-account-setup(mail="main")>>
+<<mbsync-imap-account-setup(mail="main")>>
+
+<<mbsync-imap-store-setup(mail="main")>>
+
 <<mbsync-sync-all(mail="main")>>
 
-<<mbsync-account-setup(mail="gmail")>>
+<<mbsync-imap-account-setup(mail="gmail")>>
 
-<<mbsync-account-setup(mail="school")>>
+<<mbsync-imap-store-setup(mail="gmail")>>
+
+<<mbsync-imap-account-setup(mail="school")>>
+
+<<mbsync-imap-store-setup(mail="school")>>
+
 <<mbsync-sync-all(mail="school")>>
 #+end_src
