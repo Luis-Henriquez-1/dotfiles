@@ -97,21 +97,16 @@ allow-loopback-pinentry
 #+end_src
 
 * email
+
 :PROPERTIES:
 :ID:       121f6bc5-23ed-465f-90c5-9d11db715ff6
 :END:
-
-** msmtprc
-:PROPERTIES:
-:ID:       1747ff3c-0fa4-4cb9-9b80-324bc0877dfb
-:END:
-
-*** helpers
+** helpers
 :PROPERTIES:
 :ID:       04332f62-7554-477d-a6a3-d6f5a93317aa
 :END:
 
-**** convert
+*** convert
 :PROPERTIES:
 :ID:       67ecf9f7-8c43-4538-b581-d3a363ff8eec
 :END:
@@ -128,7 +123,7 @@ possible. And also to generate repetative code.
                   (-partition 2 plist))))
 #+end_src
 
-**** conf string
+*** conf string
 :PROPERTIES:
 :ID:       f4933510-0f19-4ce0-82cf-d215b670e188
 :END:
@@ -137,6 +132,11 @@ possible. And also to generate repetative code.
 (defun conf:string (input &rest args)
   (format "%S" (apply #'format input args)))
 #+end_src
+
+** msmtprc
+:PROPERTIES:
+:ID:       1747ff3c-0fa4-4cb9-9b80-324bc0877dfb
+:END:
 
 *** msmtprc
 :PROPERTIES:
