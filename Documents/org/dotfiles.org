@@ -146,13 +146,18 @@ possible. And also to generate repetative code.
 
 #+name: msmtprc-account-info
 #+begin_src emacs-lisp :var mail="main" :tangle no
-(conf:convert-to-string
- :account (pass:field mail "account")
- :host (pass:field mail "out-host")
- :from (pass:field mail "email")
- :port (pass:field mail "out-port")
- :user (pass:field mail "email")
- :passwordeval (format "pass email/%s" (pass:field mail "account")))
+(let* ((mail (concat "email/" mail))
+       ($account (password-store-get-field mail "account"))
+       ($out-host (password-store-get-field mail "out-host"))
+       ($out-port (password-store-get-field mail "out-port"))
+       ($email (password-store-get-field mail "email")))
+  (conf:convert-to-string
+   :account $account
+   :host $out-host
+   :from $email
+   :port $out-port
+   :user $email
+   :passwordeval (conf:string "pass email/%s" $account)))
 #+end_src
 
 *** main
