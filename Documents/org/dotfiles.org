@@ -206,12 +206,27 @@ account-default main
    :SSLType 'IMAPS
    :CertificateFile '/etc/ssl/certs/ca-certificates.crt
    :Port $in-port
-   :IMAPStore
+   :IMAPStore (format "%s-remote" $account)
    :Account $account
-   :MaildirStore (format "")
+   :MaildirStore (format "%s-local" $account)
    :Subfolders 'Verbatim
    :Path (format "~/mail/%s" $email)
    :Inbox (format "~/mail/%s/inbox" $email)))
+#+end_src
+
+*** sync all
+:PROPERTIES:
+:ID:       55d49037-2d10-4890-a0ff-e1ff2b512373
+:END:
+
+#+begin_src emacs-lisp
+(conf:convert-to-string
+ :Channel $account
+ :Master (format ":-remote:")
+ :Slave (format ":-local:")
+ :Patterns '*
+ :Create\ Both
+ :SyncState '*)
 #+end_src
 
 *** all
@@ -221,8 +236,10 @@ account-default main
 
 #+begin_src conf :tangle ~/.mbsyncrc
 <<mbsync-account-setup("main")>>
+<<mbsync-sync-all("main")>>
 
 <<mbsync-account-setup("gmail")>>
 
 <<mbsync-account-setup("school")>>
+<<mbsync-sync-all("school")>>
 #+end_src
