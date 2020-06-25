@@ -192,6 +192,7 @@ account-default main
 :ID:       1e503ace-8af6-46a1-9ec0-62cef1372adf
 :END:
 
+#+name:mbsync-account-setup
 #+begin_src emacs-lisp :tangle no :var email="main"
 (let ((mail (concat "email/" mail))
       ($account (password-store-get-field mail "account"))
@@ -219,14 +220,20 @@ account-default main
 :ID:       55d49037-2d10-4890-a0ff-e1ff2b512373
 :END:
 
-#+begin_src emacs-lisp
-(conf:convert-to-string
- :Channel $account
- :Master (format ":-remote:")
- :Slave (format ":-local:")
- :Patterns '*
- :Create\ Both
- :SyncState '*)
+#+name:mbsync-sync-all
+#+begin_src emacs-lisp :var mail="mail" :tangle no
+(let* ((mail (concat "email/" mail))
+       ($account (password-store-get-field mail "account"))
+       ($in-host (password-store-get-field mail "out-host"))
+       ($in-port (password-store-get-field mail "out-port"))
+       ($email (password-store-get-field mail "email")))
+  (conf:convert-to-string
+   :Channel $account
+   :Master (format $account ":-remote:")
+   :Slave (format $account ":-local:")
+   :Patterns '*
+   :Create\ Both
+   :SyncState '*))
 #+end_src
 
 *** all
@@ -234,12 +241,12 @@ account-default main
 :ID:       3f5d8401-2090-45d8-928d-c8aa7eee32a7
 :END:
 
-#+begin_src conf :tangle ~/.mbsyncrc
-<<mbsync-account-setup("main")>>
-<<mbsync-sync-all("main")>>
+#+begin_src conf :noweb tangle :tangle ~/.mbsyncrc
+<<mbsync-account-setup(mail="main")>>
+<<mbsync-sync-all(mail="main")>>
 
-<<mbsync-account-setup("gmail")>>
+<<mbsync-account-setup(mail="gmail")>>
 
-<<mbsync-account-setup("school")>>
-<<mbsync-sync-all("school")>>
+<<mbsync-account-setup(mail="school")>>
+<<mbsync-sync-all(mail="school")>>
 #+end_src
