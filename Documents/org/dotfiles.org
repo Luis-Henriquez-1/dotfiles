@@ -116,25 +116,27 @@ allow-loopback-pinentry
 :ID:       67ecf9f7-8c43-4538-b581-d3a363ff8eec
 :END:
 
+The goal here is to write as much of the dotfile configuration in elisp as
+possible. And also to generate repetative code.
+
 #+begin_src emacs-lisp :tangle no
 (defun conf:convert-to-string (&rest plist)
-  "Return a string."
+  "Return a"
   (s-join "\n"
           (mapcar (-lambda ((keyword value))
-                    (format (concat "%s " (if (symbolp value) "%s" "%S"))
-                            (void:keyword-name keyword)
-                            value))
+                    (format (concat "%s %s") (void:keyword-name keyword) value))
                   (-partition 2 plist))))
 #+end_src
 
-**** other
+**** conf string
 :PROPERTIES:
-:ID:       7cf3bbbd-b121-45f1-ac75-4edc0a4e4cd0
+:ID:       f4933510-0f19-4ce0-82cf-d215b670e188
 :END:
 
-#+begin_src emacs-lisp :tangle no
-(defun pass:field (account field)
-  (intern (password-store-get-field (concat "email/" account) field)))
+#+begin_src emacs-lisp
+(defun conf:string (input &rest args)
+  ""
+  (format "%S" (apply #'format input args)))
 #+end_src
 
 *** msmtprc
