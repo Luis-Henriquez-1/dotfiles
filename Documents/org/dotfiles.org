@@ -119,8 +119,8 @@ possible. And also to generate repetative code.
   "Return a"
   (s-join "\n"
           (mapcar (-lambda ((keyword value))
-                    (format (concat "%s %s") (void:keyword-name keyword) value))
-                  (-partition 2 plist))))
+                    (format (concat "%s" (when value " %s")) (void:keyword-name keyword) value))
+                  (-partition-before-pred #'keywordp plist))))
 #+end_src
 
 *** conf string
