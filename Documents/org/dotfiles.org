@@ -167,10 +167,10 @@ possible. And also to generate repetative code.
 
 #+begin_src conf :noweb tangle :tangle ~/.msmtprc
 defaults
-auth           on
-tls            on
+auth on
+tls on
 tls_trust_file /etc/ssl/certs/ca-certificates.crt
-logfile        ~/.msmtp.log
+logfile ~/.msmtp.log
 
 <<msmtprc-account-info(mail="main")>>
 
