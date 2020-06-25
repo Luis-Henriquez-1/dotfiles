@@ -1,0 +1,216 @@
+* about
+:PROPERTIES:
+:ID:       bf96dec4-c43a-45c9-b5e5-65a68a892355
+:END:
+
+* noweb info
+:PROPERTIES:
+:ID:       676814ba-1935-482a-ad6a-7f251c598d2e
+:END:
+
+** my name
+:PROPERTIES:
+:ID:       4a2abab7-6824-4fd0-88fb-7cca65528c7c
+:END:
+
+#+name: pass
+#+begin_src emacs-lisp :tangle no :var entry="" :var field=""
+(password-store-get-field entry field)
+#+end_src
+
+* bashrc
+:PROPERTIES:
+:ID:       57c4a0d2-bafa-40ce-ae6a-68074db1a618
+:END:
+
+#+begin_src bash ~/.bashrc
+[[$- != *i* ]] && return
+
+# recommended by gpg manual
+GPG_TTY=$(tty)
+export GPG_TTY
+#+end_src
+
+* xinitrc
+:PROPERTIES:
+:ID:       e3ae25ce-76bd-4d31-b8d4-c7b430460860
+:END:
+
+#+begin_src sh :tangle ~/.xinitrc
+#!/bin/sh
+
+if [ -d /etc/X11/xinit/xinitrc.d ] ; then
+	for f in /etc/X11/xinit/xinitrc.d/?*.sh ; do
+		[ -x "$f" ] && . "$f"
+	done
+	unset f
+fi
+
+[ -f ~/.xprofile ] && . ~/.xprofile
+
+if [ $# -eq 0 ]; then
+    setxkbmap -option caps:escape
+	emacs --daemon
+	exec emacsclient -c
+fi
+
+exec "$@"
+#+end_src
+
+* git
+:PROPERTIES:
+:ID:       520ce874-e7af-4ae7-8ac8-b2a91490aa99
+:END:
+
+#+begin_src conf :tangle no
+[user]
+	email = <<email-main-address()>>
+	name = <<my-name()>>
+#+end_src
+
+* dunst
+:PROPERTIES:
+:ID:       65be56f1-48e8-40c1-9542-0732977ebe12
+:END:
+
+* gpg-conf
+:PROPERTIES:
+:ID:       25bb9597-94d0-44af-8da0-86b9505d1491
+:END:
+
+I took this from ambrevar.
+
+#+begin_src conf :tangle ~/.gnupg/gpg-agent.conf
+## 1-day timeout
+default-cache-ttl 86400
+max-cache-ttl 86400
+
+enable-ssh-support
+default-cache-ttl-ssh 86400
+max-cache-ttl-ssh 86400
+
+# pinentry-program /usr/bin/pinentry-emacs
+allow-loopback-pinentry
+# allow-emacs-pinentry
+#+end_src
+
+* email
+:PROPERTIES:
+:ID:       121f6bc5-23ed-465f-90c5-9d11db715ff6
+:END:
+
+** msmtprc
+:PROPERTIES:
+:ID:       1747ff3c-0fa4-4cb9-9b80-324bc0877dfb
+:END:
+
+*** helpers
+:PROPERTIES:
+:ID:       04332f62-7554-477d-a6a3-d6f5a93317aa
+:END:
+
+**** convert
+:PROPERTIES:
+:ID:       67ecf9f7-8c43-4538-b581-d3a363ff8eec
+:END:
+
+#+begin_src emacs-lisp :tangle no
+(defun conf:convert-to-string (&rest plist)
+  "Return a string."
+  (s-join "\n"
+          (mapcar (-lambda ((keyword value))
+                    (format (concat "%s " (if (symbolp value) "%s" "%S"))
+                            (void:keyword-name keyword)
+                            value))
+                  (-partition 2 plist))))
+#+end_src
+
+**** other
+:PROPERTIES:
+:ID:       7cf3bbbd-b121-45f1-ac75-4edc0a4e4cd0
+:END:
+
+#+begin_src emacs-lisp :tangle no
+(defun pass:field (account field)
+  (intern (password-store-get-field (concat "email/" account) field)))
+#+end_src
+
+*** msmtprc
+:PROPERTIES:
+:ID:       7f888dc8-1c41-478c-accd-6a038a96ec3c
+:END:
+
+#+name: msmtprc-account-info
+#+begin_src emacs-lisp :var mail="main" :tangle no
+(conf:convert-to-string
+ :account (pass:field mail "account")
+ :host (pass:field mail "out-host")
+ :from (pass:field mail "email")
+ :port (pass:field mail "out-port")
+ :user (pass:field mail "email")
+ :passwordeval (format "pass email/%s" (pass:field mail "account")))
+#+end_src
+
+*** main
+:PROPERTIES:
+:ID:       537fb697-f84c-46d7-80ac-0745ec3bddb1
+:END:
+
+#+begin_src conf :noweb tangle :tangle ~/.msmtprc
+defaults
+auth           on
+tls            on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile        ~/.msmtp.log
+
+<<msmtprc-account-info(mail="main")>>
+
+<<msmtprc-account-info(mail="school")>>
+
+<<msmtprc-account-info(mail="gmail")>>
+
+account-default main
+#+end_src
+
+** mbsync
+:PROPERTIES:
+:ID:       3d5d4928-f61b-4492-afd9-2f90c9d737c4
+:END:
+
+=mbsync= is what I use to sync my email from a server.
+
+*** mbsync account setup
+:PROPERTIES:
+:ID:       1e503ace-8af6-46a1-9ec0-62cef1372adf
+:END:
+
+#+begin_src emacs-lisp :tangle no :var email="main"
+(let ((ho))
+  (conf:convert-to-string
+   :IMAPAccount account
+   :Host host
+   :User email
+   :PassCmd (format "pass email/%s" email)
+   :SSLType 'IMAPS
+   :CertificateFile '/etc/ssl/certs/ca-certificates.crt
+   :Port in-port
+   :IMAPStore (void:symbol-intern )
+   :Account account
+   :MaildirStore (format "")
+   :Subfolders 'Verbatim
+   :Path (intern (format "~/mail/%s" email))
+   :Inbox (intern (format "~/mail/%s/inbox" email ))))
+#+end_src
+
+*** all
+:PROPERTIES:
+:ID:       3f5d8401-2090-45d8-928d-c8aa7eee32a7
+:END:
+
+#+begin_src conf :tangle ~/.mbsyncrc
+<<mbsync-account-setup("main")>>
+
+<<mbsync-account-setup("gmail")>>
+
+<<mbsync-account-setup("school")>>
+#+end_src
