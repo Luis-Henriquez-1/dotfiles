@@ -3,6 +3,8 @@
 :ID:       bf96dec4-c43a-45c9-b5e5-65a68a892355
 :END:
 
+This file generates my other dotfiles.
+
 * noweb info
 :PROPERTIES:
 :ID:       676814ba-1935-482a-ad6a-7f251c598d2e
@@ -23,7 +25,7 @@
 :ID:       57c4a0d2-bafa-40ce-ae6a-68074db1a618
 :END:
 
-#+begin_src bash ~/.bashrc
+#+begin_src bash :tangle ~/.bashrc
 [[$- != *i* ]] && return
 
 # recommended by gpg manual
