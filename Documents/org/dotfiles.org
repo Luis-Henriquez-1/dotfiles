@@ -192,7 +192,7 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsync-account-setup (mail)
+(defun dotfiles:mbsyncrc-imap-account-setup (mail)
   "Return the account part of the."
   (let (($account (password-store-get-field mail "account"))
         ($in-host (password-store-get-field mail "out-host"))
@@ -214,7 +214,7 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsync-setup-remote (mail)
+(defun dotfiles:mbsyncrc-imap-store-setup (mail)
   "Return the remote part of mbsync."
   (let* (($account (password-store-get-field mail "account"))
          ($email (password-store-get-field mail "email")))
@@ -233,7 +233,7 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsync-sync-all (mail)
+(defun dotfiles:mbsyncrc-sync-all (mail)
   "Return the sync all string of the mbsync."
   (let* (($account (password-store-get-field mail "account")))
     (conf:convert-to-string
@@ -252,10 +252,13 @@ account-default main
 
 #+begin_src emacs-lisp
 (defun dotfiles:mbsyncrc-config (pass-dir)
-  ""
-  (let ((gmail-p (string-match-p)))
-    (list (dotfiles:msmtp-account-string)
-          (dotfiles:msmtp-account-string))))
+  "Return the string"
+  (let ((gmail-p (s-contains-p "gmail.com" pass-dir)))
+    (list (dotfiles:mbsyncrc-imap-account-setup pass-dir)
+          (dotfiles:mbsyncrc-imap-store-setup pass-dir)
+          (if (not gmail-p)
+              (dotfiles:mbsyncrc-sync-all pass-dir)
+            (dotfiles:mbsyncrc-)))))
 #+end_src
 
 *** producting code
