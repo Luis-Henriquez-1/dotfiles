@@ -245,6 +245,19 @@ account-default main
      :SyncState '*)))
 #+end_src
 
+*** mbsync
+:PROPERTIES:
+:ID:       20962e17-ddae-465f-9123-ae8918539c6a
+:END:
+
+#+begin_src emacs-lisp
+(defun dotfiles:mbsyncrc-config (pass-dir)
+  ""
+  (let ((gmail-p (string-match-p)))
+    (list (dotfiles:msmtp-account-string)
+          (dotfiles:msmtp-account-string))))
+#+end_src
+
 *** producting code
 :PROPERTIES:
 :ID:       0cc68149-cf83-429e-a54b-1416565cd6ed
@@ -253,8 +266,8 @@ account-default main
 #+begin_src emacs-lisp
 (->> (directory-files (expand-file-name "~/.password-store/email"))
      (cddr)
-     (--map (string-join (list (dotfiles:)) "\n"))
-     (apply))
+     (--map #'dotfiles:msmtp-account-string)
+     (s-join "\n"))
 #+end_src
 
 *** all
