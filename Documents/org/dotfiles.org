@@ -245,6 +245,16 @@ account-default main
      :SyncState '*)))
 #+end_src
 
+*** sync gmail
+:PROPERTIES:
+:ID:       39b9d98f-223e-46f4-a136-a79292d96617
+:END:
+
+#+begin_src emacs-lisp
+(defun dotfiles:sync-gmail ()
+  )
+#+end_src
+
 *** mbsync
 :PROPERTIES:
 :ID:       20962e17-ddae-465f-9123-ae8918539c6a
