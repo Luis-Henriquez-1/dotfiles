@@ -134,7 +134,8 @@ possible. And also to generate repetative code.
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:msmtp-account-string (mail)
+(defun dotfiles:msmtprc-account-string (mail)
+  "Return account string for msmtprc."
   (let* (($account (password-store-get-field mail "account"))
          ($out-host (password-store-get-field mail "out-host"))
          ($out-port (password-store-get-field mail "out-port"))
@@ -157,7 +158,7 @@ possible. And also to generate repetative code.
 #+begin_src emacs-lisp
 (->> (directory-files (expand-file-name "~/.password-store/email"))
      (cddr)
-     (-map #'dotfiles:msmtp-account-string)
+     (-map #'dotfiles:msmtprc-account-string)
      (s-join "\n"))
 #+end_src
 
