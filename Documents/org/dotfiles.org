@@ -135,18 +135,20 @@ possible. And also to generate repetative code.
 
 #+name: msmtprc-account-info
 #+begin_src emacs-lisp :var mail="main" :tangle no
-(let* ((mail (concat "email/" mail))
-       ($account (password-store-get-field mail "account"))
-       ($out-host (password-store-get-field mail "out-host"))
-       ($out-port (password-store-get-field mail "out-port"))
-       ($email (password-store-get-field mail "email")))
-  (conf:convert-to-string
-   :account $account
-   :host $out-host
-   :from $email
-   :port $out-port
-   :user $email
-   :passwordeval (conf:string "pass email/%s" $account)))
+(defun dotfiles:msmtp-account-string (mail)
+  (let* (($account (password-store-get-field mail "account"))
+         ($out-host (password-store-get-field mail "out-host"))
+         ($out-port (password-store-get-field mail "out-port"))
+         ($email (password-store-get-field mail "email")))
+    (conf:convert-to-string
+     :account $account
+     :host $out-host
+     :from $email
+     :port $out-port
+     :user $email
+     :passwordeval (conf:string "pass email/%s" $account))))
+
+(s-join "\n" (-map #'dotfiles:msmtp-account-string (cddr (directory-files "."))))
 #+end_src
 
 *** main
@@ -161,11 +163,7 @@ tls on
 tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile ~/.msmtp.log
 
-<<msmtprc-account-info(mail="main")>>
-
-<<msmtprc-account-info(mail="school")>>
-
-<<msmtprc-account-info(mail="gmail")>>
+<<msmtprc-account-info>>
 
 account-default main
 #+end_src
@@ -184,19 +182,20 @@ account-default main
 
 #+name:mbsync-imap-account-setup
 #+begin_src emacs-lisp :tangle no :var email="main"
-(let* ((mail (concat "email/" mail))
-       ($account (password-store-get-field mail "account"))
-       ($in-host (password-store-get-field mail "out-host"))
-       ($in-port (password-store-get-field mail "out-port"))
-       ($email (password-store-get-field mail "email")))
-  (conf:convert-to-string
-   :IMAPAccount $account
-   :Host $in-host
-   :User $email
-   :PassCmd (conf:string "pass email/%s" $email)
-   :SSLType 'IMAPS
-   :CertificateFile '/etc/ssl/certs/ca-certificates.crt
-   :Port $in-port))
+(defun dotfiles:mbsync ()
+  (let* ((mail (concat "email/" mail))
+         ($account (password-store-get-field mail "account"))
+         ($in-host (password-store-get-field mail "out-host"))
+         ($in-port (password-store-get-field mail "out-port"))
+         ($email (password-store-get-field mail "email")))
+    (conf:convert-to-string
+     :IMAPAccount $account
+     :Host $in-host
+     :User $email
+     :PassCmd (conf:string "pass email/%s" $email)
+     :SSLType 'IMAPS
+     :CertificateFile '/etc/ssl/certs/ca-certificates.crt
+     :Port $in-port)))
 #+end_src
 
 *** account store
@@ -225,15 +224,25 @@ account-default main
 
 #+name:mbsync-sync-all
 #+begin_src emacs-lisp :var mail="mail" :tangle no
-(let* ((mail (concat "email/" mail))
-       ($account (password-store-get-field mail "account")))
-  (conf:convert-to-string
-   :Channel $account
-   :Master (format $account ":-remote:")
-   :Slave (format $account ":-local:")
-   :Patterns '*
-   :Create\ Both
-   :SyncState '*))
+(defun hello ()
+  (let* ((mail (concat "email/" mail))
+         ($account (password-store-get-field mail "account")))
+    (conf:convert-to-string
+     :Channel $account
+     :Master (format $account ":-remote:")
+     :Slave (format $account ":-local:")
+     :Patterns '*
+     :Create\ Both
+     :SyncState '*)))
+#+end_src
+
+*** producting code
+:PROPERTIES:
+:ID:       0cc68149-cf83-429e-a54b-1416565cd6ed
+:END:
+
+#+begin_src emacs-lisp
+(mapcar )
 #+end_src
 
 *** all
