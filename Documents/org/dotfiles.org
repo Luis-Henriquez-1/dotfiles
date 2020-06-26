@@ -251,7 +251,17 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp
-(defun dotfiles:sync-gmail ()
+(defun dotfiles:mbsyncrc-sync-gmail ()
+  (let ((gmail (list "All Mail" "Drafts" "Sent Mail")))
+    (conf:convert-to-string
+     :Channel (format "%s-all")
+     :Master (format ":%s-remote:\"[Gmail]/%s\"")
+     :Slave (format)
+     :Create 'Slave
+     :SyncState '*)
+    ;; group
+    (conf:convert-to-string
+     ))
   )
 #+end_src
 
