@@ -192,12 +192,11 @@ account-default main
 
 #+name:mbsync-imap-account-setup
 #+begin_src emacs-lisp :tangle no :var email="main"
-(defun dotfiles:mbsync ()
-  (let* ((mail (concat "email/" mail))
-         ($account (password-store-get-field mail "account"))
-         ($in-host (password-store-get-field mail "out-host"))
-         ($in-port (password-store-get-field mail "out-port"))
-         ($email (password-store-get-field mail "email")))
+(defun dotfiles:mbsync-account-setup (mail)
+  (let (($account (password-store-get-field mail "account"))
+        ($in-host (password-store-get-field mail "out-host"))
+        ($in-port (password-store-get-field mail "out-port"))
+        ($email (password-store-get-field mail "email")))
     (conf:convert-to-string
      :IMAPAccount $account
      :Host $in-host
@@ -215,16 +214,16 @@ account-default main
 
 #+name:mbsync-imap-store-setup
 #+begin_src emacs-lisp :tangle no :noweb tangle
-(let* ((mail (concat "email/" mail))
-       ($account (password-store-get-field mail "account"))
-       ($email (password-store-get-field mail "email")))
-  (conf:convert-to-string
-   :IMAPStore (format "%s-remote" $account)
-   :Account $account
-   :MaildirStore (format "%s-local" $account)
-   :Subfolders 'Verbatim
-   :Path (format "~/mail/%s" $email)
-   :Inbox (format "~/mail/%s/inbox" $email)))
+(defun dotfiles:mbsync-setup-remote (mail)
+  (let* (($account (password-store-get-field mail "account"))
+         ($email (password-store-get-field mail "email")))
+    (conf:convert-to-string
+     :IMAPStore (format "%s-remote" $account)
+     :Account $account
+     :MaildirStore (format "%s-local" $account)
+     :Subfolders 'Verbatim
+     :Path (format "~/mail/%s" $email)
+     :Inbox (format "~/mail/%s/inbox" $email))))
 #+end_src
 
 *** sync all
@@ -234,7 +233,7 @@ account-default main
 
 #+name:mbsync-sync-all
 #+begin_src emacs-lisp :var mail="mail" :tangle no
-(defun hello ()
+(defun mbsync:sync-all ()
   (let* ((mail (concat "email/" mail))
          ($account (password-store-get-field mail "account")))
     (conf:convert-to-string
@@ -261,19 +260,5 @@ account-default main
 :END:
 
 #+begin_src conf :noweb tangle :tangle ~/.mbsyncrc
-<<mbsync-imap-account-setup(mail="main")>>
-
-<<mbsync-imap-store-setup(mail="main")>>
-
-<<mbsync-sync-all(mail="main")>>
-
-<<mbsync-imap-account-setup(mail="gmail")>>
-
-<<mbsync-imap-store-setup(mail="gmail")>>
-
-<<mbsync-imap-account-setup(mail="school")>>
-
-<<mbsync-imap-store-setup(mail="school")>>
-
-<<mbsync-sync-all(mail="school")>>
+<<mbsync-setup>>
 #+end_src
