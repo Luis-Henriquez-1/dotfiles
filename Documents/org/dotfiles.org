@@ -190,9 +190,9 @@ account-default main
 :ID:       1e503ace-8af6-46a1-9ec0-62cef1372adf
 :END:
 
-#+name:mbsync-imap-account-setup
-#+begin_src emacs-lisp :tangle no :var email="main"
+#+begin_src emacs-lisp :tangle no
 (defun dotfiles:mbsync-account-setup (mail)
+  "Return the account part of the."
   (let (($account (password-store-get-field mail "account"))
         ($in-host (password-store-get-field mail "out-host"))
         ($in-port (password-store-get-field mail "out-port"))
@@ -212,9 +212,9 @@ account-default main
 :ID:       946e1645-c0e9-4f31-97bc-a54a4936d7b3
 :END:
 
-#+name:mbsync-imap-store-setup
-#+begin_src emacs-lisp :tangle no :noweb tangle
+#+begin_src emacs-lisp :tangle no
 (defun dotfiles:mbsync-setup-remote (mail)
+  "Return the remote part of mbsync."
   (let* (($account (password-store-get-field mail "account"))
          ($email (password-store-get-field mail "email")))
     (conf:convert-to-string
@@ -231,11 +231,10 @@ account-default main
 :ID:       55d49037-2d10-4890-a0ff-e1ff2b512373
 :END:
 
-#+name:mbsync-sync-all
-#+begin_src emacs-lisp :var mail="mail" :tangle no
-(defun mbsync:sync-all ()
-  (let* ((mail (concat "email/" mail))
-         ($account (password-store-get-field mail "account")))
+#+begin_src emacs-lisp :tangle no
+(defun dotfiles:mbsync-sync-all (mail)
+  "Return the sync all string of the mbsync."
+  (let* (($account (password-store-get-field mail "account")))
     (conf:convert-to-string
      :Channel $account
      :Master (format $account ":-remote:")
@@ -251,7 +250,10 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp
-(mapcar )
+(->> (directory-files (expand-file-name "~/.password-store/email"))
+     (cddr)
+     (--map (string-join (list (dotfiles:)) "\n"))
+     (apply))
 #+end_src
 
 *** all
