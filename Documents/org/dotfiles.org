@@ -133,8 +133,7 @@ possible. And also to generate repetative code.
 :ID:       7f888dc8-1c41-478c-accd-6a038a96ec3c
 :END:
 
-#+name: msmtprc-account-info
-#+begin_src emacs-lisp :var mail="main" :tangle no
+#+begin_src emacs-lisp :tangle no
 (defun dotfiles:msmtp-account-string (mail)
   (let* (($account (password-store-get-field mail "account"))
          ($out-host (password-store-get-field mail "out-host"))
@@ -147,8 +146,19 @@ possible. And also to generate repetative code.
      :port $out-port
      :user $email
      :passwordeval (conf:string "pass email/%s" $account))))
+#+end_src
 
-(s-join "\n" (-map #'dotfiles:msmtp-account-string (cddr (directory-files "."))))
+*** account-info
+:PROPERTIES:
+:ID:       82d845cb-685b-4f64-a194-99e840561c98
+:END:
+
+#+name: msmtprc-account-info
+#+begin_src emacs-lisp
+(->> (directory-files (expand-file-name "~/.password-store/email"))
+     (cddr)
+     (-map #'dotfiles:msmtp-account-string)
+     (s-join "\n"))
 #+end_src
 
 *** main
@@ -163,7 +173,7 @@ tls on
 tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile ~/.msmtp.log
 
-<<msmtprc-account-info>>
+<<msmtprc-account-info()>>
 
 account-default main
 #+end_src
