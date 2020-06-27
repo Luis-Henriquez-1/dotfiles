@@ -251,16 +251,20 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp
+(defun dotfiles: (name mailbox)
+  (conf:convert-to-string
+   :Channel (format "%s-all" name)
+   :Master (format ":%s-remote:\"[Gmail]/%s\"" name mailbox)
+   :Slave (format ":%s-local:" ())
+   :Create 'Slave
+   :SyncState '*))
+
 (defun dotfiles:mbsyncrc-sync-gmail ()
-  (let ((gmail (list "All Mail" "Drafts" "Sent Mail")))
-    (conf:convert-to-string
-     :Channel (format "%s-all")
-     :Master (format ":%s-remote:\"[Gmail]/%s\"")
-     :Slave (format)
-     :Create 'Slave
-     :SyncState '*)
+  (let ((gmail-mailboxes (list "All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash")))
+    (string-join (mapcar #' gmail-mailboxes) "\n")
     ;; group
     (conf:convert-to-string
+     :group
      ))
   )
 #+end_src
