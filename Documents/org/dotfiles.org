@@ -252,7 +252,7 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsyncrc-sync-gmail (name mailbox)
+(defun dotfiles:mbsyncrc-sync-gmail-section (name mailbox)
   (dotfiles:convert-to-string
    :Channel (format "gmail-%s" name)
    :Master (format ":gmail-remote:\"[Gmail]/%s\"" mailbox)
@@ -261,12 +261,12 @@ account-default main
    :SyncState '*))
 
 (defun dotfiles:mbsyncrc-sync-gmail (entry)
-  "Return"
   (let* ((mailboxes '("All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash"))
-         (abbrevs (s-downcase (-first-item (s-split-words it))) mailboxes))
-    (append (mapcar #'dotfiles:mbsyncrc-sync-gmail (-zip #'list mailboxes abbrevs))
-            (list "Group gmail\n")
-            (mapcar (format ":Channel gmail-%s\n" it) abbrevs))))
+         (names (s-downcase (-first-item (s-split-words it))) mailboxes))
+    (alet (append (--map #'dotfiles:mbsyncrc-sync-gmail-section (-zip #'list mailboxes names))
+                  (list "\nGroup gmail\n")
+                  (--map (format ":Channel gmail-%s\n" it) names))
+      (s-split "\n" it))))
 #+end_src
 
 *** account
