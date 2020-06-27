@@ -4023,7 +4023,7 @@ ways to read and send emails in Emacs.
 #+begin_src emacs-lisp
 (use-feature! message
   :setq
-  (message-signature . "Luis Henriquez")
+  (message-signature . user-full-name)
   (message-sendmail-envelope-from . 'header)
   (message-send-mail-function . #'smtpmail-send-it)
   (message-kill-buffer-on-exit . t))
