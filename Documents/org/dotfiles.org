@@ -270,7 +270,7 @@ account-default main
 :ID:       20962e17-ddae-465f-9123-ae8918539c6a
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defun dotfiles:mbsyncrc-account-string (entry)
   "Return the string mbsync configuration corresponding to pass dir."
   (alet (list (dotfiles:mbsyncrc-imap-account-setup entry)
@@ -287,7 +287,7 @@ account-default main
 :END:
 
 #+name:mbsync-setup
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (alet (-map #'dotfiles:mbsyncrc-account-string
             (--filter (s-matches-p (rx bos "email/") it) (password-store-list)))
   (s-join "\n\n" it))
