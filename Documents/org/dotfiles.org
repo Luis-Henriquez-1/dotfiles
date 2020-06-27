@@ -249,20 +249,20 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsyncrc-gmail-name (entry)
-  (conf:convert-to-string
-   :Channel (format "%s-all" name)
-   :Master (format ":%s-remote:\"[Gmail]/%s\"" name mailbox)
-   :Slave (format ":%s-local:" ())
-   :Create 'Slave
-   :SyncState '*))
-
 (defun dotfiles:mbsyncrc-sync-gmail ()
   "Return"
-  (let ((gmail-mailboxes (list "All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash")))
-    (s-join "\n" (mapcar #' gmail-mailboxes) "\n")
-    (conf:convert-to-string :group))
-  )
+  (let* ((mailboxes '("All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash"))
+         (abbrevs (s-downcase (-first-item (s-split-words it))) mailboxes))
+    (mapcar (lambda (name mailbox)
+              (conf:convert-to-string
+               :Channel (format "gmail-%s" name)
+               :Master (format ":gmail-remote:\"[Gmail]/%s\"" name mailbox)
+               :Slave (format ":gmail-local:" ())
+               :Create 'Slave
+               :SyncState '*))
+            (-zip #'list mailboxes abbrevs))
+    ((format "Channel gmail-%s\n"))
+    ))
 #+end_src
 
 *** mbsync
@@ -275,7 +275,9 @@ account-default main
   "Return the string mbsync configuration corresponding to pass dir."
   (alet (list (dotfiles:mbsyncrc-imap-account-setup entry)
               (dotfiles:mbsyncrc-imap-store-setup entry)
-              (dotfiles:mbsyncrc-sync-all entry))
+              (if (s-contains-p "@gmail.com")
+                  (dotfiles:mbsyncrc-sync-gmail)
+                (dotfiles:mbsyncrc-sync-all entry)))
     (s-join "\n\n" it)))
 #+end_src
 
