@@ -5,11 +5,6 @@
 
 This file generates my other dotfiles.
 
-* noweb info
-:PROPERTIES:
-:ID:       676814ba-1935-482a-ad6a-7f251c598d2e
-:END:
-
 * bashrc
 :PROPERTIES:
 :ID:       57c4a0d2-bafa-40ce-ae6a-68074db1a618
@@ -58,11 +53,6 @@ exec "$@"
 	email = <<email-main-address()>>
 	name = <<my-name()>>
 #+end_src
-
-* dunst
-:PROPERTIES:
-:ID:       65be56f1-48e8-40c1-9542-0732977ebe12
-:END:
 
 * gpg-conf
 :PROPERTIES:
@@ -256,14 +246,14 @@ account-default main
   (dotfiles:convert-to-string
    :Channel (format "gmail-%s" name)
    :Master (format ":gmail-remote:\"[Gmail]/%s\"" mailbox)
-   :Slave (format ":gmail-local:" ())
+   :Slave (format ":gmail-local:%s" name)
    :Create 'Slave
    :SyncState '*))
 
 (defun dotfiles:mbsyncrc-sync-gmail (entry)
   (let* ((mailboxes '("All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash"))
          (names (s-downcase (-first-item (s-split-words it))) mailboxes))
-    (alet (append (--map #'dotfiles:mbsyncrc-sync-gmail-section (-zip #'list mailboxes names))
+    (alet (append (-map (dotfiles:mbsyncrc-sync-gmail-section) (-zip #'list mailboxes names))
                   (list "\nGroup gmail\n")
                   (--map (format ":Channel gmail-%s\n" it) names))
       (s-split "\n" it))))
@@ -276,7 +266,6 @@ account-default main
 
 #+begin_src emacs-lisp :tangle no
 (defun dotfiles:mbsyncrc-account-string (entry)
-  "Return the string mbsync configuration corresponding to pass dir."
   (alet (list (dotfiles:mbsyncrc-imap-account-setup entry)
               (dotfiles:mbsyncrc-imap-store-setup entry)
               (if (s-contains-p "@gmail.com")
