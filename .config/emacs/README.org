@@ -8317,7 +8317,7 @@ beginning of a heading are ugly, org block end and begin lines are ugly,
 property drawers are ugly. For a nice-looking, minimal, and non-distracting
 appearance all this needs to be improved.
 
-**** visibility                                                       :disabled:
+**** visibility
 :PROPERTIES:
 :ID: 71462363-ddd0-4734-a074-7b00fde06e82
 :END:
