@@ -118,7 +118,7 @@ possible. And also to generate repetative code.
 :ID:       f4933510-0f19-4ce0-82cf-d215b670e188
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defun conf:string (input &rest args)
   (format "%S" (apply #'format input args)))
 #+end_src
