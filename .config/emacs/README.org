@@ -2946,7 +2946,7 @@ about Helm is that it's too bloated and slow.
   (helm-candidate-number-limit . 50)
   (helm-display-header-line . nil)
   (helm-mode-line-string . nil)
-  :defer-config
+  :config
   (helm-mode 1))
 
 (use-package! helm-files
@@ -3137,7 +3137,6 @@ does have isn't good enough.
 
 #+begin_src emacs-lisp
 (use-package! ace-jump-helm-line
-  :commands ace-jump-helm-line
   :bind (:helm-map ("C-'" . ace-jump-helm-line))
   :setq
   (ace-jump-helm-line-idle-delay     . 0)
@@ -3327,7 +3326,7 @@ more sense to me than this "dispatching" and "immediate" "done" stuff.
   (if (ivy--marked-p) (ivy-unmark) (ivy-mark)))
 #+end_src
 
-**** ivy rich
+**** ivy rich                                                         :disabled:
 :PROPERTIES:
 :ID: 83df9e3a-d384-4b59-b3f2-7d57ee46b25e
 :END:
