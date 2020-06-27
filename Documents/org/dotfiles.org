@@ -42,8 +42,7 @@ fi
 
 if [ $# -eq 0 ]; then
     setxkbmap -option caps:escape
-	emacs --daemon
-	exec emacsclient -c
+    exec emacs
 fi
 
 exec "$@"
@@ -134,19 +133,19 @@ possible. And also to generate repetative code.
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:msmtprc-account-string (mail)
+(defun dotfiles:msmtprc-account-string (entry)
   "Return account string for msmtprc."
-  (let* (($account (password-store-get-field mail "account"))
-         ($out-host (password-store-get-field mail "out-host"))
-         ($out-port (password-store-get-field mail "out-port"))
-         ($email (password-store-get-field mail "email")))
+  (let* (($account (password-store-get-field entry "account"))
+         ($out-host (password-store-get-field entry "out-host"))
+         ($out-port (password-store-get-field entry "out-port"))
+         ($email (password-store-get-field entry "email")))
     (conf:convert-to-string
      :account $account
      :host $out-host
      :from $email
      :port $out-port
      :user $email
-     :passwordeval (conf:string "pass email/%s" $account))))
+     :passwordeval (conf:string "pass %s" entry))))
 #+end_src
 
 *** account-info
@@ -155,11 +154,10 @@ possible. And also to generate repetative code.
 :END:
 
 #+name: msmtprc-account-info
-#+begin_src emacs-lisp
-(->> (directory-files (expand-file-name "~/.password-store/email"))
-     (cddr)
-     (-map #'dotfiles:msmtprc-account-string)
-     (s-join "\n"))
+#+begin_src emacs-lisp :tangle no
+(alet (-map #'dotfiles:msmtprc-account-string
+            (--filter (s-matches-p (rx bos "email/") it) (password-store-list)))
+  (s-join "\n\n" it))
 #+end_src
 
 *** main
@@ -214,17 +212,17 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsyncrc-imap-store-setup (mail)
+(defun dotfiles:mbsyncrc-imap-store-setup (entry)
   "Return the remote part of mbsync."
-  (let* (($account (password-store-get-field mail "account"))
-         ($email (password-store-get-field mail "email")))
+  (let* (($account (password-store-get-field entry "account"))
+         ($email (password-store-get-field entry "email")))
     (conf:convert-to-string
      :IMAPStore (format "%s-remote" $account)
      :Account $account
      :MaildirStore (format "%s-local" $account)
      :Subfolders 'Verbatim
-     :Path (format "~/mail/%s" $email)
-     :Inbox (format "~/mail/%s/inbox" $email))))
+     :Path (format "~/.mail/%s" $email)
+     :Inbox (format "~/.mail/%s/inbox" $email))))
 #+end_src
 
 *** sync all
@@ -233,13 +231,13 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsyncrc-sync-all (mail)
+(defun dotfiles:mbsyncrc-sync-all (entry)
   "Return the sync all string of the mbsync."
-  (let* (($account (password-store-get-field mail "account")))
+  (let* (($account (password-store-get-field entry "account")))
     (conf:convert-to-string
      :Channel $account
-     :Master (format $account ":-remote:")
-     :Slave (format $account ":-local:")
+     :Master (format ":%s-remote:" $account)
+     :Slave (format ":%s-local:" $account)
      :Patterns '*
      :Create\ Both
      :SyncState '*)))
@@ -250,8 +248,8 @@ account-default main
 :ID:       39b9d98f-223e-46f4-a136-a79292d96617
 :END:
 
-#+begin_src emacs-lisp
-(defun dotfiles: (name mailbox)
+#+begin_src emacs-lisp :tangle no
+(defun dotfiles:mbsyncrc-gmail-name (entry)
   (conf:convert-to-string
    :Channel (format "%s-all" name)
    :Master (format ":%s-remote:\"[Gmail]/%s\"" name mailbox)
@@ -260,12 +258,10 @@ account-default main
    :SyncState '*))
 
 (defun dotfiles:mbsyncrc-sync-gmail ()
+  "Return"
   (let ((gmail-mailboxes (list "All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash")))
-    (string-join (mapcar #' gmail-mailboxes) "\n")
-    ;; group
-    (conf:convert-to-string
-     :group
-     ))
+    (s-join "\n" (mapcar #' gmail-mailboxes) "\n")
+    (conf:convert-to-string :group))
   )
 #+end_src
 
@@ -275,14 +271,12 @@ account-default main
 :END:
 
 #+begin_src emacs-lisp
-(defun dotfiles:mbsyncrc-config (pass-dir)
-  "Return the string"
-  (let ((gmail-p (s-contains-p "gmail.com" pass-dir)))
-    (list (dotfiles:mbsyncrc-imap-account-setup pass-dir)
-          (dotfiles:mbsyncrc-imap-store-setup pass-dir)
-          (if (not gmail-p)
-              (dotfiles:mbsyncrc-sync-all pass-dir)
-            (dotfiles:mbsyncrc-)))))
+(defun dotfiles:mbsyncrc-account-string (entry)
+  "Return the string mbsync configuration corresponding to pass dir."
+  (alet (list (dotfiles:mbsyncrc-imap-account-setup entry)
+              (dotfiles:mbsyncrc-imap-store-setup entry)
+              (dotfiles:mbsyncrc-sync-all entry))
+    (s-join "\n\n" it)))
 #+end_src
 
 *** producting code
@@ -290,11 +284,11 @@ account-default main
 :ID:       0cc68149-cf83-429e-a54b-1416565cd6ed
 :END:
 
+#+name:mbsync-setup
 #+begin_src emacs-lisp
-(->> (directory-files (expand-file-name "~/.password-store/email"))
-     (cddr)
-     (--map #'dotfiles:msmtp-account-string)
-     (s-join "\n"))
+(alet (-map #'dotfiles:mbsyncrc-account-string
+            (--filter (s-matches-p (rx bos "email/") it) (password-store-list)))
+  (s-join "\n\n" it))
 #+end_src
 
 *** all
@@ -303,5 +297,5 @@ account-default main
 :END:
 
 #+begin_src conf :noweb tangle :tangle ~/.mbsyncrc
-<<mbsync-setup>>
+<<mbsync-setup()>>
 #+end_src
