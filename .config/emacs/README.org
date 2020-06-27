@@ -326,6 +326,22 @@ Void is compiled.
   (make-directory dir t))
 #+end_src
 
+**** system directories
+:PROPERTIES:
+:ID:       f3bdd353-b0ff-48fd-a2f2-295ccfa139ab
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:DOWNLOAD-DIR (expand-file-name "~/Downloads/")
+  "Directory where downloads should go.")
+
+(defconst VOID:VIDEO-DIR (expand-file-name "~/Videos/")
+  "Directory where videos should go.")
+
+(defconst VOID:MUSIC-DIR (expand-file-name "~/music/")
+  "Directory where music should go.")
+#+end_src
+
 *** defined in c source code
 :PROPERTIES:
 :ID:       873e6820-52f0-4b70-9992-ccb1610eb266
@@ -4622,9 +4638,9 @@ Youtube contains a *huge* library of videos.
 #+begin_src emacs-lisp
 (use-package! ytdl
   :setq
-  (ytdl-downloads-folder . (expand-file-name "~/Downloads"))
-  (ytdl-music-folder . (expand-file-name "~/Music"))
-  (ytdl-video-folder . (expand-file-name "~/Videos"))
+  (ytdl-downloads-folder . VOID:DOWNLOAD-DIR)
+  (ytdl-music-folder . VOID:MUSIC-DIR)
+  (ytdl-video-folder . (expand-file-name VOID:VIDEO-DIR))
   (ytdl-always-query-default-filename . nil)
   (ytdl-always-ask-delete-confirmation . t)
   (ytdl-always-query-default-filename . nil)  ;; :defer-config
