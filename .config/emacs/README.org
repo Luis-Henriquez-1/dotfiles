@@ -2945,6 +2945,7 @@ This is the user-facing function to define yasnippets.
 
 #+begin_src emacs-lisp
 (defun defsnippet:compute-body (body placeholders)
+  "Return the result of PLACEHOLDERS applied to BODY."
   (alet (seq-map (-lambda ((number name form))
                    (if (eq '_  name)
                        (format "${%d:$$%S}" number form)
@@ -2959,10 +2960,15 @@ This is the user-facing function to define yasnippets.
 :END:
 
 #+begin_src emacs-lisp
-(defun defsnippet:list-symbols ()
+(defun defsnippet:list-symbols (&optional pred)
   "List symbols."
+  (setq pred (or pred #'identity))
   (let (acc)
-    (mapatoms (lambda (it) (if (symbolp it) (push it acc))))
+    (mapatoms (lambda (it)
+                (when (and (symbolp it)
+                           (not (eq 'nil it))
+                           (funcall pred it))
+                  (push it acc))))
     (nreverse acc)))
 #+end_src
 
@@ -3002,11 +3008,12 @@ For extremely good documentation.
 :END:
 
 #+begin_src emacs-lisp
-(defsnippet:new-snippet help-variable
+(defsnippet:new-snippet
+  :name "help-variable"
   :mode 'org-mode
   :key "hvar"
   :body "[[helpvar:$1][%s]%s"
-  :placeholders '((1 variable (->> (void-list-symbols #'helpful--variable-p)
+  :placeholders '((1 variable (->> (defsnippet:list-symbols #'helpful--variable-p)
                                (yas-choose-value)
                                (yas-auto-next)))
                   (0 _ (insert "]"))))
@@ -3020,9 +3027,9 @@ For extremely good documentation.
 #+begin_src emacs-lisp
 (defsnippet:new-snippet
   :name "id"
-  :mode org-mode
+  :mode 'org-mode
   :key "oid"
-  :body "[[id:%s][#%s]]$0"
+  :body "[[id:%s][#%s]$0"
   :placeholders '((1 _ (thread-last (hash-table-keys org-id-locations)
                         (yas-choose-value)
                         (yas-auto-next)))
@@ -3094,6 +3101,15 @@ be inserted and interactively completed.
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
     (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)))
+#+end_src
+
+*** snippet collection
+:PROPERTIES:
+:ID:       ceb066ac-2242-492d-9609-9e3b879b10b7
+:END:
+
+#+begin_src emacs-lisp
+(use-package! yasnippet-snippets)
 #+end_src
 
 ** frameworks
