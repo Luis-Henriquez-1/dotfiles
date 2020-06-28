@@ -2962,6 +2962,24 @@ This is the user-facing function to define yasnippets.
           (yas-load-snippet-buffer $mode t))))))
 #+end_src
 
+**** defsnippet!
+:PROPERTIES:
+:ID:       36e73e8a-86bb-4ab0-adc6-e6ff3e263237
+:END:
+
+This macro helps me define snippets declaratively without worrying about whether
+yasnippet is loaded or not.
+
+#+begin_src emacs-lisp
+(defmacro defsnippet! (snippet &rest properties)
+  "Syntactic sugar for defining a snippet on time."
+  (declare (indent defun))
+  `(after! yasnippet
+     (defsnippet:new-snippet
+       :name ,(void:make-string snippet)
+       ,@properties)))
+#+end_src
+
 **** compute body
 :PROPERTIES:
 :ID:       e6bbca2d-ee83-4cab-b115-9098bb0962c6
@@ -3017,10 +3035,9 @@ opposed to going to the snippet buffer, editing it and reloading it.
 For extremely good documentation.
 
 #+begin_src emacs-lisp
-(defsnippet:new-snippet
-  :name "help-function"
-  :mode 'org-mode
+(defsnippet! help-function
   :key "hfn"
+  :mode 'org-mode
   :body "[[helpfn:%s][$1]%s"
   :placeholders '((1 function (yas-auto-next (yas-choose-value (defsnippet:list-symbols))))
                   (0 _ (insert "]"))))
@@ -3032,8 +3049,7 @@ For extremely good documentation.
 :END:
 
 #+begin_src emacs-lisp
-(defsnippet:new-snippet
-  :name "help-variable"
+(defsnippet! help-variable
   :mode 'org-mode
   :key "hvar"
   :body "[[helpvar:$1][%s]%s"
@@ -3049,7 +3065,7 @@ For extremely good documentation.
 :END:
 
 #+begin_src emacs-lisp
-(defsnippet:new-snippet
+(defsnippet! org-id
   :name "id"
   :mode 'org-mode
   :key "oid"
@@ -3072,8 +3088,7 @@ For extremely good documentation.
 :END:
 
 #+begin_src emacs-lisp
-(defsnippet:new-snippet
-  :name "defun"
+(defsnippet! defun
   :mode 'emacs-lisp-mode
   :key "dfn"
   :body "(defun %s (%s)\n  \"%s\"\n  %s)"
@@ -3083,22 +3098,6 @@ For extremely good documentation.
                                 (replace-regexp-in-string #'upcase yas-text)
                                 (ignore-errors)))
                   (4 body)))
-#+end_src
-
-****** defhook!
-:PROPERTIES:
-:ID:       d6f19fa1-0c22-45a7-bf7c-ca81470ed2b6
-:END:
-
-#+begin_src emacs-lisp
-(defsnippet:new-snippet
-  :name "defhook"
-  :body "(defhook! $name $args)"
-  :placeholders '((name)
-                  (args)
-                  (docstring . (-> (rx-to-string `(or ,@(s-split "\s" (yas-field-value 2) t)))
-                                (replace-regexp-in-string #'upcase yas-text)
-                                (ignore-errors)))))
 #+end_src
 
 *** yasnippet
