@@ -2985,7 +2985,7 @@ This is the user-facing function to define yasnippets.
 
 #+begin_src emacs-lisp
 (defun defsnippet:list-symbols (&optional pred)
-  "List symbols."
+  "List interned symbols."
   (setq pred (or pred #'identity))
   (let (acc)
     (mapatoms (lambda (it)
