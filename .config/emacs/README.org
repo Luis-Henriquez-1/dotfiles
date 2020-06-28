@@ -1475,6 +1475,17 @@ think you want to use =smtp=.
   (fset #'display-startup-echo-area-message #'ignore))
 #+end_src
 
+**** subr-x
+:PROPERTIES:
+:ID:       1ed0ba00-e5a1-4642-9ed5-a52f4b917a4d
+:END:
+
+#+begin_src emacs-lisp
+;; This is where `thread-last' and `thread-first' come from.
+(use-feature! subr-x
+  :require t)
+#+end_src
+
 **** ffap
 :PROPERTIES:
 :ID: b1229201-a5ac-45c7-91fa-7a6b39bbb879
@@ -1668,6 +1679,19 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! mule-cmds
   :init (prefer-coding-system VOID:DEFAULT-CODING-SYSTEM))
+#+end_src
+
+**** seq
+:PROPERTIES:
+:ID:       7b5752cf-be64-452b-95e7-35cc83bb5e0b
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! seq
+  ;; :alias (seq-some-p . seq-some)
+  ;; Don't know why seq-some doesn't end with a '-p'. It is a predicate function.
+  :init (defalias 'seq-some-p 'seq-some)
+  :require t)
 #+end_src
 
 *** external libraries
@@ -2106,11 +2130,11 @@ already has.
   "Access items from STRUCTURE.
 STRUCTURE can be an alist, a plist, or a hash table."
   (declare (indent 1))
-  (let* ((symbols (--filter (and (symbolp it) (string-prefix-p "$" (symbol-name it)))
-                            (-flatten body)))
-         (keywords (--map (void:symbol-intern ":" (-second-item (s-match (rx "$" (group (* anything)))
-                                                                         (symbol-name it))))
-                          symbols)))
+  (let* ((symbols (seq-filter (lambda (it) (and (symbolp it) (string-prefix-p "$" (symbol-name it))))
+                              (-flatten body)))
+         (keywords (seq-filter (lambda (it) (void:symbol-intern ":" (-second-item (s-match (rx "$" (group (* anything)))
+                                                                                           (symbol-name it)))))
+                               symbols)))
     `(-let [(,type ,@(-interleave keywords symbols)) ,structure]
        ,@body)))
 #+end_src
@@ -2774,8 +2798,8 @@ windows).
 (defhook! exwm:start-in-char-mode-h ()
   "Decide whether to start program in char mode."
   :hook exwm-manage-finish-hook
-  (when (-any (-rpartial #'string-prefix-p exwm-instance-name)
-              (list "emacs"))
+  (when (seq-some-p (-rpartial #'string-prefix-p exwm-instance-name)
+                    (list "emacs"))
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
 
@@ -3013,7 +3037,7 @@ For extremely good documentation.
   :mode 'org-mode
   :key "hvar"
   :body "[[helpvar:$1][%s]%s"
-  :placeholders '((1 variable (->> (defsnippet:list-symbols #'helpful--variable-p)
+  :placeholders '((1 variable (thread-last (defsnippet:list-symbols #'helpful--variable-p)
                                (yas-choose-value)
                                (yas-auto-next)))
                   (0 _ (insert "]"))))
@@ -3294,17 +3318,18 @@ does have isn't good enough.
 (after! helm
   (defun helm:org-capture-candidates ()
     "Return an alist."
-    (let* ((alist (--> (org-capture-upgrade-templates org-capture-templates)
-                       (org-contextualize-keys it org-capture-templates-contexts)
-                       (-map (-lambda ((name key)) (cons key name)) it)))
-           (keys (-map #'cdr alist)))
-      (-reject (-lambda ((elt &as _ . key))
-                 (--any-p (string-prefix-p key it) (-remove-item key keys)))
-               alist)))
+    (let* ((alist (thread-first (org-capture-upgrade-templates org-capture-templates)
+                    (org-contextualize-keys it org-capture-templates-contexts)
+                    (seq-map (-lambda ((name key)) (cons key name)) it)))
+           (keys (seq-map #'cdr alist)))
+      (seq-remove (-lambda ((elt &as _ . key))
+                    (seq-every-p (lambda (it) (not (string-prefix-p key it)))
+                                 (-remove-item key keys)))
+                  alist)))
   (setq helm:org-capture-source
         (helm-build-sync-source "helm/org-capture"
-          :candidates #'helm:org-capture-candidates
-          :action (helm-make-actions "Capture" (lambda (keys) (org-capture nil keys)))))
+                                :candidates #'helm:org-capture-candidates
+                                :action (helm-make-actions "Capture" (lambda (keys) (org-capture nil keys)))))
 
   (defun helm/org-capture ()
     "Select a capture template."
@@ -3742,7 +3767,7 @@ a file.
          (gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
          (line-choices (let ((minimum-line-number (line-number-at-pos (point-min) t))
                              (buffer-text-lines (split-string (buffer-string) "\n")))
-                         (--map-indexed (format "%d\t%s" it-index it) buffer-text-lines)))
+                         (seq-map-indexed (lambda (it it-index) (format "%d\t%s" it-index it)) buffer-text-lines)))
          ;; Get the matching line.
          (chosen-line (completing-read "Jump to matching line: " line-choices
                                        nil t nil 'selectrum:swiper-jump-to-line-history))
@@ -3771,10 +3796,10 @@ a file.
   (interactive)
   (require 'recentf)
   (let* ((selectrum-should-sort-p nil)
-         (live-buffers (--remove (string-match-p (rx bol white) it)
-                                 (-map #'buffer-name (buffer-list))))
-         (recentf-buffers (--map (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it)
-                                 recentf-list)))
+         (live-buffers (seq-remove (lambda (it) (string-match-p (rx bol white) it))
+                                   (seq-map #'buffer-name (buffer-list))))
+         (recentf-buffers (seq-map (lambda (it) (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it))
+                                   recentf-list)))
     (alet (completing-read "File: " (append live-buffers recentf-buffers))
       (setq it (or (alist-get it recentf-buffers nil nil #'string=) it))
       ;; (message "name %s|buffer: %s" it (get-buffer it))
@@ -3792,11 +3817,11 @@ a file.
   (interactive)
   (let* ((org-use-fast-tag-selection nil)
          (current-tags (org-get-tags))
-         (all-tags (-uniq (-flatten (org-map-entries (lambda () (org-get-tags (point) t))))))
+         (all-tags (seq-uniq (flatten-list (org-map-entries (lambda () (org-get-tags (point) t))))))
          (selected-tags (completing-read-multiple "set tags: " all-tags)))
     (org-set-tags
-     (append (--remove (member it current-tags) selected-tags)
-             (--remove (member it selected-tags) current-tags)))))
+     (append (seq-remove (lambda (it) (member it current-tags)) selected-tags)
+             (seq-remove (lambda (it) (member it selected-tags)) current-tags)))))
 #+end_src
 
 **** TODO qutebrowser links                                           :disabled:
@@ -3819,7 +3844,8 @@ a file.
         (push (match-string 0) links))
       (setq links (reverse links))
       ;; If the link is too long shorten it.
-      (setq links (--map (cons (s-truncate 110 it) it) links)) (completing-read "link: " links))))
+      (setq links (seq-map (lambda (it) (cons (s-truncate 110 it) it)) links))
+      (completing-read "link: " links))))
 #+end_src
 
 ** abbrev                                                               :abbrev:
@@ -3905,10 +3931,10 @@ first letter of each word.
 (defun abbrev:abbreviate-words (words)
   "Abbreviate WORDS.
 WORDS is a string of non whitespace and whitespace."
-  (->> (s-split "\s" words t)
-       (--map (char-to-string (aref it 0)))
-       (-map #'downcase)
-       (apply #'concat)))
+  (thread-last (s-split "\s" words t)
+    (seq-map (lambda (it) (char-to-string (aref it 0))))
+    (seq-map #'downcase)
+    (apply #'concat)))
 #+end_src
 
 **** abbreviate a single word
@@ -3926,12 +3952,12 @@ WORD is a string with no whitespace characters."
           (letters (--> word
                         (s-chop-suffixes abbrev:suffixes it)
                         (s-split "" it t)))
-          (no-vowels (-remove (-partial #'string-match-p vowel-regexp)
-                              letters)))
-    (->> no-vowels
-         (-uniq)
-         (-map #'downcase)
-         (apply #'concat))))
+          (no-vowels (seq-remove (-partial #'string-match-p vowel-regexp)
+                                 letters)))
+         (thread-last no-vowels
+           (seq-uniq)
+           (seq-map #'downcase)
+           (apply #'concat))))
 #+end_src
 
 **** general abbreviate function
@@ -4045,9 +4071,9 @@ WORDS is a string containing one or more words."
   (interactive)
   (-let* ((selected (completing-read
                      "abbrev to delete:"
-                     (-map (-lambda ((abbrev . expansion))
-                             (format "%s -> %s" abbrev expansion))
-                           (abbrev--alist+))))
+                     (seq-map (-lambda ((abbrev . expansion))
+                                (format "%s -> %s" abbrev expansion))
+                              (abbrev--alist+))))
           ((abbrev _ _) (s-split "\s" selected)))
     (message "deleted abbrev: %s" selected)
     (define-abbrev global-abbrev-table abbrev nil)))
@@ -4376,16 +4402,16 @@ reason I spent so much time setting this up is because.
 Create an mu4e-context for each email account in `mu4e:email-accounts'."
   (dolist (account mu4e:email-accounts)
     (with-plist! account
-      (--> `((mu4e-sent-folder . ,(concat "/%s/" (or $sent "sent")))
-             (mu4e-trash-folder . ,(concat "/%s/" (or $trash "trash")))
-             (mu4e-drafts-folder . ,(concat "/%s/" (or $drafts "drafts")))
-             (user-email-address . "%s")
-             (smtpmail-smtp-server . ,(or $server))
-             (smtpmail-smtp-user . "%s"))
-           (-map (-lambda ((var . val)) (cons var (format val $email))) it)
-           (cons `(smtpmail-smtp-service . ,(or $port 25)) it)
-           (make-mu4e-context :name $name :vars it)
-           (push it mu4e-contexts)))))
+      (thread-first `((mu4e-sent-folder . ,(concat "/%s/" (or $sent "sent")))
+                      (mu4e-trash-folder . ,(concat "/%s/" (or $trash "trash")))
+                      (mu4e-drafts-folder . ,(concat "/%s/" (or $drafts "drafts")))
+                      (user-email-address . "%s")
+                      (smtpmail-smtp-server . ,(or $server))
+                      (smtpmail-smtp-user . "%s"))
+        (seq-map (-lambda ((var . val)) (cons var (format val $email))) it)
+        (cons `(smtpmail-smtp-service . ,(or $port 25)) it)
+        (make-mu4e-context :name $name :vars it)
+        (push it mu4e-contexts)))))
 #+end_src
 
 **** shortcuts
@@ -5176,9 +5202,9 @@ the time.
   "Return the bounds of the description at point.
 ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
   (awhen (--first (--any-p (-partial #'org:element-contains-point-p point) it)
-                  (->> (cdr elements)
-                       (-partition-by #'org:element-paragraph-p)
-                       (--filter (org:element-paragraph-p (car it)))))
+                  (thread-last (cdr elements)
+                    (-partition-by #'org:element-paragraph-p)
+                    (seq-filter (lambda (it) (org:element-paragraph-p (car it))))))
     (cons (org-element-property :contents-begin (-first-item it))
           (org-element-property :contents-end (-last-item it)))))
 #+end_src
@@ -5211,12 +5237,13 @@ travel to anywhere I need within a heading from the headline itself.
   (acond
    ;; There's a paragraph among the elements.
    ((-some->> elements
-      (-drop-while (-not (-partial #'org:element-contains-point-p (point))))
-      (-first #'org:element-paragraph-p)
+      (seq-drop-while (-not (-partial #'org:element-contains-point-p (point))))
+      (seq-first #'org:element-paragraph-p)
       (org-element-property :begin))
     (org:edit-desc-bounds it elements))
    ;; Skip property drawers.
-   ((--last (eq 'property-drawer (org-element-type it)) elements)
+   ((seq-first (lambda (it) (eq 'property-drawer (org-element-type it)))
+               (reverse elements))
     (alet (org-element-property :end it) (cons it it)))
    ;; There's no paragraphs or property drawers.
    ((save-excursion (goto-char (org-element-property :begin (-first-item elements)))
@@ -6028,20 +6055,20 @@ practice, this is rarely an issue.
   (evil-define-text-object evil:textobj-inner-form (count &rest _)
     "Inner sexp object."
     (-if-let ((beg . end)
-              (->> (list (lispy--bounds-list) (lispy--bounds-string))
-                   (-non-nil)
-                   (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
-                   (car)))
+              (thread-last (list (lispy--bounds-list) (lispy--bounds-string))
+                (-non-nil)
+                (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
+                (car)))
         (evil-range (1+ beg) (1- end) 'inclusive :expanded t)
       (error "No surrounding form found.")))
 
   (evil-define-text-object evil:textobj-outer-form (count &rest _)
     "Smartparens inner sexp object."
     (-if-let ((beg . end)
-              (->> (list (lispy--bounds-list) (lispy--bounds-string))
-                   (-non-nil)
-                   (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
-                   (car)))
+              (thread-last (list (lispy--bounds-list) (lispy--bounds-string))
+                (-non-nil)
+                (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
+                (car)))
         (evil-range beg end 'inclusive :expanded t)
       (error "No surrounding form found.")))
 
@@ -6520,8 +6547,8 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 
 #+begin_src emacs-lisp
 (after! em-term
-  (--each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
-    (add-to-list 'eshell-visual-commands it)))
+  (dolist (command '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp"))
+    (add-to-list 'eshell-visual-commands command)))
 #+end_src
 
 *** improvements
@@ -6682,10 +6709,10 @@ generate the body of the eshell prompt.
 This function generates the eshell prompt by concatenating `eshell:header' with
 valid `eshell:enabled-sections' and the `eshell-prompt-string'."
   (concat eshell:header
-          (->> eshell:enabled-sections
-               (--map (void:symbol-intern 'eshell-prompt-- it))
-               (-filter #'fboundp)
-               (-reduce-from #'eshell:acc ""))
+          (thread-last eshell:enabled-sections
+            (seq-map (lambda (it) (void:symbol-intern 'eshell-prompt-- it)))
+            (seq-filter #'fboundp)
+            (-reduce-from #'eshell:acc ""))
           eshell-prompt-string))
 #+end_src
 
@@ -6833,7 +6860,7 @@ And go to the start of the path selected by the headline."
   (let ((selectrum-should-sort-p nil)
         (selectrum-refine-candidates-function #'selectrum-default-candidate-refine-function)
         (paths (org:headline-paths)))
-    (--> (-map #'car paths)
+    (--> (seq-map #'car paths)
          (completing-read "Headlines: " it)
          (alist-get it paths nil nil #'string=)
          (goto-char it))
@@ -6976,8 +7003,8 @@ again, you are taken to the location you left off. This is very convenient.
   "Remove text properties from `kill-ring'."
   :append kill-emacs-hook
   (setq kill-ring
-        (--map (when (stringp it) (substring-no-properties it))
-               (-non-nil kill-ring))))
+        (seq-map (lambda (it) (when (stringp it) (substring-no-properties it)))
+                 (-non-nil kill-ring))))
 #+end_src
 
 ** bookmarks
@@ -7467,9 +7494,8 @@ that restarts emacs. I haven't tested this in EXWM mode.
   (defhook! auto-revert:visible-buffers-h ()
     "Auto revert stale buffers in visible windows, if necessary."
     :hook (focus-in-hook after-save-hook)
-    (--each (-uniq (-map #'window-buffer (window-list)))
-      (with-current-buffer it
-        (auto-revert:buffer-h)))))
+    (seq-each (lambda (it) (with-current-buffer it (auto-revert:buffer-h)))
+              (seq-uniq (seq-map #'window-buffer (window-list))))))
 #+end_src
 
 ** security
@@ -8039,9 +8065,8 @@ when headline contents begin.
 #+begin_src emacs-lisp
 (defun org:todo-keywords ()
   "Return list of all TODO keywords."
-  (->> org-todo-keywords
-       (-flatten)
-       (--filter (and (stringp it) (not (string= "|" it))))))
+  (seq-filter (lambda (it) (and (stringp it) (not (string= "|" it))))
+              (flatten-list org-todo-keywords)))
 #+end_src
 
 ***** heading start
@@ -8971,7 +8996,8 @@ in the future. I use this template for this.
   :after org
   :commands (org-agenda org-agenda-list)
   :setq
-  (org-agenda-files . (--map (concat org-directory it) '("todo.org")))
+  (org-agenda-files . (seq-map (lambda (it) (concat org-directory it))
+                               '("todo.org")))
   (org-agenda-start-on-weekday . 0)
   (org-agenda-timegrid-use-ampm . nil)
   (org-agenda-skip-unavailable-files . nil)
@@ -9311,13 +9337,13 @@ VOID install. For writing this code I referenced the body of
                     "/fonts/"))
          (mac (concat (getenv "HOME") "/Library/Fonts/" ))
          (ns (concat (getenv "HOME") "/Library/Fonts/" )))))
-  (unless (--all-p (file-exists-p (concat font-dir it))
-                   '("all-the-icons.ttf"
-                     "file-icons.ttf"
-                     "fontawesome.ttf"
-                     "material-design-icons.ttf"
-                     "octicons.ttf"
-                     "weathericons.ttf"))
+  (unless (seq-every-p (lambda (it) (file-exists-p (concat font-dir it)))
+                       '("all-the-icons.ttf"
+                         "file-icons.ttf"
+                         "fontawesome.ttf"
+                         "material-design-icons.ttf"
+                         "octicons.ttf"
+                         "weathericons.ttf"))
     (void:log "No icons installed. Installing...")
     (all-the-icons-install-fonts :ignore-prompt)))
 #+end_src
