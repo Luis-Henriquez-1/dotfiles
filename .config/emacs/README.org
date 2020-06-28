@@ -2903,7 +2903,7 @@ of things that we actually want at this moment.
 :ID:       02dd54d0-f545-447e-89cf-c0cfcd941c76
 :END:
 
-*** defsnippet                                                        :disabled:
+*** defsnippet
 :PROPERTIES:
 :ID:       bfaa2631-a300-4f38-b31d-ec7457b18491
 :END:
@@ -2923,20 +2923,22 @@ This is the user-facing function to define yasnippets.
 #+begin_src emacs-lisp
 (defun defsnippet:new-snippet (&rest plist)
   "Define a snippet."
-  (let* ((alist (seq-partition plist 2))
-         (keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
-    (cl-assert (seq-every-p (-not #'null) (list $name $mode $body)))
-    (with-temp-buffer
-      (append
-       (list "# -*- mode: snippet -*-\n")
-       (seq-map (lambda (it) (format "# %s: %s\n" (void:keyword-name key) it))
-                (seq-filter (lambda (it) (member it keys)) alist))
-       (list "# --\n")
-       (list (defsnippet:compute-body $body $placeholders)))
-      (yas-load-snippet-buffer $mode t))))
+  (let* ((keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
+    (with-plist! plist
+      (cl-assert (seq-every-p (-not #'null) (list $name $mode $body)))
+      (alet (append
+             (list "# -*- mode: snippet -*-\n")
+             (seq-map (lambda (key)
+                        (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
+                      (seq-filter (-partial #'plist-get plist) keys))
+             (list "# --\n")
+             (list (defsnippet:compute-body $body $placeholders)))
+        (with-temp-buffer
+          (insert (s-join "\n" it))
+          (yas-load-snippet-buffer $mode t))))))
 #+end_src
 
-**** defsnippet
+**** compute body
 :PROPERTIES:
 :ID:       e6bbca2d-ee83-4cab-b115-9098bb0962c6
 :END:
@@ -2944,11 +2946,11 @@ This is the user-facing function to define yasnippets.
 #+begin_src emacs-lisp
 (defun defsnippet:compute-body (body placeholders)
   (alet (seq-map (-lambda ((number name form))
-                   (if (null name)
-                       (format "${d:$$%S}" number form)
+                   (if (eq '_  name)
+                       (format "${%d:$$%S}" number form)
                      (format "${%d:%s$%S}" number name form)))
                  placeholders)
-    (apply #'format body placeholders)))
+    (apply #'format body it)))
 #+end_src
 
 **** list symbols
@@ -2959,8 +2961,9 @@ This is the user-facing function to define yasnippets.
 #+begin_src emacs-lisp
 (defun defsnippet:list-symbols ()
   "List symbols."
-  (map-atoms)
-  )
+  (let (acc)
+    (mapatoms (lambda (it) (if (symbolp it) (push it acc))))
+    (nreverse acc)))
 #+end_src
 
 **** snippets
@@ -2988,9 +2991,9 @@ For extremely good documentation.
   :name "help-function"
   :mode 'org-mode
   :key "hfn"
-  :body "[[helpfn:%s][$1]]$0"
-  :placeholders '((1 function (yas-auto-next (yas-choose-value (mapcar #'functionp (void)))))
-                  (0 nil (insert "]"))))
+  :body "[[helpfn:%s][$1]%s"
+  :placeholders '((1 function (yas-auto-next (yas-choose-value (defsnippet:list-symbols))))
+                  (0 _ (insert "]"))))
 #+end_src
 
 ****** helpvar
@@ -3002,11 +3005,11 @@ For extremely good documentation.
 (defsnippet:new-snippet help-variable
   :mode 'org-mode
   :key "hvar"
-  :body "[[helpvar:$1][%s]]$0"
+  :body "[[helpvar:$1][%s]%s"
   :placeholders '((1 variable (->> (void-list-symbols #'helpful--variable-p)
                                (yas-choose-value)
                                (yas-auto-next)))
-                  (0 nil (insert "]"))))
+                  (0 _ (insert "]"))))
 #+end_src
 
 ****** id
@@ -3020,10 +3023,11 @@ For extremely good documentation.
   :mode org-mode
   :key "oid"
   :body "[[id:%s][#%s]]$0"
-  :placeholders '((1 . (thread-last (hash-table-keys org-id-locations)
+  :placeholders '((1 _ (thread-last (hash-table-keys org-id-locations)
                         (yas-choose-value)
                         (yas-auto-next)))
-                  (2 . (substring (yas-field-value 1) 0 5))))
+                  (2 _ (substring (yas-field-value 1) 0 5))
+                  (0 _ (insert "]"))))
 #+end_src
 
 ***** elisp
