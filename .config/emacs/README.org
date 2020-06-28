@@ -954,7 +954,7 @@ this from Doom's straight branch.
 This code initializes straight if it's not already installed.
 
 #+begin_src emacs-lisp
-(defun +straight-init-fn ()
+(defun straight:init-fn ()
   "Initialize `straight.el'."
   (defvar boostrap-version 5 "Bootstrap version for straight.el")
   (let* ((user-emacs-directory VOID:PACKAGES-DIR)
@@ -981,7 +981,7 @@ This code initializes straight if it's not already installed.
 #+begin_src emacs-lisp
 (defun straight:install-package (package-or-recipe)
   "Install PACKAGE with optional RECIPE."
-  (unless (featurep 'straight) (+straight-init-fn))
+  (unless (featurep 'straight) (straight:init-fn))
   (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
     (condition-case err
         (progn (straight-use-package package-or-recipe)
