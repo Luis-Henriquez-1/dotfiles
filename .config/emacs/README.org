@@ -3105,6 +3105,24 @@ This is the user-facing function to define yasnippets.
     (nreverse acc)))
 #+end_src
 
+**** defsnippet!
+:PROPERTIES:
+:ID:       36e73e8a-86bb-4ab0-adc6-e6ff3e263237
+:END:
+
+This macro helps me define snippets declaratively without worrying about whether
+yasnippet is loaded or not.
+
+#+begin_src emacs-lisp
+(defmacro defsnippet! (snippet &rest properties)
+  "Syntactic sugar for defining a snippet on time."
+  (declare (indent defun))
+  `(after! yasnippet
+     (defsnippet:new-snippet
+       :name ,(void:make-string snippet)
+       ,@properties)))
+#+end_src
+
 **** snippets
 :PROPERTIES:
 :ID:       a2fd6032-4c48-43c6-9afa-350dc74f47ac
