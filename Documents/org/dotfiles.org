@@ -148,9 +148,10 @@ possible. And also to generate repetative code.
 
 #+name: msmtprc-account-info
 #+begin_src emacs-lisp :tangle no
-(->> (--filter (s-matches-p (rx bos "email/") it) (password-store-list))
-     (-map #'dotfiles:msmtprc-account-string)
-     (s-join "\n\n" it))
+(thread-last (seq-filter (lambda (it) (s-matches-p (rx bos "email/") it))
+                         (password-store-list))
+  (seq-map #'dotfiles:msmtprc-account-string)
+  (s-join "\n\n"))
 #+end_src
 
 *** main
@@ -186,8 +187,8 @@ account-default main
 (defun dotfiles:mbsyncrc-imap-account-setup (mail)
   "Return the account part of the."
   (let (($account (password-store-get-field mail "account"))
-        ($in-host (password-store-get-field mail "out-host"))
-        ($in-port (password-store-get-field mail "out-port"))
+        ($in-host (password-store-get-field mail "in-host"))
+        ($in-port (password-store-get-field mail "in-port"))
         ($email (password-store-get-field mail "email")))
     (dotfiles:convert-to-string
      :IMAPAccount $account
@@ -252,14 +253,15 @@ account-default main
 
 (defun dotfiles:mbsyncrc-sync-gmail (entry)
   (let* ((mailboxes '("All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash"))
-         (names (s-downcase (-first-item (s-split-words it))) mailboxes))
-    (alet (append (-map (dotfiles:mbsyncrc-sync-gmail-section) (-zip #'list mailboxes names))
-                  (list "\nGroup gmail\n")
-                  (--map (format ":Channel gmail-%s\n" it) names))
-      (s-split "\n" it))))
+         (names (seq-map (fn (downcase (-first-item (s-split-words <1>)))) mailboxes)))
+    (alet (append (seq-map (-lambda ((n m)) (dotfiles:mbsyncrc-sync-gmail-section n m))
+                           (seq-mapn #'list names mailboxes))
+                  (list "\nGroup gmail")
+                  (seq-map (fn (format "Channel gmail-%s" <1>)) names))
+      (s-join "\n\n" it))))
 #+end_src
 
-*** account
+** account
 :PROPERTIES:
 :ID:       20962e17-ddae-465f-9123-ae8918539c6a
 :END:
@@ -268,25 +270,26 @@ account-default main
 (defun dotfiles:mbsyncrc-account-string (entry)
   (alet (list (dotfiles:mbsyncrc-imap-account-setup entry)
               (dotfiles:mbsyncrc-imap-store-setup entry)
-              (if (s-contains-p "@gmail.com")
-                  (dotfiles:mbsyncrc-sync-gmail)
+              ;; (dotfiles:mbsyncrc-sync-all entry)
+              (if (s-matches-p (rx "@gmail.com") entry)
+                  (dotfiles:mbsyncrc-sync-gmail entry)
                 (dotfiles:mbsyncrc-sync-all entry)))
-    (s-join "\n\n")))
+    (s-join "\n\n" it)))
 #+end_src
 
-*** producting code
+** producting code
 :PROPERTIES:
 :ID:       0cc68149-cf83-429e-a54b-1416565cd6ed
 :END:
 
 #+name:mbsync-setup
 #+begin_src emacs-lisp :tangle no
-(->> (--filter (s-matches-p (rx bos "email/") it) (password-store-list))
-     (-map #'dotfiles:mbsyncrc-account-string)
+(->> (seq-filter (lambda (it) (s-matches-p (rx bos "email/") it)) (password-store-list))
+     (seq-map #'dotfiles:mbsyncrc-account-string)
      (s-join "\n\n"))
 #+end_src
 
-*** all
+** all
 :PROPERTIES:
 :ID:       3f5d8401-2090-45d8-928d-c8aa7eee32a7
 :END:
