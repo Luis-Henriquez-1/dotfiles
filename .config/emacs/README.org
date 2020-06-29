@@ -1857,7 +1857,7 @@ you can "discover" the commands as you go along.
   (which-key-add-key-based-replacements void:localleader-key "<localleader>"))
 #+end_src
 
-**** dash
+**** dash                                                             :disabled:
 :PROPERTIES:
 :ID: 4e135d88-9dc3-4451-81dc-420184aecada
 :END:
@@ -1963,91 +1963,28 @@ while the user is working.
   (gcmh-high-cons-threshold . (* 16 1024 1024)))
 #+end_src
 
+**** fn
+:PROPERTIES:
+:ID:       538fa10d-1c43-4402-b07e-5dd6605b5a90
+:END:
+
+#+begin_src emacs-lisp
+(use-package! fn :require t)
+#+end_src
+
+**** mmt
+:PROPERTIES:
+:ID:       94c8da4a-3e2c-42ab-abb7-14f49e76e045
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! mmt)
+#+end_src
+
 *** custom macros and functions
 :PROPERTIES:
 :ID:       4029d357-1309-4c7f-89eb-db93a3470c42
 :END:
-
-**** all
-:PROPERTIES:
-:ID: e97267e8-fca8-4bf2-9899-7ec694e8a767
-:END:
-
-***** quit emacs without hook
-:PROPERTIES:
-:ID: b82f721c-39f5-4d41-bb0f-d4c391238eb4
-:END:
-
-Sometimes something goes wrong with [[helpvar:kill-emacs-hook][kill-emacs-hook]] and because of that I can't
-close emacs. For that reason, I have this function.
-
-#+begin_src emacs-lisp
-(defun void/kill-emacs-no-hook ()
-  "Kill emacs, ignoring `kill-emacs-hook'."
-  (interactive)
-  (when (yes-or-no-p "Quit without `kill-emacs-hook'?")
-    (let (kill-emacs-hook) (kill-emacs))))
-#+end_src
-
-***** quit emacs brutally
-:PROPERTIES:
-:ID: 8753217c-4722-4183-bbb3-049707a37e54
-:END:
-
-I've never had to use this. But better be safe than sorry.
-
-#+begin_src emacs-lisp
-(defun void/kill-emacs-brutally ()
-  "Tell an external process to kill emacs."
-  (interactive)
-  (when (yes-or-no-p "Do you want to BRUTALLY kill emacs?")
-    (call-process "kill" nil nil nil "-9" (number-to-string (emacs-pid)))))
-#+end_src
-
-***** new emacs instance
-:PROPERTIES:
-:ID: eaf80ec3-2bd4-4f05-8a9c-fa525894a6fe
-:END:
-
-#+begin_src emacs-lisp
-(defun void/open-emacs-instance ()
-  "Open a new emacs instance in debug-mode."
-  (interactive)
-  (cond ((eq system-type 'darwin)
-         (start-process-shell-command
-          "emacs"
-          nil "open -n /Applications/Emacs.app --args --debug-init"))
-        ((eq system-type 'gnu/linux)
-         (start-process "emacs" nil "emacs" "--debug-init"))))
-#+end_src
-
-***** kill all process of program
-:PROPERTIES:
-:ID: 913952e2-3727-4b38-aefc-4618c2771730
-:END:
-
-#+begin_src emacs-lisp
-(defun void/kill-emacs-processes ()
-  (interactive)
-  (let ((count 1) (process "emacs"))
-    (kill-process process)
-    (while (ignore-errors (kill-process process))
-      (setq process (format "emacs<%d>" count))
-      (cl-incf count))
-    (message "killed %d processes" count)))
-#+end_src
-
-***** qutebrowser
-:PROPERTIES:
-:ID: 77bace13-5af8-4974-981a-e07bf271182f
-:END:
-
-#+begin_src emacs-lisp
-(defun void/open-qutebrowser ()
-  "Open qutebrowser."
-  (interactive)
-  (start-process "qutebrowser" nil "qutebrowser"))
-#+end_src
 
 **** windows
 :PROPERTIES:
@@ -2083,7 +2020,12 @@ I've never had to use this. But better be safe than sorry.
 :ID: 9d65f3e2-a6d2-4f84-8150-9f9df7d3a513
 :END:
 
-***** append!
+***** list mutation
+:PROPERTIES:
+:ID:       d9f77404-5c29-4305-ae53-e409e1b06b99
+:END:
+
+****** append!
 :PROPERTIES:
 :ID: f314672c-f9f3-4630-9402-a9a65215c153
 :END:
@@ -2096,7 +2038,7 @@ SYM is a symbol that stores a list."
   `(setq ,sym (append ,sym ,@lists)))
 #+end_src
 
-***** prepend!
+****** prepend!
 :PROPERTIES:
 :ID: 3395dec3-0915-49cd-9445-d3db2b1ffe7f
 :END:
@@ -2107,7 +2049,7 @@ SYM is a symbol that stores a list."
   `(setq ,sym (append ,@lists ,sym)))
 #+end_src
 
-***** nconc!
+****** nconc!
 :PROPERTIES:
 :ID: b24d1d8f-f3e1-4dca-afdb-8fb73d5299c3
 :END:
@@ -2119,37 +2061,109 @@ SYM is a symbol that stores a list."
   `(setq ,sym (nconc ,sym ,@lists)))
 #+end_src
 
+***** anaphora
+:PROPERTIES:
+:ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
+:END:
+
+Anaphora refers to the ability to refer to. After much deliberation, I have
+decided it is best to use =<>= to denote the symbol referred to by anaphoric
+symbols because it is easy to type (assuming parentheses completion), it's a a
+symbol surrounded by =<>= is uncommon in lisp, and I like that it looks like a slot
+or placeholder.
+
+https://en.wikipedia.org/wiki/Anaphoric_macro
+
+****** anaphoric symbol regexp
+:PROPERTIES:
+:ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:ANAPHORIC-SYMBOL-REGEXP
+  (eval-when-compile (rx "<" (group (1+ (not (any white ">" "<")))) ">"))
+  "Regular expression that matches an anaphoric symbol.")
+#+end_src
+
+****** anaphoric symbol
+:PROPERTIES:
+:ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
+:END:
+
+#+begin_src emacs-lisp
+(defun void:anaphoric-symbol-p (obj)
+  "Return t if OBJ is an anaphoric symbol."
+  (and (symbolp obj)
+       (s-matches-p VOID:ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
+#+end_src
+
+****** true anaphora name
+:PROPERTIES:
+:ID:       2833cd75-9c85-4c0e-9523-4489d387150a
+:END:
+
+#+begin_src emacs-lisp
+(defun void:anaphoric-true-symbol (symbol)
+  "Return the symbol that corresponds to the anaphoric symbol.
+For example, 'hi would correspond to '<hi>."
+  (save-match-data
+    (string-match VOID:ANAPHORIC-SYMBOL-REGEXP (symbol-name symbol))
+    (intern (match-string 1 (symbol-name symbol)))))
+#+end_src
+
+****** body symbols
+:PROPERTIES:
+:ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
+:END:
+
+#+begin_src emacs-lisp
+(defun void:anaphoric-body-symbols (body &optional contains-p)
+  "Return all the anaphoric symbols in body."
+  (thread-last (flatten-list body)
+    (seq-filter #'void:anaphoric-symbol-p)
+    (seq-uniq)))
+#+end_src
+
+****** all anaphoric symbols in obj
+:PROPERTIES:
+:ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
+:END:
+
+#+begin_src emacs-lisp
+(defun void:anaphoric-symbols-in-obj (obj)
+  "Return a list of anaphoric symbols in OBJ."
+  (s-match-strings-all VOID:ANAPHORIC-SYMBOL-REGEXP (void:make-string obj)))
+#+end_src
+
 ***** pair value extraction
 :PROPERTIES:
 :ID: e546a63f-eb75-4b72-9392-2a6041f87f50
 :END:
 
-The [[https://github.com/magnars/dash.el][dash library]] provides [[https://github.com/magnars/dash.el#-let-varlist-rest-body][special keywords]] to complement [[helpfn:let][let bindings]] that help
-us easily extract values from a data structure and assign them to a variable
-value. However, sometimes even that is not concise enough. For each variable you
-assign to an element of the data structure, you have to. Using [[helpfn:let-alist][let-alist]] is an
-option but it it is specific to alists and it's "dot" notation is a bad choice
-of notation because it.
+When extracting one value from a plist, alist or another lisp data structure at
+a time, it often suffices to use =plist-get=, =alist-get= or whatever function
+is used to get a particular value based on the structure. Sometimes, however, we
+need to get and use many values from the data structure. And in these cases it
+becomes repetative to have to do ~(plist-get plist key)~ all the time.
 
 ****** with structure
 :PROPERTIES:
 :ID: c88dac35-9345-49f5-bdb5-e856071e6764
 :END:
 
-This macro capitalizes the data structure support that dash's let binding
-already has.
-
 #+begin_src emacs-lisp
-(defmacro with-structure! (structure type &rest body)
+(defmacro with-structure! (structure fn &rest body)
   "Access items from STRUCTURE.
-STRUCTURE can be an alist, a plist, or a hash table."
-  (declare (indent 1))
-  (let* ((symbols (seq-filter (lambda (it) (and (symbolp it) (string-prefix-p "$" (symbol-name it))))
-                              (-flatten body)))
-         (keywords (seq-filter (lambda (it) (void:symbol-intern ":" (-second-item (s-match (rx "$" (group (* anything)))
-                                                                                           (symbol-name it)))))
-                               symbols)))
-    `(-let [(,type ,@(-interleave keywords symbols)) ,structure]
+FN is a function that accepts two arguments, the structure and a symbol name. FN
+should return the value of structure for that symbol.
+BODY contains any number of `<NAME>' where NAME refers to the name of the symbol."
+  (declare (indent 2))
+  (let* ((symbols (thread-last (flatten-list body)
+                    (seq-filter #'void:anaphoric-symbol-p)
+                    (seq-uniq)))
+         (names (seq-map #'void:anaphoric-true-symbol symbols)))
+    `(let (,@(seq-map (-lambda ((sym name)) `(,sym (funcall ,fn ,structure ',name)))
+                      (seq-mapn #'list symbols names)))
        ,@body)))
 #+end_src
 
@@ -2161,7 +2175,7 @@ STRUCTURE can be an alist, a plist, or a hash table."
 #+begin_src emacs-lisp
 (defmacro with-plist! (plist &rest body)
   (declare (indent 1))
-  `(with-structure! ,plist &plist ,@body))
+  `(with-structure! ,plist #'plist-get ,@body))
 #+end_src
 
 ****** with-alist
@@ -2172,7 +2186,7 @@ STRUCTURE can be an alist, a plist, or a hash table."
 #+begin_src emacs-lisp
 (defmacro with-alist! (alist &rest body)
   (declare (indent 1))
-  `(with-structure! ,alist &alist ,@body))
+  `(with-structure! ,alist (lambda (key) (alist-get key alist)) ,@body))
 #+end_src
 
 **** symbols
@@ -2237,6 +2251,87 @@ type without any manual hassle.
 :PROPERTIES:
 :ID: 1b49e07a-466f-41da-8b31-18c28421cf62
 :END:
+
+***** all
+:PROPERTIES:
+:ID: e97267e8-fca8-4bf2-9899-7ec694e8a767
+:END:
+
+****** quit emacs without hook
+:PROPERTIES:
+:ID: b82f721c-39f5-4d41-bb0f-d4c391238eb4
+:END:
+
+Sometimes something goes wrong with [[helpvar:kill-emacs-hook][kill-emacs-hook]] and because of that I can't
+close emacs. For that reason, I have this function.
+
+#+begin_src emacs-lisp
+(defun void/kill-emacs-no-hook ()
+  "Kill emacs, ignoring `kill-emacs-hook'."
+  (interactive)
+  (when (yes-or-no-p "Quit without `kill-emacs-hook'?")
+    (let (kill-emacs-hook) (kill-emacs))))
+#+end_src
+
+****** quit emacs brutally
+:PROPERTIES:
+:ID: 8753217c-4722-4183-bbb3-049707a37e54
+:END:
+
+I've never had to use this. But better be safe than sorry.
+
+#+begin_src emacs-lisp
+(defun void/kill-emacs-brutally ()
+  "Tell an external process to kill emacs."
+  (interactive)
+  (when (yes-or-no-p "Do you want to BRUTALLY kill emacs?")
+    (call-process "kill" nil nil nil "-9" (number-to-string (emacs-pid)))))
+#+end_src
+
+****** new emacs instance
+:PROPERTIES:
+:ID: eaf80ec3-2bd4-4f05-8a9c-fa525894a6fe
+:END:
+
+#+begin_src emacs-lisp
+(defun void/open-emacs-instance ()
+  "Open a new emacs instance in debug-mode."
+  (interactive)
+  (cond ((eq system-type 'darwin)
+         (start-process-shell-command
+          "emacs"
+          nil "open -n /Applications/Emacs.app --args --debug-init"))
+        ((eq system-type 'gnu/linux)
+         (start-process "emacs" nil "emacs" "--debug-init"))))
+#+end_src
+
+****** kill all process of program
+:PROPERTIES:
+:ID: 913952e2-3727-4b38-aefc-4618c2771730
+:END:
+
+#+begin_src emacs-lisp
+(defun void/kill-emacs-processes ()
+  (interactive)
+  (let ((count 1) (process "emacs"))
+    (kill-process process)
+    (while (ignore-errors (kill-process process))
+      (setq process (format "emacs<%d>" count))
+      (cl-incf count))
+    (message "killed %d processes" count)))
+#+end_src
+
+****** qutebrowser
+:PROPERTIES:
+:ID: 77bace13-5af8-4974-981a-e07bf271182f
+:END:
+
+#+begin_src emacs-lisp
+(defun void/open-qutebrowser ()
+  "Open qutebrowser."
+  (interactive)
+  (start-process "qutebrowser" nil "qutebrowser"))
+#+end_src
 
 ***** messages buffer
 :PROPERTIES:
@@ -2963,35 +3058,17 @@ This is the user-facing function to define yasnippets.
   "Define a snippet."
   (let* ((keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
     (with-plist! plist
-      (cl-assert (seq-every-p (-not #'null) (list $name $mode $body)))
+      (cl-assert (seq-every-p (-not #'null) (list <:name> <:mode> <:body>)))
       (alet (append
              (list "# -*- mode: snippet -*-\n")
              (seq-map (lambda (key)
                         (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
                       (seq-filter (-partial #'plist-get plist) keys))
              (list "# --\n")
-             (list (defsnippet:compute-body $body $placeholders)))
+             (list (defsnippet:compute-body <:body> <:placeholders>)))
         (with-temp-buffer
           (insert (s-join "\n" it))
-          (yas-load-snippet-buffer $mode t))))))
-#+end_src
-
-**** defsnippet!
-:PROPERTIES:
-:ID:       36e73e8a-86bb-4ab0-adc6-e6ff3e263237
-:END:
-
-This macro helps me define snippets declaratively without worrying about whether
-yasnippet is loaded or not.
-
-#+begin_src emacs-lisp
-(defmacro defsnippet! (snippet &rest properties)
-  "Syntactic sugar for defining a snippet on time."
-  (declare (indent defun))
-  `(after! yasnippet
-     (defsnippet:new-snippet
-       :name ,(void:make-string snippet)
-       ,@properties)))
+          (yas-load-snippet-buffer <:mode> t))))))
 #+end_src
 
 **** compute body
@@ -4415,15 +4492,15 @@ reason I spent so much time setting this up is because.
 Create an mu4e-context for each email account in `mu4e:email-accounts'."
   (dolist (account mu4e:email-accounts)
     (with-plist! account
-      (thread-first `((mu4e-sent-folder . ,(concat "/%s/" (or $sent "sent")))
-                      (mu4e-trash-folder . ,(concat "/%s/" (or $trash "trash")))
-                      (mu4e-drafts-folder . ,(concat "/%s/" (or $drafts "drafts")))
+      (thread-first `((mu4e-sent-folder . ,(concat "/%s/" (or <sent> "sent")))
+                      (mu4e-trash-folder . ,(concat "/%s/" (or <trash> "trash")))
+                      (mu4e-drafts-folder . ,(concat "/%s/" (or <drafts> "drafts")))
                       (user-email-address . "%s")
                       (smtpmail-smtp-server . ,(or $server))
                       (smtpmail-smtp-user . "%s"))
-        (seq-map (-lambda ((var . val)) (cons var (format val $email))) it)
-        (cons `(smtpmail-smtp-service . ,(or $port 25)) it)
-        (make-mu4e-context :name $name :vars it)
+        (seq-map (-lambda ((var . val)) (cons var (format val <email>))) it)
+        (cons `(smtpmail-smtp-service . ,(or <port> 25)) it)
+        (make-mu4e-context :name <name> :vars it)
         (push it mu4e-contexts)))))
 #+end_src
 
@@ -5563,6 +5640,7 @@ Package [[https://github.com/mkcms/interactive-align][ialign]] lets me use regul
   (sp-max-prefix-length . 50)
   (sp-escape-quotes-after-insert . nil)
   :defer-config
+  (sp-local-pair 'emacs-lisp-mode "<" ">")
   (require 'smartparens-config)
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
 #+end_src
