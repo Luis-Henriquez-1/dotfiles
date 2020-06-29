@@ -1704,7 +1704,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
 
 #+begin_src emacs-lisp
 (use-feature! gv
-  :init
+  :defer-config
   (gv-define-simple-setter plist-get plist-put))
 #+end_src
 
