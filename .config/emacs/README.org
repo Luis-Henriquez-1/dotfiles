@@ -1694,6 +1694,20 @@ Don't ping things that look like domain names.
   :require t)
 #+end_src
 
+**** gv
+:PROPERTIES:
+:ID:       84cc5883-a303-453e-af91-644d4544e3f9
+:END:
+
+=gv= is what contains the code for the =setf= macro.
+https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-plist-get
+
+#+begin_src emacs-lisp
+(use-feature! gv
+  :init
+  (gv-define-simple-setter plist-get plist-put))
+#+end_src
+
 *** external libraries
 :PROPERTIES:
 :ID: 6e4be80e-8149-424d-a801-d7871bfe8fc8
