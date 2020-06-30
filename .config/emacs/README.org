@@ -3242,6 +3242,8 @@ be inserted and interactively completed.
 :ID:       ceb066ac-2242-492d-9609-9e3b879b10b7
 :END:
 
+=yasnippet-snippets= is a collection of snippets.
+
 #+begin_src emacs-lisp
 (use-package! yasnippet-snippets
   :after yasnippet
