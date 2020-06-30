@@ -2120,8 +2120,8 @@ For example, 'hi would correspond to '<hi>."
 (defun void:anaphoric-body-symbols (body &optional contains-p)
   "Return all the anaphoric symbols in body."
   (thread-last (flatten-list body)
-    (seq-filter #'void:anaphoric-symbol-p)
-    (seq-uniq)))
+    (-filter #'void:anaphoric-symbol-p)
+    (-uniq)))
 #+end_src
 
 ****** all anaphoric symbols in obj
@@ -2159,11 +2159,11 @@ should return the value of structure for that symbol.
 BODY contains any number of `<NAME>' where NAME refers to the name of the symbol."
   (declare (indent 2))
   (let* ((symbols (thread-last (flatten-list body)
-                    (seq-filter #'void:anaphoric-symbol-p)
-                    (seq-uniq)))
-         (names (seq-map #'void:anaphoric-true-symbol symbols)))
-    `(let (,@(seq-map (-lambda ((sym name)) `(,sym (funcall ,fn ,structure ',name)))
-                      (seq-mapn #'list symbols names)))
+                    (-filter #'void:anaphoric-symbol-p)
+                    (-uniq)))
+         (names (-map #'void:anaphoric-true-symbol symbols)))
+    `(let (,@(-map (-lambda ((sym name)) `(,sym (funcall ,fn ,structure ',name)))
+                      (-mapn #'list symbols names)))
        ,@body)))
 #+end_src
 
@@ -3031,7 +3031,7 @@ through on our own. It's not much different in Emacs. We're constantly sifting
 though files, buffers, commands, words--all to try to get through to the subset
 of things that we actually want at this moment.
 
-** snippets                                                           :disabled:
+** snippets
 :PROPERTIES:
 :ID:       02dd54d0-f545-447e-89cf-c0cfcd941c76
 :END:
@@ -3058,12 +3058,12 @@ This is the user-facing function to define yasnippets.
   "Define a snippet."
   (let* ((keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
     (with-plist! plist
-      (cl-assert (seq-every-p (-not #'null) (list <:name> <:mode> <:body>)))
+      (cl-assert (-all-p (-not #'null) (list <:name> <:mode> <:body>)))
       (alet (append
              (list "# -*- mode: snippet -*-\n")
-             (seq-map (lambda (key)
+             (-map (lambda (key)
                         (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
-                      (seq-filter (-partial #'plist-get plist) keys))
+                      (-filter (-partial #'plist-get plist) keys))
              (list "# --\n")
              (list (defsnippet:compute-body <:body> <:placeholders>)))
         (with-temp-buffer
@@ -3079,7 +3079,7 @@ This is the user-facing function to define yasnippets.
 #+begin_src emacs-lisp
 (defun defsnippet:compute-body (body placeholders)
   "Return the result of PLACEHOLDERS applied to BODY."
-  (alet (seq-map (-lambda ((number name form))
+  (alet (-map (-lambda ((number name form))
                    (if (eq '_  name)
                        (format "${%d:$$%S}" number form)
                      (format "${%d:%s$%S}" number name form)))
@@ -3175,7 +3175,6 @@ For extremely good documentation.
 
 #+begin_src emacs-lisp
 (defsnippet! org-id
-  :name "id"
   :mode 'org-mode
   :key "oid"
   :body "[[id:%s][#%s]$0"
@@ -3186,7 +3185,7 @@ For extremely good documentation.
                   (0 _ (insert "]"))))
 #+end_src
 
-***** elisp
+***** elisp                                                           :disabled:
 :PROPERTIES:
 :ID:       996f1990-991a-4cce-bfc9-629e52286ad6
 :END:
@@ -3228,7 +3227,7 @@ be inserted and interactively completed.
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :defer-config
-  (unless (file-exists-p yasnippet:dir) (mkdir yasnippet:dir))
+  (unless (file-exists-p yas-snippet-dirs) (mkdir yasnippet:dir))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
@@ -3241,7 +3240,11 @@ be inserted and interactively completed.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! yasnippet-snippets)
+(use-package! yasnippet-snippets
+  :after yasnippet
+  :init
+  (awhen (-first (fn (s-contains-p "yasnippet-snippets" <>)) load-path)
+    (push it yas-snippet-dirs)))
 #+end_src
 
 ** frameworks
@@ -3428,10 +3431,10 @@ does have isn't good enough.
     "Return an alist."
     (let* ((alist (thread-first (org-capture-upgrade-templates org-capture-templates)
                     (org-contextualize-keys it org-capture-templates-contexts)
-                    (seq-map (-lambda ((name key)) (cons key name)) it)))
-           (keys (seq-map #'cdr alist)))
-      (seq-remove (-lambda ((elt &as _ . key))
-                    (seq-every-p (lambda (it) (not (string-prefix-p key it)))
+                    (-map (-lambda ((name key)) (cons key name)) it)))
+           (keys (-map #'cdr alist)))
+      (-remove (-lambda ((elt &as _ . key))
+                    (-all-p (lambda (it) (not (string-prefix-p key it)))
                                  (-remove-item key keys)))
                   alist)))
   (setq helm:org-capture-source
@@ -3875,7 +3878,7 @@ a file.
          (gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
          (line-choices (let ((minimum-line-number (line-number-at-pos (point-min) t))
                              (buffer-text-lines (split-string (buffer-string) "\n")))
-                         (seq-map-indexed (lambda (it it-index) (format "%d\t%s" it-index it)) buffer-text-lines)))
+                         (-map-indexed (lambda (it it-index) (format "%d\t%s" it-index it)) buffer-text-lines)))
          ;; Get the matching line.
          (chosen-line (completing-read "Jump to matching line: " line-choices
                                        nil t nil 'selectrum:swiper-jump-to-line-history))
@@ -3904,9 +3907,9 @@ a file.
   (interactive)
   (require 'recentf)
   (let* ((selectrum-should-sort-p nil)
-         (live-buffers (seq-remove (lambda (it) (string-match-p (rx bol white) it))
-                                   (seq-map #'buffer-name (buffer-list))))
-         (recentf-buffers (seq-map (lambda (it) (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it))
+         (live-buffers (-remove (lambda (it) (string-match-p (rx bol white) it))
+                                   (-map #'buffer-name (buffer-list))))
+         (recentf-buffers (-map (lambda (it) (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it))
                                    recentf-list)))
     (alet (completing-read "File: " (append live-buffers recentf-buffers))
       (setq it (or (alist-get it recentf-buffers nil nil #'string=) it))
@@ -3925,11 +3928,11 @@ a file.
   (interactive)
   (let* ((org-use-fast-tag-selection nil)
          (current-tags (org-get-tags))
-         (all-tags (seq-uniq (flatten-list (org-map-entries (lambda () (org-get-tags (point) t))))))
+         (all-tags (-uniq (flatten-list (org-map-entries (lambda () (org-get-tags (point) t))))))
          (selected-tags (completing-read-multiple "set tags: " all-tags)))
     (org-set-tags
-     (append (seq-remove (lambda (it) (member it current-tags)) selected-tags)
-             (seq-remove (lambda (it) (member it selected-tags)) current-tags)))))
+     (append (-remove (lambda (it) (member it current-tags)) selected-tags)
+             (-remove (lambda (it) (member it selected-tags)) current-tags)))))
 #+end_src
 
 **** TODO qutebrowser links                                           :disabled:
@@ -3952,7 +3955,7 @@ a file.
         (push (match-string 0) links))
       (setq links (reverse links))
       ;; If the link is too long shorten it.
-      (setq links (seq-map (lambda (it) (cons (s-truncate 110 it) it)) links))
+      (setq links (-map (lambda (it) (cons (s-truncate 110 it) it)) links))
       (completing-read "link: " links))))
 #+end_src
 
@@ -4040,8 +4043,8 @@ first letter of each word.
   "Abbreviate WORDS.
 WORDS is a string of non whitespace and whitespace."
   (thread-last (s-split "\s" words t)
-    (seq-map (lambda (it) (char-to-string (aref it 0))))
-    (seq-map #'downcase)
+    (-map (lambda (it) (char-to-string (aref it 0))))
+    (-map #'downcase)
     (apply #'concat)))
 #+end_src
 
@@ -4060,11 +4063,11 @@ WORD is a string with no whitespace characters."
           (letters (--> word
                         (s-chop-suffixes abbrev:suffixes it)
                         (s-split "" it t)))
-          (no-vowels (seq-remove (-partial #'string-match-p vowel-regexp)
+          (no-vowels (-remove (-partial #'string-match-p vowel-regexp)
                                  letters)))
          (thread-last no-vowels
-           (seq-uniq)
-           (seq-map #'downcase)
+           (-uniq)
+           (-map #'downcase)
            (apply #'concat))))
 #+end_src
 
@@ -4179,7 +4182,7 @@ WORDS is a string containing one or more words."
   (interactive)
   (-let* ((selected (completing-read
                      "abbrev to delete:"
-                     (seq-map (-lambda ((abbrev . expansion))
+                     (-map (-lambda ((abbrev . expansion))
                                 (format "%s -> %s" abbrev expansion))
                               (abbrev--alist+))))
           ((abbrev _ _) (s-split "\s" selected)))
@@ -5312,7 +5315,7 @@ ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
   (awhen (--first (--any-p (-partial #'org:element-contains-point-p point) it)
                   (thread-last (cdr elements)
                     (-partition-by #'org:element-paragraph-p)
-                    (seq-filter (lambda (it) (org:element-paragraph-p (car it))))))
+                    (-filter (lambda (it) (org:element-paragraph-p (car it))))))
     (cons (org-element-property :contents-begin (-first-item it))
           (org-element-property :contents-end (-last-item it)))))
 #+end_src
@@ -5346,11 +5349,11 @@ travel to anywhere I need within a heading from the headline itself.
    ;; There's a paragraph among the elements.
    ((-some->> elements
       (seq-drop-while (-not (-partial #'org:element-contains-point-p (point))))
-      (seq-first #'org:element-paragraph-p)
+      (-first #'org:element-paragraph-p)
       (org-element-property :begin))
     (org:edit-desc-bounds it elements))
    ;; Skip property drawers.
-   ((seq-first (lambda (it) (eq 'property-drawer (org-element-type it)))
+   ((-first (lambda (it) (eq 'property-drawer (org-element-type it)))
                (reverse elements))
     (alet (org-element-property :end it) (cons it it)))
    ;; There's no paragraphs or property drawers.
@@ -6819,8 +6822,8 @@ This function generates the eshell prompt by concatenating `eshell:header' with
 valid `eshell:enabled-sections' and the `eshell-prompt-string'."
   (concat eshell:header
           (thread-last eshell:enabled-sections
-            (seq-map (lambda (it) (void:symbol-intern 'eshell-prompt-- it)))
-            (seq-filter #'fboundp)
+            (-map (lambda (it) (void:symbol-intern 'eshell-prompt-- it)))
+            (-filter #'fboundp)
             (-reduce-from #'eshell:acc ""))
           eshell-prompt-string))
 #+end_src
@@ -6969,7 +6972,7 @@ And go to the start of the path selected by the headline."
   (let ((selectrum-should-sort-p nil)
         (selectrum-refine-candidates-function #'selectrum-default-candidate-refine-function)
         (paths (org:headline-paths)))
-    (--> (seq-map #'car paths)
+    (--> (-map #'car paths)
          (completing-read "Headlines: " it)
          (alist-get it paths nil nil #'string=)
          (goto-char it))
@@ -7112,7 +7115,7 @@ again, you are taken to the location you left off. This is very convenient.
   "Remove text properties from `kill-ring'."
   :append kill-emacs-hook
   (setq kill-ring
-        (seq-map (lambda (it) (when (stringp it) (substring-no-properties it)))
+        (-map (lambda (it) (when (stringp it) (substring-no-properties it)))
                  (-non-nil kill-ring))))
 #+end_src
 
@@ -7603,8 +7606,8 @@ that restarts emacs. I haven't tested this in EXWM mode.
   (defhook! auto-revert:visible-buffers-h ()
     "Auto revert stale buffers in visible windows, if necessary."
     :hook (focus-in-hook after-save-hook)
-    (seq-each (lambda (it) (with-current-buffer it (auto-revert:buffer-h)))
-              (seq-uniq (seq-map #'window-buffer (window-list))))))
+    (mapc (lambda (it) (with-current-buffer it (auto-revert:buffer-h)))
+          (-uniq (-map #'window-buffer (window-list))))))
 #+end_src
 
 ** security
@@ -8174,7 +8177,7 @@ when headline contents begin.
 #+begin_src emacs-lisp
 (defun org:todo-keywords ()
   "Return list of all TODO keywords."
-  (seq-filter (lambda (it) (and (stringp it) (not (string= "|" it))))
+  (-filter (lambda (it) (and (stringp it) (not (string= "|" it))))
               (flatten-list org-todo-keywords)))
 #+end_src
 
@@ -9105,7 +9108,7 @@ in the future. I use this template for this.
   :after org
   :commands (org-agenda org-agenda-list)
   :setq
-  (org-agenda-files . (seq-map (lambda (it) (concat org-directory it))
+  (org-agenda-files . (-map (lambda (it) (concat org-directory it))
                                '("todo.org")))
   (org-agenda-start-on-weekday . 0)
   (org-agenda-timegrid-use-ampm . nil)
@@ -9446,7 +9449,7 @@ VOID install. For writing this code I referenced the body of
                     "/fonts/"))
          (mac (concat (getenv "HOME") "/Library/Fonts/" ))
          (ns (concat (getenv "HOME") "/Library/Fonts/" )))))
-  (unless (seq-every-p (lambda (it) (file-exists-p (concat font-dir it)))
+  (unless (-all-p (lambda (it) (file-exists-p (concat font-dir it)))
                        '("all-the-icons.ttf"
                          "file-icons.ttf"
                          "fontawesome.ttf"
