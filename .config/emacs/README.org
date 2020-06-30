@@ -3223,7 +3223,7 @@ be inserted and interactively completed.
 (use-package! yasnippet
   :hook (prog-mode-hook . yas-minor-mode-on)
   :setq
-  (yas-snippet-dir . (concat VOID:DATA-DIR "snippets/"))
+  (yas-snippet-dirs . (list (concat VOID:DATA-DIR "snippets/")))
   (yas-verbosity . (if void:debug-p 3 0))
   (yas-indent-line . 'auto)
   (yas-prompt-functions . '(yas-completing-prompt yas-ido-prompt))
