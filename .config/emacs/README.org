@@ -335,11 +335,17 @@ Void is compiled.
 (defconst VOID:DOWNLOAD-DIR (expand-file-name "~/Downloads/")
   "Directory where downloads should go.")
 
-(defconst VOID:VIDEO-DIR (expand-file-name "~/Videos/")
+(defconst VOID:MULTIMEDIA-DIR (expand-file-name "~/Multimedia/")
+  "Directory where multimedia should go.")
+
+(defconst VOID:VIDEO-DIR (concat VOID:MULTIMEDIA-DIR "Videos")
   "Directory where videos should go.")
 
-(defconst VOID:MUSIC-DIR (expand-file-name "~/music/")
+(defconst VOID:MUSIC-DIR (concat VOID:MULTIMEDIA-DIR "Music")
   "Directory where music should go.")
+
+(defconst VOID:EMAIL-DIR (expand-file-name "~/.mail/")
+  "Directories where emails are stored.")
 #+end_src
 
 *** defined in c source code
