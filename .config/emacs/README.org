@@ -2166,7 +2166,7 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
                     (-uniq)))
          (names (-map #'void:anaphoric-true-symbol symbols)))
     `(let (,@(-map (-lambda ((sym name)) `(,sym (funcall ,fn ,structure ',name)))
-                      (-mapn #'list symbols names)))
+                   (-zip-with #'list symbols names)))
        ,@body)))
 #+end_src
 
