@@ -1857,7 +1857,7 @@ you can "discover" the commands as you go along.
   (which-key-add-key-based-replacements void:localleader-key "<localleader>"))
 #+end_src
 
-**** dash                                                             :disabled:
+**** dash                                                                  :eac:
 :PROPERTIES:
 :ID: 4e135d88-9dc3-4451-81dc-420184aecada
 :END:
@@ -1869,8 +1869,6 @@ abstractions for manipulating lists.
 (use-package! dash
   :require t
   :config
-  (defun dash-expand:&llist (key source)
-    `(car (alist-get ,key ,source)))
   (defun dash-expand:&alist* (key source)
     "Generate extracting KEY from SOURCE for &alist destructuring."
     `(prog1 (alist-get ,key ,source)
