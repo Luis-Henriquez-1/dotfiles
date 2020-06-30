@@ -212,13 +212,15 @@ account-default main
   "Return the remote part of mbsync."
   (let* (($account (password-store-get-field entry "account"))
          ($email (password-store-get-field entry "email")))
-    (dotfiles:convert-to-string
-     :IMAPStore (format "%s-remote" $account)
-     :Account $account
-     :MaildirStore (format "%s-local" $account)
-     :Subfolders 'Verbatim
-     :Path (format "~/.mail/%s" $email)
-     :Inbox (format "~/.mail/%s/inbox" $email))))
+    (concat (dotfiles:convert-to-string
+             :IMAPStore (format "%s-remote" $account)
+             :Account $account)
+            "\n\n"
+            (dotfiles:convert-to-string
+             :MaildirStore (format "%s-local" $account)
+             :Subfolders 'Verbatim
+             :Path (format "~/.mail/%s/" $email)
+             :Inbox (format "~/.mail/%s/inbox" $email)))))
 #+end_src
 
 *** sync all
@@ -256,11 +258,11 @@ account-default main
 (defun dotfiles:mbsyncrc-sync-gmail (entry)
   (let* ((mailboxes '("All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash"))
          (names (seq-map (fn (downcase (-first-item (s-split-words <1>)))) mailboxes)))
-    (alet (append (seq-map (-lambda ((n m)) (dotfiles:mbsyncrc-sync-gmail-section n m))
-                           (seq-mapn #'list names mailboxes))
-                  (list "\nGroup gmail")
-                  (seq-map (fn (format "Channel gmail-%s" <1>)) names))
-      (s-join "\n\n" it))))
+    (alet (seq-map (-lambda ((n m)) (dotfiles:mbsyncrc-sync-gmail-section n m))
+                   (seq-mapn #'list names mailboxes))
+      (concat (s-join "\n\n" it)
+              "\n\n"
+              (s-join "\n" (cons "Group gmail" (seq-map (fn (format "Channel gmail-%s" <1>)) names)))))))
 #+end_src
 
 ** account
