@@ -3065,13 +3065,13 @@ This is the user-facing function to define yasnippets.
       (alet (append
              (list "# -*- mode: snippet -*-\n")
              (-map (lambda (key)
-                        (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
-                      (-filter (-partial #'plist-get plist) keys))
+                     (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
+                   (-filter (-partial #'plist-get plist) keys))
              (list "# --\n")
              (list (defsnippet:compute-body <:body> <:placeholders>)))
         (with-temp-buffer
           (insert (s-join "\n" it))
-          (yas-load-snippet-buffer <:mode> t))))))
+          (yas-load-snippet-buffer <:mode>))))))
 #+end_src
 
 **** compute body
@@ -9295,6 +9295,31 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 
 #+begin_src emacs-lisp
 (use-package! lua-mode :mode "\\.lua\\'")
+#+end_src
+
+** cpp
+:PROPERTIES:
+:ID:       2fecdcf5-f482-4672-8bc8-9e9e1e0e110b
+:END:
+
+*** modern font lock
+:PROPERTIES:
+:ID:       2778d03a-4ee0-4175-90e5-331140ca7faf
+:END:
+
+#+begin_src emacs-lisp
+(use-package! modern-cpp-font-lock
+  :hook (c++-mode-hook . modern-c++-font-lock-mode))
+#+end_src
+
+*** demangle
+:PROPERTIES:
+:ID:       2cda9af3-c7e3-48b5-8b49-ec4c63d4f501
+:END:
+
+#+begin_src emacs-lisp
+(use-package! demangle-mode
+  :hook llvm-mode-hook)
 #+end_src
 
 * User Interface
