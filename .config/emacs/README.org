@@ -1696,8 +1696,7 @@ Don't ping things that look like domain names.
 (use-feature! seq
   ;; :alias (seq-some-p . seq-some)
   ;; Don't know why seq-some doesn't end with a '-p'. It is a predicate function.
-  :init (defalias 'seq-some-p 'seq-some)
-  :require t)
+  :init (defalias 'seq-some-p 'seq-some))
 #+end_src
 
 **** gv
