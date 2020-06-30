@@ -3230,7 +3230,7 @@ be inserted and interactively completed.
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :defer-config
-  (unless (file-exists-p yas-snippet-dirs) (mkdir yasnippet:dir))
+  (-each yas-snippet-dirs (fn (mkdir <> t)))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
