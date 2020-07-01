@@ -2120,7 +2120,7 @@ For example, 'hi would correspond to '<hi>."
 :END:
 
 #+begin_src emacs-lisp
-(defun void:anaphoric-body-symbols (body &optional contains-p)
+(defun void:anaphoric-body-symbols (body)
   "Return all the anaphoric symbols in body."
   (thread-last (flatten-list body)
     (-filter #'void:anaphoric-symbol-p)
