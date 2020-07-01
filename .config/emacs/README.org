@@ -7674,7 +7674,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! epa
+(use-feature! epa
   :setq
   (epg-gpg-program . "gpg2")
   (epa-pinentry-mode . 'loopback))
