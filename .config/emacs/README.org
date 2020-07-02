@@ -1712,6 +1712,16 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
   (gv-define-simple-setter plist-get plist-put))
 #+end_src
 
+**** nsm
+:PROPERTIES:
+:ID:       0ca7fc66-5312-4c69-a87d-7607292c7a2a
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! nsm
+  :setq (nsm-settings-file . (concat VOID:DATA-DIR "network-settings.data")))
+#+end_src
+
 *** external libraries
 :PROPERTIES:
 :ID: 6e4be80e-8149-424d-a801-d7871bfe8fc8
