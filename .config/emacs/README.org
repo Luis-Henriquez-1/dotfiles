@@ -4420,7 +4420,7 @@ therefore, has the most support (in the form of setup blogs and packages).
   (mu4e-html2text-command . (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text)))
 #+end_src
 
-*** TODO setup mu4e and download mail if it hasn't been
+*** TODO setup mu4e
 :PROPERTIES:
 :ID:       8ed2fe81-eda9-4343-a6e1-0a6a725866a4
 :END:
@@ -4435,7 +4435,6 @@ therefore, has the most support (in the form of setup blogs and packages).
               (-any-p #'f-empty-p email-dirs))
       (message "creating directories that don't exist.")
       (--each email-dirs (mkdir it t))
-      (message "")
       (shell-command (format "mu init -m %s" VOID:EMAIL-DIR))
       (message "Updating mail...")
       (mu4e-update-mail-and-index t))))
