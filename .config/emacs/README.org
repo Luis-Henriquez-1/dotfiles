@@ -1437,7 +1437,6 @@ think you want to use =smtp=.
   :setq-default
   (disabled-command-function . nil)
   ;; very important if you're using msmtp
-  ;; (sendmail-program (executable-find "msmtp"))
   )
 #+end_src
 
@@ -4343,6 +4342,7 @@ ways to read and send emails in Emacs.
 (use-feature! sendmail
   :setq
   (send-mail-function . #'sendmail-send-it)
+  (sendmail-program . (executable-find "msmtp"))
   (mail-specify-envelope-from . t))
 #+end_src
 
@@ -4420,6 +4420,24 @@ therefore, has the most support (in the form of setup blogs and packages).
   (mu4e-html2text-command . (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text)))
 #+end_src
 
+*** TODO setup mu4e and download mail if it hasn't been
+:PROPERTIES:
+:ID:       8ed2fe81-eda9-4343-a6e1-0a6a725866a4
+:END:
+
+#+begin_src emacs-lisp
+(defun mu4e/init ()
+  "Initialize mu4e."
+  (interactive)
+  (require 'password-store)
+  (let ((email-dirs (--map (concat VOID:EMAIL-DIR it) (pass:email-list))))
+    (unless (-all-p #'f-exists-p email-dirs)
+      (message "creating directories that don't exist.")
+      (--each email-dirs (mkdir it t))
+      (mu4e-update-mail-and-index t)))
+  (unless mu4e-contexts (mu4e:initialize-all-contexts)))
+#+end_src
+
 *** mu4e headers
 :PROPERTIES:
 :ID: 8b59c5bb-180c-461e-9b1a-4a0c95cb7671
@@ -4479,55 +4497,76 @@ accounts. Until I set multiple accounts correctly it keeps prompting me to
 create folders (such as =sent/=) in the =~/.mail= directory. I think part of the
 reason I spent so much time setting this up is because.
 
-**** email accounts
+**** return the list of emails with credentials
 :PROPERTIES:
-:ID: 0e71d857-f945-4b82-a49f-3621ebd6a5e0
+:ID:       3f7b1728-b855-447f-9f15-43bd79a94c14
 :END:
 
 #+begin_src emacs-lisp
-(defvar mu4e:email-accounts
-  '((:name "snhu"
-     :email "luis.henriquez@snhu.edu"
-     :sent "Sent Items"
-     :trash "Deleted Items"
-     :drafts "Drafts"
-     :server "smtp.office365.com"
-     :port 587)
-    (:name "gmail"
-     :email "luishenriquezperez@gmail.com"
-     :server "smtp.gmail.com"
-     :port 587)
-    (:name "luishp"
-     :email "luis@luishp.xyz"
-     :sent "Sent"
-     :trash "Trash"
-     :drafts "Drafts"
-     :server "mail.luishp.xyz"
-     :port 25))
-  "Email account information for mu4e.")
+(defun pass:email-list ()
+  "Return a list of emails."
+  (->> (password-store-list)
+       (-map (fn (elt (s-match "email/\\(.*\\)" <>) 1)))
+       (-non-nil)))
 #+end_src
 
-**** account setter
+**** return the stuff as a plist
+:PROPERTIES:
+:ID:       8129ca16-8641-4f2f-a4b6-03477d5b78f3
+:END:
+
+#+begin_src emacs-lisp
+(defun pass:email-account-plist (email)
+  "Return a plist of the relevant values of an email."
+  (alet (concat "email/" email)
+    (-mapcat (fn (list (intern <>) (password-store-get-field it <>)))
+             (-map #'car (cdr (password-store-parse-entry it))))))
+#+end_src
+
+**** mu4e folder name alist
+:PROPERTIES:
+:ID:       2ef07842-e321-4fff-ae73-f19c41d263a4
+:END:
+
+#+begin_src emacs-lisp
+(defun mu4e:guess-folder (base-dir &rest possible-names)
+  "Guess that a folder is present based on."
+  (or (-first (lambda (it) (-any-p (lambda (name) (s-contains-p name it t)) possible-names))
+              (cddr (directory-files base-dir)))
+      (-first-item possible-names)))
+#+end_src
+
+**** set up contexts for single account
+:PROPERTIES:
+:ID:       66d460d7-9647-4c29-8348-eb7b3d571630
+:END:
+
+#+begin_src emacs-lisp
+(defun mu4e:init-account-context (email)
+  "Initialize the context of EMAIL account."
+  (-let ((base-dir (concat VOID:EMAIL-DIR email "/"))
+         ((&plist 'out-host 'out-port) (pass:email-account-plist email)))
+    (alet `((mu4e-sent-folder      . ,(mu4e:guess-folder base-dir "sent"))
+            (mu4e-drafts-folder    . ,(mu4e:guess-folder base-dir "draft"))
+            (mu4e-trash-folder     . ,(mu4e:guess-folder base-dir "trash" "delete" "junk"))
+            (user-email-address    . ,email)
+            (smtpmail-smtp-server  . ,out-host)
+            (smtpmail-smtp-user    . ,base-dir)
+            (smtpmail-smtp-service . ,out-port))
+      (make-mu4e-context :name <name> :vars it)
+      (cl-pushnew it mu4e-contexts))))
+#+end_src
+
+**** multiple contexts
 :PROPERTIES:
 :ID: e56b64ac-ed36-4689-b8f4-8711c1f4f79f
 :END:
 
 #+begin_src emacs-lisp
-(defun mu4e:init-accounts ()
-  "Initialize all accounts in `mu4e:email-accounts'.
-Create an mu4e-context for each email account in `mu4e:email-accounts'."
-  (dolist (account mu4e:email-accounts)
-    (with-plist! account
-      (thread-first `((mu4e-sent-folder . ,(concat "/%s/" (or <sent> "sent")))
-                      (mu4e-trash-folder . ,(concat "/%s/" (or <trash> "trash")))
-                      (mu4e-drafts-folder . ,(concat "/%s/" (or <drafts> "drafts")))
-                      (user-email-address . "%s")
-                      (smtpmail-smtp-server . ,(or $server))
-                      (smtpmail-smtp-user . "%s"))
-        (seq-map (-lambda ((var . val)) (cons var (format val <email>))) it)
-        (cons `(smtpmail-smtp-service . ,(or <port> 25)) it)
-        (make-mu4e-context :name <name> :vars it)
-        (push it mu4e-contexts)))))
+(defun mu4e:initialize-all-contexts ()
+  "Initiaize the context for each account."
+  (-each (-map #'pass:email-account-plist (pass:email-list))
+    #'mu4e:init-account-context))
 #+end_src
 
 **** shortcuts
