@@ -9376,6 +9376,60 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   :hook llvm-mode-hook)
 #+end_src
 
+** TODO latex
+:PROPERTIES:
+:ID:       03b47c17-e217-4dd5-b48d-36ae54a8349e
+:END:
+
+*** tex
+:PROPERTIES:
+:ID:       da68dfd0-62c5-4101-a7f3-7b13df760670
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! tex
+  :mode ("\\.tex\\'" . LaTex-mode)
+  :setq
+  (TeX-parse-self . t)
+  (TeX-auto-save . t)
+  ;; use hidden dirs for auctex files
+  (TeX-auto-local . ".auctex-auto")
+  (TeX-style-local ".auctex-style")
+  (TeX-source-correlate-mode . t)
+  (TeX-source-correlate-method . 'synctex)
+  ;; don't start the emacs server when correlating sources
+  (TeX-source-correlate-start-server . nil)
+  ;; automatically insert braces after sub/superscript in math mode
+  (TeX-electric-sub-and-superscript . t))
+#+end_src
+
+*** auctex
+:PROPERTIES:
+:ID:       5d5d2e8f-3b95-4d1a-bcc0-1c4ec8f51202
+:END:
+
+#+begin_src emacs-lisp
+(use-package! auctex)
+#+end_src
+
+*** adaptive wrap
+:PROPERTIES:
+:ID:       80c837fc-a8de-4c11-9c76-b54f58c9a157
+:END:
+
+#+begin_src emacs-lisp
+(use-package! adaptive-wrap)
+#+end_src
+
+*** preview pane
+:PROPERTIES:
+:ID:       a1c99afc-ee73-42fd-b33d-7c61ad607e90
+:END:
+
+#+begin_src emacs-lisp
+(use-package! latex-preview-pane)
+#+end_src
+
 * User Interface
 :PROPERTIES:
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
