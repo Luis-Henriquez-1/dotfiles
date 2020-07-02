@@ -4541,12 +4541,19 @@ reason I spent so much time setting this up is because.
 :ID:       2ef07842-e321-4fff-ae73-f19c41d263a4
 :END:
 
+Mu4e keeps prompting you for the sent, trash, and drafts directory if you do not
+assign the corresponding mu4e variables. The way certain email servers name
+their directories varies. For example, outlook names its sent directory as =Sent
+Items=.
+
 #+begin_src emacs-lisp
-(defun mu4e:guess-folder (base-dir &rest possible-names)
-  "Guess that a folder is present based on."
-  (alet (or (-first (lambda (it) (-any-p (lambda (name) (s-contains-p name it t)) possible-names))
+(defun mu4e:guess-folder (base-dir possible-name &rest other-possible-names)
+  "Return the first file in BASE-DIR that matches POSSIBLE-NAME or any POSSIBLE-NAMES.
+If there is no match, return POSSIBLE-NAME."
+  (alet (or (-first (lambda (it) (-any-p (lambda (name) (s-contains-p name it t))
+                                         (cons possible-name other-possible-names)))
                     (cddr (directory-files base-dir)))
-            (-first-item possible-names))
+            possible-name)
     (format "/%s/%s" (f-filename base-dir) it)))
 #+end_src
 
