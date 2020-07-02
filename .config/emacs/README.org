@@ -4563,8 +4563,8 @@ If there is no match, return POSSIBLE-NAME."
 :END:
 
 #+begin_src emacs-lisp
-(defun mu4e:init-account-context (email)
-  "Return an mu4e account context for EMAIL."
+(defun mu4e::account-context (email)
+  "Return an mu4e account context for specified EMAIL."
   (-let ((base-dir (concat VOID:EMAIL-DIR email "/"))
          (name (-second-item (s-match ".*@\\([^.]*\\)" email)))
          ((&plist 'out-host 'out-port) (pass:email-account-plist email)))
@@ -4585,9 +4585,10 @@ If there is no match, return POSSIBLE-NAME."
 
 #+begin_src emacs-lisp
 (defun mu4e:initialize-all-contexts ()
-  "Initiaize the context for each account."
+  "Initiaize context for each email account."
   (interactive)
-  (--each (-map #'mu4e:init-account-context (pass:email-list))
+  (require 'password-store)
+  (--each (-map #'mu4e::account-context (pass:email-list))
     (cl-pushnew it mu4e-contexts)))
 #+end_src
 
