@@ -4584,7 +4584,7 @@ reason I spent so much time setting this up is because.
     (cl-pushnew it mu4e-contexts)))
 #+end_src
 
-**** shortcuts
+*** shortcuts
 :PROPERTIES:
 :ID: 565ce4bc-2cdb-4e1a-b871-e2d7d34137de
 :END:
