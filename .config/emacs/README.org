@@ -4431,11 +4431,14 @@ therefore, has the most support (in the form of setup blogs and packages).
   (interactive)
   (require 'password-store)
   (let ((email-dirs (--map (concat VOID:EMAIL-DIR it) (pass:email-list))))
-    (unless (-all-p #'f-exists-p email-dirs)
+    (when (or (not (-all-p #'f-exists-p email-dirs))
+              (-any-p #'f-empty-p email-dirs))
       (message "creating directories that don't exist.")
       (--each email-dirs (mkdir it t))
-      (mu4e-update-mail-and-index t)))
-  (unless mu4e-contexts (mu4e:initialize-all-contexts)))
+      (message "")
+      (shell-command (format "mu init -m %s" VOID:EMAIL-DIR))
+      (message "Updating mail...")
+      (mu4e-update-mail-and-index t))))
 #+end_src
 
 *** mu4e headers
@@ -4518,9 +4521,10 @@ reason I spent so much time setting this up is because.
 #+begin_src emacs-lisp
 (defun pass:email-account-plist (email)
   "Return a plist of the relevant values of an email."
-  (alet (concat "email/" email)
-    (-mapcat (fn (list (intern <>) (password-store-get-field it <>)))
-             (-map #'car (cdr (password-store-parse-entry it))))))
+  (shut-up!
+    (alet (concat "email/" email)
+      (-mapcat (fn (list (intern <>) (password-store-get-field it <>)))
+               (-map #'car (cdr (password-store-parse-entry it)))))))
 #+end_src
 
 **** mu4e folder name alist
@@ -4531,9 +4535,10 @@ reason I spent so much time setting this up is because.
 #+begin_src emacs-lisp
 (defun mu4e:guess-folder (base-dir &rest possible-names)
   "Guess that a folder is present based on."
-  (or (-first (lambda (it) (-any-p (lambda (name) (s-contains-p name it t)) possible-names))
-              (cddr (directory-files base-dir)))
-      (-first-item possible-names)))
+  (alet (or (-first (lambda (it) (-any-p (lambda (name) (s-contains-p name it t)) possible-names))
+                    (cddr (directory-files base-dir)))
+            (-first-item possible-names))
+    (format "/%s/%s" (f-filename base-dir) it)))
 #+end_src
 
 **** set up contexts for single account
@@ -4545,7 +4550,8 @@ reason I spent so much time setting this up is because.
 (defun mu4e:init-account-context (email)
   "Initialize the context of EMAIL account."
   (-let ((base-dir (concat VOID:EMAIL-DIR email "/"))
-         ((&plist 'out-host 'out-port) (pass:email-account-plist email)))
+         ((&plist 'out-host 'out-port) (pass:email-account-plist email))
+         (name (-second-item (s-match ".*@\\([^.]*\\)" email))))
     (alet `((mu4e-sent-folder      . ,(mu4e:guess-folder base-dir "sent"))
             (mu4e-drafts-folder    . ,(mu4e:guess-folder base-dir "draft"))
             (mu4e-trash-folder     . ,(mu4e:guess-folder base-dir "trash" "delete" "junk"))
@@ -4553,8 +4559,7 @@ reason I spent so much time setting this up is because.
             (smtpmail-smtp-server  . ,out-host)
             (smtpmail-smtp-user    . ,base-dir)
             (smtpmail-smtp-service . ,out-port))
-      (make-mu4e-context :name <name> :vars it)
-      (cl-pushnew it mu4e-contexts))))
+      (make-mu4e-context :name name :vars it))))
 #+end_src
 
 **** multiple contexts
@@ -4565,8 +4570,9 @@ reason I spent so much time setting this up is because.
 #+begin_src emacs-lisp
 (defun mu4e:initialize-all-contexts ()
   "Initiaize the context for each account."
-  (-each (-map #'pass:email-account-plist (pass:email-list))
-    #'mu4e:init-account-context))
+  (interactive)
+  (--each (-map #'mu4e:init-account-context (pass:email-list))
+    (cl-pushnew it mu4e-contexts)))
 #+end_src
 
 **** shortcuts
