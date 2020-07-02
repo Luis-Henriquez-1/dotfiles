@@ -4557,10 +4557,10 @@ reason I spent so much time setting this up is because.
 
 #+begin_src emacs-lisp
 (defun mu4e:init-account-context (email)
-  "Initialize the context of EMAIL account."
+  "Return an mu4e account context for EMAIL."
   (-let ((base-dir (concat VOID:EMAIL-DIR email "/"))
-         ((&plist 'out-host 'out-port) (pass:email-account-plist email))
-         (name (-second-item (s-match ".*@\\([^.]*\\)" email))))
+         (name (-second-item (s-match ".*@\\([^.]*\\)" email)))
+         ((&plist 'out-host 'out-port) (pass:email-account-plist email)))
     (alet `((mu4e-sent-folder      . ,(mu4e:guess-folder base-dir "sent"))
             (mu4e-drafts-folder    . ,(mu4e:guess-folder base-dir "draft"))
             (mu4e-trash-folder     . ,(mu4e:guess-folder base-dir "trash" "delete" "junk"))
