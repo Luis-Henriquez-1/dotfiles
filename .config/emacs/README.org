@@ -4371,7 +4371,7 @@ ways to read and send emails in Emacs.
   :setq
   (message-signature . user-full-name)
   (message-sendmail-envelope-from . 'header)
-  (message-send-mail-function . #'smtpmail-send-it)
+  (message-send-mail-function . #'sendmail-send-it)
   (message-kill-buffer-on-exit . t))
 #+end_src
 
