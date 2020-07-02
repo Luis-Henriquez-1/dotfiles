@@ -7199,6 +7199,11 @@ read this [[https://emacs.stackexchange.com/questions/51853/retracing-steps-with
 
 ** elfeed
 :PROPERTIES:
+:ID:       e018eeba-2e0b-4d9e-b813-bb9c427098f5
+:END:
+
+*** elfeed
+:PROPERTIES:
 :ID: 7454a51a-cb50-47e4-b0ab-7ac493d9d09d
 :END:
 
@@ -7224,7 +7229,7 @@ in time to see older posts.
   (shr-max-image-proportion     . 0.8))
 #+end_src
 
-** elfeed org
+*** elfeed org
 :PROPERTIES:
 :ID: e385b9b0-4681-4faa-9bfe-c759080ff5d9
 :END:
