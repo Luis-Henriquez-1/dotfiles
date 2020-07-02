@@ -156,7 +156,7 @@ possible. And also to generate repetative code.
   (s-join "\n\n"))
 #+end_src
 
-*** main
+** main
 :PROPERTIES:
 :ID:       537fb697-f84c-46d7-80ac-0745ec3bddb1
 :END:
@@ -170,7 +170,7 @@ logfile ~/.msmtp.log
 
 <<msmtprc-account-info()>>
 
-account-default main
+account default : luishp
 #+end_src
 
 ** mbsync
@@ -220,7 +220,7 @@ account-default main
              :MaildirStore (format "%s-local" $account)
              :Subfolders 'Verbatim
              :Path (format "~/.mail/%s/" $email)
-             :Inbox (format "~/.mail/%s/inbox" $email)))))
+             :Inbox (format "~/.mail/%s/Inbox" $email)))))
 #+end_src
 
 *** sync all
