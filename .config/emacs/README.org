@@ -338,10 +338,10 @@ Void is compiled.
 (defconst VOID:MULTIMEDIA-DIR (expand-file-name "~/Multimedia/")
   "Directory where multimedia should go.")
 
-(defconst VOID:VIDEO-DIR (concat VOID:MULTIMEDIA-DIR "Videos")
+(defconst VOID:VIDEO-DIR (concat VOID:MULTIMEDIA-DIR "Videos/")
   "Directory where videos should go.")
 
-(defconst VOID:MUSIC-DIR (concat VOID:MULTIMEDIA-DIR "Music")
+(defconst VOID:MUSIC-DIR (concat VOID:MULTIMEDIA-DIR "Music/")
   "Directory where music should go.")
 
 (defconst VOID:EMAIL-DIR (expand-file-name "~/.mail/")
