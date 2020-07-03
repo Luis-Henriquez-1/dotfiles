@@ -6826,9 +6826,10 @@ line--that's not what we want.
 https://emacs.stackexchange.com/questions/28819/eshell-goes-to-the-bottom-of-the-page-after-executing-a-command
 
 #+begin_src emacs-lisp
-(defun eshell/clear ()
+(defadvice! eshell:scroll-buffer-to-top (&rest _)
   "Scroll eshell buffer to top.
 The effect of this is to clear the contents of the eshell buffer."
+  :override eshell/clear
   (progn (call-interactively #'evil-scroll-line-to-top) nil))
 #+end_src
 
