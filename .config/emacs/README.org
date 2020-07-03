@@ -344,6 +344,9 @@ Void is compiled.
 (defconst VOID:MUSIC-DIR (concat VOID:MULTIMEDIA-DIR "Music/")
   "Directory where music should go.")
 
+(defconst VOID:ALERT-SOUNDS (concat VOID:MULTIMEDIA-DIR "Alert Sounds/")
+  "Directory where alert sounds should go.")
+
 (defconst VOID:EMAIL-DIR (expand-file-name "~/.mail/")
   "Directories where emails are stored.")
 #+end_src
@@ -7266,8 +7269,8 @@ I might consider doing this asynchronously.
   :commands pomodoro-start
   :setq
   (pomodoro-play-sounds       . t)
-  (pomodoro-work-start-sound  . "~/Music/beeps/A-Tone-His_Self-1266414414.wav")
-  (pomodoro-break-start-sound . "~/Music/beeps/A-Tone-His_Self-1266414414.wav")
+  (pomodoro-work-start-sound  . (concat VOID:ALERT-SOUNDS "A-Tone-His_Self-1266414414.wav"))
+  (pomodoro-break-start-sound . (concat VOID:ALERT-SOUNDS "A-Tone-His_Self-1266414414.wav"))
   (pomodoro-work-time         . 25)
   (pomodoro-break-time        . 5)
   (pomodoro-long-break-time   . 15))
