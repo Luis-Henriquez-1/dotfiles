@@ -6838,17 +6838,6 @@ The effect of this is to clear the contents of the eshell buffer."
 :ID: 66d647e3-b83b-4469-bb62-75546c2fee64
 :END:
 
-**** banner message
-:PROPERTIES:
-:ID: c104955c-4109-4d49-8e1d-1a78b7ed2170
-:END:
-
-The banner message is the text above the eshell prompt that you see initially
-which says /"Welcome to the Emacs Shell"/.
-
-#+begin_src emacs-lisp
-#+end_src
-
 **** prompt
 :PROPERTIES:
 :ID: c21591c9-43a2-4c6b-aac8-b46b41f4dc63
