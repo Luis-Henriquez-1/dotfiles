@@ -7778,6 +7778,11 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 
 ** pdf-tools
 :PROPERTIES:
+:ID:       63343f9d-6b19-43de-8302-d1344d571949
+:END:
+
+*** pdf-tools
+:PROPERTIES:
 :ID: 163d8880-6a7d-4479-a7e4-e333e4f930da
 :END:
 
@@ -7788,6 +7793,51 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
   :bind (:pdf-view-mode-map
          ("j" . pdf-view-next-line-or-next-page)
          ("k" . pdf-view-previous-line-or-previous-page)))
+#+end_src
+
+*** epd-pdf-info-program
+:PROPERTIES:
+:ID:       25826061-a4a7-4f8a-8d3b-bdd5a80f70d0
+:END:
+
+#+begin_src emacs-lisp
+(defadvice! pdf-tools:build-pdf-info-program-a ()
+  "Build the pdf-info program if it hasn't already been built."
+  :before pdf-view-mode
+  (unless (file-executable-p pdf-info-epdfinfo-program)
+    (let ((wconf (current-window-configuration)))
+      (pdf-tools-install)
+      (message "Building epdfinfo, this will take a moment...")
+      (--each (buffer-list)
+        (with-current-buffer it
+          (when (eq major-mode 'pdf-view-mode)
+            (fundamental-mode))))
+      ;; (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
+      ;;   (with-current-buffer buffer (fundamental-mode)))
+      (while compilation-in-progress
+        ;; Block until `pdf-tools-install' is done
+        (redisplay)
+        (sleep-for 1))
+      ;; HACK If pdf-tools was loaded by you opening a pdf file, once
+      ;;      `pdf-tools-install' completes, `pdf-view-mode' will throw an error
+      ;;      because the compilation buffer is focused, not the pdf buffer.
+      ;;      Therefore, it is imperative that the window config is restored.
+      (when (file-executable-p pdf-info-epdfinfo-program)
+        (set-window-configuration wconf)))))
+#+end_src
+
+*** bindings
+:PROPERTIES:
+:ID:       506c568c-0473-4db6-82b6-cc91174b0ce4
+:END:
+
+#+begin_src emacs-lisp
+(general-def 'normal pdf-view-mode-map
+  "j" #'pdf-view-next-line-or-next-page
+  "k" #'pdf-view-previous-line-or-previous-page
+  "0" #'pdf-view-first-page
+  "9" #'pdf-view-last-page
+  "s" #'pdf-view-fit-width-to-window)
 #+end_src
 
 ** circe
@@ -9394,13 +9444,13 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 
 #+begin_src emacs-lisp
 (use-feature! tex
-  :mode ("\\.tex\\'" . LaTex-mode)
+  :mode ("\\.tex\\'" . LaTeX-mode)
   :setq
   (TeX-parse-self . t)
   (TeX-auto-save . t)
   ;; use hidden dirs for auctex files
   (TeX-auto-local . ".auctex-auto")
-  (TeX-style-local ".auctex-style")
+  (TeX-style-local . ".auctex-style")
   (TeX-source-correlate-mode . t)
   (TeX-source-correlate-method . 'synctex)
   ;; don't start the emacs server when correlating sources
