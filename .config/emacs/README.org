@@ -6729,8 +6729,8 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 
 #+begin_src emacs-lisp
 (after! em-term
-  (dolist (command '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp"))
-    (add-to-list 'eshell-visual-commands command)))
+  (--each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
+    (add-to-list 'eshell-visual-commands it)))
 #+end_src
 
 *** improvements
