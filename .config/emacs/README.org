@@ -4587,9 +4587,9 @@ If there is no match, return POSSIBLE-NAME."
 :END:
 
 #+begin_src emacs-lisp
-(defun mu4e:initialize-all-contexts ()
+(defadvice! mu4e:initialize-all-contexts ()
   "Initiaize context for each email account."
-  (interactive)
+  :before mu4e
   (require 'password-store)
   (--each (-map #'mu4e::account-context (pass:email-list))
     (cl-pushnew it mu4e-contexts)))
