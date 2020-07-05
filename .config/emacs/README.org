@@ -9445,6 +9445,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 #+begin_src emacs-lisp
 (use-feature! tex
   :mode ("\\.tex\\'" . LaTeX-mode)
+  :hook (LaTex-mode-hook . visual-line-mode)
   :setq
   (TeX-parse-self . t)
   (TeX-auto-save . t)
@@ -9474,7 +9475,9 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 :END:
 
 #+begin_src emacs-lisp
-(use-package! adaptive-wrap)
+(use-package! adaptive-wrap
+  :hook (LaTeX-mode . adaptive-wrap-prefix-mode)
+  :setq-default (adaptive-wrap-extra-indent . 0))
 #+end_src
 
 *** preview pane
