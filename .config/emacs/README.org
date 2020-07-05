@@ -7238,7 +7238,6 @@ in time to see older posts.
 #+begin_src emacs-lisp
 (use-package! elfeed-org
   :after elfeed
-  :require t
   :setq
   (rmh-elfeed-org-files      . (list (concat VOID:ORG-DIR "elfeed.org")))
   (rmh-elfeed-org-tree-id    . "ELFEED")
