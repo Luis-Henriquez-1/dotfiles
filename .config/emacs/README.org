@@ -3560,7 +3560,7 @@ be inserted and interactively completed.
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :defer-config
-  (-each yas-snippet-dirs (fn (mkdir <> t)))
+  (-each yas-snippet-dirs (fn! (mkdir <> t)))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
@@ -3578,7 +3578,7 @@ be inserted and interactively completed.
 (use-package! yasnippet-snippets
   :after yasnippet
   :init
-  (awhen (-first (fn (s-contains-p "yasnippet-snippets" <>)) load-path)
+  (awhen (-first (fn! (s-contains-p "yasnippet-snippets" <path>)) load-path)
     (push it yas-snippet-dirs)))
 #+end_src
 
@@ -4839,7 +4839,7 @@ reason I spent so much time setting this up is because.
 (defun pass:email-list ()
   "Return a list of emails."
   (->> (password-store-list)
-       (-map (fn (elt (s-match "email/\\(.*\\)" <>) 1)))
+       (-map (fn! (elt (s-match "email/\\(.*\\)" <entry>) 1)))
        (-non-nil)))
 #+end_src
 
@@ -4852,9 +4852,9 @@ reason I spent so much time setting this up is because.
 (defun pass:email-account-plist (email)
   "Return a plist of the relevant values of an email."
   (shut-up!
-    (alet (concat "email/" email)
-      (-mapcat (fn (list (intern <>) (password-store-get-field it <>)))
-               (-map #'car (cdr (password-store-parse-entry it)))))))
+    (-mapcat (fn! (list (intern <field>)
+                        (password-store-get-field (concat "email/" email) <field>)))
+             (-map #'car (cdr (password-store-parse-entry it))))))
 #+end_src
 
 **** mu4e folder name alist
@@ -6422,7 +6422,7 @@ cursor color will update.
 
 (defadvice! evil:set-initial-state (orig-fn &rest args)
   :around evil-set-initial-state
-  (-let [(mode state) args]
+  (let! ((`(,mode ,state) args))
     (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
 
 (advice-add #'evil-motion-state :override #'evil-normal-state)
