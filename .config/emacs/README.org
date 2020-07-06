@@ -2211,19 +2211,6 @@ you can "discover" the commands as you go along.
 (use-package! s :require t)
 #+end_src
 
-**** a
-:PROPERTIES:
-:ID: 7cacf86a-8790-4e08-95e6-6406f9dbf32d
-:END:
-
-This is an alist library--something badly needed in Emacs. Perhaps the most
-important function for me in this library is =a-update=, a function that updates
-an element of an alist.
-
-#+begin_src emacs-lisp
-(use-package! a)
-#+end_src
-
 **** gc
 :PROPERTIES:
 :ID: 4f1477b7-7b28-4a20-9a31-cc34a10f5878
