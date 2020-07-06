@@ -2202,36 +2202,6 @@ you can "discover" the commands as you go along.
   (which-key-add-key-based-replacements void:localleader-key "<localleader>"))
 #+end_src
 
-**** dash                                                                  :eac:
-:PROPERTIES:
-:ID: 4e135d88-9dc3-4451-81dc-420184aecada
-:END:
-
-Dash is a library that provides functional (sometimes clojure-esque) like
-abstractions for manipulating lists.
-
-#+begin_src emacs-lisp
-(use-package! dash
-  :require t
-  :config
-  (defun dash-expand:&alist* (key source)
-    "Generate extracting KEY from SOURCE for &alist destructuring."
-    `(prog1 (alist-get ,key ,source)
-       (setq ,source (--remove-first (equal (car it) ,key) ,source)))))
-#+end_src
-
-**** dash-functional
-:PROPERTIES:
-:ID: 5e74cff5-49e6-4dde-baf5-27de12d0063f
-:END:
-
-[[https://github.com/magnars/dash.el][dash-functional]] goes hand in hand with dash. It's a library of functions that
-transform functions into other functions.
-
-#+begin_src emacs-lisp
-(use-package! dash-functional :require t)
-#+end_src
-
 **** s
 :PROPERTIES:
 :ID: 4b82deb0-bbe1-452c-8b60-ef734efb86d8
@@ -2254,15 +2224,6 @@ an element of an alist.
 (use-package! a)
 #+end_src
 
-**** noflet
-:PROPERTIES:
-:ID: e89b1560-bb57-4c97-94e5-4ff78ab5bdde
-:END:
-
-#+begin_src emacs-lisp
-(use-package! noflet)
-#+end_src
-
 **** gc
 :PROPERTIES:
 :ID: 4f1477b7-7b28-4a20-9a31-cc34a10f5878
@@ -2278,15 +2239,6 @@ while the user is working.
   (gcmh-idle-delay . 10)
   (gcmh-verbose . void:debug-p)
   (gcmh-high-cons-threshold . (* 16 1024 1024)))
-#+end_src
-
-**** mmt
-:PROPERTIES:
-:ID:       94c8da4a-3e2c-42ab-abb7-14f49e76e045
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! mmt)
 #+end_src
 
 *** custom macros and functions
