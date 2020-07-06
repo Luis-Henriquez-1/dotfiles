@@ -2176,9 +2176,11 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
   (let* ((symbols (thread-last (flatten-list body)
                     (-filter #'void:anaphoric-symbol-p)
                     (-uniq)))
-         (names (-map #'void:anaphoric-true-symbol symbols)))
-    `(let (,@(-map (-lambda ((sym name)) `(,sym (funcall ,fn ,structure ',name)))
-                   (-zip-with #'list symbols names)))
+         (names (-map #'void:anaphoric-true-symbol symbols))
+         (structure-sym (make-symbol "structure")))
+    `(let* ((,structure-sym ,structure)
+            ,@(-map (-lambda ((sym name)) `(,sym (funcall ,fn ,structure-sym ',name)))
+                    (-zip-with #'list symbols names)))
        ,@body)))
 #+end_src
 
