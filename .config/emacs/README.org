@@ -793,468 +793,6 @@ color in the frame title.
   (setq x-gtk-use-system-tooltips nil))
 #+end_src
 
-** Package Management                                                      :ewc:
-:PROPERTIES:
-:ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
-:END:
-
-*** straight.el
-:PROPERTIES:
-:ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
-:END:
-
-[[straight][straight.el]] is a package manager that strives to make emacs configurations
-completely reproducable.
-
-**** customize straight directory
-:PROPERTIES:
-:ID: 843cc8b9-edff-42f7-a767-65a59aa38fbc
-:END:
-
-The path of the straight directory within emacs is hardcoded into
-straight so we need to trick it into thinking =VOID:PACKAGES-DIR= is the
-our emacs directory. This needs to be done before bootstraping
-straight, else the straight directory will be created anyway. I got
-this from Doom's straight branch.
-
-#+begin_src emacs-lisp
-(defadvice! straight:use-packages-dir-a (orig-fn &rest args)
-  "Use `VOID:PACKAGES-DIR' for straight directory."
-  :around straight--emacs-dir
-  (let ((user-emacs-directory VOID:PACKAGES-DIR))
-    (apply orig-fn args)))
-#+end_src
-
-**** sources
-:PROPERTIES:
-:ID: 1491c0ff-1bce-45e2-ac36-2d33752e5d45
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:core-package-sources
-  '((org-elpa :local-repo nil)
-    (melpa
-     :type git :host github
-     :repo "melpa/melpa"
-     :no-build t)
-    (gnu-elpa-mirror
-     :type git :host github
-     :repo "emacs-straight/gnu-elpa-mirror"
-     :no-build t)
-    (emacsmirror-mirror
-     :type git :host github
-     :repo "emacs-straight/emacsmirror-mirror"
-     :no-build t))
-  "A list of recipes for straight's recipe repos.")
-#+end_src
-
-**** bootstrap code
-:PROPERTIES:
-:ID: 7816be80-4db8-4219-b7d1-9a6b1ea96035
-:END:
-
-This code initializes straight if it's not already installed.
-
-#+begin_src emacs-lisp
-(defun straight:init-fn ()
-  "Initialize `straight.el'."
-  (defvar boostrap-version 5 "Bootstrap version for straight.el")
-  (let* ((user-emacs-directory VOID:PACKAGES-DIR)
-         (straight-dir (concat VOID:PACKAGES-DIR "straight/"))
-         (bootstrap-file (concat straight-dir "repos/straight.el/straight.el")))
-    (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
-      (void:log "Installing straight.el...")
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (void:log "Loading straight.el...")
-    (load bootstrap-file nil t))
-  (mapc #'straight-use-recipes void:core-package-sources))
-#+end_src
-
-**** straight-installer
-:PROPERTIES:
-:ID: 5b38a3da-d237-45f5-804f-5fd7e2f88d83
-:END:
-
-#+begin_src emacs-lisp
-(defun straight:install-package (package-or-recipe)
-  "Install PACKAGE with optional RECIPE."
-  (unless (featurep 'straight) (straight:init-fn))
-  (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
-    (condition-case err
-        (progn (straight-use-package package-or-recipe)
-               (void:log "✓ installed %s" package))
-      (error
-       (void:log "✕ failed to install %s because of %s" package err)))))
-#+end_src
-
-**** go to project page                                               :disabled:
-:PROPERTIES:
-:ID:       90f52a97-4bbf-44c2-bac2-7b5f3582650b
-:END:
-
-#+begin_src emacs-lisp
-(defun straight:cd ()
-  (straight-recipes-retrieve (intern (car (straight-recipes-list)))))
-#+end_src
-
-*** required packages
-:PROPERTIES:
-:ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
-:END:
-
-[[id:04560da8-1e8a-4bcc-bdeb-574d8bfc984d][Later]] I write a macro specifically designed for installing and configuring
-packages. I could write this macro with just plain Emacs libraries but I prefer
-using nice libraries. In byte compiled Void, they don't need to be installed.
-
-#+begin_src emacs-lisp
-(dolist (package '(leaf-keywords leaf))
-  (funcall #'straight:install-package package)
-  (require package))
-(leaf-keywords-init)
-#+end_src
-
-*** leaf
-
-:PROPERTIES:
-:ID:       109f58d7-525e-43f4-b997-658b1d5da0a8
-:END:
-
-Like =use-package=, leaf is a macro that fascilitates package configuration.
-
-**** naming
-:PROPERTIES:
-:ID:       941ce3dc-9648-4133-864b-eae2542a2b54
-:END:
-
-The name =leaf= is not descriptive about what I'm doing which is configuring a
-package.
-
-#+begin_src emacs-lisp
-(defalias 'use-package! 'leaf)
-
-(defmacro use-feature! (feature &rest args)
-  (declare (indent defun))
-  `(leaf ,feature :ensure nil ,@args))
-#+end_src
-
-**** leaf
-:PROPERTIES:
-:ID:       7d72aec8-5523-473d-860d-181ce3d484d7
-:END:
-
-#+begin_src emacs-lisp
-(use-package! leaf
-  :setq (leaf-defaults . '(:ensure t)))
-#+end_src
-
-**** define leaf keyword
-:PROPERTIES:
-:ID:       5f480daa-4561-400f-bbe2-4396fc7877ff
-:END:
-
-Leaf is very minimal and for the most part this is good. However, it does mean
-defining leaf keywords is a bit of a pain. There are many low-level parts of
-doing so that could be automated. This is my attempt to automate defining a leaf
-keyword.
-
-#+begin_src emacs-lisp
-(cl-defun leaf:define-keyword (&key name where normalizer defer alias form)
-  "Define leaf KEYWORD at PLACE.
-PLACE is a list whose car is the symbol `before' or `after' and whose cadr is
-one of leaf's available keywords. DEFER specifies whether the keyword is a
-deferring keyword. ALIAS is an alias or a list of aliases for the keyword. FORM
-is the form that will be added to."
-  (setq name (intern (concat ":" (symbol-name name))))
-  ;; Defer it if necessary.
-  (when defer
-    (push name leaf-defer-keywords))
-
-  ;; Set up aliases.
-  (let ((aliases alias))
-    (dolist (alias aliases)
-      (push (cons alias name) leaf-alias-keyword-alist)))
-
-  ;; Add a normalizer.
-  (when normalizer
-    (push `((or (eq leaf--key ,name)
-                (eq ,name (alist-get leaf--key leaf-alias-keyword-alist)))
-            (funcall #',normalizer))
-          leaf-normalize))
-
-  ;; Insert it in proper place.
-  (let* ((place (cadr where))
-         (where (car where))
-         (target-form (list name form))
-         (insert-fn (cond ((eq where 'after) #'leaf-insert-list-after)
-                          ((eq where 'before) #'leaf-insert-list-before)
-                          (t (error)))))
-    (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
-#+end_src
-
-**** custom setting keywords
-:PROPERTIES:
-:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
-:END:
-
-Leaf keywords do not.
-
-***** normalizers
-:PROPERTIES:
-:ID:       bcf96e13-f3bc-4b23-832f-f94b31dd48a5
-:END:
-
-leaf's setq does not correctly handle setting variables to forms that need to be
-evaluated.
-
-#+begin_src emacs-lisp
-(defun leaf:normalizer-setq ()
-  (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
-
-(defun leaf:normalizer-commands ()
-  (mapcar (lambda (elm)
-            (cond ((memq leaf--key '(:after))
-                   (if (eq elm t) leaf--name elm))
-                  (t elm)))
-          (delete-dups (delq nil (leaf-flatten leaf--value)))))
-#+end_src
-
-***** setq
-:PROPERTIES:
-:ID:       6f38c45b-9382-4d72-a7ae-6d7a8748d07f
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-setq
- :where '(before :setq)
- :normalizer #'leaf:normalizer-setq
- :alias (list :setq)
- :form (plist-get leaf-keywords :setq))
-#+end_src
-
-***** pre-setq
-:PROPERTIES:
-:ID:       aba01554-fa11-4120-9867-19e5e2025df4
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-pre-setq
- :where '(before :pre-setq)
- :normalizer #'leaf:normalizer-setq
- :alias (list :pre-setq)
- :form (plist-get leaf-keywords :pre-setq))
-#+end_src
-
-***** custom
-:PROPERTIES:
-:ID:       bfa61a7a-1660-4000-a80e-15851a32ffd5
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-custom
- :where '(before :custom)
- :normalizer #'leaf:normalizer-setq
- :alias (list :custom)
- :form (plist-get leaf-keywords :custom))
-#+end_src
-
-***** setq-default
-:PROPERTIES:
-:ID:       b8ab2bf6-2b4e-41db-93f8-ed5c86392c84
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-setq-default
- :where '(before :setq-default)
- :normalizer #'leaf:normalizer-setq
- :alias (list :setq-default)
- :form (plist-get leaf-keywords :setq-default))
-#+end_src
-
-**** defer keywords
-:PROPERTIES:
-:ID:       6a8189ab-9a7a-4670-aa7a-b6589c180011
-:END:
-
-These keywords are meant to improve on the deferred loading options already
-provided by leaf. They are inspired from DOOM emacs.
-
-***** leaf-generate-load-fn
-:PROPERTIES:
-:ID:       41c05e4a-a0f1-45e7-bed6-7de7a439faa1
-:END:
-
-#+begin_src emacs-lisp
-(defun leaf:generate-load-form (package &optional hooks advice-place advices)
-  "Return form that evals into function that loads the package."
-  (let ((load-fn (intern (concat "leaf:load-" (symbol-name package)))))
-    `(progn
-       (defun ,load-fn (&rest _)
-         (void:log "Loading %S..." ',package)
-         (unless (require ',package nil t)
-           (message "Error loading %S" ',package))
-         ,@(mapcar (lambda (hook) `(remove-hook ',hook #',load-fn)) hooks)
-         ,@(mapcar (lambda (advice) `(advice-remove #',advice #',load-fn)) advices)
-         (fmakunbound #',load-fn))
-       ,@(mapcar (lambda (hook) `(add-hook ',hook #',load-fn)) hooks)
-       ,@(mapcar (lambda (advice) `(advice-add #',advice ,advice-place #',load-fn)) advices))))
-#+end_src
-
-***** before-call
-:PROPERTIES:
-:ID:       5378035c-206b-4479-8c60-4d57853e5754
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'before-call
- :where '(before :hook)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`(,(leaf:generate-load-form leaf--name nil :before leaf--value)
-          ,@leaf--body))
-#+end_src
-
-***** after-call
-:PROPERTIES:
-:ID:       36389857-c070-4221-8f76-b6b0da257b34
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'after-call
- :where '(before :hook)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`(,(leaf:generate-load-form leaf--name nil :after leaf--value)
-          ,@leaf--body))
-#+end_src
-
-
-***** on-hook
-:PROPERTIES:
-:ID:       6b4696f3-2bc0-4646-ab68-e5e5b61b0624
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'on-hook
- :where '(before :hook)
- :defer t
- :form '`(,(leaf:generate-load-form leaf--name leaf--value)
-          ,@leaf--body))
-#+end_src
-
-***** defer-incrementally
-:PROPERTIES:
-:ID:       c7ab7604-6e7c-42d1-b956-c58854948e8f
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'load-incrementally
- :where '(before :before-call)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`((append! void:incremental-packages ',leaf--value)
-          ,@leaf--body))
-#+end_src
-
-**** straight keyword
-:PROPERTIES:
-:ID:       cba57988-21b2-456b-aed2-27254febf873
-:END:
-
-This keyword is designed to be compiled away, leaving only forms adding package
-paths to the load-path. This is so that package installation isn't done after
-VOID is compiled.
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-straight
- :where '(before :straight)
- :alias (list :ensure)
- :form
- '`(,@(when (and leaf--value (car-safe leaf--value))
-        `((straight:install-package ',(car leaf--value))))
-    ,@leaf--body))
-
-(push `((or (memq leaf--key '(:void-straight))
-            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void:straight))
-        (cond ((eq t (car leaf--value))
-               (list leaf--name))
-              ((eq nil (car leaf--value))
-               nil)
-              ((listp (car-safe leaf--value))
-               (list (cons leaf--name (car leaf--value))))))
-      leaf-normalize)
-#+end_src
-
-**** popup
-:PROPERTIES:
-:ID:       30845314-ac19-49bb-9065-591c13e55489
-:END:
-
-The point of this keyword is to let me configure the display of buffers for
-specific packages.
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'popup
- :where '(before :mode)
- :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
-          ,@leaf--body))
-#+end_src
-
-**** os
-:PROPERTIES:
-:ID:       3335e409-b963-4504-b9fb-2faf4fb0be3d
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'os
- :where '(before :when)
- :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
-#+end_src
-
-**** straight
-:PROPERTIES:
-:ID:       9dff9894-667c-4e74-9624-8aee533f8f70
-:END:
-
-#+begin_src emacs-lisp
-(use-package! straight
-  :require t
-  :setq
-  (straight-disable-autoloads . nil)
-  (straight-cache-autoloads . t)
-  (straight-check-for-modifications . nil)
-  (straight-enable-package-integration . nil)
-  (straight-recipes-emacsmirror-use-mirror . t))
-#+end_src
-
-**** package.el
-:PROPERTIES:
-:ID:       550066df-89b4-4d4d-b8fd-daa1c28b1ceb
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! package
-  :init (advice-add #'package--ensure-init-file :override #'ignore)
-  :setq (package-archives . `(("gnu"   . "https://elpa.gnu.org/packages/")
-                              ("melpa" . "https://melpa.org/packages/")
-                              ("org"   . "https://orgmode.org/elpa/"))))
-#+end_src
-
 ** Library
 :PROPERTIES:
 :ID: 3e9e5e7a-9f9b-4e92-b569-b5e8ba93820f
@@ -1332,15 +870,6 @@ OS can be either `mac', `linux' or `windows'(unquoted)."
                        (t nil))
                  os)
     `(progn ,@body)))
-#+end_src
-
-*** aliases
-:PROPERTIES:
-:ID:       3b6f7bec-c144-4583-bd4e-a0a8c0dcd82e
-:END:
-
-#+begin_src emacs-lisp
-(defalias 'seq-all-p 'seq-every-p)
 #+end_src
 
 *** mode-symbol-p
@@ -1459,9 +988,11 @@ from pulling (or failing to pull) in autoloaded macros/features.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro with-symbols! (symbols &rest body)
-  (let ,(seq-map (fn! (list <symbol>))))
-  )
+(defmacro with-symbols! (names &rest body)
+  "Bind each variable in NAMES to a unique symbol and evaluate BODY."
+  (declare (indent defun))
+  `(let ,(mapcar (fn! `(,<symbol> (make-symbol ,(symbol-name <symbol>)))) names)
+     ,@body))
 #+end_src
 
 *** once-only!
@@ -1470,15 +1001,61 @@ from pulling (or failing to pull) in autoloaded macros/features.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro once-only! (symbols &rest body))
+(defmacro once-only! (symbols &rest body)
+  (let ((symbols)
+        (forms))
+    `(with-symbols! ,symbols
+       (list 'let
+             (seq-mapn #'list (list ,@symbols) (list ,@forms))
+             ,(cl-list* 'let
+                        (cl-mapcar #'list names gensyms)
+                        body))
+       ))
+  )
 #+end_src
 
-*** let!
+*** TODO let!
 :PROPERTIES:
 :ID:       c53ec463-30ba-4ca6-95a2-79f6fee68539
 :END:
 
 Macro to replace Dash's =-let=.
+
+#+begin_src emacs-lisp
+(defun void::pcase-pattern (form)
+  "Return a pcase-friendly pattern."
+  (cond ((equal nil form) form)
+        ((listp form)
+         (cons (void::pcase-pattern (car form))
+               (void::pcase-pattern (cdr form))))
+        ((vectorp form)
+         (seq-into (cons (void::pcase-pattern (seq-first form))
+                         (void::pcase-pattern (seq-into (seq-rest form) 'list)))
+                   'vector))
+        ((and (symbolp form) (not (equal '_ form)))
+         (intern (concat "," (symbol-name form))))
+        (t form)))
+
+(defmacro let! (bindings &rest body)
+  "Wrapper around `pcase-let` with friendlier pattern matching."
+  (declare (indent defun))
+  `(pcase-let
+       ,(seq-map (lambda (binding)
+                   `(``,,,(void:pcase-pattern (car binding))
+                     ,(cadr binding)))
+                 bindings)
+     ,@body))
+#+end_src
+
+*** dolist!
+:PROPERTIES:
+:ID:       4f92497f-bc72-49d0-874d-c0876dbc86f8
+:END:
+
+#+begin_src emacs-lisp
+(defmacro dolist! ()
+  "")
+#+end_src
 
 *** list mutation
 :PROPERTIES:
@@ -1627,6 +1204,15 @@ For example, 'hi would correspond to '<hi>."
     `(let* ((,orign-value ,value)
             ,@(seq-map (fn! (list <symbol> orign-value)) (void:anaphoric-symbols body)))
        ,@body)))
+#+end_src
+
+*** aif!
+:PROPERTIES:
+:ID:       7d84b516-76f1-48e4-9897-04a2795c2d1d
+:END:
+
+#+begin_src emacs-lisp
+(defmacro aif! (pred ))
 #+end_src
 
 *** pair value extraction
@@ -2656,7 +2242,7 @@ The basis of the binding is a list ~(states map key def)~.
 
 #+begin_src emacs-lisp
 (defun kbd::data-to-binding (datum)
-  (-let [(states map key def) datum]
+  (pcase-let ((`(,states ,map ,key ,def) datum))
     (cond (states
            `(evil-define-key ',states ,map ,key ,def))
           (t
@@ -2736,6 +2322,468 @@ with macroexpansion in mind.
   (let ((advices (advice--p (advice--symbol-function 'fn))))
     (general-advice-add))
   )
+#+end_src
+
+** Package Management                                                      :ewc:
+:PROPERTIES:
+:ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
+:END:
+
+*** straight.el
+:PROPERTIES:
+:ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
+:END:
+
+[[straight][straight.el]] is a package manager that strives to make emacs configurations
+completely reproducable.
+
+**** customize straight directory
+:PROPERTIES:
+:ID: 843cc8b9-edff-42f7-a767-65a59aa38fbc
+:END:
+
+The path of the straight directory within emacs is hardcoded into
+straight so we need to trick it into thinking =VOID:PACKAGES-DIR= is the
+our emacs directory. This needs to be done before bootstraping
+straight, else the straight directory will be created anyway. I got
+this from Doom's straight branch.
+
+#+begin_src emacs-lisp
+(defadvice! straight:use-packages-dir-a (orig-fn &rest args)
+  "Use `VOID:PACKAGES-DIR' for straight directory."
+  :around straight--emacs-dir
+  (let ((user-emacs-directory VOID:PACKAGES-DIR))
+    (apply orig-fn args)))
+#+end_src
+
+**** sources
+:PROPERTIES:
+:ID: 1491c0ff-1bce-45e2-ac36-2d33752e5d45
+:END:
+
+#+begin_src emacs-lisp
+(defvar void:core-package-sources
+  '((org-elpa :local-repo nil)
+    (melpa
+     :type git :host github
+     :repo "melpa/melpa"
+     :no-build t)
+    (gnu-elpa-mirror
+     :type git :host github
+     :repo "emacs-straight/gnu-elpa-mirror"
+     :no-build t)
+    (emacsmirror-mirror
+     :type git :host github
+     :repo "emacs-straight/emacsmirror-mirror"
+     :no-build t))
+  "A list of recipes for straight's recipe repos.")
+#+end_src
+
+**** bootstrap code
+:PROPERTIES:
+:ID: 7816be80-4db8-4219-b7d1-9a6b1ea96035
+:END:
+
+This code initializes straight if it's not already installed.
+
+#+begin_src emacs-lisp
+(defun straight:init-fn ()
+  "Initialize `straight.el'."
+  (defvar boostrap-version 5 "Bootstrap version for straight.el")
+  (let* ((user-emacs-directory VOID:PACKAGES-DIR)
+         (straight-dir (concat VOID:PACKAGES-DIR "straight/"))
+         (bootstrap-file (concat straight-dir "repos/straight.el/straight.el")))
+    (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
+      (void:log "Installing straight.el...")
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (void:log "Loading straight.el...")
+    (load bootstrap-file nil t))
+  (mapc #'straight-use-recipes void:core-package-sources))
+#+end_src
+
+**** straight-installer
+:PROPERTIES:
+:ID: 5b38a3da-d237-45f5-804f-5fd7e2f88d83
+:END:
+
+#+begin_src emacs-lisp
+(defun straight:install-package (package-or-recipe)
+  "Install PACKAGE with optional RECIPE."
+  (unless (featurep 'straight) (straight:init-fn))
+  (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
+    (condition-case err
+        (progn (straight-use-package package-or-recipe)
+               (void:log "✓ installed %s" package))
+      (error
+       (void:log "✕ failed to install %s because of %s" package err)))))
+#+end_src
+
+**** go to project page                                               :disabled:
+:PROPERTIES:
+:ID:       90f52a97-4bbf-44c2-bac2-7b5f3582650b
+:END:
+
+#+begin_src emacs-lisp
+(defun straight:cd ()
+  (straight-recipes-retrieve (intern (car (straight-recipes-list)))))
+#+end_src
+
+*** required packages
+:PROPERTIES:
+:ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
+:END:
+
+[[id:04560da8-1e8a-4bcc-bdeb-574d8bfc984d][Later]] I write a macro specifically designed for installing and configuring
+packages. I could write this macro with just plain Emacs libraries but I prefer
+using nice libraries. In byte compiled Void, they don't need to be installed.
+
+#+begin_src emacs-lisp
+(dolist (package '(leaf-keywords leaf))
+  (funcall #'straight:install-package package)
+  (require package))
+(leaf-keywords-init)
+#+end_src
+
+*** leaf
+
+:PROPERTIES:
+:ID:       109f58d7-525e-43f4-b997-658b1d5da0a8
+:END:
+
+Like =use-package=, leaf is a macro that fascilitates package configuration.
+
+**** naming
+:PROPERTIES:
+:ID:       941ce3dc-9648-4133-864b-eae2542a2b54
+:END:
+
+The name =leaf= is not descriptive about what I'm doing which is configuring a
+package.
+
+#+begin_src emacs-lisp
+(defalias 'use-package! 'leaf)
+
+(defmacro use-feature! (feature &rest args)
+  (declare (indent defun))
+  `(leaf ,feature :ensure nil ,@args))
+#+end_src
+
+**** leaf
+:PROPERTIES:
+:ID:       7d72aec8-5523-473d-860d-181ce3d484d7
+:END:
+
+#+begin_src emacs-lisp
+(use-package! leaf
+  :setq (leaf-defaults . '(:ensure t)))
+#+end_src
+
+**** define leaf keyword
+:PROPERTIES:
+:ID:       5f480daa-4561-400f-bbe2-4396fc7877ff
+:END:
+
+Leaf is very minimal and for the most part this is good. However, it does mean
+defining leaf keywords is a bit of a pain. There are many low-level parts of
+doing so that could be automated. This is my attempt to automate defining a leaf
+keyword.
+
+#+begin_src emacs-lisp
+(cl-defun leaf:define-keyword (&key name where normalizer defer alias form)
+  "Define leaf KEYWORD at PLACE.
+PLACE is a list whose car is the symbol `before' or `after' and whose cadr is
+one of leaf's available keywords. DEFER specifies whether the keyword is a
+deferring keyword. ALIAS is an alias or a list of aliases for the keyword. FORM
+is the form that will be added to."
+  (setq name (intern (concat ":" (symbol-name name))))
+  ;; Defer it if necessary.
+  (when defer
+    (push name leaf-defer-keywords))
+
+  ;; Set up aliases.
+  (let ((aliases alias))
+    (dolist (alias aliases)
+      (push (cons alias name) leaf-alias-keyword-alist)))
+
+  ;; Add a normalizer.
+  (when normalizer
+    (push `((or (eq leaf--key ,name)
+                (eq ,name (alist-get leaf--key leaf-alias-keyword-alist)))
+            (funcall #',normalizer))
+          leaf-normalize))
+
+  ;; Insert it in proper place.
+  (let* ((place (cadr where))
+         (where (car where))
+         (target-form (list name form))
+         (insert-fn (cond ((eq where 'after) #'leaf-insert-list-after)
+                          ((eq where 'before) #'leaf-insert-list-before)
+                          (t (error)))))
+    (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
+#+end_src
+
+**** custom setting keywords
+:PROPERTIES:
+:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
+:END:
+
+Leaf keywords do not.
+
+***** normalizers
+:PROPERTIES:
+:ID:       bcf96e13-f3bc-4b23-832f-f94b31dd48a5
+:END:
+
+leaf's setq does not correctly handle setting variables to forms that need to be
+evaluated.
+
+#+begin_src emacs-lisp
+(defun leaf:normalizer-setq ()
+  (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
+
+(defun leaf:normalizer-commands ()
+  (mapcar (lambda (elm)
+            (cond ((memq leaf--key '(:after))
+                   (if (eq elm t) leaf--name elm))
+                  (t elm)))
+          (delete-dups (delq nil (leaf-flatten leaf--value)))))
+#+end_src
+
+***** setq
+:PROPERTIES:
+:ID:       6f38c45b-9382-4d72-a7ae-6d7a8748d07f
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-setq
+ :where '(before :setq)
+ :normalizer #'leaf:normalizer-setq
+ :alias (list :setq)
+ :form (plist-get leaf-keywords :setq))
+#+end_src
+
+***** pre-setq
+:PROPERTIES:
+:ID:       aba01554-fa11-4120-9867-19e5e2025df4
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-pre-setq
+ :where '(before :pre-setq)
+ :normalizer #'leaf:normalizer-setq
+ :alias (list :pre-setq)
+ :form (plist-get leaf-keywords :pre-setq))
+#+end_src
+
+***** custom
+:PROPERTIES:
+:ID:       bfa61a7a-1660-4000-a80e-15851a32ffd5
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-custom
+ :where '(before :custom)
+ :normalizer #'leaf:normalizer-setq
+ :alias (list :custom)
+ :form (plist-get leaf-keywords :custom))
+#+end_src
+
+***** setq-default
+:PROPERTIES:
+:ID:       b8ab2bf6-2b4e-41db-93f8-ed5c86392c84
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-setq-default
+ :where '(before :setq-default)
+ :normalizer #'leaf:normalizer-setq
+ :alias (list :setq-default)
+ :form (plist-get leaf-keywords :setq-default))
+#+end_src
+
+**** defer keywords
+:PROPERTIES:
+:ID:       6a8189ab-9a7a-4670-aa7a-b6589c180011
+:END:
+
+These keywords are meant to improve on the deferred loading options already
+provided by leaf. They are inspired from DOOM emacs.
+
+***** leaf-generate-load-fn
+:PROPERTIES:
+:ID:       41c05e4a-a0f1-45e7-bed6-7de7a439faa1
+:END:
+
+#+begin_src emacs-lisp
+(defun leaf:generate-load-form (package &optional hooks advice-place advices)
+  "Return form that evals into function that loads the package."
+  (let ((load-fn (intern (concat "leaf:load-" (symbol-name package)))))
+    `(progn
+       (defun ,load-fn (&rest _)
+         (void:log "Loading %S..." ',package)
+         (unless (require ',package nil t)
+           (message "Error loading %S" ',package))
+         ,@(mapcar (lambda (hook) `(remove-hook ',hook #',load-fn)) hooks)
+         ,@(mapcar (lambda (advice) `(advice-remove #',advice #',load-fn)) advices)
+         (fmakunbound #',load-fn))
+       ,@(mapcar (lambda (hook) `(add-hook ',hook #',load-fn)) hooks)
+       ,@(mapcar (lambda (advice) `(advice-add #',advice ,advice-place #',load-fn)) advices))))
+#+end_src
+
+***** before-call
+:PROPERTIES:
+:ID:       5378035c-206b-4479-8c60-4d57853e5754
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'before-call
+ :where '(before :hook)
+ :defer t
+ :normalizer #'leaf:normalizer-commands
+ :form '`(,(leaf:generate-load-form leaf--name nil :before leaf--value)
+          ,@leaf--body))
+#+end_src
+
+***** after-call
+:PROPERTIES:
+:ID:       36389857-c070-4221-8f76-b6b0da257b34
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'after-call
+ :where '(before :hook)
+ :defer t
+ :normalizer #'leaf:normalizer-commands
+ :form '`(,(leaf:generate-load-form leaf--name nil :after leaf--value)
+          ,@leaf--body))
+#+end_src
+
+
+***** on-hook
+:PROPERTIES:
+:ID:       6b4696f3-2bc0-4646-ab68-e5e5b61b0624
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'on-hook
+ :where '(before :hook)
+ :defer t
+ :form '`(,(leaf:generate-load-form leaf--name leaf--value)
+          ,@leaf--body))
+#+end_src
+
+***** defer-incrementally
+:PROPERTIES:
+:ID:       c7ab7604-6e7c-42d1-b956-c58854948e8f
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'load-incrementally
+ :where '(before :before-call)
+ :defer t
+ :normalizer #'leaf:normalizer-commands
+ :form '`((append! void:incremental-packages ',leaf--value)
+          ,@leaf--body))
+#+end_src
+
+**** straight keyword
+:PROPERTIES:
+:ID:       cba57988-21b2-456b-aed2-27254febf873
+:END:
+
+This keyword is designed to be compiled away, leaving only forms adding package
+paths to the load-path. This is so that package installation isn't done after
+VOID is compiled.
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-straight
+ :where '(before :straight)
+ :alias (list :ensure)
+ :form
+ '`(,@(when (and leaf--value (car-safe leaf--value))
+        `((straight:install-package ',(car leaf--value))))
+    ,@leaf--body))
+
+(push `((or (memq leaf--key '(:void-straight))
+            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void:straight))
+        (cond ((eq t (car leaf--value))
+               (list leaf--name))
+              ((eq nil (car leaf--value))
+               nil)
+              ((listp (car-safe leaf--value))
+               (list (cons leaf--name (car leaf--value))))))
+      leaf-normalize)
+#+end_src
+
+**** popup
+:PROPERTIES:
+:ID:       30845314-ac19-49bb-9065-591c13e55489
+:END:
+
+The point of this keyword is to let me configure the display of buffers for
+specific packages.
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'popup
+ :where '(before :mode)
+ :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
+          ,@leaf--body))
+#+end_src
+
+**** os
+:PROPERTIES:
+:ID:       3335e409-b963-4504-b9fb-2faf4fb0be3d
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'os
+ :where '(before :when)
+ :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
+#+end_src
+
+**** straight
+:PROPERTIES:
+:ID:       9dff9894-667c-4e74-9624-8aee533f8f70
+:END:
+
+#+begin_src emacs-lisp
+(use-package! straight
+  :require t
+  :setq
+  (straight-disable-autoloads . nil)
+  (straight-cache-autoloads . t)
+  (straight-check-for-modifications . nil)
+  (straight-enable-package-integration . nil)
+  (straight-recipes-emacsmirror-use-mirror . t))
+#+end_src
+
+**** package.el
+:PROPERTIES:
+:ID:       550066df-89b4-4d4d-b8fd-daa1c28b1ceb
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! package
+  :init (advice-add #'package--ensure-init-file :override #'ignore)
+  :setq (package-archives . `(("gnu"   . "https://elpa.gnu.org/packages/")
+                              ("melpa" . "https://melpa.org/packages/")
+                              ("org"   . "https://orgmode.org/elpa/"))))
 #+end_src
 
 ** UI
