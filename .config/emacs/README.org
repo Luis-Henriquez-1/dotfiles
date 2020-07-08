@@ -1002,7 +1002,23 @@ from pulling (or failing to pull) in autoloaded macros/features.
 
 #+begin_src emacs-lisp
 (defmacro once-only! (bindings &rest body)
-  "Once only!"
+  "Rebind symbols according to BINDINGS and evaluate BODY.
+
+Each of BINDINGS must be either a symbol naming the variable to be
+rebound or of the form:
+
+  (SYMBOL INITFORM)
+
+where INITFORM is guaranteed to be evaluated only once.
+
+Bare symbols in BINDINGS are equivalent to
+
+  (SYMBOL SYMBOL)
+
+Example:
+
+  (defmacro cons1 (x) (mmt-once-only (x) `(cons ,x ,x)))
+  (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
   (let* ((names-and-forms (seq-map (fn! (if (consp <bind>)
                                             (cons (car <bind>) (cadr <bind>))
                                           (cons <bind> <bind>)))
