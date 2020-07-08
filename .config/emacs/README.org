@@ -1103,6 +1103,7 @@ Macro to replace Dash's =-let=.
 
 #+begin_src emacs-lisp
 (defmacro dolist! (specs &rest body)
+  "Same as `pcase-dolist' but with nicer syntax."
   (declare (indent defun))
   (let!! (((pattern list) specs)
           (pcase-friendly-pattern (list '\` (void::pcase-pattern pattern))))
@@ -4634,11 +4635,11 @@ WORDS is a string containing one or more words."
 (defun abbrev/delete-abbrev ()
   "Delete abbrev."
   (interactive)
-  (-let* ((selected (completing-read
+  (let!! ((selected (completing-read
                      "abbrev to delete:"
                      (-map (-lambda ((abbrev . expansion))
-                                (format "%s -> %s" abbrev expansion))
-                              (abbrev--alist+))))
+                             (format "%s -> %s" abbrev expansion))
+                           (abbrev--alist+))))
           ((abbrev _ _) (s-split "\s" selected)))
     (message "deleted abbrev: %s" selected)
     (define-abbrev global-abbrev-table abbrev nil)))
@@ -5911,7 +5912,7 @@ However, I'll address this later. For now I just want things working well.
 (defun org/dwim-edit-description ()
   "Edit a description the way I want to."
   (interactive)
-  (-let* ((elements (org:element-headline-elements))
+  (let!! ((elements (org:element-headline-elements))
           ((beg . end) (org:dwim-description-bounds (point) elements))
           (edit-indirect-guess-mode-function (lambda (&rest _) (text-mode)))
           (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
@@ -5976,7 +5977,7 @@ otherwise the =#+end_src= code block delimiter will not end up in its own line
   (alet (org-element-context)
     (when (or (null it) (not (eq 'src-block (org-element-type it))))
       (user-error "No element at point."))
-    (-let* (((beg end) (org-src--contents-area it))
+    (let!! (((beg end) (org-src--contents-area it))
             (lang (plist-get (-second-item it) :language))
             (edit-indirect-guess-mode-function `(lambda (&rest _) (funcall (org-src-get-lang-mode ,lang))))
             (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
@@ -6536,12 +6537,12 @@ cursor color will update.
 (defadvice! evil:treat-motion-as-normal-state (orig-fn &rest args)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
   :around evil-make-overriding-map
-  (-let [(keymap state copy) args]
+  (let! (((keymap state copy) args))
     (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 
 (defadvice! evil:set-initial-state (orig-fn &rest args)
   :around evil-set-initial-state
-  (let! ((`(,mode ,state) args))
+  (let! (((mode state) args))
     (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
 
 (advice-add #'evil-motion-state :override #'evil-normal-state)
