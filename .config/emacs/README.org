@@ -3136,7 +3136,7 @@ yasnippet is loaded or not.
   (declare (indent defun))
   `(after! yasnippet
      (defsnippet:new-snippet
-       :name ,(void:make-string snippet)
+       :name ,(void:to-string snippet)
        ,@properties)))
 #+end_src
 
