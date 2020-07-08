@@ -1001,17 +1001,21 @@ from pulling (or failing to pull) in autoloaded macros/features.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro once-only! (symbols &rest body)
-  (let ((symbols)
-        (forms))
+(defmacro once-only! (bindings &rest body)
+  "Once only!"
+  (let* ((names-and-forms (seq-map (fn! (if (consp <bind>)
+                                            (cons (car <bind>) (cadr <bind>))
+                                          (cons <bind> <bind>)))
+                                   bindings))
+         (names (seq-map #'car names-and-forms))
+         (forms (seq-map #'cdr names-and-forms))
+         (symbols (seq-map (fn! (make-symbol (symbol-name <name>))) names)))
     `(with-symbols! ,symbols
        (list 'let
              (seq-mapn #'list (list ,@symbols) (list ,@forms))
              ,(cl-list* 'let
-                        (cl-mapcar #'list names gensyms)
-                        body))
-       ))
-  )
+                        (seq-mapn #'list names symbols)
+                        body)))))
 #+end_src
 
 *** TODO let!
