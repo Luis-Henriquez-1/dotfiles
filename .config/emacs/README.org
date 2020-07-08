@@ -1034,12 +1034,15 @@ Example:
                         body)))))
 #+end_src
 
-*** TODO let!
+*** let!
 :PROPERTIES:
-:ID:       c53ec463-30ba-4ca6-95a2-79f6fee68539
+:ID:       3bac36e8-40e8-4838-8aeb-51c9cd85a572
 :END:
 
-Macro to replace Dash's =-let=.
+**** pcase pattern
+:PROPERTIES:
+:ID:       a26885f3-3dae-40a7-bec0-319b330dab87
+:END:
 
 #+begin_src emacs-lisp
 (defun void::pcase-pattern (form)
@@ -1053,16 +1056,42 @@ Macro to replace Dash's =-let=.
                          (void::pcase-pattern (seq-into (seq-rest form) 'list)))
                    'vector))
         ((and (symbolp form) (not (equal '_ form)))
-         (intern (concat "," (symbol-name form))))
+         (list '\, form))
         (t form)))
+#+end_src
 
+**** let!
+:PROPERTIES:
+:ID:       c53ec463-30ba-4ca6-95a2-79f6fee68539
+:END:
+
+Macro to replace Dash's =-let=.
+
+#+begin_src emacs-lisp
 (defmacro let! (bindings &rest body)
   "Wrapper around `pcase-let` with friendlier pattern matching."
   (declare (indent defun))
   `(pcase-let
        ,(seq-map (lambda (binding)
-                   `(``,,,(void:pcase-pattern (car binding))
-                     ,(cadr binding)))
+                   (list (list '\` (void::pcase-pattern (car binding)))
+                         (cadr binding)))
+                 bindings)
+     ,@body))
+#+end_src
+
+**** let!!
+:PROPERTIES:
+:ID:       742e5a6c-8e5b-4ea0-a3d1-9dfd352d0b3e
+:END:
+
+#+begin_src emacs-lisp
+(defmacro let!! (bindings &rest body)
+  "Wrapper around `pcase-let` with friendlier pattern matching."
+  (declare (indent defun))
+  `(pcase-let*
+       ,(seq-map (lambda (binding)
+                   (list (list '\` (void::pcase-pattern (car binding)))
+                         (cadr binding)))
                  bindings)
      ,@body))
 #+end_src
@@ -1073,8 +1102,12 @@ Macro to replace Dash's =-let=.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro dolist! ()
-  "")
+(defmacro dolist! (specs &rest body)
+  (declare (indent defun))
+  (let!! (((pattern list) specs)
+          (pcase-friendly-pattern (list '\` (void::pcase-pattern pattern))))
+    `(pcase-dolist (,pcase-friendly-pattern ,list)
+       ,@body)))
 #+end_src
 
 *** list mutation
