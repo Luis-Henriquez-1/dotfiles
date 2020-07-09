@@ -9,152 +9,6 @@
 :ID: 3e9e5e7a-9f9b-4e92-b569-b5e8ba93820f
 :END:
 
-*** directories                                                            :eac:
-:PROPERTIES:
-:ID: 93cc2db1-44c7-45ec-af98-5a4eb7145f61
-:END:
-
-There are a handful of files and directory that are necessary to doom. I try to
-keep the number of files to a minimum because I think that more files means more
-stuff to manage, and more potential errors. That's partly the reason why I use
-one large org file.
-
-**** core directories and files
-:PROPERTIES:
-:ID: ad18ebcb-803a-4fd6-adcb-c71cf54f3432
-:END:
-
-***** top level
-:PROPERTIES:
-:ID: 48bf884a-de27-45f8-a5b1-94567815942d
-:END:
-
-These are important files and directories that I end up referring to often in my
-code. Well, not so much =VOID:README-FILE= and =VOID:TODO-FILE= but the others are
-referenced alot.
-
-#+begin_src emacs-lisp
-(defconst VOID:EMACS-DIR (file-truename user-emacs-directory)
-  "Path to `user-emacs-directory'.")
-
-(defconst VOID:INIT-FILE (concat VOID:EMACS-DIR "init.el")
-  "Path to the elisp file that bootstraps Void startup.")
-
-(defconst VOID:README-FILE (concat VOID:EMACS-DIR "README.org")
-  "Path to the Org file that when that Void.")
-
-(defconst VOID:ORG-DIR (expand-file-name "~/Documents/org/")
-  "Path where Void's org files go.")
-
-(defconst VOID:SCREENSHOT-DIR (concat VOID:EMACS-DIR "screenshots/")
-  "Path where any screenshots I take with Void go.")
-
-(defconst VOID:TEST-FILE (concat VOID:EMACS-DIR "test.org")
-  "Path to the file that contains all of Void's tests.")
-
-(defconst VOID:TODO-FILE (concat VOID:ORG-DIR "emacs.org")
-  "Path where all of Void's emacs related todos go.")
-#+end_src
-
-***** hidden
-:PROPERTIES:
-:ID: d46d573b-1d17-4d0b-9b49-9049dbb6f7c1
-:END:
-
-#+begin_src emacs-lisp
-(defconst VOID:LOCAL-DIR (concat VOID:EMACS-DIR ".local/")
-  "Path to the directory for local Emacs files.
-Files that need to exist, but I don't typically want to see go here.")
-
-(defconst VOID:DATA-DIR (concat VOID:LOCAL-DIR "data/")
-  "Path to the directory where Void data files are stored.")
-
-(defconst VOID:PACKAGES-DIR (concat VOID:LOCAL-DIR "packages/")
-  "Path to the directory where packages are stored.")
-#+end_src
-
-**** ensure directories exist                                              :ewc:
-:PROPERTIES:
-:ID: 56e80dda-5d0e-4c7c-a225-00d0028d4995
-:END:
-
-I create the directories that don't exist. But I assume they already exist if
-Void is compiled.
-
-#+begin_src emacs-lisp
-(dolist (dir (list VOID:LOCAL-DIR VOID:DATA-DIR VOID:ORG-DIR))
-  (make-directory dir t))
-#+end_src
-
-**** system directories
-:PROPERTIES:
-:ID:       f3bdd353-b0ff-48fd-a2f2-295ccfa139ab
-:END:
-
-#+begin_src emacs-lisp
-(defconst VOID:DOWNLOAD-DIR (expand-file-name "~/Downloads/")
-  "Directory where downloads should go.")
-
-(defconst VOID:MULTIMEDIA-DIR (expand-file-name "~/Multimedia/")
-  "Directory where multimedia should go.")
-
-(defconst VOID:VIDEO-DIR (concat VOID:MULTIMEDIA-DIR "Videos/")
-  "Directory where videos should go.")
-
-(defconst VOID:MUSIC-DIR (concat VOID:MULTIMEDIA-DIR "Music/")
-  "Directory where music should go.")
-
-(defconst VOID:ALERT-SOUNDS (concat VOID:MULTIMEDIA-DIR "Alert Sounds/")
-  "Directory where alert sounds should go.")
-
-(defconst VOID:EMAIL-DIR (expand-file-name "~/.mail/")
-  "Directories where emails are stored.")
-#+end_src
-
-*** message logging
-:PROPERTIES:
-:ID:       4d4f4b4a-4fc3-47fe-bed7-acc8e8103933
-:END:
-
-**** debug-p                                                               :eac:
-:PROPERTIES:
-:ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
-:END:
-
-[[helpvar:void-debug-p][void:debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
-is to serve as an indicator of whether the current Void instance is run for
-debugging. When Void is set up for debugging it prints out many messages about
-what its doing via [[hfn:void-log][void:log]].
-
-#+begin_src emacs-lisp
-(defvar void:debug-p (or (getenv "DEBUG") init-file-debug)
-  "When non-nil print debug messages.
-The --debug-init flag and setting the DEBUG envar will enable this at startup.")
-#+end_src
-
-**** logging                                                               :eac:
-:PROPERTIES:
-:ID: 84ded5f7-382e-4f59-af9e-ccb157ef5c42
-:END:
-
-The purpose of ~void:log~ is to distinguish regular messages from messages that
-pertain specifically to Void, and to help debug Void functionality. When Void is
-=void:debug= is non-nil, void:specific messages are logged in the =*messages*=
-buffer.
-
-#+begin_src emacs-lisp
-(defun void:log (format-string &rest args)
-  "Log to *Messages* if `void:debug-p' is on.
-Does not interrupt the minibuffer if it is in use, but still log to *Messages*.
-Accept the same arguments as `message'."
-  (when void:debug-p
-    (let ((inhibit-message (active-minibuffer-window)))
-      (when void:debug-p
-        (apply #'message (concat (propertize "VOID " 'face 'font-lock-comment-face)
-                                 format-string)
-               args)))))
-#+end_src
-
 *** requires                                                               :ewc:
 :PROPERTIES:
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
@@ -169,6 +23,79 @@ Accept the same arguments as `message'."
 :PROPERTIES:
 :ID:       4029d357-1309-4c7f-89eb-db93a3470c42
 :END:
+
+**** anaphora                                                              :eac:
+:PROPERTIES:
+:ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
+:END:
+
+Anaphora refers to the ability to refer to. After much deliberation, I have
+decided it is best to use =<>= to denote the symbol referred to by anaphoric
+symbols because it is easy to type (assuming parentheses completion), it's a a
+symbol surrounded by =<>= is uncommon in lisp, and I like that it looks like a slot
+or placeholder.
+
+https://en.wikipedia.org/wiki/Anaphoric_macro
+
+***** anaphoric symbol regexp
+:PROPERTIES:
+:ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:ANAPHORIC-SYMBOL-REGEXP
+  (eval-when-compile (rx "<" (group (1+ (not (any white ">" "<")))) ">"))
+  "Regular expression that matches an anaphoric symbol.")
+#+end_src
+
+***** anaphoric symbol
+:PROPERTIES:
+:ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
+:END:
+
+#+begin_src emacs-lisp
+(defun void:anaphoric-symbol-p (obj)
+  "Return non-nil if OBJ is an anaphoric symbol."
+  (and (symbolp obj)
+       (string-match-p VOID:ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
+#+end_src
+
+***** true anaphora name
+:PROPERTIES:
+:ID:       2833cd75-9c85-4c0e-9523-4489d387150a
+:END:
+
+#+begin_src emacs-lisp
+(defun void:anaphoric-true-symbol (symbol)
+  "Return the symbol that corresponds to the anaphoric symbol."
+  (save-match-data
+    (string-match VOID:ANAPHORIC-SYMBOL-REGEXP (symbol-name symbol))
+    (intern (match-string 1 (symbol-name symbol)))))
+#+end_src
+
+***** body symbols
+:PROPERTIES:
+:ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
+:END:
+
+#+begin_src emacs-lisp
+(defun void:anaphoric-symbols (body)
+  "Return all the anaphoric symbols in body."
+  (thread-last (flatten-list body)
+    (seq-filter #'void:anaphoric-symbol-p)
+    (seq-uniq)))
+#+end_src
+
+***** all anaphoric symbols in obj
+:PROPERTIES:
+:ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
+:END:
+
+#+begin_src emacs-lisp
+(defun void:anaphoric-symbols-in-obj (obj)
+  "Return a list of anaphoric symbols in OBJ."
+  (s-match-strings-all VOID:ANAPHORIC-SYMBOL-REGEXP (void:to-string obj)))
+#+end_src
 
 **** pcase pattern
 :PROPERTIES:
@@ -326,13 +253,14 @@ Example:
 
   (defmacro cons1 (x) (mmt-once-only (x) `(cons ,x ,x)))
   (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
-  (let* ((names-and-forms (seq-map (fn! (if (consp <bind>)
-                                            (cons (car <bind>) (cadr <bind>))
-                                          (cons <bind> <bind>)))
-                                   bindings))
+  (let* ((bind-fn (lambda (bind)
+                    (if (consp bind)
+                        (cons (car bind) (cadr bind))
+                      (cons bind bind))))
+         (names-and-forms (seq-map bind-fn bindings))
          (names (seq-map #'car names-and-forms))
          (forms (seq-map #'cdr names-and-forms))
-         (symbols (seq-map (fn! (make-symbol (symbol-name <name>))) names)))
+         (symbols (seq-map (lambda (name) (make-symbol (symbol-name name))) names)))
     `(with-symbols! ,symbols
        (list 'let
              (seq-mapn #'list (list ,@symbols) (list ,@forms))
@@ -345,80 +273,6 @@ Example:
 :PROPERTIES:
 :ID:       001dde5a-bb43-4ce8-82ef-806e37ba7f6e
 :END:
-
-***** anaphora                                                             :eac:
-:PROPERTIES:
-:ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
-:END:
-
-Anaphora refers to the ability to refer to. After much deliberation, I have
-decided it is best to use =<>= to denote the symbol referred to by anaphoric
-symbols because it is easy to type (assuming parentheses completion), it's a a
-symbol surrounded by =<>= is uncommon in lisp, and I like that it looks like a slot
-or placeholder.
-
-https://en.wikipedia.org/wiki/Anaphoric_macro
-
-****** anaphoric symbol regexp
-:PROPERTIES:
-:ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
-:END:
-
-#+begin_src emacs-lisp
-(defconst VOID:ANAPHORIC-SYMBOL-REGEXP
-  (eval-when-compile (rx "<" (group (1+ (not (any white ">" "<")))) ">"))
-  "Regular expression that matches an anaphoric symbol.")
-#+end_src
-
-****** anaphoric symbol
-:PROPERTIES:
-:ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
-:END:
-
-#+begin_src emacs-lisp
-(defun void:anaphoric-symbol-p (obj)
-  "Return t if OBJ is an anaphoric symbol."
-  (and (symbolp obj)
-       (string-match-p VOID:ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
-#+end_src
-
-****** true anaphora name
-:PROPERTIES:
-:ID:       2833cd75-9c85-4c0e-9523-4489d387150a
-:END:
-
-#+begin_src emacs-lisp
-(defun void:anaphoric-true-symbol (symbol)
-  "Return the symbol that corresponds to the anaphoric symbol.
-For example, 'hi would correspond to '<hi>."
-  (save-match-data
-    (string-match VOID:ANAPHORIC-SYMBOL-REGEXP (symbol-name symbol))
-    (intern (match-string 1 (symbol-name symbol)))))
-#+end_src
-
-****** body symbols
-:PROPERTIES:
-:ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
-:END:
-
-#+begin_src emacs-lisp
-(defun void:anaphoric-symbols (body)
-  "Return all the anaphoric symbols in body."
-  (thread-last (flatten-list body)
-    (seq-filter #'void:anaphoric-symbol-p)
-    (seq-uniq)))
-#+end_src
-
-****** all anaphoric symbols in obj
-:PROPERTIES:
-:ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
-:END:
-
-#+begin_src emacs-lisp
-(defun void:anaphoric-symbols-in-obj (obj)
-  "Return a list of anaphoric symbols in OBJ."
-  (s-match-strings-all VOID:ANAPHORIC-SYMBOL-REGEXP (void:to-string obj)))
-#+end_src
 
 ***** fn!
 :PROPERTIES:
@@ -1031,10 +885,382 @@ with macroexpansion in mind.
                  (kbd::list-data <states> <maps> <bindings>))))))
 #+end_src
 
-** Init
+** Core
 :PROPERTIES:
-:ID: 9022457f-609b-4d1c-b972-ceca19300cd3
+:ID:       6e1d0ef3-5a9b-4db4-b8f7-110e96f2d23e
 :END:
+
+*** OS
+:PROPERTIES:
+:ID: e3d140d2-77c3-46bd-b94d-ab7196190a67
+:END:
+
+**** =abbreviated-home-dir=
+:PROPERTIES:
+:ID: 345958e8-fb62-4b27-b30e-c4e8b69804cd
+:END:
+
+Emacs on windows often confuses =HOME= (=C:\Users\<NAME>=) and =APPDATA=, causing
+[[hvar:abbreviate-home-dir][abbreviate-home-dir]] to produce incorrect paths.
+
+#+begin_src emacs-lisp
+(with-os! windows
+  (setq abbreviated-home-dir "\\`'"))
+#+end_src
+
+**** font caches
+:PROPERTIES:
+:ID: 339f6b4b-424c-4057-b7ea-d44c69b0f9fb
+:END:
+
+Font compacting can be terribly expensive, especially for rendering icon
+fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
+been determined.
+
+#+begin_src emacs-lisp
+(with-os! windows
+  (setq inhibit-compacting-font-caches t))
+#+end_src
+
+**** windows performance
+:PROPERTIES:
+:ID: eda95bfe-8033-42f0-9038-11da6f9bd8fb
+:END:
+
+Reduce the workload when doing file IO.
+
+#+begin_src emacs-lisp
+(with-os! windows
+  (setq w32-get-true-file-attributes nil))
+#+end_src
+
+**** unnecessary command line options
+:PROPERTIES:
+:ID: 0bfbc8e5-88f3-4e19-a9d5-bc610ce09bb2
+:END:
+
+Some command line options aren't necessary.
+
+#+begin_src emacs-lisp
+(with-os! (not linux)
+  (setq command-line-x-option-alist nil))
+
+(with-os! (not mac)
+  (setq command-line-ns-option-alist nil))
+#+end_src
+
+**** windows
+:PROPERTIES:
+:ID: 8bd7f515-0e56-4195-a04a-5003625b2dae
+:END:
+
+#+begin_src emacs-lisp
+(with-os! windows
+  (setq w32-get-true-file-attributes nil)
+  (when (display-graphic-p)
+    (setenv "GIT_ASKPASS" "git-gui--askpass")))
+#+end_src
+
+**** mac                                                              :disabled:
+:PROPERTIES:
+:ID: e502d7e6-8b19-4300-a4fd-9a797df98402
+:END:
+
+***** defaults                                                        :disabled:
+:PROPERTIES:
+:ID: 8e4e5a73-5616-4aca-b939-5bad62e6c657
+:END:
+
+#+begin_src emacs-lisp
+(with-os! mac
+  (setq mac-command-modifier 'meta)
+  (setq mac-option-modifier  'alt)
+  ;; sane trackpad/mouse scroll settings
+  (setq mac-redisplay-dont-reset-vscroll t)
+  (setq mac-mouse-wheel-smooth-scroll nil)
+  ;;  one line at a time
+  (setq mouse-wheel-scroll-amount '(5 ((shift) . 2)))
+  ;; don't accelerate scrolling
+  (setq mouse-wheel-progressive-speed nil)
+  (setq ns-use-native-fullscreen nil)
+  ;; Don't open files from the workspace in a new frame
+  (setq ns-pop-up-frames nil))
+#+end_src
+
+***** exec path from shell                                            :disabled:
+:PROPERTIES:
+:ID: 0cc48982-6a3e-40ee-9e95-3e21dae157b5
+:END:
+
+
+A known problem with GUI Emacs on MacOS (or daemons started via
+launchctl or brew services): it runs in an isolated
+environment, so envvars will be wrong. That includes the path
+Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] fixes this.
+
+#+begin_src emacs-lisp
+(leaf exec-path-from-shell
+  :os mac
+  :when (or (daemonp) (display-graphic-p))
+  :require t
+  :setq
+  (exec-path-from-shell-check-startup-files . nil)
+  (exec-path-from-shell-arguments . (delete "-i" exec-path-from-shell-arguments))
+  (exec-path-from-shell-debug . void:debug-p)
+  :init
+  (nconc! exec-path-from-shell-variables
+    '("LC_CTYPE" "LC_ALL" "LANG"))
+  (exec-path-from-shell-initialize))
+#+end_src
+
+***** ns-auto-titlebar
+:PROPERTIES:
+:ID: 751ae26b-d0ae-4af1-80a5-c2b0ae360367
+:END:
+
+[[https://github.com/purcell/ns-auto-titlebar][ns-auto-titlebar]] syncs ns frame parameters with theme and fixes mismatching text
+color in the frame title.
+
+#+begin_src emacs-lisp
+(use-package! ns-auto-titlebar
+  :os mac
+  :when (or (daemonp) (display-graphic-p))
+  :require t)
+#+end_src
+
+***** osx-clipboard
+:PROPERTIES:
+:ID: 6eb19c02-ce40-4aec-9124-a58a4389855f
+:END:
+
+#+begin_src emacs-lisp
+(use-package! osx-clipboard
+  :os mac
+  :when (or (daemonp) (not (display-graphic-p)))
+  :hook emacs-startup-hook)
+#+end_src
+
+**** linux
+:PROPERTIES:
+:ID: 122381a6-784b-4f56-a97e-8c1a2d18dcc0
+:END:
+
+#+begin_src emacs-lisp
+(with-os! linux
+  (setq x-underline-at-descent-line t)
+  (setq x-gtk-use-system-tooltips nil))
+#+end_src
+
+*** post init
+:PROPERTIES:
+:ID: 0f1da89a-2278-4493-ba62-e2a334204be6
+:END:
+
+**** incremental loading
+:PROPERTIES:
+:ID: c93aefa6-80ff-420d-86ae-a0c06c5c0e76
+:END:
+
+Some packages like =org= are really big. When loading such packages, we can
+notice a pause. To keep the experience in emacs snappy and avoid noticeable
+pauses, I load many small packages pre-emptively. I got this idea form reading
+[[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L355][Doom source code]]. Packages added to [[helpvar:void-incremental-packages][void:incremental-packages]] will be
+incrementally. After Void has finished loading it will wait for
+[[helpvar:void-initial-incremental-loading-delay][void:initial-incremental-loading-delay]] and then load one package from
+~void:incremental-packages~ intervals of =N= idle seconds, where =N= is
+[[helpvar:void-incremental-loading-interval][void:incremental-loading-interval]].
+
+***** packages
+:PROPERTIES:
+:ID: 41201902-db03-4acb-9c03-953f1720d494
+:END:
+
+Later in my config I will add packages to [[helpvar:void-incremental-packages][void:incremental-packages]] (using
+~nconc!~). But no incremental loading will happen until after Void is done loading.
+
+#+begin_src emacs-lisp
+(defvar void:incremental-packages nil
+  "A list of packages to load incrementally after startup.")
+#+end_src
+
+***** timers
+:PROPERTIES:
+:ID: 154e4f5d-58fc-4946-b471-c0e5f636ab61
+:END:
+
+#+begin_src emacs-lisp
+(defvar void:initial-incremental-loading-delay 6
+  "How long (in idle seconds) until incremental loading starts.
+Set this to nil to disable incremental loading.")
+
+(defvar void:incremental-loading-interval 5
+  "How long (in idle seconds) in between incrementally loading packages.")
+#+end_src
+
+***** load-incrementally
+:PROPERTIES:
+:ID: 747c8ead-18f0-467b-aa91-3922f1212743
+:END:
+
+#+begin_src emacs-lisp
+(defun void:load-incrementally (packages)
+  "Load PACKAGES incrementally.
+This function tries to load a package from PACKAGES, a list of packages. It then
+calls itself on the rest of PACKAGES in `void:incremental-loading-interval'
+idle seconds."
+  (let ((gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
+        (gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
+        (file-name-handler-alist nil)
+        (package (car packages))
+        (rest (cdr packages)))
+    (cond ((null package) nil)
+          ((featurep package)
+           (void:load-incrementally rest))
+          (t
+           (condition-case e
+               (progn
+                 (void:log "Incrementally loading %s" package)
+                 (require package nil t))
+             (error
+              (message "Failed to load '%s' incrementally, because %s" package e)))
+           (run-with-idle-timer
+            void:incremental-loading-interval nil #'void:load-incrementally rest)))))
+#+end_src
+
+***** incremental load hook
+:PROPERTIES:
+:ID: 94c37e44-b03c-49c3-a376-696e6efb3e96
+:END:
+
+This hook triggers incremental loading to start.
+
+#+begin_src emacs-lisp
+(defhook! void:load-packages-incrementally-h ()
+  "Begin incrementally loading packages in `void:incremental-packages'.
+If this is a daemon session, load them all immediately instead."
+  :hook emacs-startup-hook
+  (cond
+   ((daemonp)
+    (mapc #'require (cdr void:incremental-packages)))
+   ((numberp void:incremental-loading-interval)
+    (run-with-idle-timer
+     void:initial-incremental-loading-delay
+     nil
+     #'void:load-incrementally
+     void:incremental-packages))
+   (t nil)))
+#+end_src
+
+**** =tty=
+:PROPERTIES:
+:ID: 63e351ad-9ef6-4034-9fca-861881c74d6a
+:END:
+
+When running emacs in terminal tty is *tremendously* slow.
+
+#+begin_src emacs-lisp
+(unless (display-graphic-p)
+  (advice-add #'tty-run-terminal-initialization :override #'ignore)
+  (defhook! void:init-tty-h ()
+    :hook window-setup-hook
+    (advice-remove #'tty-run-terminal-initialization #'ignore)
+    (tty-run-terminal-initialization (selected-frame) nil t)))
+#+end_src
+
+**** minibuffer
+:PROPERTIES:
+:ID: 83f47b4d-a0e2-4275-9c1a-7e317fdc4e41
+:END:
+
+[[helpvar:minibuffer-setup-hook][minibuffer-setup-hook]] and [[helpvar:minibuffer-exit-hook][minibuffer-exit-hook]] are the hooks run just before
+entering and exiting the minibuffer (respectively). In the minibuffer I'll be
+primarily doing searches for variables and functions. There are alot of
+variables and functions so this can certainly get computationally expensive. To
+keep things snappy I increase boost the [[helpvar:gc-cons-threshold][gc-cons-threshold]] just before I enter
+the minibuffer, and restore it to it's original value a few seconds after it's closed.
+
+It would take me forever to guess the name =minibuffer-setup-hook= from the
+variable [[helpvar:minibuffer-exit-hook][minibuffer-exit-hook]]. If I knew the name =minibuffer-exit-hook= but did not
+know what the hook to enter the minibuffer was, I'd probably
+=minibuffer-enter-hook= because [[https://www.wordhippo.com/what-is/the-opposite-of/exit.html]["enter" is one of the main antonyms of "exit"]].
+It'd take me forever to guess =startup=. Note that the only tricky thing about
+this example.
+
+At first I thought of =entry= but after more thought I realized
+hook variables use action verbs in their names not nouns. So the =exit= in
+=minibuffer-exit-hook= is actually the verb =exit= not the noun.
+
+#+begin_src emacs-lisp
+(defvaralias 'minibuffer-enter-hook 'minibuffer-setup-hook)
+
+(defhook! void:boost-garbage-collection-h ()
+  "Boost garbage collection settings to `VOID:GC-CONS-THRESHOLD-MAX'."
+  :hook minibuffer-enter-hook
+  (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX))
+
+(defhook! void:defer-garbage-collection-h ()
+  "Reset garbage collection settings to `void:gc-cons-threshold' after delay."
+  :append minibuffer-exit-hook
+  (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD))))
+#+end_src
+
+**** tangling
+:PROPERTIES:
+:ID: 3288c787-4b5c-4f0c-9d18-6f18afaf2b99
+:END:
+
+***** tangle hook
+:PROPERTIES:
+:ID: 549999d7-901b-4ab4-bdbe-81514b756ced
+:END:
+
+Void tangles itself just before quitting if [[helpfn:void-needs-tangling-p][void:needs-tangling-p]] returns true.
+I tangle before quitting so I don't have to do it before startup. It's
+preferable for quitting emacs to be slightly slower than for emacs startup to
+be.
+
+#+begin_src emacs-lisp
+(defhook! void:tangle-on-quit-maybe-h ()
+  "Tangle if `void:needs-tangling-p' returns t."
+  :append kill-emacs-hook
+  (when (void:needs-tangling-p)
+    (void/tangle-org-file)))
+#+end_src
+
+***** tangle asynchronously upon saving
+:PROPERTIES:
+:ID: 00298d4e-6b18-4203-874f-f5a877a5cabf
+:END:
+
+This is another attempt to keep my =main.el= file in sync as much as possible with
+[[helpvar:VOID-README-FILE][void:main-org-file]]. ~void:tangle-on-save-h~ is called whenever a buffer is being
+saved to a file. The reason why I use ~cl-letf~ to temporarily override [[helpfn:load][load]] is
+because ~VOID:INIT-FILE~ already contains all the code I need so I don't want it
+to waste time loading ~void:main-elisp-file~.
+
+#+begin_src emacs-lisp
+(defhook! void:tangle-on-save-h ()
+  "Tangle `VOID:README-FILE' asynchronously when it is saved."
+  :hook after-save-hook
+  (when (and (require 'async nil t)
+             (string= (file-truename VOID:README-FILE)
+                      (or (buffer-file-name (current-buffer)) ""))
+             (void:needs-tangling-p))
+    (async-start
+     (lambda ()
+       (let ((old-fn (symbol-function 'load))
+             (user-init-file (concat user-emacs-directory "init.el")))
+         (require 'cl)
+         (cl-letf (((symbol-function 'load)
+                    (lambda (file &rest args)
+                      (when (string= user-init-file file)
+                        (apply old-fn file args)))))
+           (load user-init-file))))
+     (lambda (_)
+       (void:log
+        (concat (if (void:needs-tangling-p) "✕ failed" "✓ succeeded")
+                " tangling `VOID:README-FILE'."))))))
+#+end_src
 
 *** void specific funtions
 :PROPERTIES:
@@ -1293,6 +1519,108 @@ time.
 (run-with-idle-timer 7 nil #'void:restore-gc-cons-threshold)
 #+end_src
 
+*** directories                                                            :eac:
+:PROPERTIES:
+:ID: 93cc2db1-44c7-45ec-af98-5a4eb7145f61
+:END:
+
+There are a handful of files and directory that are necessary to doom. I try to
+keep the number of files to a minimum because I think that more files means more
+stuff to manage, and more potential errors. That's partly the reason why I use
+one large org file.
+
+**** core directories and files
+:PROPERTIES:
+:ID: ad18ebcb-803a-4fd6-adcb-c71cf54f3432
+:END:
+
+***** top level
+:PROPERTIES:
+:ID: 48bf884a-de27-45f8-a5b1-94567815942d
+:END:
+
+These are important files and directories that I end up referring to often in my
+code. Well, not so much =VOID:README-FILE= and =VOID:TODO-FILE= but the others are
+referenced alot.
+
+#+begin_src emacs-lisp
+(defconst VOID:EMACS-DIR (file-truename user-emacs-directory)
+  "Path to `user-emacs-directory'.")
+
+(defconst VOID:INIT-FILE (concat VOID:EMACS-DIR "init.el")
+  "Path to the elisp file that bootstraps Void startup.")
+
+(defconst VOID:README-FILE (concat VOID:EMACS-DIR "README.org")
+  "Path to the Org file that when that Void.")
+
+(defconst VOID:ORG-DIR (expand-file-name "~/Documents/org/")
+  "Path where Void's org files go.")
+
+(defconst VOID:SCREENSHOT-DIR (concat VOID:EMACS-DIR "screenshots/")
+  "Path where any screenshots I take with Void go.")
+
+(defconst VOID:TEST-FILE (concat VOID:EMACS-DIR "test.org")
+  "Path to the file that contains all of Void's tests.")
+
+(defconst VOID:TODO-FILE (concat VOID:ORG-DIR "emacs.org")
+  "Path where all of Void's emacs related todos go.")
+#+end_src
+
+***** hidden
+:PROPERTIES:
+:ID: d46d573b-1d17-4d0b-9b49-9049dbb6f7c1
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:LOCAL-DIR (concat VOID:EMACS-DIR ".local/")
+  "Path to the directory for local Emacs files.
+Files that need to exist, but I don't typically want to see go here.")
+
+(defconst VOID:DATA-DIR (concat VOID:LOCAL-DIR "data/")
+  "Path to the directory where Void data files are stored.")
+
+(defconst VOID:PACKAGES-DIR (concat VOID:LOCAL-DIR "packages/")
+  "Path to the directory where packages are stored.")
+#+end_src
+
+**** ensure directories exist                                              :ewc:
+:PROPERTIES:
+:ID: 56e80dda-5d0e-4c7c-a225-00d0028d4995
+:END:
+
+I create the directories that don't exist. But I assume they already exist if
+Void is compiled.
+
+#+begin_src emacs-lisp
+(dolist (dir (list VOID:LOCAL-DIR VOID:DATA-DIR VOID:ORG-DIR))
+  (make-directory dir t))
+#+end_src
+
+**** system directories
+:PROPERTIES:
+:ID:       f3bdd353-b0ff-48fd-a2f2-295ccfa139ab
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:DOWNLOAD-DIR (expand-file-name "~/Downloads/")
+  "Directory where downloads should go.")
+
+(defconst VOID:MULTIMEDIA-DIR (expand-file-name "~/Multimedia/")
+  "Directory where multimedia should go.")
+
+(defconst VOID:VIDEO-DIR (concat VOID:MULTIMEDIA-DIR "Videos/")
+  "Directory where videos should go.")
+
+(defconst VOID:MUSIC-DIR (concat VOID:MULTIMEDIA-DIR "Music/")
+  "Directory where music should go.")
+
+(defconst VOID:ALERT-SOUNDS (concat VOID:MULTIMEDIA-DIR "Alert Sounds/")
+  "Directory where alert sounds should go.")
+
+(defconst VOID:EMAIL-DIR (expand-file-name "~/.mail/")
+  "Directories where emails are stored.")
+#+end_src
+
 *** default coding system
 :PROPERTIES:
 :ID:       4c55a0d4-dbd7-4405-b944-3b68d8a069f2
@@ -1301,6 +1629,20 @@ time.
 #+begin_src emacs-lisp
 (defconst VOID:DEFAULT-CODING-SYSTEM 'utf-8
   "Default text encoding.")
+#+end_src
+
+*** UTF-8 for everything
+:PROPERTIES:
+:ID: dd0fc702-67a7-404c-849e-22804663308d
+:END:
+
+I set =utf-8= as the default encoding for everything except the clipboard on
+windows. Window clipboard encoding could be wider than =utf-8=, so we let
+Emacs/the OS decide what encoding to use.
+
+#+begin_src emacs-lisp
+(when (fboundp 'set-charset-priority)
+  (set-charset-priority 'unicode))
 #+end_src
 
 *** defined in c source code
@@ -1466,390 +1808,48 @@ to abbreviate it at this point.
 (setq-default print-escape-newlines t)
 #+end_src
 
-*** UTF-8 for everything
+*** message logging
 :PROPERTIES:
-:ID: dd0fc702-67a7-404c-849e-22804663308d
+:ID:       4d4f4b4a-4fc3-47fe-bed7-acc8e8103933
 :END:
 
-I set =utf-8= as the default encoding for everything except the clipboard on
-windows. Window clipboard encoding could be wider than =utf-8=, so we let
-Emacs/the OS decide what encoding to use.
+**** debug-p                                                               :eac:
+:PROPERTIES:
+:ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
+:END:
+
+[[helpvar:void-debug-p][void:debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
+is to serve as an indicator of whether the current Void instance is run for
+debugging. When Void is set up for debugging it prints out many messages about
+what its doing via [[hfn:void-log][void:log]].
 
 #+begin_src emacs-lisp
-(when (fboundp 'set-charset-priority)
-  (set-charset-priority 'unicode))
+(defvar void:debug-p (or (getenv "DEBUG") init-file-debug)
+  "When non-nil print debug messages.
+The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
-*** post init
+**** logging                                                               :eac:
 :PROPERTIES:
-:ID: 0f1da89a-2278-4493-ba62-e2a334204be6
+:ID: 84ded5f7-382e-4f59-af9e-ccb157ef5c42
 :END:
 
-**** incremental loading
-:PROPERTIES:
-:ID: c93aefa6-80ff-420d-86ae-a0c06c5c0e76
-:END:
-
-Some packages like =org= are really big. When loading such packages, we can
-notice a pause. To keep the experience in emacs snappy and avoid noticeable
-pauses, I load many small packages pre-emptively. I got this idea form reading
-[[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L355][Doom source code]]. Packages added to [[helpvar:void-incremental-packages][void:incremental-packages]] will be
-incrementally. After Void has finished loading it will wait for
-[[helpvar:void-initial-incremental-loading-delay][void:initial-incremental-loading-delay]] and then load one package from
-~void:incremental-packages~ intervals of =N= idle seconds, where =N= is
-[[helpvar:void-incremental-loading-interval][void:incremental-loading-interval]].
-
-***** packages
-:PROPERTIES:
-:ID: 41201902-db03-4acb-9c03-953f1720d494
-:END:
-
-Later in my config I will add packages to [[helpvar:void-incremental-packages][void:incremental-packages]] (using
-~nconc!~). But no incremental loading will happen until after Void is done loading.
+The purpose of ~void:log~ is to distinguish regular messages from messages that
+pertain specifically to Void, and to help debug Void functionality. When Void is
+=void:debug= is non-nil, void:specific messages are logged in the =*messages*=
+buffer.
 
 #+begin_src emacs-lisp
-(defvar void:incremental-packages nil
-  "A list of packages to load incrementally after startup.")
-#+end_src
-
-***** timers
-:PROPERTIES:
-:ID: 154e4f5d-58fc-4946-b471-c0e5f636ab61
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:initial-incremental-loading-delay 6
-  "How long (in idle seconds) until incremental loading starts.
-Set this to nil to disable incremental loading.")
-
-(defvar void:incremental-loading-interval 5
-  "How long (in idle seconds) in between incrementally loading packages.")
-#+end_src
-
-***** load-incrementally
-:PROPERTIES:
-:ID: 747c8ead-18f0-467b-aa91-3922f1212743
-:END:
-
-#+begin_src emacs-lisp
-(defun void:load-incrementally (packages)
-  "Load PACKAGES incrementally.
-This function tries to load a package from PACKAGES, a list of packages. It then
-calls itself on the rest of PACKAGES in `void:incremental-loading-interval'
-idle seconds."
-  (let ((gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
-        (gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
-        (file-name-handler-alist nil)
-        (package (car packages))
-        (rest (cdr packages)))
-    (cond ((null package) nil)
-          ((featurep package)
-           (void:load-incrementally rest))
-          (t
-           (condition-case e
-               (progn
-                 (void:log "Incrementally loading %s" package)
-                 (require package nil t))
-             (error
-              (message "Failed to load '%s' incrementally, because %s" package e)))
-           (run-with-idle-timer
-            void:incremental-loading-interval nil #'void:load-incrementally rest)))))
-#+end_src
-
-***** incremental load hook
-:PROPERTIES:
-:ID: 94c37e44-b03c-49c3-a376-696e6efb3e96
-:END:
-
-This hook triggers incremental loading to start.
-
-#+begin_src emacs-lisp
-(defhook! void:load-packages-incrementally-h ()
-  "Begin incrementally loading packages in `void:incremental-packages'.
-If this is a daemon session, load them all immediately instead."
-  :hook emacs-startup-hook
-  (cond
-   ((daemonp)
-    (mapc #'require (cdr void:incremental-packages)))
-   ((numberp void:incremental-loading-interval)
-    (run-with-idle-timer
-     void:initial-incremental-loading-delay
-     nil
-     #'void:load-incrementally
-     void:incremental-packages))
-   (t nil)))
-#+end_src
-
-**** =tty=
-:PROPERTIES:
-:ID: 63e351ad-9ef6-4034-9fca-861881c74d6a
-:END:
-
-When running emacs in terminal tty is *tremendously* slow.
-
-#+begin_src emacs-lisp
-(unless (display-graphic-p)
-  (advice-add #'tty-run-terminal-initialization :override #'ignore)
-  (defhook! void:init-tty-h ()
-    :hook window-setup-hook
-    (advice-remove #'tty-run-terminal-initialization #'ignore)
-    (tty-run-terminal-initialization (selected-frame) nil t)))
-#+end_src
-
-**** minibuffer
-:PROPERTIES:
-:ID: 83f47b4d-a0e2-4275-9c1a-7e317fdc4e41
-:END:
-
-[[helpvar:minibuffer-setup-hook][minibuffer-setup-hook]] and [[helpvar:minibuffer-exit-hook][minibuffer-exit-hook]] are the hooks run just before
-entering and exiting the minibuffer (respectively). In the minibuffer I'll be
-primarily doing searches for variables and functions. There are alot of
-variables and functions so this can certainly get computationally expensive. To
-keep things snappy I increase boost the [[helpvar:gc-cons-threshold][gc-cons-threshold]] just before I enter
-the minibuffer, and restore it to it's original value a few seconds after it's closed.
-
-It would take me forever to guess the name =minibuffer-setup-hook= from the
-variable [[helpvar:minibuffer-exit-hook][minibuffer-exit-hook]]. If I knew the name =minibuffer-exit-hook= but did not
-know what the hook to enter the minibuffer was, I'd probably
-=minibuffer-enter-hook= because [[https://www.wordhippo.com/what-is/the-opposite-of/exit.html]["enter" is one of the main antonyms of "exit"]].
-It'd take me forever to guess =startup=. Note that the only tricky thing about
-this example.
-
-At first I thought of =entry= but after more thought I realized
-hook variables use action verbs in their names not nouns. So the =exit= in
-=minibuffer-exit-hook= is actually the verb =exit= not the noun.
-
-#+begin_src emacs-lisp
-(defvaralias 'minibuffer-enter-hook 'minibuffer-setup-hook)
-
-(defhook! void:boost-garbage-collection-h ()
-  "Boost garbage collection settings to `VOID:GC-CONS-THRESHOLD-MAX'."
-  :hook minibuffer-enter-hook
-  (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX))
-
-(defhook! void:defer-garbage-collection-h ()
-  "Reset garbage collection settings to `void:gc-cons-threshold' after delay."
-  :append minibuffer-exit-hook
-  (run-with-idle-timer 3 nil (lambda () (setq gc-cons-threshold VOID:GC-CONS-THRESHOLD))))
-#+end_src
-
-**** tangling
-:PROPERTIES:
-:ID: 3288c787-4b5c-4f0c-9d18-6f18afaf2b99
-:END:
-
-***** tangle hook
-:PROPERTIES:
-:ID: 549999d7-901b-4ab4-bdbe-81514b756ced
-:END:
-
-Void tangles itself just before quitting if [[helpfn:void-needs-tangling-p][void:needs-tangling-p]] returns true.
-I tangle before quitting so I don't have to do it before startup. It's
-preferable for quitting emacs to be slightly slower than for emacs startup to
-be.
-
-#+begin_src emacs-lisp
-(defhook! void:tangle-on-quit-maybe-h ()
-  "Tangle if `void:needs-tangling-p' returns t."
-  :append kill-emacs-hook
-  (when (void:needs-tangling-p)
-    (void/tangle-org-file)))
-#+end_src
-
-***** tangle asynchronously upon saving
-:PROPERTIES:
-:ID: 00298d4e-6b18-4203-874f-f5a877a5cabf
-:END:
-
-This is another attempt to keep my =main.el= file in sync as much as possible with
-[[helpvar:VOID-README-FILE][void:main-org-file]]. ~void:tangle-on-save-h~ is called whenever a buffer is being
-saved to a file. The reason why I use ~cl-letf~ to temporarily override [[helpfn:load][load]] is
-because ~VOID:INIT-FILE~ already contains all the code I need so I don't want it
-to waste time loading ~void:main-elisp-file~.
-
-#+begin_src emacs-lisp
-(defhook! void:tangle-on-save-h ()
-  "Tangle `VOID:README-FILE' asynchronously when it is saved."
-  :hook after-save-hook
-  (when (and (require 'async nil t)
-             (string= (file-truename VOID:README-FILE)
-                      (or (buffer-file-name (current-buffer)) ""))
-             (void:needs-tangling-p))
-    (async-start
-     (lambda ()
-       (let ((old-fn (symbol-function 'load))
-             (user-init-file (concat user-emacs-directory "init.el")))
-         (require 'cl)
-         (cl-letf (((symbol-function 'load)
-                    (lambda (file &rest args)
-                      (when (string= user-init-file file)
-                        (apply old-fn file args)))))
-           (load user-init-file))))
-     (lambda (_)
-       (void:log
-        (concat (if (void:needs-tangling-p) "✕ failed" "✓ succeeded")
-                " tangling `VOID:README-FILE'."))))))
-#+end_src
-
-*** OS
-:PROPERTIES:
-:ID: e3d140d2-77c3-46bd-b94d-ab7196190a67
-:END:
-
-**** =abbreviated-home-dir=
-:PROPERTIES:
-:ID: 345958e8-fb62-4b27-b30e-c4e8b69804cd
-:END:
-
-Emacs on windows often confuses =HOME= (=C:\Users\<NAME>=) and =APPDATA=, causing
-[[hvar:abbreviate-home-dir][abbreviate-home-dir]] to produce incorrect paths.
-
-#+begin_src emacs-lisp
-(with-os! windows
-  (setq abbreviated-home-dir "\\`'"))
-#+end_src
-
-**** font caches
-:PROPERTIES:
-:ID: 339f6b4b-424c-4057-b7ea-d44c69b0f9fb
-:END:
-
-Font compacting can be terribly expensive, especially for rendering icon
-fonts on Windows. Whether it has a noteable affect on Linux and Mac hasn't
-been determined.
-
-#+begin_src emacs-lisp
-(with-os! windows
-  (setq inhibit-compacting-font-caches t))
-#+end_src
-
-**** windows performance
-:PROPERTIES:
-:ID: eda95bfe-8033-42f0-9038-11da6f9bd8fb
-:END:
-
-Reduce the workload when doing file IO.
-
-#+begin_src emacs-lisp
-(with-os! windows
-  (setq w32-get-true-file-attributes nil))
-#+end_src
-
-**** unnecessary command line options
-:PROPERTIES:
-:ID: 0bfbc8e5-88f3-4e19-a9d5-bc610ce09bb2
-:END:
-
-Some command line options aren't necessary.
-
-#+begin_src emacs-lisp
-(with-os! (not linux)
-  (setq command-line-x-option-alist nil))
-
-(with-os! (not mac)
-  (setq command-line-ns-option-alist nil))
-#+end_src
-
-**** windows
-:PROPERTIES:
-:ID: 8bd7f515-0e56-4195-a04a-5003625b2dae
-:END:
-
-#+begin_src emacs-lisp
-(with-os! windows
-  (setq w32-get-true-file-attributes nil)
-  (when (display-graphic-p)
-    (setenv "GIT_ASKPASS" "git-gui--askpass")))
-#+end_src
-
-**** mac                                                              :disabled:
-:PROPERTIES:
-:ID: e502d7e6-8b19-4300-a4fd-9a797df98402
-:END:
-
-***** defaults                                                        :disabled:
-:PROPERTIES:
-:ID: 8e4e5a73-5616-4aca-b939-5bad62e6c657
-:END:
-
-#+begin_src emacs-lisp
-(with-os! mac
-  (setq mac-command-modifier 'meta)
-  (setq mac-option-modifier  'alt)
-  ;; sane trackpad/mouse scroll settings
-  (setq mac-redisplay-dont-reset-vscroll t)
-  (setq mac-mouse-wheel-smooth-scroll nil)
-  ;;  one line at a time
-  (setq mouse-wheel-scroll-amount '(5 ((shift) . 2)))
-  ;; don't accelerate scrolling
-  (setq mouse-wheel-progressive-speed nil)
-  (setq ns-use-native-fullscreen nil)
-  ;; Don't open files from the workspace in a new frame
-  (setq ns-pop-up-frames nil))
-#+end_src
-
-***** exec path from shell                                            :disabled:
-:PROPERTIES:
-:ID: 0cc48982-6a3e-40ee-9e95-3e21dae157b5
-:END:
-
-
-A known problem with GUI Emacs on MacOS (or daemons started via
-launchctl or brew services): it runs in an isolated
-environment, so envvars will be wrong. That includes the path
-Emacs picks up. [[https://github.com/purcell/exec-path-from-shell][exec-path-from-shell]] fixes this.
-
-#+begin_src emacs-lisp
-(leaf exec-path-from-shell
-  :os mac
-  :when (or (daemonp) (display-graphic-p))
-  :require t
-  :setq
-  (exec-path-from-shell-check-startup-files . nil)
-  (exec-path-from-shell-arguments . (delete "-i" exec-path-from-shell-arguments))
-  (exec-path-from-shell-debug . void:debug-p)
-  :init
-  (nconc! exec-path-from-shell-variables
-    '("LC_CTYPE" "LC_ALL" "LANG"))
-  (exec-path-from-shell-initialize))
-#+end_src
-
-***** ns-auto-titlebar
-:PROPERTIES:
-:ID: 751ae26b-d0ae-4af1-80a5-c2b0ae360367
-:END:
-
-[[https://github.com/purcell/ns-auto-titlebar][ns-auto-titlebar]] syncs ns frame parameters with theme and fixes mismatching text
-color in the frame title.
-
-#+begin_src emacs-lisp
-(use-package! ns-auto-titlebar
-  :os mac
-  :when (or (daemonp) (display-graphic-p))
-  :require t)
-#+end_src
-
-***** osx-clipboard
-:PROPERTIES:
-:ID: 6eb19c02-ce40-4aec-9124-a58a4389855f
-:END:
-
-#+begin_src emacs-lisp
-(use-package! osx-clipboard
-  :os mac
-  :when (or (daemonp) (not (display-graphic-p)))
-  :hook emacs-startup-hook)
-#+end_src
-
-**** linux
-:PROPERTIES:
-:ID: 122381a6-784b-4f56-a97e-8c1a2d18dcc0
-:END:
-
-#+begin_src emacs-lisp
-(with-os! linux
-  (setq x-underline-at-descent-line t)
-  (setq x-gtk-use-system-tooltips nil))
+(defun void:log (format-string &rest args)
+  "Log to *Messages* if `void:debug-p' is on.
+Does not interrupt the minibuffer if it is in use, but still log to *Messages*.
+Accept the same arguments as `message'."
+  (when void:debug-p
+    (let ((inhibit-message (active-minibuffer-window)))
+      (when void:debug-p
+        (apply #'message (concat (propertize "VOID " 'face 'font-lock-comment-face)
+                                 format-string)
+               args)))))
 #+end_src
 
 ** Package Management                                                      :ewc:
