@@ -961,25 +961,28 @@ We intentionally avoid with-eval-after-load to prevent eager macro expansion
 from pulling (or failing to pull) in autoloaded macros/features.
 
 #+begin_src emacs-lisp
-;; (defmacro after-feature! (feature &rest body)
-;;   "Execute BODY after FEATURES are loaded."
-;;   (declare (indent defun) (debug t))
-;;   `(,(if (and (bound-and-true-p byte-compile-current-file)
-;;               (not (require feature nil 'noerror)))
-;;          #'with-no-warnings
-;;        #'progn)
-;;     (if (featurep ',feature)
-;;         (progn ,@body)
-;;       (eval-after-load ',feature '(progn ,@body)))))
-
+;; 1. Fail gracefully.
+;; 2. Be callable.
+;; 3. Don't eval twice.
 (defmacro after! (features &rest body)
   "Same as `with-eval-after-load' but."
   (declare (indent defun) (debug t))
-  `(condition-case err
-       ,@body
-     (error (let ((void:debug-p t))
-              (void-log "Error in `after!' block for."))))
-  )
+  (setq body (macroexp-progn body))
+  ;; (setq features (if (listp features)))
+  (let ((body (macroexp-progn body)))
+    (pcase key
+      (`or
+       (macroexp-progn
+        (seq-map (fn! `(after! ,<feature> ,body))
+                 (cdr features))))
+      (`and
+       (void:wrap-form (seq-map (fn! `(after! ,<feature>)) (cdr features))
+                       body))
+      ((pred symbolp)
+       `(if (featurep ',features)
+            ,body
+          (eval-after-load ',features ',body)))
+      (_ (error "Invalid argument.")))))
 #+end_src
 
 *** with-symbols!
@@ -1058,6 +1061,10 @@ Example:
         ((and (symbolp form) (not (equal '_ form)))
          (list '\, form))
         (t form)))
+
+(defun void:pcase-pattern (form)
+  "Return pcase pattern for form."
+  (list '\` (void::pcase-pattern form)))
 #+end_src
 
 **** let!
