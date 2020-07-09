@@ -2071,10 +2071,9 @@ is the form that will be added to."
   (when defer
     (push name leaf-defer-keywords))
 
-  ;; Set up aliases.
-  (let ((aliases alias))
-    (dolist (alias aliases)
-      (push (cons alias name) leaf-alias-keyword-alist)))
+  ;; update aliases
+  (dolist (alias (void:enlist alias))
+    (add-to-list 'leaf-alias-keyword-alist (cons alias name)))
 
   ;; Add a normalizer.
   (when normalizer
@@ -2084,12 +2083,12 @@ is the form that will be added to."
           leaf-normalize))
 
   ;; Insert it in proper place.
-  (let* ((place (cadr where))
-         (where (car where))
-         (target-form (list name form))
-         (insert-fn (cond ((eq where 'after) #'leaf-insert-list-after)
-                          ((eq where 'before) #'leaf-insert-list-before)
-                          (t (error)))))
+  (let!! (((where place) where)
+          (target-form (list name form))
+          (insert-fn (pcase where
+                       ('after #'leaf-insert-list-after)
+                       ('before #'leaf-insert-list-before)
+                       (_ (error)))))
     (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
 #+end_src
 
