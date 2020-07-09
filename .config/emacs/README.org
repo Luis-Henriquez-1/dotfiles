@@ -140,6 +140,19 @@ WRAPPERS are a list of forms to wrap around FORM."
     form))
 #+end_src
 
+**** enlist
+:PROPERTIES:
+:ID:       61095d7b-749e-4832-98b7-c2aaadbca7bb
+:END:
+
+#+begin_src emacs-lisp
+(defun void:enlist (obj)
+  "Make object into a list."
+  (if (atom obj)
+      obj
+    (list obj)))
+#+end_src
+
 **** symbols
 :PROPERTIES:
 :ID: 2cdf8ab1-4e59-4128-a8a4-e5519ca0f4bf
@@ -212,8 +225,6 @@ type without any manual hassle.
 (defmacro ignore! (&rest _)
   "Do nothing and return nil."
   nil)
-
-(defalias 'disable! 'ignore!)
 #+end_src
 
 **** with-symbols!
@@ -245,14 +256,9 @@ rebound or of the form:
 
 where INITFORM is guaranteed to be evaluated only once.
 
-Bare symbols in BINDINGS are equivalent to
+Bare symbols in BINDINGS are equivalent to:
 
-  (SYMBOL SYMBOL)
-
-Example:
-
-  (defmacro cons1 (x) (mmt-once-only (x) `(cons ,x ,x)))
-  (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
+  (SYMBOL SYMBOL)"
   (let* ((bind-fn (lambda (bind)
                     (if (consp bind)
                         (cons (car bind) (cadr bind))
@@ -281,7 +287,7 @@ Example:
 
 #+begin_src emacs-lisp
 (defmacro fn! (&rest body)
-  "Return a lambda."
+  "An anaphoric lambda."
   (let ((args (make-symbol "args")))
     `(lambda (&rest ,args)
        (let ,(seq-map-indexed (lambda (sym index) `(,sym (seq-elt ,args ,index)))
@@ -393,13 +399,11 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
 #+begin_src emacs-lisp
 (defmacro defadvice! (name args &rest body)
   "Add advice."
-  (let* ((docstring (when (stringp (car body)) (pop body)))
-         (key (pop body))
-         (advices (pop body)))
-    (unless (listp advices) (setq advices (list advices)))
+  (let! ((docstring (when (stringp (car body)) (pop body)))
+         ((key advices . body) body))
     `(prog1 (defun ,name ,args ,docstring ,@body)
-       ,@(mapcar (lambda (advice) `(advice-add #',advice ,key #',name))
-                 advices))))
+       ,@(mapcar (fn! `(advice-add #',<advice> ,key #',name))
+                 (void:enlist advices)))))
 #+end_src
 
 **** defhook!
@@ -410,15 +414,13 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
 #+begin_src emacs-lisp
 (defmacro defhook! (name args &rest body)
   "Define a hook function."
-  (let* ((docstring (when (stringp (car body)) (pop body)))
-         (key (pop body))
-         (hooks (pop body))
-         (append (eq key :append))
-         (local (eq key :local)))
-    (unless (listp hooks) (setq hooks (list hooks)))
+  (let!! ((docstring (when (stringp (car body)) (pop body)))
+          ((key hooks . body) body)
+          (append (eq key :append))
+          (local (eq key :local)))
     `(prog1 (defun ,name ,args ,docstring ,@body)
-       ,@(mapcar (lambda (hook) `(add-hook ',hook #',name ,append ,local))
-                 hooks))))
+       ,@(mapcar (fn! `(add-hook ',<hook> #',name ,append ,local))
+                 (void:enlist hooks)))))
 #+end_src
 
 **** with-os!
@@ -553,7 +555,7 @@ Macro to replace Dash's =-let=.
 
 #+begin_src emacs-lisp
 (defmacro let!! (bindings &rest body)
-  "Wrapper around `pcase-let` with friendlier pattern matching."
+  "Wrapper around `pcase-let*` with friendlier pattern matching."
   (declare (indent defun))
   `(pcase-let*
        ,(seq-map (lambda (binding)
@@ -591,11 +593,6 @@ Macro to replace Dash's =-let=.
        (let! ,()
          ,@body))))
 #+end_src
-
-***** lambda!                                                         :disabled:
-:PROPERTIES:
-:ID:       ca818af6-a1a2-43f8-be6c-959f8f89097e
-:END:
 
 **** list mutation
 :PROPERTIES:
