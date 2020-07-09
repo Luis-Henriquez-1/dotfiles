@@ -276,6 +276,19 @@ type without any manual hassle.
 :ID:       f27aa611-a2bd-4b76-85ce-72feb1e9f19f
 :END:
 
+**** ignore!
+:PROPERTIES:
+:ID: 0597956f-d40c-4c2b-9adf-5ece8c5b38de
+:END:
+
+#+begin_src emacs-lisp
+(defmacro ignore! (&rest _)
+  "Do nothing and return nil."
+  nil)
+
+(defalias 'disable! 'ignore!)
+#+end_src
+
 **** with-symbols!
 :PROPERTIES:
 :ID:       0ba70f30-f1a8-4a5d-acf9-07db9931bd54
@@ -287,6 +300,45 @@ type without any manual hassle.
   (declare (indent defun))
   `(let ,(mapcar (lambda (symbol) `(,symbol (make-symbol ,(symbol-name symbol)))) names)
      ,@body))
+#+end_src
+
+**** once-only!
+:PROPERTIES:
+:ID:       23c10e2a-6ccc-42dc-a898-29ab39a1f79c
+:END:
+
+#+begin_src emacs-lisp
+(defmacro once-only! (bindings &rest body)
+  "Rebind symbols according to BINDINGS and evaluate BODY.
+
+Each of BINDINGS must be either a symbol naming the variable to be
+rebound or of the form:
+
+  (SYMBOL INITFORM)
+
+where INITFORM is guaranteed to be evaluated only once.
+
+Bare symbols in BINDINGS are equivalent to
+
+  (SYMBOL SYMBOL)
+
+Example:
+
+  (defmacro cons1 (x) (mmt-once-only (x) `(cons ,x ,x)))
+  (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
+  (let* ((names-and-forms (seq-map (fn! (if (consp <bind>)
+                                            (cons (car <bind>) (cadr <bind>))
+                                          (cons <bind> <bind>)))
+                                   bindings))
+         (names (seq-map #'car names-and-forms))
+         (forms (seq-map #'cdr names-and-forms))
+         (symbols (seq-map (fn! (make-symbol (symbol-name <name>))) names)))
+    `(with-symbols! ,symbols
+       (list 'let
+             (seq-mapn #'list (list ,@symbols) (list ,@forms))
+             ,(cl-list* 'let
+                        (seq-mapn #'list names symbols)
+                        body)))))
 #+end_src
 
 **** anaphoric macros
@@ -479,19 +531,6 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
   `(with-structure! ,alist (lambda (key) (alist-get key alist)) ,@body))
 #+end_src
 
-**** ignore!
-:PROPERTIES:
-:ID: 0597956f-d40c-4c2b-9adf-5ece8c5b38de
-:END:
-
-#+begin_src emacs-lisp
-(defmacro ignore! (&rest _)
-  "Do nothing and return nil."
-  nil)
-
-(defalias 'disable! 'ignore!)
-#+end_src
-
 **** defadvice!
 :PROPERTIES:
 :ID:       cc161eaf-a8fb-4e24-853f-a76a49c28dcf
@@ -627,45 +666,6 @@ from pulling (or failing to pull) in autoloaded macros/features.
           ,(macroexp-progn body)
         (eval-after-load ',features '(with-demoted-errors ,@body))))
     (_ (error "Invalid argument."))))
-#+end_src
-
-**** once-only!
-:PROPERTIES:
-:ID:       23c10e2a-6ccc-42dc-a898-29ab39a1f79c
-:END:
-
-#+begin_src emacs-lisp
-(defmacro once-only! (bindings &rest body)
-  "Rebind symbols according to BINDINGS and evaluate BODY.
-
-Each of BINDINGS must be either a symbol naming the variable to be
-rebound or of the form:
-
-  (SYMBOL INITFORM)
-
-where INITFORM is guaranteed to be evaluated only once.
-
-Bare symbols in BINDINGS are equivalent to
-
-  (SYMBOL SYMBOL)
-
-Example:
-
-  (defmacro cons1 (x) (mmt-once-only (x) `(cons ,x ,x)))
-  (let ((y 0)) (cons1 (incf y))) => (1 . 1)"
-  (let* ((names-and-forms (seq-map (fn! (if (consp <bind>)
-                                            (cons (car <bind>) (cadr <bind>))
-                                          (cons <bind> <bind>)))
-                                   bindings))
-         (names (seq-map #'car names-and-forms))
-         (forms (seq-map #'cdr names-and-forms))
-         (symbols (seq-map (fn! (make-symbol (symbol-name <name>))) names)))
-    `(with-symbols! ,symbols
-       (list 'let
-             (seq-mapn #'list (list ,@symbols) (list ,@forms))
-             ,(cl-list* 'let
-                        (seq-mapn #'list names symbols)
-                        body)))))
 #+end_src
 
 **** destructuring
@@ -2407,6 +2407,8 @@ think you want to use =smtp=.
 #+begin_src emacs-lisp
 (use-feature! files
   :setq-default
+  ;; Disable second, case-insensitive pass over `auto-mode-alist'.
+  (auto-mode-case-fold nil)
   ;; Whether to add a newline automatically at the end of the file.
   ;; Whether confirmation is requested before visiting a new file or buffer.
   (confirm-nonexistent-file-or-buffer . nil)
