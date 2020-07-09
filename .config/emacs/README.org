@@ -106,7 +106,9 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 
 [[][]] is a very flexible macro. Instead of re-inveinting destructuring using
 dash. The only annoyance is that the syntax while flexible and powerful is also
-unpleasant-looking and cumbersome.
+unpleasant-looking and cumbersome. I'd like to use the syntax that I want, have
+that converted to pcase-friendly syntax, and finally pass that in to pcase
+destructuring macros.
 
 #+begin_src emacs-lisp
 (defun void::pcase-pattern (form)
@@ -432,6 +434,8 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
 :ID:       ef1c0e0e-9a2f-4ae3-89ff-f404772ee1b8
 :END:
 
+Destructuring.
+
 ***** let!
 :PROPERTIES:
 :ID:       c53ec463-30ba-4ca6-95a2-79f6fee68539
@@ -614,11 +618,11 @@ from pulling (or failing to pull) in autoloaded macros/features.
   "Same as `with-eval-after-load' but."
   (declare (indent defun) (debug t))
   (pcase (car-safe features)
-    (`or
+    ('or
      (macroexp-progn
       (seq-map (fn! `(after! ,<feature> ,@body))
                (cdr features))))
-    (`and
+    ('and
      (void:wrap-form (seq-map (fn! `(after! ,<feature>)) (cdr features))
                      (macroexp-progn body)))
     ((guard (listp features))
