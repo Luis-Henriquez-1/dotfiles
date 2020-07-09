@@ -1291,6 +1291,8 @@ to abbreviate it at this point.
 :ID:       4d4f4b4a-4fc3-47fe-bed7-acc8e8103933
 :END:
 
+Its not uncommon for the *Messages* buffer to become full of messages.
+
 **** debug-p                                                               :eac:
 :PROPERTIES:
 :ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
