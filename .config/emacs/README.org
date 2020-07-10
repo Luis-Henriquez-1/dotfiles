@@ -3047,7 +3047,6 @@ frame. So here I'm making the default font for all Emacs frames =void:font=.
 (defadvice! void:frame-notice-user-settings-a (orig-fn &rest args)
   "Try `void:font' followed each of `void:backup-fonts' until success.
 If none of the fonts work, just use the default system font."
-  ;; :when (display-graphic-p)
   :around frame-notice-user-settings
   (condition-case nil
       (progn (apply orig-fn args)
@@ -3058,8 +3057,6 @@ If none of the fonts work, just use the default system font."
            ;; (push (cons err nil) void:init-errors)
            (void:log "Setting %s failed. Trying %s..." void:font (car void:backup-fonts))
            (setq void:font (pop void:backup-fonts))
-           (setq default-frame-alist
-                 (seq-remove (fn! (eq (car <it>) 'font)) default-frame-alist))
            (add-to-list 'default-frame-alist (cons 'font void:font))
            ;; I want to call the function with advice in it.
            (apply #'frame-notice-user-settings args))
