@@ -330,10 +330,9 @@ Bare symbols in BINDINGS are equivalent to:
 #+begin_src emacs-lisp
 (defmacro fn! (&rest body)
   "An anaphoric lambda."
-  (let ((args (make-symbol "args")))
-    `(lambda (&rest ,args)
-       (let ,(seq-map-indexed (lambda (sym index) `(,sym (seq-elt ,args ,index)))
-                              (void:anaphoric-symbols body))
+  (with-symbols! (args)
+    `(lambda (,args)
+       (let! ((,(void:anaphoric-symbols body) (void:enlist ,args)))
          ,@body))))
 #+end_src
 
