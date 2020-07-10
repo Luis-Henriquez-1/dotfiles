@@ -2095,6 +2095,33 @@ is the form that will be added to."
     (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
 #+end_src
 
+**** use =after!= in leaf-defer
+:PROPERTIES:
+:ID:       3d3cf50c-20eb-4276-a81e-33a6c368d55f
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-leaf-defer
+ :where '(before :leaf-defer)
+ :alias (list :leaf-defer)
+ :form
+ '(if (and leaf--body (eval (car leaf--value))
+       (leaf-list-memq leaf-defer-keywords (leaf-plist-keys leaf--raw)))
+      `((after! ,leaf--name ,@leaf--body))
+    `(,@leaf--body)))
+#+end_src
+
+**** make leaf defer default
+:PROPERTIES:
+:ID:       bdaa5011-f0b3-44bc-a3c9-f9713d82c280
+:END:
+
+#+begin_src emacs-lisp
+(ignore! (add-to-list 'leaf-defer-keywords :leaf-defer)
+         (append! leaf-defaults '(:leaf-defer t)))
+#+end_src
+
 **** custom setting keywords
 :PROPERTIES:
 :ID:       225cdf80-0770-47c0-8a94-6d69f4583374
