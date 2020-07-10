@@ -158,6 +158,8 @@ WRAPPERS are a list of forms to wrap around FORM."
 :ID:       3320ad2b-3afe-429b-a2f8-57fb7ed711a3
 :END:
 
+In emacs-lisp =listp= returns non-nil for cons-cells. I'd like a distinction.
+
 #+begin_src emacs-lisp
 (defun void:cons-pair-p (obj)
   "Return non-nil if OBJ is true objs pair.
@@ -171,6 +173,8 @@ That is (A . B) where B is not a list."
 :PROPERTIES:
 :ID:       5cb6286d-2d4b-48d4-842a-9f9d0cc35eee
 :END:
+
+I'd also like to know when a list is actually a list I can loop through.
 
 #+begin_src emacs-lisp
 (defun void:real-list-p (obj)
@@ -2446,7 +2450,7 @@ think you want to use =smtp=.
 (use-feature! files
   :setq-default
   ;; Disable second, case-insensitive pass over `auto-mode-alist'.
-  (auto-mode-case-fold nil)
+  (auto-mode-case-fold . nil)
   ;; Whether to add a newline automatically at the end of the file.
   ;; Whether confirmation is requested before visiting a new file or buffer.
   (confirm-nonexistent-file-or-buffer . nil)
