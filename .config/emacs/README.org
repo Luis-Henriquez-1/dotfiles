@@ -1880,7 +1880,9 @@ you can "discover" the commands as you go along.
 :END:
 
 Dash is a library that provides functional (sometimes clojure-esque) like
-abstractions for manipulating lists.
+abstractions for manipulating lists. Much of dash's functionality is already
+provided by built-in packages. Specifically, I'm referring to the =cl-lib= and
+=seq= libraries. The problem though is that the functionality is scattered and.
 
 #+begin_src emacs-lisp
 (use-package! dash
