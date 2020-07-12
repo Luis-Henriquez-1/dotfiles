@@ -17,6 +17,7 @@
 #+begin_src emacs-lisp
 (require 'subr-x)
 (require 'seq)
+(require 'cl-lib)
 #+end_src
 
 *** helpers                                                                :eac:
@@ -317,6 +318,107 @@ Bare symbols in BINDINGS are equivalent to:
                         body)))))
 #+end_src
 
+**** destructuring
+:PROPERTIES:
+:ID:       ef1c0e0e-9a2f-4ae3-89ff-f404772ee1b8
+:END:
+
+Destructuring.
+
+***** let!
+:PROPERTIES:
+:ID:       c53ec463-30ba-4ca6-95a2-79f6fee68539
+:END:
+
+Macro to replace Dash's =-let=.
+
+#+begin_src emacs-lisp
+(defmacro let! (bindings &rest body)
+  "Wrapper around `pcase-let` with friendlier pattern matching."
+  (declare (indent defun))
+  `(pcase-let
+       ,(mapcar (lambda (binding)
+                  (list (list '\` (void::pcase-pattern (car binding)))
+                        (cadr binding)))
+                bindings)
+     ,@body))
+#+end_src
+
+***** let!!
+:PROPERTIES:
+:ID:       742e5a6c-8e5b-4ea0-a3d1-9dfd352d0b3e
+:END:
+
+#+begin_src emacs-lisp
+(defmacro let!! (bindings &rest body)
+  "Wrapper around `pcase-let*` with friendlier pattern matching."
+  (declare (indent defun))
+  `(pcase-let*
+       ,(mapcar (lambda (binding)
+                   (list (list '\` (void::pcase-pattern (car binding)))
+                         (cadr binding)))
+                 bindings)
+     ,@body))
+#+end_src
+
+***** if-let!
+:PROPERTIES:
+:ID:       4f1c72b6-acfb-44b7-ab5f-c24bc6dd17dd
+:END:
+
+#+begin_src emacs-lisp
+(defmacro if-let! (bindings then &rest else)
+  (declare (indent 2))
+  ;; determine whether single binding.
+  ;; (when (or (symbolp (car bindings))
+  ;;           (length 2 bindings))
+  ;;   (setq bindings (list bindings)))
+  `(let! ,bindings
+     (if (and ,@(flatten-list (seq-map #'car bindings)))
+         ,then
+       ,@else)))
+#+end_src
+
+***** when-let!
+:PROPERTIES:
+:ID:       90084108-8bbe-492a-80fb-da37accaea29
+:END:
+
+#+begin_src emacs-lisp
+(defmacro when-let! (binding &rest body)
+  (declare (indent defun))
+  `(if-let! ,binding (progn ,@body)))
+#+end_src
+
+***** dolist!
+:PROPERTIES:
+:ID:       4f92497f-bc72-49d0-874d-c0876dbc86f8
+:END:
+
+#+begin_src emacs-lisp
+(defmacro dolist! (specs &rest body)
+  "Same as `pcase-dolist' but with nicer syntax."
+  (declare (indent defun))
+  (let!! (((pattern list) specs)
+          (pcase-friendly-pattern (list '\` (void::pcase-pattern pattern))))
+    `(pcase-dolist (,pcase-friendly-pattern ,list)
+       ,@body)))
+#+end_src
+
+***** defun!                                                          :disabled:
+:PROPERTIES:
+:ID:       9bb1621a-2315-4c08-a2b4-0f62e15202d2
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defun! (name args &rest body)
+  ""
+  (with-symbols! (args)
+    `(defun ,name (&rest ,args)
+       (let! ,()
+         ,@body))))
+#+end_src
+
 **** anaphoric macros
 :PROPERTIES:
 :ID:       001dde5a-bb43-4ce8-82ef-806e37ba7f6e
@@ -346,7 +448,7 @@ Bare symbols in BINDINGS are equivalent to:
   (declare (indent defun))
   (let ((orign-value (make-symbol "orig-value")))
     `(let* ((,orign-value ,value)
-            ,@(seq-map (fn! (list <symbol> orign-value)) (void:anaphoric-symbols body)))
+            ,@(mapcar (fn! (list <symbol> orign-value)) (void:anaphoric-symbols body)))
        ,@body)))
 #+end_src
 
@@ -402,11 +504,11 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
   (let* ((symbols (thread-last (flatten-list body)
                     (seq-filter #'void:anaphoric-symbol-p)
                     (seq-uniq)))
-         (names (seq-map #'void:anaphoric-true-symbol symbols))
+         (names (mapcar #'void:anaphoric-true-symbol symbols))
          (structure-sym (make-symbol "structure")))
     `(let* ((,structure-sym ,structure)
-            ,@(seq-map (fn! `(,<sym> (funcall ,fn ,structure-sym ',<name>)))
-                       (seq-mapn #'list symbols names)))
+            ,@(mapcar (fn! `(,<sym> (funcall ,fn ,structure-sym ',<name>)))
+                      (cl-mapcar #'list symbols names)))
        ,@body)))
 #+end_src
 
@@ -430,78 +532,6 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
 (defmacro with-alist! (alist &rest body)
   (declare (indent 1))
   `(with-structure! ,alist (lambda (key) (alist-get key alist)) ,@body))
-#+end_src
-
-**** destructuring
-:PROPERTIES:
-:ID:       ef1c0e0e-9a2f-4ae3-89ff-f404772ee1b8
-:END:
-
-Destructuring.
-
-***** let!
-:PROPERTIES:
-:ID:       c53ec463-30ba-4ca6-95a2-79f6fee68539
-:END:
-
-Macro to replace Dash's =-let=.
-
-#+begin_src emacs-lisp
-(defmacro let! (bindings &rest body)
-  "Wrapper around `pcase-let` with friendlier pattern matching."
-  (declare (indent defun))
-  `(pcase-let
-       ,(seq-map (lambda (binding)
-                   (list (list '\` (void::pcase-pattern (car binding)))
-                         (cadr binding)))
-                 bindings)
-     ,@body))
-#+end_src
-
-***** let!!
-:PROPERTIES:
-:ID:       742e5a6c-8e5b-4ea0-a3d1-9dfd352d0b3e
-:END:
-
-#+begin_src emacs-lisp
-(defmacro let!! (bindings &rest body)
-  "Wrapper around `pcase-let*` with friendlier pattern matching."
-  (declare (indent defun))
-  `(pcase-let*
-       ,(seq-map (lambda (binding)
-                   (list (list '\` (void::pcase-pattern (car binding)))
-                         (cadr binding)))
-                 bindings)
-     ,@body))
-#+end_src
-
-***** dolist!
-:PROPERTIES:
-:ID:       4f92497f-bc72-49d0-874d-c0876dbc86f8
-:END:
-
-#+begin_src emacs-lisp
-(defmacro dolist! (specs &rest body)
-  "Same as `pcase-dolist' but with nicer syntax."
-  (declare (indent defun))
-  (let!! (((pattern list) specs)
-          (pcase-friendly-pattern (list '\` (void::pcase-pattern pattern))))
-    `(pcase-dolist (,pcase-friendly-pattern ,list)
-       ,@body)))
-#+end_src
-
-***** defun!                                                          :disabled:
-:PROPERTIES:
-:ID:       9bb1621a-2315-4c08-a2b4-0f62e15202d2
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defun! (name args &rest body)
-  ""
-  (with-symbols! (args)
-    `(defun ,name (&rest ,args)
-       (let! ,()
-         ,@body))))
 #+end_src
 
 **** defadvice!
@@ -623,17 +653,25 @@ from pulling (or failing to pull) in autoloaded macros/features.
   (pcase (car-safe features)
     ('or
      (macroexp-progn
-      (seq-map (fn! `(after! ,<feature> ,@body))
-               (cdr features))))
+      (mapcar (fn! `(after! ,<feature> ,@body))
+              (cdr features))))
     ('and
-     (void:wrap-form (seq-map (fn! `(after! ,<feature>)) (cdr features))
+     (void:wrap-form (mapcar (fn! `(after! ,<feature>)) (cdr features))
                      (macroexp-progn body)))
     ((guard (listp features))
      `(after! ,(cons 'and features) ,@body))
     ((pred symbolp)
      `(if (featurep ',features)
           ,(macroexp-progn body)
-        (eval-after-load ',features '(with-demoted-errors ,@body))))
+        (eval-after-load ',features
+          '(with-no-warnings
+             (condition-case error
+                 (progn ,@body)
+               (error
+                (message "Error: %S" error)
+                (message "BODY: %S" ',body)))
+             ;; (with-demoted-errors ,(format "Error: %%S\n BODY: %S" (car body)) ,@body)
+             ))))
     (_ (error "Invalid argument."))))
 #+end_src
 
@@ -823,9 +861,9 @@ The basis of the binding is a list ~(states map key def)~.
 #+begin_src emacs-lisp
 (defun kbd::list-data (states maps bindings)
   "Return a list whose elements are (states map key bind)."
-  (-map (-lambda ((map (key def)))
-          (list states map key def))
-        (-table-flat #'list maps (-partition 2 bindings))))
+  (mapcar (-lambda ((map (key def)))
+             (list states map key def))
+           (-table-flat #'list maps (seq-partition bindings 2))))
 #+end_src
 
 ***** apply prefix
@@ -871,9 +909,9 @@ The basis of the binding is a list ~(states map key def)~.
 #+begin_src emacs-lisp
 (defun kbd::gen-lazy-loaded ()
   "Return lazy loaded binding forms."
-  (-map (-lambda ((keymap bindings))
-          `(after! mode ,@(-map #'produce bindings)))
-        (-group-by #'-second-item bindings)))
+  (mapcar (-lambda ((keymap bindings))
+             `(after! mode ,@(-map #'produce bindings)))
+           (seq-group-by #'cl-second bindings)))
 #+end_src
 
 ***** generate autoload
@@ -2894,6 +2932,28 @@ while the user is working.
   (gcmh-high-cons-threshold . (* 16 1024 1024)))
 #+end_src
 
+**** shut-up
+:PROPERTIES:
+:ID:       65590d3e-ef24-4214-a602-2f4728b2f8c1
+:END:
+
+#+begin_src emacs-lisp
+(use-package! shut-up
+  :commands shut-up
+  :init
+  (defalias 'shut-up! 'shut-up)
+  (defalias 'quiet! 'shut-up))
+#+end_src
+
+**** anaphora
+:PROPERTIES:
+:ID:       c478b00e-bd13-4640-9a9d-f8dd97510d2a
+:END:
+
+#+begin_src emacs-lisp
+(use-package! anaphora :require t)
+#+end_src
+
 ** UI
 :PROPERTIES:
 :ID: c21a5946-38b1-40dd-b6c3-da41fb5c4a5c
@@ -3176,7 +3236,7 @@ a new theme.
   (apply orig-fn args))
 #+end_src
 
-* Window Management                                                   :disabled:
+* Window Management
 :PROPERTIES:
 :ID: 29dbf899-17cd-4b00-aacb-090ccd20e133
 :END:
@@ -3390,10 +3450,10 @@ use (like =M-x=) which conflict with Emacs (the instance that's managing the
 windows).
 
 #+begin_src emacs-lisp
-(defhook! exwm:start-in-char-mode-h ()
+ (defhook! exwm:start-in-char-mode-h ()
   "Decide whether to start program in char mode."
   :hook exwm-manage-finish-hook
-  (when (seq-some-p (-rpartial #'string-prefix-p exwm-instance-name)
+  (when (seq-some-p (fn! (string-prefix-p <prefix> exwm-instance-name))
                     (list "emacs"))
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
@@ -3504,7 +3564,7 @@ Emacs's text editing capabilities on it.
    ("k" . buffer-expose-up-window)))
 #+end_src
 
-* Completion                                                          :disabled:
+* Completion
 :PROPERTIES:
 :ID: 056384d1-a95a-4dcb-bc9d-ffe95bbb52a8
 :END:
@@ -3517,12 +3577,12 @@ through on our own. It's not much different in Emacs. We're constantly sifting
 though files, buffers, commands, words--all to try to get through to the subset
 of things that we actually want at this moment.
 
-** snippets
+** snippets                                                           :disabled:
 :PROPERTIES:
 :ID:       02dd54d0-f545-447e-89cf-c0cfcd941c76
 :END:
 
-*** defsnippet
+*** defsnippet                                                        :disabled:
 :PROPERTIES:
 :ID:       bfaa2631-a300-4f38-b31d-ec7457b18491
 :END:
@@ -3544,16 +3604,16 @@ This is the user-facing function to define yasnippets.
   "Define a snippet."
   (let* ((keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
     (with-plist! plist
-      (cl-assert (-all-p (-not #'null) (list <:name> <:mode> <:body>)))
+      (cl-assert (seq-every-p (fn! (not (null <it>))) (list <:name> <:mode> <:body>)))
       (alet (append
              (list "# -*- mode: snippet -*-\n")
-             (seq-map (lambda (key)
-                     (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
-                   (-filter (-partial #'plist-get plist) keys))
+             (mapcar (lambda (key)
+                       (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
+                     (seq-filter (fn! (plist-get plist <it>)) keys))
              (list "# --\n")
              (list (defsnippet:compute-body <:body> <:placeholders>)))
         (with-temp-buffer
-          (insert (s-join "\n" it))
+          (insert (string-join "\n" it))
           (yas-load-snippet-buffer <:mode>))))))
 #+end_src
 
@@ -3565,12 +3625,13 @@ This is the user-facing function to define yasnippets.
 #+begin_src emacs-lisp
 (defun defsnippet:compute-body (body placeholders)
   "Return the result of PLACEHOLDERS applied to BODY."
-  (alet (seq-map (-lambda ((number name form))
-                   (if (eq '_  name)
-                       (format "${%d:$$%S}" number form)
-                     (format "${%d:%s$%S}" number name form)))
-                 placeholders)
-    (apply #'format body it)))
+  (alet! (mapcar (lambda (it)
+                    (let! (((number name form) it))
+                      (if (eq '_  name)
+                          (format "${%d:$$%S}" number form)
+                        (format "${%d:%s$%S}" number name form))))
+                  placeholders)
+    (apply #'format body <it>)))
 #+end_src
 
 **** list symbols
@@ -3688,7 +3749,7 @@ For extremely good documentation.
   :body "(defun %s (%s)\n  \"%s\"\n  %s)"
   :placeholders '((1 name)
                   (2 args)
-                  (3 docstring (-> (rx-to-string `(or ,@(s-split "\s" (yas-field-value 2) t)))
+                  (3 docstring (thread-first (rx-to-string `(or ,@(s-split "\s" (yas-field-value 2) t)))
                                 (replace-regexp-in-string #'upcase yas-text)
                                 (ignore-errors)))
                   (4 body)))
@@ -3713,7 +3774,7 @@ be inserted and interactively completed.
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :defer-config
-  (-each yas-snippet-dirs (fn! (mkdir <> t)))
+  (seq-each (fn! (mkdir <dir> t)) yas-snippet-dirs)
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
@@ -3731,8 +3792,8 @@ be inserted and interactively completed.
 (use-package! yasnippet-snippets
   :after yasnippet
   :init
-  (awhen! (-first (fn! (s-contains-p "yasnippet-snippets" <path>)) load-path)
-    (push <path> yas-snippet-dirs)))
+  (awhen! (seq-first (fn! (s-contains-p "yasnippet-snippets" <path>)) load-path)
+          (push <path> yas-snippet-dirs)))
 #+end_src
 
 ** frameworks
@@ -3919,12 +3980,12 @@ does have isn't good enough.
     "Return an alist."
     (let* ((alist (thread-first (org-capture-upgrade-templates org-capture-templates)
                     (org-contextualize-keys it org-capture-templates-contexts)
-                    (seq-map (-lambda ((name key)) (cons key name)) it)))
-           (keys (seq-map #'cdr alist)))
-      (-remove (-lambda ((elt &as _ . key))
-                    (-all-p (lambda (it) (not (string-prefix-p key it)))
-                                 (-remove-item key keys)))
-                  alist)))
+                    (mapcar (-lambda ((name key)) (cons key name)) it)))
+           (keys (mapcar #'cdr alist)))
+      (cl-remove-if (-lambda ((elt &as _ . key))
+                      (seq-every-p (lambda (it) (not (string-prefix-p key it)))
+                                   (seq-remove key keys)))
+                    alist)))
   (setq helm:org-capture-source
         (helm-build-sync-source "helm/org-capture"
                                 :candidates #'helm:org-capture-candidates
@@ -4395,9 +4456,9 @@ a file.
   (interactive)
   (require 'recentf)
   (let* ((selectrum-should-sort-p nil)
-         (live-buffers (-remove (lambda (it) (string-match-p (rx bol white) it))
-                                   (seq-map #'buffer-name (buffer-list))))
-         (recentf-buffers (seq-map (lambda (it) (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it))
+         (live-buffers (seq-remove (lambda (it) (string-match-p (rx bol white) it))
+                                   (mapcar #'buffer-name (buffer-list))))
+         (recentf-buffers (mapcar (lambda (it) (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it))
                                    recentf-list)))
     (alet (completing-read "File: " (append live-buffers recentf-buffers))
       (setq it (or (alist-get it recentf-buffers nil nil #'string=) it))
@@ -4419,8 +4480,8 @@ a file.
          (all-tags (seq-uniq (flatten-list (org-map-entries (lambda () (org-get-tags (point) t))))))
          (selected-tags (completing-read-multiple "set tags: " all-tags)))
     (org-set-tags
-     (append (-remove (lambda (it) (member it current-tags)) selected-tags)
-             (-remove (lambda (it) (member it selected-tags)) current-tags)))))
+     (append (seq-remove (lambda (it) (member it current-tags)) selected-tags)
+             (seq-remove (lambda (it) (member it selected-tags)) current-tags)))))
 #+end_src
 
 **** TODO qutebrowser links                                           :disabled:
@@ -4443,7 +4504,7 @@ a file.
         (push (match-string 0) links))
       (setq links (reverse links))
       ;; If the link is too long shorten it.
-      (setq links (seq-map (lambda (it) (cons (s-truncate 110 it) it)) links))
+      (setq links (mapcar (lambda (it) (cons (s-truncate 110 it) it)) links))
       (completing-read "link: " links))))
 #+end_src
 
@@ -4531,8 +4592,8 @@ first letter of each word.
   "Abbreviate WORDS.
 WORDS is a string of non whitespace and whitespace."
   (thread-last (s-split "\s" words t)
-    (seq-map (lambda (it) (char-to-string (aref it 0))))
-    (seq-map #'downcase)
+    (mapcar (lambda (it) (char-to-string (aref it 0))))
+    (mapcar #'downcase)
     (apply #'concat)))
 #+end_src
 
@@ -4549,13 +4610,13 @@ Abbreviating a single word is harder.
 WORD is a string with no whitespace characters."
   (let!* ((vowel-regexp (rx (or "a" "e" "i" "o" "u" "y")))
           (letters (thread-first word
-                        (s-chop-suffixes abbrev:suffixes it)
-                        (s-split "" it t)))
-          (no-vowels (-remove (-partial #'string-match-p vowel-regexp)
+                     (s-chop-suffixes abbrev:suffixes it)
+                     (s-split "" it t)))
+          (no-vowels (seq-remove (fn! (string-match-p vowel-regexp <string>))
                                  letters)))
          (thread-last no-vowels
            (seq-uniq)
-           (seq-map #'downcase)
+           (mapcar #'downcase)
            (apply #'concat))))
 #+end_src
 
@@ -4670,7 +4731,7 @@ WORDS is a string containing one or more words."
   (interactive)
   (let!! ((selected (completing-read
                      "abbrev to delete:"
-                     (seq-map (-lambda ((abbrev . expansion))
+                     (mapcar (-lambda ((abbrev . expansion))
                              (format "%s -> %s" abbrev expansion))
                            (abbrev--alist+))))
           ((abbrev _ _) (s-split "\s" selected)))
@@ -4758,8 +4819,7 @@ worth quoting here:
 (defun company--backends+ ()
   "Compute company backends."
   (or
-   (-when-let ((mode type backends)
-               (assoc major-mode company:backend-alist))
+   (when-let! ((mode type backends) (assoc major-mode company:backend-alist))
      (when (eq type :only) backends))
    (mapcan (-lambda ((mode type backends))
              (when (or (and (eq type :derived) (derived-mode-p mode))
@@ -4806,7 +4866,7 @@ worth quoting here:
 (use-package! company-prescient :hook company-mode-hook)
 #+end_src
 
-* Email                                                               :disabled:
+* Email
 :PROPERTIES:
 :ID: b31fc41c-135d-45d9-9c05-5889d21d1cd4
 :END:
@@ -4914,7 +4974,7 @@ therefore, has the most support (in the form of setup blogs and packages).
   "Initialize mu4e."
   (interactive)
   (require 'password-store)
-  (let ((email-dirs (seq-map (fn! (concat VOID:EMAIL-DIR <email>)) (pass:email-list))))
+  (let ((email-dirs (mapcar (fn! (concat VOID:EMAIL-DIR <email>)) (pass:email-list))))
     (when (or (not (seq-every-p #'f-exists-p email-dirs))
               (seq-some-p #'f-empty-p email-dirs))
       (message "creating directories that don't exist.")
@@ -4992,8 +5052,8 @@ reason I spent so much time setting this up is because.
 (defun pass:email-list ()
   "Return a list of emails."
   (thread-last (password-store-list)
-    (seq-map (fn! (elt (s-match "email/\\(.*\\)" <entry>) 1)))
-    (-non-nil)))
+    (mapcar (fn! (elt (s-match "email/\\(.*\\)" <entry>) 1)))
+    (seq-every-p (fn! (not (null <it>))))))
 #+end_src
 
 **** return the stuff as a plist
@@ -5005,9 +5065,9 @@ reason I spent so much time setting this up is because.
 (defun pass:email-account-plist (email)
   "Return a plist of the relevant values of an email."
   (shut-up!
-    (-mapcat (fn! (list (intern <field>)
-                        (password-store-get-field (concat "email/" email) <field>)))
-             (seq-map #'car (cdr (password-store-parse-entry it))))))
+    (mapcan (fn! (list (intern <field>)
+                       (password-store-get-field (concat "email/" email) <field>)))
+            (mapcar #'car (cdr (password-store-parse-entry it))))))
 #+end_src
 
 **** mu4e folder name alist
@@ -5024,9 +5084,9 @@ Items=.
 (defun mu4e:guess-folder (base-dir possible-name &rest other-possible-names)
   "Return the first file in BASE-DIR that matches POSSIBLE-NAME or any POSSIBLE-NAMES.
 If there is no match, return POSSIBLE-NAME."
-  (alet (or (-first (lambda (it) (-any-p (lambda (name) (s-contains-p name it t))
-                                         (cons possible-name other-possible-names)))
-                    (cddr (directory-files base-dir)))
+  (alet (or (seq-first (lambda (it) (seq-some-p (fn! (s-contains-p <name> it t))
+                                                (cons possible-name other-possible-names)))
+                       (cddr (directory-files base-dir)))
             possible-name)
     (format "/%s/%s" (f-filename base-dir) it)))
 #+end_src
@@ -5039,9 +5099,11 @@ If there is no match, return POSSIBLE-NAME."
 #+begin_src emacs-lisp
 (defun mu4e::account-context (email)
   "Return an mu4e account context for specified EMAIL."
-  (-let ((base-dir (concat VOID:EMAIL-DIR email "/"))
-         (name (-second-item (s-match ".*@\\([^.]*\\)" email)))
-         ((&plist 'out-host 'out-port) (pass:email-account-plist email)))
+  (let* ((base-dir (concat VOID:EMAIL-DIR email "/"))
+         (name (cl-second (s-match ".*@\\([^.]*\\)" email)))
+         (account (pass:email-account-plist email))
+         (out-host (plist-get 'out-host account))
+         (out-port (plist-get 'out-port account)))
     (alet `((mu4e-sent-folder      . ,(mu4e:guess-folder base-dir "sent"))
             (mu4e-drafts-folder    . ,(mu4e:guess-folder base-dir "draft"))
             (mu4e-trash-folder     . ,(mu4e:guess-folder base-dir "trash" "delete" "junk"))
@@ -5062,8 +5124,8 @@ If there is no match, return POSSIBLE-NAME."
   "Initiaize context for each email account."
   :before mu4e
   (require 'password-store)
-  (--each (seq-map #'mu4e::account-context (pass:email-list))
-    (cl-pushnew it mu4e-contexts)))
+  (seq-each (fn! (cl-pushnew <context> mu4e-contexts))
+            (mapcar #'mu4e::account-context (pass:email-list))))
 #+end_src
 
 *** shortcuts
@@ -5377,7 +5439,7 @@ mean 2000 which is not a lot by today's standard).
   (gnus-sorted-header-list . gnus-visible-headers))
 #+end_src
 
-* Web Browsing                                                        :disabled:
+* Web Browsing
 :PROPERTIES:
 :ID: f0960e47-5dbb-4cca-a17a-f8eb0da445d3
 :END:
@@ -5479,7 +5541,7 @@ The optional argument NEW-WINDOW is not used."
   :setq (xwwp-follow-link-completion-system . 'ivy))
 #+end_src
 
-* Multimedia                                                          :disabled:
+* Multimedia
 :PROPERTIES:
 :ID: 20a915a0-8525-413c-bd68-f1d5c14ce3da
 :END:
@@ -5682,7 +5744,7 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
   (keypression-frame-justify . 'keypression-right-justified))
 #+end_src
 
-* Text Editing                                                        :disabled:
+* Text Editing
 :PROPERTIES:
 :ID: 42e0838f-f72a-43f3-8db2-a406d2d89adb
 :END:
@@ -5853,12 +5915,13 @@ the time.
 (defun org:edit-desc-bounds (point elements)
   "Return the bounds of the description at point.
 ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
-  (awhen! (--first (--any-p (-partial #'org:element-contains-point-p point) it)
-                   (thread-last (cdr elements)
-                     (-partition-by #'org:element-paragraph-p)
-                     (seq-filter (lambda (it) (org:element-paragraph-p (car it))))))
-    (cons (org-element-property :contents-begin (-first-item <it>))
-          (org-element-property :contents-end (-last-item <it>)))))
+  (awhen! (seq-first (fn! (seq-some-p (apply-partially #'org:element-contains-point-p point)
+                                      <it>))
+                     (thread-last (cdr elements)
+                       (seq-group-by #'org:element-paragraph-p)
+                       (seq-filter (lambda (it) (org:element-paragraph-p (car it))))))
+    (cons (org-element-property :contents-begin (cl-first <it>))
+          (org-element-property :contents-end (car (last <it>))))))
 #+end_src
 
 **** org edit description at point
@@ -5890,15 +5953,15 @@ travel to anywhere I need within a heading from the headline itself.
    ;; There's a paragraph among the elements.
    ((-some->> elements
       (seq-drop-while (-not (-partial #'org:element-contains-point-p (point))))
-      (-first #'org:element-paragraph-p)
+      (seq-first #'org:element-paragraph-p)
       (org-element-property :begin))
     (org:edit-desc-bounds it elements))
    ;; Skip property drawers.
-   ((-first (lambda (it) (eq 'property-drawer (org-element-type it)))
+   ((seq-first (fn! (eq 'property-drawer (org-element-type <element>)))
                (reverse elements))
     (alet (org-element-property :end it) (cons it it)))
    ;; There's no paragraphs or property drawers.
-   ((save-excursion (goto-char (org-element-property :begin (-first-item elements)))
+   ((save-excursion (goto-char (org-element-property :begin (cl-first elements)))
                     (end-of-line)
                     (org-skip-whitespace)
                     (point))
@@ -6031,8 +6094,8 @@ block.
   "Edit the source block."
   (interactive)
   (if (or (org-in-src-block-p)
-          (alet (--first (eq (org-element-type it) 'src-block)
-                         (org:element-headline-elements))
+          (alet (seq-first (fn! (eq (org-element-type <element>) 'src-block))
+                           (org:element-headline-elements))
             (goto-char (org-element-property :begin it))))
       (org/edit:source-block-at-point)
     (user-error "No source block at point.")))
@@ -6719,7 +6782,7 @@ practice, this is rarely an issue.
     "Smartparens inner sexp object."
     (-if-let ((beg . end)
               (thread-last (list (lispy--bounds-list) (lispy--bounds-string))
-                (-non-nil)
+                (seq-remove #'null)
                 (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
                 (car)))
         (evil-range beg end 'inclusive :expanded t)
@@ -7139,7 +7202,7 @@ larger text objects. It's saves me keystrokes.
   (global-undo-tree-mode -1))
 #+end_src
 
-* Utility                                                             :disabled:
+* Utility
 :PROPERTIES:
 :ID: 15266577-fc6e-4ec7-8277-3a94b6f4f926
 :END:
@@ -7200,8 +7263,8 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 
 #+begin_src emacs-lisp
 (after! em-term
-  (--each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
-    (add-to-list 'eshell-visual-commands it)))
+  (seq-each (fn! (add-to-list 'eshell-visual-commands <command>))
+            '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")))
 #+end_src
 
 *** improvements
@@ -7353,7 +7416,7 @@ This function generates the eshell prompt by concatenating `eshell:header' with
 valid `eshell:enabled-sections' and the `eshell-prompt-string'."
   (concat eshell:header
           (thread-last eshell:enabled-sections
-            (seq-map (lambda (it) (void:symbol-intern 'eshell-prompt-- it)))
+            (mapcar (lambda (it) (void:symbol-intern 'eshell-prompt-- it)))
             (seq-filter #'fboundp)
             (-reduce-from #'eshell:acc ""))
           eshell-prompt-string))
@@ -7503,7 +7566,7 @@ And go to the start of the path selected by the headline."
   (let ((selectrum-should-sort-p nil)
         (selectrum-refine-candidates-function #'selectrum-default-candidate-refine-function)
         (paths (org:headline-paths)))
-    (thread-first (seq-map #'car paths)
+    (thread-first (mapcar #'car paths)
          (completing-read "Headlines: " it)
          (alist-get it paths nil nil #'string=)
          (goto-char it))
@@ -7582,7 +7645,7 @@ have to set out to look for a file with =dired=.
                            "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
                            ;; ignore private Void temp files (but not all of them)
                            #'(lambda (file)
-                               (-any-p (-partial #'file-in-directory-p file)
+                               (seq-some-p (apply-partially #'file-in-directory-p file)
                                 (list VOID:DATA-DIR)))))
   (recentf-max-menu-items . 0)
   (recentf-max-saved-items . 700)
@@ -7646,7 +7709,7 @@ again, you are taken to the location you left off. This is very convenient.
   "Remove text properties from `kill-ring'."
   :append kill-emacs-hook
   (setq kill-ring
-        (seq-map (lambda (it) (when (stringp it) (substring-no-properties it)))
+        (mapcar (lambda (it) (when (stringp it) (substring-no-properties it)))
                  (-non-nil kill-ring))))
 #+end_src
 
@@ -8146,7 +8209,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
     "Auto revert stale buffers in visible windows, if necessary."
     :hook (focus-in-hook after-save-hook)
     (mapc (lambda (it) (with-current-buffer it (auto-revert:buffer-h)))
-          (seq-uniq (seq-map #'window-buffer (window-list))))))
+          (seq-uniq (mapcar #'window-buffer (window-list))))))
 #+end_src
 
 ** security
@@ -8282,12 +8345,10 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
     (let ((wconf (current-window-configuration)))
       (pdf-tools-install)
       (message "Building epdfinfo, this will take a moment...")
-      (--each (buffer-list)
-        (with-current-buffer it
-          (when (eq major-mode 'pdf-view-mode)
-            (fundamental-mode))))
-      ;; (dolist (buffer (doom-buffers-in-mode 'pdf-view-mode))
-      ;;   (with-current-buffer buffer (fundamental-mode)))
+      (seq-each (fn! (with-current-buffer it
+                       (when (eq major-mode 'pdf-view-mode)
+                         (fundamental-mode))))
+                (buffer-list))
       (while compilation-in-progress
         ;; Block until `pdf-tools-install' is done
         (redisplay)
@@ -8380,7 +8441,7 @@ on the buffer you'd like to edit.
   (magit-status "/yadm::"))
 #+end_src
 
-* Languages                                                           :disabled:
+* Languages
 :PROPERTIES:
 :ID: 51e3b9b1-0e74-431e-a113-fe6f86a4b22a
 :END:
@@ -9375,7 +9436,7 @@ Sometimes the heading inserted doesn't remain visible.
 (defhook! org:ensure-heading-visible-h ()
   "Ensure that heading remains visible."
   :hook org-insert-heading-hook
-  (-when-let (o (cdr (get-char-property-and-overlay (point) 'invisible)))
+  (when-let! (o (cdr (get-char-property-and-overlay (point) 'invisible)))
     (move-overlay o (overlay-start o) (line-end-position 0))))
 #+end_src
 
@@ -9697,7 +9758,7 @@ in the future. I use this template for this.
   :after org
   :commands (org-agenda org-agenda-list)
   :setq
-  (org-agenda-files . (seq-map (lambda (it) (concat org-directory it))
+  (org-agenda-files . (mapcar (lambda (it) (concat org-directory it))
                                '("todo.org")))
   (org-agenda-start-on-weekday . 0)
   (org-agenda-timegrid-use-ampm . nil)
@@ -9776,7 +9837,7 @@ tracking the time you spend on a particular task.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! org-crypt
+(use-feature! org-crypt
   :commands org-encrypt-entries org-encrypt-entry org-decrypt-entries org-decrypt-entry
   :hook (org-reveal-start . org-decrypt-entry)
   ;; :preface
@@ -9963,7 +10024,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 (use-package! latex-preview-pane)
 #+end_src
 
-* User Interface                                                      :disabled:
+* User Interface
 :PROPERTIES:
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
 :END:
@@ -10008,7 +10069,7 @@ understanding of a verbally terse and dry command description.
   :init (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-* Asthetic                                                            :disabled:
+* Asthetic
 :PROPERTIES:
 :ID: bd21a69a-794c-4ff1-97d0-9e5911a26ad7
 :END:
@@ -10235,7 +10296,7 @@ see dark on light better than light on dark.
 (use-package! avk-emacs-themes)
 #+end_src
 
-* Keybindings                                                         :disabled:
+* Keybindings
 :PROPERTIES:
 :ID: 226e2c5b-2b81-483a-9942-d0ca0fc80f1f
 :END:
