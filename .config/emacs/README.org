@@ -355,39 +355,45 @@ Macro to replace Dash's =-let=.
   (declare (indent defun))
   `(pcase-let*
        ,(mapcar (lambda (binding)
-                   (list (list '\` (void::pcase-pattern (car binding)))
-                         (cadr binding)))
-                 bindings)
+                  (list (void:pcase-pattern (car binding))
+                        (cadr binding)))
+                bindings)
      ,@body))
 #+end_src
 
-***** if-let!
+***** if-let!!
 :PROPERTIES:
 :ID:       4f1c72b6-acfb-44b7-ab5f-c24bc6dd17dd
 :END:
 
 #+begin_src emacs-lisp
 (defmacro if-let! (bindings then &rest else)
+  (cl-macrolet )
+  )
+
+(defmacro if-let!! (bindings then &rest else)
   (declare (indent 2))
-  ;; determine whether single binding.
-  ;; (when (or (symbolp (car bindings))
-  ;;           (length 2 bindings))
-  ;;   (setq bindings (list bindings)))
-  `(let! ,bindings
+  (when (= 2 (length bindings))
+    (setq bindings (list bindings)))
+  `(let!! ,bindings
      (if (and ,@(flatten-list (seq-map #'car bindings)))
          ,then
        ,@else)))
 #+end_src
 
-***** when-let!
+***** when-let!!
 :PROPERTIES:
 :ID:       90084108-8bbe-492a-80fb-da37accaea29
 :END:
 
 #+begin_src emacs-lisp
-(defmacro when-let! (binding &rest body)
+(defmacro when-let!! (bindings &rest body)
   (declare (indent defun))
-  `(if-let! ,binding (progn ,@body)))
+  `(if-let!! ,bindings (progn ,@body)))
+
+(defmacro when-let! (bindings &rest body)
+  (declare (indent defun))
+  `(if-let! ,bindings (progn ,@body)))
 #+end_src
 
 ***** dolist!
