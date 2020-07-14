@@ -112,24 +112,21 @@ that converted to pcase-friendly syntax, and finally pass that in to pcase
 destructuring macros.
 
 #+begin_src emacs-lisp
-(defun void::pcase-pattern (form)
-  "Return a pcase-friendly pattern."
-  (declare (pure t) (side-effect-free t))
-  (cond ((equal nil form) form)
-        ((listp form)
-         (cons (void::pcase-pattern (car form))
-               (void::pcase-pattern (cdr form))))
-        ((vectorp form)
-         (seq-into (cons (void::pcase-pattern (seq-first form))
-                         (void::pcase-pattern (seq-into (seq-rest form) 'list)))
-                   'vector))
-        ((and (symbolp form) (not (equal '_ form)))
-         (list '\, form))
-        (t form)))
-
 (defun void:pcase-pattern (form)
   "Return pcase pattern for form."
-  (list '\` (void::pcase-pattern form)))
+  (cl-labels ((void::pcase-pattern (form)
+                                   (cond ((equal nil form) form)
+                                         ((listp form)
+                                          (cons (void::pcase-pattern (car form))
+                                                (void::pcase-pattern (cdr form))))
+                                         ((vectorp form)
+                                          (seq-into (cons (void::pcase-pattern (seq-first form))
+                                                          (void::pcase-pattern (seq-into (seq-rest form) 'list)))
+                                                    'vector))
+                                         ((and (symbolp form) (not (equal '_ form)))
+                                          (list '\, form))
+                                         (t form))))
+    (list '\` (void::pcase-pattern form))))
 #+end_src
 
 **** wrap-form
