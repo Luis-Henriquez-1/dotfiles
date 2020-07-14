@@ -5857,6 +5857,7 @@ correctness of values returned as opposed to the state change of the buffer.
 #+begin_src emacs-lisp
 (defun org:element-headline-elements ()
   "Return the list of org elements from the current headline to the next."
+  (require 'dash)
   (save-excursion
     (unless (org-at-heading-p) (org-back-to-heading))
     (cons (org-element-at-point)
@@ -5959,6 +5960,7 @@ travel to anywhere I need within a heading from the headline itself.
 #+begin_src emacs-lisp
 (defun org:dwim-description-bounds (point elements)
   "Return the beginning and end of description bounds."
+  (require 'dash)
   (acond
    ;; There's a paragraph among the elements.
    ((-some->> elements
