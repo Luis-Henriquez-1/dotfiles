@@ -6773,7 +6773,7 @@ practice, this is rarely an issue.
 (after! evil
   (evil-define-text-object evil:textobj-inner-form (count &rest _)
     "Inner sexp object."
-    (-if-let ((beg . end)
+    (if-let! ((beg . end)
               (thread-last (list (lispy--bounds-list) (lispy--bounds-string))
                 (-non-nil)
                 (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
@@ -10217,7 +10217,7 @@ VOID install. For writing this code I referenced the body of
                     "/fonts/"))
          (mac (concat (getenv "HOME") "/Library/Fonts/" ))
          (ns (concat (getenv "HOME") "/Library/Fonts/" )))))
-  (unless (-all-p (lambda (it) (file-exists-p (concat font-dir it)))
+  (unless (seq-every-p (lambda (it) (file-exists-p (concat font-dir it)))
                        '("all-the-icons.ttf"
                          "file-icons.ttf"
                          "fontawesome.ttf"
