@@ -336,12 +336,15 @@ Macro to replace Dash's =-let=.
 (defmacro let! (bindings &rest body)
   "Wrapper around `pcase-let` with friendlier pattern matching."
   (declare (indent defun))
-  `(pcase-let
-       ,(mapcar (lambda (binding)
-                  (list (list '\` (void::pcase-pattern (car binding)))
-                        (cadr binding)))
-                bindings)
-     ,@body))
+  (let ((var-to-new (mapcar (lambda (var) (cons var (make-symbol (symbol-name var))))
+                            (seq-uniq (flatten-list (mapcar #'car bindings))))))
+    `(let!! ,(append
+              (seq-map (lambda (it) (cons (cl-sublis var-to-new (car it))
+                                          (cdr it)))
+                       bindings)
+              (seq-map (lambda (it) (list (car it) (cdr it)))
+                       var-to-new))
+       ,@body)))
 #+end_src
 
 ***** let!!
