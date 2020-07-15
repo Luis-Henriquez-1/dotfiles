@@ -5874,15 +5874,15 @@ correctness of values returned as opposed to the state change of the buffer.
 #+begin_src emacs-lisp
 (defun org:element-headline-elements ()
   "Return the list of org elements from the current headline to the next."
-  (require 'dash)
   (save-excursion
     (unless (org-at-heading-p) (org-back-to-heading))
-    (cons (org-element-at-point)
-          (--unfold (when (and it (not (eq 'headline (org-element-type it))))
-                      (cons it (ignore-errors (org-forward-element)
-                                              (org-element-at-point))))
-                    (when (ignore-errors (org-down-element))
-                      (org-element-at-point))))))
+    (when (org-at-heading-p)
+      (cons (org-element-at-point)
+            (ignore-errors
+              (org-down-element)
+              (cons (org-element-at-point)
+                    (while! (ignore-errors (org-forward-element))
+                            (org-element-at-point))))))))
 #+end_src
 
 *** editing headline descriptions
@@ -6123,61 +6123,12 @@ block.
   "Edit the source block."
   (interactive)
   (if (or (org-in-src-block-p)
-          (alet (seq-first (fn! (eq (org-element-type <element>) 'src-block))
-                           (org:element-headline-elements))
-            (goto-char (org-element-property :begin it))))
+          (thread-last (org:element-headline-elements)
+            (seq-find (lambda (it) (eq (org-element-type it) 'src-block)))
+            (org-element-property :begin)
+            (goto-char)))
       (org/edit:source-block-at-point)
     (user-error "No source block at point.")))
-#+end_src
-
-*** editing comments                                                  :disabled:
-:PROPERTIES:
-:ID: d7f9a526-3906-4b8e-80b9-17e3e12a6061
-:END:
-
-Many think of html or markdown when asked about cases where you have many
-languages intermingled in one file. However, any programming language with
-comments and docstrings is also an example! Comments and docstrings are used to
-add plain prose to a language. Necessarily, plain prose requires it's own set of
-tools (like spell-checking) which is not something used (at least in the typical
-sense) in programming languages. Some solutions to this have been to try to lump
-in spell checking and such tools into programming modes (one example is
-[[helpfn:flyspell-prog-mode][flyspell-prog-mode]] which checks for spelling only in a language's comments.
-However, I argue that this approach is misguided. The problem is not that
-programming language modes lack spell-checking in comments; rather, it's that
-we're trying to edit plain prose in a file specifically designed to edit the
-programming language. Solution? Take the prose out, edit it in a mode with all
-prose-editing features enabled, then put it back in. This way we can leverage
-existing modes instead of trying to fit everything into one.
-
-**** separedit
-:PROPERTIES:
-:ID: 678b68dc-67a5-4b96-9f9a-12211ddbd503
-:END:
-
-Separedit is a package that's designed for editing comments and docstring in
-edit indirect buffers. Interestingly, it can also edit source blocks inside
-comments.
-
-#+begin_src emacs-lisp
-(use-package! separedit)
-#+end_src
-
-**** disable separedit header line
-:PROPERTIES:
-:ID: caaf863f-fc16-4c50-8b38-dda6f09da45d
-:END:
-
-By default =separedit= displays a headerline at the top of its =edit-indirect=
-buffer that tells you which binding you need get out of it and the one you need
-to abort it. For experienced users (like me), this is not necessary. Therefore,
-I remove it.
-
-#+begin_src emacs-lisp
-(defhook! separedit:remove-headerline-h ()
-  "Disable the separedit headerline."
-  (:hook separedit-buffer-creation-hook)
-  (setq-local header-line-format nil))
 #+end_src
 
 *** bindings inside edit-indirect
