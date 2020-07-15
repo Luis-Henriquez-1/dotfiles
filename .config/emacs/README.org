@@ -682,7 +682,7 @@ from pulling (or failing to pull) in autoloaded macros/features.
     ((pred symbolp)
      `(if (featurep ',features)
           ,(macroexp-progn body)
-        (eval-after-load! features ,@body)))
+        (eval-after-load! ,features ,@body)))
     (_ (error "Invalid argument."))))
 #+end_src
 
@@ -693,16 +693,14 @@ from pulling (or failing to pull) in autoloaded macros/features.
 
 #+begin_src emacs-lisp
 (defmacro eval-after-load! (feature &rest body)
-  ""
+  (declare (indent defun))
   `(eval-after-load ',feature
      '(with-no-warnings
         (condition-case error
             (progn ,@body)
           (error
            (message "Error: %S" error)
-           (message "BODY: %S" ',body)))
-        ;; (with-demoted-errors ,(format "Error: %%S\n BODY: %S" (car body)) ,@body)
-        )))
+           (message "BODY: %S" ',body))))))
 #+end_src
 
 **** while!
