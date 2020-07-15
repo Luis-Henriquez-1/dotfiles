@@ -3632,16 +3632,17 @@ This is the user-facing function to define yasnippets.
   "Define a snippet."
   (let* ((keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
     (with-plist! plist
-      (cl-assert (seq-every-p (fn! (not (null <it>))) (list <:name> <:mode> <:body>)))
-      (alet (append
-             (list "# -*- mode: snippet -*-\n")
-             (mapcar (lambda (key)
-                       (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
-                     (seq-filter (fn! (plist-get plist <it>)) keys))
-             (list "# --\n")
-             (list (defsnippet:compute-body <:body> <:placeholders>)))
+      (cl-assert (seq-every-p (fn! (not (null <it>)))
+                              (list <:name> <:mode> <:body>)))
+      (alet! (append
+              (list "# -*- mode: snippet -*-\n")
+              (mapcar (lambda (key)
+                        (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
+                      (seq-filter (lambda (it) (plist-get plist it)) keys))
+              (list "# --\n")
+              (list (defsnippet:compute-body <:body> <:placeholders>)))
         (with-temp-buffer
-          (insert (string-join "\n" it))
+          (insert (string-join "\n" <it>))
           (yas-load-snippet-buffer <:mode>))))))
 #+end_src
 
