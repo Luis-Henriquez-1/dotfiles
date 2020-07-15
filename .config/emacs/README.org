@@ -643,7 +643,14 @@ See `if!' for details on this macro's purpose."
 #+begin_src emacs-lisp
 (defmacro quiet! (&rest body)
   "Run BODY without generating output."
-  ())
+  (let! ((standard-output (lambda (&rest _)))
+         (defun message (&rest _))
+         (defun load (file &optional noerror nomessage nosuffix must-suffix)
+           (funcall load file noerror t nosuffix must-suffix))
+         (defun write-region (start end filename &optional append visit lockname mustbenew)
+           (unless visit (setq visit 'no-message))
+           (funcall write-region start end filename append visit lockname mustbenew)))
+    ,@body))
 #+end_src
 
 **** after!
