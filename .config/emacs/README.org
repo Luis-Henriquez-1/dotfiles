@@ -411,10 +411,10 @@ Macro to replace Dash's =-let=.
 (defmacro dolist! (specs &rest body)
   "Same as `pcase-dolist' but with nicer syntax."
   (declare (indent defun))
-  (let!! (((pattern list) specs)
-          (pcase-friendly-pattern (list '\` (void::pcase-pattern pattern))))
-    `(pcase-dolist (,pcase-friendly-pattern ,list)
-       ,@body)))
+  (let!! (((pattern list) specs))
+    `(cl-block nil
+       (pcase-dolist (,(void:pcase-pattern pattern) ,list)
+         ,@body))))
 #+end_src
 
 ***** defun!                                                          :disabled:
