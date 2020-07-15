@@ -5931,9 +5931,10 @@ correctness of values returned as opposed to the state change of the buffer.
       (cons (org-element-at-point)
             (ignore-errors
               (org-down-element)
-              (cons (org-element-at-point)
-                    (while! (ignore-errors (org-forward-element))
-                            (org-element-at-point))))))))
+              (seq-unfold (lambda (x)
+                            (when (ignore-errors (org-forward-element))
+                              (cons x (org-element-at-point))))
+                          (org-element-at-point)))))))
 #+end_src
 
 *** editing headline descriptions
