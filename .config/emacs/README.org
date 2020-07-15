@@ -427,8 +427,26 @@ Macro to replace Dash's =-let=.
   ""
   (with-symbols! (args)
     `(defun ,name (&rest ,args)
-       (let! ,()
-         ,@body))))
+       (cl-block nil
+         (let! ,() ,@body)))))
+#+end_src
+
+***** lambda!
+:PROPERTIES:
+:ID:       9acda4bb-e1c4-42d1-a6f6-9cdad5d1b15e
+:END:
+
+#+begin_src emacs-lisp
+(defmacro lambda! (spec &rest body)
+  "Only accepts one argument. Made to be used with mapcar."
+  (declare (indent defun))
+  (with-symbols! (args)
+    (when (= (length spec) 1)
+      (setq spec (car spec)))
+    `(lambda (,args)
+       (cl-block nil
+         (let! ((,spec ,args))
+           ,@body)))))
 #+end_src
 
 **** anaphoric macros
