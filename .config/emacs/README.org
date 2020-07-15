@@ -6768,7 +6768,7 @@ practice, this is rarely an issue.
 
   (evil-define-text-object evil:textobj-outer-form (count &rest _)
     "Smartparens inner sexp object."
-    (-if-let ((beg . end)
+    (if-let! ((beg . end)
               (thread-last (list (lispy--bounds-list) (lispy--bounds-string))
                 (seq-remove #'null)
                 (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
@@ -6798,7 +6798,7 @@ Why not just go to the end of the ="= like any other around operator?
 (after! evil
   (evil-define-text-object evil:textobj-a-string (count &rest _)
     "An outer comment text object as defined by `lispy--bounds-string'."
-    (-if-let ((beg . end) (lispy--bounds-string))
+    (if-let! ((beg . end) (lispy--bounds-string))
         (evil-range beg end 'exclusive :expanded t)
       (error "Not inside a comment.")))
 
