@@ -741,9 +741,6 @@ from pulling (or failing to pull) in autoloaded macros/features.
 :ID:       e4fc8ee2-90ff-49c7-b586-4fc2da6ea1bf
 :END:
 
-=cl-loop= can be completely replaced by =mapcar=. The only time where I ever
-miss =cl-loop= is when I'd like to "collect" values.
-
 #+begin_src emacs-lisp
 (defmacro while! (test &rest body)
   "Same as while but return collected values in a list."
