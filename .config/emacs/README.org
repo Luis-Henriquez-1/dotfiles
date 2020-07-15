@@ -369,6 +369,7 @@ Macro to replace Dash's =-let=.
 
 #+begin_src emacs-lisp
 (defmacro if-let! (bindings then &rest else)
+  (declare (indent 2))
   (when (= 2 (length bindings))
     (setq bindings (list bindings)))
   `(let! ,bindings
