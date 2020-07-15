@@ -25,6 +25,21 @@
 :ID:       4029d357-1309-4c7f-89eb-db93a3470c42
 :END:
 
+**** unfold
+:PROPERTIES:
+:ID:       e804a7c5-9cdd-4b52-95a4-bc4e8af30933
+:END:
+
+#+begin_src emacs-lisp
+(defun seq:unfold (fun seed)
+  (let ((last (funcall fun seed))
+        (r nil))
+    (while last
+      (push (car last) r)
+      (setq last (funcall fun (cdr last))))
+    (nreverse r)))
+#+end_src
+
 **** anaphora                                                              :eac:
 :PROPERTIES:
 :ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
@@ -735,21 +750,6 @@ miss =cl-loop= is when I'd like to "collect" values.
   (declare (indent defun))
   `(cl-block nil
      (while ,test ,@body)))
-#+end_src
-
-**** reduce
-:PROPERTIES:
-:ID:       e804a7c5-9cdd-4b52-95a4-bc4e8af30933
-:END:
-
-#+begin_src emacs-lisp
-(defun seq:unfold (fun seed)
-  (let ((last (funcall fun seed))
-        (r nil))
-    (while last
-      (push (car last) r)
-      (setq last (funcall fun (cdr last))))
-    (nreverse r)))
 #+end_src
 
 **** list mutation
