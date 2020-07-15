@@ -8755,7 +8755,7 @@ these overlays.
 
 (defadvice! outorg:do-not-add-overlays-a (orig-fn &rest args)
   :around outorg-wrap-source-in-block
-  (noflet ((overlay-put (&rest _) nil))
+  (cl-letf (((symbol-function #'overlay-put) #'ignore))
     (apply orig-fn args)))
 #+end_src
 
