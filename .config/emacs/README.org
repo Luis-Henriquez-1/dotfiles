@@ -686,6 +686,22 @@ from pulling (or failing to pull) in autoloaded macros/features.
     (_ (error "Invalid argument."))))
 #+end_src
 
+**** while!
+:PROPERTIES:
+:ID:       e4fc8ee2-90ff-49c7-b586-4fc2da6ea1bf
+:END:
+
+#+begin_src emacs-lisp
+(defmacro while! (test &rest body)
+  "Same as while but return collected values in a list."
+  (declare (indent defun))
+  (once-only! ((collection nil))
+    `(progn
+       (while ,test
+         (push (progn ,@body) ,collection))
+       (nreverse ,collection))))
+#+end_src
+
 **** list mutation
 :PROPERTIES:
 :ID:       d9f77404-5c29-4305-ae53-e409e1b06b99
