@@ -3819,8 +3819,8 @@ be inserted and interactively completed.
 (use-package! yasnippet-snippets
   :after yasnippet
   :init
-  (awhen! (seq-first (fn! (s-contains-p "yasnippet-snippets" <path>)) load-path)
-          (push <path> yas-snippet-dirs)))
+  (awhen! (seq-find (fn! (s-contains-p "yasnippet-snippets" <path>)) load-path)
+    (push <path> yas-snippet-dirs)))
 #+end_src
 
 ** frameworks
@@ -5943,11 +5943,11 @@ the time.
 (defun org:edit-desc-bounds (point elements)
   "Return the bounds of the description at point.
 ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
-  (awhen! (seq-first (fn! (seq-some-p (apply-partially #'org:element-contains-point-p point)
-                                      <it>))
-                     (thread-last (cdr elements)
-                       (seq-group-by #'org:element-paragraph-p)
-                       (seq-filter (lambda (it) (org:element-paragraph-p (car it))))))
+  (awhen! (seq-find (fn! (seq-some-p (apply-partially #'org:element-contains-point-p point)
+                                     <it>))
+                    (thread-last (cdr elements)
+                      (seq-group-by #'org:element-paragraph-p)
+                      (seq-filter (lambda (it) (org:element-paragraph-p (car it))))))
     (cons (org-element-property :contents-begin (cl-first <it>))
           (org-element-property :contents-end (car (last <it>))))))
 #+end_src
@@ -5978,16 +5978,22 @@ travel to anywhere I need within a heading from the headline itself.
 (defun org:dwim-description-bounds (point elements)
   "Return the beginning and end of description bounds."
   (require 'dash)
+  ;; case 1
+  ;; (seq-find (fn! (and (org:element-paragraph-p <elt>)
+  ;;                     (org:element-contains-point-p (point) <elt>)))
+  ;;           elements)
+  ;; (org:edit-desc-bounds it elements)
+
   (acond
    ;; There's a paragraph among the elements.
    ((-some->> elements
       (seq-drop-while (-not (-partial #'org:element-contains-point-p (point))))
-      (seq-first #'org:element-paragraph-p)
+      (seq-find #'org:element-paragraph-p)
       (org-element-property :begin))
     (org:edit-desc-bounds it elements))
    ;; Skip property drawers.
-   ((seq-first (fn! (eq 'property-drawer (org-element-type <element>)))
-               (reverse elements))
+   ((seq-find (fn! (eq 'property-drawer (org-element-type <element>)))
+              (reverse elements))
     (alet (org-element-property :end it) (cons it it)))
    ;; There's no paragraphs or property drawers.
    ((save-excursion (goto-char (org-element-property :begin (cl-first elements)))
