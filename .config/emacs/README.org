@@ -484,7 +484,7 @@ Macro to replace Dash's =-let=.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro awhen! (cond body)
+(defmacro awhen! (cond &rest body)
   (declare (indent defun))
   `(aif! ,cond (progn ,@body)))
 #+end_src
