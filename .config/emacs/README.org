@@ -908,9 +908,9 @@ The basis of the binding is a list ~(states map key def)~.
 #+begin_src emacs-lisp
 (defun kbd::list-data (states maps bindings)
   "Return a list whose elements are (states map key bind)."
-  (mapcar (-lambda ((map (key def)))
-             (list states map key def))
-           (-table-flat #'list maps (seq-partition bindings 2))))
+  (mapcar (lambda! ((map (key def)))
+            (list states map key def))
+          (-table-flat #'list maps (seq-partition bindings 2))))
 #+end_src
 
 ***** apply prefix
@@ -956,9 +956,9 @@ The basis of the binding is a list ~(states map key def)~.
 #+begin_src emacs-lisp
 (defun kbd::gen-lazy-loaded ()
   "Return lazy loaded binding forms."
-  (mapcar (-lambda ((keymap bindings))
-             `(after! mode ,@(-map #'produce bindings)))
-           (seq-group-by #'cl-second bindings)))
+  (mapcar (lambda! ((keymap bindings))
+            `(after! mode ,@(-map #'produce bindings)))
+          (seq-group-by #'cl-second bindings)))
 #+end_src
 
 ***** generate autoload
@@ -4869,7 +4869,7 @@ worth quoting here:
   (or
    (when-let! ((mode type backends) (assoc major-mode company:backend-alist))
      (when (eq type :only) backends))
-   (mapcan (-lambda ((mode type backends))
+   (mapcan (lambda! ((mode type backends))
              (when (or (and (eq type :derived) (derived-mode-p mode))
                        (and (eq type :exact)
                             (or (eq major-mode mode)
