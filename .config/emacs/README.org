@@ -4535,7 +4535,7 @@ a file.
       (completing-read "link: " links))))
 #+end_src
 
-** abbrev                                                               :abbrev:
+** abbrev                                                      :abbrev:disabled:
 :PROPERTIES:
 :ID: ce3011f3-c8c6-468a-928b-c7bc3ba22f60
 :END:
