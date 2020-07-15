@@ -627,9 +627,9 @@ expensive macros that could safely be removed at compile time."
 
 #+begin_src emacs-lisp
 (defmacro when! (cond &rest body)
-  "Expands to BODY if CONDITION is non-nil at compile/expansion time.
+  "Expand to BODY if CONDITION is non-nil at compile/expansion time.
 See `if!' for details on this macro's purpose."
-  (declare (indent 1))
+  (declare (indent defun))
   (when (eval cond)
     (macroexp-progn body)))
 #+end_src
