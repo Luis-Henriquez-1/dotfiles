@@ -733,11 +733,9 @@ miss =cl-loop= is when I'd like to "collect" values.
 (defmacro while! (test &rest body)
   "Same as while but return collected values in a list."
   (declare (indent defun))
-  (once-only! ((collection nil))
-    `(cl-block nil
-       (while ,test
-         (push (progn ,@body) ,collection))
-       (nreverse ,collection))))
+  `(cl-block nil
+     (while ,test ,@body)))
+#+end_src
 #+end_src
 
 **** list mutation
