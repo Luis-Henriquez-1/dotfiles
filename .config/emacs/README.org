@@ -299,6 +299,7 @@ where INITFORM is guaranteed to be evaluated only once.
 Bare symbols in BINDINGS are equivalent to:
 
   (SYMBOL SYMBOL)"
+  (declare (indent defun))
   (let* ((bind-fn (lambda (bind)
                     (if (consp bind)
                         (cons (car bind) (cadr bind))
