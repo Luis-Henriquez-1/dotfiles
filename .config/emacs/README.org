@@ -5111,11 +5111,11 @@ Items=.
 (defun mu4e:guess-folder (base-dir possible-name &rest other-possible-names)
   "Return the first file in BASE-DIR that matches POSSIBLE-NAME or any POSSIBLE-NAMES.
 If there is no match, return POSSIBLE-NAME."
-  (alet (or (seq-first (lambda (it) (seq-some-p (fn! (s-contains-p <name> it t))
+  (alet! (or (seq-find (lambda (it) (seq-some-p (fn! (s-contains-p <name> it t))
                                                 (cons possible-name other-possible-names)))
                        (cddr (directory-files base-dir)))
-            possible-name)
-    (format "/%s/%s" (f-filename base-dir) it)))
+             possible-name)
+    (format "/%s/%s" (f-filename base-dir) <folder>)))
 #+end_src
 
 **** set up contexts for single account
