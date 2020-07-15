@@ -6020,7 +6020,7 @@ hooks.
     (add-hook 'edit-indirect-before-commit-hook
               (lambda ()
                 ;; (not (string-match-p "\\(?:[[:space:]]\\|\n\\)+" (buffer-string)))
-                (end-of-buffer) (insert "\n\n"))
+                (goto-char (point-max)) (insert "\n\n"))
               0
               :local)))
 #+end_src
