@@ -736,6 +736,20 @@ miss =cl-loop= is when I'd like to "collect" values.
   `(cl-block nil
      (while ,test ,@body)))
 #+end_src
+
+**** reduce
+:PROPERTIES:
+:ID:       e804a7c5-9cdd-4b52-95a4-bc4e8af30933
+:END:
+
+#+begin_src emacs-lisp
+(defun seq:unfold (fun seed)
+  (let ((last (funcall fun seed))
+        (r nil))
+    (while last
+      (push (car last) r)
+      (setq last (funcall fun (cdr last))))
+    (nreverse r)))
 #+end_src
 
 **** list mutation
