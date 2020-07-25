@@ -23,3 +23,6 @@
 ;; in this file and can conflict with later config (particularly where the
 ;; cursor color is concerned).
 (advice-add #'x-apply-session-resources :override #'ignore)
+
+;; Prevent early display of modeline.
+(setq-default mode-line-format nil)
