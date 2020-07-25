@@ -4,41 +4,686 @@
 :ID:       d68434bf-be6a-471f-ab65-e151f4f1c111
 :END:
 
+** init
+:PROPERTIES:
+:ID:       71dbf82e-cf4f-4e8a-b14d-df78bea5b20f
+:END:
+
+*** default coding system
+:PROPERTIES:
+:ID:       4c55a0d4-dbd7-4405-b944-3b68d8a069f2
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:DEFAULT-CODING-SYSTEM 'utf-8
+  "Default text encoding.")
+#+end_src
+
+*** directories                                                            :eac:
+:PROPERTIES:
+:ID: 93cc2db1-44c7-45ec-af98-5a4eb7145f61
+:END:
+
+There are a handful of files and directory that are necessary to doom. I try to
+keep the number of files to a minimum because I think that more files means more
+stuff to manage, and more potential errors. That's partly the reason why I use
+one large org file.
+
+**** core directories and files
+:PROPERTIES:
+:ID: ad18ebcb-803a-4fd6-adcb-c71cf54f3432
+:END:
+
+***** top level
+:PROPERTIES:
+:ID: 48bf884a-de27-45f8-a5b1-94567815942d
+:END:
+
+These are important files and directories that I end up referring to often in my
+code. Well, not so much =VOID:README-FILE= and =VOID:TODO-FILE= but the others are
+referenced alot.
+
+#+begin_src emacs-lisp
+(defconst VOID:EMACS-DIR (file-truename user-emacs-directory)
+  "Path to `user-emacs-directory'.")
+
+(defconst VOID:INIT-FILE (concat VOID:EMACS-DIR "init.el")
+  "Path to the elisp file that bootstraps Void startup.")
+
+(defconst VOID:README-FILE (concat VOID:EMACS-DIR "README.org")
+  "Path to the Org file that when that Void.")
+
+(defconst VOID:ORG-DIR (expand-file-name "~/Documents/org/")
+  "Path where Void's org files go.")
+
+(defconst VOID:SCREENSHOT-DIR (concat VOID:EMACS-DIR "screenshots/")
+  "Path where any screenshots I take with Void go.")
+
+(defconst VOID:TEST-FILE (concat VOID:EMACS-DIR "test.org")
+  "Path to the file that contains all of Void's tests.")
+
+(defconst VOID:TODO-FILE (concat VOID:ORG-DIR "emacs.org")
+  "Path where all of Void's emacs related todos go.")
+#+end_src
+
+***** hidden
+:PROPERTIES:
+:ID: d46d573b-1d17-4d0b-9b49-9049dbb6f7c1
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:LOCAL-DIR (concat VOID:EMACS-DIR ".local/")
+  "Path to the directory for local Emacs files.
+Files that need to exist, but I don't typically want to see go here.")
+
+(defconst VOID:DATA-DIR (concat VOID:LOCAL-DIR "data/")
+  "Path to the directory where Void data files are stored.")
+
+(defconst VOID:PACKAGES-DIR (concat VOID:LOCAL-DIR "packages/")
+  "Path to the directory where packages are stored.")
+#+end_src
+
+**** ensure directories exist                                              :ewc:
+:PROPERTIES:
+:ID: 56e80dda-5d0e-4c7c-a225-00d0028d4995
+:END:
+
+I create the directories that don't exist. But I assume they already exist if
+Void is compiled.
+
+#+begin_src emacs-lisp
+(dolist (dir (list VOID:LOCAL-DIR VOID:DATA-DIR VOID:ORG-DIR))
+  (make-directory dir t))
+#+end_src
+
+**** system directories
+:PROPERTIES:
+:ID:       f3bdd353-b0ff-48fd-a2f2-295ccfa139ab
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:DOWNLOAD-DIR (expand-file-name "~/Downloads/")
+  "Directory where downloads should go.")
+
+(defconst VOID:MULTIMEDIA-DIR (expand-file-name "~/Multimedia/")
+  "Directory where multimedia should go.")
+
+(defconst VOID:VIDEO-DIR (concat VOID:MULTIMEDIA-DIR "Videos/")
+  "Directory where videos should go.")
+
+(defconst VOID:MUSIC-DIR (concat VOID:MULTIMEDIA-DIR "Music/")
+  "Directory where music should go.")
+
+(defconst VOID:ALERT-SOUNDS (concat VOID:MULTIMEDIA-DIR "Alert Sounds/")
+  "Directory where alert sounds should go.")
+
+(defconst VOID:EMAIL-DIR (expand-file-name "~/.mail/")
+  "Directories where emails are stored.")
+#+end_src
+
+*** message logging
+:PROPERTIES:
+:ID:       4d4f4b4a-4fc3-47fe-bed7-acc8e8103933
+:END:
+
+Its not uncommon for the *Messages* buffer to become full of messages.
+
+**** debug-p                                                               :eac:
+:PROPERTIES:
+:ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
+:END:
+
+[[helpvar:void-debug-p][void:debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
+is to serve as an indicator of whether the current Void instance is run for
+debugging. When Void is set up for debugging it prints out many messages about
+what its doing via [[hfn:void-log][void:log]].
+
+#+begin_src emacs-lisp
+(defvar void:debug-p (or (getenv "DEBUG") init-file-debug)
+  "When non-nil print debug messages.
+The --debug-init flag and setting the DEBUG envar will enable this at startup.")
+#+end_src
+
+**** logging                                                               :eac:
+:PROPERTIES:
+:ID: 84ded5f7-382e-4f59-af9e-ccb157ef5c42
+:END:
+
+The purpose of ~void:log~ is to distinguish regular messages from messages that
+pertain specifically to Void, and to help debug Void functionality. When Void is
+=void:debug= is non-nil, void:specific messages are logged in the =*messages*=
+buffer.
+
+#+begin_src emacs-lisp
+(defun void:log (format-string &rest args)
+  "Log to *Messages* if `void:debug-p' is on.
+Does not interrupt the minibuffer if it is in use, but still log to *Messages*.
+Accept the same arguments as `message'."
+  (when void:debug-p
+    (let ((inhibit-message (active-minibuffer-window)))
+      (when void:debug-p
+        (apply #'message (concat (propertize "VOID " 'face 'font-lock-comment-face)
+                                 format-string)
+               args)))))
+#+end_src
+
+** Package Management
+:PROPERTIES:
+:ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
+:END:
+
+*** straight.el
+:PROPERTIES:
+:ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
+:END:
+
+[[straight][straight.el]] is a package manager that strives to make emacs configurations
+completely reproducable.
+
+**** customize straight directory
+:PROPERTIES:
+:ID: 843cc8b9-edff-42f7-a767-65a59aa38fbc
+:END:
+
+The path of the straight directory within emacs is hardcoded into
+straight so we need to trick it into thinking =VOID:PACKAGES-DIR= is the
+our emacs directory. This needs to be done before bootstraping
+straight, else the straight directory will be created anyway. I got
+this from Doom's straight branch.
+
+#+begin_src emacs-lisp
+(defun straight:use-packages-dir-a (orig-fn &rest args)
+  "Use `VOID:PACKAGES-DIR' for straight directory."
+  (let ((user-emacs-directory VOID:PACKAGES-DIR))
+    (apply orig-fn args)))
+
+(advice-add #'straight--emacs-dir :around #'straight:use-packages-dir-a)
+#+end_src
+
+**** sources
+:PROPERTIES:
+:ID: 1491c0ff-1bce-45e2-ac36-2d33752e5d45
+:END:
+
+#+begin_src emacs-lisp
+(defvar void:core-package-sources
+  '((org-elpa :local-repo nil)
+    (melpa
+     :type git :host github
+     :repo "melpa/melpa"
+     :no-build t)
+    (gnu-elpa-mirror
+     :type git :host github
+     :repo "emacs-straight/gnu-elpa-mirror"
+     :no-build t)
+    (emacsmirror-mirror
+     :type git :host github
+     :repo "emacs-straight/emacsmirror-mirror"
+     :no-build t))
+  "A list of recipes for straight's recipe repos.")
+#+end_src
+
+**** bootstrap code
+:PROPERTIES:
+:ID: 7816be80-4db8-4219-b7d1-9a6b1ea96035
+:END:
+
+This code initializes straight if it's not already installed.
+
+#+begin_src emacs-lisp
+(defun straight:init-fn ()
+  "Initialize `straight.el'."
+  (defvar boostrap-version 5 "Bootstrap version for straight.el")
+  (let* ((user-emacs-directory VOID:PACKAGES-DIR)
+         (straight-dir (concat VOID:PACKAGES-DIR "straight/"))
+         (bootstrap-file (concat straight-dir "repos/straight.el/straight.el")))
+    (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
+      (void:log "Installing straight.el...")
+      (with-current-buffer
+          (url-retrieve-synchronously
+           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
+           'silent 'inhibit-cookies)
+        (goto-char (point-max))
+        (eval-print-last-sexp)))
+    (void:log "Loading straight.el...")
+    (load bootstrap-file nil t))
+  (mapc #'straight-use-recipes void:core-package-sources))
+#+end_src
+
+**** straight-installer
+:PROPERTIES:
+:ID: 5b38a3da-d237-45f5-804f-5fd7e2f88d83
+:END:
+
+#+begin_src emacs-lisp
+(defun straight:install-package (package-or-recipe)
+  "Install PACKAGE with optional RECIPE."
+  (unless (featurep 'straight) (straight:init-fn))
+  (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
+    (condition-case err
+        (progn (straight-use-package package-or-recipe)
+               (void:log "✓ installed %s" package))
+      (error
+       (void:log "✕ failed to install %s because of %s" package err)))))
+#+end_src
+
+**** go to project page                                               :disabled:
+:PROPERTIES:
+:ID:       90f52a97-4bbf-44c2-bac2-7b5f3582650b
+:END:
+
+#+begin_src emacs-lisp
+(defun straight:cd ()
+  (straight-recipes-retrieve (intern (car (straight-recipes-list)))))
+#+end_src
+
+*** required packages
+:PROPERTIES:
+:ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
+:END:
+
+[[id:04560da8-1e8a-4bcc-bdeb-574d8bfc984d][Later]] I write a macro specifically designed for installing and configuring
+packages. I could write this macro with just plain Emacs libraries but I prefer
+using nice libraries. In byte compiled Void, they don't need to be installed.
+
+#+begin_src emacs-lisp
+(dolist (package '(leaf-keywords leaf dash))
+  (funcall #'straight:install-package package)
+  (require package))
+(leaf-keywords-init)
+#+end_src
+
+*** leaf aliases
+:PROPERTIES:
+:ID:       1fc34b15-c6cc-450c-bcc9-61a9a8f5a39d
+:END:
+
+#+begin_src emacs-lisp
+(defalias 'use-package! 'leaf)
+
+(defmacro use-feature! (feature &rest args)
+  (declare (indent defun))
+  `(leaf ,feature :ensure nil ,@args))
+#+end_src
+
+*** leaf
+
+:PROPERTIES:
+:ID:       109f58d7-525e-43f4-b997-658b1d5da0a8
+:END:
+Like =use-package=, leaf is a macro that fascilitates package configuration.
+
+**** leaf
+:PROPERTIES:
+:ID:       7d72aec8-5523-473d-860d-181ce3d484d7
+:END:
+
+#+begin_src emacs-lisp
+(use-package! leaf
+  :setq (leaf-defaults . '(:ensure t)))
+#+end_src
+
+**** define leaf keyword
+:PROPERTIES:
+:ID:       5f480daa-4561-400f-bbe2-4396fc7877ff
+:END:
+
+Leaf is very minimal and for the most part this is good. However, it does mean
+defining leaf keywords is a bit of a pain. There are many low-level parts of
+doing so that could be automated. This is my attempt to automate defining a leaf
+keyword.
+
+#+begin_src emacs-lisp
+(cl-defun leaf:define-keyword (&key name where normalizer defer alias form)
+  "Define leaf KEYWORD at PLACE.
+PLACE is a list whose car is the symbol `before' or `after' and whose cadr is
+one of leaf's available keywords. DEFER specifies whether the keyword is a
+deferring keyword. ALIAS is an alias or a list of aliases for the keyword. FORM
+is the form that will be added to."
+  (setq name (intern (concat ":" (symbol-name name))))
+  ;; Defer it if necessary.
+  (when defer
+    (push name leaf-defer-keywords))
+
+  ;; update aliases
+  (dolist (alias (-list alias))
+    (add-to-list 'leaf-alias-keyword-alist (cons alias name)))
+
+  ;; Add a normalizer.
+  (when normalizer
+    (push `((or (eq leaf--key ,name)
+                (eq ,name (alist-get leaf--key leaf-alias-keyword-alist)))
+            (funcall #',normalizer))
+          leaf-normalize))
+
+  ;; Insert it in proper place.
+  (-let* (((where place) where)
+          (target-form (list name form))
+          (insert-fn (pcase where
+                       ('after #'leaf-insert-list-after)
+                       ('before #'leaf-insert-list-before)
+                       (_ (error "where is %S but expected `before' or `after'" where)))))
+    (when insert-fn
+      (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form)))))
+#+end_src
+
+**** use =after!= in leaf-defer
+:PROPERTIES:
+:ID:       3d3cf50c-20eb-4276-a81e-33a6c368d55f
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-leaf-defer
+ :where '(before :leaf-defer)
+ :alias (list :leaf-defer)
+ :form
+ '(if (and leaf--body (eval (car leaf--value))
+       (leaf-list-memq leaf-defer-keywords (leaf-plist-keys leaf--raw)))
+      `((after! ,leaf--name ,@leaf--body))
+    `(,@leaf--body)))
+#+end_src
+
+**** make leaf defer default                                          :disabled:
+:PROPERTIES:
+:ID:       bdaa5011-f0b3-44bc-a3c9-f9713d82c280
+:END:
+
+#+begin_src emacs-lisp
+(ignore! (add-to-list 'leaf-defer-keywords :leaf-defer)
+         (append! leaf-defaults '(:leaf-defer t)))
+#+end_src
+
+**** custom setting keywords
+:PROPERTIES:
+:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
+:END:
+
+Leaf keywords do not.
+
+***** normalizers
+:PROPERTIES:
+:ID:       bcf96e13-f3bc-4b23-832f-f94b31dd48a5
+:END:
+
+leaf's setq does not correctly handle setting variables to forms that need to be
+evaluated.
+
+#+begin_src emacs-lisp
+(defun leaf:normalizer-setq ()
+  (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
+
+(defun leaf:normalizer-commands ()
+  (mapcar (lambda (elm)
+            (cond ((memq leaf--key '(:after))
+                   (if (eq elm t) leaf--name elm))
+                  (t elm)))
+          (delete-dups (delq nil (leaf-flatten leaf--value)))))
+#+end_src
+
+***** setq
+:PROPERTIES:
+:ID:       6f38c45b-9382-4d72-a7ae-6d7a8748d07f
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-setq
+ :where '(before :setq)
+ :normalizer #'leaf:normalizer-setq
+ :alias (list :setq)
+ :form (plist-get leaf-keywords :setq))
+#+end_src
+
+***** pre-setq
+:PROPERTIES:
+:ID:       aba01554-fa11-4120-9867-19e5e2025df4
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-pre-setq
+ :where '(before :pre-setq)
+ :normalizer #'leaf:normalizer-setq
+ :alias (list :pre-setq)
+ :form (plist-get leaf-keywords :pre-setq))
+#+end_src
+
+***** custom
+:PROPERTIES:
+:ID:       bfa61a7a-1660-4000-a80e-15851a32ffd5
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-custom
+ :where '(before :custom)
+ :normalizer #'leaf:normalizer-setq
+ :alias (list :custom)
+ :form (plist-get leaf-keywords :custom))
+#+end_src
+
+***** setq-default
+:PROPERTIES:
+:ID:       b8ab2bf6-2b4e-41db-93f8-ed5c86392c84
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-setq-default
+ :where '(before :setq-default)
+ :normalizer #'leaf:normalizer-setq
+ :alias (list :setq-default)
+ :form (plist-get leaf-keywords :setq-default))
+#+end_src
+
+**** defer keywords
+:PROPERTIES:
+:ID:       6a8189ab-9a7a-4670-aa7a-b6589c180011
+:END:
+
+These keywords are meant to improve on the deferred loading options already
+provided by leaf. They are inspired from DOOM emacs.
+
+***** leaf-generate-load-fn
+:PROPERTIES:
+:ID:       41c05e4a-a0f1-45e7-bed6-7de7a439faa1
+:END:
+
+#+begin_src emacs-lisp
+(defun leaf:generate-load-form (package &optional hooks advice-place advices)
+  "Return form that evals into function that loads the package."
+  (let ((load-fn (intern (concat "leaf:load-" (symbol-name package)))))
+    `(progn
+       (defun ,load-fn (&rest _)
+         (void:log "Loading %S..." ',package)
+         (unless (require ',package nil t)
+           (message "Error loading %S" ',package))
+         ,@(mapcar (lambda (hook) `(remove-hook ',hook #',load-fn)) hooks)
+         ,@(mapcar (lambda (advice) `(advice-remove #',advice #',load-fn)) advices)
+         (fmakunbound #',load-fn))
+       ,@(mapcar (lambda (hook) `(add-hook ',hook #',load-fn)) hooks)
+       ,@(mapcar (lambda (advice) `(advice-add #',advice ,advice-place #',load-fn)) advices))))
+#+end_src
+
+***** before-call
+:PROPERTIES:
+:ID:       5378035c-206b-4479-8c60-4d57853e5754
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'before-call
+ :where '(before :hook)
+ :defer t
+ :normalizer #'leaf:normalizer-commands
+ :form '`(,(leaf:generate-load-form leaf--name nil :before leaf--value)
+          ,@leaf--body))
+#+end_src
+
+***** after-call
+:PROPERTIES:
+:ID:       36389857-c070-4221-8f76-b6b0da257b34
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'after-call
+ :where '(before :hook)
+ :defer t
+ :normalizer #'leaf:normalizer-commands
+ :form '`(,(leaf:generate-load-form leaf--name nil :after leaf--value)
+          ,@leaf--body))
+#+end_src
+
+
+***** on-hook
+:PROPERTIES:
+:ID:       6b4696f3-2bc0-4646-ab68-e5e5b61b0624
+:END:
+
+#+begin_src emacs-lisp
+(defun kbd::data-to-binding (datum)
+  (pcase-let ((`(,states ,map ,key ,def) datum))
+    (cond (states
+           `(evil-define-key ',states ,map ,key ,def))
+          (t
+           `(define-key ,map ,key ,def)))))
+#+end_src
+
+***** defer-incrementally
+:PROPERTIES:
+:ID:       c7ab7604-6e7c-42d1-b956-c58854948e8f
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'load-incrementally
+ :where '(before :before-call)
+ :defer t
+ :normalizer #'leaf:normalizer-commands
+ :form '`((append! void:incremental-packages ',leaf--value)
+          ,@leaf--body))
+#+end_src
+
+**** straight keyword
+:PROPERTIES:
+:ID:       cba57988-21b2-456b-aed2-27254febf873
+:END:
+
+This keyword is designed to be compiled away, leaving only forms adding package
+paths to the load-path. This is so that package installation isn't done after
+VOID is compiled.
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'void-straight
+ :where '(before :straight)
+ :alias (list :ensure)
+ :form
+ '`(,@(when (and leaf--value (car-safe leaf--value))
+        `((straight:install-package ',(car leaf--value))))
+    ,@leaf--body))
+
+(push `((or (memq leaf--key '(:void-straight))
+            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void:straight))
+        (cond ((eq t (car leaf--value))
+               (list leaf--name))
+              ((eq nil (car leaf--value))
+               nil)
+              ((listp (car-safe leaf--value))
+               (list (cons leaf--name (car leaf--value))))))
+      leaf-normalize)
+#+end_src
+
+**** popup
+:PROPERTIES:
+:ID:       30845314-ac19-49bb-9065-591c13e55489
+:END:
+
+The point of this keyword is to let me configure the display of buffers for
+specific packages.
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'popup
+ :where '(before :mode)
+ :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
+          ,@leaf--body))
+#+end_src
+
+**** os
+:PROPERTIES:
+:ID:       3335e409-b963-4504-b9fb-2faf4fb0be3d
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword
+ :name 'os
+ :where '(before :when)
+ :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
+#+end_src
+
+**** straight
+:PROPERTIES:
+:ID:       9dff9894-667c-4e74-9624-8aee533f8f70
+:END:
+
+#+begin_src emacs-lisp
+(use-package! straight
+  :require t
+  :setq
+  (straight-disable-autoloads . nil)
+  (straight-cache-autoloads . t)
+  (straight-check-for-modifications . nil)
+  (straight-enable-package-integration . nil)
+  (straight-recipes-emacsmirror-use-mirror . t))
+#+end_src
+
+**** package.el
+:PROPERTIES:
+:ID:       550066df-89b4-4d4d-b8fd-daa1c28b1ceb
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! package
+  :init (advice-add #'package--ensure-init-file :override #'ignore)
+  :setq (package-archives . `(("gnu"   . "https://elpa.gnu.org/packages/")
+                              ("melpa" . "https://melpa.org/packages/")
+                              ("org"   . "https://orgmode.org/elpa/"))))
+#+end_src
+
 ** Library
 :PROPERTIES:
 :ID: 3e9e5e7a-9f9b-4e92-b569-b5e8ba93820f
 :END:
 
-*** requires                                                               :ewc:
+*** subr-x                                                                 :ewc:
 :PROPERTIES:
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
 :END:
 
 #+begin_src emacs-lisp
-(require 'subr-x)
-(require 'seq)
-(require 'cl-lib)
+(use-feature! subr-x :require t)
+#+end_src
+
+*** dash                                                                   :eac:
+
+Dash is an excellent functional list manipulation library. If I did not use it
+as a dependency, I'd end up rewriting many of its functions.
+
+:PROPERTIES:
+:ID:       7d37ae8b-d319-4077-ae7a-aa463d8ec68d
+:END:
+
+#+begin_src emacs-lisp
+(use-package! dash :require t)
 #+end_src
 
 *** helpers                                                                :eac:
 :PROPERTIES:
 :ID:       4029d357-1309-4c7f-89eb-db93a3470c42
 :END:
-
-**** unfold
-:PROPERTIES:
-:ID:       e804a7c5-9cdd-4b52-95a4-bc4e8af30933
-:END:
-
-#+begin_src emacs-lisp
-(defun seq:unfold (fun seed)
-  (let ((last (funcall fun seed))
-        (r nil))
-    (while last
-      (push (car last) r)
-      (setq last (funcall fun (cdr last))))
-    (nreverse r)))
-#+end_src
 
 **** anaphora                                                              :eac:
 :PROPERTIES:
@@ -99,9 +744,9 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 #+begin_src emacs-lisp
 (defun void:anaphoric-symbols (body)
   "Return all the anaphoric symbols in body."
-  (thread-last (flatten-list body)
-    (seq-filter #'void:anaphoric-symbol-p)
-    (seq-uniq)))
+  (thread-last (-flatten body)
+    (-filter #'void:anaphoric-symbol-p)
+    (-uniq)))
 #+end_src
 
 ***** all anaphoric symbols in obj
@@ -166,22 +811,6 @@ WRAPPERS are a list of forms to wrap around FORM."
     form))
 #+end_src
 
-**** cons-pair-p
-:PROPERTIES:
-:ID:       3320ad2b-3afe-429b-a2f8-57fb7ed711a3
-:END:
-
-In emacs-lisp =listp= returns non-nil for cons-cells. I'd like a distinction.
-
-#+begin_src emacs-lisp
-(defun void:cons-pair-p (obj)
-  "Return non-nil if OBJ is true objs pair.
-That is (A . B) where B is not a list."
-  (declare (pure t) (side-effect-free t))
-  (and (listp obj)
-       (not (listp (cdr obj)))))
-#+end_src
-
 **** void real listp
 :PROPERTIES:
 :ID:       5cb6286d-2d4b-48d4-842a-9f9d0cc35eee
@@ -193,19 +822,7 @@ I'd also like to know when a list is actually a list I can loop through.
 (defun void:real-list-p (obj)
   "Return non-nil if obj is a list."
   (declare (pure t) (side-effect-free t))
-  (and (listp obj) (not (void:cons-pair-p obj))))
-#+end_src
-
-**** enlist
-:PROPERTIES:
-:ID:       61095d7b-749e-4832-98b7-c2aaadbca7bb
-:END:
-
-#+begin_src emacs-lisp
-(defun void:enlist (obj)
-  "Make object into a list."
-  (declare (pure t) (side-effect-free t))
-  (if (void:real-list-p obj) obj (list obj)))
+  (and (listp obj) (not (-cons-pair-p obj))))
 #+end_src
 
 **** symbols
@@ -291,7 +908,7 @@ type without any manual hassle.
 (defmacro with-symbols! (names &rest body)
   "Bind each variable in NAMES to a unique symbol and evaluate BODY."
   (declare (indent defun))
-  `(let ,(mapcar (lambda (symbol) `(,symbol (make-symbol ,(symbol-name symbol)))) names)
+  `(let ,(-map (lambda (symbol) `(,symbol (make-symbol ,(symbol-name symbol)))) names)
      ,@body))
 #+end_src
 
@@ -319,15 +936,15 @@ Bare symbols in BINDINGS are equivalent to:
                     (if (consp bind)
                         (cons (car bind) (cadr bind))
                       (cons bind bind))))
-         (names-and-forms (seq-map bind-fn bindings))
-         (names (seq-map #'car names-and-forms))
-         (forms (seq-map #'cdr names-and-forms))
-         (symbols (seq-map (lambda (name) (make-symbol (symbol-name name))) names)))
+         (names-and-forms (-map bind-fn bindings))
+         (names (-map #'car names-and-forms))
+         (forms (-map #'cdr names-and-forms))
+         (symbols (-map (lambda (name) (make-symbol (symbol-name name))) names)))
     `(with-symbols! ,symbols
        (list 'let
-             (seq-mapn #'list (list ,@symbols) (list ,@forms))
+             (-zip #'list (list ,@symbols) (list ,@forms))
              ,(cl-list* 'let
-                        (seq-mapn #'list names symbols)
+                        (-zip #'list names symbols)
                         body)))))
 #+end_src
 
@@ -350,13 +967,13 @@ Macro to replace Dash's =-let=.
   "Wrapper around `pcase-let` with friendlier pattern matching."
   (declare (indent defun))
   (let ((var-to-new (mapcar (lambda (var) (cons var (make-symbol (symbol-name var))))
-                            (seq-uniq (flatten-list (mapcar #'car bindings))))))
+                            (-uniq (flatten-list (mapcar #'car bindings))))))
     `(let!! ,(append
-              (seq-map (lambda (it) (cons (cl-sublis var-to-new (car it))
-                                          (cdr it)))
-                       bindings)
-              (seq-map (lambda (it) (list (car it) (cdr it)))
-                       var-to-new))
+              (-map (lambda (it) (cons (cl-sublis var-to-new (car it))
+                                       (cdr it)))
+                    bindings)
+              (-map (lambda (it) (list (car it) (cdr it)))
+                    var-to-new))
        ,@body)))
 #+end_src
 
@@ -370,10 +987,10 @@ Macro to replace Dash's =-let=.
   "Wrapper around `pcase-let*` with friendlier pattern matching."
   (declare (indent defun))
   `(pcase-let*
-       ,(mapcar (lambda (binding)
-                  (list (void:pcase-pattern (car binding))
-                        (cadr binding)))
-                bindings)
+       ,(-map (lambda (binding)
+                (list (void:pcase-pattern (car binding))
+                      (cadr binding)))
+              bindings)
      ,@body))
 #+end_src
 
@@ -388,7 +1005,7 @@ Macro to replace Dash's =-let=.
   (when (= 2 (length bindings))
     (setq bindings (list bindings)))
   `(let! ,bindings
-     (if (and ,@(flatten-list (seq-map #'car bindings)))
+     (if (and ,@(flatten-list (-map #'car bindings)))
          ,then
        ,@else)))
 
@@ -397,7 +1014,7 @@ Macro to replace Dash's =-let=.
   (when (= 2 (length bindings))
     (setq bindings (list bindings)))
   `(let!! ,bindings
-     (if (and ,@(flatten-list (seq-map #'car bindings)))
+     (if (and ,@(flatten-list (-map #'car bindings)))
          ,then
        ,@else)))
 #+end_src
@@ -479,7 +1096,7 @@ Macro to replace Dash's =-let=.
   "An anaphoric lambda."
   (with-symbols! (args)
     `(lambda (,args)
-       (let! ((,(void:anaphoric-symbols body) (void:enlist ,args)))
+       (let! ((,(void:anaphoric-symbols body) (-list ,args)))
          ,@body))))
 #+end_src
 
@@ -547,13 +1164,13 @@ should return the value of structure for that symbol.
 BODY contains any number of `<NAME>' where NAME refers to the name of the symbol."
   (declare (indent 2))
   (let* ((symbols (thread-last (flatten-list body)
-                    (seq-filter #'void:anaphoric-symbol-p)
-                    (seq-uniq)))
-         (names (mapcar #'void:anaphoric-true-symbol symbols))
+                    (-filter #'void:anaphoric-symbol-p)
+                    (-uniq)))
+         (names (-map #'void:anaphoric-true-symbol symbols))
          (structure-sym (make-symbol "structure")))
     `(let* ((,structure-sym ,structure)
-            ,@(mapcar (fn! `(,<sym> (funcall ,fn ,structure-sym ',<name>)))
-                      (cl-mapcar #'list symbols names)))
+            ,@(-map (fn! `(,<sym> (funcall ,fn ,structure-sym ',<name>)))
+                    (-zip #'list symbols names)))
        ,@body)))
 #+end_src
 
@@ -590,8 +1207,8 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
   (let! ((docstring (when (stringp (car body)) (pop body)))
          ((key advices . body) body))
     `(prog1 (defun ,name ,args ,docstring ,@body)
-       ,@(mapcar (fn! `(advice-add #',<advice> ,key #',name))
-                 (void:enlist advices)))))
+       ,@(--map `(advice-add #',it ,key #',name)
+                (-list advices)))))
 #+end_src
 
 **** defhook!
@@ -608,7 +1225,7 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
           (local (eq key :local)))
     `(prog1 (defun ,name ,args ,docstring ,@body)
        ,@(mapcar (fn! `(add-hook ',<hook> #',name ,append ,local))
-                 (void:enlist hooks)))))
+                 (-list hooks)))))
 #+end_src
 
 **** with-os!
@@ -1037,6 +1654,532 @@ with macroexpansion in mind.
                  (kbd::list-data <states> <maps> <bindings>))))))
 #+end_src
 
+** built-in
+:PROPERTIES:
+:ID: 40367976-12a0-4ccd-9aff-4df144a73edf
+:END:
+
+*** startup
+:PROPERTIES:
+:ID: 9725b7e0-54b8-4ab4-aa00-d950345d0aea
+:END:
+
+Emacs starts up with a default screen setup. No, thanks.
+
+#+begin_src emacs-lisp
+(use-feature! startup
+  :setq
+  (inhibit-startup-screen . t)
+  (inhibit-default-init . t)
+  (inhibit-startup-buffer-menu . t)
+  (initial-major-mode . 'fundamental-mode)
+  (initial-scratch-message . nil)
+  (initial-buffer-choice . (if void:debug-p (lambda () (get-buffer "*Messages*")) t))
+  (inhibit-startup-echo-area-message . user-login-name))
+#+end_src
+
+*** paren
+:PROPERTIES:
+:ID: 8ba80d6f-292e-4d44-acfe-d7b7ba939fa4
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! paren
+  :hook (prog-mode-hook . show-paren-mode)
+  :setq-default
+  (show-paren-delay . 0))
+#+end_src
+
+*** clipboard
+:PROPERTIES:
+:ID: 60abb076-89b1-439b-8198-831b2df47782
+:END:
+
+#+begin_src emacs-lisp
+;; Not windows.
+(use-feature! select
+  :setq
+  (selection-coding-system . 'utf-8)
+  (select-enable-clipboard . t)
+  (select-enable-primary . t)
+  (x-select-request-type . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+end_src
+
+*** simple
+:PROPERTIES:
+:ID: 89df102a-a2c9-4ece-9acc-ed90e8064ed8
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! simple
+  :popup ("\\*Messages"
+          (display-buffer-at-bottom)
+          (window-height . 0.5))
+  :setq-default
+  (idle-update-delay . 1)
+  (blink-matching-paren . t)
+  (delete-trailing-lines . nil)
+  :setq
+  (mail-user-agent . 'mu4e-user-agent))
+#+end_src
+
+*** loaddefs
+:PROPERTIES:
+:ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
+:END:
+
+These are *extremely* important lines if you use an external program as I do
+([[https://wiki.archlinux.org/index.php/Msmtp][msmtp]]) to send your email. If you don't set these variables, emacs will
+think you want to use =smtp=.
+
+#+begin_src emacs-lisp
+(use-feature! loaddefs
+  :setq-default
+  (disabled-command-function . nil)
+  ;; very important if you're using msmtp
+  )
+#+end_src
+
+*** files
+:PROPERTIES:
+:ID: 2a7862da-c863-416b-a976-4cf7840a8712
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! files
+  :setq-default
+  ;; Disable second, case-insensitive pass over `auto-mode-alist'.
+  (auto-mode-case-fold . nil)
+  ;; Whether to add a newline automatically at the end of the file.
+  ;; Whether confirmation is requested before visiting a new file or buffer.
+  (confirm-nonexistent-file-or-buffer . nil)
+  ;; How to ask for confirmation when leaving Emacs.
+  (confirm-kill-emacs . #'y-or-n-p)
+  (require-final-newline . nil)
+  (trash-directory . (expand-file-name "Trash" "~"))
+  (auto-save-default . nil)
+  (auto-save-interval . 300)
+  (auto-save-timeout . 30)
+  (backup-directory-alist . (list (cons ".*" (concat VOID:DATA-DIR "backup/"))))
+  (make-backup-files . nil)
+  (version-control . nil)
+  (kept-old-versions . 2)
+  (kept-new-versions . 2)
+  (delete-old-versions . t)
+  (backup-by-copying . t)
+  (backup-by-copying-when-linked . t))
+#+end_src
+
+*** subr
+:PROPERTIES:
+:ID:       61603f44-780e-4456-88c6-7ffe1e5c7197
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! subr
+  :init
+  (fset #'yes-or-no-p #'y-or-n-p)
+  (fset #'display-startup-echo-area-message #'ignore))
+#+end_src
+
+*** subr-x
+:PROPERTIES:
+:ID:       1ed0ba00-e5a1-4642-9ed5-a52f4b917a4d
+:END:
+
+#+begin_src emacs-lisp
+;; This is where `thread-last' and `thread-first' come from.
+(use-feature! subr-x
+  :require t)
+#+end_src
+
+*** ffap
+:PROPERTIES:
+:ID: b1229201-a5ac-45c7-91fa-7a6b39bbb879
+:END:
+
+Don't ping things that look like domain names.
+
+#+begin_src emacs-lisp
+(use-feature! ffap
+  :setq
+  (ffap-machine-p-known . 'reject))
+#+end_src
+
+*** server
+:PROPERTIES:
+:ID: 3ddeb65c-9df6-4ede-9644-eb106b3ba1dd
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! server
+  :setq
+  (server-auth-dir . (concat VOID:DATA-DIR "server/")))
+#+end_src
+
+*** tramp
+:PROPERTIES:
+:ID: 3af0a4d6-bd08-4fe2-bc5c-79b1b811fc6b
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! tramp
+  :setq
+  (tramp-backup-directory-alist . backup-directory-alist)
+  (tramp-auto-save-directory . (concat VOID:DATA-DIR "tramp-auto-save/"))
+  (tramp-persistency-file-name . (concat VOID:DATA-DIR "tramp-persistency.el")))
+#+end_src
+
+*** desktop
+:PROPERTIES:
+:ID: 3a6b72e7-57c8-42f0-a8d7-1bbde72de9bd
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! desktop
+  :setq
+  (desktop-dirname . (concat VOID:DATA-DIR "desktop"))
+  (desktop-base-file-name . "autosave")
+  (desktop-base-lock-name . "autosave-lock"))
+#+end_src
+
+*** cus-edit
+:PROPERTIES:
+:ID: 8bd5683d-91e1-4c1b-a8a5-3b39921e995d
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! cus-edit
+  :setq
+  (custom-file . (concat VOID:DATA-DIR "custom.el"))
+  (custom-theme-directory . (concat VOID:LOCAL-DIR "themes/")))
+#+end_src
+
+*** url cache
+:PROPERTIES:
+:ID: e4b5bfce-1111-48b2-bfee-da754974aa46
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! url
+  :setq
+  (url-cache-directory . (concat VOID:DATA-DIR "url/cache/"))
+  (url-configuration-directory . (concat VOID:DATA-DIR "url/configuration/")))
+#+end_src
+
+*** bytecomp
+:PROPERTIES:
+:ID:       6b375bfb-a8c3-473c-8dbd-530e692a15ab
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! bytecomp
+  :setq
+  (byte-compile-verbose . void:debug-p)
+  (byte-compile-warnings . '(not free-vars unresolved noruntime lexical make-local)))
+#+end_src
+
+*** compile
+:PROPERTIES:
+:ID:       913aa4f2-e42b-4b74-a2d4-e87b1738a5bd
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! compile
+  :setq-default
+  (compilation-always-kill . t)
+  (compilation-ask-about-save . nil)
+  (compilation-scroll-output . 'first-error))
+#+end_src
+
+*** uniquify
+:PROPERTIES:
+:ID:       9ba2726b-3fef-4e9b-9387-a80ab09bdb7d
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! uniquify
+  :setq-default
+  (uniquify-buffer-name-style . 'forward))
+#+end_src
+
+*** ansi-color
+:PROPERTIES:
+:ID:       5feaab76-e5c1-450c-94a6-8fdfb95ddb94
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! ansi-color
+  :setq-default
+  (ansi-color-for-comint-mode . t))
+#+end_src
+
+*** image mode
+:PROPERTIES:
+:ID:       32e2118a-c92b-4e8d-b2db-048428462783
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! image-mode
+  :setq
+  ;; Non-nil means animated images loop forever, rather than playing once.
+  (image-animate-loop . t))
+#+end_src
+
+*** window
+:PROPERTIES:
+:ID:       af27cd7e-2096-4f6d-a749-63e4c38d136c
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! window
+  :setq-default
+  (split-width-threshold . 160))
+#+end_src
+
+*** paragraphs
+:PROPERTIES:
+:ID:       f289ade4-ad16-4f6a-8868-1f9b7af5ddca
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! paragraphs)
+#+end_src
+
+*** indent
+:PROPERTIES:
+:ID:       a5d97d4d-3af9-4fde-ae14-953ad4d28edd
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! indent
+  :setq-default
+  (tab-always-indent . t))
+#+end_src
+
+*** mouse
+:PROPERTIES:
+:ID:       d0d6de11-50fa-4ae2-ad4b-69712f3e2c54
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! mouse
+  :setq-default
+  (mouse-yank-at-point . t))
+#+end_src
+
+*** calendar
+:PROPERTIES:
+:ID:       4ad7e704-f490-40e4-b2bc-8a30a10a7bb7
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! calendar
+  :setq (diary-file . (concat VOID:DATA-DIR "diary")))
+#+end_src
+
+*** mule-cmds
+:PROPERTIES:
+:ID:       e48e925e-1f1e-4c79-8652-c92aafe06290
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! mule-cmds
+  :init (prefer-coding-system VOID:DEFAULT-CODING-SYSTEM))
+#+end_src
+
+*** seq
+:PROPERTIES:
+:ID:       7b5752cf-be64-452b-95e7-35cc83bb5e0b
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! seq
+  :require t
+  ;; :alias (seq-some-p . seq-some)
+  ;; Don't know why seq-some doesn't end with a '-p'. It is a predicate function.
+  :init (defalias 'seq-some-p 'seq-some))
+#+end_src
+
+*** gv
+:PROPERTIES:
+:ID:       84cc5883-a303-453e-af91-644d4544e3f9
+:END:
+
+=gv= is what contains the code for the =setf= macro.
+https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-plist-get
+
+#+begin_src emacs-lisp
+(use-feature! gv
+  :defer-config
+  (gv-define-simple-setter plist-get plist-put))
+#+end_src
+
+*** nsm
+:PROPERTIES:
+:ID:       0ca7fc66-5312-4c69-a87d-7607292c7a2a
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! nsm
+  :setq (nsm-settings-file . (concat VOID:DATA-DIR "network-settings.data")))
+#+end_src
+
+** external libraries
+:PROPERTIES:
+:ID: 6e4be80e-8149-424d-a801-d7871bfe8fc8
+:END:
+
+*** general
+:PROPERTIES:
+:ID: 706f35fc-f840-4a51-998f-abcd54c5d314
+:END:
+
+Keybindings are a key part of emacs (pun intended).
+
+**** general
+:PROPERTIES:
+:ID: f1ad5258-17cb-4424-a161-b856ee6dc5ab
+:END:
+
+There are numerous keybinding functions in Emacs; and they all look a little
+different: there's [[helpfn:global-set-key][global-set-key]], [[helpfn:local-set-key][local-set-key]], [[helpfn:define-key][define-key]] and the list goes
+on. And with [[][evil]] which [[id:73366b3e-7438-4abf-a661-ed1553b1b8df][I use]] , there's also [[helpfn:evil-global-set-key][evil-global-set-key]] and
+[[helpfn:evil-define-key][evil-define-key]]. It would be nice to have one keybinding function that can
+handle all bindings. [[][general]] provides such a function ([[helpfn:general-define-key][general-define-key]]).
+
+#+begin_src emacs-lisp
+(use-package! general
+  :require t
+  :config
+  (general-auto-unbind-keys))
+#+end_src
+
+**** prefix bindings
+:PROPERTIES:
+:ID: b0b5b51c-155e-46fc-a80a-0d45a32440ba
+:END:
+
+A popular strategy to mitigate the mental load of remembering many keybindings
+is to bind them in a tree-like fashion. [[][spacemacs]].
+
+***** leader Keys
+:PROPERTIES:
+:ID: 143211d6-b868-4ffb-a5d0-25a77dee401f
+:END:
+
+#+begin_src emacs-lisp
+(defvar void:leader-key "SPC"
+  "The evil leader prefix key.")
+
+(defvar void:leader-alt-key "M-SPC"
+  "The leader prefix key used for Insert and Emacs states.")
+#+end_src
+
+***** localleader keys
+:PROPERTIES:
+:ID: 45941bcb-209f-4aa3-829a-dee4e3ef2464
+:END:
+
+#+begin_src emacs-lisp
+(defvar void:localleader-key "SPC m"
+  "The localleader prefix key for major-mode specific commands.")
+
+(defvar void:localleader-alt-key "C-SPC m"
+  "The localleader prefix key for major-mode specific commands.")
+
+(defvar void:localleader-short-key ","
+  "A shorter alternative `void:localleader-key'.")
+
+(defvar void:localleader-short-alt-key "M-,"
+  "A short non-normal  `void:localleader-key'.")
+#+end_src
+
+***** definers
+:PROPERTIES:
+:ID: 6444d218-1627-48bd-9b5c-7bfffb17d912
+:END:
+
+As I've mentioned =general= uses the function =general-define-key= as a generic
+do-all key binder. Sometimes though we have keys that we want to bind with
+specific arguments to =general-define-key= pretty often. A typical example of
+this is binding =leader= or =localleader= keys like [[https://github.com/syl20bnr/spacemacs][spacemacs]].
+
+#+begin_src emacs-lisp
+(general-create-definer define-leader-key!
+  :prefix void:leader-key
+  :non-normal-prefix void:leader-alt-key
+  :keymaps 'override
+  :states '(normal motion insert emacs))
+#+end_src
+
+***** localleader
+:PROPERTIES:
+:ID:       e4770eae-adf5-4216-9016-5ec4bc465e03
+:END:
+
+There's pros and cons to the =SPC m= binding. The main pro is that it's
+consistent with =SPC=. With the leader and the localleader, this means that you
+can reach any binding from just =SPC=. This means that you can discover all
+bindings from just one root binding. This is a nice property to have. On the
+other hand, bindings can get a bit long. That one extra character can really
+make a difference. That's why.
+
+#+begin_src emacs-lisp
+(defmacro define-localleader-key! (&rest args)
+  (declare (indent defun))
+  (let ((shared-args '(:keymaps 'override :states '(normal motion insert emacs))))
+    `(progn (general-def
+              ,@args
+              ,@shared-args
+              :prefix void:localleader-key
+              :non-normal-prefix void:localleader-alt-key)
+            (general-def
+              ,@args
+              ,@shared-args
+              :prefix void:localleader-short-key
+              :non-normal-prefix void:localleader-short-alt-key))))
+#+end_src
+
+*** s
+:PROPERTIES:
+:ID: 4b82deb0-bbe1-452c-8b60-ef734efb86d8
+:END:
+
+#+begin_src emacs-lisp
+(use-package! s :require t)
+#+end_src
+
+*** gc
+:PROPERTIES:
+:ID: 4f1477b7-7b28-4a20-9a31-cc34a10f5878
+:END:
+
+Wait until idle time to garbage collect while staving off garbage collector
+while the user is working.
+
+#+begin_src emacs-lisp
+(use-package! gcmh
+  :hook emacs-startup-hook
+  :setq
+  (gcmh-idle-delay . 10)
+  (gcmh-verbose . void:debug-p)
+  (gcmh-high-cons-threshold . (* 16 1024 1024)))
+#+end_src
+
+*** shut-up
+:PROPERTIES:
+:ID:       65590d3e-ef24-4214-a602-2f4728b2f8c1
+:END:
+
+#+begin_src emacs-lisp
+(use-package! shut-up
+  :commands shut-up
+  :init
+  (defalias 'shut-up! 'shut-up)
+  (defalias 'quiet! 'shut-up))
+#+end_src
+
 ** Initialize
 :PROPERTIES:
 :ID:       6e1d0ef3-5a9b-4db4-b8f7-110e96f2d23e
@@ -1112,118 +2255,6 @@ time.
 (run-with-idle-timer 7 nil #'void:restore-gc-cons-threshold)
 #+end_src
 
-*** directories                                                            :eac:
-:PROPERTIES:
-:ID: 93cc2db1-44c7-45ec-af98-5a4eb7145f61
-:END:
-
-There are a handful of files and directory that are necessary to doom. I try to
-keep the number of files to a minimum because I think that more files means more
-stuff to manage, and more potential errors. That's partly the reason why I use
-one large org file.
-
-**** core directories and files
-:PROPERTIES:
-:ID: ad18ebcb-803a-4fd6-adcb-c71cf54f3432
-:END:
-
-***** top level
-:PROPERTIES:
-:ID: 48bf884a-de27-45f8-a5b1-94567815942d
-:END:
-
-These are important files and directories that I end up referring to often in my
-code. Well, not so much =VOID:README-FILE= and =VOID:TODO-FILE= but the others are
-referenced alot.
-
-#+begin_src emacs-lisp
-(defconst VOID:EMACS-DIR (file-truename user-emacs-directory)
-  "Path to `user-emacs-directory'.")
-
-(defconst VOID:INIT-FILE (concat VOID:EMACS-DIR "init.el")
-  "Path to the elisp file that bootstraps Void startup.")
-
-(defconst VOID:README-FILE (concat VOID:EMACS-DIR "README.org")
-  "Path to the Org file that when that Void.")
-
-(defconst VOID:ORG-DIR (expand-file-name "~/Documents/org/")
-  "Path where Void's org files go.")
-
-(defconst VOID:SCREENSHOT-DIR (concat VOID:EMACS-DIR "screenshots/")
-  "Path where any screenshots I take with Void go.")
-
-(defconst VOID:TEST-FILE (concat VOID:EMACS-DIR "test.org")
-  "Path to the file that contains all of Void's tests.")
-
-(defconst VOID:TODO-FILE (concat VOID:ORG-DIR "emacs.org")
-  "Path where all of Void's emacs related todos go.")
-#+end_src
-
-***** hidden
-:PROPERTIES:
-:ID: d46d573b-1d17-4d0b-9b49-9049dbb6f7c1
-:END:
-
-#+begin_src emacs-lisp
-(defconst VOID:LOCAL-DIR (concat VOID:EMACS-DIR ".local/")
-  "Path to the directory for local Emacs files.
-Files that need to exist, but I don't typically want to see go here.")
-
-(defconst VOID:DATA-DIR (concat VOID:LOCAL-DIR "data/")
-  "Path to the directory where Void data files are stored.")
-
-(defconst VOID:PACKAGES-DIR (concat VOID:LOCAL-DIR "packages/")
-  "Path to the directory where packages are stored.")
-#+end_src
-
-**** ensure directories exist                                              :ewc:
-:PROPERTIES:
-:ID: 56e80dda-5d0e-4c7c-a225-00d0028d4995
-:END:
-
-I create the directories that don't exist. But I assume they already exist if
-Void is compiled.
-
-#+begin_src emacs-lisp
-(dolist (dir (list VOID:LOCAL-DIR VOID:DATA-DIR VOID:ORG-DIR))
-  (make-directory dir t))
-#+end_src
-
-**** system directories
-:PROPERTIES:
-:ID:       f3bdd353-b0ff-48fd-a2f2-295ccfa139ab
-:END:
-
-#+begin_src emacs-lisp
-(defconst VOID:DOWNLOAD-DIR (expand-file-name "~/Downloads/")
-  "Directory where downloads should go.")
-
-(defconst VOID:MULTIMEDIA-DIR (expand-file-name "~/Multimedia/")
-  "Directory where multimedia should go.")
-
-(defconst VOID:VIDEO-DIR (concat VOID:MULTIMEDIA-DIR "Videos/")
-  "Directory where videos should go.")
-
-(defconst VOID:MUSIC-DIR (concat VOID:MULTIMEDIA-DIR "Music/")
-  "Directory where music should go.")
-
-(defconst VOID:ALERT-SOUNDS (concat VOID:MULTIMEDIA-DIR "Alert Sounds/")
-  "Directory where alert sounds should go.")
-
-(defconst VOID:EMAIL-DIR (expand-file-name "~/.mail/")
-  "Directories where emails are stored.")
-#+end_src
-
-*** default coding system
-:PROPERTIES:
-:ID:       4c55a0d4-dbd7-4405-b944-3b68d8a069f2
-:END:
-
-#+begin_src emacs-lisp
-(defconst VOID:DEFAULT-CODING-SYSTEM 'utf-8
-  "Default text encoding.")
-#+end_src
-
 *** UTF-8 for everything
 :PROPERTIES:
 :ID: dd0fc702-67a7-404c-849e-22804663308d
@@ -1256,7 +2287,7 @@ Emacs/the OS decide what encoding to use.
 (setq-default indicate-buffer-boundaries nil)
 (setq-default inhibit-compacting-font-caches t)
 (setq-default max-mini-window-height 0.3)
-(setq-default mode-line-default-help-echo nil)
+(setq-default mode-linek-default-help-echo nil)
 (setq-default mouse-yank-at-point t)
 (setq-default resize-mini-windows 'grow-only)
 (setq-default show-help-function nil)
@@ -1399,52 +2430,6 @@ to abbreviate it at this point.
 (setq-default print-level nil)
 (setq-default print-quoted t)
 (setq-default print-escape-newlines t)
-#+end_src
-
-*** message logging
-:PROPERTIES:
-:ID:       4d4f4b4a-4fc3-47fe-bed7-acc8e8103933
-:END:
-
-Its not uncommon for the *Messages* buffer to become full of messages.
-
-**** debug-p                                                               :eac:
-:PROPERTIES:
-:ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
-:END:
-
-[[helpvar:void-debug-p][void:debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
-is to serve as an indicator of whether the current Void instance is run for
-debugging. When Void is set up for debugging it prints out many messages about
-what its doing via [[hfn:void-log][void:log]].
-
-#+begin_src emacs-lisp
-(defvar void:debug-p (or (getenv "DEBUG") init-file-debug)
-  "When non-nil print debug messages.
-The --debug-init flag and setting the DEBUG envar will enable this at startup.")
-#+end_src
-
-**** logging                                                               :eac:
-:PROPERTIES:
-:ID: 84ded5f7-382e-4f59-af9e-ccb157ef5c42
-:END:
-
-The purpose of ~void:log~ is to distinguish regular messages from messages that
-pertain specifically to Void, and to help debug Void functionality. When Void is
-=void:debug= is non-nil, void:specific messages are logged in the =*messages*=
-buffer.
-
-#+begin_src emacs-lisp
-(defun void:log (format-string &rest args)
-  "Log to *Messages* if `void:debug-p' is on.
-Does not interrupt the minibuffer if it is in use, but still log to *Messages*.
-Accept the same arguments as `message'."
-  (when void:debug-p
-    (let ((inhibit-message (active-minibuffer-window)))
-      (when void:debug-p
-        (apply #'message (concat (propertize "VOID " 'face 'font-lock-comment-face)
-                                 format-string)
-               args)))))
 #+end_src
 
 *** OS
@@ -2004,1028 +2989,6 @@ to waste time loading ~void:main-elisp-file~.
        (void:log
         (concat (if (void:needs-tangling-p) "✕ failed" "✓ succeeded")
                 " tangling `VOID:README-FILE'."))))))
-#+end_src
-
-** Package Management                                                      :ewc:
-:PROPERTIES:
-:ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
-:END:
-
-*** straight.el
-:PROPERTIES:
-:ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
-:END:
-
-[[straight][straight.el]] is a package manager that strives to make emacs configurations
-completely reproducable.
-
-**** customize straight directory
-:PROPERTIES:
-:ID: 843cc8b9-edff-42f7-a767-65a59aa38fbc
-:END:
-
-The path of the straight directory within emacs is hardcoded into
-straight so we need to trick it into thinking =VOID:PACKAGES-DIR= is the
-our emacs directory. This needs to be done before bootstraping
-straight, else the straight directory will be created anyway. I got
-this from Doom's straight branch.
-
-#+begin_src emacs-lisp
-(defadvice! straight:use-packages-dir-a (orig-fn &rest args)
-  "Use `VOID:PACKAGES-DIR' for straight directory."
-  :around straight--emacs-dir
-  (let ((user-emacs-directory VOID:PACKAGES-DIR))
-    (apply orig-fn args)))
-#+end_src
-
-**** sources
-:PROPERTIES:
-:ID: 1491c0ff-1bce-45e2-ac36-2d33752e5d45
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:core-package-sources
-  '((org-elpa :local-repo nil)
-    (melpa
-     :type git :host github
-     :repo "melpa/melpa"
-     :no-build t)
-    (gnu-elpa-mirror
-     :type git :host github
-     :repo "emacs-straight/gnu-elpa-mirror"
-     :no-build t)
-    (emacsmirror-mirror
-     :type git :host github
-     :repo "emacs-straight/emacsmirror-mirror"
-     :no-build t))
-  "A list of recipes for straight's recipe repos.")
-#+end_src
-
-**** bootstrap code
-:PROPERTIES:
-:ID: 7816be80-4db8-4219-b7d1-9a6b1ea96035
-:END:
-
-This code initializes straight if it's not already installed.
-
-#+begin_src emacs-lisp
-(defun straight:init-fn ()
-  "Initialize `straight.el'."
-  (defvar boostrap-version 5 "Bootstrap version for straight.el")
-  (let* ((user-emacs-directory VOID:PACKAGES-DIR)
-         (straight-dir (concat VOID:PACKAGES-DIR "straight/"))
-         (bootstrap-file (concat straight-dir "repos/straight.el/straight.el")))
-    (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
-      (void:log "Installing straight.el...")
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (void:log "Loading straight.el...")
-    (load bootstrap-file nil t))
-  (mapc #'straight-use-recipes void:core-package-sources))
-#+end_src
-
-**** straight-installer
-:PROPERTIES:
-:ID: 5b38a3da-d237-45f5-804f-5fd7e2f88d83
-:END:
-
-#+begin_src emacs-lisp
-(defun straight:install-package (package-or-recipe)
-  "Install PACKAGE with optional RECIPE."
-  (unless (featurep 'straight) (straight:init-fn))
-  (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
-    (condition-case err
-        (progn (straight-use-package package-or-recipe)
-               (void:log "✓ installed %s" package))
-      (error
-       (void:log "✕ failed to install %s because of %s" package err)))))
-#+end_src
-
-**** go to project page                                               :disabled:
-:PROPERTIES:
-:ID:       90f52a97-4bbf-44c2-bac2-7b5f3582650b
-:END:
-
-#+begin_src emacs-lisp
-(defun straight:cd ()
-  (straight-recipes-retrieve (intern (car (straight-recipes-list)))))
-#+end_src
-
-*** required packages
-:PROPERTIES:
-:ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
-:END:
-
-[[id:04560da8-1e8a-4bcc-bdeb-574d8bfc984d][Later]] I write a macro specifically designed for installing and configuring
-packages. I could write this macro with just plain Emacs libraries but I prefer
-using nice libraries. In byte compiled Void, they don't need to be installed.
-
-#+begin_src emacs-lisp
-(dolist (package '(leaf-keywords leaf))
-  (funcall #'straight:install-package package)
-  (require package))
-(leaf-keywords-init)
-#+end_src
-
-*** leaf
-
-:PROPERTIES:
-:ID:       109f58d7-525e-43f4-b997-658b1d5da0a8
-:END:
-Like =use-package=, leaf is a macro that fascilitates package configuration.
-
-**** naming
-:PROPERTIES:
-:ID:       941ce3dc-9648-4133-864b-eae2542a2b54
-:END:
-
-The name =leaf= is not descriptive about what I'm doing which is configuring a
-package.
-
-#+begin_src emacs-lisp
-(defalias 'use-package! 'leaf)
-
-(defmacro use-feature! (feature &rest args)
-  (declare (indent defun))
-  `(leaf ,feature :ensure nil ,@args))
-#+end_src
-
-**** leaf
-:PROPERTIES:
-:ID:       7d72aec8-5523-473d-860d-181ce3d484d7
-:END:
-
-#+begin_src emacs-lisp
-(use-package! leaf
-  :setq (leaf-defaults . '(:ensure t)))
-#+end_src
-
-**** define leaf keyword
-:PROPERTIES:
-:ID:       5f480daa-4561-400f-bbe2-4396fc7877ff
-:END:
-
-Leaf is very minimal and for the most part this is good. However, it does mean
-defining leaf keywords is a bit of a pain. There are many low-level parts of
-doing so that could be automated. This is my attempt to automate defining a leaf
-keyword.
-
-#+begin_src emacs-lisp
-(cl-defun leaf:define-keyword (&key name where normalizer defer alias form)
-  "Define leaf KEYWORD at PLACE.
-PLACE is a list whose car is the symbol `before' or `after' and whose cadr is
-one of leaf's available keywords. DEFER specifies whether the keyword is a
-deferring keyword. ALIAS is an alias or a list of aliases for the keyword. FORM
-is the form that will be added to."
-  (setq name (intern (concat ":" (symbol-name name))))
-  ;; Defer it if necessary.
-  (when defer
-    (push name leaf-defer-keywords))
-
-  ;; update aliases
-  (dolist (alias (void:enlist alias))
-    (add-to-list 'leaf-alias-keyword-alist (cons alias name)))
-
-  ;; Add a normalizer.
-  (when normalizer
-    (push `((or (eq leaf--key ,name)
-                (eq ,name (alist-get leaf--key leaf-alias-keyword-alist)))
-            (funcall #',normalizer))
-          leaf-normalize))
-
-  ;; Insert it in proper place.
-  (let!! (((where place) where)
-          (target-form (list name form))
-          (insert-fn (pcase where
-                       ('after #'leaf-insert-list-after)
-                       ('before #'leaf-insert-list-before)
-                       (_ (error)))))
-    (setq leaf-keywords (funcall insert-fn leaf-keywords place target-form))))
-#+end_src
-
-**** use =after!= in leaf-defer
-:PROPERTIES:
-:ID:       3d3cf50c-20eb-4276-a81e-33a6c368d55f
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-leaf-defer
- :where '(before :leaf-defer)
- :alias (list :leaf-defer)
- :form
- '(if (and leaf--body (eval (car leaf--value))
-       (leaf-list-memq leaf-defer-keywords (leaf-plist-keys leaf--raw)))
-      `((after! ,leaf--name ,@leaf--body))
-    `(,@leaf--body)))
-#+end_src
-
-**** make leaf defer default
-:PROPERTIES:
-:ID:       bdaa5011-f0b3-44bc-a3c9-f9713d82c280
-:END:
-
-#+begin_src emacs-lisp
-(ignore! (add-to-list 'leaf-defer-keywords :leaf-defer)
-         (append! leaf-defaults '(:leaf-defer t)))
-#+end_src
-
-**** custom setting keywords
-:PROPERTIES:
-:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
-:END:
-
-Leaf keywords do not.
-
-***** normalizers
-:PROPERTIES:
-:ID:       bcf96e13-f3bc-4b23-832f-f94b31dd48a5
-:END:
-
-leaf's setq does not correctly handle setting variables to forms that need to be
-evaluated.
-
-#+begin_src emacs-lisp
-(defun leaf:normalizer-setq ()
-  (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
-
-(defun leaf:normalizer-commands ()
-  (mapcar (lambda (elm)
-            (cond ((memq leaf--key '(:after))
-                   (if (eq elm t) leaf--name elm))
-                  (t elm)))
-          (delete-dups (delq nil (leaf-flatten leaf--value)))))
-#+end_src
-
-***** setq
-:PROPERTIES:
-:ID:       6f38c45b-9382-4d72-a7ae-6d7a8748d07f
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-setq
- :where '(before :setq)
- :normalizer #'leaf:normalizer-setq
- :alias (list :setq)
- :form (plist-get leaf-keywords :setq))
-#+end_src
-
-***** pre-setq
-:PROPERTIES:
-:ID:       aba01554-fa11-4120-9867-19e5e2025df4
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-pre-setq
- :where '(before :pre-setq)
- :normalizer #'leaf:normalizer-setq
- :alias (list :pre-setq)
- :form (plist-get leaf-keywords :pre-setq))
-#+end_src
-
-***** custom
-:PROPERTIES:
-:ID:       bfa61a7a-1660-4000-a80e-15851a32ffd5
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-custom
- :where '(before :custom)
- :normalizer #'leaf:normalizer-setq
- :alias (list :custom)
- :form (plist-get leaf-keywords :custom))
-#+end_src
-
-***** setq-default
-:PROPERTIES:
-:ID:       b8ab2bf6-2b4e-41db-93f8-ed5c86392c84
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-setq-default
- :where '(before :setq-default)
- :normalizer #'leaf:normalizer-setq
- :alias (list :setq-default)
- :form (plist-get leaf-keywords :setq-default))
-#+end_src
-
-**** defer keywords
-:PROPERTIES:
-:ID:       6a8189ab-9a7a-4670-aa7a-b6589c180011
-:END:
-
-These keywords are meant to improve on the deferred loading options already
-provided by leaf. They are inspired from DOOM emacs.
-
-***** leaf-generate-load-fn
-:PROPERTIES:
-:ID:       41c05e4a-a0f1-45e7-bed6-7de7a439faa1
-:END:
-
-#+begin_src emacs-lisp
-(defun leaf:generate-load-form (package &optional hooks advice-place advices)
-  "Return form that evals into function that loads the package."
-  (let ((load-fn (intern (concat "leaf:load-" (symbol-name package)))))
-    `(progn
-       (defun ,load-fn (&rest _)
-         (void:log "Loading %S..." ',package)
-         (unless (require ',package nil t)
-           (message "Error loading %S" ',package))
-         ,@(mapcar (lambda (hook) `(remove-hook ',hook #',load-fn)) hooks)
-         ,@(mapcar (lambda (advice) `(advice-remove #',advice #',load-fn)) advices)
-         (fmakunbound #',load-fn))
-       ,@(mapcar (lambda (hook) `(add-hook ',hook #',load-fn)) hooks)
-       ,@(mapcar (lambda (advice) `(advice-add #',advice ,advice-place #',load-fn)) advices))))
-#+end_src
-
-***** before-call
-:PROPERTIES:
-:ID:       5378035c-206b-4479-8c60-4d57853e5754
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'before-call
- :where '(before :hook)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`(,(leaf:generate-load-form leaf--name nil :before leaf--value)
-          ,@leaf--body))
-#+end_src
-
-***** after-call
-:PROPERTIES:
-:ID:       36389857-c070-4221-8f76-b6b0da257b34
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'after-call
- :where '(before :hook)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`(,(leaf:generate-load-form leaf--name nil :after leaf--value)
-          ,@leaf--body))
-#+end_src
-
-
-***** on-hook
-:PROPERTIES:
-:ID:       6b4696f3-2bc0-4646-ab68-e5e5b61b0624
-:END:
-
-#+begin_src emacs-lisp
-(defun kbd::data-to-binding (datum)
-  (pcase-let ((`(,states ,map ,key ,def) datum))
-    (cond (states
-           `(evil-define-key ',states ,map ,key ,def))
-          (t
-           `(define-key ,map ,key ,def)))))
-#+end_src
-
-***** defer-incrementally
-:PROPERTIES:
-:ID:       c7ab7604-6e7c-42d1-b956-c58854948e8f
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'load-incrementally
- :where '(before :before-call)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`((append! void:incremental-packages ',leaf--value)
-          ,@leaf--body))
-#+end_src
-
-**** straight keyword
-:PROPERTIES:
-:ID:       cba57988-21b2-456b-aed2-27254febf873
-:END:
-
-This keyword is designed to be compiled away, leaving only forms adding package
-paths to the load-path. This is so that package installation isn't done after
-VOID is compiled.
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-straight
- :where '(before :straight)
- :alias (list :ensure)
- :form
- '`(,@(when (and leaf--value (car-safe leaf--value))
-        `((straight:install-package ',(car leaf--value))))
-    ,@leaf--body))
-
-(push `((or (memq leaf--key '(:void-straight))
-            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void:straight))
-        (cond ((eq t (car leaf--value))
-               (list leaf--name))
-              ((eq nil (car leaf--value))
-               nil)
-              ((listp (car-safe leaf--value))
-               (list (cons leaf--name (car leaf--value))))))
-      leaf-normalize)
-#+end_src
-
-**** popup
-:PROPERTIES:
-:ID:       30845314-ac19-49bb-9065-591c13e55489
-:END:
-
-The point of this keyword is to let me configure the display of buffers for
-specific packages.
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'popup
- :where '(before :mode)
- :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
-          ,@leaf--body))
-#+end_src
-
-**** os
-:PROPERTIES:
-:ID:       3335e409-b963-4504-b9fb-2faf4fb0be3d
-:END:
-
-#+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'os
- :where '(before :when)
- :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
-#+end_src
-
-**** straight
-:PROPERTIES:
-:ID:       9dff9894-667c-4e74-9624-8aee533f8f70
-:END:
-
-#+begin_src emacs-lisp
-(use-package! straight
-  :require t
-  :setq
-  (straight-disable-autoloads . nil)
-  (straight-cache-autoloads . t)
-  (straight-check-for-modifications . nil)
-  (straight-enable-package-integration . nil)
-  (straight-recipes-emacsmirror-use-mirror . t))
-#+end_src
-
-**** package.el
-:PROPERTIES:
-:ID:       550066df-89b4-4d4d-b8fd-daa1c28b1ceb
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! package
-  :init (advice-add #'package--ensure-init-file :override #'ignore)
-  :setq (package-archives . `(("gnu"   . "https://elpa.gnu.org/packages/")
-                              ("melpa" . "https://melpa.org/packages/")
-                              ("org"   . "https://orgmode.org/elpa/"))))
-#+end_src
-
-*** built-in
-:PROPERTIES:
-:ID: 40367976-12a0-4ccd-9aff-4df144a73edf
-:END:
-
-**** startup
-:PROPERTIES:
-:ID: 9725b7e0-54b8-4ab4-aa00-d950345d0aea
-:END:
-
-Emacs starts up with a default screen setup. No, thanks.
-
-#+begin_src emacs-lisp
-(use-feature! startup
-  :setq
-  (inhibit-startup-screen . t)
-  (inhibit-default-init . t)
-  (inhibit-startup-buffer-menu . t)
-  (initial-major-mode . 'fundamental-mode)
-  (initial-scratch-message . nil)
-  (initial-buffer-choice . (if void:debug-p (lambda () (get-buffer "*Messages*")) t))
-  (inhibit-startup-echo-area-message . user-login-name))
-#+end_src
-
-**** paren
-:PROPERTIES:
-:ID: 8ba80d6f-292e-4d44-acfe-d7b7ba939fa4
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! paren
-  :hook (prog-mode-hook . show-paren-mode)
-  :setq-default
-  (show-paren-delay . 0))
-#+end_src
-
-**** clipboard
-:PROPERTIES:
-:ID: 60abb076-89b1-439b-8198-831b2df47782
-:END:
-
-#+begin_src emacs-lisp
-;; Not windows.
-(use-feature! select
-  :setq
-  (selection-coding-system . 'utf-8)
-  (select-enable-clipboard . t)
-  (select-enable-primary . t)
-  (x-select-request-type . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
-#+end_src
-
-**** simple
-:PROPERTIES:
-:ID: 89df102a-a2c9-4ece-9acc-ed90e8064ed8
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! simple
-  :popup ("\\*Messages"
-          (display-buffer-at-bottom)
-          (window-height . 0.5))
-  :setq-default
-  (idle-update-delay . 1)
-  (blink-matching-paren . t)
-  (delete-trailing-lines . nil)
-  :setq
-  (mail-user-agent . 'mu4e-user-agent))
-#+end_src
-
-**** loaddefs
-:PROPERTIES:
-:ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
-:END:
-
-These are *extremely* important lines if you use an external program as I do
-([[https://wiki.archlinux.org/index.php/Msmtp][msmtp]]) to send your email. If you don't set these variables, emacs will
-think you want to use =smtp=.
-
-#+begin_src emacs-lisp
-(use-feature! loaddefs
-  :setq-default
-  (disabled-command-function . nil)
-  ;; very important if you're using msmtp
-  )
-#+end_src
-
-**** files
-:PROPERTIES:
-:ID: 2a7862da-c863-416b-a976-4cf7840a8712
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! files
-  :setq-default
-  ;; Disable second, case-insensitive pass over `auto-mode-alist'.
-  (auto-mode-case-fold . nil)
-  ;; Whether to add a newline automatically at the end of the file.
-  ;; Whether confirmation is requested before visiting a new file or buffer.
-  (confirm-nonexistent-file-or-buffer . nil)
-  ;; How to ask for confirmation when leaving Emacs.
-  (confirm-kill-emacs . #'y-or-n-p)
-  (require-final-newline . nil)
-  (trash-directory . (expand-file-name "Trash" "~"))
-  (auto-save-default . nil)
-  (auto-save-interval . 300)
-  (auto-save-timeout . 30)
-  (backup-directory-alist . (list (cons ".*" (concat VOID:DATA-DIR "backup/"))))
-  (make-backup-files . nil)
-  (version-control . nil)
-  (kept-old-versions . 2)
-  (kept-new-versions . 2)
-  (delete-old-versions . t)
-  (backup-by-copying . t)
-  (backup-by-copying-when-linked . t))
-#+end_src
-
-**** subr
-:PROPERTIES:
-:ID:       61603f44-780e-4456-88c6-7ffe1e5c7197
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! subr
-  :init
-  (fset #'yes-or-no-p #'y-or-n-p)
-  (fset #'display-startup-echo-area-message #'ignore))
-#+end_src
-
-**** subr-x
-:PROPERTIES:
-:ID:       1ed0ba00-e5a1-4642-9ed5-a52f4b917a4d
-:END:
-
-#+begin_src emacs-lisp
-;; This is where `thread-last' and `thread-first' come from.
-(use-feature! subr-x
-  :require t)
-#+end_src
-
-**** ffap
-:PROPERTIES:
-:ID: b1229201-a5ac-45c7-91fa-7a6b39bbb879
-:END:
-
-Don't ping things that look like domain names.
-
-#+begin_src emacs-lisp
-(use-feature! ffap
-  :setq
-  (ffap-machine-p-known . 'reject))
-#+end_src
-
-**** server
-:PROPERTIES:
-:ID: 3ddeb65c-9df6-4ede-9644-eb106b3ba1dd
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! server
-  :setq
-  (server-auth-dir . (concat VOID:DATA-DIR "server/")))
-#+end_src
-
-**** tramp
-:PROPERTIES:
-:ID: 3af0a4d6-bd08-4fe2-bc5c-79b1b811fc6b
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! tramp
-  :setq
-  (tramp-backup-directory-alist . backup-directory-alist)
-  (tramp-auto-save-directory . (concat VOID:DATA-DIR "tramp-auto-save/"))
-  (tramp-persistency-file-name . (concat VOID:DATA-DIR "tramp-persistency.el")))
-#+end_src
-
-**** desktop
-:PROPERTIES:
-:ID: 3a6b72e7-57c8-42f0-a8d7-1bbde72de9bd
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! desktop
-  :setq
-  (desktop-dirname . (concat VOID:DATA-DIR "desktop"))
-  (desktop-base-file-name . "autosave")
-  (desktop-base-lock-name . "autosave-lock"))
-#+end_src
-
-**** cus-edit
-:PROPERTIES:
-:ID: 8bd5683d-91e1-4c1b-a8a5-3b39921e995d
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! cus-edit
-  :setq
-  (custom-file . (concat VOID:DATA-DIR "custom.el"))
-  (custom-theme-directory . (concat VOID:LOCAL-DIR "themes/")))
-#+end_src
-
-**** url cache
-:PROPERTIES:
-:ID: e4b5bfce-1111-48b2-bfee-da754974aa46
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! url
-  :setq
-  (url-cache-directory . (concat VOID:DATA-DIR "url/cache/"))
-  (url-configuration-directory . (concat VOID:DATA-DIR "url/configuration/")))
-#+end_src
-
-**** bytecomp
-:PROPERTIES:
-:ID:       6b375bfb-a8c3-473c-8dbd-530e692a15ab
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! bytecomp
-  :setq
-  (byte-compile-verbose . void:debug-p)
-  (byte-compile-warnings . '(not free-vars unresolved noruntime lexical make-local)))
-#+end_src
-
-**** compile
-:PROPERTIES:
-:ID:       913aa4f2-e42b-4b74-a2d4-e87b1738a5bd
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! compile
-  :setq-default
-  (compilation-always-kill . t)
-  (compilation-ask-about-save . nil)
-  (compilation-scroll-output . 'first-error))
-#+end_src
-
-**** uniquify
-:PROPERTIES:
-:ID:       9ba2726b-3fef-4e9b-9387-a80ab09bdb7d
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! uniquify
-  :setq-default
-  (uniquify-buffer-name-style . 'forward))
-#+end_src
-
-**** ansi-color
-:PROPERTIES:
-:ID:       5feaab76-e5c1-450c-94a6-8fdfb95ddb94
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! ansi-color
-  :setq-default
-  (ansi-color-for-comint-mode . t))
-#+end_src
-
-**** image mode
-:PROPERTIES:
-:ID:       32e2118a-c92b-4e8d-b2db-048428462783
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! image-mode
-  :setq
-  ;; Non-nil means animated images loop forever, rather than playing once.
-  (image-animate-loop . t))
-#+end_src
-
-**** window
-:PROPERTIES:
-:ID:       af27cd7e-2096-4f6d-a749-63e4c38d136c
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! window
-  :setq-default
-  (split-width-threshold . 160))
-#+end_src
-
-**** paragraphs
-:PROPERTIES:
-:ID:       f289ade4-ad16-4f6a-8868-1f9b7af5ddca
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! paragraphs)
-#+end_src
-
-**** indent
-:PROPERTIES:
-:ID:       a5d97d4d-3af9-4fde-ae14-953ad4d28edd
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! indent
-  :setq-default
-  (tab-always-indent . t))
-#+end_src
-
-**** mouse
-:PROPERTIES:
-:ID:       d0d6de11-50fa-4ae2-ad4b-69712f3e2c54
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! mouse
-  :setq-default
-  (mouse-yank-at-point . t))
-#+end_src
-
-**** calendar
-:PROPERTIES:
-:ID:       4ad7e704-f490-40e4-b2bc-8a30a10a7bb7
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! calendar
-  :setq (diary-file . (concat VOID:DATA-DIR "diary")))
-#+end_src
-
-**** mule-cmds
-:PROPERTIES:
-:ID:       e48e925e-1f1e-4c79-8652-c92aafe06290
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! mule-cmds
-  :init (prefer-coding-system VOID:DEFAULT-CODING-SYSTEM))
-#+end_src
-
-**** seq
-:PROPERTIES:
-:ID:       7b5752cf-be64-452b-95e7-35cc83bb5e0b
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! seq
-  :require t
-  ;; :alias (seq-some-p . seq-some)
-  ;; Don't know why seq-some doesn't end with a '-p'. It is a predicate function.
-  :init (defalias 'seq-some-p 'seq-some))
-#+end_src
-
-**** gv
-:PROPERTIES:
-:ID:       84cc5883-a303-453e-af91-644d4544e3f9
-:END:
-
-=gv= is what contains the code for the =setf= macro.
-https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-plist-get
-
-#+begin_src emacs-lisp
-(use-feature! gv
-  :defer-config
-  (gv-define-simple-setter plist-get plist-put))
-#+end_src
-
-**** nsm
-:PROPERTIES:
-:ID:       0ca7fc66-5312-4c69-a87d-7607292c7a2a
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! nsm
-  :setq (nsm-settings-file . (concat VOID:DATA-DIR "network-settings.data")))
-#+end_src
-
-*** external libraries
-:PROPERTIES:
-:ID: 6e4be80e-8149-424d-a801-d7871bfe8fc8
-:END:
-
-**** general
-:PROPERTIES:
-:ID: 706f35fc-f840-4a51-998f-abcd54c5d314
-:END:
-
-Keybindings are a key part of emacs (pun intended).
-
-***** general
-:PROPERTIES:
-:ID: f1ad5258-17cb-4424-a161-b856ee6dc5ab
-:END:
-
-There are numerous keybinding functions in Emacs; and they all look a little
-different: there's [[helpfn:global-set-key][global-set-key]], [[helpfn:local-set-key][local-set-key]], [[helpfn:define-key][define-key]] and the list goes
-on. And with [[][evil]] which [[id:73366b3e-7438-4abf-a661-ed1553b1b8df][I use]] , there's also [[helpfn:evil-global-set-key][evil-global-set-key]] and
-[[helpfn:evil-define-key][evil-define-key]]. It would be nice to have one keybinding function that can
-handle all bindings. [[][general]] provides such a function ([[helpfn:general-define-key][general-define-key]]).
-
-#+begin_src emacs-lisp
-(use-package! general
-  :require t
-  :config
-  (general-auto-unbind-keys))
-#+end_src
-
-***** prefix bindings
-:PROPERTIES:
-:ID: b0b5b51c-155e-46fc-a80a-0d45a32440ba
-:END:
-
-A popular strategy to mitigate the mental load of remembering many keybindings
-is to bind them in a tree-like fashion. [[][spacemacs]].
-
-****** leader Keys
-:PROPERTIES:
-:ID: 143211d6-b868-4ffb-a5d0-25a77dee401f
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:leader-key "SPC"
-  "The evil leader prefix key.")
-
-(defvar void:leader-alt-key "M-SPC"
-  "The leader prefix key used for Insert and Emacs states.")
-#+end_src
-
-****** localleader keys
-:PROPERTIES:
-:ID: 45941bcb-209f-4aa3-829a-dee4e3ef2464
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:localleader-key "SPC m"
-  "The localleader prefix key for major-mode specific commands.")
-
-(defvar void:localleader-alt-key "C-SPC m"
-  "The localleader prefix key for major-mode specific commands.")
-
-(defvar void:localleader-short-key ","
-  "A shorter alternative `void:localleader-key'.")
-
-(defvar void:localleader-short-alt-key "M-,"
-  "A short non-normal  `void:localleader-key'.")
-#+end_src
-
-****** definers
-:PROPERTIES:
-:ID: 6444d218-1627-48bd-9b5c-7bfffb17d912
-:END:
-
-As I've mentioned =general= uses the function =general-define-key= as a generic
-do-all key binder. Sometimes though we have keys that we want to bind with
-specific arguments to =general-define-key= pretty often. A typical example of
-this is binding =leader= or =localleader= keys like [[https://github.com/syl20bnr/spacemacs][spacemacs]].
-
-#+begin_src emacs-lisp
-(general-create-definer define-leader-key!
-  :prefix void:leader-key
-  :non-normal-prefix void:leader-alt-key
-  :keymaps 'override
-  :states '(normal motion insert emacs))
-#+end_src
-
-****** localleader
-:PROPERTIES:
-:ID:       e4770eae-adf5-4216-9016-5ec4bc465e03
-:END:
-
-There's pros and cons to the =SPC m= binding. The main pro is that it's
-consistent with =SPC=. With the leader and the localleader, this means that you
-can reach any binding from just =SPC=. This means that you can discover all
-bindings from just one root binding. This is a nice property to have. On the
-other hand, bindings can get a bit long. That one extra character can really
-make a difference. That's why.
-
-#+begin_src emacs-lisp
-(defmacro define-localleader-key! (&rest args)
-  (declare (indent defun))
-  (let ((shared-args '(:keymaps 'override :states '(normal motion insert emacs))))
-    `(progn (general-def
-              ,@args
-              ,@shared-args
-              :prefix void:localleader-key
-              :non-normal-prefix void:localleader-alt-key)
-            (general-def
-              ,@args
-              ,@shared-args
-              :prefix void:localleader-short-key
-              :non-normal-prefix void:localleader-short-alt-key))))
-#+end_src
-
-**** s
-:PROPERTIES:
-:ID: 4b82deb0-bbe1-452c-8b60-ef734efb86d8
-:END:
-
-#+begin_src emacs-lisp
-(use-package! s :require t)
-#+end_src
-
-**** gc
-:PROPERTIES:
-:ID: 4f1477b7-7b28-4a20-9a31-cc34a10f5878
-:END:
-
-Wait until idle time to garbage collect while staving off garbage collector
-while the user is working.
-
-#+begin_src emacs-lisp
-(use-package! gcmh
-  :hook emacs-startup-hook
-  :setq
-  (gcmh-idle-delay . 10)
-  (gcmh-verbose . void:debug-p)
-  (gcmh-high-cons-threshold . (* 16 1024 1024)))
-#+end_src
-
-**** shut-up
-:PROPERTIES:
-:ID:       65590d3e-ef24-4214-a602-2f4728b2f8c1
-:END:
-
-#+begin_src emacs-lisp
-(use-package! shut-up
-  :commands shut-up
-  :init
-  (defalias 'shut-up! 'shut-up)
-  (defalias 'quiet! 'shut-up))
-#+end_src
-
-**** anaphora
-:PROPERTIES:
-:ID:       c478b00e-bd13-4640-9a9d-f8dd97510d2a
-:END:
-
-#+begin_src emacs-lisp
-(use-package! anaphora :require t)
 #+end_src
 
 ** UI
@@ -4502,7 +4465,7 @@ a file.
          (gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
          (line-choices (let ((minimum-line-number (line-number-at-pos (point-min) t))
                              (buffer-text-lines (split-string (buffer-string) "\n")))
-                         (seq-map-indexed (lambda (it it-index) (format "%d\t%s" it-index it)) buffer-text-lines)))
+                         (-map-indexed (lambda (it it-index) (format "%d\t%s" it-index it)) buffer-text-lines)))
          ;; Get the matching line.
          (chosen-line (completing-read "Jump to matching line: " line-choices
                                        nil t nil 'selectrum:swiper-jump-to-line-history))
@@ -5928,10 +5891,10 @@ correctness of values returned as opposed to the state change of the buffer.
       (cons (org-element-at-point)
             (ignore-errors
               (org-down-element)
-              (seq:unfold (lambda (x)
-                            (when (ignore-errors (org-forward-element))
-                              (cons x (org-element-at-point))))
-                          (org-element-at-point)))))))
+              (-unfold (lambda (x)
+                         (when (ignore-errors (org-forward-element))
+                           (cons x (org-element-at-point))))
+                       (org-element-at-point)))))))
 #+end_src
 
 *** editing headline descriptions
@@ -5992,13 +5955,13 @@ the time.
 (defun org:edit-desc-bounds (point elements)
   "Return the bounds of the description at point.
 ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
-  (awhen! (seq-find (fn! (seq-some-p (apply-partially #'org:element-contains-point-p point)
-                                     <it>))
-                    (thread-last (cdr elements)
-                      (seq-group-by #'org:element-paragraph-p)
-                      (seq-filter (lambda (it) (org:element-paragraph-p (car it))))))
-    (cons (org-element-property :contents-begin (cl-first <it>))
-          (org-element-property :contents-end (car (last <it>))))))
+  (awhen! (-find (fn! (seq-some-p (apply-partially #'org:element-contains-point-p point)
+                                  <it>))
+                 (thread-last (cdr elements)
+                   (-group-by #'org:element-paragraph-p)
+                   (-filter (lambda (it) (org:element-paragraph-p (car it))))))
+    (cons (org-element-property :contents-begin (-first-item <it>))
+          (org-element-property :contents-end (-last-item <it>)))))
 #+end_src
 
 **** org edit description at point
