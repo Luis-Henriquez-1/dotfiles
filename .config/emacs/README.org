@@ -9,16 +9,6 @@
 :ID:       71dbf82e-cf4f-4e8a-b14d-df78bea5b20f
 :END:
 
-*** default coding system
-:PROPERTIES:
-:ID:       4c55a0d4-dbd7-4405-b944-3b68d8a069f2
-:END:
-
-#+begin_src emacs-lisp
-(defconst VOID:DEFAULT-CODING-SYSTEM 'utf-8
-  "Default text encoding.")
-#+end_src
-
 *** directories                                                            :eac:
 :PROPERTIES:
 :ID: 93cc2db1-44c7-45ec-af98-5a4eb7145f61
@@ -165,6 +155,16 @@ Accept the same arguments as `message'."
         (apply #'message (concat (propertize "VOID " 'face 'font-lock-comment-face)
                                  format-string)
                args)))))
+#+end_src
+
+*** default coding system
+:PROPERTIES:
+:ID:       4c55a0d4-dbd7-4405-b944-3b68d8a069f2
+:END:
+
+#+begin_src emacs-lisp
+(defconst VOID:DEFAULT-CODING-SYSTEM 'utf-8
+  "Default text encoding.")
 #+end_src
 
 ** Package Management
