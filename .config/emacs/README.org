@@ -4,7 +4,7 @@
 :ID:       d68434bf-be6a-471f-ab65-e151f4f1c111
 :END:
 
-** init
+** Init
 :PROPERTIES:
 :ID:       71dbf82e-cf4f-4e8a-b14d-df78bea5b20f
 :END:
