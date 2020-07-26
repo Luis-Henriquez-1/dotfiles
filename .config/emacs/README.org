@@ -413,7 +413,7 @@ Like =use-package=, leaf is a macro that fascilitates package configuration.
 :END:
 
 #+begin_src emacs-lisp
-(defun +leaf-insert-keyword (keyword where place form)
+(defun leaf:insert-keyword (keyword where place form)
   "Insert KEYWORD at PLACE."
   (-let* ((insert-fn (pcase where
                        ('after #'leaf-insert-list-after)
@@ -458,7 +458,7 @@ is the form that will be added to."
 
   ;; Insert it in proper place.
   (-let [(where place) where]
-    (+leaf-insert-keyword name where place form)))
+    (leaf:insert-keyword name where place form)))
 #+end_src
 
 **** use =after!= in leaf-defer
