@@ -765,7 +765,6 @@ specific packages.
 
 Dash is an excellent functional list manipulation library. If I did not use it
 as a dependency, I'd end up rewriting many of its functions.
-
 :PROPERTIES:
 :ID:       7d37ae8b-d319-4077-ae7a-aa463d8ec68d
 :END:
