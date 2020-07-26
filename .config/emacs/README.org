@@ -478,16 +478,6 @@ is the form that will be added to."
     `(,@leaf--body)))
 #+end_src
 
-**** make leaf defer default                                          :disabled:
-:PROPERTIES:
-:ID:       bdaa5011-f0b3-44bc-a3c9-f9713d82c280
-:END:
-
-#+begin_src emacs-lisp
-(ignore! (add-to-list 'leaf-defer-keywords :leaf-defer)
-         (append! leaf-defaults '(:leaf-defer t)))
-#+end_src
-
 **** custom setting keywords
 :PROPERTIES:
 :ID:       225cdf80-0770-47c0-8a94-6d69f4583374
@@ -630,20 +620,6 @@ provided by leaf. They are inspired from DOOM emacs.
           ,@leaf--body))
 #+end_src
 
-
-***** on-hook
-:PROPERTIES:
-:ID:       6b4696f3-2bc0-4646-ab68-e5e5b61b0624
-:END:
-
-#+begin_src emacs-lisp
-(defun kbd::data-to-binding (datum)
-  (pcase-let ((`(,states ,map ,key ,def) datum))
-    (cond (states
-           `(evil-define-key ',states ,map ,key ,def))
-          (t
-           `(define-key ,map ,key ,def)))))
-#+end_src
 
 ***** defer-incrementally
 :PROPERTIES:
