@@ -4450,7 +4450,7 @@ a file.
          (gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
          (line-choices (let ((minimum-line-number (line-number-at-pos (point-min) t))
                              (buffer-text-lines (split-string (buffer-string) "\n")))
-                         (-map-indexed (lambda (it it-index) (format "%d\t%s" it-index it)) buffer-text-lines)))
+                         (--map-indexed (format "%d\t%s" it-index it) buffer-text-lines)))
          ;; Get the matching line.
          (chosen-line (completing-read "Jump to matching line: " line-choices
                                        nil t nil 'selectrum:swiper-jump-to-line-history))
