@@ -4540,11 +4540,11 @@ a file.
   (interactive)
   (let* ((org-use-fast-tag-selection nil)
          (current-tags (org-get-tags))
-         (all-tags (seq-uniq (flatten-list (org-map-entries (lambda () (org-get-tags (point) t))))))
+         (all-tags (-uniq (flatten-list (org-map-entries (lambda () (org-get-tags (point) t))))))
          (selected-tags (completing-read-multiple "set tags: " all-tags)))
     (org-set-tags
-     (append (seq-remove (lambda (it) (member it current-tags)) selected-tags)
-             (seq-remove (lambda (it) (member it selected-tags)) current-tags)))))
+     (append (--remove (member it current-tags) selected-tags)
+             (--remove (member it selected-tags) current-tags)))))
 #+end_src
 
 **** TODO qutebrowser links                                           :disabled:
