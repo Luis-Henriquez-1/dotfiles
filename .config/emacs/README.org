@@ -377,10 +377,19 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
 (leaf-keywords-init)
 #+end_src
 
-*** leaf aliases
+*** leaf
+
+:PROPERTIES:
+:ID:       109f58d7-525e-43f4-b997-658b1d5da0a8
+:END:
+Like =use-package=, leaf is a macro that fascilitates package configuration.
+
+**** leaf aliases
 :PROPERTIES:
 :ID:       1fc34b15-c6cc-450c-bcc9-61a9a8f5a39d
 :END:
+
+The name =leaf= is not very indicative of what the leaf macro does.
 
 #+begin_src emacs-lisp
 (defalias 'use-package! 'leaf)
@@ -390,13 +399,6 @@ using nice libraries. In byte compiled Void, they don't need to be installed.
   `(leaf ,feature :ensure nil ,@args))
 #+end_src
 
-*** leaf
-
-:PROPERTIES:
-:ID:       109f58d7-525e-43f4-b997-658b1d5da0a8
-:END:
-Like =use-package=, leaf is a macro that fascilitates package configuration.
-
 **** leaf
 :PROPERTIES:
 :ID:       7d72aec8-5523-473d-860d-181ce3d484d7
@@ -404,17 +406,40 @@ Like =use-package=, leaf is a macro that fascilitates package configuration.
 
 #+begin_src emacs-lisp
 (use-package! leaf
-  :setq (leaf-defaults . '(:ensure t)))
+  :setq
+  (leaf-defaults . '(:ensure t))
+  (leaf-expand-minimally . t))
 #+end_src
 
-**** leaf insert keyword
+**** defining leaf keywords
+:PROPERTIES:
+:ID:       5d7d9185-6897-419d-90bd-5e2d2cb3f1b1
+:END:
+
+Leaf is very low level. It does not provide a function or macro for fast new
+keyword creation. Whenever you want to create a new keyword you have to
+recall the underlying leaf data structure.
+
+***** leaf variables
+:PROPERTIES:
+:ID:       40d6a763-279b-4a18-9761-93754472b1a7
+:END:
+
+#+begin_src emacs-lisp
+(defvar leaf:process-variables
+  '(leaf--raw leaf--name leaf--key leaf--keyname leaf--value leaf--body)
+  "List of variables that leaf binds when processing a keyword.")
+#+end_src
+
+***** leaf insert keyword
 :PROPERTIES:
 :ID:       5369cb48-51f3-49c6-8374-5aa84db027e2
 :END:
 
 #+begin_src emacs-lisp
 (defun leaf:insert-keyword (keyword where place form)
-  "Insert KEYWORD at PLACE."
+  "Insert KEYWORD at PLACE.
+WHERE can be the symbol `before' or `after'."
   (-let* ((insert-fn (pcase where
                        ('after #'leaf-insert-list-after)
                        ('before #'leaf-insert-list-before)
@@ -423,69 +448,79 @@ Like =use-package=, leaf is a macro that fascilitates package configuration.
           (funcall insert-fn leaf-keywords place (list keyword form)))))
 #+end_src
 
-**** define leaf keyword
+***** defer
 :PROPERTIES:
-:ID:       5f480daa-4561-400f-bbe2-4396fc7877ff
-:END:
-
-Leaf is very minimal and for the most part this is good. However, it does mean
-defining leaf keywords is a bit of a pain. There are many low-level parts of
-doing so that could be automated. This is my attempt to automate defining a leaf
-keyword.
-
-#+begin_src emacs-lisp
-(cl-defun leaf:define-keyword (&key name where normalizer defer alias form)
-  "Define leaf KEYWORD at PLACE.
-PLACE is a list whose car is the symbol `before' or `after' and whose cadr is
-one of leaf's available keywords. DEFER specifies whether the keyword is a
-deferring keyword. ALIAS is an alias or a list of aliases for the keyword. FORM
-is the form that will be added to."
-  (setq name (intern (concat ":" (symbol-name name))))
-  ;; Defer it if necessary.
-  (when defer
-    (push name leaf-defer-keywords))
-
-  ;; update aliases
-  (dolist (alias (-list alias))
-    (add-to-list 'leaf-alias-keyword-alist (cons alias name)))
-
-  ;; Add a normalizer.
-  (when normalizer
-    (push `((or (eq leaf--key ,name)
-                (eq ,name (alist-get leaf--key leaf-alias-keyword-alist)))
-            (funcall #',normalizer))
-          leaf-normalize))
-
-  ;; Insert it in proper place.
-  (-let [(where place) where]
-    (leaf:insert-keyword name where place form)))
-#+end_src
-
-**** use =after!= in leaf-defer
-:PROPERTIES:
-:ID:       3d3cf50c-20eb-4276-a81e-33a6c368d55f
+:ID:       a965af35-804c-460c-8787-1cf8a849dba1
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-leaf-defer
- :where '(before :leaf-defer)
- :alias (list :leaf-defer)
- :form
- '(if (and leaf--body (eval (car leaf--value))
-       (leaf-list-memq leaf-defer-keywords (leaf-plist-keys leaf--raw)))
-      `((after! ,leaf--name ,@leaf--body))
-    `(,@leaf--body)))
+(defun leaf:make-defer (keyword)
+  "Add KEYWORDS to `leaf-defer-keywords'."
+  (add-to-list 'leaf-defer-keywords keyword))
 #+end_src
 
-**** custom setting keywords
+***** alias
 :PROPERTIES:
-:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
+:ID:       7e515288-9071-44dd-b09d-bfddb58c1ea9
 :END:
 
-Leaf keywords do not.
+#+begin_src emacs-lisp
+(defun leaf:set-alias (alias name)
+  "Add KEYNAMES to `leaf-alias-keywords'."
+  (push (cons alias name) leaf-alias-keyword-alist))
+#+end_src
 
-***** normalizers
+***** leaf:define-keyword!
+:PROPERTIES:
+:ID:       db05b51b-bbe4-41a4-ae45-1e72aba57ae4
+:END:
+
+#+begin_src emacs-lisp
+(defmacro leaf:define-keyword! (name args &rest body)
+  "Define a leaf keyword."
+  (declare (indent defun))
+  (-let* ((keyword (intern (concat ":" (symbol-name name))))
+          ((where place) args)
+          (docstring (when (stringp body) (pop body)))
+          (actions (--unfold (when (keywordp (car it))
+                               (cons (-take 2 it)
+                                     (setq body (-drop 2 it))))
+                             body))
+          (apply-fn (intern (concat "leaf::apply-" (symbol-name name))))
+          (form `(,apply-fn ,@leaf:process-variables)))
+    `(progn
+       (leaf:insert-keyword ,keyword ',where ,place ',form)
+       (defun ,apply-fn ,leaf:process-variables
+         ,docstring
+         (ignore ,@leaf:process-variables)
+         ,@body))))
+#+end_src
+
+***** normalizer
+:PROPERTIES:
+:ID:       cc4b1777-9ee5-42bf-a268-c43afcd3fc20
+:END:
+
+****** add normalizer
+:PROPERTIES:
+:ID:       2abfe05c-010b-467f-aab8-2949af3f7b64
+:END:
+
+#+begin_src emacs-lisp
+(defun leaf:set-normalizer (keyword normalizer)
+  "Add KEYWORD."
+  (push `((or (memq leaf--key '(,keyword))
+              (eq (alist-get leaf--key leaf-alias-keyword-alist) ,keyword))
+          (funcall #',normalizer leaf--value))
+        leaf-normalize))
+#+end_src
+
+****** normalizers
+:PROPERTIES:
+:ID:       72c23168-98dd-4a74-85b8-c0e313aa96df
+:END:
+
+******* normalizers
 :PROPERTIES:
 :ID:       bcf96e13-f3bc-4b23-832f-f94b31dd48a5
 :END:
@@ -494,74 +529,94 @@ leaf's setq does not correctly handle setting variables to forms that need to be
 evaluated.
 
 #+begin_src emacs-lisp
-(defun leaf:normalizer-setq ()
-  (mapcar (lambda (it) (cons (car it) (cdr it))) leaf--value))
+(defun leaf:normalize-setq (leaf--value)
+  (-map (-lambda ((var . value)) (cons var value))
+        leaf--value))
 
-(defun leaf:normalizer-commands ()
-  (mapcar (lambda (elm)
-            (cond ((memq leaf--key '(:after))
-                   (if (eq elm t) leaf--name elm))
-                  (t elm)))
-          (delete-dups (delq nil (leaf-flatten leaf--value)))))
+(defun leaf:normalize-commands (leaf--value)
+  (-map (lambda (elm)
+          (cond ((memq leaf--key '(:after))
+                 (if (eq elm t) leaf--name elm))
+                (t elm)))
+        (-uniq (delq nil (leaf-flatten leaf--value)))))
 #+end_src
 
-***** setq
+******* default normalizer                                            :disabled:
+:PROPERTIES:
+:ID:       9d60dd5b-9e3e-4536-9571-501d3e5735d1
+:END:
+
+#+begin_src emacs-lisp
+(defvar leaf-default-normalizer
+  `((or (eq leaf--key ,name)
+        (eq ,name (alist-get leaf--key leaf-alias-keyword-alist)))
+    (funcall #',normalizer)))
+#+end_src
+
+**** use =after!= in leaf-defer
+:PROPERTIES:
+:ID:       3d3cf50c-20eb-4276-a81e-33a6c368d55f
+:END:
+
+#+begin_src emacs-lisp
+(leaf:set-alias :leaf-defer :void-leaf-defer)
+
+(leaf:define-keyword! void-leaf-defer (before :leaf-defer)
+  (if (and leaf--body (eval (car leaf--value))
+           (leaf-list-memq leaf-defer-keywords (leaf-plist-keys leaf--raw)))
+      `((after! ,leaf--name ,@leaf--body))
+    `(,@leaf--body)))
+#+end_src
+
+**** custom leaf keywords
+:PROPERTIES:
+:ID:       2e9dac82-0709-4294-ae58-bb3eccfbb9a5
+:END:
+
+***** set keywords
+:PROPERTIES:
+:ID:       225cdf80-0770-47c0-8a94-6d69f4583374
+:END:
+
+Leaf keywords do not.
+
+****** setq
 :PROPERTIES:
 :ID:       6f38c45b-9382-4d72-a7ae-6d7a8748d07f
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-setq
- :where '(before :setq)
- :normalizer #'leaf:normalizer-setq
- :alias (list :setq)
- :form (plist-get leaf-keywords :setq))
+(leaf:set-normalizer :setq #'leaf:normalize-setq)
 #+end_src
 
-***** pre-setq
+****** pre-setq
 :PROPERTIES:
 :ID:       aba01554-fa11-4120-9867-19e5e2025df4
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-pre-setq
- :where '(before :pre-setq)
- :normalizer #'leaf:normalizer-setq
- :alias (list :pre-setq)
- :form (plist-get leaf-keywords :pre-setq))
+(leaf:set-normalizer :pre-setq #'leaf:normalize-setq)
 #+end_src
 
-***** custom
+****** custom
 :PROPERTIES:
 :ID:       bfa61a7a-1660-4000-a80e-15851a32ffd5
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-custom
- :where '(before :custom)
- :normalizer #'leaf:normalizer-setq
- :alias (list :custom)
- :form (plist-get leaf-keywords :custom))
+(leaf:set-normalizer :custom #'leaf:normalize-setq)
 #+end_src
 
-***** setq-default
+****** setq-default
 :PROPERTIES:
 :ID:       b8ab2bf6-2b4e-41db-93f8-ed5c86392c84
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-setq-default
- :where '(before :setq-default)
- :normalizer #'leaf:normalizer-setq
- :alias (list :setq-default)
- :form (plist-get leaf-keywords :setq-default))
+(leaf:set-normalizer :setq-default #'leaf:normalize-setq)
 #+end_src
 
-**** defer keywords
+***** defer keywords
 :PROPERTIES:
 :ID:       6a8189ab-9a7a-4670-aa7a-b6589c180011
 :END:
@@ -569,7 +624,7 @@ evaluated.
 These keywords are meant to improve on the deferred loading options already
 provided by leaf. They are inspired from DOOM emacs.
 
-***** leaf-generate-load-fn
+****** leaf-generate-load-fn
 :PROPERTIES:
 :ID:       41c05e4a-a0f1-45e7-bed6-7de7a439faa1
 :END:
@@ -590,53 +645,48 @@ provided by leaf. They are inspired from DOOM emacs.
        ,@(mapcar (lambda (advice) `(advice-add #',advice ,advice-place #',load-fn)) advices))))
 #+end_src
 
-***** before-call
+****** before-call
 :PROPERTIES:
 :ID:       5378035c-206b-4479-8c60-4d57853e5754
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'before-call
- :where '(before :hook)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`(,(leaf:generate-load-form leaf--name nil :before leaf--value)
-          ,@leaf--body))
+(leaf:make-defer :before-call)
+
+(leaf:set-normalizer :before-call #'leaf:normalize-commands)
+
+(leaf:define-keyword! before-call (before :hook)
+  `(,(leaf:generate-load-form leaf--name nil :before leaf--value)
+    ,@leaf--body))
 #+end_src
 
-***** after-call
+****** after-call
 :PROPERTIES:
 :ID:       36389857-c070-4221-8f76-b6b0da257b34
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'after-call
- :where '(before :hook)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`(,(leaf:generate-load-form leaf--name nil :after leaf--value)
-          ,@leaf--body))
+(leaf:make-defer :after-call)
+
+(leaf:set-normalizer :after-call #'leaf:normalize-commands)
+
+(leaf:define-keyword! after-call (before :hook)
+  `(,(leaf:generate-load-form leaf--name nil :after leaf--value)
+    ,@leaf--body))
 #+end_src
 
-
-***** defer-incrementally
+****** defer-incrementally
 :PROPERTIES:
 :ID:       c7ab7604-6e7c-42d1-b956-c58854948e8f
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'load-incrementally
- :where '(before :before-call)
- :defer t
- :normalizer #'leaf:normalizer-commands
- :form '`((append! void:incremental-packages ',leaf--value)
-          ,@leaf--body))
+(leaf:define-keyword! load-incrementally (before :before-call)
+  `((append! void:incremental-packages ',leaf--value)
+    ,@leaf--body))
 #+end_src
 
-**** straight keyword
+***** straight keyword
 :PROPERTIES:
 :ID:       cba57988-21b2-456b-aed2-27254febf873
 :END:
@@ -646,27 +696,27 @@ paths to the load-path. This is so that package installation isn't done after
 VOID is compiled.
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'void-straight
- :where '(before :straight)
- :alias (list :ensure)
- :form
- '`(,@(when (and leaf--value (car-safe leaf--value))
-        `((straight:install-package ',(car leaf--value))))
-    ,@leaf--body))
+(leaf:set-alias :straight :void-straight)
+(leaf:set-alias :ensure :void-straight)
 
-(push `((or (memq leaf--key '(:void-straight))
-            (eq (alist-get leaf--key leaf-alias-keyword-alist) :void:straight))
-        (cond ((eq t (car leaf--value))
-               (list leaf--name))
-              ((eq nil (car leaf--value))
-               nil)
-              ((listp (car-safe leaf--value))
-               (list (cons leaf--name (car leaf--value))))))
-      leaf-normalize)
+(leaf:set-normalizer :void-straight #'leaf:void-straight-normalizer)
+
+(leaf:define-keyword! void-straight (before :straight)
+  (progn (message "Calling straight...")
+         `(,@(when (and leaf--value (car-safe leaf--value))
+               `((straight:install-package ',(car leaf--value))))
+           ,@leaf--body)))
+
+(defun leaf:void-straight-normalizer (leaf--value)
+  (cond ((eq t (car leaf--value))
+         (list leaf--name))
+        ((eq nil (car leaf--value))
+         nil)
+        ((listp (car-safe leaf--value))
+         (list (cons leaf--name (car leaf--value))))))
 #+end_src
 
-**** popup
+***** popup
 :PROPERTIES:
 :ID:       30845314-ac19-49bb-9065-591c13e55489
 :END:
@@ -675,26 +725,22 @@ The point of this keyword is to let me configure the display of buffers for
 specific packages.
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'popup
- :where '(before :mode)
- :form '`(,@(mapcar (lambda (it) `(push ',it display-buffer-alist)) leaf--value)
-          ,@leaf--body))
+(leaf:define-keyword! popup (before :mode)
+  `(,@(--map `(push ',it display-buffer-alist) leaf--value)
+    ,@leaf--body))
 #+end_src
 
-**** os
+***** os
 :PROPERTIES:
 :ID:       3335e409-b963-4504-b9fb-2faf4fb0be3d
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword
- :name 'os
- :where '(before :when)
- :form '(when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
+(leaf:define-keyword! os (before :when)
+  (when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
 #+end_src
 
-**** straight
+***** straight
 :PROPERTIES:
 :ID:       9dff9894-667c-4e74-9624-8aee533f8f70
 :END:
@@ -708,6 +754,17 @@ specific packages.
   (straight-check-for-modifications . nil)
   (straight-enable-package-integration . nil)
   (straight-recipes-emacsmirror-use-mirror . t))
+#+end_src
+
+***** alias                                                           :disabled:
+:PROPERTIES:
+:ID:       9ce3a0f5-6b44-4c60-9599-b3b77199fa99
+:END:
+
+#+begin_src emacs-lisp
+(leaf:define-keyword! alias (after :init)
+  (-let [(alias . definition) leaf--value]
+    `(defalias ',alias ',definition)))
 #+end_src
 
 **** package.el
@@ -747,6 +804,15 @@ as a dependency, I'd end up rewriting many of its functions.
 
 #+begin_src emacs-lisp
 (use-package! dash :require t)
+#+end_src
+
+*** dash-functional
+:PROPERTIES:
+:ID:       4be107b5-b756-4372-9f74-655bda941b75
+:END:
+
+#+begin_src emacs-lisp
+(use-package! dash-functional :require t)
 #+end_src
 
 *** helpers                                                                :eac:
@@ -827,35 +893,6 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 (defun void:anaphoric-symbols-in-obj (obj)
   "Return a list of anaphoric symbols in OBJ."
   (s-match-strings-all VOID:ANAPHORIC-SYMBOL-REGEXP (void:to-string obj)))
-#+end_src
-
-**** pcase pattern
-:PROPERTIES:
-:ID:       a26885f3-3dae-40a7-bec0-319b330dab87
-:END:
-
-[[][]] is a very flexible macro. Instead of re-inveinting destructuring using
-dash. The only annoyance is that the syntax while flexible and powerful is also
-unpleasant-looking and cumbersome. I'd like to use the syntax that I want, have
-that converted to pcase-friendly syntax, and finally pass that in to pcase
-destructuring macros.
-
-#+begin_src emacs-lisp
-(defun void:pcase-pattern (form)
-  "Return pcase pattern for form."
-  (cl-labels ((void::pcase-pattern (form)
-                                   (cond ((equal nil form) form)
-                                         ((listp form)
-                                          (cons (void::pcase-pattern (car form))
-                                                (void::pcase-pattern (cdr form))))
-                                         ((vectorp form)
-                                          (seq-into (cons (void::pcase-pattern (seq-first form))
-                                                          (void::pcase-pattern (seq-into (seq-rest form) 'list)))
-                                                    'vector))
-                                         ((and (symbolp form) (not (equal '_ form)))
-                                          (list '\, form))
-                                         (t form))))
-    (list '\` (void::pcase-pattern form))))
 #+end_src
 
 **** wrap-form
@@ -952,6 +989,22 @@ type without any manual hassle.
     (dolist (a args) (princ a))))
 #+end_src
 
+**** unquote                                                          :disabled:
+:PROPERTIES:
+:ID:       e02675e1-e66d-4250-b84a-0078d6556444
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+**** unfunctionquote                                                  :disabled:
+:PROPERTIES:
+:ID:       de215757-dd53-4115-87fb-b8649d717388
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 *** macros
 :PROPERTIES:
 :ID:       f27aa611-a2bd-4b76-85ce-72feb1e9f19f
@@ -1032,35 +1085,8 @@ Destructuring.
 Macro to replace Dash's =-let=.
 
 #+begin_src emacs-lisp
-(defmacro let! (bindings &rest body)
-  "Wrapper around `pcase-let` with friendlier pattern matching."
-  (declare (indent defun))
-  (let ((var-to-new (mapcar (lambda (var) (cons var (make-symbol (symbol-name var))))
-                            (-uniq (flatten-list (mapcar #'car bindings))))))
-    `(let!! ,(append
-              (-map (lambda (it) (cons (cl-sublis var-to-new (car it))
-                                       (cdr it)))
-                    bindings)
-              (-map (lambda (it) (list (car it) (cdr it)))
-                    var-to-new))
-       ,@body)))
-#+end_src
-
-***** let!!
-:PROPERTIES:
-:ID:       742e5a6c-8e5b-4ea0-a3d1-9dfd352d0b3e
-:END:
-
-#+begin_src emacs-lisp
-(defmacro let!! (bindings &rest body)
-  "Wrapper around `pcase-let*` with friendlier pattern matching."
-  (declare (indent defun))
-  `(pcase-let*
-       ,(-map (lambda (binding)
-                (list (void:pcase-pattern (car binding))
-                      (cadr binding)))
-              bindings)
-     ,@body))
+(defalias 'let! '-let)
+(defalias 'let!! '-let*)
 #+end_src
 
 ***** if-let!!
@@ -1433,6 +1459,20 @@ from pulling (or failing to pull) in autoloaded macros/features.
   (declare (indent defun))
   `(cl-block nil
      (while ,test ,@body)))
+#+end_src
+
+**** pop!
+:PROPERTIES:
+:ID:       108456c5-ed0b-4679-84d7-f766adc79b2b
+:END:
+
+#+begin_src emacs-lisp
+(defmacro pop! (place &optional n)
+  "Same as `pop' but pops N."
+  (setq n (or n 1))
+  `(--unfold (when (> it 0)
+               (cons (pop ,place) (- it 1)))
+             ,n))
 #+end_src
 
 **** list mutation
