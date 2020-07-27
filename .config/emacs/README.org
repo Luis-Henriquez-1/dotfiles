@@ -253,7 +253,7 @@ Emacs/the OS decide what encoding to use.
   (set-charset-priority 'unicode))
 #+end_src
 
-** Package Manager Bootstrap                                               :ewc:
+** Package Manager Bootstrap
 :PROPERTIES:
 :ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
 :END:
@@ -645,17 +645,6 @@ Bare symbols in BINDINGS are equivalent to:
 
 Destructuring.
 
-***** let!
-:PROPERTIES:
-:ID:       c53ec463-30ba-4ca6-95a2-79f6fee68539
-:END:
-
-Macro to replace Dash's =-let=.
-
-#+begin_src emacs-lisp
-
-#+end_src
-
 ***** dolist!
 :PROPERTIES:
 :ID:       4f92497f-bc72-49d0-874d-c0876dbc86f8
@@ -973,33 +962,6 @@ from pulling (or failing to pull) in autoloaded macros/features.
           (error
            (message "Error: %S" error)
            (message "BODY: %S" ',body))))))
-#+end_src
-
-**** while!
-:PROPERTIES:
-:ID:       e4fc8ee2-90ff-49c7-b586-4fc2da6ea1bf
-:END:
-
-#+begin_src emacs-lisp
-(defmacro while! (test &rest body)
-  "Same as while but return collected values in a list."
-  (declare (indent defun))
-  `(cl-block nil
-     (while ,test ,@body)))
-#+end_src
-
-**** pop!
-:PROPERTIES:
-:ID:       108456c5-ed0b-4679-84d7-f766adc79b2b
-:END:
-
-#+begin_src emacs-lisp
-(defmacro pop! (place &optional n)
-  "Same as `pop' but pops N."
-  (setq n (or n 1))
-  `(--unfold (when (> it 0)
-               (cons (pop ,place) (- it 1)))
-             ,n))
 #+end_src
 
 **** list mutation
