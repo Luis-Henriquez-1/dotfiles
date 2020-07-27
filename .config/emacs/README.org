@@ -445,7 +445,7 @@ WHERE can be the symbol `before' or `after'."
 
 #+begin_src emacs-lisp
 (defun leaf:make-defer (keyword)
-  "Add KEYWORDS to `leaf-defer-keywords'."
+  "Add KEYWORD to `leaf-defer-keywords'."
   (add-to-list 'leaf-defer-keywords keyword))
 #+end_src
 
@@ -456,7 +456,7 @@ WHERE can be the symbol `before' or `after'."
 
 #+begin_src emacs-lisp
 (defun leaf:set-alias (alias name)
-  "Add KEYNAMES to `leaf-alias-keywords'."
+  "Set ALIAS to NAME."
   (push (cons alias name) leaf-alias-keyword-alist))
 #+end_src
 
