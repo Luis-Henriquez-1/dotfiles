@@ -253,7 +253,7 @@ Emacs/the OS decide what encoding to use.
   (set-charset-priority 'unicode))
 #+end_src
 
-** Package Management
+** Package Manager Bootstrap
 :PROPERTIES:
 :ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
 :END:
