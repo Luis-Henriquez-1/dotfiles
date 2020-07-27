@@ -4263,13 +4263,13 @@ worth quoting here:
   (or
    (when-let! ((mode type backends) (assoc major-mode company:backend-alist))
      (when (eq type :only) backends))
-   (mapcan (lambda! ((mode type backends))
-             (when (or (and (eq type :derived) (derived-mode-p mode))
-                       (and (eq type :exact)
-                            (or (eq major-mode mode)
-                                (and (boundp mode) (symbol-value mode)))))
-               backends))
-           company:backend-alist)))
+   (-mapcat (-lambda ((mode type backends))
+              (when (or (and (eq type :derived) (derived-mode-p mode))
+                        (and (eq type :exact)
+                             (or (eq major-mode mode)
+                                 (and (boundp mode) (symbol-value mode)))))
+                backends))
+            company:backend-alist)))
 #+end_src
 
 **** local hook
@@ -5401,8 +5401,8 @@ travel to anywhere I need within a heading from the headline itself.
       (org-element-property :begin))
     (org:edit-desc-bounds it elements))
    ;; Skip property drawers.
-   ((seq-find (fn! (eq 'property-drawer (org-element-type <element>)))
-              (reverse elements))
+   ((-first (fn! (eq 'property-drawer (org-element-type <element>)))
+            (reverse elements))
     (alet (org-element-property :end it) (cons it it)))
    ;; There's no paragraphs or property drawers.
    ((save-excursion (goto-char (org-element-property :begin (cl-first elements)))
