@@ -663,12 +663,12 @@ Bare symbols in BINDINGS are equivalent to:
          (names-and-forms (-map bind-fn bindings))
          (names (-map #'car names-and-forms))
          (forms (-map #'cdr names-and-forms))
-         (symbols (-map (lambda (name) (make-symbol (symbol-name name))) names)))
+         (symbols (--map (make-symbol (symbol-name it)) names)))
     `(with-symbols! ,symbols
        (list 'let
-             (-zip #'list (list ,@symbols) (list ,@forms))
+             (-zip-with #'list (list ,@symbols) (list ,@forms))
              ,(cl-list* 'let
-                        (-zip #'list names symbols)
+                        (-zip-with #'list names symbols)
                         body)))))
 #+end_src
 
