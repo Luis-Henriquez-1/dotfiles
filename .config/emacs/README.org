@@ -1648,6 +1648,15 @@ specific packages.
 :ID: 40367976-12a0-4ccd-9aff-4df144a73edf
 :END:
 
+**** subr-x                                                                :ewc:
+:PROPERTIES:
+:ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! subr-x :require t)
+#+end_src
+
 **** startup
 :PROPERTIES:
 :ID: 9725b7e0-54b8-4ab4-aa00-d950345d0aea
