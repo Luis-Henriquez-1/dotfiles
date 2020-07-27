@@ -804,7 +804,14 @@ as a dependency, I'd end up rewriting many of its functions.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! dash :require t)
+(use-package! dash
+  :require t
+  :alias
+  (let!      . -let)
+  (let!!     . -let*)
+  (if-let!   . -if-let)
+  (if-let!!  . -if-let*)
+  (when-let! . -when-let))
 #+end_src
 
 *** dash-functional
@@ -1086,11 +1093,7 @@ Destructuring.
 Macro to replace Dash's =-let=.
 
 #+begin_src emacs-lisp
-(defalias 'let! '-let)
-(defalias 'let!! '-let*)
-(defalias 'if-let! '-if-let)
-(defalias 'if-let!! '-if-let*)
-(defalias 'when-let! '-when-let)
+
 #+end_src
 
 ***** dolist!
