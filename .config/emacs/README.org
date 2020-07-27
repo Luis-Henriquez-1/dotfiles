@@ -755,15 +755,17 @@ specific packages.
   (straight-recipes-emacsmirror-use-mirror . t))
 #+end_src
 
-***** alias                                                           :disabled:
+***** alias
 :PROPERTIES:
 :ID:       9ce3a0f5-6b44-4c60-9599-b3b77199fa99
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword! alias (after :init)
-  (-let [(alias . definition) leaf--value]
-    `(defalias ',alias ',definition)))
+(leaf:set-normalizer :alias #'leaf:normalize-setq)
+
+(leaf:define-keyword! alias (before :init)
+  `(,@(-map (-lambda ((alias . def)) `(defalias ',alias ',def))
+            leaf--value)))
 #+end_src
 
 **** package.el
