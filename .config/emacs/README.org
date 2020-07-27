@@ -395,14 +395,8 @@ packages.
 :ID: 3e9e5e7a-9f9b-4e92-b569-b5e8ba93820f
 :END:
 
-*** subr-x                                                                 :ewc:
-:PROPERTIES:
-:ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! subr-x :require t)
-#+end_src
+This headline contains all the the helper functions and macros I defined for
+customizing emacs.
 
 *** helpers                                                                :eac:
 :PROPERTIES:
@@ -511,9 +505,8 @@ WRAPPERS are a list of forms to wrap around FORM."
 :ID: 2cdf8ab1-4e59-4128-a8a4-e5519ca0f4bf
 :END:
 
-Here I have convenience functions for primarily used for writing macros. They
-help me convert a combinations of strings and symbols or numbers into another
-type without any manual hassle.
+Conversion between symbols, keywords, and strings are prevalent in
+macro-writing.
 
 ***** symbol intern
 :PROPERTIES:
