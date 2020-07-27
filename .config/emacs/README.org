@@ -3543,12 +3543,12 @@ through on our own. It's not much different in Emacs. We're constantly sifting
 though files, buffers, commands, words--all to try to get through to the subset
 of things that we actually want at this moment.
 
-** snippets                                                           :disabled:
+** snippets
 :PROPERTIES:
 :ID:       02dd54d0-f545-447e-89cf-c0cfcd941c76
 :END:
 
-*** defsnippet                                                        :disabled:
+*** defsnippet
 :PROPERTIES:
 :ID:       bfaa2631-a300-4f38-b31d-ec7457b18491
 :END:
