@@ -240,7 +240,7 @@ Accept the same arguments as `message'."
   "Default text encoding.")
 #+end_src
 
-*** UTF-8 for everything
+*** UTF-8
 :PROPERTIES:
 :ID: dd0fc702-67a7-404c-849e-22804663308d
 :END:
