@@ -591,6 +591,21 @@ macro-writing.
 #+begin_src emacs-lisp
 #+end_src
 
+**** factorial
+:PROPERTIES:
+:ID:       01a0195a-d518-4e22-8708-e682b6f462ba
+:END:
+
+#+begin_src emacs-lisp
+(defun ! (n)
+  "Return the factorial of N."
+  (let ((factorial 1))
+    (while (> n 0)
+      (setq factorial (* factorial n))
+      (setq n (- n 1)))
+    factorial))
+#+end_src
+
 *** macros
 :PROPERTIES:
 :ID:       f27aa611-a2bd-4b76-85ce-72feb1e9f19f
