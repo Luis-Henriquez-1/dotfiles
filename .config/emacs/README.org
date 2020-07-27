@@ -1005,17 +1005,17 @@ SYM is a symbol that stores a list."
   `(setq ,sym (nconc ,sym ,@lists)))
 #+end_src
 
-*** keybinding                                                        :disabled:
+** keybinding                                                         :disabled:
 :PROPERTIES:
 :ID:       e8f85c93-2699-4ec9-baf4-ac2b109ca030
 :END:
 
-**** leaders
+*** leaders
 :PROPERTIES:
 :ID:       c0bffef4-1d78-4cdf-825d-fc628c79ea77
 :END:
 
-***** leaders
+**** leaders
 :PROPERTIES:
 :ID:       9e4eceb6-bdc8-496e-abe5-aaf2f5ab9d2c
 :END:
@@ -1028,7 +1028,7 @@ SYM is a symbol that stores a list."
   "The leader prefix key used for Insert and Emacs states.")
 #+end_src
 
-***** leader map
+**** leader map
 :PROPERTIES:
 :ID:       2aec7943-ecca-4db4-bc27-1ac565681419
 :END:
@@ -1047,7 +1047,7 @@ SYM is a symbol that stores a list."
                     'void/leader))
 #+end_src
 
-***** leader alt map
+**** leader alt map
 :PROPERTIES:
 :ID:       da4c7933-e479-42e6-8f95-d65a4bcddfe5
 :END:
@@ -1065,7 +1065,7 @@ SYM is a symbol that stores a list."
                     'void/leader-alt))
 #+end_src
 
-***** localleader
+**** localleader
 :PROPERTIES:
 :ID:       1343a6ed-6590-47b3-b423-bb49338fbaaa
 :END:
@@ -1084,12 +1084,12 @@ SYM is a symbol that stores a list."
   "An shorter alternative for `void-localleader-alt-key'.")
 #+end_src
 
-**** evil states
+*** evil states
 :PROPERTIES:
 :ID:       4276f7d5-05a4-4895-9b2e-52d2fa37b54f
 :END:
 
-***** list of evil states
+**** list of evil states
 :PROPERTIES:
 :ID:       df03cf22-5fc8-4145-8aca-0f2708190257
 :END:
@@ -1107,7 +1107,7 @@ SYM is a symbol that stores a list."
   "A list of cons cells that map a letter to a evil state symbol.")
 #+end_src
 
-***** evil keyword to states
+**** evil keyword to states
 :PROPERTIES:
 :ID:       2f3546d4-2f15-46ef-bbf2-ec5ba4802115
 :END:
@@ -1124,7 +1124,7 @@ SYM is a symbol that stores a list."
        (mapcar (-rpartial #'-al-get void-evil-state-alist) it)))
 #+end_src
 
-***** evil keyword-p
+**** evil keyword-p
 :PROPERTIES:
 :ID:       70cc9979-cb88-4960-9509-c1fc3b2256ec
 :END:
@@ -1135,12 +1135,12 @@ SYM is a symbol that stores a list."
   (member))
 #+end_src
 
-**** define-key macro
+*** define-key macro
 :PROPERTIES:
 :ID:       df3c6d92-9b6c-40c0-b9ce-aa8d71e40224
 :END:
 
-***** list of binding data
+**** list of binding data
 :PROPERTIES:
 :ID:       6442b9d1-4b74-4925-a5c6-925a191a81f4
 :END:
@@ -1155,7 +1155,7 @@ The basis of the binding is a list ~(states map key def)~.
           (-table-flat #'list maps (-partition 2 bindings))))
 #+end_src
 
-***** apply prefix
+**** apply prefix
 :PROPERTIES:
 :ID:       75bac321-56e9-45c0-ac22-a27f39664462
 :END:
@@ -1168,7 +1168,7 @@ The basis of the binding is a list ~(states map key def)~.
   (setf (cadr binding) 3))
 #+end_src
 
-***** apply kbd
+**** apply kbd
 :PROPERTIES:
 :ID:       a2ba300a-458c-433a-9e16-f0b1509d69a8
 :END:
@@ -1176,7 +1176,7 @@ The basis of the binding is a list ~(states map key def)~.
 #+begin_src emacs-lisp
 #+end_src
 
-***** produce binding
+**** produce binding
 :PROPERTIES:
 :ID:       04f66c21-1c53-4884-90f7-599cbae0989c
 :END:
@@ -1190,7 +1190,7 @@ The basis of the binding is a list ~(states map key def)~.
            `(define-key ,map ,key ,def)))))
 #+end_src
 
-***** generate lazy loaded bindings
+**** generate lazy loaded bindings
 :PROPERTIES:
 :ID:       d8fe6c10-7920-442a-b983-20bfb8ea9da9
 :END:
@@ -1203,7 +1203,7 @@ The basis of the binding is a list ~(states map key def)~.
           (-group-by #'-second-item bindings)))
 #+end_src
 
-***** generate autoload
+**** generate autoload
 :PROPERTIES:
 :ID:       4c6eb7e1-d842-46bf-b480-d5622dfd9226
 :END:
@@ -1214,7 +1214,7 @@ The basis of the binding is a list ~(states map key def)~.
   `(autoload function "filename" "" t 'function))
 #+end_src
 
-***** process arguments
+**** process arguments
 :PROPERTIES:
 :ID:       c48bc608-ceca-465d-bef1-aede14fe216e
 :END:
@@ -1234,7 +1234,7 @@ The basis of the binding is a list ~(states map key def)~.
   )
 #+end_src
 
-***** macro
+**** macro
 :PROPERTIES:
 :ID:       32fba3bf-8f3b-4b9e-997d-15b92ff28c5a
 :END:
