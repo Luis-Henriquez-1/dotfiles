@@ -253,10 +253,14 @@ Emacs/the OS decide what encoding to use.
   (set-charset-priority 'unicode))
 #+end_src
 
-** Package Manager Bootstrap
+** Package Manager Bootstrap                                               :ewc:
 :PROPERTIES:
 :ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
 :END:
+
+Here I initialize the package managers I could use, choose one based on either
+preference or the availability of git, and then install only the essential
+external packages.
 
 *** straight.el
 :PROPERTIES:
@@ -498,20 +502,6 @@ WRAPPERS are a list of forms to wrap around FORM."
                       (append (car wrappers)
                               (list form)))
     form))
-#+end_src
-
-**** void real listp
-:PROPERTIES:
-:ID:       5cb6286d-2d4b-48d4-842a-9f9d0cc35eee
-:END:
-
-I'd also like to know when a list is actually a list I can loop through.
-
-#+begin_src emacs-lisp
-(defun void:real-list-p (obj)
-  "Return non-nil if obj is a list."
-  (declare (pure t) (side-effect-free t))
-  (and (listp obj) (not (-cons-pair-p obj))))
 #+end_src
 
 **** symbols
