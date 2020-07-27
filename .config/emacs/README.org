@@ -708,24 +708,6 @@ Destructuring.
          (let! ,() ,@body)))))
 #+end_src
 
-***** lambda!
-:PROPERTIES:
-:ID:       9acda4bb-e1c4-42d1-a6f6-9cdad5d1b15e
-:END:
-
-#+begin_src emacs-lisp
-(defmacro lambda! (spec &rest body)
-  "Only accepts one argument. Made to be used with mapcar."
-  (declare (indent defun))
-  (with-symbols! (args)
-    (when (= (length spec) 1)
-      (setq spec (car spec)))
-    `(lambda (,args)
-       (cl-block nil
-         (let! ((,spec ,args))
-           ,@body)))))
-#+end_src
-
 **** anaphoric macros
 :PROPERTIES:
 :ID:       001dde5a-bb43-4ce8-82ef-806e37ba7f6e
@@ -1166,7 +1148,7 @@ The basis of the binding is a list ~(states map key def)~.
 #+begin_src emacs-lisp
 (defun kbd::list-data (states maps bindings)
   "Return a list whose elements are (states map key bind)."
-  (mapcar (lambda! ((map (key def)))
+  (mapcar (-lambda ((map (key def)))
             (list states map key def))
           (-table-flat #'list maps (-partition 2 bindings))))
 #+end_src
@@ -1199,11 +1181,10 @@ The basis of the binding is a list ~(states map key def)~.
 
 #+begin_src emacs-lisp
 (defun kbd::data-to-binding (datum)
-  (pcase-let ((`(,states ,map ,key ,def) datum))
-    (cond (states
-           `(evil-define-key ',states ,map ,key ,def))
-          (t
-           `(define-key ,map ,key ,def)))))
+  (-let [(states map key def) datum]
+    (if states
+        `(evil-define-key ',states ,map ,key ,def)
+      `(define-key ,map ,key ,def))))
 #+end_src
 
 **** generate lazy loaded bindings
@@ -1214,7 +1195,7 @@ The basis of the binding is a list ~(states map key def)~.
 #+begin_src emacs-lisp
 (defun kbd::gen-lazy-loaded ()
   "Return lazy loaded binding forms."
-  (mapcar (lambda! ((keymap bindings))
+  (mapcar (-lambda ((keymap bindings))
             `(after! mode ,@(-map #'produce bindings)))
           (-group-by #'-second-item bindings)))
 #+end_src
