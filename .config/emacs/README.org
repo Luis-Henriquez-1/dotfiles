@@ -1626,7 +1626,7 @@ The basis of the binding is a list ~(states map key def)~.
   "Return a list whose elements are (states map key bind)."
   (mapcar (lambda! ((map (key def)))
             (list states map key def))
-          (-table-flat #'list maps (seq-partition bindings 2))))
+          (-table-flat #'list maps (-partition 2 bindings))))
 #+end_src
 
 ***** apply prefix
@@ -1674,7 +1674,7 @@ The basis of the binding is a list ~(states map key def)~.
   "Return lazy loaded binding forms."
   (mapcar (lambda! ((keymap bindings))
             `(after! mode ,@(-map #'produce bindings)))
-          (seq-group-by #'cl-second bindings)))
+          (-group-by #'-second-item bindings)))
 #+end_src
 
 ***** generate autoload
@@ -2058,19 +2058,6 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! mule-cmds
   :init (prefer-coding-system VOID:DEFAULT-CODING-SYSTEM))
-#+end_src
-
-*** seq
-:PROPERTIES:
-:ID:       7b5752cf-be64-452b-95e7-35cc83bb5e0b
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! seq
-  :require t
-  ;; :alias (seq-some-p . seq-some)
-  ;; Don't know why seq-some doesn't end with a '-p'. It is a predicate function.
-  :init (defalias 'seq-some-p 'seq-some))
 #+end_src
 
 *** gv
@@ -3629,13 +3616,13 @@ This is the user-facing function to define yasnippets.
   "Define a snippet."
   (let* ((keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
     (with-plist! plist
-      (cl-assert (seq-every-p (fn! (not (null <it>)))
-                              (list <:name> <:mode> <:body>)))
+      (cl-assert (-all-p (fn! (not (null <it>)))
+                         (list <:name> <:mode> <:body>)))
       (alet! (append
               (list "# -*- mode: snippet -*-\n")
               (mapcar (lambda (key)
                         (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
-                      (seq-filter (lambda (it) (plist-get plist it)) keys))
+                      (--filter (plist-get plist it) keys))
               (list "# --\n")
               (list (defsnippet:compute-body <:body> <:placeholders>)))
         (with-temp-buffer
@@ -4010,7 +3997,7 @@ does have isn't good enough.
            (keys (mapcar #'cdr alist)))
       (-remove (-lambda ((elt &as _ . key))
                  (-all-p (lambda (it) (not (string-prefix-p key it)))
-                         (seq-remove key keys)))
+                         (-remove key keys)))
                alist)))
   (setq helm:org-capture-source
         (helm-build-sync-source "helm/org-capture"
@@ -4415,6 +4402,7 @@ existing completing-read-using commands.
   (append! selectrum-minibuffer-bindings
     '(([tab]     . selectrum-next-candidate)
       ([backtab] . selectrum-previous-candidate)
+      ("RET" . selectrum-select-current-candidate)
       ("C-SPC"   . selectrum-insert-current-candidate)
       ("C-j"     . selectrum-next-candidate)
       ("C-k"     . selectrum-previous-candidate))))
@@ -4482,17 +4470,16 @@ a file.
   (interactive)
   (require 'recentf)
   (let* ((selectrum-should-sort-p nil)
-         (live-buffers (seq-remove (lambda (it) (string-match-p (rx bol white) it))
-                                   (mapcar #'buffer-name (buffer-list))))
-         (recentf-buffers (mapcar (lambda (it) (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it))
-                                   recentf-list)))
+         (live-buffers (--remove (string-match-p (rx bol white) it)
+                                 (mapcar #'buffer-name (buffer-list))))
+         (recentf-buffers (--map (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it)
+                                 recentf-list)))
     (alet (completing-read "File: " (append live-buffers recentf-buffers))
       (setq it (or (alist-get it recentf-buffers nil nil #'string=) it))
-      ;; (message "name %s|buffer: %s" it (get-buffer it))
       (switch-to-buffer (or (get-buffer it) (find-file-noselect it))))))
 #+end_src
 
-**** tag headlines
+***** tag headlines
 :PROPERTIES:
 :ID:       ae87e87d-3e58-4d8c-b495-0d61770d8d74
 :END:
@@ -4508,30 +4495,6 @@ a file.
     (org-set-tags
      (append (--remove (member it current-tags) selected-tags)
              (--remove (member it selected-tags) current-tags)))))
-#+end_src
-
-**** TODO qutebrowser links                                           :disabled:
-:PROPERTIES:
-:ID:       e304a673-08fd-466f-bcb0-6b3f57acc60d
-:END:
-
-#+begin_src emacs-lisp
-(defun void/browser-links ()
-  "For now use completing read to see qutebrowser links. TODO: do something with the choosen link(s)."
-  (interactive)
-  (let ((links nil)
-        (selectrum-should-sort-p nil)
-        (qutebrowser-history-path "~/.local/share/qutebrowser/history.sqlite")
-        (regexp "https:\\(?:[[:alpha:]]\\|[[:digit:]]\\|[[:punct:]]\\|[[:space:]]\\)+"))
-    (with-current-buffer (find-file-noselect qutebrowser-history-path)
-      (revert-buffer)
-      (goto-char (point-min))
-      (while (re-search-forward regexp nil t nil)
-        (push (match-string 0) links))
-      (setq links (reverse links))
-      ;; If the link is too long shorten it.
-      (setq links (mapcar (lambda (it) (cons (s-truncate 110 it) it)) links))
-      (completing-read "link: " links))))
 #+end_src
 
 ** abbrev                                                      :abbrev:disabled:
@@ -4617,7 +4580,7 @@ first letter of each word.
 (defun abbrev:abbreviate-words (words)
   "Abbreviate WORDS.
 WORDS is a string of non whitespace and whitespace."
-  (thread-last (s-split "\s" words t)
+  (->> (s-split "\s" words t)
     (mapcar (lambda (it) (char-to-string (aref it 0))))
     (mapcar #'downcase)
     (apply #'concat)))
@@ -4634,16 +4597,16 @@ Abbreviating a single word is harder.
 (defun abbrev:abbreviate-word (word)
   "Abbreviate WORD.
 WORD is a string with no whitespace characters."
-  (let!* ((vowel-regexp (rx (or "a" "e" "i" "o" "u" "y")))
-          (letters (thread-first word
-                     (s-chop-suffixes abbrev:suffixes it)
-                     (s-split "" it t)))
-          (no-vowels (seq-remove (fn! (string-match-p vowel-regexp <string>))
-                                 letters)))
-         (thread-last no-vowels
-           (seq-uniq)
-           (mapcar #'downcase)
-           (apply #'concat))))
+  (let!! ((vowel-regexp (rx (or "a" "e" "i" "o" "u" "y")))
+          (letters (-> word
+                       (s-chop-suffixes abbrev:suffixes it)
+                       (s-split "" it t)))
+          (no-vowels (-remove (fn! (string-match-p vowel-regexp <string>))
+                              letters)))
+    (->> no-vowels
+         (-uniq)
+         (-map #'downcase)
+         (apply #'concat))))
 #+end_src
 
 **** general abbreviate function
@@ -5001,8 +4964,8 @@ therefore, has the most support (in the form of setup blogs and packages).
   (interactive)
   (require 'password-store)
   (let ((email-dirs (mapcar (fn! (concat VOID:EMAIL-DIR <email>)) (pass:email-list))))
-    (when (or (not (seq-every-p #'f-exists-p email-dirs))
-              (seq-some-p #'f-empty-p email-dirs))
+    (when (or (not (-all-p #'f-exists-p email-dirs))
+              (-some-p #'f-empty-p email-dirs))
       (message "creating directories that don't exist.")
       (dolist (dir email-dirs) (mkdir dir t))
       (shell-command (format "mu init -m %s" VOID:EMAIL-DIR))
@@ -5077,9 +5040,9 @@ reason I spent so much time setting this up is because.
 #+begin_src emacs-lisp
 (defun pass:email-list ()
   "Return a list of emails."
-  (thread-last (password-store-list)
-    (mapcar (fn! (elt (s-match "email/\\(.*\\)" <entry>) 1)))
-    (seq-every-p (fn! (not (null <it>))))))
+  (->> (password-store-list)
+       (mapcar (fn! (elt (s-match "email/\\(.*\\)" <entry>) 1)))
+       (-all-p (fn! (not (null <it>))))))
 #+end_src
 
 **** return the stuff as a plist
@@ -5110,9 +5073,9 @@ Items=.
 (defun mu4e:guess-folder (base-dir possible-name &rest other-possible-names)
   "Return the first file in BASE-DIR that matches POSSIBLE-NAME or any POSSIBLE-NAMES.
 If there is no match, return POSSIBLE-NAME."
-  (alet! (or (seq-find (lambda (it) (seq-some-p (fn! (s-contains-p <name> it t))
-                                                (cons possible-name other-possible-names)))
-                       (cddr (directory-files base-dir)))
+  (alet! (or (-first (lambda (it) (-some-p (fn! (s-contains-p <name> it t))
+                                           (cons possible-name other-possible-names)))
+                     (cddr (directory-files base-dir)))
              possible-name)
     (format "/%s/%s" (f-filename base-dir) <folder>)))
 #+end_src
@@ -5150,8 +5113,8 @@ If there is no match, return POSSIBLE-NAME."
   "Initiaize context for each email account."
   :before mu4e
   (require 'password-store)
-  (seq-each (fn! (cl-pushnew <context> mu4e-contexts))
-            (mapcar #'mu4e::account-context (pass:email-list))))
+  (-each (mapcar #'mu4e::account-context (pass:email-list))
+    (fn! (cl-pushnew <context> mu4e-contexts))))
 #+end_src
 
 *** shortcuts
@@ -5943,11 +5906,11 @@ the time.
 (defun org:edit-desc-bounds (point elements)
   "Return the bounds of the description at point.
 ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
-  (awhen! (-find (fn! (seq-some-p (apply-partially #'org:element-contains-point-p point)
-                                  <it>))
-                 (thread-last (cdr elements)
-                   (-group-by #'org:element-paragraph-p)
-                   (-filter (lambda (it) (org:element-paragraph-p (car it))))))
+  (awhen! (-find (fn! (-some-p (apply-partially #'org:element-contains-point-p point)
+                               <it>))
+                 (->> (cdr elements)
+                      (-group-by #'org:element-paragraph-p)
+                      (-filter (lambda (it) (org:element-paragraph-p (car it))))))
     (cons (org-element-property :contents-begin (-first-item <it>))
           (org-element-property :contents-end (-last-item <it>)))))
 #+end_src
@@ -5977,18 +5940,11 @@ travel to anywhere I need within a heading from the headline itself.
 #+begin_src emacs-lisp
 (defun org:dwim-description-bounds (point elements)
   "Return the beginning and end of description bounds."
-  (require 'dash)
-  ;; case 1
-  ;; (seq-find (fn! (and (org:element-paragraph-p <elt>)
-  ;;                     (org:element-contains-point-p (point) <elt>)))
-  ;;           elements)
-  ;; (org:edit-desc-bounds it elements)
-
   (acond
    ;; There's a paragraph among the elements.
    ((-some->> elements
-      (seq-drop-while (-not (-partial #'org:element-contains-point-p (point))))
-      (seq-find #'org:element-paragraph-p)
+      (-drop-while (-not (-partial #'org:element-contains-point-p (point))))
+      (-first #'org:element-paragraph-p)
       (org-element-property :begin))
     (org:edit-desc-bounds it elements))
    ;; Skip property drawers.
@@ -6129,10 +6085,10 @@ block.
   "Edit the source block."
   (interactive)
   (if (or (org-in-src-block-p)
-          (thread-last (org:element-headline-elements)
-            (seq-find (lambda (it) (eq (org-element-type it) 'src-block)))
-            (org-element-property :begin)
-            (goto-char)))
+          (->> (org:element-headline-elements)
+               (--first (eq (org-element-type it) 'src-block))
+               (org-element-property :begin)
+               (goto-char)))
       (org/edit:source-block-at-point)
     (user-error "No source block at point.")))
 #+end_src
@@ -6757,20 +6713,20 @@ practice, this is rarely an issue.
   (evil-define-text-object evil:textobj-inner-form (count &rest _)
     "Inner sexp object."
     (if-let! ((beg . end)
-              (thread-last (list (lispy--bounds-list) (lispy--bounds-string))
-                (-non-nil)
-                (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
-                (car)))
+              (->> (list (lispy--bounds-list) (lispy--bounds-string))
+                   (-non-nil)
+                   (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
+                   (car)))
         (evil-range (1+ beg) (1- end) 'inclusive :expanded t)
       (error "No surrounding form found.")))
 
   (evil-define-text-object evil:textobj-outer-form (count &rest _)
     "Smartparens inner sexp object."
     (if-let! ((beg . end)
-              (thread-last (list (lispy--bounds-list) (lispy--bounds-string))
-                (seq-remove #'null)
-                (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
-                (car)))
+              (->> (list (lispy--bounds-list) (lispy--bounds-string))
+                   (-non-nil)
+                   (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
+                   (car)))
         (evil-range beg end 'inclusive :expanded t)
       (error "No surrounding form found.")))
 
@@ -7249,8 +7205,8 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 
 #+begin_src emacs-lisp
 (after! em-term
-  (seq-each (fn! (add-to-list 'eshell-visual-commands <command>))
-            '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")))
+  (-each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
+    (fn! (add-to-list 'eshell-visual-commands <command>))))
 #+end_src
 
 *** improvements
@@ -7401,10 +7357,10 @@ generate the body of the eshell prompt.
 This function generates the eshell prompt by concatenating `eshell:header' with
 valid `eshell:enabled-sections' and the `eshell-prompt-string'."
   (concat eshell:header
-          (thread-last eshell:enabled-sections
-            (mapcar (lambda (it) (void:symbol-intern 'eshell-prompt-- it)))
-            (seq-filter #'fboundp)
-            (-reduce-from #'eshell:acc ""))
+          (->> eshell:enabled-sections
+               (mapcar (lambda (it) (void:symbol-intern 'eshell-prompt-- it)))
+               (-filter #'fboundp)
+               (-reduce-from #'eshell:acc ""))
           eshell-prompt-string))
 #+end_src
 
@@ -7631,7 +7587,7 @@ have to set out to look for a file with =dired=.
                            "\\.\\(?:gz\\|gif\\|svg\\|png\\|jpe?g\\)$"
                            ;; ignore private Void temp files (but not all of them)
                            #'(lambda (file)
-                               (seq-some-p (apply-partially #'file-in-directory-p file)
+                               (-some-p (apply-partially #'file-in-directory-p file)
                                 (list VOID:DATA-DIR)))))
   (recentf-max-menu-items . 0)
   (recentf-max-saved-items . 700)
@@ -8194,8 +8150,8 @@ that restarts emacs. I haven't tested this in EXWM mode.
   (defhook! auto-revert:visible-buffers-h ()
     "Auto revert stale buffers in visible windows, if necessary."
     :hook (focus-in-hook after-save-hook)
-    (mapc (lambda (it) (with-current-buffer it (auto-revert:buffer-h)))
-          (seq-uniq (mapcar #'window-buffer (window-list))))))
+    (--each (-uniq (mapcar #'window-buffer (window-list)))
+      (with-current-buffer it (auto-revert:buffer-h)))))
 #+end_src
 
 ** security
@@ -8331,10 +8287,10 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
     (let ((wconf (current-window-configuration)))
       (pdf-tools-install)
       (message "Building epdfinfo, this will take a moment...")
-      (seq-each (fn! (with-current-buffer it
-                       (when (eq major-mode 'pdf-view-mode)
-                         (fundamental-mode))))
-                (buffer-list))
+      (--each (buffer-list)
+        (with-current-buffer it
+          (when (eq major-mode 'pdf-view-mode)
+            (fundamental-mode))))
       (while compilation-in-progress
         ;; Block until `pdf-tools-install' is done
         (redisplay)
@@ -8813,8 +8769,8 @@ when headline contents begin.
 #+begin_src emacs-lisp
 (defun org:todo-keywords ()
   "Return list of all TODO keywords."
-  (seq-filter (lambda (it) (and (stringp it) (not (string= "|" it))))
-              (flatten-list org-todo-keywords)))
+  (--filter (and (stringp it) (not (string= "|" it)))
+            (flatten-list org-todo-keywords)))
 #+end_src
 
 ***** heading start
@@ -10200,13 +10156,13 @@ VOID install. For writing this code I referenced the body of
                     "/fonts/"))
          (mac (concat (getenv "HOME") "/Library/Fonts/" ))
          (ns (concat (getenv "HOME") "/Library/Fonts/" )))))
-  (unless (seq-every-p (lambda (it) (file-exists-p (concat font-dir it)))
-                       '("all-the-icons.ttf"
-                         "file-icons.ttf"
-                         "fontawesome.ttf"
-                         "material-design-icons.ttf"
-                         "octicons.ttf"
-                         "weathericons.ttf"))
+  (unless (--all-p (file-exists-p (concat font-dir it))
+                   '("all-the-icons.ttf"
+                     "file-icons.ttf"
+                     "fontawesome.ttf"
+                     "material-design-icons.ttf"
+                     "octicons.ttf"
+                     "weathericons.ttf"))
     (void:log "No icons installed. Installing...")
     (all-the-icons-install-fonts :ignore-prompt)))
 #+end_src
