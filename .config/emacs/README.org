@@ -51,9 +51,11 @@ When VOID is performing computationally intensive operations,
 :ID: eac7cfbb-6576-4506-8118-5bfda151654b
 :END:
 
+Here I boost the gc-cons-threshold for my current emacs session.
+
 #+begin_src emacs-lisp
-(setq gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX
-      gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
+(setq gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
+(setq gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
 #+end_src
 
 **** Restore GC after delay
