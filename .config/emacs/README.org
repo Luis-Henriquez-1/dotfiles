@@ -371,7 +371,7 @@ packages. I could write this macro with just plain Emacs libraries but I prefer
 using nice libraries. In byte compiled Void, they don't need to be installed.
 
 #+begin_src emacs-lisp
-(dolist (package '(leaf-keywords leaf dash))
+(dolist (package '(leaf-keywords leaf dash anaphora))
   (funcall #'straight:install-package package)
   (require package))
 (leaf-keywords-init)
@@ -879,7 +879,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 #+begin_src emacs-lisp
 (defun void:anaphoric-symbols (body)
   "Return all the anaphoric symbols in body."
-  (thread-last (-flatten body)
+  (->> (-flatten body)
     (-filter #'void:anaphoric-symbol-p)
     (-uniq)))
 #+end_src
@@ -1087,46 +1087,9 @@ Macro to replace Dash's =-let=.
 #+begin_src emacs-lisp
 (defalias 'let! '-let)
 (defalias 'let!! '-let*)
-#+end_src
-
-***** if-let!!
-:PROPERTIES:
-:ID:       4f1c72b6-acfb-44b7-ab5f-c24bc6dd17dd
-:END:
-
-#+begin_src emacs-lisp
-(defmacro if-let! (bindings then &rest else)
-  (declare (indent 2))
-  (when (= 2 (length bindings))
-    (setq bindings (list bindings)))
-  `(let! ,bindings
-     (if (and ,@(flatten-list (-map #'car bindings)))
-         ,then
-       ,@else)))
-
-(defmacro if-let!! (bindings then &rest else)
-  (declare (indent 2))
-  (when (= 2 (length bindings))
-    (setq bindings (list bindings)))
-  `(let!! ,bindings
-     (if (and ,@(flatten-list (-map #'car bindings)))
-         ,then
-       ,@else)))
-#+end_src
-
-***** when-let!!
-:PROPERTIES:
-:ID:       90084108-8bbe-492a-80fb-da37accaea29
-:END:
-
-#+begin_src emacs-lisp
-(defmacro when-let!! (bindings &rest body)
-  (declare (indent defun))
-  `(if-let!! ,bindings (progn ,@body)))
-
-(defmacro when-let! (bindings &rest body)
-  (declare (indent defun))
-  `(if-let! ,bindings (progn ,@body)))
+(defalias 'if-let! '-if-let)
+(defalias 'if-let!! '-if-let*)
+(defalias 'when-let! '-when-let)
 #+end_src
 
 ***** dolist!
@@ -1258,7 +1221,7 @@ FN is a function that accepts two arguments, the structure and a symbol name. FN
 should return the value of structure for that symbol.
 BODY contains any number of `<NAME>' where NAME refers to the name of the symbol."
   (declare (indent 2))
-  (let* ((symbols (thread-last (flatten-list body)
+  (let* ((symbols (->> (flatten-list body)
                     (-filter #'void:anaphoric-symbol-p)
                     (-uniq)))
          (names (-map #'void:anaphoric-true-symbol symbols))
@@ -1897,7 +1860,7 @@ think you want to use =smtp=.
 :END:
 
 #+begin_src emacs-lisp
-;; This is where `thread-last' and `thread-first' come from.
+;; This is where `->>' and `thread-first' come from.
 (use-feature! subr-x
   :require t)
 #+end_src
@@ -3512,11 +3475,11 @@ use (like =M-x=) which conflict with Emacs (the instance that's managing the
 windows).
 
 #+begin_src emacs-lisp
- (defhook! exwm:start-in-char-mode-h ()
+(defhook! exwm:start-in-char-mode-h ()
   "Decide whether to start program in char mode."
   :hook exwm-manage-finish-hook
-  (when (seq-some-p (fn! (string-prefix-p <prefix> exwm-instance-name))
-                    (list "emacs"))
+  (when (-any-p (fn! (string-prefix-p <prefix> exwm-instance-name))
+                (list "emacs"))
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
 
@@ -3772,7 +3735,7 @@ For extremely good documentation.
   :mode 'org-mode
   :key "hvar"
   :body "[[helpvar:$1][%s]%s"
-  :placeholders '((1 variable (thread-last (defsnippet:list-symbols #'helpful--variable-p)
+  :placeholders '((1 variable (->> (defsnippet:list-symbols #'helpful--variable-p)
                                (yas-choose-value)
                                (yas-auto-next)))
                   (0 _ (insert "]"))))
@@ -3788,7 +3751,7 @@ For extremely good documentation.
   :mode 'org-mode
   :key "oid"
   :body "[[id:%s][#%s]$0"
-  :placeholders '((1 _ (thread-last (hash-table-keys org-id-locations)
+  :placeholders '((1 _ (->> (hash-table-keys org-id-locations)
                         (yas-choose-value)
                         (yas-auto-next)))
                   (2 _ (substring (yas-field-value 1) 0 5))
@@ -3837,7 +3800,7 @@ be inserted and interactively completed.
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :defer-config
-  (seq-each (fn! (mkdir <dir> t)) yas-snippet-dirs)
+  (-each yas-snippet-dirs (fn! (mkdir <dir> t)))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
@@ -3855,7 +3818,7 @@ be inserted and interactively completed.
 (use-package! yasnippet-snippets
   :after yasnippet
   :init
-  (awhen! (seq-find (fn! (s-contains-p "yasnippet-snippets" <path>)) load-path)
+  (awhen! (-first (fn! (s-contains-p "yasnippet-snippets" <path>)) load-path)
     (push <path> yas-snippet-dirs)))
 #+end_src
 
@@ -4045,10 +4008,10 @@ does have isn't good enough.
                     (org-contextualize-keys it org-capture-templates-contexts)
                     (mapcar (-lambda ((name key)) (cons key name)) it)))
            (keys (mapcar #'cdr alist)))
-      (cl-remove-if (-lambda ((elt &as _ . key))
-                      (seq-every-p (lambda (it) (not (string-prefix-p key it)))
-                                   (seq-remove key keys)))
-                    alist)))
+      (-remove (-lambda ((elt &as _ . key))
+                 (-all-p (lambda (it) (not (string-prefix-p key it)))
+                         (seq-remove key keys)))
+               alist)))
   (setq helm:org-capture-source
         (helm-build-sync-source "helm/org-capture"
                                 :candidates #'helm:org-capture-candidates
