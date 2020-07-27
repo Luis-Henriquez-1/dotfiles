@@ -702,10 +702,9 @@ VOID is compiled.
 (leaf:set-normalizer :void-straight #'leaf:void-straight-normalizer)
 
 (leaf:define-keyword! void-straight (before :straight)
-  (progn (message "Calling straight...")
-         `(,@(when (and leaf--value (car-safe leaf--value))
-               `((straight:install-package ',(car leaf--value))))
-           ,@leaf--body)))
+  `(,@(when (and leaf--value (car-safe leaf--value))
+        `((straight:install-package ',(car leaf--value))))
+    ,@leaf--body))
 
 (defun leaf:void-straight-normalizer (leaf--value)
   (cond ((eq t (car leaf--value))
