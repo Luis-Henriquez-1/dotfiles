@@ -983,7 +983,7 @@ SYM is a symbol that stores a list."
   `(setq ,sym (nconc ,sym ,@lists)))
 #+end_src
 
-** keybinding                                                         :disabled:
+** Keybinding                                                         :disabled:
 :PROPERTIES:
 :ID:       e8f85c93-2699-4ec9-baf4-ac2b109ca030
 :END:
