@@ -361,15 +361,10 @@ This code initializes straight if it's not already installed.
 :ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
 :END:
 
-[[id:04560da8-1e8a-4bcc-bdeb-574d8bfc984d][Later]] I write a macro specifically designed for installing and configuring
-packages. I could write this macro with just plain Emacs libraries but I prefer
-using nice libraries. In byte compiled Void, they don't need to be installed.
-
 #+begin_src emacs-lisp
 (dolist (package '(leaf-keywords leaf dash anaphora))
   (funcall #'straight:install-package package)
   (require package))
-(leaf-keywords-init)
 #+end_src
 
 *** leaf aliases
@@ -1246,6 +1241,16 @@ Like =use-package=, leaf is a macro that fascilitates package configuration.
   :setq
   (leaf-defaults . '(:ensure t))
   (leaf-expand-minimally . t))
+#+end_src
+
+*** leaf-keywords
+:PROPERTIES:
+:ID:       e47cf69e-4ba8-45d8-bb62-fd0c1d785583
+:END:
+
+#+begin_src emacs-lisp
+(use-package! leaf-keywords
+  :init (leaf-keywords-init))
 #+end_src
 
 *** defining leaf keywords
