@@ -3794,24 +3794,27 @@ a file.
   (interactive)
   (let* ((selectrum-should-sort-p nil)
          (gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
-         (line-choices (let ((minimum-line-number (line-number-at-pos (point-min) t))
-                             (buffer-text-lines (split-string (buffer-string) "\n")))
-                         (--map-indexed (format "%d\t%s" it-index it) buffer-text-lines)))
+         (minimum-line-number (line-number-at-pos (point-min) t))
+         (buffer-text-lines (split-string (buffer-string) "\n"))
+         (line-choices (--map-indexed (format "%d\t%s" it-index it) buffer-text-lines))
          ;; Get the matching line.
-         (chosen-line (completing-read "Jump to matching line: " line-choices
-                                       nil t nil 'selectrum:swiper-jump-to-line-history))
+         (chosen-line
+          (completing-read "Jump to matching line: " line-choices
+                           nil t nil 'selectrum:swiper-jump-to-line-history))
          ;; Get the corresponding line number.
-         (chosen-line-number (progn (string-match "\\([[:digit:]]+\\)[[:space:]]\\(?:.\\|\n\\)*" chosen-line)
-                                    (string-to-number (match-string-no-properties 1 chosen-line))))
+         (chosen-line-number
+          (progn (string-match "\\([[:digit:]]+\\)[[:space:]]\\(?:.\\|\n\\)*" chosen-line)
+                 (string-to-number (match-string-no-properties 1 chosen-line))))
          ;; Get the current line number for determining the travel distance.
          (current-line-number (line-number-at-pos (point) t)))
     (push-mark (point) t)
     (forward-line (1+ (- chosen-line-number current-line-number)))
     (beginning-of-line-text 1)
     (when (eq major-mode 'org-mode)
-      (org-adjust-nearby-headlines-a)
+      (org:prettify-nearby-headlines)
       (when (org:heading-folded-p)
-        (outline-toggle-children)))))
+        (outline-toggle-children)
+        (forward-line (1+ (- chosen-line-number (line-number-at-pos (point) t))))))))
 #+end_src
 
 **** recent buffer
@@ -8207,18 +8210,17 @@ akwardly folded. This advice adjusts headings around as well as putting the
 headline in view.
 
 #+begin_src emacs-lisp
-(defadvice! org-adjust-nearby-headlines-a (&rest _)
-  :after org/jump-to-headline
+(defun org:prettify-nearby-headlines ()
+  "Prettify display of nearby headlines."
   (save-excursion
     (while (org-up-heading-safe)
       (outline-show-children)))
   (outline-show-children)
-  ;; From `evil-scroll-line-to-top'.
   (let ((line (line-number-at-pos (point))))
     (goto-char (point-min))
     (forward-line (1- line)))
   (recenter (1- (max 1 scroll-margin)))
-  (org:heading-goto-start))
+  (org-beginning-of-line))
 #+end_src
 
 **** helpers
