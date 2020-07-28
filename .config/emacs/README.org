@@ -7087,14 +7087,14 @@ again, you are taken to the location you left off. This is very convenient.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! savehist
+(use-feature! savehist
   :load-incrementally custom
   :hook emacs-startup-hook
   :setq
   (savehist-save-minibuffer-history . t)
-  (savehist-autosave-interval       . nil)
-  (savehist-additional-variables    . '(kill-ring search-ring regexp-search-ring))
-  (savehist-file                    . (concat VOID:DATA-DIR "savehist")))
+  (savehist-autosave-interval . nil)
+  (savehist-additional-variables . '(kill-ring search-ring regexp-search-ring))
+  (savehist-file . (concat VOID:DATA-DIR "savehist")))
 
 (defhook! void:unpropertize-kill-ring-h ()
   "Remove text properties from `kill-ring'."
