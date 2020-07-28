@@ -3496,7 +3496,7 @@ through on our own. It's not much different in Emacs. We're constantly sifting
 though files, buffers, commands, words--all to try to get through to the subset
 of things that we actually want at this moment.
 
-** snippets
+** snippets                                                           :disabled:
 :PROPERTIES:
 :ID:       02dd54d0-f545-447e-89cf-c0cfcd941c76
 :END:
@@ -3741,10 +3741,6 @@ existing completing-read-using commands.
   (selectrum-show-indices             . nil)
   (selectrum-fix-minibuffer-height    . t)
   (selectrum-num-candidates-displayed . 15)
-  :bind
-  ([remap swiper] . selectrum/swiper)
-  ([remap switch-to-buffer] . selectrum/buffer-or-recentf)
-  ([remap org-set-tags-command] . selectrum/org-set-tags)
   :config
   (append! selectrum-minibuffer-bindings
     '(([tab]     . selectrum-next-candidate)
@@ -3836,6 +3832,18 @@ Embark provides actions.
 :PROPERTIES:
 :ID:       4a744244-f6a7-42c4-8c9a-f7ab73336faf
 :END:
+
+**** bindings
+:PROPERTIES:
+:ID:       87b0f65f-6af2-46ad-8575-a9de3bd63bc3
+:END:
+
+#+begin_src emacs-lisp
+(general-def
+  [remap swiper] #'selectrum/swiper
+  [remap switch-to-buffer] #'selectrum/buffer-or-recentf
+  [remap org-set-tags-command] #'selectrum/org-set-tags)
+#+end_src
 
 **** jump to line
 :PROPERTIES:
