@@ -261,24 +261,6 @@ Here I initialize the package managers I could use, choose one based on either
 preference or the availability of git, and then install only the essential
 external packages.
 
-*** quiet!                                                            :disabled:
-:PROPERTIES:
-:ID:       57798d18-2c85-45a5-b3f8-ca0397d4b99e
-:END:
-
-#+begin_src emacs-lisp
-(defmacro quiet! (&rest body)
-  "Run BODY without generating output."
-  (let! ((standard-output (lambda (&rest _)))
-         (defun message (&rest _))
-         (defun load (file &optional noerror nomessage nosuffix must-suffix)
-           (funcall load file noerror t nosuffix must-suffix))
-         (defun write-region (start end filename &optional append visit lockname mustbenew)
-           (unless visit (setq visit 'no-message))
-           (funcall write-region start end filename append visit lockname mustbenew)))
-    ,@body))
-#+end_src
-
 *** straight.el
 :PROPERTIES:
 :ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
