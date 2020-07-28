@@ -3957,6 +3957,20 @@ a file.
              (--remove (member it selected-tags) current-tags)))))
 #+end_src
 
+**** choose font
+:PROPERTIES:
+:ID:       cb09fe43-aff4-4fbe-be4e-12db296298ad
+:END:
+
+#+begin_src emacs-lisp
+(defun void/choose-font ()
+  "Choose font."
+  (interactive)
+  (let ((font-list (-uniq (font-family-list))))
+    (awhen! (completing-read "Font: " font-list)
+      (set-face-attribute 'default nil :family <font>))))
+#+end_src
+
 ** abbrev                                                      :abbrev:disabled:
 :PROPERTIES:
 :ID: ce3011f3-c8c6-468a-928b-c7bc3ba22f60
