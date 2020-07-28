@@ -4301,10 +4301,6 @@ existing completing-read-using commands.
   (selectrum-show-indices             . nil)
   (selectrum-fix-minibuffer-height    . t)
   (selectrum-num-candidates-displayed . 15)
-  :bind
-  ([remap swiper] . selectrum/swiper)
-  ([remap switch-to-buffer] . selectrum/buffer-or-recentf)
-  ([remap org-set-tags-command] . selectrum/org-set-tags)
   :config
   (append! selectrum-minibuffer-bindings
     '(([tab]     . selectrum-next-candidate)
@@ -4327,6 +4323,86 @@ existing completing-read-using commands.
   :after selectrum
   :require t
   :defer-config (selectrum-prescient-mode 1))
+#+end_src
+
+*** orderless
+:PROPERTIES:
+:ID:       8cb7b1af-3786-48b7-92ec-b21759bbabc3
+:END:
+
+This package provides an "orderless" completion style.
+
+#+begin_src emacs-lisp
+(use-package! orderless
+  :setq
+  (selectrum-refine-candidates-function . #'orderless-filter)
+  (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
+#+end_src
+
+*** embark
+:PROPERTIES:
+:ID:       18abb7cd-e98b-437e-a851-922da949d546
+:END:
+
+Embark provides actions.
+
+**** embark
+:PROPERTIES:
+:ID:       7d866a13-28b3-4e2b-82de-2126d71c40b6
+:END:
+
+#+begin_src emacs-lisp
+(use-package! embark
+  :ensure (:repo "oantolin/embark" :host github)
+  :commands (embark-act embark-act-noexit)
+  :init
+  (after! selectrum
+    (--each '(("C-m" . embark-act) ("C-l" . embark-act-noexit))
+      (push it selectrum-minibuffer-bindings))))
+#+end_src
+
+**** use a which-key like menu or prompt                              :disabled:
+:PROPERTIES:
+:ID:       f2dc6833-a90e-4819-b26a-4a8bfae6b340
+:END:
+
+#+begin_src emacs-lisp
+(defun embark:which-key-setup ()
+  (let ((help-char nil)
+        (which-key-show-transient-maps t)
+        (which-key-replacement-alist
+         (cons '(("^[0-9-]\\|kp-[0-9]\\|kp-subtract\\|C-u$" . nil) . ignore)
+               which-key-replacement-alist)))
+    (setq-local which-key-show-prefix nil)
+    (setq-local which-key-persistent-popup t)
+    (which-key--update)))
+
+(setq embark-action-indicator #'embark:which-key-setup
+      embark-become-indicator embark-action-indicator)
+
+(defhook! embark:which-key-tear-down ()
+  :hook embark-pre-action-hook
+  (kill-local-variable 'which-key-persistent-popup)
+  (kill-local-variable 'which-key-show-prefix)
+  (unless which-key-persistent-popup
+    (which-key--hide-popup-ignore-command)))
+#+end_src
+
+*** selectrum utility functions
+:PROPERTIES:
+:ID:       4a744244-f6a7-42c4-8c9a-f7ab73336faf
+:END:
+
+**** bindings
+:PROPERTIES:
+:ID:       87b0f65f-6af2-46ad-8575-a9de3bd63bc3
+:END:
+
+#+begin_src emacs-lisp
+(general-def
+  [remap swiper] #'selectrum/swiper
+  [remap switch-to-buffer] #'selectrum/buffer-or-recentf
+  [remap org-set-tags-command] #'selectrum/org-set-tags)
 #+end_src
 
 **** jump to line
