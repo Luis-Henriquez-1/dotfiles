@@ -669,20 +669,6 @@ Destructuring.
          ,@body))))
 #+end_src
 
-***** defun!                                                          :disabled:
-:PROPERTIES:
-:ID:       9bb1621a-2315-4c08-a2b4-0f62e15202d2
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defun! (name args &rest body)
-  ""
-  (with-symbols! (args)
-    `(defun ,name (&rest ,args)
-       (cl-block nil
-         (let! ,() ,@body)))))
-#+end_src
-
 **** anaphoric macros
 :PROPERTIES:
 :ID:       001dde5a-bb43-4ce8-82ef-806e37ba7f6e
