@@ -2101,7 +2101,7 @@ while the user is working.
 (setq-default indicate-buffer-boundaries nil)
 (setq-default inhibit-compacting-font-caches t)
 (setq-default max-mini-window-height 0.3)
-(setq-default mode-linek-default-help-echo nil)
+(setq-default mode-line-default-help-echo nil)
 (setq-default mouse-yank-at-point t)
 (setq-default resize-mini-windows 'grow-only)
 (setq-default show-help-function nil)
