@@ -261,114 +261,10 @@ Here I initialize the package managers I could use, choose one based on either
 preference or the availability of git, and then install only the essential
 external packages.
 
-*** straight.el                                                       :disabled:
-:PROPERTIES:
-:ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
-:END:
-
-[[straight][straight.el]] is a package manager that strives to make emacs configurations
-completely reproducable.
-
-**** customize straight directory
-:PROPERTIES:
-:ID: 843cc8b9-edff-42f7-a767-65a59aa38fbc
-:END:
-
-The path of the straight directory within emacs is hardcoded into
-straight so we need to trick it into thinking =VOID:PACKAGES-DIR= is the
-our emacs directory. This needs to be done before bootstraping
-straight, else the straight directory will be created anyway. I got
-this from Doom's straight branch.
-
-#+begin_src emacs-lisp
-(defun straight:use-packages-dir-a (orig-fn &rest args)
-  "Use `VOID:PACKAGES-DIR' for straight directory."
-  (let ((user-emacs-directory VOID:PACKAGES-DIR))
-    (apply orig-fn args)))
-
-(advice-add #'straight--emacs-dir :around #'straight:use-packages-dir-a)
-#+end_src
-
-**** sources
-:PROPERTIES:
-:ID: 1491c0ff-1bce-45e2-ac36-2d33752e5d45
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:core-package-sources
-  '((org-elpa :local-repo nil)
-    (melpa
-     :type git :host github
-     :repo "melpa/melpa"
-     :no-build t)
-    (gnu-elpa-mirror
-     :type git :host github
-     :repo "emacs-straight/gnu-elpa-mirror"
-     :no-build t)
-    (emacsmirror-mirror
-     :type git :host github
-     :repo "emacs-straight/emacsmirror-mirror"
-     :no-build t))
-  "A list of recipes for straight's recipe repos.")
-#+end_src
-
-**** bootstrap code
-:PROPERTIES:
-:ID: 7816be80-4db8-4219-b7d1-9a6b1ea96035
-:END:
-
-This code initializes straight if it's not already installed.
-
-#+begin_src emacs-lisp
-(defun straight:init-fn ()
-  "Initialize `straight.el'."
-  (defvar boostrap-version 5 "Bootstrap version for straight.el")
-  (let* ((user-emacs-directory VOID:PACKAGES-DIR)
-         (straight-dir (concat VOID:PACKAGES-DIR "straight/"))
-         (bootstrap-file (concat straight-dir "repos/straight.el/straight.el")))
-    (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
-      (void:log "Installing straight.el...")
-      (with-current-buffer
-          (url-retrieve-synchronously
-           "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
-           'silent 'inhibit-cookies)
-        (goto-char (point-max))
-        (eval-print-last-sexp)))
-    (void:log "Loading straight.el...")
-    (load bootstrap-file nil t))
-  (mapc #'straight-use-recipes void:core-package-sources))
-#+end_src
-
-**** straight-installer
-:PROPERTIES:
-:ID: 5b38a3da-d237-45f5-804f-5fd7e2f88d83
-:END:
-
-#+begin_src emacs-lisp
-(defun straight:install-package (package-or-recipe)
-  "Install PACKAGE with optional RECIPE."
-  (unless (featurep 'straight) (straight:init-fn))
-  (let ((package (or (car-safe package-or-recipe) package-or-recipe)))
-    (condition-case err
-        (progn (straight-use-package package-or-recipe)
-               (void:log "✓ installed %s" package))
-      (error
-       (void:log "✕ failed to install %s because of %s" package err)))))
-#+end_src
-
 *** package.el
 :PROPERTIES:
 :ID:       89b26461-2338-4842-8b03-218dc095af32
 :END:
-
-**** variables
-:PROPERTIES:
-:ID:       e3553cde-4e5d-4540-9e8e-64674fb18581
-:END:
-
-#+begin_src emacs-lisp
-(setq package-user-dir (concat VOID:PACKAGES-DIR))
-#+end_src
 
 **** install fn
 :PROPERTIES:
@@ -376,7 +272,13 @@ This code initializes straight if it's not already installed.
 :END:
 
 #+begin_src emacs-lisp
-(defun package:install-package ()
+(defun package:install-package (package-or-recipe)
+  "Install package."
+  (unless (package-installed-p package)
+    (package-refresh-contents)
+    (package-install package))
+  ;; if it's a recipe install with quelpa.
+  ;; (quel)
   )
 #+end_src
 
@@ -390,9 +292,15 @@ packages. I could write this macro with just plain Emacs libraries but I prefer
 using nice libraries. In byte compiled Void, they don't need to be installed.
 
 #+begin_src emacs-lisp
-(dolist (package '(leaf leaf-keywords dash anaphora quelpa))
-  (funcall #'package:install-package package)
-  (require package))
+(let ((package-user-dir (concat VOID:PACKAGES-DIR)))
+  (package-initialize)
+  (require 'package)
+  (package-install 'quelpa)
+  (require 'quelpa)
+  (dolist (package '(leaf leaf-keywords dash anaphora))
+    (quelpa package)
+    ;; (require package)
+    ))
 (leaf-keywords-init)
 #+end_src
 
@@ -3194,7 +3102,7 @@ a new theme.
   (apply orig-fn args))
 #+end_src
 
-* Window Management
+* Window Management                                                   :disabled:
 :PROPERTIES:
 :ID: 29dbf899-17cd-4b00-aacb-090ccd20e133
 :END:
@@ -3522,7 +3430,7 @@ Emacs's text editing capabilities on it.
    ("k" . buffer-expose-up-window)))
 #+end_src
 
-* Completion
+* Completion                                                          :disabled:
 :PROPERTIES:
 :ID: 056384d1-a95a-4dcb-bc9d-ffe95bbb52a8
 :END:
@@ -4323,7 +4231,7 @@ worth quoting here:
 (use-package! company-prescient :hook company-mode-hook)
 #+end_src
 
-* Email
+* Email                                                               :disabled:
 :PROPERTIES:
 :ID: b31fc41c-135d-45d9-9c05-5889d21d1cd4
 :END:
@@ -4896,7 +4804,7 @@ mean 2000 which is not a lot by today's standard).
   (gnus-sorted-header-list . gnus-visible-headers))
 #+end_src
 
-* Web Browsing
+* Web Browsing                                                        :disabled:
 :PROPERTIES:
 :ID: f0960e47-5dbb-4cca-a17a-f8eb0da445d3
 :END:
@@ -4998,7 +4906,7 @@ The optional argument NEW-WINDOW is not used."
   :setq (xwwp-follow-link-completion-system . 'ivy))
 #+end_src
 
-* Multimedia
+* Multimedia                                                          :disabled:
 :PROPERTIES:
 :ID: 20a915a0-8525-413c-bd68-f1d5c14ce3da
 :END:
@@ -5201,7 +5109,7 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
   (keypression-frame-justify . 'keypression-right-justified))
 #+end_src
 
-* Text Editing
+* Text Editing                                                        :disabled:
 :PROPERTIES:
 :ID: 42e0838f-f72a-43f3-8db2-a406d2d89adb
 :END:
@@ -6612,7 +6520,7 @@ larger text objects. It's saves me keystrokes.
   (global-undo-tree-mode -1))
 #+end_src
 
-* Utility
+* Utility                                                             :disabled:
 :PROPERTIES:
 :ID: 15266577-fc6e-4ec7-8277-3a94b6f4f926
 :END:
@@ -7851,7 +7759,7 @@ on the buffer you'd like to edit.
   (magit-status "/yadm::"))
 #+end_src
 
-* Languages
+* Languages                                                           :disabled:
 :PROPERTIES:
 :ID: 51e3b9b1-0e74-431e-a113-fe6f86a4b22a
 :END:
@@ -9434,7 +9342,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 (use-package! latex-preview-pane)
 #+end_src
 
-* User Interface
+* User Interface                                                      :disabled:
 :PROPERTIES:
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
 :END:
@@ -9479,7 +9387,7 @@ understanding of a verbally terse and dry command description.
   :init (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-* Asthetic
+* Asthetic                                                            :disabled:
 :PROPERTIES:
 :ID: bd21a69a-794c-4ff1-97d0-9e5911a26ad7
 :END:
