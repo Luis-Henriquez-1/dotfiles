@@ -1993,14 +1993,7 @@ as a dependency, I'd end up rewriting many of its functions.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! dash
-  :require t
-  :alias
-  (let!      . -let)
-  (let!!     . -let*)
-  (if-let!   . -if-let)
-  (if-let!!  . -if-let*)
-  (when-let! . -when-let))
+(use-package! dash :require t)
 #+end_src
 
 **** general
@@ -4033,7 +4026,7 @@ Abbreviating a single word is harder.
 (defun abbrev:abbreviate-word (word)
   "Abbreviate WORD.
 WORD is a string with no whitespace characters."
-  (let!! ((vowel-regexp (rx (or "a" "e" "i" "o" "u" "y")))
+  (-let* ((vowel-regexp (rx (or "a" "e" "i" "o" "u" "y")))
           (letters (-> word
                        (s-chop-suffixes abbrev:suffixes it)
                        (s-split "" it t)))
@@ -4154,11 +4147,11 @@ WORDS is a string containing one or more words."
 (defun abbrev/delete-abbrev ()
   "Delete abbrev."
   (interactive)
-  (let!! ((selected (completing-read
+  (-let* ((selected (completing-read
                      "abbrev to delete:"
                      (mapcar (-lambda ((abbrev . expansion))
-                             (format "%s -> %s" abbrev expansion))
-                           (abbrev--alist+))))
+                               (format "%s -> %s" abbrev expansion))
+                             (abbrev--alist+))))
           ((abbrev _ _) (s-split "\s" selected)))
     (message "deleted abbrev: %s" selected)
     (define-abbrev global-abbrev-table abbrev nil)))
@@ -4244,7 +4237,7 @@ worth quoting here:
 (defun company--backends+ ()
   "Compute company backends."
   (or
-   (when-let! ((mode type backends) (assoc major-mode company:backend-alist))
+   (-when-let ((mode type backends) (assoc major-mode company:backend-alist))
      (when (eq type :only) backends))
    (-mapcat (-lambda ((mode type backends))
               (when (or (and (eq type :derived) (derived-mode-p mode))
@@ -5360,9 +5353,8 @@ ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
 (defun org/edit:description-at-point ()
   "Edit the description at point."
   (interactive)
-  (let! (((beg . end) (org:edit-desc-bounds (point) (org:element-headline-elements))))
-    (when (and beg end)
-      (edit-indirect-region beg end t))))
+  (-when-let ((beg . end) (org:edit-desc-bounds (point) (org:element-headline-elements)))
+    (edit-indirect-region beg end t)))
 #+end_src
 
 **** dwim paragraph bounds
@@ -5435,7 +5427,7 @@ However, I'll address this later. For now I just want things working well.
 (defun org/dwim-edit-description ()
   "Edit a description the way I want to."
   (interactive)
-  (let!! ((elements (org:element-headline-elements))
+  (-let* ((elements (org:element-headline-elements))
           ((beg . end) (org:dwim-description-bounds (point) elements))
           (edit-indirect-guess-mode-function (lambda (&rest _) (text-mode)))
           (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
@@ -5500,7 +5492,7 @@ otherwise the =#+end_src= code block delimiter will not end up in its own line
   (alet (org-element-context)
     (when (or (null it) (not (eq 'src-block (org-element-type it))))
       (user-error "No element at point."))
-    (let!! (((beg end) (org-src--contents-area it))
+    (-let* (((beg end) (org-src--contents-area it))
             (lang (plist-get (-second-item it) :language))
             (edit-indirect-guess-mode-function `(lambda (&rest _) (funcall (org-src-get-lang-mode ,lang))))
             (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
@@ -6011,12 +6003,12 @@ cursor color will update.
 (defadvice! evil:treat-motion-as-normal-state (orig-fn &rest args)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
   :around evil-make-overriding-map
-  (let! (((keymap state copy) args))
+  (-let (((keymap state copy) args))
     (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 
 (defadvice! evil:set-initial-state (orig-fn &rest args)
   :around evil-set-initial-state
-  (let! (((mode state) args))
+  (-let (((mode state) args))
     (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
 
 (advice-add #'evil-motion-state :override #'evil-normal-state)
@@ -6148,7 +6140,7 @@ practice, this is rarely an issue.
 (after! evil
   (evil-define-text-object evil:textobj-inner-form (count &rest _)
     "Inner sexp object."
-    (if-let! ((beg . end)
+    (-if-let ((beg . end)
               (->> (list (lispy--bounds-list) (lispy--bounds-string))
                    (-non-nil)
                    (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
@@ -6158,7 +6150,7 @@ practice, this is rarely an issue.
 
   (evil-define-text-object evil:textobj-outer-form (count &rest _)
     "Smartparens inner sexp object."
-    (if-let! ((beg . end)
+    (-if-let ((beg . end)
               (->> (list (lispy--bounds-list) (lispy--bounds-string))
                    (-non-nil)
                    (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
@@ -6188,7 +6180,7 @@ Why not just go to the end of the ="= like any other around operator?
 (after! evil
   (evil-define-text-object evil:textobj-a-string (count &rest _)
     "An outer comment text object as defined by `lispy--bounds-string'."
-    (if-let! ((beg . end) (lispy--bounds-string))
+    (-if-let ((beg . end) (lispy--bounds-string))
         (evil-range beg end 'exclusive :expanded t)
       (error "Not inside a comment.")))
 
@@ -8814,7 +8806,7 @@ Sometimes the heading inserted doesn't remain visible.
 (defhook! org:ensure-heading-visible-h ()
   "Ensure that heading remains visible."
   :hook org-insert-heading-hook
-  (when-let! (o (cdr (get-char-property-and-overlay (point) 'invisible)))
+  (-when-let (o (cdr (get-char-property-and-overlay (point) 'invisible)))
     (move-overlay o (overlay-start o) (line-end-position 0))))
 #+end_src
 
