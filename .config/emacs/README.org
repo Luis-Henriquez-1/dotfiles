@@ -266,20 +266,51 @@ external packages.
 :ID:       89b26461-2338-4842-8b03-218dc095af32
 :END:
 
-**** install fn
+**** set up
 :PROPERTIES:
-:ID:       55726235-2963-42ab-9a83-e897fe9083d7
+:ID:       05f0eb53-d2b5-4288-a9d5-9aa35be49a1b
 :END:
 
 #+begin_src emacs-lisp
-(defun package:install-package (package-or-recipe)
-  "Install package."
-  (unless (package-installed-p package)
-    (package-refresh-contents)
-    (package-install package))
-  ;; if it's a recipe install with quelpa.
-  ;; (quel)
-  )
+(setq package-user-dir (concat VOID:PACKAGES-DIR "package.el/"))
+(require 'package)
+;; Disable package initialize after us.  We either initialize it
+;; anyway in case of interpreted .emacs, or we don't want slow
+;; initizlization in case of byte-compiled .emacs.elc.
+(setq package-enable-at-startup nil)
+;; Ask package.el to not add (package-initialize) to .emacs.
+(setq package--init-file-ensured t)
+(setq package-user-dir (concat VOID:PACKAGES-DIR "package.el/"))
+;; set use-package-verbose to t for interpreted .emacs,
+;; and to nil for byte-compiled .emacs.elc
+(eval-and-compile
+  (setq use-package-verbose (not (bound-and-true-p byte-compile-current-file))))
+
+(advice-add #'package--ensure-init-file :override #'ignore)
+(setq package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
+                         ("melpa" . "https://melpa.org/packages/")
+                         ("org"   . "https://orgmode.org/elpa/")))
+#+end_src
+
+**** install a package
+:PROPERTIES:
+:ID:       58ad377f-ecd0-44de-9451-4674bbbcbc05
+:END:
+
+#+begin_src emacs-lisp
+(defun package:install (package)
+  (setq package (if (atom package) (list package) package))
+  (condition-case nil
+      (if (package-installed-p (car package))
+          (void:log "%s is already installed." (car package))
+        (void:log "Installing %s package." (car package))
+        (shut-up
+          (package-refresh-contents)
+          (if (= 1 (length package))
+              (package-install (car package))
+            (setq package (cl-subst :fetcher :host (car package)))
+            (quelpa package))))
+    (error (void:log "Could not install %s" package))))
 #+end_src
 
 *** required packages
@@ -287,20 +318,14 @@ external packages.
 :ID: 453cc36d-9174-4b63-b3f2-4d1dd7e3521d
 :END:
 
-[[id:04560da8-1e8a-4bcc-bdeb-574d8bfc984d][Later]] I write a macro specifically designed for installing and configuring
-packages. I could write this macro with just plain Emacs libraries but I prefer
-using nice libraries. In byte compiled Void, they don't need to be installed.
-
 #+begin_src emacs-lisp
-(let ((package-user-dir (concat VOID:PACKAGES-DIR)))
-  (package-initialize)
-  (require 'package)
-  (package-install 'quelpa)
-  (require 'quelpa)
-  (dolist (package '(leaf leaf-keywords dash anaphora))
-    (quelpa package)
-    ;; (require package)
-    ))
+(require 'package)
+(package-initialize)
+(dolist (package '(leaf leaf-keywords dash anaphora quelpa shut-up))
+  (unless (package-installed-p package)
+    (package-refresh-contents)
+    (package-install package))
+  (require package))
 (leaf-keywords-init)
 #+end_src
 
@@ -604,20 +629,6 @@ Destructuring.
     `(cl-block nil
        (pcase-dolist (,(void:pcase-pattern pattern) ,list)
          ,@body))))
-#+end_src
-
-***** defun!                                                          :disabled:
-:PROPERTIES:
-:ID:       9bb1621a-2315-4c08-a2b4-0f62e15202d2
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defun! (name args &rest body)
-  ""
-  (with-symbols! (args)
-    `(defun ,name (&rest ,args)
-       (cl-block nil
-         (let! ,() ,@body)))))
 #+end_src
 
 **** anaphoric macros
@@ -1180,6 +1191,17 @@ Like =use-package=, leaf is a macro that fascilitates package configuration.
   (leaf-expand-minimally . t))
 #+end_src
 
+*** leaf-keywords
+:PROPERTIES:
+:ID:       e47cf69e-4ba8-45d8-bb62-fd0c1d785583
+:END:
+
+#+begin_src emacs-lisp
+(use-package! leaf-keywords
+  :ensure nil
+  :init (leaf-keywords-init))
+#+end_src
+
 *** defining leaf keywords
 :PROPERTIES:
 :ID:       5d7d9185-6897-419d-90bd-5e2d2cb3f1b1
@@ -1443,7 +1465,7 @@ provided by leaf. They are inspired from DOOM emacs.
     ,@leaf--body))
 #+end_src
 
-**** straight keyword
+**** package keyword
 :PROPERTIES:
 :ID:       cba57988-21b2-456b-aed2-27254febf873
 :END:
@@ -1453,17 +1475,16 @@ paths to the load-path. This is so that package installation isn't done after
 VOID is compiled.
 
 #+begin_src emacs-lisp
-(leaf:set-alias :straight :void-straight)
-(leaf:set-alias :ensure :void-straight)
+(leaf:set-alias :ensure :void-package)
 
-(leaf:set-normalizer :void-straight #'leaf:void-straight-normalizer)
+(leaf:set-normalizer :void-package #'leaf:package-normalizer)
 
-(leaf:define-keyword! void-straight (before :straight)
+(leaf:define-keyword! void-package (before :package)
   `(,@(when (and leaf--value (car-safe leaf--value))
-        `((straight:install-package ',(car leaf--value))))
+        `((package:install ',(car leaf--value))))
     ,@leaf--body))
 
-(defun leaf:void-straight-normalizer (leaf--value)
+(defun leaf:package-normalizer (leaf--value)
   (cond ((eq t (car leaf--value))
          (list leaf--name))
         ((eq nil (car leaf--value))
@@ -1496,22 +1517,6 @@ specific packages.
   (when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
 #+end_src
 
-**** straight
-:PROPERTIES:
-:ID:       9dff9894-667c-4e74-9624-8aee533f8f70
-:END:
-
-#+begin_src emacs-lisp
-(use-package! straight
-  :require t
-  :setq
-  (straight-disable-autoloads . nil)
-  (straight-cache-autoloads . t)
-  (straight-check-for-modifications . nil)
-  (straight-enable-package-integration . nil)
-  (straight-recipes-emacsmirror-use-mirror . t))
-#+end_src
-
 **** alias
 :PROPERTIES:
 :ID:       9ce3a0f5-6b44-4c60-9599-b3b77199fa99
@@ -1523,19 +1528,6 @@ specific packages.
 (leaf:define-keyword! alias (before :init)
   `(,@(-map (-lambda ((alias . def)) `(defalias ',alias ',def))
             leaf--value)))
-#+end_src
-
-*** package.el
-:PROPERTIES:
-:ID:       550066df-89b4-4d4d-b8fd-daa1c28b1ceb
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! package
-  :init (advice-add #'package--ensure-init-file :override #'ignore)
-  :setq (package-archives . `(("gnu"   . "https://elpa.gnu.org/packages/")
-                              ("melpa" . "https://melpa.org/packages/")
-                              ("org"   . "https://orgmode.org/elpa/"))))
 #+end_src
 
 ** Packages
@@ -1933,14 +1925,7 @@ as a dependency, I'd end up rewriting many of its functions.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! dash
-  :require t
-  :alias
-  (let!      . -let)
-  (let!!     . -let*)
-  (if-let!   . -if-let)
-  (if-let!!  . -if-let*)
-  (when-let! . -when-let))
+(use-package! dash :require t)
 #+end_src
 
 **** general
@@ -3102,7 +3087,7 @@ a new theme.
   (apply orig-fn args))
 #+end_src
 
-* Window Management                                                   :disabled:
+* Window Management
 :PROPERTIES:
 :ID: 29dbf899-17cd-4b00-aacb-090ccd20e133
 :END:
@@ -3430,7 +3415,7 @@ Emacs's text editing capabilities on it.
    ("k" . buffer-expose-up-window)))
 #+end_src
 
-* Completion                                                          :disabled:
+* Completion
 :PROPERTIES:
 :ID: 056384d1-a95a-4dcb-bc9d-ffe95bbb52a8
 :END:
@@ -3443,7 +3428,7 @@ through on our own. It's not much different in Emacs. We're constantly sifting
 though files, buffers, commands, words--all to try to get through to the subset
 of things that we actually want at this moment.
 
-** snippets
+** snippets                                                           :disabled:
 :PROPERTIES:
 :ID:       02dd54d0-f545-447e-89cf-c0cfcd941c76
 :END:
@@ -3688,10 +3673,6 @@ existing completing-read-using commands.
   (selectrum-show-indices             . nil)
   (selectrum-fix-minibuffer-height    . t)
   (selectrum-num-candidates-displayed . 15)
-  :bind
-  ([remap swiper] . selectrum/swiper)
-  ([remap switch-to-buffer] . selectrum/buffer-or-recentf)
-  ([remap org-set-tags-command] . selectrum/org-set-tags)
   :config
   (append! selectrum-minibuffer-bindings
     '(([tab]     . selectrum-next-candidate)
@@ -3783,6 +3764,18 @@ Embark provides actions.
 :PROPERTIES:
 :ID:       4a744244-f6a7-42c4-8c9a-f7ab73336faf
 :END:
+
+**** bindings
+:PROPERTIES:
+:ID:       87b0f65f-6af2-46ad-8575-a9de3bd63bc3
+:END:
+
+#+begin_src emacs-lisp
+(general-def
+  [remap swiper] #'selectrum/swiper
+  [remap switch-to-buffer] #'selectrum/buffer-or-recentf
+  [remap org-set-tags-command] #'selectrum/org-set-tags)
+#+end_src
 
 **** jump to line
 :PROPERTIES:
@@ -3973,7 +3966,7 @@ Abbreviating a single word is harder.
 (defun abbrev:abbreviate-word (word)
   "Abbreviate WORD.
 WORD is a string with no whitespace characters."
-  (let!! ((vowel-regexp (rx (or "a" "e" "i" "o" "u" "y")))
+  (-let* ((vowel-regexp (rx (or "a" "e" "i" "o" "u" "y")))
           (letters (-> word
                        (s-chop-suffixes abbrev:suffixes it)
                        (s-split "" it t)))
@@ -4094,11 +4087,11 @@ WORDS is a string containing one or more words."
 (defun abbrev/delete-abbrev ()
   "Delete abbrev."
   (interactive)
-  (let!! ((selected (completing-read
+  (-let* ((selected (completing-read
                      "abbrev to delete:"
                      (mapcar (-lambda ((abbrev . expansion))
-                             (format "%s -> %s" abbrev expansion))
-                           (abbrev--alist+))))
+                               (format "%s -> %s" abbrev expansion))
+                             (abbrev--alist+))))
           ((abbrev _ _) (s-split "\s" selected)))
     (message "deleted abbrev: %s" selected)
     (define-abbrev global-abbrev-table abbrev nil)))
@@ -4184,7 +4177,7 @@ worth quoting here:
 (defun company--backends+ ()
   "Compute company backends."
   (or
-   (when-let! ((mode type backends) (assoc major-mode company:backend-alist))
+   (-when-let ((mode type backends) (assoc major-mode company:backend-alist))
      (when (eq type :only) backends))
    (-mapcat (-lambda ((mode type backends))
               (when (or (and (eq type :derived) (derived-mode-p mode))
@@ -4231,7 +4224,7 @@ worth quoting here:
 (use-package! company-prescient :hook company-mode-hook)
 #+end_src
 
-* Email                                                               :disabled:
+* Email
 :PROPERTIES:
 :ID: b31fc41c-135d-45d9-9c05-5889d21d1cd4
 :END:
@@ -4305,6 +4298,7 @@ therefore, has the most support (in the form of setup blogs and packages).
 
 #+begin_src emacs-lisp
 (use-package! mu4e
+  :ensure nil
   :load-path "/usr/share/emacs/site-lisp/mu4e/"
   :commands mu4e
   :setq
@@ -4356,6 +4350,7 @@ therefore, has the most support (in the form of setup blogs and packages).
 
 #+begin_src emacs-lisp
 (use-package! mu4e-headers
+  :ensure nil
   :after mu4e
   :setq
   (mu4e-use-fancy-chars . t)
@@ -4804,7 +4799,7 @@ mean 2000 which is not a lot by today's standard).
   (gnus-sorted-header-list . gnus-visible-headers))
 #+end_src
 
-* Web Browsing                                                        :disabled:
+* Web Browsing
 :PROPERTIES:
 :ID: f0960e47-5dbb-4cca-a17a-f8eb0da445d3
 :END:
@@ -4906,7 +4901,7 @@ The optional argument NEW-WINDOW is not used."
   :setq (xwwp-follow-link-completion-system . 'ivy))
 #+end_src
 
-* Multimedia                                                          :disabled:
+* Multimedia
 :PROPERTIES:
 :ID: 20a915a0-8525-413c-bd68-f1d5c14ce3da
 :END:
@@ -5109,7 +5104,7 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
   (keypression-frame-justify . 'keypression-right-justified))
 #+end_src
 
-* Text Editing                                                        :disabled:
+* Text Editing
 :PROPERTIES:
 :ID: 42e0838f-f72a-43f3-8db2-a406d2d89adb
 :END:
@@ -5300,9 +5295,8 @@ ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
 (defun org/edit:description-at-point ()
   "Edit the description at point."
   (interactive)
-  (let! (((beg . end) (org:edit-desc-bounds (point) (org:element-headline-elements))))
-    (when (and beg end)
-      (edit-indirect-region beg end t))))
+  (-when-let ((beg . end) (org:edit-desc-bounds (point) (org:element-headline-elements)))
+    (edit-indirect-region beg end t)))
 #+end_src
 
 **** dwim paragraph bounds
@@ -5375,7 +5369,7 @@ However, I'll address this later. For now I just want things working well.
 (defun org/dwim-edit-description ()
   "Edit a description the way I want to."
   (interactive)
-  (let!! ((elements (org:element-headline-elements))
+  (-let* ((elements (org:element-headline-elements))
           ((beg . end) (org:dwim-description-bounds (point) elements))
           (edit-indirect-guess-mode-function (lambda (&rest _) (text-mode)))
           (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
@@ -5440,7 +5434,7 @@ otherwise the =#+end_src= code block delimiter will not end up in its own line
   (alet (org-element-context)
     (when (or (null it) (not (eq 'src-block (org-element-type it))))
       (user-error "No element at point."))
-    (let!! (((beg end) (org-src--contents-area it))
+    (-let* (((beg end) (org-src--contents-area it))
             (lang (plist-get (-second-item it) :language))
             (edit-indirect-guess-mode-function `(lambda (&rest _) (funcall (org-src-get-lang-mode ,lang))))
             (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
@@ -5951,12 +5945,12 @@ cursor color will update.
 (defadvice! evil:treat-motion-as-normal-state (orig-fn &rest args)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
   :around evil-make-overriding-map
-  (let! (((keymap state copy) args))
+  (-let (((keymap state copy) args))
     (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 
 (defadvice! evil:set-initial-state (orig-fn &rest args)
   :around evil-set-initial-state
-  (let! (((mode state) args))
+  (-let (((mode state) args))
     (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
 
 (advice-add #'evil-motion-state :override #'evil-normal-state)
@@ -6088,7 +6082,7 @@ practice, this is rarely an issue.
 (after! evil
   (evil-define-text-object evil:textobj-inner-form (count &rest _)
     "Inner sexp object."
-    (if-let! ((beg . end)
+    (-if-let ((beg . end)
               (->> (list (lispy--bounds-list) (lispy--bounds-string))
                    (-non-nil)
                    (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
@@ -6098,7 +6092,7 @@ practice, this is rarely an issue.
 
   (evil-define-text-object evil:textobj-outer-form (count &rest _)
     "Smartparens inner sexp object."
-    (if-let! ((beg . end)
+    (-if-let ((beg . end)
               (->> (list (lispy--bounds-list) (lispy--bounds-string))
                    (-non-nil)
                    (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
@@ -6128,7 +6122,7 @@ Why not just go to the end of the ="= like any other around operator?
 (after! evil
   (evil-define-text-object evil:textobj-a-string (count &rest _)
     "An outer comment text object as defined by `lispy--bounds-string'."
-    (if-let! ((beg . end) (lispy--bounds-string))
+    (-if-let ((beg . end) (lispy--bounds-string))
         (evil-range beg end 'exclusive :expanded t)
       (error "Not inside a comment.")))
 
@@ -6520,7 +6514,7 @@ larger text objects. It's saves me keystrokes.
   (global-undo-tree-mode -1))
 #+end_src
 
-* Utility                                                             :disabled:
+* Utility
 :PROPERTIES:
 :ID: 15266577-fc6e-4ec7-8277-3a94b6f4f926
 :END:
@@ -7014,14 +7008,14 @@ again, you are taken to the location you left off. This is very convenient.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! savehist
+(use-feature! savehist
   :load-incrementally custom
   :hook emacs-startup-hook
   :setq
   (savehist-save-minibuffer-history . t)
-  (savehist-autosave-interval       . nil)
-  (savehist-additional-variables    . '(kill-ring search-ring regexp-search-ring))
-  (savehist-file                    . (concat VOID:DATA-DIR "savehist")))
+  (savehist-autosave-interval . nil)
+  (savehist-additional-variables . '(kill-ring search-ring regexp-search-ring))
+  (savehist-file . (concat VOID:DATA-DIR "savehist")))
 
 (defhook! void:unpropertize-kill-ring-h ()
   "Remove text properties from `kill-ring'."
@@ -7759,7 +7753,7 @@ on the buffer you'd like to edit.
   (magit-status "/yadm::"))
 #+end_src
 
-* Languages                                                           :disabled:
+* Languages
 :PROPERTIES:
 :ID: 51e3b9b1-0e74-431e-a113-fe6f86a4b22a
 :END:
@@ -8754,7 +8748,7 @@ Sometimes the heading inserted doesn't remain visible.
 (defhook! org:ensure-heading-visible-h ()
   "Ensure that heading remains visible."
   :hook org-insert-heading-hook
-  (when-let! (o (cdr (get-char-property-and-overlay (point) 'invisible)))
+  (-when-let (o (cdr (get-char-property-and-overlay (point) 'invisible)))
     (move-overlay o (overlay-start o) (line-end-position 0))))
 #+end_src
 
@@ -9342,7 +9336,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 (use-package! latex-preview-pane)
 #+end_src
 
-* User Interface                                                      :disabled:
+* User Interface
 :PROPERTIES:
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
 :END:
@@ -9387,7 +9381,7 @@ understanding of a verbally terse and dry command description.
   :init (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
 #+end_src
 
-* Asthetic                                                            :disabled:
+* Asthetic
 :PROPERTIES:
 :ID: bd21a69a-794c-4ff1-97d0-9e5911a26ad7
 :END:
@@ -9473,8 +9467,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
         (format "%d packages loaded in %.2f seconds"
                 (cond ((featurep 'straight)
                        (hash-table-size straight--profile-cache))
-                      (t
-                       (package (length package-activated-list))))
+                      (t (length package-activated-list)))
                 (string-to-number (emacs-init-time)))))
 #+end_src
 
@@ -9513,7 +9506,7 @@ A little bit of decoration and spice can go a long way. As its name suggests,
 a few). In practice I use these icons to (1) make things look nicer and more
 colorful and (2) enhance readability of plain text.
 
-*** install all the icons if not installed :disabled:
+*** install all the icons if not installed                            :disabled:
 :PROPERTIES:
 :ID: 1cda0692-8f42-4bb3-b11d-da52e2004a55
 :END:
