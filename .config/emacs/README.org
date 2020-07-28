@@ -1378,18 +1378,6 @@ evaluated.
         (-uniq (delq nil (leaf-flatten leaf--value)))))
 #+end_src
 
-****** default normalizer                                             :disabled:
-:PROPERTIES:
-:ID:       9d60dd5b-9e3e-4536-9571-501d3e5735d1
-:END:
-
-#+begin_src emacs-lisp
-(defvar leaf-default-normalizer
-  `((or (eq leaf--key ,name)
-        (eq ,name (alist-get leaf--key leaf-alias-keyword-alist)))
-    (funcall #',normalizer)))
-#+end_src
-
 *** use =after!= in leaf-defer
 :PROPERTIES:
 :ID:       3d3cf50c-20eb-4276-a81e-33a6c368d55f
