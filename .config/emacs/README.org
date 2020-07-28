@@ -1250,6 +1250,7 @@ Like =use-package=, leaf is a macro that fascilitates package configuration.
 
 #+begin_src emacs-lisp
 (use-package! leaf-keywords
+  :ensure nil
   :init (leaf-keywords-init))
 #+end_src
 
