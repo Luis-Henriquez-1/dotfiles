@@ -299,18 +299,23 @@ external packages.
 
 #+begin_src emacs-lisp
 (defun package:install (package)
+  "Install PACKAGE.
+PACKAGE is either a package name (represented a symbol) or a recipe (represented
+as a list). Silence any messages outputed from installing package."
   (setq package (if (atom package) (list package) package))
-  (condition-case nil
-      (if (package-installed-p (car package))
-          (void:log "%s is already installed." (car package))
-        (void:log "Installing %s package." (car package))
-        (shut-up
-          (package-refresh-contents)
-          (if (= 1 (length package))
-              (package-install (car package))
-            (setq package (cl-subst :fetcher :host (car package)))
-            (quelpa package))))
-    (error (void:log "Could not install %s" package))))
+  (let ((package (or (car-safe package) package))
+        (recipe (when (listp package) (cl-subst :fetcher :host package))))
+    (condition-case err
+        (if (package-installed-p package)
+            (void:log "`%s' already installed." package)
+          (void:log "Installing %s package." package)
+          (shut-up
+            (package-refresh-contents)
+            (if recipe
+                (package-install package)
+              (quelpa recipe))))
+      (error
+       (void:log "Could not install %s because %S" package err)))))
 #+end_src
 
 *** required packages
