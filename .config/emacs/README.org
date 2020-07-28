@@ -17,9 +17,7 @@
 A big contributor to long startup times is the garbage collector. When
 performing a large number of calculations, it can make a big difference to
 increase the [[helpvar:gc-cons-threshold][gc-cons-threshold]], or the /number of bytes of consing between
-garbage collections/. If garbage collection is done too often between
-calculations it will affect the time they take. Besides, the default value is
-usually too low for modern machines.
+garbage collections/. The default value is usually too low for modern machines.
 
 **** gc cons threshold
 :PROPERTIES:
@@ -59,12 +57,12 @@ restored after package loading slows down.
 (setq gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
 #+end_src
 
-**** Restore GC after delay
+**** restore threshold after delay
 :PROPERTIES:
 :ID: d49bef67-0a1e-4026-838c-217b0d6ecad5
 :END:
 
-Restore gc cons threshold (after a 7 second delay). I got this from [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L283][doom]]. We
+Restore gc-cons-threshold (after a 7 second delay). I got this from [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L283][doom]]. We
 don't do it immediately because packages are still being lazy loaded at this
 time.
 
@@ -146,19 +144,6 @@ Files that need to exist, but I don't typically want to see go here.")
   "Path to the directory where packages are stored.")
 #+end_src
 
-**** ensure directories exist                                              :ewc:
-:PROPERTIES:
-:ID: 56e80dda-5d0e-4c7c-a225-00d0028d4995
-:END:
-
-I create the directories that don't exist. But I assume they already exist if
-Void is compiled.
-
-#+begin_src emacs-lisp
-(dolist (dir (list VOID:LOCAL-DIR VOID:DATA-DIR VOID:ORG-DIR))
-  (make-directory dir t))
-#+end_src
-
 **** system directories
 :PROPERTIES:
 :ID:       f3bdd353-b0ff-48fd-a2f2-295ccfa139ab
@@ -182,6 +167,19 @@ Void is compiled.
 
 (defconst VOID:EMAIL-DIR (expand-file-name "~/.mail/")
   "Directories where emails are stored.")
+#+end_src
+
+**** ensure directories exist                                              :ewc:
+:PROPERTIES:
+:ID: 56e80dda-5d0e-4c7c-a225-00d0028d4995
+:END:
+
+I create the directories that don't exist. But I assume they already exist if
+Void is compiled.
+
+#+begin_src emacs-lisp
+(dolist (dir (list VOID:LOCAL-DIR VOID:DATA-DIR VOID:ORG-DIR))
+  (make-directory dir t))
 #+end_src
 
 *** message logging
