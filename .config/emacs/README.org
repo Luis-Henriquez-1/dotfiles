@@ -849,8 +849,8 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
           (append (eq key :append))
           (local (eq key :local)))
     `(prog1 (defun ,name ,args ,docstring ,@body)
-       ,@(mapcar (fn! `(add-hook ',<hook> #',name ,append ,local))
-                 (-list hooks)))))
+       ,@(-map (lambda (hook) `(add-hook ',hook #',name ,append ,local))
+               (-list hooks)))))
 #+end_src
 
 **** with-os!
@@ -929,10 +929,10 @@ from pulling (or failing to pull) in autoloaded macros/features.
   (pcase (car-safe features)
     ('or
      (macroexp-progn
-      (mapcar (fn! `(after! ,<feature> ,@body))
-              (cdr features))))
+      (-map (fn! `(after! ,<feature> ,@body))
+            (cdr features))))
     ('and
-     (void:wrap-form (mapcar (fn! `(after! ,<feature>)) (cdr features))
+     (void:wrap-form (-map (fn! `(after! ,<feature>)) (cdr features))
                      (macroexp-progn body)))
     ((guard (listp features))
      `(after! ,(cons 'and features) ,@body))
