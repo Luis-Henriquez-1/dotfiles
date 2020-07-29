@@ -3876,12 +3876,31 @@ a file.
 :END:
 
 #+begin_src emacs-lisp
-(defun void/choose-font ()
-  "Choose font."
+(defun void/set-font ()
+  "Set the font."
   (interactive)
   (let ((font-list (-uniq (font-family-list))))
     (awhen! (completing-read "Font: " font-list)
       (set-face-attribute 'default nil :family <font>))))
+#+end_src
+
+**** outline
+:PROPERTIES:
+:ID:       37bf41c1-2b3a-429f-9872-8466b69115fd
+:END:
+
+#+begin_src emacs-lisp
+(defvar selectrum::outline-history nil "History of chosen headings for `selectrum-outline'.")
+
+(defun selectrum/outline ()
+  "Jump to a heading."
+  (interactive)
+  (let ((selectrum-should-sort-p nil)) ; Headings should stay in order of appearance.
+    ;; Just use Org's built-in features when applicable.
+    (if (eq major-mode 'org-mode)
+        (let ((org-outline-path-complete-in-steps)
+              (org-goto-interface 'outline-path-completion))
+          (org-goto)))))
 #+end_src
 
 ** abbrev                                                      :abbrev:disabled:
