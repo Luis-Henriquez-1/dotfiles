@@ -9491,6 +9491,23 @@ I got this from [[][centaur emacs]].
     ("Z" zoom-out "zoom-out"))))
 #+end_src
 
+*** help
+:PROPERTIES:
+:ID:       0f7f0487-d554-4957-a834-6aef6ea89028
+:END:
+
+#+begin_src emacs-lisp
+(pretty-hydra-define hydra:help (:title (pretty-hydra-title "Help" 'material "help")
+                                 :color amaranth :quit-key "q")
+  ("Describe"
+   (("v" describe-variable "variable")
+    ("f" describe-function "function")
+    ("k" describe-key "key"))
+   "Apropos"
+   (("a" apropos "apropos")
+    ("V" apropos-variable "variable"))))
+#+end_src
+
 *** packages
 :PROPERTIES:
 :ID:       4187c7f4-8b54-4ac3-bcec-cb84a63466e0
