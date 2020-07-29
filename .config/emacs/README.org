@@ -5919,24 +5919,25 @@ travel to anywhere I need within a heading from the headline itself.
 
 #+begin_src emacs-lisp
 (defun org:dwim-description-bounds (point elements)
-  "Return the beginning and end of description bounds."
-  (acond
-   ;; There's a paragraph among the elements.
-   ((-some->> elements
-      (-drop-while (-not (-partial #'org:element-contains-point-p (point))))
-      (-first #'org:element-paragraph-p)
-      (org-element-property :begin))
-    (org:edit-desc-bounds it elements))
-   ;; Skip property drawers.
-   ((-first (fn! (eq 'property-drawer (org-element-type <element>)))
-            (reverse elements))
-    (alet (org-element-property :end it) (cons it it)))
-   ;; There's no paragraphs or property drawers.
-   ((save-excursion (goto-char (org-element-property :begin (cl-first elements)))
-                    (end-of-line)
-                    (org-skip-whitespace)
-                    (point))
-    (cons it it))))
+  "Return bounds description under headline as a cons cell.
+If there is no description element, return a cons cell containing the the point
+where the point should go."
+  ;; There are no paragraph elements.
+  (acond ((-any-p #'org:element-paragraph-p elements)
+          (alet (->> elements
+                     (-partition-by #'org:element-paragraph-p)
+                     (-filter (-compose #'org:element-paragraph-p #'-first-item))
+                     (-first-item))
+            (cons (org-element-property :contents-begin (-first-item it))
+                  (org-element-property :contents-end (-last-item it)))))
+         ;; Is there a source block?
+         ((--first (eq (org-element-type it) 'src-block) elements)
+          (cons (org-element-property :begin it)
+                (org-element-property :begin it)))
+         ;; Insert the description after any property drawers.
+         (t (cons 'x 'x))
+         ;; Go to the end of the list.
+         ))
 #+end_src
 
 **** maybe add newlines
