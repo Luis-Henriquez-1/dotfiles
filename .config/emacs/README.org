@@ -5492,9 +5492,9 @@ Emacs's go-to function for browsing the web is stored in the variable
 [[helpvar:browse-url-browser-function][browse-url-browser-function]].
 
 #+begin_src emacs-lisp
-(setq browse-url-browser-function #'browse-url-qutebrowser)
+(setq browse-url-browser-function #'browse-url-firefox)
 
-(defun browse-url-qutebrowser (url &optional _new-window)
+(defun browse-url-firefox (url &optional _new-window)
   "Ask the Qutebrowser WWW browser to load URL.
 Default to the URL around or before point.  The strings in
 variable `browse-url-qutebrowser-arguments' are also passed to
@@ -5504,7 +5504,7 @@ The optional argument NEW-WINDOW is not used."
   (setq url (browse-url-encode-url url))
   (let* ((process-environment (browse-url-process-environment)))
     (apply 'start-process
-           (concat "qutebrowser " url) nil
+           (concat "firefox " url) nil
            (executable-find "qutebrowser")
            (append nil (list url)))))
 #+end_src
