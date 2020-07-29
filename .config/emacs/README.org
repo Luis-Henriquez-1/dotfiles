@@ -3971,7 +3971,7 @@ does have isn't good enough.
   (ace-jump-helm-line-persistent-key . ?p))
 #+end_src
 
-*** ivy                                                               :disabled:
+*** ivy
 :PROPERTIES:
 :ID: cf88854e-4f88-4f64-962d-5d0ff99cd94f
 :END:
@@ -4291,7 +4291,7 @@ provide a more informative interface to ivy commands.
 (advice-add #'counsel-M-x-transformer :override #'identity)
 #+end_src
 
-*** selectrum
+*** selectrum                                                         :disabled:
 :PROPERTIES:
 :ID: abfc6965-d021-4d71-9cf4-42f8fd1de0e8
 :END:
