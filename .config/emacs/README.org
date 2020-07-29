@@ -9441,21 +9441,20 @@ I got this from [[][centaur emacs]].
 
 #+begin_src emacs-lisp
 (pretty-hydra-define hydra:theme (:title (pretty-hydra-title "Themes" 'faicon "paint-brush")
-                                  :color amaranth :quit-key "q")
+                                  :color amaranth :quit-key "quit")
   ("Traverse"
    (("j" theme-looper-enable-next-theme "next")
     ("k" theme-looper-enable-previous-theme "previous")
     ("r" theme-looper-enable-random-theme "random"))
    "Favorites"
    (("f" theme-looper/add-current-theme-to-favorites "favorites")
-    ("f" theme-looper/add-current-theme-to-ignored "ignore")
-    )
+    ("f" theme-looper/add-current-theme-to-ignored "ignore"))
    "Random"
    (("d" theme-looper/enable-random-dark-theme "dark")
     ("l" theme-looper/enable-random-light-theme "light")
-    ("F" theme-looper/enable-random-favorite-theme "favorite")
-    ;; ("t" circadian:set-current-theme-for-time)
-    )))
+    ("F" theme-looper/enable-random-favorite-theme "favorite"))
+   "circadian"
+   (("t" circadian/set-current-theme-for-time "display at particular time"))))
 #+end_src
 
 *** window
