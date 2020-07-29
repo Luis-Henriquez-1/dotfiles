@@ -9462,10 +9462,116 @@ I got this from [[][centaur emacs]].
 :ID:       71951e0f-fbb9-4458-be9f-ce439e1eedcd
 :END:
 
+#+begin_src emacs-lisp
+(pretty-hydra-define hydra:window (:title (pretty-hydra-title "Windows" 'faicon "windows")
+                                   :color amaranth
+                                   :quit-key "q")
+  ("Traverse"
+   (("h" windmove-left "move left")
+    ("j" windmove-down "move down")
+    ("k" windmove-up "move up")
+    ("l" windmove-right "move right"))
+   "Resize"
+   (("M" maximize-window "maximize")
+    ("m" minimize-window "minimize")
+    ("b" balance-windows "balance"))
+   "Split"
+   (("s" split-window-horizontally "horizontally")
+    ("v" split-window-vertically "vertically"))
+   "Transpose"
+   (("t" transpose-frame "vertically")
+    ("v" transpose- "horizontally"))
+   "Actions"
+   (("a" ace-select-window "select")
+    ("w" ace-swap-window "swap")
+    ("d" delete-window "delete")
+    ("D" delete-other-windows "delete others"))
+   "Zoom"
+   (("z" zoom-in "zoom-in")
+    ("Z" zoom-out "zoom-out"))))
+#+end_src
+
 *** packages
 :PROPERTIES:
 :ID:       4187c7f4-8b54-4ac3-bcec-cb84a63466e0
 :END:
+
+#+begin_src emacs-lisp
+(pretty-hydra-define hydra:packages (:title (pretty-hydra-title "Packages" 'octicon "package")
+                                     :color pink :quit-key "q")
+  ("Installation"
+   (("i" package-install "install")
+    ("c" remove "remove")
+    ("l" paradox "debug"))
+   ""
+   (("f" #'paradox-list-packages "font face")
+    ("L" org-toggle-link-display "link display")
+    ("s" void/set-font-size "font size"))))
+#+end_src
+
+*** quit
+:PROPERTIES:
+:ID:       08725792-4030-4224-a678-e70f84495d51
+:END:
+
+#+begin_src emacs-lisp
+(pretty-hydra-define hydra:theme (:title (pretty-hydra-title "Themes" 'faicon "paint-brush")
+                                  :color amaranth :quit-key "q")
+  ("Emacs"
+   (("q" theme-looper-enable-next-theme "next")
+    ("D" void/kill-emacs-no-hook "with no hook")
+    ("X" theme-looper-enable-random-theme "random"))
+   "Processes"
+   (("f" theme-looper/add-current-theme-to-favorites "favorites")
+    ("f" theme-looper/add-current-theme-to-ignored "ignore"))))
+
+(define-leader-key!
+  :infix "q"
+  ""  (list :ignore t                        :wk "quit")
+  "q" (list :def #'evil-quit-all             :wk "normally")
+  "s" (list :def #'void/quit-emacs-no-prompt :wk "with no prompt")
+  "Q" (list :def #'evil-save-and-quit        :wk "and save")
+  "x" (list :def #'void/kill-emacs-no-hook   :wk "with no hook")
+  "e" (list :def #'void/kill-emacs-processes :wk "emacs processes")
+  "b" (list :def #'void/kill-emacs-brutally  :wk "brutally")
+  "r" (list :def #'restart-emacs             :wk "and restart"))
+#+end_src
+
+*** help
+:PROPERTIES:
+:ID:       4d314900-312d-42ef-b183-b308b852b17f
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+** TODO buffer management                                             :disabled:
+:PROPERTIES:
+:ID:       68cf786d-0b21-40df-9e70-eb546710d61e
+:END:
+
+Buffer management is a huge problem in emacs.
+
+*** TODO midnight
+:PROPERTIES:
+:ID:       68657704-7efc-4d69-9137-8068f21a769c
+:END:
+:LOGBOOK:
+CLOCK: [2020-06-26 Fri 00:24]--[2020-06-26 Fri 00:26] =>  0:02
+:END:
+
+There's a package called midnight in emacs that has some cleaning buffer
+functionality. Only beef I have with this package is that it is geared towards
+being cleaning buffers at midnight, but I'd like them to be cleaned at many
+different times. Though there are ways to hack around this.
+
+#+begin_src emacs-lisp
+(use-feature! midnight
+  :custom
+  (clean-buffer-list-delay-special)
+  (clean-buffer-list-kill-regexps . (list ))
+  )
+#+end_src
 
 ** helpful
 :PROPERTIES:
