@@ -6023,13 +6023,14 @@ otherwise the =#+end_src= code block delimiter will not end up in its own line
 (see this for example).
 
 #+begin_src emacs-lisp
-(defun edit:indirect-ensure-end-in-newline-h ()
-  "Ensure edit-indirect buffers end with newline."
-  (add-hook 'edit-indirect-before-commit-hook
-            (lambda () (unless (string-match-p (rx (1+ anything) "\n" eos) (buffer-string))
-                         (setf (buffer-string) (concat (buffer-string) "\n"))))
-            0
-            :local))
+(defun edit-indirect:ensure-newline (&optional block-was-empty-p)
+  "Ensure that source block ends with a newline.
+If the source block was initially empty and no content was added, don't add a newline.
+Otherwise, add a newline if there isn't one."
+  (when (and (not (string-match-p (rx (* anything) "\n" eos) (buffer-string)))
+             (not block-was-empty-p))
+    (goto-char (point-max))
+    (insert "\n")))
 #+end_src
 
 **** edit source block at point
