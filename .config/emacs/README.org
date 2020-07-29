@@ -5349,7 +5349,7 @@ travel to anywhere I need within a heading from the headline itself.
 If there is no description element, return a cons cell containing the the point
 where the point should go."
   ;; There are no paragraph elements.
-  (acond ((-none-p #'org:element-paragraph-p elements)
+  (acond ((-any-p #'org:element-paragraph-p elements)
           (alet (->> elements
                      (-partition-by #'org:element-paragraph-p)
                      (-filter (-compose #'org:element-paragraph-p #'-first-item))
@@ -5357,11 +5357,11 @@ where the point should go."
             (cons (org-element-property :contents-begin (-first-item it))
                   (org-element-property :contents-end (-last-item it)))))
          ;; Is there a source block?
-         ((--first (eq (org-element-type it) 'src-block))
-          (cons (org-element-property :contents-begin it)
-                (org-element-property :contents-begin it)))
+         ((--first (eq (org-element-type it) 'src-block) elements)
+          (cons (org-element-property :begin it)
+                (org-element-property :begin it)))
          ;; Insert the description after any property drawers.
-         (t (-first-item (-t)))
+         (t (cons 'x 'x))
          ;; Go to the end of the list.
          ))
 #+end_src
