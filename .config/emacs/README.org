@@ -5471,7 +5471,8 @@ otherwise the =#+end_src= code block delimiter will not end up in its own line
             (lang (plist-get (-second-item it) :language))
             (edit-indirect-guess-mode-function `(lambda (&rest _) (funcall (org-src-get-lang-mode ,lang))))
             (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
-      (add-hook 'edit-indirect-after-creation-hook #'edit:indirect-ensure-end-in-newline-h)
+      (unless (= beg end)
+        (add-hook 'edit-indirect-after-creation-hook #'edit:indirect-ensure-end-in-newline-h))
       (edit-indirect-region beg end t))))
 #+end_src
 
