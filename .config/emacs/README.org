@@ -9972,6 +9972,10 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 :ID:       503d301c-8452-4a85-be41-aa6e5ed701dd
 :END:
 
+I'm sure many of us can relate to the feeling of traversing through themes like
+TV channels, spending 5 or more minutes trying to find the one that satisfies
+our urges for now.
+
 *** pretty hydra
 :PROPERTIES:
 :ID:       236961bf-5600-46d0-8468-51d6cb6e15d8
