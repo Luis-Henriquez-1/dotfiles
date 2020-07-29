@@ -9442,11 +9442,15 @@ I got this from [[][centaur emacs]].
     ("k" theme-looper-enable-previous-theme "previous")
     ("r" theme-looper-enable-random-theme "random"))
    "Favorites"
-   (("i" theme-looper:ignore-current "ignore")
-    ("f" theme-looper:add-current-to-favorite "font"))
-   "Circadian"
-   (("d" theme-looper:enable-dark-theme "dark")
-    ("l" theme-looper:enable-light-theme "light"))))
+   (("f" theme-looper/add-current-theme-to-favorites "favorites")
+    ("f" theme-looper/add-current-theme-to-ignored "ignore")
+    )
+   "Random"
+   (("d" theme-looper/enable-random-dark-theme "dark")
+    ("l" theme-looper/enable-random-light-theme "light")
+    ("F" theme-looper/enable-random-favorite-theme "favorite")
+    ;; ("t" circadian:set-current-theme-for-time)
+    )))
 #+end_src
 
 *** window
