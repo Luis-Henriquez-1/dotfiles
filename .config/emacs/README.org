@@ -6039,7 +6039,7 @@ Otherwise, add a newline if there isn't one."
 :END:
 
 #+begin_src emacs-lisp
-(defun org/edit:source-block-at-point ()
+(defun org/edit-source-block-at-point ()
   "Edit the source block at point."
   (interactive)
   (alet (org-element-context)
@@ -6049,7 +6049,8 @@ Otherwise, add a newline if there isn't one."
             (lang (plist-get (-second-item it) :language))
             (edit-indirect-guess-mode-function `(lambda (&rest _) (funcall (org-src-get-lang-mode ,lang))))
             (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
-      (add-hook 'edit-indirect-after-creation-hook #'edit:indirect-ensure-end-in-newline-h)
+      (add-hook 'edit-indirect-after-creation-hook #'edit-indirect:ensure-newline)
+      (add-hook 'edit-indirect-after-creation-hook #'beginning-of-buffer)
       (edit-indirect-region beg end t))))
 #+end_src
 
@@ -6070,7 +6071,7 @@ block.
                (--first (eq (org-element-type it) 'src-block))
                (org-element-property :begin)
                (goto-char)))
-      (org/edit:source-block-at-point)
+      (org/edit-source-block-at-point)
     (user-error "No source block at point.")))
 #+end_src
 
