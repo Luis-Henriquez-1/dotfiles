@@ -5242,18 +5242,17 @@ buffer text. It also makes code easier to debug because you can test for the
 correctness of values returned as opposed to the state change of the buffer.
 
 #+begin_src emacs-lisp
-(defun org:element-headline-elements ()
+(cl-defun org:element-headline-elements ()
   "Return the list of org elements from the current headline to the next."
   (save-excursion
     (unless (org-at-heading-p) (org-back-to-heading))
-    (when (org-at-heading-p)
-      (cons (org-element-at-point)
-            (ignore-errors
-              (org-down-element)
-              (-unfold (lambda (x)
-                         (when (ignore-errors (org-forward-element))
-                           (cons x (org-element-at-point))))
-                       (org-element-at-point)))))))
+    (unless (org-at-heading-p) (cl-return))
+    (cons (org-element-at-point)
+          (ignore-errors
+            (org-down-element)
+            (--unfold (when (ignore-errors (org-forward-element))
+                        (cons it (org-element-at-point)))
+                      (org-element-at-point))))))
 #+end_src
 
 *** editing headline descriptions
