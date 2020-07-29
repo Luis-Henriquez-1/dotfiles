@@ -5984,11 +5984,9 @@ However, I'll address this later. For now I just want things working well.
           ((beg . end) (org:dwim-description-bounds (point) elements))
           (edit-indirect-guess-mode-function (lambda (&rest _) (text-mode)))
           (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
-    (general-add-hook '(edit-indirect-after-creation-hook)
-                      (list #'edit:indirect-add-newlines-maybe-h
-                            #'aggressive-fill-paragraph-mode
-                            ;; #'spell-fu-mode
-                            (lambda () (quiet! (org-link-minor-mode)))
+    (general-add-hook 'edit-indirect-after-creation-hook
+                      ;; Move point to last non-whitespace character.
+                      (list (lambda () (end-of-buffer) (re-search-backward (rx (or white "\n"))))
                             #'evil-insert-state))
     (edit-indirect-region beg end t)))
 #+end_src
