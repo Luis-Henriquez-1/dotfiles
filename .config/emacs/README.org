@@ -349,7 +349,7 @@ installed or not."
 
 The name =leaf= is not very indicative of what the leaf macro does. Therefore, I
 alias it to =use-package!= for external packages, and =use-feature!= for built-in
-packages.
+packages. The name choosing was influenced by [[https://github.com/raxod502/radian/blob/develop/emacs/radian.el#L542][radian's dotfiles]].
 
 #+begin_src emacs-lisp
 (defalias 'use-package! 'leaf)
