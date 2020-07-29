@@ -10038,14 +10038,18 @@ I got this from [[][centaur emacs]].
                                   :color amaranth :quit-key "q")
   ("Traverse"
    (("j" theme-looper-enable-next-theme "next")
-    ("k" theme-looper-enable-previous-theme "previous")
-    ("r" theme-looper-enable-random-theme "random"))
+    ("k" theme-looper-enable-previous-theme "previous"))
    "Favorites"
-   (("i" theme-looper:ignore-current "ignore")
-    ("f" theme-looper:add-current-to-favorite "font"))
-   "Circadian"
-   (("d" theme-looper:enable-dark-theme "dark")
-    ("l" theme-looper:enable-light-theme "light"))))
+   (("f" theme-looper/add-current-theme-to-favorites "favorites")
+    ("f" theme-looper/add-current-theme-to-ignored "ignore"))
+   "Random"
+   (;; ("d" theme-looper/enable-random-dark-theme "dark")
+    ;; ("l" theme-looper/enable-random-light-theme "light")
+    ("r" theme-looper-enable-random-theme "random")
+    ("I" theme-looper/enable-random-ignored-theme "ignored")
+    ("F" theme-looper/enable-random-favorite-theme "favorite"))
+   "circadian"
+   (("t" circadian/set-current-theme-for-time "display at particular time"))))
 #+end_src
 
 *** window
@@ -10123,34 +10127,34 @@ I got this from [[][centaur emacs]].
 :END:
 
 #+begin_src emacs-lisp
-(pretty-hydra-define hydra:theme (:title (pretty-hydra-title "Themes" 'faicon "paint-brush")
-                                  :color amaranth :quit-key "q")
+(pretty-hydra-define hydra:quit (:title (pretty-hydra-title "quit" 'faicon "power-off")
+                                 :color amaranth :quit-key "q")
   ("Emacs"
-   (("q" theme-looper-enable-next-theme "next")
+   (("q" evil-quit-all "next")
+    ("s" void/quit-emacs-no-prompt "with no prompt")
+    ("Q" evil-save-and-quit "and save")
     ("D" void/kill-emacs-no-hook "with no hook")
-    ("X" theme-looper-enable-random-theme "random"))
+    ("Q" void/kill-emacs-brutally "brutally"))
+   "Restart"
+   (("r" restart-emacs "and restart"))
    "Processes"
-   (("f" theme-looper/add-current-theme-to-favorites "favorites")
-    ("f" theme-looper/add-current-theme-to-ignored "ignore"))))
-
-(define-leader-key!
-  :infix "q"
-  ""  (list :ignore t                        :wk "quit")
-  "q" (list :def #'evil-quit-all             :wk "normally")
-  "s" (list :def #'void/quit-emacs-no-prompt :wk "with no prompt")
-  "Q" (list :def #'evil-save-and-quit        :wk "and save")
-  "x" (list :def #'void/kill-emacs-no-hook   :wk "with no hook")
-  "e" (list :def #'void/kill-emacs-processes :wk "emacs processes")
-  "b" (list :def #'void/kill-emacs-brutally  :wk "brutally")
-  "r" (list :def #'restart-emacs             :wk "and restart"))
+   (("p" void/kill-emacs-processes "favorites"))))
 #+end_src
 
-*** help
+*** app
 :PROPERTIES:
-:ID:       4d314900-312d-42ef-b183-b308b852b17f
+:ID:       ae7ffbcd-07f5-4b23-a134-262e51485be0
 :END:
 
 #+begin_src emacs-lisp
+(pretty-hydra-define hydra:app (:title (pretty-hydra-title "Apps" 'faicon "")
+                                :color amaranth :quit-key "q")
+  ("Browsers"
+   (("f" firefox "next")
+    ("q" qutebrowser "with no hook")
+    ("n" next "random"))
+   "Processes"
+   (("p" void/kill-emacs-processes "favorites"))))
 #+end_src
 
 ** TODO buffer management                                             :disabled:
