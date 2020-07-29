@@ -551,22 +551,6 @@ macro-writing.
     (dolist (a args) (princ a))))
 #+end_src
 
-**** unquote                                                          :disabled:
-:PROPERTIES:
-:ID:       e02675e1-e66d-4250-b84a-0078d6556444
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
-**** unfunctionquote                                                  :disabled:
-:PROPERTIES:
-:ID:       de215757-dd53-4115-87fb-b8649d717388
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
 **** factorial
 :PROPERTIES:
 :ID:       01a0195a-d518-4e22-8708-e682b6f462ba
