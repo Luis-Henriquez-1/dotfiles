@@ -266,6 +266,8 @@ external packages.
 :ID:       89b26461-2338-4842-8b03-218dc095af32
 :END:
 
+=package.el= is Emacs's built-in package manager.
+
 **** set up
 :PROPERTIES:
 :ID:       05f0eb53-d2b5-4288-a9d5-9aa35be49a1b
@@ -286,7 +288,9 @@ external packages.
 (eval-and-compile
   (setq use-package-verbose (not (bound-and-true-p byte-compile-current-file))))
 
+;; Don't write in init file.
 (advice-add #'package--ensure-init-file :override #'ignore)
+
 (setq package-archives '(("gnu"   . "https://elpa.gnu.org/packages/")
                          ("melpa" . "https://melpa.org/packages/")
                          ("org"   . "https://orgmode.org/elpa/")))
@@ -297,11 +301,15 @@ external packages.
 :ID:       58ad377f-ecd0-44de-9451-4674bbbcbc05
 :END:
 
+For package management I use a combination of =package.el= and =quelpa=.
+
 #+begin_src emacs-lisp
 (defun package:install (package)
   "Install PACKAGE.
 PACKAGE is either a package name (represented a symbol) or a recipe (represented
-as a list). Silence any messages outputed from installing package."
+as a list). Silence any messages outputed from installing package. If
+`void:debug-p' is non-nil, output messages about whether the package was
+installed or not."
   (setq package (if (atom package) (list package) package))
   (let ((package (or (car-safe package) package))
         (recipe (when (listp package) (cl-subst :fetcher :host package))))
