@@ -6065,13 +6065,12 @@ block.
 (defun org/dwim-edit-source-block ()
   "Edit the source block."
   (interactive)
-  (if (or (org-in-src-block-p)
-          (->> (org:element-headline-elements)
-               (--first (eq (org-element-type it) 'src-block))
-               (org-element-property :begin)
-               (goto-char)))
-      (org/edit-source-block-at-point)
-    (user-error "No source block at point.")))
+  (unless (org-in-src-block-p)
+    (aif (--first (eq (org-element-type it) 'src-block)
+                  (org:element-headline-elements))
+        (goto-char (org-element-property :begin it))
+      (user-error "No source at headline.")))
+  (org/edit-source-block-at-point))
 #+end_src
 
 *** bindings inside edit-indirect
