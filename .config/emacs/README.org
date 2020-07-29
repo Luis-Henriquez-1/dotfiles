@@ -9939,7 +9939,7 @@ prompt asking me if I'm sure.
 (define-leader-key!
   :infix "s"
   :keymaps 'org-mode-map
-  "h" (list :def #'counsel-org-goto :wk "headlines"))
+  "h" (list :def #'selectrum/outline :wk "headlines"))
 #+end_src
 
 ** git
