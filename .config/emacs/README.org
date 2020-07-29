@@ -9373,6 +9373,92 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 :ID: ee57f711-9a4f-421f-b831-ab4907402e52
 :END:
 
+** TODO hydra
+:PROPERTIES:
+:ID:       503d301c-8452-4a85-be41-aa6e5ed701dd
+:END:
+
+*** pretty hydra
+:PROPERTIES:
+:ID:       236961bf-5600-46d0-8468-51d6cb6e15d8
+:END:
+
+#+begin_src emacs-lisp
+(use-package! pretty-hydra)
+#+end_src
+
+*** pretty hydra title
+:PROPERTIES:
+:ID:       68af369e-fc84-41dc-8804-5a4ba785fb51
+:END:
+
+I got this from [[][centaur emacs]].
+
+#+begin_src emacs-lisp
+(cl-defun pretty-hydra-title (title &optional icon-type icon-name
+                                    &key face height v-adjust)
+  "Add an icon in the hydra title."
+  (let ((face (or face `(:foreground ,(face-background 'highlight))))
+        (height (or height 1.0))
+        (v-adjust (or v-adjust 0.0)))
+    (concat
+     (when (and (icons-displayable-p) icon-type icon-name)
+       (let ((f (intern (format "all-the-icons-%s" icon-type))))
+         (when (fboundp f)
+           (concat
+            (apply f (list icon-name :face face :height height :v-adjust v-adjust))
+            " "))))
+     (propertize title 'face face))))
+#+end_src
+
+*** toggle
+:PROPERTIES:
+:ID: 10d6851b-6af6-4185-8976-0ad65b3d1d28
+:END:
+
+#+begin_src emacs-lisp
+(pretty-hydra-define hydra:toggle (:title (pretty-hydra-title "Toggles" 'faicon "toggle-on")
+                                   :color amaranth :quit-key "q")
+  ("No Title"
+   (("l" display-line-numbers "line-numbers")
+    ("c" caps-lock "caps-lock")
+    ("d" debug-on-error "debug"))
+   "Other"
+   (("f" void/set-font "font face")
+    ("L" org-toggle-link-display "link display")
+    ("s" void/set-font-size "font size"))))
+#+end_src
+
+*** theme
+:PROPERTIES:
+:ID:       e3525bb4-8b8c-4a87-ac23-f9627c6e55bb
+:END:
+
+#+begin_src emacs-lisp
+(pretty-hydra-define hydra:theme (:title (pretty-hydra-title "Themes" 'faicon "paint-brush")
+                                  :color amaranth :quit-key "q")
+  ("Traverse"
+   (("j" theme-looper-enable-next-theme "next")
+    ("k" theme-looper-enable-previous-theme "previous")
+    ("r" theme-looper-enable-random-theme "random"))
+   "Favorites"
+   (("i" theme-looper:ignore-current "ignore")
+    ("f" theme-looper:add-current-to-favorite "font"))
+   "Circadian"
+   (("d" theme-looper:enable-dark-theme "dark")
+    ("l" theme-looper:enable-light-theme "light"))))
+#+end_src
+
+*** window
+:PROPERTIES:
+:ID:       71951e0f-fbb9-4458-be9f-ce439e1eedcd
+:END:
+
+*** packages
+:PROPERTIES:
+:ID:       4187c7f4-8b54-4ac3-bcec-cb84a63466e0
+:END:
+
 ** helpful
 :PROPERTIES:
 :ID: 25270809-b64e-4b9a-b0c2-95ffd047280c
