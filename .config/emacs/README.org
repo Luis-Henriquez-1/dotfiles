@@ -7041,7 +7041,6 @@ read this [[https://emacs.stackexchange.com/questions/51853/retracing-steps-with
 
 #+begin_src emacs-lisp
 (use-feature! bookmark
-  :tag "built-in"
   :pre-setq
   (bookmark-default-file . (concat VOID:DATA-DIR "bookmarks"))
   (bookmark-save-flag . t))
