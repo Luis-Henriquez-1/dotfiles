@@ -9715,18 +9715,23 @@ see dark on light better than light on dark.
 
 (use-package! tao-theme)
 
-(use-package! zenburn-theme)
-
-(use-package! color-theme-sanityinc-tomorrow)
-
-(use-package! gruvbox-theme)
-
 (use-package! one-themes)
 
-(use-package! solarized-theme
-  :pre-setq (solarized-use-variable-pitch . nil))
-
 (use-package! avk-emacs-themes)
+
+(use-package! hemera-theme)
+#+end_src
+
+*** circadian                                                         :disabled:
+:PROPERTIES:
+:ID:       1f8dfb73-9709-4b3b-b02f-0c81b04665f3
+:END:
+
+[[][]] manages the loading of themes at certain time.
+
+#+begin_src emacs-lisp
+(use-package! circadian)
+
 #+end_src
 
 * Keybindings
