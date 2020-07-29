@@ -9412,14 +9412,15 @@ I got this from [[][centaur emacs]].
                                   :color amaranth :quit-key "quit")
   ("Traverse"
    (("j" theme-looper-enable-next-theme "next")
-    ("k" theme-looper-enable-previous-theme "previous")
-    ("r" theme-looper-enable-random-theme "random"))
+    ("k" theme-looper-enable-previous-theme "previous"))
    "Favorites"
    (("f" theme-looper/add-current-theme-to-favorites "favorites")
     ("f" theme-looper/add-current-theme-to-ignored "ignore"))
    "Random"
-   (("d" theme-looper/enable-random-dark-theme "dark")
-    ("l" theme-looper/enable-random-light-theme "light")
+   (;; ("d" theme-looper/enable-random-dark-theme "dark")
+    ;; ("l" theme-looper/enable-random-light-theme "light")
+    ("r" theme-looper-enable-random-theme "random")
+    ("I" theme-looper/enable-random-ignored-theme "ignored")
     ("F" theme-looper/enable-random-favorite-theme "favorite"))
    "circadian"
    (("t" circadian/set-current-theme-for-time "display at particular time"))))
@@ -9500,34 +9501,34 @@ I got this from [[][centaur emacs]].
 :END:
 
 #+begin_src emacs-lisp
-(pretty-hydra-define hydra:theme (:title (pretty-hydra-title "Themes" 'faicon "paint-brush")
-                                  :color amaranth :quit-key "q")
+(pretty-hydra-define hydra:quit (:title (pretty-hydra-title "quit" 'faicon "power-off")
+                                 :color amaranth :quit-key "q")
   ("Emacs"
-   (("q" theme-looper-enable-next-theme "next")
+   (("q" evil-quit-all "next")
+    ("s" void/quit-emacs-no-prompt "with no prompt")
+    ("Q" evil-save-and-quit "and save")
     ("D" void/kill-emacs-no-hook "with no hook")
-    ("X" theme-looper-enable-random-theme "random"))
+    ("Q" void/kill-emacs-brutally "brutally"))
+   "Restart"
+   (("r" restart-emacs "and restart"))
    "Processes"
-   (("f" theme-looper/add-current-theme-to-favorites "favorites")
-    ("f" theme-looper/add-current-theme-to-ignored "ignore"))))
-
-(define-leader-key!
-  :infix "q"
-  ""  (list :ignore t                        :wk "quit")
-  "q" (list :def #'evil-quit-all             :wk "normally")
-  "s" (list :def #'void/quit-emacs-no-prompt :wk "with no prompt")
-  "Q" (list :def #'evil-save-and-quit        :wk "and save")
-  "x" (list :def #'void/kill-emacs-no-hook   :wk "with no hook")
-  "e" (list :def #'void/kill-emacs-processes :wk "emacs processes")
-  "b" (list :def #'void/kill-emacs-brutally  :wk "brutally")
-  "r" (list :def #'restart-emacs             :wk "and restart"))
+   (("p" void/kill-emacs-processes "favorites"))))
 #+end_src
 
-*** help
+*** app
 :PROPERTIES:
-:ID:       4d314900-312d-42ef-b183-b308b852b17f
+:ID:       ae7ffbcd-07f5-4b23-a134-262e51485be0
 :END:
 
 #+begin_src emacs-lisp
+(pretty-hydra-define hydra:app (:title (pretty-hydra-title "Apps" 'faicon "")
+                                :color amaranth :quit-key "q")
+  ("Browsers"
+   (("f" firefox "next")
+    ("q" qutebrowser "with no hook")
+    ("n" next "random"))
+   "Processes"
+   (("p" void/kill-emacs-processes "favorites"))))
 #+end_src
 
 ** TODO buffer management                                             :disabled:
@@ -9865,123 +9866,6 @@ press as well and even faster than =SPC SPC=.
   "q" #'delete-window)
 #+end_src
 
-*** scrolling pages
-:PROPERTIES:
-:ID: 4861fa41-7185-471f-bfad-bba1283414ce
-:END:
-
-I scroll pages all the time. The default binding for scrolling pages in evil are
-=C-j= to scroll down and =C-k= to scroll up. These chords are too much for such
-common commands however, so I bound them to =J= and =K= respectively.
-
-#+begin_src emacs-lisp
-(general-def 'normal
-  "K" #'evil-scroll-page-up
-  "J" #'evil-scroll-page-down)
-#+end_src
-
-*** increasing text scale
-:PROPERTIES:
-:ID: 927dedb6-eee9-47ff-9298-c2e21bbce524
-:END:
-
-As someone who spends much of his day on the computer.
-
-#+begin_src emacs-lisp
-(general-def '(emacs normal)
-  "M--" #'text-scale-decrease
-  "M-=" #'text-scale-increase)
-#+end_src
-
-** windows
-:PROPERTIES:
-:ID: 784956e2-3696-4f92-80ca-41b7e30e5b2b
-:END:
-
-Efficient window management in Emacs crucial for success. These keys all pertain
-to window/workspace actions.
-
-#+begin_src emacs-lisp
-(define-leader-key!
-  :infix "w"
-  ""  (list :ignore nil                              :wk "window")
-  "w" (list :def #'display-buffer :wk "display buffer")
-  "o" (list :def #'other-window                      :wk "other window")
-  "S" (list :def #'void/window-split-below-and-focus :wk "split below and focus")
-  "V" (list :def #'void/window-split-right-and-focus :wk "split right and focus")
-  "s" (list :def #'split-window-below                :wk "split below")
-  "v" (list :def #'split-window-right                :wk "split right")
-  "M" (list :def #'maximize-window                   :wk "maximize")
-  "m" (list :def #'minimize-window                   :wk "minimize")
-  "b" (list :def #'balance-windows                   :wk "move left")
-  "d" (list :def #'delete-window                     :wk "delete current")
-  "D" (list :def #'delete-other-windows              :wk "delete others")
-  "h" (list :def #'windmove-left                     :wk "move left")
-  "j" (list :def #'windmove-down                     :wk "move down")
-  "k" (list :def #'windmove-up                       :wk "move up")
-  "l" (list :def #'windmove-right                    :wk "move right")
-  "x" (list :def #'ace-swap-window                   :wk "swap windows")
-  "t" (list :def #'transpose-frame                   :wk "transpose")
-  "n" (list :def #'eyebrowse-create-window-config    :wk "save window config")
-  "J" (list :def #'eyebrowse-next-window-config      :wk "next window config")
-  "K" (list :def #'eyebrowse-prev-window-config      :wk "prev window config"))
-#+end_src
-
-** buffer
-:PROPERTIES:
-:ID: e3eec4f8-88d8-4010-adb5-2f8e05f14677
-:END:
-
-In emacs, we change the buffer a window's displaying pretty often. That's why
-efficient buffer navigation is a must. There are particular buffers which I
-visit so often that it's worth having keybindings just for them.
-
-#+begin_src emacs-lisp
-(define-leader-key!
-  :infix "b"
-  ""  (list :def nil                            :wk "buffer")
-  "e" (list :def #'buffer-expose                :wk "expose")
-  "p" (list :def #'previous-buffer              :wk "previous")
-  "n" (list :def #'next-buffer                  :wk "next")
-  "s" (list :def #'switch-to-buffer             :wk "switch")
-  "b" (list :def #'switch-to-buffer             :wk "switch")
-  "d" (list :def #'display-buffer               :wk "display")
-  "t" (list :def #'void/switch-to-todo-file     :wk "Void TODO")
-  "S" (list :def #'void/open-scratch            :wk "*scratch*")
-  "i" (list :def #'void/switch-to-init-org-file :wk "fallback")
-  "I" (list :def #'void/switch-to-main-elisp    :wk "main.el")
-  "m" (list :def #'void/switch-to-main-org-file :wk "Void README")
-  "M" (list :def #'void/switch-to-messages      :wk "*messages*"))
-
-(define-leader-key!
-  :infix "b k"
-  ""  (list :ignore t             :wk "kill")
-  "c" (list #'kill-current-buffer :wk "current"))
-#+end_src
-
-** app
-:PROPERTIES:
-:ID: 3f09a41a-03b8-4d5c-85c5-d7adeb7dd328
-:END:
-
-These keybindings are for opening particular apps. When I'm testing Void I like
-to open another emacs instance.
-
-#+begin_src emacs-lisp
-(define-leader-key!
-  :infix "a"
-  ""  (list :ignore t                       :wk "app")
-  "a" (list :def #'counsel-linux-app :wk "open app")
-  "E" (list :def #'elfeed                   :wk "elfeed")
-  "d" (list :def #'deer                     :wk "deer")
-  "r" (list :def #'ranger                   :wk "ranger")
-  "e" (list :def #'void/open-emacs-instance :wk "emacs")
-  "q" (list :def #'void/open-qutebrowser    :wk "qutebrowser")
-  "q" (list :def #'void/open-next           :wk "next")
-  "w" (list :def #'w3m                      :wk "w3m")
-  "c" (list :def #'org-capture              :wk "capture"))
-#+end_src
-
 ** file
 :PROPERTIES:
 :ID: 2231147b-88c9-4c63-9c75-488cd1465807
@@ -9998,21 +9882,6 @@ to open another emacs instance.
   "d" (list :def #'deer        :wk "deer"))
 #+end_src
 
-** eval
-:PROPERTIES:
-:ID: afa6be08-a38c-45f1-867a-5620fc290aac
-:END:
-
-#+begin_src emacs-lisp
-(define-leader-key!
-  :infix "e"
-  ""  (list :ignore t                   :wk "eval")
-  "r" (list :def #'eval-region          :wk "region")
-  "d" (list :def #'eval-defun           :wk "defun")
-  "l" (list :def #'eval-print-last-sexp :wk "sexp")
-  "b" (list :def #'eval-buffer          :wk "buffer"))
-#+end_src
-
 ** code
 :PROPERTIES:
 :ID: 661f77fb-3435-4e4f-8adb-c4d6390ea6b8
@@ -10027,88 +9896,6 @@ These bindings are for generally working with code.
   "a" (list :def #'ialign                               :wk "align")
   "l" (list :def #'lispyville-comment-or-uncomment-line :wk "toggle comment")
   "y" (list :def #'lispyvile-comment-and-cone-dwim      :wk "copy comment"))
-#+end_src
-
-** toggle
-:PROPERTIES:
-:ID: 10d6851b-6af6-4185-8976-0ad65b3d1d28
-:END:
-
-#+begin_src emacs-lisp
-(define-leader-key!
-  :infix "t"
-  ""  (list :ignore t                    :wk "toggle/set")
-  "r" (list :def #'read-only-mode        :wk "read-only")
-  "t" (list :def #'load-theme            :wk "load theme")
-  "c" (list :def #'caps-lock-mode        :wk "caps lock")
-  "d" (list :def #'toggle-debug-on-error :wk "debug")
-  "F" (list :def #'counsel-fonts         :wk "set font")
-  "f" (list :def #'void/set-font-size    :wk "font size"))
-
-(define-leader-key!
-  :infix "t"
-  :keymaps 'org-mode-map
-  "l" (list :def #'org-toggle-link-display :wk "link display"))
-#+end_src
-
-** help
-:PROPERTIES:
-:ID: c7f3b699-7cf9-480b-a88c-10bdae4c165e
-:END:
-
-There's a lot of documentation finding and information searching involved in
-Emacs and for that we need all the help we can get.
-
-#+begin_src emacs-lisp
-(define-leader-key!
-  :infix "h"
-  ""  (list :ignore t                      :wk "help")
-  "h" (list :def #'describe-function       :wk "function")
-  "v" (list :def #'describe-variable       :wk "variable")
-  "c" (list :def #'describe-char           :wk "char")
-  "k" (list :def #'describe-key            :wk "key")
-  "f" (list :def #'describe-function       :wk "function")
-  "l" (list :def #'global-command-log-mode :wk "command log")
-  "a" (list :def #'apropos                 :wk "apropos"))
-#+end_src
-
-** quit
-:PROPERTIES:
-:ID: d4828ea9-5ee1-4424-8ff0-f700876d34fd
-:END:
-
-There's many ways to quit Emacs. Sometimes I'd like to save all the buffers I
-had been working on. Sometimes, when I'm testing something and I mess up
-[[helpvar:kill-emacs-hook][kill-emacs-hook]] I want Emacs to just quit even if it means ignoring that hook.
-Most of the time, I know what I'm doing when I quit Emacs, so I don't want a
-prompt asking me if I'm sure.
-
-#+begin_src emacs-lisp
-(define-leader-key!
-  :infix "q"
-  ""  (list :ignore t                        :wk "quit")
-  "q" (list :def #'evil-quit-all             :wk "normally")
-  "s" (list :def #'void/quit-emacs-no-prompt :wk "with no prompt")
-  "Q" (list :def #'evil-save-and-quit        :wk "and save")
-  "x" (list :def #'void/kill-emacs-no-hook   :wk "with no hook")
-  "e" (list :def #'void/kill-emacs-processes :wk "emacs processes")
-  "b" (list :def #'void/kill-emacs-brutally  :wk "brutally")
-  "r" (list :def #'restart-emacs             :wk "and restart"))
-#+end_src
-
-** packages
-:PROPERTIES:
-:ID: d3286920-ead4-4f7c-bf9d-8a6ed3d7ba46
-:END:
-
-#+begin_src emacs-lisp
-(define-leader-key!
-  :infix "p"
-  ""  (list :ignore t                       :wk "package")
-  "i" (list :def #'straight-use-package     :wk "install")
-  "r" (list :def #'straight-rebuild-package :wk "rebuild")
-  "p" (list :def #'straight-pull-package    :wk "pull")
-  "s" (list :def #'straight/search-package  :wk "search"))
 #+end_src
 
 ** search
