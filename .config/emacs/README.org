@@ -3729,7 +3729,6 @@ of stock emacs functions with a version that using =ivy= for completion.
   ([remap imenu]                    . counsel-imenu)
   ([remap recentf-open-files]       . counsel-recentf)
   ([remap org-capture]              . counsel-org-capture)
-  ([remap swiper]                   . counsel-grep-or-swiper)
   ([remap evil-ex-registers]        . counsel-evil-registers)
   ([remap yank-pop]                 . counsel-yank-pop)
   :setq
