@@ -5513,7 +5513,9 @@ However, I'll address this later. For now I just want things working well.
           (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
     (general-add-hook 'edit-indirect-after-creation-hook
                       ;; Move point to last non-whitespace character.
-                      (list (lambda () (end-of-buffer) (re-search-backward (rx (or white "\n"))))
+                      (list (lambda ()
+                              (end-of-buffer)
+                              (ignore-errors (re-search-backward (rx (or white "\n")))))
                             #'evil-insert-state))
     (edit-indirect-region beg end t)))
 #+end_src
