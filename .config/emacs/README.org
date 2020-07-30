@@ -8431,7 +8431,8 @@ see if it's gone farther than it should have and in that case goes back.
   (interactive)
   (unless (org-at-heading-p)
     (user-error "Not in source block"))
-  (org-babel-execute-subtree))
+  (save-window-excursion
+    (org-babel-execute-subtree)))
 #+end_src
 
 ****** next-line
