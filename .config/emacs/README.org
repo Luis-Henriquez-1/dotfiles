@@ -4469,6 +4469,8 @@ This package provides an "orderless" completion style.
   :setq
   (selectrum-refine-candidates-function . #'orderless-filter)
   (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
+
+(setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))
 #+end_src
 
 ** abbrev                                                      :abbrev:disabled:
