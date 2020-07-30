@@ -6997,57 +6997,6 @@ aliases.
   :commands shrink-path-file)
 #+end_src
 
-** TODO org goto heading
-:PROPERTIES:
-:ID: 7c70f9e4-c47f-4f2c-8b0d-9bafac116be6
-:END:
-
-*** selectrum
-:PROPERTIES:
-:ID: 70aaadda-abfe-4ac2-af31-229d2208a859
-:END:
-
-#+begin_src emacs-lisp
-(defun org/jump-to-headline ()
-  "Prompt the user to select one of the headline paths.
-And go to the start of the path selected by the headline."
-  (interactive)
-  (let ((selectrum-should-sort-p nil)
-        (selectrum-refine-candidates-function #'selectrum-default-candidate-refine-function)
-        (paths (org:headline-paths)))
-    (thread-first (mapcar #'car paths)
-         (completing-read "Headlines: " it)
-         (alist-get it paths nil nil #'string=)
-         (goto-char it))
-    (org-adjust-nearby-headlines-a)
-    (when (org:heading-folded-p)
-      (outline-toggle-children))))
-#+end_src
-
-*** steps to add selectrum
-:PROPERTIES:
-:ID: a252c3c0-c4e7-43cf-b916-f1e956f1ba98
-:END:
-
-#+begin_src emacs-lisp
-(defun org:headline-paths ()
-  "Return an alist whose elements are (headline-path . point).
-HEADLINE-PATH is the path to a headline and POINT is the start of the headline."
-  (save-excursion
-    (goto-char (point-min))
-    (let ((case-fold-search nil))
-      (--unfold
-       (when (re-search-forward void:headline-regexp nil t nil)
-         (let ((last-level (length it))
-               (level (length (match-string 1)))
-               (headline (match-string-no-properties 4))
-               (start (match-beginning 0)))
-           (setq it (cons headline
-                          (nthcdr (max 0 (1+ (- last-level level))) it)))
-           (cons (cons (s-join "/" (reverse it)) start) it)))
-       nil))))
-#+end_src
-
 ** command-log-mode
 :PROPERTIES:
 :ID: 10226327-4c31-41db-b202-e4a9f44fc6fe
