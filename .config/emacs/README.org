@@ -5827,7 +5827,7 @@ very useful to me.
 
 #+begin_src emacs-lisp
 (use-package! lispy
-  ;; :hook emacs-lisp-mode-hook
+  :hook emacs-lisp-mode-hook
   :setq
   (lispy-avy-style-paren . 'at-full)
   (lispy-eval-display-style . 'overlay)
