@@ -658,60 +658,6 @@ Destructuring.
 :ID:       001dde5a-bb43-4ce8-82ef-806e37ba7f6e
 :END:
 
-***** fn!
-:PROPERTIES:
-:ID:       1cf5fc1c-cabc-4e32-8e74-2be2a3cd48a6
-:END:
-
-#+begin_src emacs-lisp
-(defmacro fn! (&rest body)
-  "An anaphoric lambda."
-  (with-symbols! (args)
-    `(lambda (,args)
-       (-let ((,(void:anaphoric-symbols body) (-list ,args)))
-         ,@body))))
-#+end_src
-
-***** alet!
-:PROPERTIES:
-:ID:       64b57fb6-11b5-46c7-b002-1497aa4b2edb
-:END:
-
-#+begin_src emacs-lisp
-(defmacro alet! (value &rest body)
-  (declare (indent defun))
-  (let ((orign-value (make-symbol "orig-value")))
-    `(let* ((,orign-value ,value)
-            ,@(mapcar (fn! (list <symbol> orign-value)) (void:anaphoric-symbols body)))
-       ,@body)))
-#+end_src
-
-***** aif!
-:PROPERTIES:
-:ID:       7d84b516-76f1-48e4-9897-04a2795c2d1d
-:END:
-
-#+begin_src emacs-lisp
-(defmacro aif! (cond then &optional else)
-  "Anaphoric if."
-  (declare (indent defun))
-  (with-symbols! (return-value)
-    `(let ((,return-value ,cond))
-       (alet! ,return-value
-         (if ,return-value ,then ,else)))))
-#+end_src
-
-***** awhen!
-:PROPERTIES:
-:ID:       3953606e-7301-418e-ad05-fd909b28a050
-:END:
-
-#+begin_src emacs-lisp
-(defmacro awhen! (cond &rest body)
-  (declare (indent defun))
-  `(aif! ,cond (progn ,@body)))
-#+end_src
-
 ***** pair value extraction
 :PROPERTIES:
 :ID: e546a63f-eb75-4b72-9392-2a6041f87f50
@@ -736,13 +682,13 @@ should return the value of structure for that symbol.
 BODY contains any number of `<NAME>' where NAME refers to the name of the symbol."
   (declare (indent 2))
   (let* ((symbols (->> (flatten-list body)
-                    (-filter #'void:anaphoric-symbol-p)
-                    (-uniq)))
+                       (-filter #'void:anaphoric-symbol-p)
+                       (-uniq)))
          (names (-map #'void:anaphoric-true-symbol symbols))
          (structure-sym (make-symbol "structure")))
     `(let* ((,structure-sym ,structure)
-            ,@(-map (fn! `(,<sym> (funcall ,fn ,structure-sym ',<name>)))
-                    (-zip #'list symbols names)))
+            ,@(--map `(,it (funcall ,fn ,structure-sym ',it))
+                     (-zip #'list symbols names)))
        ,@body)))
 #+end_src
 
@@ -845,10 +791,9 @@ from pulling (or failing to pull) in autoloaded macros/features.
   (pcase (car-safe features)
     ('or
      (macroexp-progn
-      (-map (fn! `(after! ,<feature> ,@body))
-            (cdr features))))
+      (--map `(after! ,it ,@body) (cdr features))))
     ('and
-     (void:wrap-form (-map (fn! `(after! ,<feature>)) (cdr features))
+     (void:wrap-form (--map `(after! ,it) (cdr features))
                      (macroexp-progn body)))
     ((guard (listp features))
      `(after! ,(cons 'and features) ,@body))
@@ -3325,8 +3270,8 @@ windows).
 (defhook! exwm:start-in-char-mode-h ()
   "Decide whether to start program in char mode."
   :hook exwm-manage-finish-hook
-  (when (-any-p (fn! (string-prefix-p <prefix> exwm-instance-name))
-                (list "emacs"))
+  (when (--any-p (string-prefix-p it exwm-instance-name)
+                 (list "emacs"))
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
 
@@ -3476,17 +3421,17 @@ This is the user-facing function to define yasnippets.
   "Define a snippet."
   (let* ((keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
     (with-plist! plist
-      (cl-assert (-all-p (fn! (not (null <it>)))
-                         (list <:name> <:mode> <:body>)))
-      (alet! (append
-              (list "# -*- mode: snippet -*-\n")
-              (mapcar (lambda (key)
-                        (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
-                      (--filter (plist-get plist it) keys))
-              (list "# --\n")
-              (list (defsnippet:compute-body <:body> <:placeholders>)))
+      (cl-assert (-none-p #'null
+                          (list <:name> <:mode> <:body>)))
+      (alet (append
+             (list "# -*- mode: snippet -*-\n")
+             (mapcar (lambda (key)
+                       (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
+                     (--filter (plist-get plist it) keys))
+             (list "# --\n")
+             (list (defsnippet:compute-body <:body> <:placeholders>)))
         (with-temp-buffer
-          (insert (string-join "\n" <it>))
+          (insert (string-join "\n" it))
           (yas-load-snippet-buffer <:mode>))))))
 #+end_src
 
@@ -3498,13 +3443,12 @@ This is the user-facing function to define yasnippets.
 #+begin_src emacs-lisp
 (defun defsnippet:compute-body (body placeholders)
   "Return the result of PLACEHOLDERS applied to BODY."
-  (alet! (mapcar (lambda (it)
-                    (let! (((number name form) it))
-                      (if (eq '_  name)
-                          (format "${%d:$$%S}" number form)
-                        (format "${%d:%s$%S}" number name form))))
-                  placeholders)
-    (apply #'format body <it>)))
+  (alet (-map (-lambda ((number name form))
+                (if (eq '_  name)
+                    (format "${%d:$$%S}" number form)
+                  (format "${%d:%s$%S}" number name form)))
+              placeholders)
+    (apply #'format body it)))
 #+end_src
 
 **** list symbols
@@ -3647,7 +3591,7 @@ be inserted and interactively completed.
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :defer-config
-  (-each yas-snippet-dirs (fn! (mkdir <dir> t)))
+  (--each yas-snippet-dirs (mkdir it t))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
@@ -3665,8 +3609,8 @@ be inserted and interactively completed.
 (use-package! yasnippet-snippets
   :after yasnippet
   :init
-  (awhen! (-first (fn! (s-contains-p "yasnippet-snippets" <path>)) load-path)
-    (push <path> yas-snippet-dirs)))
+  (awhen (-first (-partial #'s-contains-p "yasnippet-snippets") load-path)
+    (push it yas-snippet-dirs)))
 #+end_src
 
 ** ivy
@@ -4109,8 +4053,7 @@ WORD is a string with no whitespace characters."
           (letters (-> word
                        (s-chop-suffixes abbrev:suffixes it)
                        (s-split "" it t)))
-          (no-vowels (-remove (fn! (string-match-p vowel-regexp <string>))
-                              letters)))
+          (no-vowels (-remove (-partial #'string-match-p vowel-regexp) letters)))
     (->> no-vowels
          (-uniq)
          (-map #'downcase)
@@ -4472,11 +4415,11 @@ therefore, has the most support (in the form of setup blogs and packages).
   "Initialize mu4e."
   (interactive)
   (require 'password-store)
-  (let ((email-dirs (mapcar (fn! (concat VOID:EMAIL-DIR <email>)) (pass:email-list))))
+  (let ((email-dirs (--map (concat VOID:EMAIL-DIR it) (pass:email-list))))
     (when (or (not (-all-p #'f-exists-p email-dirs))
               (-some-p #'f-empty-p email-dirs))
       (message "creating directories that don't exist.")
-      (dolist (dir email-dirs) (mkdir dir t))
+      (--each email-dirs (mkdir it t))
       (shell-command (format "mu init -m %s" VOID:EMAIL-DIR))
       (message "Updating mail...")
       (mu4e-update-mail-and-index t))))
@@ -4551,8 +4494,8 @@ reason I spent so much time setting this up is because.
 (defun pass:email-list ()
   "Return a list of emails."
   (->> (password-store-list)
-       (mapcar (fn! (elt (s-match "email/\\(.*\\)" <entry>) 1)))
-       (-all-p (fn! (not (null <it>))))))
+       (--map (elt (s-match "email/\\(.*\\)" it) 1))
+       (-none-p #'null)))
 #+end_src
 
 **** return the stuff as a plist
@@ -4564,9 +4507,10 @@ reason I spent so much time setting this up is because.
 (defun pass:email-account-plist (email)
   "Return a plist of the relevant values of an email."
   (shut-up!
-    (mapcan (fn! (list (intern <field>)
-                       (password-store-get-field (concat "email/" email) <field>)))
-            (mapcar #'car (cdr (password-store-parse-entry it))))))
+    (->> (cdr (password-store-parse-entry it))
+         (mapcar #'car)
+         (--mapcat (list (intern it)
+                         (password-store-get-field (concat "email/" email) it))))))
 #+end_src
 
 **** mu4e folder name alist
@@ -4583,11 +4527,11 @@ Items=.
 (defun mu4e:guess-folder (base-dir possible-name &rest other-possible-names)
   "Return the first file in BASE-DIR that matches POSSIBLE-NAME or any POSSIBLE-NAMES.
 If there is no match, return POSSIBLE-NAME."
-  (alet! (or (-first (lambda (it) (-some-p (fn! (s-contains-p <name> it t))
-                                           (cons possible-name other-possible-names)))
+  (alet (or (--first (-some-p (-cut #'s-contains-p <> it t)
+                              (cons possible-name other-possible-names))
                      (cddr (directory-files base-dir)))
-             possible-name)
-    (format "/%s/%s" (f-filename base-dir) <folder>)))
+            possible-name)
+    (format "/%s/%s" (f-filename base-dir) it)))
 #+end_src
 
 **** set up contexts for single account
@@ -4623,8 +4567,8 @@ If there is no match, return POSSIBLE-NAME."
   "Initiaize context for each email account."
   :before mu4e
   (require 'password-store)
-  (-each (mapcar #'mu4e::account-context (pass:email-list))
-    (fn! (cl-pushnew <context> mu4e-contexts))))
+  (--each (-map #'mu4e::account-context (pass:email-list))
+    (cl-pushnew it mu4e-contexts)))
 #+end_src
 
 *** shortcuts
@@ -5415,13 +5359,12 @@ the time.
 (defun org:edit-desc-bounds (point elements)
   "Return the bounds of the description at point.
 ELEMENTS is a list of headline elements (see `org:element-headline-elements')."
-  (awhen! (-find (fn! (-some-p (apply-partially #'org:element-contains-point-p point)
-                               <it>))
-                 (->> (cdr elements)
-                      (-group-by #'org:element-paragraph-p)
-                      (-filter (lambda (it) (org:element-paragraph-p (car it))))))
-    (cons (org-element-property :contents-begin (-first-item <it>))
-          (org-element-property :contents-end (-last-item <it>)))))
+  (awhen (-find (-some-p (-partial #'org:element-contains-point-p point) it)
+                (->> (cdr elements)
+                     (-group-by #'org:element-paragraph-p)
+                     (-filter (-compose #'org:element-paragraph-p #'car))))
+    (cons (org-element-property :contents-begin (-first-item it))
+          (org-element-property :contents-end (-last-item it)))))
 #+end_src
 
 **** org edit description at point
@@ -6725,8 +6668,8 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 
 #+begin_src emacs-lisp
 (after! em-term
-  (-each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
-    (fn! (add-to-list 'eshell-visual-commands <command>))))
+  (--each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
+    (add-to-list 'eshell-visual-commands it)))
 #+end_src
 
 *** improvements
