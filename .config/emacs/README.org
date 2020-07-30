@@ -5934,10 +5934,9 @@ where the point should go."
          ((--first (eq (org-element-type it) 'src-block) elements)
           (cons (org-element-property :begin it)
                 (org-element-property :begin it)))
-         ;; Insert the description after any property drawers.
-         (t (cons 'x 'x))
-         ;; Go to the end of the list.
-         ))
+         ;; Insert it after the last headline element.
+         ((org-element-property :end (-last-item elements))
+          (cons it it))))
 #+end_src
 
 **** maybe add newlines
