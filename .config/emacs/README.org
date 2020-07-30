@@ -8821,18 +8821,17 @@ akwardly folded. This advice adjusts headings around as well as putting the
 headline in view.
 
 #+begin_src emacs-lisp
-(defadvice! org-adjust-nearby-headlines-a (&rest _)
-  :after org/jump-to-headline
+(defun org:prettify-nearby-headlines ()
+  "Prettify display of nearby headlines."
   (save-excursion
     (while (org-up-heading-safe)
       (outline-show-children)))
   (outline-show-children)
-  ;; From `evil-scroll-line-to-top'.
   (let ((line (line-number-at-pos (point))))
     (goto-char (point-min))
     (forward-line (1- line)))
   (recenter (1- (max 1 scroll-margin)))
-  (org:heading-goto-start))
+  (org-beginning-of-line))
 #+end_src
 
 **** helpers
