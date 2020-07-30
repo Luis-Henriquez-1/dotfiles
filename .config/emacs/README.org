@@ -5500,9 +5500,6 @@ hooks.
 :ID: b409f0d6-c681-4554-9ee5-2a303bd613b3
 :END:
 
-I shouldn't hard-code things modes like =spell-fu= into editing a description.
-However, I'll address this later. For now I just want things working well.
-
 #+begin_src emacs-lisp
 (defun org/dwim-edit-description ()
   "Edit a description the way I want to."
@@ -5511,6 +5508,7 @@ However, I'll address this later. For now I just want things working well.
           ((beg . end) (org:dwim-description-bounds (point) elements))
           (edit-indirect-guess-mode-function (lambda (&rest _) (text-mode)))
           (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
+    (edit-indirect:add-before-commit-hook #'edit-indirect:ensure-newline)
     (general-add-hook 'edit-indirect-after-creation-hook
                       ;; Move point to last non-whitespace character.
                       (list (lambda ()
@@ -5540,6 +5538,19 @@ which does it? One reason is consistently. Eventually, I want all separate
 editing buffers to be from =edit-indirect=. That why I don't have to configure
 both =edit-indirect= and org source block function to work the way I want; I can
 deal with just one source.
+
+**** add before commit hook
+:PROPERTIES:
+:ID:       ab108485-1978-4bfd-9329-cc29035399d2
+:END:
+
+#+begin_src emacs-lisp
+(defun edit-indirect:add-before-commit-hook (fn)
+  "Add FN."
+  (add-hook 'edit-indirect-after-creation-hook
+            `(lambda ()
+               (add-hook 'edit-indirect-before-commit-hook #',fn nil t))))
+#+end_src
 
 **** prevent ending with no newline
 :PROPERTIES:
