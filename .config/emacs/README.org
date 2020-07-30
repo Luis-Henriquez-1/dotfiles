@@ -10223,7 +10223,7 @@ prompt asking me if I'm sure.
 (define-leader-key!
   :infix "s"
   :keymaps 'org-mode-map
-  "h" (list :def #'swiper :wk "headlines"))
+  "h" (list :def #'counsel-org-goto :wk "headlines"))
 #+end_src
 
 ** git
