@@ -4494,7 +4494,7 @@ reason I spent so much time setting this up is because.
   "Return a list of emails."
   (->> (password-store-list)
        (--map (elt (s-match "email/\\(.*\\)" it) 1))
-       (-none-p #'null)))
+       (-non-nil)))
 #+end_src
 
 **** return the stuff as a plist
@@ -4506,7 +4506,7 @@ reason I spent so much time setting this up is because.
 (defun pass:email-account-plist (email)
   "Return a plist of the relevant values of an email."
   (shut-up!
-    (->> (cdr (password-store-parse-entry it))
+    (->> (cdr (password-store-parse-entry email))
          (mapcar #'car)
          (--mapcat (list (intern it)
                          (password-store-get-field (concat "email/" email) it))))))
