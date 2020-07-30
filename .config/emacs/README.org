@@ -8299,10 +8299,7 @@ I need this function for some org actions. Evil has this as
 :ID: 6168590a-db23-4f0b-bdd9-9d9666624af6
 :END:
 
-=counsel-org-goto= is an increadible command that lets you fuzzy select a subtree
-you want to see. Only problem is after you get there, it looks scrunchy and
-akwardly folded. This advice adjusts headings around as well as putting the
-headline in view.
+=counsel-org-goto= is lets you fuzzy search a term among org headings.
 
 #+begin_src emacs-lisp
 (defun org:prettify-nearby-headlines ()
