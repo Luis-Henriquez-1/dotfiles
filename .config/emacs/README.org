@@ -10298,8 +10298,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
         (format "%d packages loaded in %.2f seconds"
                 (cond ((featurep 'straight)
                        (hash-table-size straight--profile-cache))
-                      (t
-                       (package (length package-activated-list))))
+                      (t (length package-activated-list)))
                 (string-to-number (emacs-init-time)))))
 #+end_src
 
