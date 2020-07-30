@@ -3669,247 +3669,7 @@ be inserted and interactively completed.
     (push <path> yas-snippet-dirs)))
 #+end_src
 
-** frameworks
-:PROPERTIES:
-:ID: 9784c474-56ee-4d76-bbd0-3f611fc001ee
-:END:
-
-*** helm                                                              :disabled:
-:PROPERTIES:
-:ID: 19772582-4016-4e6b-8d70-7f608d50fc37
-:END:
-
-Helm is the most popular emacs completion framework. It is full-featured and
-extremely customizable. I haven't found an official manual for it but I often
-see people reference [[http://tuhdo.github.io/helm-intro.html][this helm intro]] that showcase many useful helm commands. A huge
-advantage helm has is the breath of its support. The biggest complaint heard
-about Helm is that it's too bloated and slow.
-
-**** helm-core
-:PROPERTIES:
-:ID: 17c16fa7-9612-43dc-b1bb-c2a7f4e3ab79
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm
-  :commands helm-M-x
-  :popup
-  ("\\*Helm"
-   (display-buffer-at-bottom)
-   (side . bottom)
-   (slot . 1)
-   (window-height . 0.5)
-   (window-parameters . ((no-other-window . t))))
-  :pre-setq
-  (helm-default-display-buffer-functions . '(pop-to-buffer))
-  (helm-display-buffer-height . .6)
-  (helm-display-buffer-default-height . 0.6)
-  (helm-candidate-number-limit . 50)
-  (helm-display-header-line . nil)
-  (helm-mode-line-string . nil)
-  :config
-  (helm-mode 1))
-
-(use-package! helm-files
-  :setq
-  (helm-ff-auto-update-initial-value . nil)
-  (helm-ff-lynx-style-map . nil)
-  (helm-find-files-doc-header . nil))
-#+end_src
-
-**** helm-mode
-:PROPERTIES:
-:ID: e505c504-63ac-404a-93ae-6c32f599e22e
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-files
-  ;; (:after-hook pre-command-hook)
-  :bind
-  ([remap apropos]                  . helm-apropos)
-  ([remap find-library]             . helm-locate-library)
-  ([remap execute-extended-command] . helm-M-x)
-  ([remap find-file]                . helm-find-files)
-  ([remap locate]                   . helm-locate)
-  ([remap imenu]                    . helm-semantic-or-imenu)
-  ([remap noop-show-kill-ring]      . helm-show-kill-ring)
-  ([remap recentf]                  . helm-recentf)
-  ([remap switch-to-buffer]         . helm-mini))
-#+end_src
-
-**** helm swoop
-:PROPERTIES:
-:ID: 9d9f4072-b75e-41d0-9a48-961a3a8cd85a
-:END:
-
-[[https://github.com/emacsorphanage/helm-swoop][helm-swoop]] is an helm version of swiper. It gives me an overview of searches.
-
-#+begin_src emacs-lisp
-(use-package! helm-swoop
-  :commands helm-swoop
-  :setq
-  (helm-swoop-pre-input-function   . (lambda () ""))
-  (helm-swoop-use-line-number-face . nil)
-  (helm-swoop-move-to-line-cycle   . t)
-  (helm-swoop-speed-or-color       . nil)
-  (helm-swoop-use-fuzzy-match      . t))
-#+end_src
-
-**** helm descbinds
-:PROPERTIES:
-:ID: b30b7467-1715-4040-ba2a-78cbb5a9d0a7
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-descbinds
-  :hook (helm-mode-hook . helm-descbinds-mode))
-#+end_src
-
-**** helm-mode-map
-:PROPERTIES:
-:ID: 94edac5d-d40e-447f-a347-51b0d4d63331
-:END:
-
-#+begin_src emacs-lisp
-(after! (helm evil)
-  (general-def '(emacs insert) helm-map
-    "C-m" #'helm-toggle-visible-mark-forward
-    "M-m" #'helm-toggle-visible-mark-forward
-    "C-j" #'helm-next-line
-    "C-k" #'helm-previous-line
-    "C-n" #'helm-next-page
-    "C-a" #'helm-select-action
-    "TAB" #'helm-next-line
-    "C-l" #'helm-execute-persistent-action
-    [backtab] #'helm-previous-line
-    "<RET>" #'helm-maybe-exit-minibuffer))
-#+end_src
-
-**** helm-system-packages
-:PROPERTIES:
-:ID: 832ad8ea-df31-45c4-a0b2-b8cdff00a23d
-:END:
-
-[[https://github.com/emacs-helm/helm-system-packages][helm-system-packages]] incorporates helm with your operating system's package manager.
-
-#+begin_src emacs-lisp
-(use-package! helm-system-packages
-  :commands helm-system-packages)
-#+end_src
-
-**** helm-exwm                                                        :disabled:
-:PROPERTIES:
-:ID: 4c3a384d-846b-41dd-9878-dc739f97ccd7
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-exwm)
-#+end_src
-
-**** hide helm modeline
-:PROPERTIES:
-:ID: c82ddad1-a41c-48ec-aa84-d916cdeed66f
-:END:
-
-#+begin_src emacs-lisp
-(after! helm
-  (defun helm--hide:mode-line (&rest _)
-    (with-current-buffer (helm-buffer-get)
-      (unless helm-mode-line-string
-        (hide-mode-line-mode +1))))
-  (add-hook 'helm-after-initialize-hook #'helm--hide:mode-line)
-  (advice-add #'helm-display-mode-line :override #'helm--hide:mode-line))
-#+end_src
-
-**** helm-dash
-:PROPERTIES:
-:ID: de4aa3ef-c0b8-40e6-b8b4-f9cf148bc41b
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-dash
-  :commands helm-dash
-  :setq
-  (helm-dash-docsets-path . (concat VOID:DATA-DIR "/dash-docsets"))
-  (helm-dash-browser-func . (if (executable-find "w3m") #'w3m #'browse-url)))
-#+end_src
-
-**** helm-org
-:PROPERTIES:
-:ID:       1e19a081-d107-4593-8af4-e72c84bbaeff
-:END:
-
-***** org capture
-:PROPERTIES:
-:ID:       a11e2fe3-8596-4a15-bed7-08a988c561a0
-:END:
-
-[[https://github.com/emacs-helm/helm-org][helm-org]] doesn't have everything I need for org mode--or rather what it
-does have isn't good enough.
-
-#+begin_src emacs-lisp
-(after! helm
-  (defun helm:org-capture-candidates ()
-    "Return an alist."
-    (let* ((alist (thread-first (org-capture-upgrade-templates org-capture-templates)
-                    (org-contextualize-keys it org-capture-templates-contexts)
-                    (mapcar (-lambda ((name key)) (cons key name)) it)))
-           (keys (mapcar #'cdr alist)))
-      (-remove (-lambda ((elt &as _ . key))
-                 (-all-p (lambda (it) (not (string-prefix-p key it)))
-                         (-remove key keys)))
-               alist)))
-  (setq helm:org-capture-source
-        (helm-build-sync-source "helm/org-capture"
-                                :candidates #'helm:org-capture-candidates
-                                :action (helm-make-actions "Capture" (lambda (keys) (org-capture nil keys)))))
-
-  (defun helm/org-capture ()
-    "Select a capture template."
-    (interactive)
-    (helm :sources helm:org-capture-source :prompt "capture: "))
-
-  (general-def [remap org-capture] #'helm/org-capture))
-#+end_src
-
-***** helm-org
-:PROPERTIES:
-:ID: c73e9389-5dee-425f-b54f-0f23cf2bd91a
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-org)
-#+end_src
-
-**** helm pass
-:PROPERTIES:
-:ID: 22516c69-0339-42be-962f-fc4433933665
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-pass :commands helm-pass)
-#+end_src
-
-**** ace-helm-jump-line
-:PROPERTIES:
-:ID: a0032cc5-d211-48ee-8f30-7538306122dd
-:END:
-
-[[https://github.com/cute-jumper/ace-jump-helm-line/issues][ace-jump-helm-line]] allows me to jump to helm candidates using [[https://github.com/abo-abo/avy][avy]].
-
-#+begin_src emacs-lisp
-(use-package! ace-jump-helm-line
-  :bind (:helm-map ("C-'" . ace-jump-helm-line))
-  :setq
-  (ace-jump-helm-line-idle-delay     . 0)
-  (ace-jump-helm-line-default-action . 'select)
-  (ace-jump-helm-line-style          . 'pre)
-  (ace-jump-helm-line-select-key     . ?e)
-  (ace-jump-helm-line-move-only-key  . ?o)
-  (ace-jump-helm-line-persistent-key . ?p))
-#+end_src
-
-*** ivy
+** ivy
 :PROPERTIES:
 :ID: cf88854e-4f88-4f64-962d-5d0ff99cd94f
 :END:
@@ -3920,7 +3680,7 @@ when eyeballing candidate completion between [[helpfn:counsel-M-x][counsel-M-x]]
 =counsel-M-x= is noticeably (albeit slightly) faster. Ivy strives to be more
 minimal and more predictable than helm.
 
-**** ivy
+*** ivy
 :PROPERTIES:
 :ID: 4bf12e8b-7f71-45cc-bf48-c1aec795c9fe
 :END:
@@ -3947,7 +3707,7 @@ query to narrow the list, and then selecting one of the remaining candidates.
   (ivy-count-format             . ""))
 #+end_src
 
-**** ivy-avy
+*** ivy-avy
 :PROPERTIES:
 :ID:       ae043d9b-e057-4f3e-b0d7-a96624b307d4
 :END:
@@ -3958,7 +3718,7 @@ query to narrow the list, and then selecting one of the remaining candidates.
   :commands ivy-avy)
 #+end_src
 
-**** ivy prescient
+*** ivy prescient
 :PROPERTIES:
 :ID: ec8cd466-c6cf-4b25-9624-07e9d0e0fd0c
 :END:
@@ -3983,7 +3743,7 @@ command is likely to be.
   (prescient-persist-mode 1))
 #+end_src
 
-**** amx
+*** amx
 :PROPERTIES:
 :ID:       ae950812-773f-4f54-a1f5-d6777864adcf
 :END:
@@ -3994,7 +3754,7 @@ command is likely to be.
   :pre-setq (amx-save-file . (concat VOID:DATA-DIR "amx-save-file")))
 #+end_src
 
-**** counsel
+*** counsel
 :PROPERTIES:
 :ID: f1f77877-1cbc-40c4-b62c-4239a0c338e6
 :END:
@@ -4039,7 +3799,7 @@ of stock emacs functions with a version that using =ivy= for completion.
   (counsel-pt-base-command . "pt -zS --nocolor --nogroup -e %s"))
 #+end_src
 
-**** swiper
+*** swiper
 :PROPERTIES:
 :ID: 732421fb-2eb6-4701-be12-d4b03c726df8
 :END:
@@ -4051,7 +3811,7 @@ of stock emacs functions with a version that using =ivy= for completion.
   :commands swiper swiper-isearch)
 #+end_src
 
-**** minibuffer bindings
+*** minibuffer bindings
 :PROPERTIES:
 :ID:       5a21af24-4383-40dc-8c53-562f2cf68961
 :END:
@@ -4076,7 +3836,7 @@ more sense to me than this "dispatching" and "immediate" "done" stuff.
   "RET"     #'ivy-done)
 #+end_src
 
-**** toggle mark
+*** toggle mark
 :PROPERTIES:
 :ID: 2414a29d-e874-4174-8f90-b9d80c001026
 :END:
@@ -4088,7 +3848,7 @@ more sense to me than this "dispatching" and "immediate" "done" stuff.
   (if (ivy--marked-p) (ivy-unmark) (ivy-mark)))
 #+end_src
 
-**** ivy rich
+*** ivy rich
 :PROPERTIES:
 :ID: 83df9e3a-d384-4b59-b3f2-7d57ee46b25e
 :END:
@@ -4096,7 +3856,7 @@ more sense to me than this "dispatching" and "immediate" "done" stuff.
 [[https://github.com/Yevgnen/ivy-rich][ivy-rich]] provides an easy way (the plist [[helpvar:ivy-rich-display-transformers-list][ivy-rich-display-transformers-list]]) to
 provide a more informative interface to ivy commands.
 
-***** ivy rich
+**** ivy rich
 :PROPERTIES:
 :ID: 4b4cd57a-2812-4f47-91a8-4c1be0934f27
 :END:
@@ -4116,7 +3876,7 @@ provide a more informative interface to ivy commands.
   :require t)
 #+end_src
 
-***** icons
+**** icons
 :PROPERTIES:
 :ID: 07d448d4-73ac-4222-a13c-d9ea9e937103
 :END:
@@ -4131,7 +3891,7 @@ provide a more informative interface to ivy commands.
         icon))))
 #+end_src
 
-***** M-x
+**** M-x
 :PROPERTIES:
 :ID: bcc47223-f662-4820-9031-d2ef38312021
 :END:
@@ -4145,7 +3905,7 @@ provide a more informative interface to ivy commands.
         (ivy-rich-counsel-function-docstring (:face font-lock-doc-face)))))))
 #+end_src
 
-***** ivy-switch-buffer
+**** ivy-switch-buffer
 :PROPERTIES:
 :ID: 1fdb0710-efe6-4d23-9c79-16db51fb3e2c
 :END:
@@ -4166,7 +3926,7 @@ provide a more informative interface to ivy commands.
        (lambda (cand) (get-buffer cand))))))
 #+end_src
 
-***** helpful callable
+**** helpful callable
 :PROPERTIES:
 :ID: d89f7c98-aae3-4b07-b8be-3bd63aa41779
 :END:
@@ -4180,7 +3940,7 @@ provide a more informative interface to ivy commands.
         (ivy-rich-counsel-function-docstring (:face font-lock-doc-face)))))))
 #+end_src
 
-***** helpful variable
+**** helpful variable
 :PROPERTIES:
 :ID: 6dce36ab-3f83-4530-918f-d698f79adf8f
 :END:
@@ -4194,12 +3954,12 @@ provide a more informative interface to ivy commands.
         (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face)))))))
 #+end_src
 
-**** customizing specific functions
+*** customizing specific functions
 :PROPERTIES:
 :ID:       ee303d38-fb3a-4b31-a226-4c8e04a63d1a
 :END:
 
-***** no sort
+**** no sort
 :PROPERTIES:
 :ID:       3c1f1892-d9cb-4767-82a5-aa157de739de
 :END:
@@ -4208,7 +3968,7 @@ provide a more informative interface to ivy commands.
 (after! ivy (push '(counsel-org-goto . nil) ivy-sort-functions-alist))
 #+end_src
 
-***** make the default action setting the font
+**** make the default action setting the font
 :PROPERTIES:
 :ID:       17f2d06a-835c-4bba-960b-d0f8c028a91a
 :END:
@@ -4220,7 +3980,7 @@ provide a more informative interface to ivy commands.
     (set-face-attribute 'default nil :font font)))
 #+end_src
 
-***** don't include binding information
+**** don't include binding information
 :PROPERTIES:
 :ID:       50e3991d-8c46-4dcb-86d9-79c2bede4e50
 :END:
@@ -4229,235 +3989,7 @@ provide a more informative interface to ivy commands.
 (advice-add #'counsel-M-x-transformer :override #'identity)
 #+end_src
 
-*** selectrum                                                         :disabled:
-:PROPERTIES:
-:ID: abfc6965-d021-4d71-9cf4-42f8fd1de0e8
-:END:
-
-Selectrum is a new (as of time of writing) and budding completing-framework. It
-strives to be less buggy and have cleaner, less hacky code than either Helm or
-Ivy even if this comes at the expense of less features (such as multiple
-completion and/or multiple actions). It seeks to reuse the Emacs's existing
-completing-read framework as opposed to creating it's own function for any
-existing completing-read-using commands.
-
-**** selectrum
-:PROPERTIES:
-:ID: 13ff73f6-a491-44ab-9295-9613843afe9f
-:END:
-
-#+begin_src emacs-lisp
-(use-package! selectrum
-  :hook emacs-startup-hook
-  :setq
-  (selectrum-count-style              . nil)
-  (selectrum-show-indices             . nil)
-  (selectrum-fix-minibuffer-height    . t)
-  (selectrum-num-candidates-displayed . 15)
-  :config
-  (append! selectrum-minibuffer-bindings
-    '(([tab]     . selectrum-next-candidate)
-      ([backtab] . selectrum-previous-candidate)
-      ("RET" . selectrum-select-current-candidate)
-      ("C-SPC"   . selectrum-insert-current-candidate)
-      ("C-j"     . selectrum-next-candidate)
-      ("C-k"     . selectrum-previous-candidate))))
-#+end_src
-
-**** selectrum prescient
-:PROPERTIES:
-:ID: ef02c8dc-c9e3-460a-a0a1-d7f415297447
-:END:
-
-#+begin_src emacs-lisp
-(use-package! selectrum-prescient
-  :ensure (:host github :repo "raxod502/prescient.el"
-           :files ("selectrum-prescient.el"))
-  :after selectrum
-  :require t
-  :defer-config (selectrum-prescient-mode 1))
-#+end_src
-
-**** selectrum utility functions
-:PROPERTIES:
-:ID:       4a744244-f6a7-42c4-8c9a-f7ab73336faf
-:END:
-
-***** bindings
-:PROPERTIES:
-:ID:       87b0f65f-6af2-46ad-8575-a9de3bd63bc3
-:END:
-
-#+begin_src emacs-lisp
-(general-def
-  [remap swiper] #'selectrum/swiper
-  [remap switch-to-buffer] #'selectrum/buffer-or-recentf
-  [remap org-set-tags-command] #'selectrum/org-set-tag)
-#+end_src
-
-***** jump to line
-:PROPERTIES:
-:ID:       b4ccbc1d-b2fa-4bfa-95ef-3bde8ce57655
-:END:
-
-This is a replacement for swiper. It lets me fuzzy jump to a particular line in
-a file.
-
-#+begin_src emacs-lisp
-(defvar selectrum:swiper-jump-to-line-history nil
-  "Submission history for `selectrum/jump-to-line'.")
-
-(defun selectrum/swiper ()
-  "Search for a line and jump to it."
-  (interactive)
-  (let* ((selectrum-should-sort-p nil)
-         (gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
-         (minimum-line-number (line-number-at-pos (point-min) t))
-         (buffer-text-lines (split-string (buffer-string) "\n"))
-         (line-choices (--map-indexed (format "%d\t%s" it-index it) buffer-text-lines))
-         ;; Get the matching line.
-         (chosen-line
-          (completing-read "Jump to matching line: " line-choices
-                           nil t nil 'selectrum:swiper-jump-to-line-history))
-         ;; Get the corresponding line number.
-         (chosen-line-number
-          (progn (string-match "\\([[:digit:]]+\\)[[:space:]]\\(?:.\\|\n\\)*" chosen-line)
-                 (string-to-number (match-string-no-properties 1 chosen-line))))
-         ;; Get the current line number for determining the travel distance.
-         (current-line-number (line-number-at-pos (point) t)))
-    (push-mark (point) t)
-    (forward-line (1+ (- chosen-line-number current-line-number)))
-    (beginning-of-line-text 1)
-    (when (eq major-mode 'org-mode)
-      (org:prettify-nearby-headlines)
-      (when (org:heading-folded-p)
-        (outline-toggle-children)
-        (forward-line (1+ (- chosen-line-number (line-number-at-pos (point) t))))))))
-#+end_src
-
-***** recent buffer
-:PROPERTIES:
-:ID:       9de994ec-e4f2-4375-9466-6ec7f5ea907e
-:END:
-
-#+begin_src emacs-lisp
-(defun selectrum/buffer-or-recentf ()
-  "Jump to buffer or recentf candidate."
-  (interactive)
-  (require 'recentf)
-  (let* ((selectrum-should-sort-p nil)
-         (live-buffers
-          (--remove (string-match-p (rx bol white) it)
-                    (mapcar #'buffer-name (buffer-list))))
-         (recentf-buffers
-          (--map (cons (propertize (shrink-path-file it) 'face 'font-lock-comment-face) it)
-                 recentf-list)))
-    (alet (completing-read "File: " (append live-buffers recentf-buffers))
-      (setq it (or (alist-get it recentf-buffers nil nil #'string=) it))
-      (switch-to-buffer (or (get-buffer it) (find-file-noselect it))))))
-#+end_src
-
-****** tag headlines
-:PROPERTIES:
-:ID:       ae87e87d-3e58-4d8c-b495-0d61770d8d74
-:END:
-
-#+begin_src emacs-lisp
-(defun selectrum/org-set-tag ()
-  "Add or remove tags from an org-mode headline."
-  (interactive)
-  (let* ((org-use-fast-tag-selection nil)
-         (current-tags (org-get-tags))
-         (all-tags (-uniq (flatten-list (org-map-entries (lambda () (org-get-tags (point) t))))))
-         (selected-tags (completing-read-multiple "set tags: " all-tags)))
-    (org-set-tags
-     (append (--remove (member it current-tags) selected-tags)
-             (--remove (member it selected-tags) current-tags)))))
-#+end_src
-
-***** choose font
-:PROPERTIES:
-:ID:       cb09fe43-aff4-4fbe-be4e-12db296298ad
-:END:
-
-#+begin_src emacs-lisp
-(defun void/set-font ()
-  "Set the font."
-  (interactive)
-  (let ((font-list (-uniq (font-family-list))))
-    (awhen! (completing-read "Font: " font-list)
-      (set-face-attribute 'default nil :family <font>))))
-#+end_src
-
-***** outline
-:PROPERTIES:
-:ID:       37bf41c1-2b3a-429f-9872-8466b69115fd
-:END:
-
-#+begin_src emacs-lisp
-(defvar selectrum::outline-history nil "History of chosen headings for `selectrum-outline'.")
-
-(defun selectrum/outline ()
-  "Jump to a heading."
-  (interactive)
-  (let ((selectrum-should-sort-p nil)) ; Headings should stay in order of appearance.
-    ;; Just use Org's built-in features when applicable.
-    (if (eq major-mode 'org-mode)
-        (let ((org-outline-path-complete-in-steps)
-              (org-goto-interface 'outline-path-completion))
-          (org-goto)))))
-#+end_src
-
-**** embark
-:PROPERTIES:
-:ID:       18abb7cd-e98b-437e-a851-922da949d546
-:END:
-
-Embark provides actions.
-
-***** embark
-:PROPERTIES:
-:ID:       7d866a13-28b3-4e2b-82de-2126d71c40b6
-:END:
-
-#+begin_src emacs-lisp
-(use-package! embark
-  :ensure (:repo "oantolin/embark" :host github)
-  :commands (embark-act embark-act-noexit)
-  :init
-  (after! selectrum
-    (--each '(("C-m" . embark-act) ("C-l" . embark-act-noexit))
-      (push it selectrum-minibuffer-bindings))))
-#+end_src
-
-***** use a which-key like menu or prompt                             :disabled:
-:PROPERTIES:
-:ID:       f2dc6833-a90e-4819-b26a-4a8bfae6b340
-:END:
-
-#+begin_src emacs-lisp
-(defun embark:which-key-setup ()
-  (let ((help-char nil)
-        (which-key-show-transient-maps t)
-        (which-key-replacement-alist
-         (cons '(("^[0-9-]\\|kp-[0-9]\\|kp-subtract\\|C-u$" . nil) . ignore)
-               which-key-replacement-alist)))
-    (setq-local which-key-show-prefix nil)
-    (setq-local which-key-persistent-popup t)
-    (which-key--update)))
-
-(setq embark-action-indicator #'embark:which-key-setup
-      embark-become-indicator embark-action-indicator)
-
-(defhook! embark:which-key-tear-down ()
-  :hook embark-pre-action-hook
-  (kill-local-variable 'which-key-persistent-popup)
-  (kill-local-variable 'which-key-show-prefix)
-  (unless which-key-persistent-popup
-    (which-key--hide-popup-ignore-command)))
-#+end_src
-
-*** orderless
+** orderless
 :PROPERTIES:
 :ID:       8cb7b1af-3786-48b7-92ec-b21759bbabc3
 :END:
