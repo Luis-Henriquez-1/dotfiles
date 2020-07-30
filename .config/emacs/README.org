@@ -826,37 +826,6 @@ OS can be either `mac', `linux' or `windows'(unquoted)."
     `(progn ,@body)))
 #+end_src
 
-**** if!
-:PROPERTIES:
-:ID:       e2e9b33d-9a07-44d7-85ec-71bfd6a4c678
-:END:
-
-#+begin_src emacs-lisp
-(defmacro if! (cond then &rest body)
-  "Expands to THEN if COND is non-nil, to BODY otherwise.
-COND is checked at compile/expansion time, allowing BODY to be omitted
-entirely when the elisp is byte-compiled. Use this for forms that contain
-expensive macros that could safely be removed at compile time."
-  (declare (indent 2))
-  (if (eval cond)
-      then
-    (macroexp-progn body)))
-#+end_src
-
-**** when!
-:PROPERTIES:
-:ID:       f8e9d68b-264a-44f3-8847-3e41689384aa
-:END:
-
-#+begin_src emacs-lisp
-(defmacro when! (cond &rest body)
-  "Expand to BODY if CONDITION is non-nil at compile/expansion time.
-See `if!' for details on this macro's purpose."
-  (declare (indent defun))
-  (when (eval cond)
-    (macroexp-progn body)))
-#+end_src
-
 **** after!
 :PROPERTIES:
 :ID: b31cd42d-cc57-492d-afae-d7d5e353e931
@@ -4386,7 +4355,7 @@ Embark provides actions.
 (general-def
   [remap swiper] #'selectrum/swiper
   [remap switch-to-buffer] #'selectrum/buffer-or-recentf
-  [remap org-set-tags-command] #'selectrum/org-set-tags)
+  [remap org-set-tags-command] #'selectrum/org-set-tag)
 #+end_src
 
 **** jump to line
@@ -4475,12 +4444,31 @@ a file.
 :END:
 
 #+begin_src emacs-lisp
-(defun void/choose-font ()
-  "Choose font."
+(defun void/set-font ()
+  "Set the font."
   (interactive)
   (let ((font-list (-uniq (font-family-list))))
     (awhen! (completing-read "Font: " font-list)
       (set-face-attribute 'default nil :family <font>))))
+#+end_src
+
+**** outline
+:PROPERTIES:
+:ID:       37bf41c1-2b3a-429f-9872-8466b69115fd
+:END:
+
+#+begin_src emacs-lisp
+(defvar selectrum::outline-history nil "History of chosen headings for `selectrum-outline'.")
+
+(defun selectrum/outline ()
+  "Jump to a heading."
+  (interactive)
+  (let ((selectrum-should-sort-p nil)) ; Headings should stay in order of appearance.
+    ;; Just use Org's built-in features when applicable.
+    (if (eq major-mode 'org-mode)
+        (let ((org-outline-path-complete-in-steps)
+              (org-goto-interface 'outline-path-completion))
+          (org-goto)))))
 #+end_src
 
 ** abbrev                                                      :abbrev:disabled:
@@ -10337,7 +10325,7 @@ A little bit of decoration and spice can go a long way. As its name suggests,
 a few). In practice I use these icons to (1) make things look nicer and more
 colorful and (2) enhance readability of plain text.
 
-*** install all the icons if not installed :disabled:
+*** install all the icons if not installed                            :disabled:
 :PROPERTIES:
 :ID: 1cda0692-8f42-4bb3-b11d-da52e2004a55
 :END:
@@ -10739,7 +10727,7 @@ prompt asking me if I'm sure.
 (define-leader-key!
   :infix "s"
   :keymaps 'org-mode-map
-  "h" (list :def #'counsel-org-goto :wk "headlines"))
+  "h" (list :def #'selectrum/outline :wk "headlines"))
 #+end_src
 
 ** git
