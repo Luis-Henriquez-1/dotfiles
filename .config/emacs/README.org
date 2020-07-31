@@ -1197,13 +1197,13 @@ WHERE can be the symbol `before' or `after'."
   (push (cons alias name) leaf-alias-keyword-alist))
 #+end_src
 
-**** leaf:define-keyword!
+**** define-leaf-keyword!
 :PROPERTIES:
 :ID:       db05b51b-bbe4-41a4-ae45-1e72aba57ae4
 :END:
 
 #+begin_src emacs-lisp
-(defmacro leaf:define-keyword! (name args &rest body)
+(defmacro define-leaf-keyword! (name args &rest body)
   "Define a leaf keyword."
   (declare (indent defun))
   (-let* ((keyword (intern (concat ":" (symbol-name name))))
@@ -1276,7 +1276,7 @@ evaluated.
 #+begin_src emacs-lisp
 (leaf:set-alias :leaf-defer :void-leaf-defer)
 
-(leaf:define-keyword! void-leaf-defer (before :leaf-defer)
+(define-leaf-keyword! void-leaf-defer (before :leaf-defer)
   (if (and leaf--body (eval (car leaf--value))
            (leaf-list-memq leaf-defer-keywords (leaf-plist-keys leaf--raw)))
       `((after! ,leaf--name ,@leaf--body))
@@ -1370,7 +1370,7 @@ provided by leaf. They are inspired from DOOM emacs.
 
 (leaf:set-normalizer :before-call #'leaf:normalize-commands)
 
-(leaf:define-keyword! before-call (before :hook)
+(define-leaf-keyword! before-call (before :hook)
   `(,(leaf:generate-load-form leaf--name nil :before leaf--value)
     ,@leaf--body))
 #+end_src
@@ -1385,7 +1385,7 @@ provided by leaf. They are inspired from DOOM emacs.
 
 (leaf:set-normalizer :after-call #'leaf:normalize-commands)
 
-(leaf:define-keyword! after-call (before :hook)
+(define-leaf-keyword! after-call (before :hook)
   `(,(leaf:generate-load-form leaf--name nil :after leaf--value)
     ,@leaf--body))
 #+end_src
@@ -1396,7 +1396,7 @@ provided by leaf. They are inspired from DOOM emacs.
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword! load-incrementally (before :before-call)
+(define-leaf-keyword! load-incrementally (before :before-call)
   `((append! void:incremental-packages ',leaf--value)
     ,@leaf--body))
 #+end_src
@@ -1416,7 +1416,7 @@ VOID is compiled.
 
 (leaf:set-normalizer :void-straight #'leaf:void-straight-normalizer)
 
-(leaf:define-keyword! void-straight (before :straight)
+(define-leaf-keyword! void-straight (before :straight)
   `(,@(when (and leaf--value (car-safe leaf--value))
         `((straight:install-package ',(car leaf--value))))
     ,@leaf--body))
@@ -1439,7 +1439,7 @@ The point of this keyword is to let me configure the display of buffers for
 specific packages.
 
 #+begin_src emacs-lisp
-(leaf:define-keyword! popup (before :mode)
+(define-leaf-keyword! popup (before :mode)
   `(,@(--map `(push ',it display-buffer-alist) leaf--value)
     ,@leaf--body))
 #+end_src
@@ -1450,7 +1450,7 @@ specific packages.
 :END:
 
 #+begin_src emacs-lisp
-(leaf:define-keyword! os (before :when)
+(define-leaf-keyword! os (before :when)
   (when leaf--body `((with-os! ,leaf--value ,@leaf--body))))
 #+end_src
 
@@ -1478,7 +1478,7 @@ specific packages.
 #+begin_src emacs-lisp
 (leaf:set-normalizer :alias #'leaf:normalize-setq)
 
-(leaf:define-keyword! alias (before :init)
+(define-leaf-keyword! alias (before :init)
   `(,@(-map (-lambda ((alias . def)) `(defalias ',alias ',def))
             leaf--value)))
 #+end_src
