@@ -3394,7 +3394,7 @@ through on our own. It's not much different in Emacs. We're constantly sifting
 though files, buffers, commands, words--all to try to get through to the subset
 of things that we actually want at this moment.
 
-** snippets                                                           :disabled:
+** snippets
 :PROPERTIES:
 :ID:       02dd54d0-f545-447e-89cf-c0cfcd941c76
 :END:
@@ -3419,20 +3419,20 @@ This is the user-facing function to define yasnippets.
 #+begin_src emacs-lisp
 (defun defsnippet:new-snippet (&rest plist)
   "Define a snippet."
-  (let* ((keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
-    (with-plist! plist
-      (cl-assert (-none-p #'null
-                          (list <:name> <:mode> <:body>)))
-      (alet (append
-             (list "# -*- mode: snippet -*-\n")
-             (mapcar (lambda (key)
-                       (format "# %s: %s\n" (void:keyword-name key) (plist-get plist key)))
-                     (--filter (plist-get plist it) keys))
-             (list "# --\n")
-             (list (defsnippet:compute-body <:body> <:placeholders>)))
-        (with-temp-buffer
-          (insert (string-join "\n" it))
-          (yas-load-snippet-buffer <:mode>))))))
+  (-let (((&plist :name :mode :body :placeholders) plist)
+         (keys '(:key :name :contributor :group :expand-env :binding :type :uuid)))
+    (cl-assert (-none-p #'null (list name mode body)))
+
+    (alet (append
+           (list "# -*- mode: snippet -*-\n")
+           (->> keys
+                (--filter (plist-get plist it))
+                (--map (format "# %s: %s\n" (void:keyword-name it) (plist-get plist it))))
+           (list "# --\n")
+           (list (defsnippet:compute-body body placeholders)))
+      (with-temp-buffer
+        (insert (string-join it "\n"))
+        (yas-load-snippet-buffer mode)))))
 #+end_src
 
 **** compute body
@@ -3549,7 +3549,7 @@ For extremely good documentation.
                   (0 _ (insert "]"))))
 #+end_src
 
-***** elisp                                                           :disabled:
+***** elisp
 :PROPERTIES:
 :ID:       996f1990-991a-4cce-bfc9-629e52286ad6
 :END:
