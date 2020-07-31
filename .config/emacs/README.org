@@ -4258,7 +4258,7 @@ worth quoting here:
 (defun company--backends+ ()
   "Compute company backends."
   (or
-   (-when-let ((mode type backends) (assoc major-mode company:backend-alist))
+   (-when-let (((mode type backends) (assoc major-mode company:backend-alist)))
      (when (eq type :only) backends))
    (-mapcat (-lambda ((mode type backends))
               (when (or (and (eq type :derived) (derived-mode-p mode))
