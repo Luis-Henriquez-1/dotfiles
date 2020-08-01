@@ -551,6 +551,33 @@ macro-writing.
     (dolist (a args) (princ a))))
 #+end_src
 
+**** add multiple hooks
+:PROPERTIES:
+:ID:       bf95b493-7809-42c3-9d81-888bb44ddfaa
+:END:
+
+#+begin_src emacs-lisp
+(defun void:add-hook (targets hooks &optional depth local)
+  "Add HOOKS to TARGETS.
+HOOKS is either a hook symbol or a list of hook symbols."
+  (dolist (target (-list targets))
+    (dolist (hook (-list hooks))
+      (add-hook target hook depth local))))
+#+end_src
+
+**** add multiple advices
+:PROPERTIES:
+:ID:       b9816912-7b5d-4477-bb94-b06581e0f4f0
+:END:
+
+#+begin_src emacs-lisp
+(defun void:add-advice (targets where advices &optional props)
+  "Add ADVICES to TARGETS."
+  (dolist (target (-list targets))
+    (dolist (advice (-list advices))
+      (advice-add target where advice props))))
+#+end_src
+
 **** factorial
 :PROPERTIES:
 :ID:       01a0195a-d518-4e22-8708-e682b6f462ba
@@ -5451,12 +5478,12 @@ hooks.
           (edit-indirect-guess-mode-function (lambda (&rest _) (text-mode)))
           (edit-indirect-after-creation-hook edit-indirect-after-creation-hook))
     (edit-indirect:add-before-commit-hook #'edit-indirect:ensure-newline)
-    (general-add-hook 'edit-indirect-after-creation-hook
-                      ;; Move point to last non-whitespace character.
-                      (list (lambda ()
-                              (end-of-buffer)
-                              (ignore-errors (re-search-backward (rx (or white "\n")))))
-                            #'evil-insert-state))
+    (void:add-hook 'edit-indirect-after-creation-hook
+                   ;; Move point to last non-whitespace character.
+                   (list (lambda ()
+                           (end-of-buffer)
+                           (ignore-errors (re-search-backward (rx (or white "\n")))))
+                         #'evil-insert-state))
     (edit-indirect-region beg end t)))
 #+end_src
 
