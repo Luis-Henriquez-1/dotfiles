@@ -9084,9 +9084,6 @@ Buffer management is a huge problem in emacs.
 :PROPERTIES:
 :ID:       68657704-7efc-4d69-9137-8068f21a769c
 :END:
-:LOGBOOK:
-CLOCK: [2020-06-26 Fri 00:24]--[2020-06-26 Fri 00:26] =>  0:02
-:END:
 
 There's a package called midnight in emacs that has some cleaning buffer
 functionality. Only beef I have with this package is that it is geared towards
