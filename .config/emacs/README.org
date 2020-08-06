@@ -9118,7 +9118,8 @@ different times. However, it is not difficult to get around this.
 :END:
 
 [[https://www.emacswiki.org/emacs/TempbufMode][This package]] provides a minor mode that kills buffers after it has been
-determined that it is no longer useful.
+determined that it is no longer useful. It is determined whether its not useful
+based on whether functions have been called in it and whether it is visible.
 
 #+begin_src emacs-lisp
 (use-package! tempbuf
