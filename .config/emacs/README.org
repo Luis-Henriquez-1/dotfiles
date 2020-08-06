@@ -9245,6 +9245,47 @@ startup. If I start my emacs with =dashboard= I can avoid this.
   (concat VOID:LOCAL-DIR "void-banner.txt"))
 #+end_src
 
+*** navigator buttons
+:PROPERTIES:
+:ID:       a4a9e0ae-ee44-4434-bcf6-b415ef348e45
+:END:
+
+**** navigator button
+:PROPERTIES:
+:ID:       63829df6-5ba9-477e-99e9-86aabf7f5862
+:END:
+
+This is a convenience macro that allows navigation buttons to be defined
+declaratively and with a "defun-like" syntax.
+
+#+begin_src emacs-lisp
+(defmacro dashboard:define-naviator-button! (name args description &rest body)
+  "Define a dashboard navigator button."
+  (declare (indent defun))
+  (let ((dashboard-fn dashboard:name-button)
+        ((&plist ))
+        ((&plist ) icon))
+    `(alet (list ()
+                 ,name
+                 ,description
+                 #',dashboard-fn)
+       (push it dashboard-navigator-buttons))))
+#+end_src
+
+**** github link
+:PROPERTIES:
+:ID:       a3c05c71-bd42-4508-8738-5c75f95b29d6
+:END:
+
+#+begin_src emacs-lisp
+(dashboard:define-naviator-button! Homepage ()
+  "Browse Homepage."
+  :icon "mark-github"
+  :height 1.1
+  :v-adjust 0.0
+  (browse-url "https://github.com/Luis-Henriquez-Perez/dotfiles"))
+#+end_src
+
 ** hide-mode-line
 :PROPERTIES:
 :ID: 043e3474-7b66-4e73-9e0b-3347897dbdcc
