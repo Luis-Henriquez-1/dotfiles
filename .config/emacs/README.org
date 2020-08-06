@@ -857,6 +857,7 @@ SYM is a symbol that stores a list."
 :PROPERTIES:
 :ID:       109f58d7-525e-43f4-b997-658b1d5da0a8
 :END:
+
 Like =use-package=, leaf is a macro that fascilitates package configuration.
 
 *** leaf
