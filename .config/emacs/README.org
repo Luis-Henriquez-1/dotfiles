@@ -9109,7 +9109,7 @@ different times. However, it is not difficult to get around this.
 
 #+begin_src emacs-lisp
 (use-feature! midnight
-  :commands (clean-buffer-list))
+  :commands clean-buffer-list)
 #+end_src
 
 *** tempbuff
