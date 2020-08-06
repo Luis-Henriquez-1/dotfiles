@@ -392,10 +392,89 @@ packages.
 This headline contains all the the helper functions and macros I defined for
 customizing emacs.
 
-*** helpers
+*** macro writing tools
 :PROPERTIES:
-:ID:       4029d357-1309-4c7f-89eb-db93a3470c42
+:ID:       ea5d3295-d8f9-4f3a-a1f6-25811696aa29
 :END:
+
+**** symbols
+:PROPERTIES:
+:ID: 2cdf8ab1-4e59-4128-a8a4-e5519ca0f4bf
+:END:
+
+Conversion between symbols, keywords, and strings are prevalent in
+macro-writing.
+
+***** symbol intern
+:PROPERTIES:
+:ID: 659e8389-84c5-4ac4-a9ba-7dd40599191d
+:END:
+
+#+begin_src emacs-lisp
+(defun void:symbol-intern (&rest args)
+  "Return ARGS as a symbol."
+  (declare (pure t) (side-effect-free t))
+  (intern (apply #'void:to-string args)))
+#+end_src
+
+***** keyword intern
+:PROPERTIES:
+:ID: f2668044-13b2-46e7-bf84-fcf998591e37
+:END:
+
+#+begin_src emacs-lisp
+(defun void:keyword-intern (&rest args)
+  "Return ARGS as a keyword."
+  (declare (pure t) (side-effect-free t))
+  (apply #'void:symbol-intern ":" args))
+#+end_src
+
+***** keyword name
+:PROPERTIES:
+:ID: fb867938-d62b-42fc-bf07-092f10b64f22
+:END:
+
+#+begin_src emacs-lisp
+(defun void:keyword-name (key)
+  "Return the name of the key without the prepended :."
+  (declare (pure t) (side-effect-free t))
+  (substring-no-properties (void:to-string key) 1))
+#+end_src
+
+***** convert to string
+:PROPERTIES:
+:ID: 4ef52875-4ce6-4940-8b7e-13c96bedcb3d
+:END:
+
+#+begin_src emacs-lisp
+(defun void:to-string (&rest args)
+  "Return ARGS as a string."
+  (declare (pure t) (side-effect-free t))
+  (with-output-to-string
+    (dolist (a args) (princ a))))
+#+end_src
+
+**** wrap-form
+:PROPERTIES:
+:ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
+:END:
+
+When writing macros in lisp it is not uncommon to need to write a macro that can
+nest a form within some number of other forms (for an example, see [[id][after!]]). This
+macro makes this problem much easier.
+
+#+begin_src emacs-lisp
+(defun void:wrap-form (wrappers form)
+  "Wrap FORM with each wrapper in WRAPPERS.
+WRAPPERS are a list of forms to wrap around FORM."
+  (declare (pure t) (side-effect-free t))
+  (setq wrappers (reverse wrappers))
+  (if (consp wrappers)
+      (void:wrap-form (cdr wrappers)
+                      (append (car wrappers)
+                              (list form)))
+    form))
+#+end_src
 
 **** anaphora
 :PROPERTIES:
@@ -472,101 +551,6 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (s-match-strings-all VOID:ANAPHORIC-SYMBOL-REGEXP (void:to-string obj)))
 #+end_src
 
-**** wrap-form
-:PROPERTIES:
-:ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
-:END:
-
-When writing macros in lisp it is not uncommon to need to write a macro that can
-nest a form within some number of other forms (for an example, see [[id][after!]]). This
-macro makes this problem much easier.
-
-#+begin_src emacs-lisp
-(defun void:wrap-form (wrappers form)
-  "Wrap FORM with each wrapper in WRAPPERS.
-WRAPPERS are a list of forms to wrap around FORM."
-  (declare (pure t) (side-effect-free t))
-  (setq wrappers (reverse wrappers))
-  (if (consp wrappers)
-      (void:wrap-form (cdr wrappers)
-                      (append (car wrappers)
-                              (list form)))
-    form))
-#+end_src
-
-**** symbols
-:PROPERTIES:
-:ID: 2cdf8ab1-4e59-4128-a8a4-e5519ca0f4bf
-:END:
-
-Conversion between symbols, keywords, and strings are prevalent in
-macro-writing.
-
-***** symbol intern
-:PROPERTIES:
-:ID: 659e8389-84c5-4ac4-a9ba-7dd40599191d
-:END:
-
-#+begin_src emacs-lisp
-(defun void:symbol-intern (&rest args)
-  "Return ARGS as a symbol."
-  (declare (pure t) (side-effect-free t))
-  (intern (apply #'void:to-string args)))
-#+end_src
-
-***** keyword intern
-:PROPERTIES:
-:ID: f2668044-13b2-46e7-bf84-fcf998591e37
-:END:
-
-#+begin_src emacs-lisp
-(defun void:keyword-intern (&rest args)
-  "Return ARGS as a keyword."
-  (declare (pure t) (side-effect-free t))
-  (apply #'void:symbol-intern ":" args))
-#+end_src
-
-***** keyword name
-:PROPERTIES:
-:ID: fb867938-d62b-42fc-bf07-092f10b64f22
-:END:
-
-#+begin_src emacs-lisp
-(defun void:keyword-name (key)
-  "Return the name of the key without the prepended :."
-  (declare (pure t) (side-effect-free t))
-  (substring-no-properties (void:to-string key) 1))
-#+end_src
-
-***** convert to string
-:PROPERTIES:
-:ID: 4ef52875-4ce6-4940-8b7e-13c96bedcb3d
-:END:
-
-#+begin_src emacs-lisp
-(defun void:to-string (&rest args)
-  "Return ARGS as a string."
-  (declare (pure t) (side-effect-free t))
-  (with-output-to-string
-    (dolist (a args) (princ a))))
-#+end_src
-
-*** macros
-:PROPERTIES:
-:ID:       f27aa611-a2bd-4b76-85ce-72feb1e9f19f
-:END:
-
-**** ignore!
-:PROPERTIES:
-:ID: 0597956f-d40c-4c2b-9adf-5ece8c5b38de
-:END:
-
-#+begin_src emacs-lisp
-(defmacro ignore! (&rest _)
-  "Do nothing and return nil."
-  nil)
-#+end_src
-
 **** with-symbols!
 :PROPERTIES:
 :ID:       0ba70f30-f1a8-4a5d-acf9-07db9931bd54
@@ -614,6 +598,138 @@ Bare symbols in BINDINGS are equivalent to:
              ,(cl-list* 'let
                         (-zip-with #'list names symbols)
                         body)))))
+#+end_src
+
+*** deferred loading
+:PROPERTIES:
+:ID:       1d0746ea-ecb2-46ad-8afa-a54aca74a185
+:END:
+
+**** with-os!
+:PROPERTIES:
+:ID: 1a645745-11ce-4cfb-8c5f-63470f0a61c3
+:END:
+
+Emacs is for the most part operating system agnostic. Packages written in elisp
+should work across operating systems. Nevertheless, there are a handful of
+settings that should favors particular operating systems over others.
+
+#+begin_src emacs-lisp
+(defmacro with-os! (os &rest body)
+  "If OS is current system's operating system, execute body.
+OS can be either `mac', `linux' or `windows'(unquoted)."
+  (declare (indent defun))
+  (setq os (if (listp os) os (list os)))
+  (when (funcall (cond ((eq :not (car-safe os)) (lambda (a b) (not (member a b))))
+                       (t #'member))
+                 (pcase system-type
+                   (`darwin 'mac)
+                   (`gnu/linux 'linux)
+                   (`(cygwin windows-nt ms-dos) 'windows)
+                   (_ nil))
+                 os)
+    `(progn ,@body)))
+#+end_src
+
+**** defhook!
+:PROPERTIES:
+:ID:       fb33eef6-d84e-4384-9241-73cde5e0e0d0
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defhook! (name args &rest body)
+  "Define a hook function."
+  (-let* ((docstring (when (stringp (car body)) (pop body)))
+          ((key hooks . body) body)
+          (append (eq key :append))
+          (local (eq key :local)))
+    `(prog1 (defun ,name ,args ,docstring ,@body)
+       ,@(-map (lambda (hook) `(add-hook ',hook #',name ,append ,local))
+               (-list hooks)))))
+#+end_src
+
+**** defadvice!
+:PROPERTIES:
+:ID:       cc161eaf-a8fb-4e24-853f-a76a49c28dcf
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defadvice! (name args &rest body)
+  "Add advice."
+  (-let ((docstring (when (stringp (car body)) (pop body)))
+         ((key advices . body) body))
+    `(prog1 (defun ,name ,args ,docstring ,@body)
+       ,@(--map `(advice-add #',it ,key #',name)
+                (-list advices)))))
+#+end_src
+
+**** eval-after-load!
+:PROPERTIES:
+:ID:       8d831084-539b-4072-a86a-b55afb09bf02
+:END:
+
+If an =eval-after-load= block contains an error and it is triggered by a
+feature, the error will keep raised everytime you load that feature.
+
+#+begin_src emacs-lisp
+(defmacro eval-after-load! (feature &rest body)
+  ""
+  (declare (indent defun))
+  `(eval-after-load ',feature
+     '(with-no-warnings
+        (condition-case error
+            (progn ,@body)
+          (error
+           (message "Error: %S" error)
+           (message "BODY: %S" ',body))))))
+#+end_src
+
+**** after!
+:PROPERTIES:
+:ID: b31cd42d-cc57-492d-afae-d7d5e353e931
+:END:
+
+The reason that we check for the feature is to prevent [[hvar:eval-after-load][eval-after-load]] from polluting the
+[[hvar:after-load-list][after-load-list]]. =eval-after-load= adds an entry to =after-load-list= whether or not it has
+been loaded.
+
+We intentionally avoid with-eval-after-load to prevent eager macro expansion
+from pulling (or failing to pull) in autoloaded macros/features.
+
+#+begin_src emacs-lisp
+(defmacro after! (features &rest body)
+  "Same as `with-eval-after-load' but."
+  (declare (indent defun) (debug t))
+  (pcase (car-safe features)
+    ('or
+     (macroexp-progn
+      (--map `(after! ,it ,@body) (cdr features))))
+    ('and
+     (void:wrap-form (--map `(after! ,it) (cdr features))
+                     (macroexp-progn body)))
+    ((guard (listp features))
+     `(after! ,(cons 'and features) ,@body))
+    ((pred symbolp)
+     `(if (featurep ',features)
+          ,(macroexp-progn body)
+        (eval-after-load! ,features ,@body)))
+    (_ (error "Invalid argument."))))
+#+end_src
+
+*** macros
+:PROPERTIES:
+:ID:       f27aa611-a2bd-4b76-85ce-72feb1e9f19f
+:END:
+
+**** ignore!
+:PROPERTIES:
+:ID: 0597956f-d40c-4c2b-9adf-5ece8c5b38de
+:END:
+
+#+begin_src emacs-lisp
+(defmacro ignore! (&rest _)
+  "Do nothing and return nil."
+  nil)
 #+end_src
 
 **** destructuring
@@ -697,113 +813,6 @@ BODY contains any number of `<NAME>' where NAME refers to the name of the symbol
 (defmacro with-alist! (alist &rest body)
   (declare (indent 1))
   `(with-structure! ,alist (lambda (key) (alist-get key alist)) ,@body))
-#+end_src
-
-**** defadvice!
-:PROPERTIES:
-:ID:       cc161eaf-a8fb-4e24-853f-a76a49c28dcf
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defadvice! (name args &rest body)
-  "Add advice."
-  (-let ((docstring (when (stringp (car body)) (pop body)))
-         ((key advices . body) body))
-    `(prog1 (defun ,name ,args ,docstring ,@body)
-       ,@(--map `(advice-add #',it ,key #',name)
-                (-list advices)))))
-#+end_src
-
-**** defhook!
-:PROPERTIES:
-:ID:       fb33eef6-d84e-4384-9241-73cde5e0e0d0
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defhook! (name args &rest body)
-  "Define a hook function."
-  (-let* ((docstring (when (stringp (car body)) (pop body)))
-          ((key hooks . body) body)
-          (append (eq key :append))
-          (local (eq key :local)))
-    `(prog1 (defun ,name ,args ,docstring ,@body)
-       ,@(-map (lambda (hook) `(add-hook ',hook #',name ,append ,local))
-               (-list hooks)))))
-#+end_src
-
-**** with-os!
-:PROPERTIES:
-:ID: 1a645745-11ce-4cfb-8c5f-63470f0a61c3
-:END:
-
-Emacs is for the most part operating system agnostic. Packages written in elisp
-should work across operating systems. Nevertheless, there are a handful of
-settings that should favors particular operating systems over others.
-
-#+begin_src emacs-lisp
-(defmacro with-os! (os &rest body)
-  "If OS is current system's operating system, execute body.
-OS can be either `mac', `linux' or `windows'(unquoted)."
-  (declare (indent defun))
-  (setq os (if (listp os) os (list os)))
-  (when (funcall (cond ((eq :not (car-safe os)) (lambda (a b) (not (member a b))))
-                       (t #'member))
-                 (pcase system-type
-                   (`darwin 'mac)
-                   (`gnu/linux 'linux)
-                   (`(cygwin windows-nt ms-dos) 'windows)
-                   (_ nil))
-                 os)
-    `(progn ,@body)))
-#+end_src
-
-**** after!
-:PROPERTIES:
-:ID: b31cd42d-cc57-492d-afae-d7d5e353e931
-:END:
-
-The reason that we check for the feature is to prevent [[hvar:eval-after-load][eval-after-load]] from polluting the
-[[hvar:after-load-list][after-load-list]]. =eval-after-load= adds an entry to =after-load-list= whether or not it has
-been loaded.
-
-We intentionally avoid with-eval-after-load to prevent eager macro expansion
-from pulling (or failing to pull) in autoloaded macros/features.
-
-#+begin_src emacs-lisp
-(defmacro after! (features &rest body)
-  "Same as `with-eval-after-load' but."
-  (declare (indent defun) (debug t))
-  (pcase (car-safe features)
-    ('or
-     (macroexp-progn
-      (--map `(after! ,it ,@body) (cdr features))))
-    ('and
-     (void:wrap-form (--map `(after! ,it) (cdr features))
-                     (macroexp-progn body)))
-    ((guard (listp features))
-     `(after! ,(cons 'and features) ,@body))
-    ((pred symbolp)
-     `(if (featurep ',features)
-          ,(macroexp-progn body)
-        (eval-after-load! ,features ,@body)))
-    (_ (error "Invalid argument."))))
-#+end_src
-
-**** eval-after-load!
-:PROPERTIES:
-:ID:       8d831084-539b-4072-a86a-b55afb09bf02
-:END:
-
-#+begin_src emacs-lisp
-(defmacro eval-after-load! (feature &rest body)
-  (declare (indent defun))
-  `(eval-after-load ',feature
-     '(with-no-warnings
-        (condition-case error
-            (progn ,@body)
-          (error
-           (message "Error: %S" error)
-           (message "BODY: %S" ',body))))))
 #+end_src
 
 **** list mutation
