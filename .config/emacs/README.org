@@ -9151,8 +9151,8 @@ understanding of a verbally terse and dry command description.
 #+begin_src emacs-lisp
 (use-package! elisp-demos
   ;; :functions elisp-demos-advice-helpful-update
-  :commands elisp-demos-add-demo
-  :init (advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update))
+  :advice (:after helpful-update elisp-demos-advice-helpful-update)
+  :commands elisp-demos-add-demo)
 #+end_src
 
 * Asthetic
