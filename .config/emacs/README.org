@@ -8922,7 +8922,7 @@ but often it can be useful to able to also see the keybindings.
 :ID:       68af369e-fc84-41dc-8804-5a4ba785fb51
 :END:
 
-I got this from [[][centaur emacs]].
+I got this from [[https://github.com/seagle0128/.emacs.d/blob/master/lisp/init-hydra.el][centaur emacs]].
 
 #+begin_src emacs-lisp
 (cl-defun pretty-hydra-title (title &optional icon-type icon-name
