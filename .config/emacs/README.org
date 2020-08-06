@@ -257,10 +257,6 @@ Emacs/the OS decide what encoding to use.
 :ID: 0397db22-91be-4311-beef-aeda4cd3a7f3
 :END:
 
-Here I initialize the package managers I could use, choose one based on either
-preference or the availability of git, and then install only the essential
-external packages.
-
 *** straight.el
 :PROPERTIES:
 :ID: a086d616-b90d-4826-b61f-93eb0b7efc8e
