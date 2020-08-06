@@ -1230,6 +1230,20 @@ specific packages.
     ,@leaf--body))
 #+end_src
 
+**** ignore-buffers                                                   :disabled:
+:PROPERTIES:
+:ID:       46e099c0-257b-4292-b5bc-acdf1bceaeea
+:END:
+
+#+begin_src emacs-lisp
+(leaf:set-normalizer :ignore-buffers #'leaf:normalize-commands)
+
+(define-leaf-keyword! ignore-buffers (before :ignore-buffers)
+  `((--each ',leaf--value
+      (add-to-list 'clean-buffer-list-kill-regexps it))
+    ,@leaf--body))
+#+end_src
+
 ** Packages
 :PROPERTIES:
 :ID:       d5c0d112-319d-4271-a819-eb786a64bfc6
@@ -6613,6 +6627,7 @@ in time to see older posts.
 
 #+begin_src emacs-lisp
 (use-package! elfeed
+  :ignore-buffers ("\\*elfeed")
   :commands elfeed
   :setq
   (elfeed-search-filter         . "@1-year-old")
