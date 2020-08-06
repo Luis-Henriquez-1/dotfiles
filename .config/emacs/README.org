@@ -9100,7 +9100,12 @@ different times. Though there are ways to hack around this.
   )
 #+end_src
 
-** helpful
+** help and documentation
+:PROPERTIES:
+:ID:       3c01c053-fe6f-4a7a-92a5-6d4de7caac0a
+:END:
+
+*** helpful
 :PROPERTIES:
 :ID: 25270809-b64e-4b9a-b0c2-95ffd047280c
 :END:
@@ -9124,7 +9129,7 @@ in a better format.
   ([remap describe-key]      . helpful-key))
 #+end_src
 
-** elisp demos
+*** elisp demos
 :PROPERTIES:
 :ID: d1164fd9-bfc6-4436-a249-136a63c76e40
 :END:
