@@ -9448,7 +9448,7 @@ graphical interface but.
 :ID:       1f8dfb73-9709-4b3b-b02f-0c81b04665f3
 :END:
 
-[[][]] manages the loading of themes at certain time.
+[[https://github.com/GuidoSchmidt/circadian.el][circadian]] manages the loading of themes at certain time.
 
 #+begin_src emacs-lisp
 (use-package! circadian)
