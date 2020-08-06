@@ -80,7 +80,7 @@ time.
 (run-with-idle-timer 7 nil #'void:restore-gc-cons-threshold)
 #+end_src
 
-*** directories                                                            :eac:
+*** directories
 :PROPERTIES:
 :ID: 93cc2db1-44c7-45ec-af98-5a4eb7145f61
 :END:
@@ -169,7 +169,7 @@ Files that need to exist, but I don't typically want to see go here.")
   "Directories where emails are stored.")
 #+end_src
 
-**** ensure directories exist                                              :ewc:
+**** ensure directories exist
 :PROPERTIES:
 :ID: 56e80dda-5d0e-4c7c-a225-00d0028d4995
 :END:
@@ -189,7 +189,7 @@ Void is compiled.
 
 Its not uncommon for the *Messages* buffer to become full of messages.
 
-**** debug-p                                                               :eac:
+**** debug-p
 :PROPERTIES:
 :ID: b9e28d90-cdbe-412f-8ed8-1b8b97c1ab07
 :END:
@@ -205,7 +205,7 @@ what its doing via [[hfn:void-log][void:log]].
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
-**** logging                                                               :eac:
+**** logging
 :PROPERTIES:
 :ID: 84ded5f7-382e-4f59-af9e-ccb157ef5c42
 :END:
@@ -392,12 +392,12 @@ packages.
 This headline contains all the the helper functions and macros I defined for
 customizing emacs.
 
-*** helpers                                                                :eac:
+*** helpers
 :PROPERTIES:
 :ID:       4029d357-1309-4c7f-89eb-db93a3470c42
 :END:
 
-**** anaphora                                                              :eac:
+**** anaphora
 :PROPERTIES:
 :ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
 :END:
@@ -1232,7 +1232,7 @@ specific packages.
 :ID: 40367976-12a0-4ccd-9aff-4df144a73edf
 :END:
 
-**** subr-x                                                                :ewc:
+**** subr-x
 :PROPERTIES:
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
 :END:
@@ -1608,7 +1608,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
 (use-package! dash-functional :require t)
 #+end_src
 
-**** dash                                                                  :eac:
+**** dash
 
 Dash is an excellent functional list manipulation library. If I did not use it
 as a dependency, I'd end up rewriting many of its functions.
