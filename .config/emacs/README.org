@@ -1218,8 +1218,10 @@ specific packages.
 (leaf:set-normalizer :alias #'leaf:normalize-setq)
 
 (define-leaf-keyword! alias (before :init)
-  `(,@(-map (-lambda ((alias . def)) `(defalias ',alias ',def))
-            leaf--value)))
+  `((eval-and-compile
+      ,@(-map (-lambda ((alias . def)) `(defalias ',alias ',def))
+              leaf--value))
+    ,@leaf--body))
 #+end_src
 
 ** Packages
