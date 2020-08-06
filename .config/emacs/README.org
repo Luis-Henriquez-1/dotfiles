@@ -5013,10 +5013,11 @@ otherwise the =#+end_src= code block delimiter will not end up in its own line
   "Ensure that source block ends with a newline.
 If the source block was initially empty and no content was added, don't add a newline.
 Otherwise, add a newline if there isn't one."
-  (when (and (not (string-match-p (rx (* anything) "\n" eos) (buffer-string)))
-             (not block-was-empty-p))
-    (goto-char (point-max))
-    (insert "\n")))
+  (save-excursion
+    (when (and (not (string-match-p (rx (* anything) "\n" eos) (buffer-string)))
+               (not block-was-empty-p))
+      (goto-char (point-max))
+      (insert "\n"))))
 #+end_src
 
 **** edit source block at point
