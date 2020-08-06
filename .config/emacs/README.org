@@ -1230,7 +1230,7 @@ specific packages.
     ,@leaf--body))
 #+end_src
 
-**** ignore-buffers                                                   :disabled:
+**** ignore-buffers
 :PROPERTIES:
 :ID:       46e099c0-257b-4292-b5bc-acdf1bceaeea
 :END:
@@ -1238,9 +1238,10 @@ specific packages.
 #+begin_src emacs-lisp
 (leaf:set-normalizer :ignore-buffers #'leaf:normalize-commands)
 
-(define-leaf-keyword! ignore-buffers (before :ignore-buffers)
-  `((--each ',leaf--value
-      (add-to-list 'clean-buffer-list-kill-regexps it))
+(define-leaf-keyword! ignore-buffers (before :init)
+  `((after! midnight
+      (--each ',leaf--value
+        (push it clean-buffer-list-kill-regexps)))
     ,@leaf--body))
 #+end_src
 
@@ -9120,7 +9121,7 @@ different times. However, it is not difficult to get around this.
 determined that it is no longer useful.
 
 #+begin_src emacs-lisp
-(use-package! tempbuff
+(use-package! tempbuf
   :hook (find-file-hooks . turn-on-tempbuf-mode))
 #+end_src
 
@@ -9414,12 +9415,13 @@ graphical interface but.
 
 ** themes
 :PROPERTIES:
-:ID: fb192344-8aef-4ab1-800d-6b5cd8c900b9
+:ID:       d21b01bd-b5fe-461e-bd3e-54bcde7a8244
 :END:
 
-I am one of the few that prefers light themes over dark ones. I find light
-themes more readable. And if I had to guess, I'd guess humans have evolved to
-see dark on light better than light on dark.
+*** themes
+:PROPERTIES:
+:ID: fb192344-8aef-4ab1-800d-6b5cd8c900b9
+:END:
 
 #+begin_src emacs-lisp
 (use-package! humanoid-themes
