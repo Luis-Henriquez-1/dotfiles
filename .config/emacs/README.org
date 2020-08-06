@@ -1641,6 +1641,7 @@ handle all bindings. [[][general]] provides such a function ([[helpfn:general-de
 #+begin_src emacs-lisp
 (use-package! general
   :require t
+  :alias (define-key! . general-def)
   :config
   (general-auto-unbind-keys))
 #+end_src
@@ -3490,7 +3491,7 @@ chose for their minibuffer commands. Things like "persistent" action make much
 more sense to me than this "dispatching" and "immediate" "done" stuff.
 
 #+begin_src emacs-lisp
-(general-def '(emacs insert) ivy-minibuffer-map
+(define-key! '(emacs insert) ivy-minibuffer-map
   "C-k"     #'ivy-previous-line
   "C-j"     #'ivy-next-line
   [backtab] #'ivy-previous-line
@@ -4098,7 +4099,7 @@ If there is no match, return POSSIBLE-NAME."
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal mu4e-headers-mode-map
+(define-key! 'normal mu4e-headers-mode-map
   "q" #'kill-buffer-and-window
   "i" #'ignore
   "I" #'ignore
@@ -4113,7 +4114,7 @@ If there is no match, return POSSIBLE-NAME."
   "r" #'mu4e-compose-reply
   "RET" #'mu4e-headers-view-message)
 
-(general-def 'normal mu4e-view-mode-map
+(define-key! 'normal mu4e-view-mode-map
   "q" #'kill-buffer-and-window)
 
 (define-localleader-key! mu4e-compose-mode-map
@@ -4418,7 +4419,7 @@ javascript code.
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal w3m-mode-map
+(define-key! 'normal w3m-mode-map
   "o" #'w3m-search
   "O" #'w3m-search-new-session
   ;; Jump to a link with avy in the current session.
@@ -5248,7 +5249,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :END:
 
 #+begin_src emacs-lisp
-(general-def evil-inner-text-objects-map
+(define-key! evil-inner-text-objects-map
   "a" #'lispyville-inner-atom
   "l" #'lispyville-inner-list
   "x" #'lispyville-inner-sexp
@@ -5258,7 +5259,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
   ;; overriding inner-sentence.
   "s" #'lispyville-inner-string)
 
-(general-def evil-outer-text-objects-map
+(define-key! evil-outer-text-objects-map
   "a" #'lispyville-a-atom
   "l" #'lispyville-a-list
   "x" #'lispyville-a-sexp
@@ -5275,7 +5276,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal lispyville-mode-map
+(define-key! 'normal lispyville-mode-map
   ">" #'lispyville-slurp
   "<" #'lispyville-barf)
 #+end_src
@@ -5292,7 +5293,7 @@ to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]]
 Sometimes =evil-normal-state= enters visual state.
 
 #+begin_src emacs-lisp
-(general-def '(emacs insert) lispyville-mode-map [escape] #'lispyville-normal-state)
+(define-key! '(emacs insert) lispyville-mode-map [escape] #'lispyville-normal-state)
 (advice-add #'lispyville-normal-state :after #'evil:dwim-abort-after-escape-a)
 #+end_src
 
@@ -5302,11 +5303,11 @@ Sometimes =evil-normal-state= enters visual state.
 :END:
 
 #+begin_src emacs-lisp
-(general-def '(emacs insert) lispyville-mode-map
+(define-key! '(emacs insert) lispyville-mode-map
   "SPC" #'lispy-space
   ";"   #'lispy-comment)
 
-(general-def '(normal visual) lispyville-mode-map
+(define-key! '(normal visual) lispyville-mode-map
   "M-j" #'lispyville-drag-forward
   "M-k" #'lispyville-drag-backward
   "M-R" #'lispyville-raise-list
@@ -5592,7 +5593,7 @@ This variable will be nil when the minibuffer is closed.")
 We want escape to be a general "quit everything".
 
 #+begin_src emacs-lisp
-(general-define-key :states '(emacs insert) [escape] #'evil-force-normal-state)
+(define-key! :states '(emacs insert) [escape] #'evil-force-normal-state)
 
 (defadvice! evil:dwim-abort-after-escape-a ()
   "Exits out of whatever is happening after escape."
@@ -5620,9 +5621,9 @@ This is better than evil escape as it only binds in insert.
   :after-call (evil-insert-state evil-emacs-state)
   :defer-config
   (quiet! (key-chord-mode 1))
-  (general-define-key :states '(visual insert)
-                      (general-chord "jk") 'evil-force-normal-state
-                      (general-chord "kj") 'evil-force-normal-state))
+  (define-key! :states '(visual insert)
+    (general-chord "jk") 'evil-force-normal-state
+    (general-chord "kj") 'evil-force-normal-state))
 #+end_src
 
 **** saving
@@ -5689,9 +5690,9 @@ practice, this is rarely an issue.
         (evil-range beg end 'inclusive :expanded t)
       (error "No surrounding form found.")))
 
-  (general-def evil-inner-text-objects-map
+  (define-key! evil-inner-text-objects-map
     "f" #'evil:textobj-inner-form)
-  (general-def evil-outer-text-objects-map
+  (define-key! evil-outer-text-objects-map
     "f" #'evil:textobj-outer-form))
 #+end_src
 
@@ -5715,7 +5716,7 @@ Why not just go to the end of the ="= like any other around operator?
         (evil-range beg end 'exclusive :expanded t)
       (error "Not inside a comment.")))
 
-  (general-def evil-outer-text-objects-map
+  (define-key! evil-outer-text-objects-map
     "\"" #'evil:textobj-a-string))
 #+end_src
 
@@ -5767,22 +5768,22 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(general-define-key
- (:map Info-mode-map)
- (:m "h"   #'Info-backward-node)
- (:m "l"   #'Info-forward-node)
- (:m "H"   #'Info-history-back)
- (:m "L"   #'Info-history-forward)
- (:m "r"   #'Info-history)
- (:m "J"   #'evil-scroll-page-down)
- (:m "K"   #'evil-scroll-page-up)
- (:m "f"   #'ace-link-info)
- (:m "u"   #'Info-up)
- (:m "U"   #'Info-top-node)
- (:m "m"   #'Info-menu)
- (:m "s"   #'Info-search)
- (:m "RET" #'Info-follow-nearest-node)
- (:m "q"   #'quit-window))
+(define-key!
+  (:map Info-mode-map)
+  (:m "h"   #'Info-backward-node)
+  (:m "l"   #'Info-forward-node)
+  (:m "H"   #'Info-history-back)
+  (:m "L"   #'Info-history-forward)
+  (:m "r"   #'Info-history)
+  (:m "J"   #'evil-scroll-page-down)
+  (:m "K"   #'evil-scroll-page-up)
+  (:m "f"   #'ace-link-info)
+  (:m "u"   #'Info-up)
+  (:m "U"   #'Info-top-node)
+  (:m "m"   #'Info-menu)
+  (:m "s"   #'Info-search)
+  (:m "RET" #'Info-follow-nearest-node)
+  (:m "q"   #'quit-window))
 #+end_src
 
 ***** eshell
@@ -5951,7 +5952,7 @@ Package [[https://github.com/Dewdrops/evil-exchange][evil-exchange]] lets me swa
 (use-package! evil-exchange
   :commands evil-exchange
   :init
-  (general-def 'normal
+  (define-key! 'normal
     :prefix "g"
     "X" (list :def #'evil-exchange-cancel :wk "cancel")
     "x" (list :def #'evil-exchange :wk "exchange")))
@@ -5984,7 +5985,7 @@ larger text objects. It's saves me keystrokes.
 (use-package! expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
   :init
-  (general-def 'visual
+  (define-key! 'visual
     "V" #'er/contract-region
     "v" #'er/expand-region)
   :defer-config
@@ -6070,7 +6071,7 @@ larger text objects. It's saves me keystrokes.
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal
+(define-key! 'normal
   "f" #'avy-goto-char
   "w" #'void/evil-beginning-of-word
   "W" #'void/evil-beginning-of-WORD
@@ -6735,7 +6736,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal ranger-mode-map
+(define-key! 'normal ranger-mode-map
   "m" #'dired-mark
   "d" #'dired-do-delete
   "s" #'dired-do-symlink
@@ -6758,7 +6759,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal ranger-mode-map
+(define-key! 'normal ranger-mode-map
   "A" #'dired-do-find-regexp
   "C" #'dired-do-copy
   "B" #'dired-do-byte-compile
@@ -6785,7 +6786,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal ranger-mode-map
+(define-key! 'normal ranger-mode-map
   "["                   #'dired-prev-dirline
   "]"                   #'dired-next-dirline
   "<"                   #'dired-prev-dirline
@@ -6806,7 +6807,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal ranger-mode-map
+(define-key! 'normal ranger-mode-map
   :prefix "%"
   "u" #'dired-upcase
   "l" #'dired-downcase
@@ -6825,7 +6826,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal ranger-mode-map
+(define-key! 'normal ranger-mode-map
   :prefix "*"
   "*"         #'dired-mark-executables
   "/"         #'dired-mark-directories
@@ -6852,7 +6853,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal ranger-mode-map
+(define-key! 'normal ranger-mode-map
   [remap read-only-mode]   #'dired-toggle-read-only
   [remap toggle-read-only] #'dired-toggle-read-only
   "<delete>"               #'dired-unmark-backward
@@ -7216,7 +7217,7 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 :END:
 
 #+begin_src emacs-lisp
-(general-def 'normal pdf-view-mode-map
+(define-key! 'normal pdf-view-mode-map
   "j" #'pdf-view-next-line-or-next-page
   "k" #'pdf-view-previous-line-or-previous-page
   "0" #'pdf-view-first-page
@@ -7586,7 +7587,7 @@ from elisp to org. My [[helpvar:VOID-INIT-FILE][void:init-file]] is written with
 (use-package! outshine
   :hook emacs-lisp-mode-hook
   :defer-config
-  (general-def '(normal) emacs-lisp-mode-map
+  (define-key! '(normal) emacs-lisp-mode-map
     "TAB" #'outline-toggle-children))
 #+end_src
 
@@ -8750,7 +8751,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
 ;;   (:n "a" #'outline-show-all)
 ;;   (:n "m" #'outline:hide-all-sublevels))
 
-(general-def 'normal org-mode-map
+(define-key! 'normal org-mode-map
   [tab] #'outline-toggle-children
   "TAB" #'outline-toggle-children)
 
@@ -8758,7 +8759,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   (interactive)
   (outline-hide-sublevels 1))
 
-(general-def 'normal org-mode-map
+(define-key! 'normal org-mode-map
   "j" #'org/dwim-next-line
   "k" #'org/dwim-previous-line
   "b" #'org/dwim-insert-elisp-block
@@ -9392,11 +9393,11 @@ press as well and even faster than =SPC SPC=.
 #+begin_src emacs-lisp
 (define-leader-key! "SPC" (list :def #'execute-extended-command :wk "M-x"))
 
-(general-def
+(define-key!
   "A-x" #'execute-extended-command
   "M-x" #'execute-extended-command)
 
-(general-def 'normal ";" #'execute-extended-command
+(define-key! 'normal ";" #'execute-extended-command
   "q" #'delete-window)
 #+end_src
 
@@ -9410,7 +9411,7 @@ I scroll pages all the time. The default binding for scrolling pages in evil are
 common commands however, so I bound them to =J= and =K= respectively.
 
 #+begin_src emacs-lisp
-(general-def 'normal
+(define-key! 'normal
   "K" #'evil-scroll-page-up
   "J" #'evil-scroll-page-down)
 #+end_src
@@ -9423,7 +9424,7 @@ common commands however, so I bound them to =J= and =K= respectively.
 As someone who spends much of his day on the computer.
 
 #+begin_src emacs-lisp
-(general-def '(emacs normal)
+(define-key! '(emacs normal)
   "M--" #'text-scale-decrease
   "M-=" #'text-scale-increase)
 #+end_src
