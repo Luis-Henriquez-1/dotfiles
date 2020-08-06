@@ -9223,13 +9223,13 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 
 #+begin_src emacs-lisp
 (defadvice! dashboard:set-init-info-a (&rest _)
-  "Use `void:init-time' dashboard."
   :before dashboard-insert-startupify-lists
   (setq dashboard-init-info
         (format "%d packages loaded in %.2f seconds"
                 (cond ((featurep 'straight)
                        (hash-table-size straight--profile-cache))
-                      (t (length package-activated-list)))
+                      ((featurep 'package) (length package-activated-list))
+                      (t 0))
                 (string-to-number (emacs-init-time)))))
 #+end_src
 
