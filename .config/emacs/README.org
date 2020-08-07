@@ -5251,9 +5251,9 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 #+begin_src emacs-lisp
 (use-package! lispyville
   :commands lispyville-comment-or-uncomment-line
-  :hook lisp-mode-hook
+  :hook emacs-lisp-mode-hook
   :bind
-  (:lisp-mode-map
+  (:emacs-lisp-mode-map
    ([remap evil-yank]                 . lispyville-yank)
    ([remap evil-delete]               . lispyville-delete)
    ([remap evil-change]               . lispyville-change)
