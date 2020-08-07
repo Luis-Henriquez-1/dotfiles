@@ -4711,8 +4711,7 @@ necessary! It [[https://raw.githubusercontent.com/wiki/chuntaro/emacs-keypressio
 #+begin_src emacs-lisp
 (use-package! keypression
   :ensure (:host github :repo "chuntaro/emacs-keypression")
-  :setq
-  (keypression-frame-justify . 'keypression-right-justified))
+  :setq (keypression-frame-justify . 'keypression-right-justified))
 #+end_src
 
 * Text Editing
