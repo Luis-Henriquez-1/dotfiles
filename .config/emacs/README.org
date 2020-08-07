@@ -1255,6 +1255,16 @@ specific packages.
 :ID: 40367976-12a0-4ccd-9aff-4df144a73edf
 :END:
 
+**** vc-hook
+:PROPERTIES:
+:ID:       a8dcb1f6-05a0-46cb-95b5-1d0cd0ad4467
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! vc-hooks
+  :setq (vc-follow-link . t))
+#+end_src
+
 **** subr-x
 :PROPERTIES:
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
@@ -4527,7 +4537,7 @@ information such as music, videos, images, and gifs.
 
 Youtube contains a *huge* library of videos.
 
-*** TODO ytdl
+*** ytdl
 :PROPERTIES:
 :ID:       27739f6e-9104-4e2f-b8e5-c8f56e5bb69b
 :END:
@@ -4549,7 +4559,7 @@ Youtube contains a *huge* library of videos.
   )
 #+end_src
 
-*** TODO ytel
+*** ytel
 :PROPERTIES:
 :ID:       167bc712-5552-4cfe-83ce-d0bb9927fa6a
 :END:
