@@ -1794,6 +1794,15 @@ while the user is working.
   (defalias 'quiet! 'shut-up))
 #+end_src
 
+**** keyfreq
+:PROPERTIES:
+:ID:       626b35f7-eef1-4a75-b2dc-8600c1ac47b7
+:END:
+
+#+begin_src emacs-lisp
+(use-package! keyfreq :hook emacs-startup-hook)
+#+end_src
+
 ** Initialize
 :PROPERTIES:
 :ID:       6e1d0ef3-5a9b-4db4-b8f7-110e96f2d23e
