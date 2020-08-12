@@ -9292,7 +9292,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
   (concat VOID:LOCAL-DIR "void-banner.txt"))
 #+end_src
 
-*** navigator buttons
+*** navigator buttons                                                 :disabled:
 :PROPERTIES:
 :ID:       a4a9e0ae-ee44-4434-bcf6-b415ef348e45
 :END:
