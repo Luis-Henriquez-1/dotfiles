@@ -7334,6 +7334,25 @@ on the buffer you'd like to edit.
   (magit-status "/yadm::"))
 #+end_src
 
+** plantuml
+:PROPERTIES:
+:ID:       4c452dea-a404-4443-9ecc-189c940d201e
+:END:
+
+#+begin_src emacs-lisp
+(use-package! plantuml-mode
+  :init
+  (after! org
+    (add-to-list 'org-src-lang-modes '("plantuml" . plantuml))
+    (org-babel-do-load-languages 'org-babel-load-languages '((plantuml . t))))
+  :setq
+  (plantuml-executable-path . (executable-find "plantuml"))
+  (plantuml-jar-path . "/usr/share/java/plantuml/plantuml.jar")
+  (plantuml-default-exec-mode . 'jar)
+  (org-plantuml-jar-path . "/usr/share/java/plantuml/plantuml.jar")
+  (org-plantuml-executable-path . (executable-find "plantuml")))
+#+end_src
+
 * Languages
 :PROPERTIES:
 :ID: 51e3b9b1-0e74-431e-a113-fe6f86a4b22a
