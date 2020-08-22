@@ -88,6 +88,7 @@ bindsym $mod+w layout tabbed
 bindsym $mod+e exec emacs
 bindsym $mod+n exec next
 bindsym $mod+q exec qutebrowser
+bindsym $mod+i exec iceweasel
 
 # toggle tiling / floating
 bindsym $mod+Shift+space floating toggle
