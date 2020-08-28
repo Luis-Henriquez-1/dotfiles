@@ -285,29 +285,6 @@ this from Doom's straight branch.
 (advice-add #'straight--emacs-dir :around #'straight:use-packages-dir-a)
 #+end_src
 
-**** sources
-:PROPERTIES:
-:ID: 1491c0ff-1bce-45e2-ac36-2d33752e5d45
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:core-package-sources
-  '((org-elpa :local-repo nil)
-    (melpa
-     :type git :host github
-     :repo "melpa/melpa"
-     :no-build t)
-    (gnu-elpa-mirror
-     :type git :host github
-     :repo "emacs-straight/gnu-elpa-mirror"
-     :no-build t)
-    (emacsmirror-mirror
-     :type git :host github
-     :repo "emacs-straight/emacsmirror-mirror"
-     :no-build t))
-  "A list of recipes for straight's recipe repos.")
-#+end_src
-
 **** bootstrap code
 :PROPERTIES:
 :ID: 7816be80-4db8-4219-b7d1-9a6b1ea96035
@@ -318,21 +295,19 @@ This code initializes straight if it's not already installed.
 #+begin_src emacs-lisp
 (defun straight:init-fn ()
   "Initialize `straight.el'."
-  (defvar boostrap-version 5 "Bootstrap version for straight.el")
+  (defvar bootstrap-version)
   (let* ((user-emacs-directory VOID:PACKAGES-DIR)
-         (straight-dir (concat VOID:PACKAGES-DIR "straight/"))
-         (bootstrap-file (concat straight-dir "repos/straight.el/straight.el")))
-    (unless (or (require 'straight nil t) (file-readable-p bootstrap-file))
-      (void:log "Installing straight.el...")
+         (bootstrap-file
+          (expand-file-name "straight/repos/straight.el/bootstrap.el" user-emacs-directory))
+         (bootstrap-version 5))
+    (unless (file-exists-p bootstrap-file)
       (with-current-buffer
           (url-retrieve-synchronously
            "https://raw.githubusercontent.com/raxod502/straight.el/develop/install.el"
            'silent 'inhibit-cookies)
         (goto-char (point-max))
         (eval-print-last-sexp)))
-    (void:log "Loading straight.el...")
-    (load bootstrap-file nil t))
-  (mapc #'straight-use-recipes void:core-package-sources))
+    (load bootstrap-file nil 'nomessage)))
 #+end_src
 
 **** straight-installer
@@ -9479,6 +9454,10 @@ graphical interface but.
 (use-package! avk-emacs-themes)
 
 (use-package! hemera-theme)
+
+(use-package! modus-vivendi)
+
+(use-package! modus-operandi)
 #+end_src
 
 *** circadian                                                         :disabled:
