@@ -6879,6 +6879,16 @@ inspired file manager]] of also called =ranger=.
   [remap advertised-undo]  #'dired-undo)
 #+end_src
 
+***** make sure that =;= uses =M-x=
+:PROPERTIES:
+:ID:       c63911ca-6d26-4d7c-be76-246639fb6c7a
+:END:
+
+#+begin_src emacs-lisp
+(define-key! 'normal ranger-mode-map
+  ";" #'execute-extended-command)
+#+end_src
+
 **** entry
 :PROPERTIES:
 :ID: 2edf3f72-726f-4b31-9ff0-20e5e7d251b1
