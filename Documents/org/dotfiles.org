@@ -3,7 +3,8 @@
 :ID:       bf96dec4-c43a-45c9-b5e5-65a68a892355
 :END:
 
-This file generates my other dotfiles.
+Ideally, I'd like to use lisp to write my dotfiles. This file generates my other
+dotfiles.
 
 * bashrc
 :PROPERTIES:
@@ -79,8 +80,11 @@ allow-emacs-pinentry
 
 * email
 
-I generate my =.msmtprc= and =.mbsyncrc= based on the contents of
-=.password-store=.
+I download all my email from servers into my local computer. That way I can
+still view my email without internet connection. Also, when read and write email
+I don't have to deal with network latency since it's done locally on my machine.
+Only time I need the internet connection is when I'm either fetching email or
+sending email.
 
 :PROPERTIES:
 :ID:       121f6bc5-23ed-465f-90c5-9d11db715ff6
@@ -95,12 +99,12 @@ I generate my =.msmtprc= and =.mbsyncrc= based on the contents of
 :ID:       67ecf9f7-8c43-4538-b581-d3a363ff8eec
 :END:
 
-The goal here is to write as much of the dotfile configuration in elisp as
-possible. And also to generate repetative code.
+Many configuration files in linux are written in the form of a DSL with
+key-value pairs.
 
 #+begin_src emacs-lisp :tangle no
 (defun dotfiles:convert-to-string (&rest plist)
-  "Return a"
+  "Return a plist as a stirng."
   (s-join "\n"
           (mapcar (-lambda ((keyword value))
                     (format (concat "%s" (when value " %s")) (void:keyword-name keyword) value))
@@ -117,10 +121,26 @@ possible. And also to generate repetative code.
   (format "%S" (apply #'format input args)))
 #+end_src
 
+*** with password entries
+:PROPERTIES:
+:ID:       613f48cc-5c17-4306-ae30-2745c27105b8
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-password-entries! (entry &rest body)
+  (declare (indent defun))
+  `(let ,(--map (list it `(password-store-get-field ,entry ,(void:anaphoric-true-symbol it)))
+                (void:anaphoric-symbols body))
+     ,@body))
+#+end_src
+
 ** msmtprc
 :PROPERTIES:
 :ID:       1747ff3c-0fa4-4cb9-9b80-324bc0877dfb
 :END:
+
+The =msmtprc= file contains the information needed to send email.
+You need things like the name of the outgoing server and its port.
 
 *** msmtprc
 :PROPERTIES:
@@ -130,16 +150,13 @@ possible. And also to generate repetative code.
 #+begin_src emacs-lisp :tangle no
 (defun dotfiles:msmtprc-account-string (entry)
   "Return account string for msmtprc."
-  (let* (($account (password-store-get-field entry "account"))
-         ($out-host (password-store-get-field entry "out-host"))
-         ($out-port (password-store-get-field entry "out-port"))
-         ($email (password-store-get-field entry "email")))
+  (with-password-entries! entry
     (dotfiles:convert-to-string
-     :account $account
-     :host $out-host
-     :from $email
-     :port $out-port
-     :user $email
+     :account <account>
+     :host <out-host>
+     :from <email>
+     :port <out-port>
+     :user <email>
      :passwordeval (dotfiles:string "pass %s | head -n 1" entry))))
 #+end_src
 
@@ -150,13 +167,13 @@ possible. And also to generate repetative code.
 
 #+name: msmtprc-account-info
 #+begin_src emacs-lisp :tangle no
-(thread-last (seq-filter (lambda (it) (s-matches-p (rx bos "email/") it))
-                         (password-store-list))
+(thread-last (--filter (s-matches-p (rx bos "email/") it)
+                       (password-store-list))
   (seq-map #'dotfiles:msmtprc-account-string)
   (s-join "\n\n"))
 #+end_src
 
-** main
+*** main
 :PROPERTIES:
 :ID:       537fb697-f84c-46d7-80ac-0745ec3bddb1
 :END:
@@ -178,7 +195,7 @@ account default : luishp
 :ID:       3d5d4928-f61b-4492-afd9-2f90c9d737c4
 :END:
 
-=mbsync= is what I use to sync my email from a server.
+=mbsync= contains the information I need to download my email from a server.
 
 *** mbsync account setup
 :PROPERTIES:
@@ -188,13 +205,10 @@ account default : luishp
 #+begin_src emacs-lisp :tangle no
 (defun dotfiles:mbsyncrc-imap-account-setup (mail)
   "Return the account part of the."
-  (let (($account (password-store-get-field mail "account"))
-        ($in-host (password-store-get-field mail "in-host"))
-        ($in-port (password-store-get-field mail "in-port"))
-        ($email (password-store-get-field mail "email")))
+  (with-password-entries! mail
     (dotfiles:convert-to-string
      :IMAPAccount $account
-     :Host $in-host
+     :Host $server
      :User $email
      :PassCmd (dotfiles:string "pass email/%s | head -n 1" $email)
      :SSLType 'IMAPS
@@ -257,15 +271,15 @@ account default : luishp
 
 (defun dotfiles:mbsyncrc-sync-gmail (entry)
   (let* ((mailboxes '("All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash"))
-         (names (seq-map (fn (downcase (-first-item (s-split-words <1>)))) mailboxes)))
+         (names (--map (downcase (-first-item (s-split-words it))) mailboxes)))
     (alet (seq-map (-lambda ((n m)) (dotfiles:mbsyncrc-sync-gmail-section n m))
                    (seq-mapn #'list names mailboxes))
       (concat (s-join "\n\n" it)
               "\n\n"
-              (s-join "\n" (cons "Group gmail" (seq-map (fn (format "Channel gmail-%s" <1>)) names)))))))
+              (s-join "\n" (cons "Group gmail" (--map (format "Channel gmail-%s" it) names)))))))
 #+end_src
 
-** account
+*** account
 :PROPERTIES:
 :ID:       20962e17-ddae-465f-9123-ae8918539c6a
 :END:
