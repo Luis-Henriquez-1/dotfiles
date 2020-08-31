@@ -6946,6 +6946,18 @@ which only some files are hidden. That's wierd, so I get rid of it.
 #+end_src
 
 
+**** refresh
+:PROPERTIES:
+:ID:       14e0f5b0-2b6c-44eb-8214-80e20f168871
+:END:
+
+#+begin_src emacs-lisp
+(defadvice! ranger:refresh-after-new-dir (&rest _)
+  :after mkdir
+  (when (eq major-mode 'ranger)
+    (ranger-refresh)))
+#+end_src
+
 *** dired icons
 :PROPERTIES:
 :ID: 3b4561b3-18a5-475f-a8e8-e9cb7e213881
