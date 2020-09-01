@@ -57,13 +57,20 @@ programming language. And these DSLs almost never contain if statements.
 :ID:       99dce350-cdf4-4d40-b81b-a2ae11e8986a
 :END:
 
+Like I said, I want to document my dotfiles well so that others will have an
+easier time than I did getting theirs up and running. Being a markup language,
+org makes provides a really easy, convenient and consistent way to document
+different languages.
+
 ** Yadm
 :PROPERTIES:
 :ID:       cc39eccf-a405-4edf-8545-64c6c32641fe
 :END:
 
 How to manage your dotfiles? It is not a good idea to version control your home
-directory. My dotfile manager is [[][yadm]].
+directory. My dotfile manager is [[https://yadm.io/][yadm]]. I looked at a lot of alternatives such as
+rcm, chezmoi, GNU stow, and even just managing version control and symlinks
+myself. The reason I choose yadm because it was the easiest to use.
 
 #+begin_src sh
 yadm clone https://github.com/Luis-Henriquez-1/dotfiles
