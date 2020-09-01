@@ -75,3 +75,13 @@ myself. The reason I choose yadm because it was the easiest to use.
 #+begin_src sh
 yadm clone https://github.com/Luis-Henriquez-1/dotfiles
 #+end_src
+
+* Goals
+:PROPERTIES:
+:ID:       6cce4471-3727-4387-a3aa-7bb1e074a295
+:END:
+
+** create a bootstrap script
+:PROPERTIES:
+:ID:       79310436-9282-48a0-8625-4f0d8a64b5cf
+:END:
