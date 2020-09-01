@@ -31,7 +31,7 @@ example. I had a hard time figuring out how to properly manage dotfiles. And
 frankly, I felt many other dotfiles I looked at as an example didn't do a great
 job of documenting.
 
-* Design Choices
+* Dotfile Management Tools
 :PROPERTIES:
 :ID:       85e47a8f-6b12-470d-939a-461ed719a8fa
 :END:
