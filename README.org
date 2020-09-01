@@ -56,3 +56,10 @@ programming language. And these DSLs almost never contain if statements.
 :PROPERTIES:
 :ID:       99dce350-cdf4-4d40-b81b-a2ae11e8986a
 :END:
+
+** Yadm
+:PROPERTIES:
+:ID:       cc39eccf-a405-4edf-8545-64c6c32641fe
+:END:
+
+My dotfile manager is [[][yadm]].
