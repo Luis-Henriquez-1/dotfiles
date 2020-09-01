@@ -36,6 +36,8 @@ job of documenting.
 :ID:       85e47a8f-6b12-470d-939a-461ed719a8fa
 :END:
 
+Here I talk about what I choose to manage my dotfiles and why.
+
 ** Org Mode
 :PROPERTIES:
 :ID:       68a3ce10-b52f-48f8-8e44-808cc0186684
@@ -77,7 +79,9 @@ myself, I /really/ did not want to learn a new language or new commands just for
 managing my dotfiles. I just wanted something that would be easy to learn, do
 its job, and get out of my way. Yadm fit the bill.
 
-Getting yadm is as simple as.
+One of the first things I noticed about yadm was its mantra: "If you know how to
+use git, you already know how to use yadm". I can testify
+that this is true. Yadm's similarity with git made.
 
 #+begin_src sh
 yadm clone https://github.com/Luis-Henriquez-1/dotfiles
@@ -88,7 +92,9 @@ yadm clone https://github.com/Luis-Henriquez-1/dotfiles
 :ID:       6cce4471-3727-4387-a3aa-7bb1e074a295
 :END:
 
-** create a bootstrap script
+** TODO create a bootstrap script
 :PROPERTIES:
 :ID:       79310436-9282-48a0-8625-4f0d8a64b5cf
 :END:
+
+I'm not very familiar with bash scripting. However, I really to write one that will install.
