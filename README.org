@@ -62,4 +62,9 @@ programming language. And these DSLs almost never contain if statements.
 :ID:       cc39eccf-a405-4edf-8545-64c6c32641fe
 :END:
 
-My dotfile manager is [[][yadm]].
+How to manage your dotfiles? It is not a good idea to version control your home
+directory. My dotfile manager is [[][yadm]].
+
+#+begin_src sh
+yadm clone https://github.com/Luis-Henriquez-1/dotfiles
+#+end_src
