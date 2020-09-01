@@ -100,7 +100,8 @@ sending email.
 :END:
 
 Many configuration files in linux are written in the form of a DSL with
-key-value pairs.
+key-value pairs. This function takes in a plist and converts it to a string of
+key value pairs. I'll then write this string to a file and voila!
 
 #+begin_src emacs-lisp :tangle no
 (defun dotfiles:convert-to-string (&rest plist)
@@ -144,10 +145,12 @@ This is a convenience anaphoric macro for quickly getting password entries.
 The =msmtprc= file contains the information needed to send email.
 You need things like the name of the outgoing server and its port.
 
-*** msmtprc
+*** account information
 :PROPERTIES:
 :ID:       7f888dc8-1c41-478c-accd-6a038a96ec3c
 :END:
+
+For each email account I have will need the information.
 
 #+begin_src emacs-lisp :tangle no
 (defun dotfiles:msmtprc-account-string (entry)
@@ -258,7 +261,7 @@ my computer.
      :SyncState '*)))
 #+end_src
 
-*** sync gmail
+*** gmail account sync settings
 :PROPERTIES:
 :ID:       39b9d98f-223e-46f4-a136-a79292d96617
 :END:
