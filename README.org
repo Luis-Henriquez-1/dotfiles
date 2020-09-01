@@ -2,3 +2,57 @@
 
 These are my dotfiles. Most of the configuration is in Emacs which I use as my
 window manager.
+
+* Purpose
+:PROPERTIES:
+:ID:       9fbf543f-1e87-4842-a059-1ed292d27b14
+:END:
+
+** Backup
+:PROPERTIES:
+:ID:       0a1cf1fc-3382-4571-9e41-35588995b140
+:END:
+
+The purpose of these dotfiles are to provide me with a backup of my information
+and a means to quickly set up my system on a brand new linux install. This
+repository will contain all the information that it's O.K. to keep public. Any
+private information I will store in a USB. The idea is that in the case where my
+hardrive fails, my computer is destroyed, or I simply wish to distro hop, I can
+clone this repository, pull out my usb of private information and use that (as
+well as a bootstrap script) to generate my setup.
+
+** Providing Others With An Example
+:PROPERTIES:
+:ID:       a85929c7-b86f-4c81-8b93-a78658820ad2
+:END:
+
+Another purpose is to help others with their dotfiles by providing yet another
+example. I had a hard time figuring out how to properly manage dotfiles. And
+frankly, I felt many other dotfiles I looked at as an example didn't do a great
+job of documenting.
+
+* Design Choices
+:PROPERTIES:
+:ID:       85e47a8f-6b12-470d-939a-461ed719a8fa
+:END:
+
+** Org Mode
+:PROPERTIES:
+:ID:       68a3ce10-b52f-48f8-8e44-808cc0186684
+:END:
+
+*** Robustness
+:PROPERTIES:
+:ID:       0526ca29-608f-4a77-90ac-96d0e167691e
+:END:
+
+One challenge in creating dotfiles you'll surely face is making dotfiles truly
+robust and flexibile. It is useful to be able to change settings based on the
+environment in which your dotfiles are installed in. The vast majority of
+dotfiles used for configuring programs are written in a DSL instead of a real
+programming language. And these DSLs almost never contain if statements.
+
+*** Documentation Focused
+:PROPERTIES:
+:ID:       99dce350-cdf4-4d40-b81b-a2ae11e8986a
+:END:
