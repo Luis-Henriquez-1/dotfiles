@@ -86,6 +86,15 @@ I don't have to deal with network latency since it's done locally on my machine.
 Only time I need the internet connection is when I'm either fetching email or
 sending email.
 
+This is a setup I've created to generate my =mbsync= and =msmtprc= files based on
+the email accounts I have in my =~/.password-store= directory. Specifically, my
+email stuff. This code will look through my "email/" entries and write update
+the =mbsync= and =msmtprc= files appropriately. For this to work I need to specify
+the following fields in my email entry: account, out-host, out-port, and email.
+
+=account= is the nickname I assign to the email account. =out-host= is the
+server name of the.
+
 :PROPERTIES:
 :ID:       121f6bc5-23ed-465f-90c5-9d11db715ff6
 :END:

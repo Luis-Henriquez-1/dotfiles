@@ -69,8 +69,15 @@ different languages.
 
 How to manage your dotfiles? It is not a good idea to version control your home
 directory. My dotfile manager is [[https://yadm.io/][yadm]]. I looked at a lot of alternatives such as
-rcm, chezmoi, GNU stow, and even just managing version control and symlinks
-myself. The reason I choose yadm because it was the easiest to use.
+[[https://thoughtbot.com/blog/rcm-for-rc-files-in-dotfiles-repos][rcm]], [[https://www.chezmoi.io/][chezmoi]], [[https://www.gnu.org/software/stow/][GNU stow]], and even just managing version control and symlinks
+myself. In a nutshell, I found that chezmoi and rcm required too much time
+investment on my part and that some features in chezmoi in particular I could
+get from just using org files. Seeking a good dotfile management solution for
+myself, I /really/ did not want to learn a new language or new commands just for
+managing my dotfiles. I just wanted something that would be easy to learn, do
+its job, and get out of my way. Yadm fit the bill.
+
+Getting yadm is as simple as.
 
 #+begin_src sh
 yadm clone https://github.com/Luis-Henriquez-1/dotfiles
