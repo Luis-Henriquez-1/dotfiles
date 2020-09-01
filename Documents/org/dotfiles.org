@@ -126,6 +126,8 @@ key-value pairs.
 :ID:       613f48cc-5c17-4306-ae30-2745c27105b8
 :END:
 
+This is a convenience anaphoric macro for quickly getting password entries.
+
 #+begin_src emacs-lisp
 (defmacro with-password-entries! (entry &rest body)
   (declare (indent defun))
@@ -195,7 +197,8 @@ account default : luishp
 :ID:       3d5d4928-f61b-4492-afd9-2f90c9d737c4
 :END:
 
-=mbsync= contains the information I need to download my email from a server.
+=mbsync= contains the information I need to download my email from a server to
+my computer.
 
 *** mbsync account setup
 :PROPERTIES:
@@ -295,7 +298,7 @@ account default : luishp
     (s-join "\n\n" it)))
 #+end_src
 
-** producting code
+*** producting code
 :PROPERTIES:
 :ID:       0cc68149-cf83-429e-a54b-1416565cd6ed
 :END:
@@ -307,7 +310,7 @@ account default : luishp
      (s-join "\n\n"))
 #+end_src
 
-** all
+*** all
 :PROPERTIES:
 :ID:       3f5d8401-2090-45d8-928d-c8aa7eee32a7
 :END:
