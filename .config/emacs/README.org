@@ -6953,7 +6953,7 @@ which only some files are hidden. That's wierd, so I get rid of it.
 
 #+begin_src emacs-lisp
 (defadvice! ranger:refresh-after-new-dir (&rest _)
-  :after mkdir
+  :after (mkdir dired-do-rename)
   (when (eq major-mode 'ranger)
     (ranger-refresh)))
 #+end_src
