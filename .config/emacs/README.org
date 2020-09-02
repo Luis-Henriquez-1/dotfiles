@@ -4573,18 +4573,13 @@ YouTube search results into a buffer and manipulate them with emacs lisp.
 
 #+begin_src emacs-lisp
 (use-package! emms
-  :commands emms
   :setq
   (emms-directory . (concat VOID:DATA-DIR "emms/"))
   (emms-seek-seconds . 5)
-  (emms-player-list . '(emms-player-mpd))
-  (emms-volume-change-function . 'emms-volume-mpd-change)
-  (emms-player-mpd-music-directory . (file-truename "~/Music"))
-  (emms-player-mpd-server-name . "127.0.0.1")
-  (emms-player-mpd-server-port . "6600")
-  (emms-source-file-default-directory . (expand-file-name "~/Music"))
+  (emms-player-list . '(emms-player-mpv))
+  (emms-source-file-default-directory . VOID:MUSIC-DIR)
   (emms-source-file-directory-tree-function . 'emms-source-file-directory-tree-find)
-  (emms-playlist-buffer-name . "*Music*")
+  (emms-playlist-buffer-name . "*EMMS-PLAYLIST*")
   (mpc-host . "127.0.0.1:6600"))
 #+end_src
 
@@ -4602,33 +4597,6 @@ YouTube search results into a buffer and manipulate them with emacs lisp.
   ;; kill any existing mpd processes
   (when (member 'emms-player-mpd emms-player-list)
     (call-process "killall" nil nil nil "mpd")))
-#+end_src
-
-*** connect to mpd
-:PROPERTIES:
-:ID: 1fc7b846-7bbc-4d19-85f2-b7a091ca678d
-:END:
-
-#+begin_src emacs-lisp
-(defun emms ()
-  "Initialize EMMS."
-  (interactive)
-  (fmakunbound #'emms)
-  (when (executable-find "mpd")
-    (require 'emms-setup)
-    (require 'emms-player-mpd)
-    (emms-all)
-    ;; kill any existing mpd processes
-    (call-process "killall" nil nil nil "mpd")
-    ;; start mpd
-    (shell-command "mpd /home/luis/.config/mpd/mpd.conf")
-    ;; update mpd database
-    (call-process "mpc" nil nil nil "update")
-    (emms-player-mpd-connect)
-    (emms-cache-set-from-mpd-all)
-    (emms-add-directory-tree emms-source-file-default-directory)
-    (void:log "Set up emms"))
-  (funcall #'emms))
 #+end_src
 
 ** screenshot
