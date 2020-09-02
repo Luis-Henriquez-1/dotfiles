@@ -4527,14 +4527,17 @@ Youtube contains a *huge* library of videos.
   (ytdl-video-folder . VOID:VIDEO-DIR)
   (ytdl-always-query-default-filename . nil)
   (ytdl-always-ask-delete-confirmation . t)
-  (ytdl-always-query-default-filename . nil)  ;; :defer-config
+  (ytdl-always-query-default-filename . nil)
   (ytdl-media-player . "mpv")
-  (ytdl-max-mini-buffer-download-type-entries . 0)
-  ;; (ytdl-add-field-in-download-type-list "Music" "p" (expand-file-name "~/podcasts") nil)
-  )
+  (ytdl-max-mini-buffer-download-type-entries . 0))
 #+end_src
 
 *** ytel
+:PROPERTIES:
+:ID:       69d6a52c-137b-4b7c-aa23-75e95399594d
+:END:
+
+**** ytel
 :PROPERTIES:
 :ID:       167bc712-5552-4cfe-83ce-d0bb9927fa6a
 :END:
