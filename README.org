@@ -1,8 +1,8 @@
 * About
 
 These are my dotfiles. Right now the OS I am running on my main computer--my
-laptop--is parabola linux. The window manager I use is [[https://github.com/ch11ng/exwm][EXWM]]. I do have an i3
-config and an awesome config as well just in case.
+laptop--is parabola linux. The window manager I use is [[https://github.com/ch11ng/exwm][EXWM]]. I do have an [[https://i3wm.org/][i3]]
+config and an [[https://awesomewm.org/][awesome]] config as well just in case.
 
 * Purpose
 :PROPERTIES:
@@ -95,11 +95,6 @@ putting it in your dotfile repo? One answer is to version control encrypted
 files in a private repo. Of course, just the act of uploading your secrets to a
 server you don't own is a risk even if they're encrypted. Right now I've settled
 on keeping my secrets on a usb.
-
-** generating my gpg key with paperkey
-:PROPERTIES:
-:ID:       c1fb9475-d4a7-4dd6-9830-5962670845c7
-:END:
 
 * Bootstraping
 :PROPERTIES:
