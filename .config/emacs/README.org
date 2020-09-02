@@ -4524,7 +4524,7 @@ Youtube contains a *huge* library of videos.
   :setq
   (ytdl-downloads-folder . VOID:DOWNLOAD-DIR)
   (ytdl-music-folder . VOID:MUSIC-DIR)
-  (ytdl-video-folder . (expand-file-name VOID:VIDEO-DIR))
+  (ytdl-video-folder . VOID:VIDEO-DIR)
   (ytdl-always-query-default-filename . nil)
   (ytdl-always-ask-delete-confirmation . t)
   (ytdl-always-query-default-filename . nil)  ;; :defer-config
