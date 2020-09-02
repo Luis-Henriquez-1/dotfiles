@@ -4545,18 +4545,69 @@ YouTube search results into a buffer and manipulate them with emacs lisp.
 #+begin_src emacs-lisp
 (use-package! ytel
   ;; depends on curl (executable-find "curl")
-  :commands ytel
-  :defer-config
-  (defun ytel/watch ()
-    "Stream video at point in mpv."
-    (interactive)
-    (let* ((video (ytel-get-current-video))
-     	   (id    (ytel-video-id video)))
-      (start-process "ytel mpv" nil
-		             "mpv"
-		             (concat "https://www.youtube.com/watch?v=" id))
-	  "--ytdl-format=bestvideo[height<=?720]+bestaudio/best")
-    (message "Starting streaming...")))
+  :commands ytel)
+#+end_src
+
+**** utility functions
+:PROPERTIES:
+:ID:       21924123-35ce-4cf2-bf6a-2d24708cbc32
+:END:
+
+***** TODO search a video with completion framework
+:PROPERTIES:
+:ID:       6ba6baa7-e0f8-457e-a777-0fba05c6d81d
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+***** stream a video in mpv
+:PROPERTIES:
+:ID:       1109a6f4-3c74-4ddb-963a-1434c421b542
+:END:
+
+#+begin_src emacs-lisp
+(defun ytel/watch-video ()
+  "Stream video at point in mpv."
+  (interactive)
+  (let* ((video (ytel-get-current-video))
+     	 (id    (ytel-video-id video)))
+    (start-process "ytel mpv" nil
+		           "mpv"
+		           (concat "https://www.youtube.com/watch?v=" id))
+	"--ytdl-format=bestvideo[height<=?720]+bestaudio/best")
+  (message "Starting streaming..."))
+#+end_src
+
+***** TODO download audio
+:PROPERTIES:
+:ID:       1091dca6-698d-4bda-bcea-54e72092621b
+:END:
+
+#+begin_src emacs-lisp
+(defun ytel/download-audio ()
+  "Stream video at point in mpv."
+  (interactive)
+  (let ((id (ytel-video-id (ytel-get-current-video)))
+        (fname (read-string "Filename: ")))
+    (ytdl--download-async (concat "https://www.youtube.com/watch?v=" id)
+                          (concat VOID:MUSIC-DIR fname)
+                          ytdl-music-extra-args
+                          nil
+                          "Music"))
+  (message "Audio downloading..."))
+#+end_src
+
+***** thumbnail
+:PROPERTIES:
+:ID:       6f8c8765-abcd-4432-8f34-1b12e4b81620
+:END:
+
+#+begin_src emacs-lisp
+(defun ytel/download-thumbnail ()
+  ""
+  (interactive)
+  )
 #+end_src
 
 ** emms
