@@ -1,7 +1,7 @@
 * About
 
 These are my dotfiles. Right now the OS I am running on my main computer--my
-laptop--is parabola linux. The window manager I use is EXWM. I do have an i3
+laptop--is parabola linux. The window manager I use is [[https://github.com/ch11ng/exwm][EXWM]]. I do have an i3
 config and an awesome config as well just in case.
 
 * Purpose
