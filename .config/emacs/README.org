@@ -3357,326 +3357,32 @@ be inserted and interactively completed.
     (push it yas-snippet-dirs)))
 #+end_src
 
-** ivy
+** selectrum
 :PROPERTIES:
-:ID: cf88854e-4f88-4f64-962d-5d0ff99cd94f
+:ID:       4c384110-96fe-4d7a-8bcf-6592f4c9ad67
 :END:
 
-Ivy is considered to be the main alternative to helm. It's main advantage is
-that it is faster than helm in many cases. I haven't done benchmarking but even
-when eyeballing candidate completion between [[helpfn:counsel-M-x][counsel-M-x]] and [[helpfn:helm-M-x][helm-M-x]],
-=counsel-M-x= is noticeably (albeit slightly) faster. Ivy strives to be more
-minimal and more predictable than helm.
-
-*** ivy
+*** selectrum
 :PROPERTIES:
-:ID: 4bf12e8b-7f71-45cc-bf48-c1aec795c9fe
-:END:
-
-[[github:abo-abo/swiper][ivy]] provides a user interface for choosing from a list of options by typing a
-query to narrow the list, and then selecting one of the remaining candidates.
-
-#+begin_src emacs-lisp
-(use-package! ivy
-  :hook emacs-startup-hook
-  :custom
-  (ivy-initial-inputs-alist     . nil)
-  :bind
-  ([switch-to-buffer] . ivy-switch-buffer)
-  :setq
-  (ivy-height . 18)
-  (ivy-wrap                     . t)
-  (ivy-fixed-height-minibuffer  . t)
-  (ivy-use-selectable-prompt    . t)
-  (ivy-use-virtual-buffers      . t)
-  (ivy-virtual-abbreviate       . 'full)
-  (ivy-on-delete-error-function . nil)
-  (ivy-use-selectable-prompt    . t)
-  (ivy-count-format             . ""))
-#+end_src
-
-*** ivy-avy
-:PROPERTIES:
-:ID:       ae043d9b-e057-4f3e-b0d7-a96624b307d4
+:ID:       eaf04d8c-0004-4ab1-8f85-b9520999eeb1
 :END:
 
 #+begin_src emacs-lisp
-(use-package! ivy-avy
-  :ensure nil
-  :commands ivy-avy)
+(use-package! selectrum
+  :hook emacs-startup-hook)
 #+end_src
 
-*** ivy prescient
+*** utilities
 :PROPERTIES:
-:ID: ec8cd466-c6cf-4b25-9624-07e9d0e0fd0c
+:ID:       7fe34b0d-ad94-42ee-b206-e7b6af3dc17d
 :END:
 
-[[https://github.com/raxod502/prescient.el][ivy-prescient]] keeps track of recently selected ivy candidates in the
-[[helpvar:prescient-save-file][prescient-save-file]] and makes sure that these recent items are added to the top
-of the next ivy selection. Most of us only use a subset of commands. A recent
-command is likely to be.
-
-#+begin_src emacs-lisp
-(use-package! ivy-prescient
-  :hook ivy-mode-hook
-  :hook (ivy-prescient-mode . prescient-persist-mode)
-  :setq
-  (prescient-filter-method . '(literal regexp initialism fuzzy))
-  (prescient-save-file . (concat VOID:DATA-DIR "prescient-save.el"))
-  (ivy-prescient-sort-commands . '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
-                                   counsel-git-grep counsel-ag counsel-rg counsel-imenu
-                                   counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
-  (ivy-prescient-retain-classic-highlighting . t)
-  :defer-config
-  (prescient-persist-mode 1))
-#+end_src
-
-*** amx
+**** swiper
 :PROPERTIES:
-:ID:       ae950812-773f-4f54-a1f5-d6777864adcf
+:ID:       7254902a-0caa-4f93-ba8e-13d3feae95b3
 :END:
 
-#+begin_src emacs-lisp
-(use-package! amx
-  :hook ivy-mode-hook
-  :pre-setq (amx-save-file . (concat VOID:DATA-DIR "amx-save-file")))
-#+end_src
-
-*** counsel
-:PROPERTIES:
-:ID: f1f77877-1cbc-40c4-b62c-4239a0c338e6
-:END:
-
-=ivy= is designed to be pretty minimal. [[https://github.com/abo-abo/swiper][counsel]] is a library that replaces a lot
-of stock emacs functions with a version that using =ivy= for completion.
-
-#+begin_src emacs-lisp
-(use-package! counsel
-  :hook ivy-mode-hook
-  :commands counsel-org-goto
-  :bind
-  ([remap load-theme]               . counsel-load-theme)
-  ([remap apropos]                  . counsel-apropos)
-  ([remap bookmark-jump]            . counsel-bookmark)
-  ([remap describe-bindings]        . counsel-descbinds)
-  ([remap info-lookup-symbol]       . counsel-info-lookup-symbol)
-  ([remap org-set-tags-command]     . counsel-org-tag)
-  ([remap unicode-chars-list-chars] . counsel-unicode-char)
-  ([remap locate]                   . counsel-locate)
-  ([remap describe-face]            . counsel-describe-face)
-  ([remap describe-function]        . counsel-describe-function)
-  ([remap describe-variable]        . counsel-describe-variable)
-  ([remap execute-extended-command] . counsel-M-x)
-  ([remap find-file]                . counsel-find-file)
-  ([remap find-library]             . counsel-find-library)
-  ([remap info-lookup-symbol]       . counsel-info-lookup-symbol)
-  ([remap imenu]                    . counsel-imenu)
-  ([remap recentf-open-files]       . counsel-recentf)
-  ([remap org-capture]              . counsel-org-capture)
-  ([remap evil-ex-registers]        . counsel-evil-registers)
-  ([remap yank-pop]                 . counsel-yank-pop)
-  :setq
-  (counsel-find-file-ignore-regexp . "\\(?:^[#.]\\)\\|\\(?:[#~]$\\)\\|\\(?:^Icon?\\)")
-  (counsel-describe-function-function . #'helpful-callable)
-  (counsel-describe-variable-function . #'helpful-variable)
-  ;; Add smart-casing and compressed archive searching (-zS) to default
-  ;; command arguments:
-  (counsel-rg-base-command . "rg -zS --no-heading --line-number --color never %s .")
-  (counsel-ag-base-command . "ag -zS --nocolor --nogroup %s")
-  (counsel-pt-base-command . "pt -zS --nocolor --nogroup -e %s"))
-#+end_src
-
-*** swiper
-:PROPERTIES:
-:ID: 732421fb-2eb6-4701-be12-d4b03c726df8
-:END:
-
-[[https://github.com/abo-abo/swiper][Swiper]] is a package that interactively search items.
-
-#+begin_src emacs-lisp
-(use-package! swiper
-  :commands swiper swiper-isearch)
-#+end_src
-
-*** minibuffer bindings
-:PROPERTIES:
-:ID:       5a21af24-4383-40dc-8c53-562f2cf68961
-:END:
-
-These bindings are partly influenced by helm. I strongly prefer the names helm
-chose for their minibuffer commands. Things like "persistent" action make much
-more sense to me than this "dispatching" and "immediate" "done" stuff.
-
-#+begin_src emacs-lisp
-(define-key! '(emacs insert) ivy-minibuffer-map
-  "C-k"     #'ivy-previous-line
-  "C-j"     #'ivy-next-line
-  [backtab] #'ivy-previous-line
-  "TAB"     #'ivy-next-line
-  "C-SPC"   #'ivy/toggle-mark
-  "C-m"     #'ivy/toggle-mark
-  "C-a"     #'ivy-dispatching-done
-  "C-n"     #'ivy-toggle-marks
-  "C-l"     #'ivy-next-line-and-call
-  "C-o"     #'ivy-occur
-  "C-'"     #'ivy-avy
-  "RET"     #'ivy-done)
-#+end_src
-
-*** toggle mark
-:PROPERTIES:
-:ID: 2414a29d-e874-4174-8f90-b9d80c001026
-:END:
-
-#+begin_src emacs-lisp
-(defun ivy/toggle-mark ()
-  "Toggle mark."
-  (interactive)
-  (if (ivy--marked-p) (ivy-unmark) (ivy-mark)))
-#+end_src
-
-*** ivy rich                                                          :disabled:
-:PROPERTIES:
-:ID: 83df9e3a-d384-4b59-b3f2-7d57ee46b25e
-:END:
-
-[[https://github.com/Yevgnen/ivy-rich][ivy-rich]] provides an easy way (the plist [[helpvar:ivy-rich-display-transformers-list][ivy-rich-display-transformers-list]]) to
-provide a more informative interface to ivy commands.
-
-**** ivy rich
-:PROPERTIES:
-:ID: 4b4cd57a-2812-4f47-91a8-4c1be0934f27
-:END:
-
-#+begin_src emacs-lisp
-(use-package! ivy-rich
-  :after ivy
-  :setq
-  (ivy-rich-display-transformers-list . nil)
-  (ivy-rich-parse-remote-buffer . nil)
-  :init
-  (ivy-rich-mode)
-  (setcdr (assq t ivy-format-functions-alist) #'ivy-format-function-line))
-
-(use-package! all-the-icons-ivy
-  :after ivy-rich
-  :require t)
-#+end_src
-
-**** icons
-:PROPERTIES:
-:ID: 07d448d4-73ac-4222-a13c-d9ea9e937103
-:END:
-
-#+begin_src emacs-lisp
-(defun ivy:rich-switch-buffer-icon (candidate)
-  "Testing icons in switch to buffer from Yevgnen/ivy-rich."
-  (with-current-buffer (get-buffer candidate)
-    (let ((icon (all-the-icons-icon-for-mode major-mode)))
-      (if (symbolp icon)
-          (all-the-icons-icon-for-mode 'fundamental-mode)
-        icon))))
-#+end_src
-
-**** M-x
-:PROPERTIES:
-:ID: bcc47223-f662-4820-9031-d2ef38312021
-:END:
-
-#+begin_src emacs-lisp
-(after! ivy-rich
-  (nconc! ivy-rich-display-transformers-list
-    '(counsel-M-x
-      (:columns
-       ((counsel-M-x-transformer (:width 40))
-        (ivy-rich-counsel-function-docstring (:face font-lock-doc-face)))))))
-#+end_src
-
-**** ivy-switch-buffer
-:PROPERTIES:
-:ID: 1fdb0710-efe6-4d23-9c79-16db51fb3e2c
-:END:
-
-#+begin_src emacs-lisp
-(after! ivy-rich
-  (nconc! ivy-rich-display-transformers-list
-    '(ivy-switch-buffer
-      (:columns
-       ((ivy:rich-switch-buffer-icon :width 2)
-        (ivy-rich-candidate (:width 30))
-        (ivy-rich-switch-buffer-size (:width 7))
-        (ivy-rich-switch-buffer-indicators (:width 4 :face error :align right))
-        (ivy-rich-switch-buffer-major-mode (:width 12 :face warning))
-        (ivy-rich-switch-buffer-project (:width 15 :face success))
-        (ivy-rich-switch-buffer-path (:width (lambda (x) (ivy-rich-switch-buffer-shorten-path x (ivy-rich-minibuffer-width 0.3))))))
-       :predicate
-       (lambda (cand) (get-buffer cand))))))
-#+end_src
-
-**** helpful callable
-:PROPERTIES:
-:ID: d89f7c98-aae3-4b07-b8be-3bd63aa41779
-:END:
-
-#+begin_src emacs-lisp
-(after! ivy-rich
-  (nconc! ivy-rich-display-transformers-list
-    '(helpful-callable
-      (:columns
-       ((counsel-describe-function-transformer (:width 40))
-        (ivy-rich-counsel-function-docstring (:face font-lock-doc-face)))))))
-#+end_src
-
-**** helpful variable
-:PROPERTIES:
-:ID: 6dce36ab-3f83-4530-918f-d698f79adf8f
-:END:
-
-#+begin_src emacs-lisp
-(after! ivy-rich
-  (nconc! ivy-rich-display-transformers-list
-    '(helpful-variable
-      (:columns
-       ((counsel-describe-variable-transformer (:width 40))
-        (ivy-rich-counsel-variable-docstring (:face font-lock-doc-face)))))))
-#+end_src
-
-*** customizing specific functions
-:PROPERTIES:
-:ID:       ee303d38-fb3a-4b31-a226-4c8e04a63d1a
-:END:
-
-**** no sort
-:PROPERTIES:
-:ID:       3c1f1892-d9cb-4767-82a5-aa157de739de
-:END:
-
-#+begin_src emacs-lisp
-(after! ivy (push '(counsel-org-goto . nil) ivy-sort-functions-alist))
-#+end_src
-
-**** make the default action setting the font
-:PROPERTIES:
-:ID:       17f2d06a-835c-4bba-960b-d0f8c028a91a
-:END:
-
-#+begin_src emacs-lisp
-(after! ivy
-  (ivy-set-actions #'counsel-fonts (list (list "o" #'void:set-font "set font")))
-  (defun void:set-font (font)
-    (set-face-attribute 'default nil :font font)))
-#+end_src
-
-**** don't include binding information
-:PROPERTIES:
-:ID:       50e3991d-8c46-4dcb-86d9-79c2bede4e50
-:END:
-
-#+begin_src emacs-lisp
-(advice-add #'counsel-M-x-transformer :override #'identity)
-#+end_src
-
-** orderless
+*** orderless
 :PROPERTIES:
 :ID:       8cb7b1af-3786-48b7-92ec-b21759bbabc3
 :END:
@@ -3688,8 +3394,6 @@ This package provides an "orderless" completion style.
   :setq
   (selectrum-refine-candidates-function . #'orderless-filter)
   (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
-
-(setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))
 #+end_src
 
 ** company
