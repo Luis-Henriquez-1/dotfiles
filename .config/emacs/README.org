@@ -3595,7 +3595,8 @@ does have isn't good enough.
 
 #+begin_src emacs-lisp
 (use-package! ace-jump-helm-line
-  :bind (:helm-map ("C-'" . ace-jump-helm-line))
+  :init
+  (define-key! '(insert emacs) helm-map "C-'" #'ace-jump-helm-line)
   :setq
   (ace-jump-helm-line-idle-delay     . 0)
   (ace-jump-helm-line-default-action . 'select)
