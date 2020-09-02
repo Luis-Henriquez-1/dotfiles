@@ -3420,7 +3420,6 @@ about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (use-package! helm-files
-  ;; (:after-hook pre-command-hook)
   :bind
   ([remap apropos]                  . helm-apropos)
   ([remap find-library]             . helm-locate-library)
@@ -3433,24 +3432,6 @@ about Helm is that it's too bloated and slow.
   ([remap switch-to-buffer]         . helm-mini))
 #+end_src
 
-*** helm swoop
-:PROPERTIES:
-:ID: 9d9f4072-b75e-41d0-9a48-961a3a8cd85a
-:END:
-
-[[https://github.com/emacsorphanage/helm-swoop][helm-swoop]] is an helm version of swiper. It gives me an overview of searches.
-
-#+begin_src emacs-lisp
-(use-package! helm-swoop
-  :commands helm-swoop
-  :setq
-  (helm-swoop-pre-input-function   . (lambda () ""))
-  (helm-swoop-use-line-number-face . nil)
-  (helm-swoop-move-to-line-cycle   . t)
-  (helm-swoop-speed-or-color       . nil)
-  (helm-swoop-use-fuzzy-match      . t))
-#+end_src
-
 *** helm descbinds
 :PROPERTIES:
 :ID: b30b7467-1715-4040-ba2a-78cbb5a9d0a7
@@ -3459,6 +3440,21 @@ about Helm is that it's too bloated and slow.
 #+begin_src emacs-lisp
 (use-package! helm-descbinds
   :hook (helm-mode-hook . helm-descbinds-mode))
+#+end_src
+
+*** swiper helm
+:PROPERTIES:
+:ID:       4e0768d8-706a-4692-b700-2640dd534587
+:END:
+
+#+begin_src emacs-lisp
+(use-package! swiper-helm :commands swiper-helm)
+
+(defadvice! swiper-helm:speedup (orig-fn &rest args)
+  :around swiper-helm
+  (let ((gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
+        (gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX))
+    (apply orig-fn args)))
 #+end_src
 
 *** helm-mode-map
@@ -3547,18 +3543,19 @@ does have isn't good enough.
 (after! helm
   (defun helm:org-capture-candidates ()
     "Return an alist."
-    (let* ((alist (thread-first (org-capture-upgrade-templates org-capture-templates)
-                    (org-contextualize-keys it org-capture-templates-contexts)
-                    (mapcar (-lambda ((name key)) (cons key name)) it)))
+    (let* ((alist (--> (org-capture-upgrade-templates org-capture-templates)
+                       (org-contextualize-keys it org-capture-templates-contexts)
+                       (mapcar (-lambda ((name key)) (cons key name)) it)))
            (keys (mapcar #'cdr alist)))
       (-remove (-lambda ((elt &as _ . key))
                  (-all-p (lambda (it) (not (string-prefix-p key it)))
-                         (-remove key keys)))
+                         (-remove (-partial #'string= key) keys)))
                alist)))
+
   (setq helm:org-capture-source
         (helm-build-sync-source "helm/org-capture"
-                                :candidates #'helm:org-capture-candidates
-                                :action (helm-make-actions "Capture" (lambda (keys) (org-capture nil keys)))))
+          :candidates #'helm:org-capture-candidates
+          :action (helm-make-actions "Capture" (lambda (keys) (org-capture nil keys)))))
 
   (defun helm/org-capture ()
     "Select a capture template."
@@ -9722,7 +9719,7 @@ prompt asking me if I'm sure.
 (define-leader-key!
   :infix "s"
   ""  (list :ignore t :wk "search")
-  "s" (list :def #'swiper :wk "swiper"))
+  "s" (list :def #'swiper-helm :wk "swiper"))
 
 (define-leader-key!
   :infix "s"
