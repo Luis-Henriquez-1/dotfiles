@@ -1,14 +1,15 @@
 * About
 
-These are my dotfiles. Most of the configuration is in Emacs which I use as my
-window manager.
+These are my dotfiles. Right now the OS I am running on my main computer--my
+laptop--is parabola linux. The window manager I use is EXWM. I do have an i3
+config and an awesome config as well just in case.
 
 * Purpose
 :PROPERTIES:
 :ID:       9fbf543f-1e87-4842-a059-1ed292d27b14
 :END:
 
-** Backup
+** Backup and Quick Setup
 :PROPERTIES:
 :ID:       0a1cf1fc-3382-4571-9e41-35588995b140
 :END:
@@ -52,7 +53,8 @@ One challenge in creating dotfiles you'll surely face is making dotfiles truly
 robust and flexibile. It is useful to be able to change settings based on the
 environment in which your dotfiles are installed in. The vast majority of
 dotfiles used for configuring programs are written in a DSL instead of a real
-programming language. And these DSLs almost never contain if statements.
+programming language. And these DSLs almost never contain if statements. With
+org mode you can [[][embed the result of evaluating other code in a tangled file]].
 
 *** Documentation Focused
 :PROPERTIES:
@@ -69,32 +71,67 @@ different languages.
 :ID:       cc39eccf-a405-4edf-8545-64c6c32641fe
 :END:
 
-How to manage your dotfiles? It is not a good idea to version control your home
-directory. My dotfile manager is [[https://yadm.io/][yadm]]. I looked at a lot of alternatives such as
-[[https://thoughtbot.com/blog/rcm-for-rc-files-in-dotfiles-repos][rcm]], [[https://www.chezmoi.io/][chezmoi]], [[https://www.gnu.org/software/stow/][GNU stow]], and even just managing version control and symlinks
-myself. In a nutshell, I found that chezmoi and rcm required too much time
-investment on my part and that some features in chezmoi in particular I could
-get from just using org files. Seeking a good dotfile management solution for
-myself, I /really/ did not want to learn a new language or new commands just for
-managing my dotfiles. I just wanted something that would be easy to learn, do
-its job, and get out of my way. Yadm fit the bill.
+My dotfile manager is [[https://yadm.io/][yadm]]. I looked at a lot of alternatives such as [[https://thoughtbot.com/blog/rcm-for-rc-files-in-dotfiles-repos][rcm]],
+[[https://www.chezmoi.io/][chezmoi]], [[https://www.gnu.org/software/stow/][GNU stow]], and even just managing version control and symlinks myself.
+In a nutshell, I found that chezmoi and rcm required too much time investment on
+my part and that some features in chezmoi in particular I could get from just
+using org files. I /really/ did not want to learn a new language or new commands
+just for managing my dotfiles. Also, I didn't want to make any changes to the
+names of my original files. I just wanted something that would be easy to learn,
+do its job, and get out of my way. Yadm fit the bill.
 
 One of the first things I noticed about yadm was its mantra: "If you know how to
 use git, you already know how to use yadm". I can testify
-that this is true. Yadm's similarity with git made.
+that this is true. Yadm's similarity with git made picking it up a snap.
+
+* Dealing with Secrets
+:PROPERTIES:
+:ID:       af19c5ea-71c9-42ab-9303-37c510820d21
+:END:
+
+When I first got serious about dotfile managment I would think: how do you deal
+with private information you want to back up but don't want to compromise by
+putting it in your dotfile repo? One answer is to version control encrypted
+files in a private repo. Of course, just the act of uploading your secrets to a
+server you don't own is a risk even if they're encrypted. Right now I've settled
+on keeping my secrets on a usb.
+
+** generating my gpg key with paperkey
+:PROPERTIES:
+:ID:       c1fb9475-d4a7-4dd6-9830-5962670845c7
+:END:
+
+* Bootstraping
+:PROPERTIES:
+:ID:       0fcb8392-8e6a-4e7a-aef4-67809e1930a6
+:END:
+
+Here I describe what it takes to set up my dotfiles on a new machine.
+
+*** getting yadm
+:PROPERTIES:
+:ID:       5166690b-13ac-4432-8f60-b9c58b012390
+:END:
+
+All you have to do is download yadm and add it to your =$PATH=. For more details
+on this see [[https://yadm.io/docs/install][the yadm installation page]].
+
+** using yadm clone
+:PROPERTIES:
+:ID:       c5ddf379-6c93-49c4-b657-eebe4211ab9f
+:END:
+
+=yadm clone= takes care of setting all the files.
 
 #+begin_src sh
 yadm clone https://github.com/Luis-Henriquez-1/dotfiles
 #+end_src
 
-* Goals
+** TODO run bootstrap script
 :PROPERTIES:
-:ID:       6cce4471-3727-4387-a3aa-7bb1e074a295
+:ID:       b87cd7ff-7b18-4e39-815c-5e40650c6c30
 :END:
 
-** TODO create a bootstrap script
-:PROPERTIES:
-:ID:       79310436-9282-48a0-8625-4f0d8a64b5cf
-:END:
+I'm not very familiar with bash scripting. However, I plan to write one that
+will install my OS from a usb, and get it all set up.
 
-I'm not very familiar with bash scripting. However, I really to write one that will install.
