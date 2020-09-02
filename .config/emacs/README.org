@@ -4510,7 +4510,8 @@ information such as music, videos, images, and gifs.
 :ID: 10642631-365c-46b4-ad29-e28e509aa1ae
 :END:
 
-Youtube contains a *huge* library of videos.
+Youtube contains a *huge* library of videos. It would be a shame not to take
+advantage of it.
 
 *** ytdl
 :PROPERTIES:
