@@ -3392,7 +3392,9 @@ Selectrum is an investement.
 This package manages remembering.
 
 #+begin_src emacs-lisp
-(use-package! selectrum-prescient)
+(use-package! selectrum-prescient
+  :init
+  (after! selectrum (selectrum-prescient-mode)))
 #+end_src
 
 *** utilities
