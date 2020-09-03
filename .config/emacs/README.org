@@ -3574,14 +3574,37 @@ This package provides an "orderless" completion style.
 :ID:       e8cc7b06-19b4-4ade-a950-4bd2caf63dc1
 :END:
 
+Embark allows for using actions on candidates.
+
 #+begin_src emacs-lisp
-(use-package! embark)
-;; (define-key! "C-a")
+(use-package! embark
+  :ensure (:host github :repo "oantolin/embark"))
+
+(define-key! '(insert emacs) selectrum-minibuffer-map "C-a" #'embark-act)
 
 (defun refresh-selectrum ()
   (setq selectrum--previous-input-string nil))
 
 (add-hook 'embark-pre-action-hook #'refresh-selectrum)
+
+(setq embark-action-indicator
+      (defun embark-which-key-setup ()
+        (let ((help-char nil)
+              (which-key-show-transient-maps t)
+              (which-key-replacement-alist
+               (cons '(("^[0-9-]\\|kp-[0-9]\\|kp-subtract\\|C-u$" . nil) . ignore)
+                     which-key-replacement-alist)))
+          (setq-local which-key-show-prefix nil)
+          (setq-local which-key-persistent-popup t)
+          (which-key--update)))
+      embark-become-indicator embark-action-indicator)
+
+(add-hook 'embark-pre-action-hook
+          (defun embark-which-key-tear-down ()
+            (kill-local-variable 'which-key-persistent-popup)
+            (kill-local-variable 'which-key-show-prefix)
+            (unless which-key-persistent-popup
+              (which-key--hide-popup-ignore-command))))
 #+end_src
 
 ** company
