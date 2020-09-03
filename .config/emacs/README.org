@@ -3484,6 +3484,8 @@ This version lets you choose different variants.
       (if (-contains-p recentf-list it)
           (find-file it)
         (switch-to-buffer it)))))
+
+(define-key! [remap switch-to-buffer] #'selectrum/switch-buffer)
 #+end_src
 
 **** org
