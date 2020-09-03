@@ -3487,15 +3487,6 @@ about Helm is that it's too bloated and slow.
   :commands helm-system-packages)
 #+end_src
 
-*** helm-exwm                                                         :disabled:
-:PROPERTIES:
-:ID: 4c3a384d-846b-41dd-9878-dc739f97ccd7
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-exwm)
-#+end_src
-
 *** hide helm modeline
 :PROPERTIES:
 :ID: c82ddad1-a41c-48ec-aa84-d916cdeed66f
