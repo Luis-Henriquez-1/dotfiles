@@ -3405,12 +3405,6 @@ about Helm is that it's too bloated and slow.
   (helm-mode-line-string . nil)
   :config
   (helm-mode 1))
-
-(use-package! helm-files
-  :setq
-  (helm-ff-auto-update-initial-value . nil)
-  (helm-ff-lynx-style-map . nil)
-  (helm-find-files-doc-header . nil))
 #+end_src
 
 *** helm-mode
@@ -3420,6 +3414,10 @@ about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (use-package! helm-files
+  :setq
+  (helm-ff-auto-update-initial-value . nil)
+  (helm-ff-lynx-style-map . nil)
+  (helm-find-files-doc-header . nil)
   :bind
   ([remap apropos]                  . helm-apropos)
   ([remap find-library]             . helm-locate-library)
