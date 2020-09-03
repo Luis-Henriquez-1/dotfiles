@@ -3470,7 +3470,7 @@ This version lets you choose different variants.
 :END:
 
 #+begin_src emacs-lisp
-(defun selectrum/outline-headings ()
+(defun selectrum/org-outline-headings ()
   (interactive)
   (let ((selectrum-should-sort-p nil)
         (org-outline-path-complete-in-steps)
