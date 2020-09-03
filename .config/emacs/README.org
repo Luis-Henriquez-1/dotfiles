@@ -3542,6 +3542,18 @@ ourselves.
       (org-set-tags it))))
 #+end_src
 
+***** select capture templates
+:PROPERTIES:
+:ID:       75aae139-a6b2-4517-b1f8-88cb2a1ac5fb
+:END:
+
+#+begin_src emacs-lisp
+(defun selectrum/select-capture-template ()
+  "Select capture template."
+  (interactive)
+  )
+#+end_src
+
 *** orderless
 :PROPERTIES:
 :ID:       8cb7b1af-3786-48b7-92ec-b21759bbabc3
