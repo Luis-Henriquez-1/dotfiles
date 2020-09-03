@@ -3525,7 +3525,7 @@ ourselves.
     (org-goto)))
 #+end_src
 
-***** TODO org select tags
+***** org select tags
 :PROPERTIES:
 :ID:       0b73aa11-f1a6-4d88-b7cd-35eef34b7f38
 :END:
@@ -3536,10 +3536,10 @@ ourselves.
   (interactive)
   (let* ((all (org-get-tags))
          (current (org-get-tags (point)))
-         (selected (completing-read-multiple "Select org tag(s): " all)))
+         (selected (completing-read-multiple "Select org tag(s): " #'org-tags-completion-function)))
     (alet (-uniq (append (-difference current selected)
                          (-difference selected current)))
-      (message "%S" it))))
+      (org-set-tags it))))
 #+end_src
 
 *** orderless
