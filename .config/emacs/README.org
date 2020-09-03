@@ -3379,6 +3379,8 @@ Selectrum is an investement.
 
 (define-key! '(insert emacs) selectrum-minibuffer-map
   "TAB" #'selectrum-next-candidate
+  "C-k" #'selectrum-previous-candidate
+  "C-j" #'selectrum-next-candidate
   [backtab] #'selectrum-previous-candidate)
 #+end_src
 
