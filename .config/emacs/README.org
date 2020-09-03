@@ -3484,7 +3484,7 @@ This version lets you choose different variants.
 :END:
 
 #+begin_src emacs-lisp
-(defun selectrum/select-tags ()
+(defun selectrum/org-select-tags ()
   ""
   (interactive)
   )
