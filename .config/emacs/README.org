@@ -3384,6 +3384,7 @@ won't have to worry about snappiness and performance.
   "TAB" #'selectrum-next-candidate
   "C-k" #'selectrum-previous-candidate
   "C-j" #'selectrum-next-candidate
+  "C-l" #'selectrum/mark-candidate
   [backtab] #'selectrum-previous-candidate)
 #+end_src
 
@@ -3486,6 +3487,22 @@ This version lets you choose different variants.
         (switch-to-buffer it)))))
 
 (define-key! [remap switch-to-buffer] #'selectrum/switch-buffer)
+#+end_src
+
+**** mark candidate for completing-read-mutiple
+:PROPERTIES:
+:ID:       3b24f70f-3d35-478b-9657-fae5a8a67661
+:END:
+
+This saves us some time over tab completing and then adding the separator
+ourselves.
+
+#+begin_src emacs-lisp
+(defun selectrum/mark-candidate ()
+  "Mark candidate for completing-read-multiple."
+  (interactive)
+  (selectrum-insert-current-candidate)
+  (insert crm-default-separator))
 #+end_src
 
 **** org
