@@ -3405,9 +3405,9 @@ This package manages remembering.
 :ID:       7fe34b0d-ad94-42ee-b206-e7b6af3dc17d
 :END:
 
-Many of these utilities come from the [[][selectrum wiki]].
+Many of these utilities come from the [[https://github.com/raxod502/selectrum/wiki/Useful-Commands#switching-buffers--files][selectrum wiki]].
 
-**** TODO select x-font function for ivy and selectrum
+**** select x-font function for ivy and selectrum
 :PROPERTIES:
 :ID: B32AD25F-FBBC-47B1-8BFE-701B31462405
 :CREATED: [2020-09-03 Thu 10:29]
@@ -3466,7 +3466,7 @@ This version lets you choose different variants.
     (beginning-of-line-text 1)))
 #+end_src
 
-**** switch to buffer and recentf
+**** TODO switch to buffer and recentf
 :PROPERTIES:
 :ID:       6f3e2870-d2f7-40d2-8fb7-d3709f3088c2
 :END:
@@ -3508,17 +3508,21 @@ This version lets you choose different variants.
     (org-goto)))
 #+end_src
 
-***** org select tags
+***** TODO org select tags
 :PROPERTIES:
 :ID:       0b73aa11-f1a6-4d88-b7cd-35eef34b7f38
 :END:
 
 #+begin_src emacs-lisp
 (defun selectrum/org-select-tags ()
-  ""
+  "Select tags to add to headline."
   (interactive)
-  (let ((all-tags (org-get-tags)))
-    (org-set-tags (completing-read-multiple "Select org tag(s): " all-tags))))
+  (let* ((all (org-get-tags))
+         (current (org-get-tags (point)))
+         (selected (completing-read-multiple "Select org tag(s): " all)))
+    (alet (-uniq (append (-difference current selected)
+                         (-difference selected current)))
+      (message "%S" it))))
 #+end_src
 
 *** orderless
@@ -3536,13 +3540,14 @@ This package provides an "orderless" completion style.
     (setq selectrum-highlight-candidates-function #'orderless-highlight-matches)))
 #+end_src
 
-*** embark
+*** TODO embark
 :PROPERTIES:
 :ID:       e8cc7b06-19b4-4ade-a950-4bd2caf63dc1
 :END:
 
 #+begin_src emacs-lisp
 (use-package! embark)
+;; (define-key! "C-a")
 
 (defun refresh-selectrum ()
   (setq selectrum--previous-input-string nil))
