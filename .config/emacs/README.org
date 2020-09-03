@@ -3376,6 +3376,10 @@ Selectrum is an investement.
   (setq selectrum-count-style nil)
   (setq selectrum-num-candidates-displayed 15)
   :hook emacs-startup-hook)
+
+(define-key! '(insert emacs) selectrum-minibuffer-map
+  "TAB" #'selectrum-next-candidate
+  [backtab] #'selectrum-previous-candidate)
 #+end_src
 
 *** selectrum prescient
