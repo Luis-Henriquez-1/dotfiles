@@ -3362,7 +3362,10 @@ be inserted and interactively completed.
 :ID:       4c384110-96fe-4d7a-8bcf-6592f4c9ad67
 :END:
 
-Selectrum is an investement.
+Selectrum is an investement. It doesn't have the support that completing
+frameworks like ivy and helm has. However, it is coded more sanely and it is
+more predictable. Additionally, it is minimal and lightweight meaning that you
+won't have to worry about snappiness and performance.
 
 *** selectrum
 :PROPERTIES:
