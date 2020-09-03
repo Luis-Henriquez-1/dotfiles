@@ -3382,6 +3382,28 @@ be inserted and interactively completed.
 :ID:       7254902a-0caa-4f93-ba8e-13d3feae95b3
 :END:
 
+**** x-font
+:PROPERTIES:
+:ID:       e83728ea-922a-4269-8683-3baeb4ca2eb8
+:END:
+
+#+begin_src emacs-lisp
+(defun void/select-xfont ()
+  "Select x-font."
+  (interactive)
+  (completing-read (x-list-fonts)))
+#+end_src
+
+**** org
+:PROPERTIES:
+:ID:       efd47856-d461-4be7-b4a3-325d2a39c957
+:END:
+
+***** outline headlines
+:PROPERTIES:
+:ID:       cf57f0cb-a9f9-44e4-99ea-aab11a8a2097
+:END:
+
 *** orderless
 :PROPERTIES:
 :ID:       8cb7b1af-3786-48b7-92ec-b21759bbabc3
@@ -3394,6 +3416,15 @@ This package provides an "orderless" completion style.
   :setq
   (selectrum-refine-candidates-function . #'orderless-filter)
   (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
+#+end_src
+
+*** embark
+:PROPERTIES:
+:ID:       e8cc7b06-19b4-4ade-a950-4bd2caf63dc1
+:END:
+
+#+begin_src emacs-lisp
+(use-package! embark)
 #+end_src
 
 ** company
