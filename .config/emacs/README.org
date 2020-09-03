@@ -3495,6 +3495,7 @@ This version lets you choose different variants.
 
 #+begin_src emacs-lisp
 (defun selectrum/org-outline-headings ()
+  "Jump to an org heading using selectrum."
   (interactive)
   (let ((selectrum-should-sort-p nil)
         (org-outline-path-complete-in-steps)
