@@ -3382,6 +3382,43 @@ be inserted and interactively completed.
 :ID:       7254902a-0caa-4f93-ba8e-13d3feae95b3
 :END:
 
+#+begin_src emacs-lisp
+(defvar selectrum:swiper-history nil "Submission history for `selectrum-swiper'.")
+
+(defun selectrum/swiper ()
+  "Search for a matching line and jump to the beginning of its text.  Obeys narrowing."
+  (interactive)
+  (let* ((selectrum-should-sort-p nil)
+         (line-choices (cl-loop
+                        with minimum-line-number = (line-number-at-pos (point-min) t)
+                        with buffer-text-lines = (split-string (buffer-string) "\n")
+                        with number-format = (format "L%%0%dd: " (length (number-to-string (length buffer-text-lines))))
+                        for txt in buffer-text-lines
+                        for num from minimum-line-number to (+ minimum-line-number
+                                                               (1- (length buffer-text-lines)))
+                        unless (string-empty-p txt) ; Just skip empty lines.
+                        collect (concat (format number-format num) txt)))
+         ;; Get the matching line.
+         (chosen-line (completing-read "Jump to matching line: " line-choices
+                                       nil t nil 'selectrum:swiper-history))
+         ;; Stop at the ":". It is followed by one " ".
+         (line-number-prefix (seq-take-while (lambda (char)
+                                               (not (char-equal ?: char)))
+                                             chosen-line))
+         ;; Get the corresponding line number, skipping the "L" in line-number-prefix.
+         (chosen-line-number (string-to-number (substring line-number-prefix 1)))
+         ;; Get the current line number for determining the travel distance.
+         (current-line-number (line-number-at-pos (point) t)))
+
+    (push-mark (point) t)
+    ;; Manually edit history to remove line numbers.
+    (setcar selectrum-swiper-history (substring chosen-line
+                                                ;; Want after line-prefix followed by ": ".
+                                                (+ (length line-number-prefix) 2)))
+    (forward-line (- chosen-line-number current-line-number))
+    (beginning-of-line-text 1)))
+#+end_src
+
 **** x-font
 :PROPERTIES:
 :ID:       e83728ea-922a-4269-8683-3baeb4ca2eb8
@@ -3425,6 +3462,11 @@ This package provides an "orderless" completion style.
 
 #+begin_src emacs-lisp
 (use-package! embark)
+
+(defun refresh-selectrum ()
+  (setq selectrum--previous-input-string nil))
+
+(add-hook 'embark-pre-action-hook #'refresh-selectrum)
 #+end_src
 
 ** company
