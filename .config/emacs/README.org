@@ -3592,6 +3592,15 @@ does have isn't good enough.
   (ace-jump-helm-line-persistent-key . ?p))
 #+end_src
 
+*** helm-rg
+:PROPERTIES:
+:ID:       5966387c-cb9e-4d18-8b54-97240864862b
+:END:
+
+#+begin_src emacs-lisp
+(use-package! helm-rg)
+#+end_src
+
 ** company
 :PROPERTIES:
 :ID: 436d68f7-09f1-470a-a730-fd79d9c183ee
