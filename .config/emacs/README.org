@@ -3362,6 +3362,8 @@ be inserted and interactively completed.
 :ID:       4c384110-96fe-4d7a-8bcf-6592f4c9ad67
 :END:
 
+Selectrum is an investement.
+
 *** selectrum
 :PROPERTIES:
 :ID:       eaf04d8c-0004-4ab1-8f85-b9520999eeb1
@@ -3369,7 +3371,22 @@ be inserted and interactively completed.
 
 #+begin_src emacs-lisp
 (use-package! selectrum
+  :init
+  (setq selectrum-fix-minibuffer-height t)
+  (setq selectrum-count-style nil)
+  (setq selectrum-num-candidates-displayed 15)
   :hook emacs-startup-hook)
+#+end_src
+
+*** selectrum prescient
+:PROPERTIES:
+:ID:       0aaa7e9f-4b78-43f8-91c3-168ea25ece63
+:END:
+
+This package manages remembering.
+
+#+begin_src emacs-lisp
+(use-package! selectrum-prescient)
 #+end_src
 
 *** utilities
@@ -3377,7 +3394,24 @@ be inserted and interactively completed.
 :ID:       7fe34b0d-ad94-42ee-b206-e7b6af3dc17d
 :END:
 
-**** swiper
+Many of these utilities come from the [[][selectrum wiki]].
+
+**** TODO select x-font function for ivy and selectrum
+:PROPERTIES:
+:ID: B32AD25F-FBBC-47B1-8BFE-701B31462405
+:CREATED: [2020-09-03 Thu 10:29]
+:END:
+
+This version lets you choose different variants.
+
+#+begin_src emacs-lisp
+(defun void/set-font ()
+  "Select xfont."
+  (interactive)
+  (set-frame-font (completing-read "Choose font:" (x-list-fonts "*"))))
+#+end_src
+
+**** TODO swiper
 :PROPERTIES:
 :ID:       7254902a-0caa-4f93-ba8e-13d3feae95b3
 :END:
@@ -3389,6 +3423,8 @@ be inserted and interactively completed.
   "Search for a matching line and jump to the beginning of its text.  Obeys narrowing."
   (interactive)
   (let* ((selectrum-should-sort-p nil)
+         ;; (minimim-line-number (line-number-at-pos (point-min) t))
+         ;; (buffer-text-lines (split-string (buffer-string) "\n"))
          (line-choices (cl-loop
                         with minimum-line-number = (line-number-at-pos (point-min) t)
                         with buffer-text-lines = (split-string (buffer-string) "\n")
@@ -3419,18 +3455,6 @@ be inserted and interactively completed.
     (beginning-of-line-text 1)))
 #+end_src
 
-**** x-font
-:PROPERTIES:
-:ID:       e83728ea-922a-4269-8683-3baeb4ca2eb8
-:END:
-
-#+begin_src emacs-lisp
-(defun void/select-xfont ()
-  "Select x-font."
-  (interactive)
-  (completing-read (x-list-fonts)))
-#+end_src
-
 **** org
 :PROPERTIES:
 :ID:       efd47856-d461-4be7-b4a3-325d2a39c957
@@ -3441,6 +3465,27 @@ be inserted and interactively completed.
 :ID:       cf57f0cb-a9f9-44e4-99ea-aab11a8a2097
 :END:
 
+#+begin_src emacs-lisp
+(defun selectrum/outline-headings ()
+  (interactive)
+  (let ((selectrum-should-sort-p nil)
+        (org-outline-path-complete-in-steps)
+        (org-goto-interface 'outline-path-completion))
+    (org-goto)))
+#+end_src
+
+***** org select tags
+:PROPERTIES:
+:ID:       0b73aa11-f1a6-4d88-b7cd-35eef34b7f38
+:END:
+
+#+begin_src emacs-lisp
+(defun selectrum/select-tags ()
+  ""
+  (interactive)
+  )
+#+end_src
+
 *** orderless
 :PROPERTIES:
 :ID:       8cb7b1af-3786-48b7-92ec-b21759bbabc3
@@ -3450,9 +3495,10 @@ This package provides an "orderless" completion style.
 
 #+begin_src emacs-lisp
 (use-package! orderless
-  :setq
-  (selectrum-refine-candidates-function . #'orderless-filter)
-  (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
+  :init
+  (after! selectrum
+    (setq selectrum-refine-candidates-function #'orderless-filter)
+    (setq selectrum-highlight-candidates-function #'orderless-highlight-matches)))
 #+end_src
 
 *** embark
@@ -9452,7 +9498,7 @@ These bindings are for generally working with code.
   "t" (list :def #'load-theme            :wk "load theme")
   "c" (list :def #'caps-lock-mode        :wk "caps lock")
   "d" (list :def #'toggle-debug-on-error :wk "debug")
-  "F" (list :def #'counsel-fonts         :wk "set font")
+  "F" (list :def #'void/set-font         :wk "set font")
   "f" (list :def #'void/set-font-size    :wk "font size"))
 
 (define-leader-key!
