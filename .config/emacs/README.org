@@ -3520,7 +3520,7 @@ about Helm is that it's too bloated and slow.
 :ID:       1e19a081-d107-4593-8af4-e72c84bbaeff
 :END:
 
-**** org capture
+**** org capture                                                      :disabled:
 :PROPERTIES:
 :ID:       a11e2fe3-8596-4a15-bed7-08a988c561a0
 :END:
