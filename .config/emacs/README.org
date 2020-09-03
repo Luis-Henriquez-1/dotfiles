@@ -3459,6 +3459,26 @@ This version lets you choose different variants.
     (beginning-of-line-text 1)))
 #+end_src
 
+**** switch to buffer and recentf
+:PROPERTIES:
+:ID:       6f3e2870-d2f7-40d2-8fb7-d3709f3088c2
+:END:
+
+#+begin_src emacs-lisp
+(defun selectrum/switch-buffer ()
+  (interactive)
+  (let ((selectrum-should-sort-p nil)
+        (other-buffers (->> (buffer-list)
+                            (-remove-item (current-buffer))
+                            (-map #'buffer-name)
+                            (--remove (s-prefix-p " " it))))
+        (recentf-paths recentf-list))
+    (alet (completing-read "Select buffer: " (append other-buffers recentf-paths))
+      (if (-contains-p recentf-list it)
+          (find-file it)
+        (switch-to-buffer it)))))
+#+end_src
+
 **** org
 :PROPERTIES:
 :ID:       efd47856-d461-4be7-b4a3-325d2a39c957
