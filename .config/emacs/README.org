@@ -3511,7 +3511,8 @@ This version lets you choose different variants.
 (defun selectrum/org-select-tags ()
   ""
   (interactive)
-  )
+  (let ((all-tags (org-get-tags)))
+    (org-set-tags (completing-read-multiple "Select org tag(s): " all-tags))))
 #+end_src
 
 *** orderless
