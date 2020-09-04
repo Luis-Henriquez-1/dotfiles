@@ -1237,7 +1237,9 @@ specific packages.
 
 #+begin_src emacs-lisp
 (use-feature! vc-hooks
-  :setq (vc-follow-link . t))
+  :setq
+  (vc-follow-link . t)
+  (vc-follow-symlinks . t))
 #+end_src
 
 **** subr-x
