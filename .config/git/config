@@ -1,3 +1,6 @@
 [user]
-	email = luis@luishp.xyz
+	email = luishenriquezperez@gmail.com
 	name = Luis Henriquez-Perez
+	signingkey = luis@luishp.xyz
+[commit]
+	gpgsign = true
