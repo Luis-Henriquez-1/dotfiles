@@ -3539,6 +3539,8 @@ ourselves.
     (alet (-uniq (append (-difference current selected)
                          (-difference selected current)))
       (org-set-tags it))))
+
+(define-key! [remap org-set-tags-command] #'selectrum/org-select-tags)
 #+end_src
 
 ***** TODO select capture templates
