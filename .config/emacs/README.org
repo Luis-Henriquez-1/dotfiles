@@ -3357,6 +3357,20 @@ be inserted and interactively completed.
     (push it yas-snippet-dirs)))
 #+end_src
 
+** prescient
+:PROPERTIES:
+:ID:       5ff6e6e0-af0d-4e21-8ba0-c2cb6438e757
+:END:
+
+#+begin_src emacs-lisp
+(use-package! prescient
+  :setq
+  (prescient-filter-method . '(literal regexp initialism fuzzy))
+  (prescient-save-file . (concat VOID:DATA-DIR "prescient-save.el"))
+  :defer-config
+  (prescient-persist-mode 1))
+#+end_src
+
 ** ivy
 :PROPERTIES:
 :ID: cf88854e-4f88-4f64-962d-5d0ff99cd94f
@@ -3421,25 +3435,10 @@ command is likely to be.
   :hook ivy-mode-hook
   :hook (ivy-prescient-mode . prescient-persist-mode)
   :setq
-  (prescient-filter-method . '(literal regexp initialism fuzzy))
-  (prescient-save-file . (concat VOID:DATA-DIR "prescient-save.el"))
   (ivy-prescient-sort-commands . '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
                                    counsel-git-grep counsel-ag counsel-rg counsel-imenu
                                    counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
-  (ivy-prescient-retain-classic-highlighting . t)
-  :defer-config
-  (prescient-persist-mode 1))
-#+end_src
-
-*** amx
-:PROPERTIES:
-:ID:       ae950812-773f-4f54-a1f5-d6777864adcf
-:END:
-
-#+begin_src emacs-lisp
-(use-package! amx
-  :hook ivy-mode-hook
-  :pre-setq (amx-save-file . (concat VOID:DATA-DIR "amx-save-file")))
+  (ivy-prescient-retain-classic-highlighting . t))
 #+end_src
 
 *** counsel
