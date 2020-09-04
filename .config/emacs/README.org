@@ -3507,6 +3507,19 @@ ourselves.
   (insert crm-default-separator))
 #+end_src
 
+**** open app
+:PROPERTIES:
+:ID:       9a589a83-4898-4e19-b394-bf7e3d0a2f2a
+:END:
+
+#+begin_src emacs-lisp
+(defun selectrum/open-app ()
+  "Open an application I have installed."
+  (interactive)
+  (alet (completing-read-multiple "Open app: " ())
+    (start-process)))
+#+end_src
+
 **** org
 :PROPERTIES:
 :ID:       efd47856-d461-4be7-b4a3-325d2a39c957
