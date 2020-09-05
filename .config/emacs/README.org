@@ -3376,11 +3376,11 @@ won't have to worry about snappiness and performance.
 
 #+begin_src emacs-lisp
 (use-package! selectrum
-  :init
-  (setq selectrum-fix-minibuffer-height t)
-  (setq selectrum-count-style nil)
-  (setq selectrum-num-candidates-displayed 15)
-  :hook emacs-startup-hook)
+  :hook emacs-startup-hook
+  :setq
+  (selectrum-fix-minibuffer-height . t)
+  (selectrum-count-style . nil)
+  (selectrum-num-candidates-displayed . 15))
 
 (define-key! '(insert emacs) selectrum-minibuffer-map
   "TAB" #'selectrum-next-candidate
