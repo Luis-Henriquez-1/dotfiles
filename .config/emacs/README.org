@@ -3536,7 +3536,7 @@ ourselves.
   "Select tags to add to headline."
   (interactive)
   (let* ((current (org-get-tags (point)))
-         (selected (completing-read-multiple "Select org tag(s): " #'org-tags-completion-function)))
+         (selected (completing-read-multiple "Select org tag(s): " (org-get-buffer-tags))))
     (alet (-uniq (append (-difference current selected)
                          (-difference selected current)))
       (org-set-tags it))))
