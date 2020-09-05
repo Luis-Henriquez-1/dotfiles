@@ -3421,14 +3421,8 @@ of the next ivy selection. Most of us only use a subset of commands. A recent
 command is likely to be.
 
 #+begin_src emacs-lisp
-(use-package! ivy-prescient
-  :hook ivy-mode-hook
-  :hook (ivy-prescient-mode . prescient-persist-mode)
-  :setq
-  (ivy-prescient-sort-commands . '(:not swiper swiper-isearch ivy-switch-buffer counsel-grep
-                                   counsel-git-grep counsel-ag counsel-rg counsel-imenu
-                                   counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
-  (ivy-prescient-retain-classic-highlighting . t))
+(use-package! prescient
+  :hook (ivy-mode-hook . prescient-persist-mode))
 #+end_src
 
 *** all-the-icons-ivy
