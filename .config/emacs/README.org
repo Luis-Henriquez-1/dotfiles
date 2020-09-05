@@ -9092,7 +9092,7 @@ I got this from [[https://github.com/seagle0128/.emacs.d/blob/master/lisp/init-h
    (("p" void/kill-emacs-processes "favorites"))))
 #+end_src
 
-** buffer management
+** buffer management                                                  :disabled:
 :PROPERTIES:
 :ID:       68cf786d-0b21-40df-9e70-eb546710d61e
 :END:
