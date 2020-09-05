@@ -3397,9 +3397,8 @@ query to narrow the list, and then selecting one of the remaining candidates.
   :hook emacs-startup-hook
   :custom
   (ivy-initial-inputs-alist     . nil)
-  :bind
-  ([switch-to-buffer] . ivy-switch-buffer)
   :setq
+  (ivy-sort-max-size . 7500)
   (ivy-height . 18)
   (ivy-wrap                     . t)
   (ivy-fixed-height-minibuffer  . t)
@@ -3409,17 +3408,6 @@ query to narrow the list, and then selecting one of the remaining candidates.
   (ivy-on-delete-error-function . nil)
   (ivy-use-selectable-prompt    . t)
   (ivy-count-format             . ""))
-#+end_src
-
-*** ivy-avy
-:PROPERTIES:
-:ID:       ae043d9b-e057-4f3e-b0d7-a96624b307d4
-:END:
-
-#+begin_src emacs-lisp
-(use-package! ivy-avy
-  :ensure nil
-  :commands ivy-avy)
 #+end_src
 
 *** ivy prescient
@@ -3441,6 +3429,19 @@ command is likely to be.
                                    counsel-git-grep counsel-ag counsel-rg counsel-imenu
                                    counsel-yank-pop counsel-recentf counsel-buffer-or-recentf))
   (ivy-prescient-retain-classic-highlighting . t))
+#+end_src
+
+*** all-the-icons-ivy
+:PROPERTIES:
+:ID:       e141b4bb-1ff2-42b0-9826-a58e02ccfb9c
+:END:
+
+#+begin_src emacs-lisp
+(use-package! all-the-icons-ivy
+  :after ivy
+  :init
+  (setq all-the-icons-ivy-buffer-commands nil)
+  (all-the-icons-ivy-setup))
 #+end_src
 
 *** counsel
@@ -3514,8 +3515,6 @@ more sense to me than this "dispatching" and "immediate" "done" stuff.
   "C-j"     #'ivy-next-line
   [backtab] #'ivy-previous-line
   "TAB"     #'ivy-next-line
-  "C-SPC"   #'ivy/toggle-mark
-  "C-m"     #'ivy/toggle-mark
   "C-a"     #'ivy-dispatching-done
   "C-n"     #'ivy-toggle-marks
   "C-l"     #'ivy-next-line-and-call
@@ -3534,9 +3533,13 @@ more sense to me than this "dispatching" and "immediate" "done" stuff.
   "Toggle mark."
   (interactive)
   (if (ivy--marked-p) (ivy-unmark) (ivy-mark)))
+
+(define-key! '(emacs insert) ivy-minibuffer-map
+  "C-SPC"   #'ivy/toggle-mark
+  "C-m"     #'ivy/toggle-mark)
 #+end_src
 
-*** ivy rich                                                          :disabled:
+*** ivy rich
 :PROPERTIES:
 :ID: 83df9e3a-d384-4b59-b3f2-7d57ee46b25e
 :END:
@@ -3593,7 +3596,7 @@ provide a more informative interface to ivy commands.
         (ivy-rich-counsel-function-docstring (:face font-lock-doc-face)))))))
 #+end_src
 
-**** ivy-switch-buffer
+**** ivy-switch-buffer                                                :disabled:
 :PROPERTIES:
 :ID: 1fdb0710-efe6-4d23-9c79-16db51fb3e2c
 :END:
@@ -8294,8 +8297,6 @@ Unless I explicitly ask for properties I don't want to see them.
 (defadvice! org:set-startup-visibility-h ()
   "Completely hide all text properties."
   :override org-set-startup-visibility
-  ;; Hide property drawers on startup.
-  (org/hide-property-drawers)
   (org-overview))
 #+end_src
 
