@@ -3385,16 +3385,22 @@ This version lets you choose different variants.
 #+begin_src emacs-lisp
 (defun selectrum/switch-buffer ()
   (interactive)
-  (let ((selectrum-should-sort-p nil)
-        (other-buffers (->> (buffer-list)
-                            (-remove-item (current-buffer))
-                            (-map #'buffer-name)
-                            (--remove (s-prefix-p " " it))))
-        (recentf-paths recentf-list))
+  (let* ((selectrum-should-sort-p nil)
+         (other-buffers (->> (buffer-list)
+                             (-remove-item (current-buffer))
+                             (-map #'buffer-name)
+                             (--remove (s-prefix-p " " it))))
+         (buffer-file-paths (->> other-buffers
+                                 (--map (buffer-file-name (get-buffer it)))
+                                 (-non-nil)))
+         (recentf-paths (--remove (-any-p (-partial #'string= (f-full it))
+                                          buffer-file-paths)
+                                  recentf-list)))
     (alet (completing-read "Select buffer: " (append other-buffers recentf-paths))
-      (if (-contains-p recentf-list it)
-          (find-file it)
-        (switch-to-buffer it)))))
+      (funcall (if (-contains-p recentf-list it)
+                   #'find-file
+                 #'switch-to-buffer)
+               it))))
 
 (define-key! [remap switch-to-buffer] #'selectrum/switch-buffer)
 #+end_src
