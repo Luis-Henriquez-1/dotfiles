@@ -1116,8 +1116,8 @@ provided by leaf. They are inspired from DOOM emacs.
 :END:
 
 #+begin_src emacs-lisp
-(define-leaf-keyword! load-incrementally (before :before-call)
-  `((append! void:incremental-packages ',leaf--value)
+(define-leaf-keyword! idle-require (before :before-call)
+  `((-each ',leaf--value #'idle-require)
     ,@leaf--body))
 #+end_src
 
@@ -2311,99 +2311,20 @@ of the Emacs frame are recorded after they expire.
 :ID: 0f1da89a-2278-4493-ba62-e2a334204be6
 :END:
 
-**** incremental loading
+**** idle require
 :PROPERTIES:
-:ID: c93aefa6-80ff-420d-86ae-a0c06c5c0e76
+:ID:       c550f82a-9608-47e6-972b-eca460015e3c
 :END:
 
-Some packages like =org= are really big. When loading such packages, we can
-notice a pause. To keep the experience in emacs snappy and avoid noticeable
-pauses, I load many small packages pre-emptively. I got this idea form reading
-[[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el#L355][Doom source code]]. Packages added to [[helpvar:void-incremental-packages][void:incremental-packages]] will be
-incrementally. After Void has finished loading it will wait for
-[[helpvar:void-initial-incremental-loading-delay][void:initial-incremental-loading-delay]] and then load one package from
-~void:incremental-packages~ intervals of =N= idle seconds, where =N= is
-[[helpvar:void-incremental-loading-interval][void:incremental-loading-interval]].
-
-***** packages
-:PROPERTIES:
-:ID: 41201902-db03-4acb-9c03-953f1720d494
-:END:
-
-Later in my config I will add packages to [[helpvar:void-incremental-packages][void:incremental-packages]] (using
-~nconc!~). But no incremental loading will happen until after Void is done loading.
+This package.
 
 #+begin_src emacs-lisp
-(defvar void:incremental-packages nil
-  "A list of packages to load incrementally after startup.")
-#+end_src
-
-***** timers
-:PROPERTIES:
-:ID: 154e4f5d-58fc-4946-b471-c0e5f636ab61
-:END:
-
-#+begin_src emacs-lisp
-(defvar void:initial-incremental-loading-delay 6
-  "How long (in idle seconds) until incremental loading starts.
-Set this to nil to disable incremental loading.")
-
-(defvar void:incremental-loading-interval 5
-  "How long (in idle seconds) in between incrementally loading packages.")
-#+end_src
-
-***** load-incrementally
-:PROPERTIES:
-:ID: 747c8ead-18f0-467b-aa91-3922f1212743
-:END:
-
-#+begin_src emacs-lisp
-(defun void:load-incrementally (packages)
-  "Load PACKAGES incrementally.
-This function tries to load a package from PACKAGES, a list of packages. It then
-calls itself on the rest of PACKAGES in `void:incremental-loading-interval'
-idle seconds."
-  (let ((gc-cons-threshold VOID:GC-CONS-THRESHOLD-MAX)
-        (gc-cons-percentage VOID:GC-CONS-PERCENTAGE-MAX)
-        (file-name-handler-alist nil)
-        (package (car packages))
-        (rest (cdr packages)))
-    (cond ((null package) nil)
-          ((featurep package)
-           (void:load-incrementally rest))
-          (t
-           (condition-case e
-               (progn
-                 (void:log "Incrementally loading %s" package)
-                 (require package nil t))
-             (error
-              (message "Failed to load '%s' incrementally, because %s" package e)))
-           (run-with-idle-timer
-            void:incremental-loading-interval nil #'void:load-incrementally rest)))))
-#+end_src
-
-***** incremental load hook
-:PROPERTIES:
-:ID: 94c37e44-b03c-49c3-a376-696e6efb3e96
-:END:
-
-This hook triggers incremental loading to start.
-
-#+begin_src emacs-lisp
-(defhook! void:load-packages-incrementally-h ()
-  "Begin incrementally loading packages in `void:incremental-packages'.
-If this is a daemon session, load them all immediately instead."
+(use-package! idle-require
+  :require t
   :hook emacs-startup-hook
-  (cond
-   ((daemonp)
-    (mapc #'require (cdr void:incremental-packages)))
-   ((numberp void:incremental-loading-interval)
-    (run-with-idle-timer
-     void:initial-incremental-loading-delay
-     nil
-     #'void:load-incrementally
-     void:incremental-packages))
-   (t nil)))
+  :setq
+  (idle-require-idle-delay . 7)
+  (idle-require-load-break . 2))
 #+end_src
 
 **** =tty=
@@ -6056,7 +5977,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 #+begin_src emacs-lisp
 (use-feature! eshell
   :commands eshell
-  :load-incrementally
+  :idle-require
   em-alias em-banner em-basic em-cmpl
   em-dirs em-glob em-hist em-ls em-prompt
   em-script em-term em-unix
@@ -6415,7 +6336,7 @@ have to set out to look for a file with =dired=.
 #+begin_src emacs-lisp
 (use-feature! recentf
   :before-call find-file
-  :load-incrementally easymenu tree-widget timer
+  :idle-require easymenu tree-widget timer
   :commands recentf-open-files
   :defer-config
   (advice-add #'recentf-save-list :before #'recentf-cleanup)
@@ -6477,7 +6398,7 @@ again, you are taken to the location you left off. This is very convenient.
 
 #+begin_src emacs-lisp
 (use-feature! savehist
-  :load-incrementally custom
+  :idle-require custom
   :hook emacs-startup-hook
   :setq
   (savehist-save-minibuffer-history . t)
@@ -6918,7 +6839,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
 #+begin_src emacs-lisp
 (use-package! magit
   :commands magit-status magit-get-current-branch
-  :load-incrementally f s with-editor git-commit package eieio lv transient
+  :idle-require f s with-editor git-commit package eieio lv transient
   :popup ("magit:"
           (display-buffer-at-bottom)
           (window-height . 0.5))
@@ -8091,7 +8012,7 @@ use =edit-indirect= to edit source blocks.
 
 #+begin_src emacs-lisp
 (use-package! org
-  :load-incrementally
+  :idle-require
   calendar find-func format-spec org-macs org-compat org-faces org-entities
   org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
   org-capture
