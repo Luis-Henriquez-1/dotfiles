@@ -9386,10 +9386,6 @@ graphical interface but.
 (use-package! avk-emacs-themes)
 
 (use-package! hemera-theme)
-
-(use-package! modus-vivendi)
-
-(use-package! modus-operandi)
 #+end_src
 
 *** circadian                                                         :disabled:
