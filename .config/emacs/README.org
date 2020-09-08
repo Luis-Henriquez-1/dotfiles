@@ -3423,6 +3423,9 @@ command is likely to be.
 #+begin_src emacs-lisp
 (use-package! prescient
   :hook (ivy-mode-hook . prescient-persist-mode))
+
+(use-package! ivy-prescient
+  :hook ivy-mode-hook)
 #+end_src
 
 *** all-the-icons-ivy
@@ -3683,11 +3686,15 @@ This package provides an "orderless" completion style.
 
 #+begin_src emacs-lisp
 (use-package! orderless
+  :init
+  (defhook! orderless:set-orderless-re-builder ()
+    :hook ivy-mode-hook
+    (push '(t . orderless-ivy-re-builder) ivy-re-builders-alist))
   :setq
+  :setq
+  (ivy-prescient-enable-filtering . nil)
   (selectrum-refine-candidates-function . #'orderless-filter)
   (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
-
-(setq ivy-re-builders-alist '((t . orderless-ivy-re-builder)))
 #+end_src
 
 ** company
