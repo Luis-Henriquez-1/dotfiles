@@ -3328,6 +3328,7 @@ This package manages remembering recently selected candidates.
   (after! selectrum (prescient-persist-mode)))
 
 (use-package! selectrum-prescient
+  :hook selectrum-mode-hook
   :setq
   (selectrum-preprocess-candidates-function . #'selectrum-prescient--preprocess))
 #+end_src
@@ -3341,6 +3342,14 @@ This package provides an "orderless" completion style.
 
 #+begin_src emacs-lisp
 (use-package! orderless
+  :init
+  (defadvice! orderless:inhibit-filtering-and-highlighting (orig-fn &rest args)
+    "Don't let `selectrum-prescient' filter or highlight.
+Orderless will do this."
+    :around selectrum-prescient-mode
+    (let ((selectrum-refine-candidates-function selectrum-refine-candidates-function)
+          (selectrum-highlight-candidates-function selectrum-highlight-candidates-function))
+      (apply orig-fn args)))
   :setq
   (selectrum-refine-candidates-function . #'orderless-filter)
   (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
