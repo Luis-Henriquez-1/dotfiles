@@ -6979,7 +6979,7 @@ that restarts emacs. I haven't tested this in EXWM mode.
   :bind (:magit-status-mode-map
          ([remap magit-mode-bury-buffer] . magit/quit))
   :setq
-  (magit-completing-read-function . (cond ((bound-and-true-p ivy-mode #'ivy-completing-read))
+  (magit-completing-read-function . (cond ((bound-and-true-p ivy-mode) #'ivy-completing-read)
                                           (t #'magit-builtin-completing-read)))
   (magit-revision-show-gravatars . '("^Author:     " . "^Commit:     "))
   (magit-diff-refine-hunk . t)
