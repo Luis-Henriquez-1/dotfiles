@@ -3301,6 +3301,7 @@ won't have to worry about snappiness and performance.
   :hook emacs-startup-hook
   :setq
   (selectrum-fix-minibuffer-height . t)
+  (selectrum-should-sort-p . t)
   (selectrum-count-style . nil)
   (selectrum-num-candidates-displayed . 15))
 
@@ -3317,14 +3318,32 @@ won't have to worry about snappiness and performance.
 :ID:       0aaa7e9f-4b78-43f8-91c3-168ea25ece63
 :END:
 
-This package manages remembering.
+This package manages remembering recently selected candidates.
 
 #+begin_src emacs-lisp
-(use-package! selectrum-prescient
+(use-package! prescient
   :setq
   (prescient-save-file . (concat VOID:DATA-DIR "prescient-save-file"))
   :init
-  (after! selectrum (selectrum-prescient-mode)))
+  (after! selectrum (prescient-persist-mode)))
+
+(use-package! selectrum-prescient
+  :setq
+  (selectrum-preprocess-candidates-function . #'selectrum-prescient--preprocess))
+#+end_src
+
+*** orderless
+:PROPERTIES:
+:ID:       8cb7b1af-3786-48b7-92ec-b21759bbabc3
+:END:
+
+This package provides an "orderless" completion style.
+
+#+begin_src emacs-lisp
+(use-package! orderless
+  :setq
+  (selectrum-refine-candidates-function . #'orderless-filter)
+  (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
 #+end_src
 
 *** utilities
@@ -3485,47 +3504,27 @@ This is based on [[][counsel-org-capture]].
 (defun selectrum/select-capture-template ()
   "Select capture template."
   (interactive)
-  (-mapcat (-lambda ())
-           (-> org-capture-templates
-               (org-capture-upgrade-templates)
-               (org-contextualize-keys org-capture-templates-contexts)))
-  ;; (let (prefixes)
-  ;;   (cl-mapcan
-  ;;    (lambda (x)
-  ;;      (let ((x-keys (car x)))
-  ;;        ;; Remove prefixed keys until we get one that matches the current item.
-  ;;        (while (and prefixes
-  ;;                    (let ((p1-keys (caar prefixes)))
-  ;;                      (or
-  ;;                       (<= (length x-keys) (length p1-keys))
-  ;;                       (not (string-prefix-p p1-keys x-keys)))))
-  ;;          (pop prefixes))
-  ;;        (if (> (length x) 2)
-  ;;            (let ((desc (mapconcat #'cadr (reverse (cons x prefixes)) " | ")))
-  ;;              (list (format "%-5s %s" x-keys desc)))
-  ;;          (push x prefixes)
-  ;;          nil)))
-  ;;    (or (org-contextualize-keys
-  ;;         (org-capture-upgrade-templates org-capture-templates)
-  ;;         org-capture-templates-contexts)
-  ;;        '(("t" "Task" entry (file+headline "" "Tasks")
-  ;;           "* TODO %?\n  %u\n  %a")))))
-  )
-#+end_src
+  (let (prefixes)
+    (alet (mapcan (lambda (x)
+                    (let ((x-keys (car x)))
+                      ;; Remove prefixed keys until we get one that matches the current item.
+                      (while (and prefixes
+                                  (let ((p1-keys (caar prefixes)))
+                                    (or
+                                     (<= (length x-keys) (length p1-keys))
+                                     (not (string-prefix-p p1-keys x-keys)))))
+                        (pop prefixes))
+                      (if (> (length x) 2)
+                          (let ((desc (mapconcat #'cadr (reverse (cons x prefixes)) " | ")))
+                            (list (format "%-5s %s" x-keys desc)))
+                        (push x prefixes)
+                        nil)))
+                  (-> org-capture-templates
+                      (org-capture-upgrade-templates)
+                      (org-contextualize-keys org-capture-templates-contexts)))
+      (funcall #'org-capture nil (car (split-string (completing-read "Capture template: " it nil t)))) )))
 
-*** orderless
-:PROPERTIES:
-:ID:       8cb7b1af-3786-48b7-92ec-b21759bbabc3
-:END:
-
-This package provides an "orderless" completion style.
-
-#+begin_src emacs-lisp
-(use-package! orderless
-  :init
-  (after! selectrum
-    (setq selectrum-refine-candidates-function #'orderless-filter)
-    (setq selectrum-highlight-candidates-function #'orderless-highlight-matches)))
+(define-key org-mode-map [remap org-capture] #'selectrum/select-capture-template)
 #+end_src
 
 *** TODO embark
