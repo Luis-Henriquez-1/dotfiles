@@ -3533,7 +3533,7 @@ This is based on [[][counsel-org-capture]].
                       (org-contextualize-keys org-capture-templates-contexts)))
       (funcall #'org-capture nil (car (split-string (completing-read "Capture template: " it nil t)))) )))
 
-(define-key org-mode-map [remap org-capture] #'selectrum/select-capture-template)
+(general-def org-mode-map [remap org-capture] #'selectrum/select-capture-template)
 #+end_src
 
 *** TODO embark
