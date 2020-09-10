@@ -2806,7 +2806,8 @@ makes emacs feel like a window manager with gaps.
 :END:
 
 #+begin_src emacs-lisp
-(defhook! frame:update-divider-h ()
+(defhook! frame:update-window-divider-hook ()
+  "Ensure window divider persists after theme change."
   :hook void:after-load-theme-hook
   (unless (bound-and-true-p window-divider-mode)
     (window-divider-mode 1)))
