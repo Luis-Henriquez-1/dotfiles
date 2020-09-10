@@ -1651,7 +1651,6 @@ handle all bindings. [[][general]] provides such a function ([[helpfn:general-de
 #+begin_src emacs-lisp
 (use-package! general
   :require t
-  :alias (define-key! . general-def)
   :config
   (general-auto-unbind-keys))
 #+end_src
@@ -3305,7 +3304,7 @@ won't have to worry about snappiness and performance.
   (selectrum-count-style . nil)
   (selectrum-num-candidates-displayed . 15))
 
-(define-key! '(insert emacs) selectrum-minibuffer-map
+(general-def '(insert emacs) selectrum-minibuffer-map
   "TAB" #'selectrum-next-candidate
   "C-k" #'selectrum-previous-candidate
   "C-j" #'selectrum-next-candidate
@@ -3432,7 +3431,7 @@ This version lets you choose different variants.
                  #'switch-to-buffer)
                it))))
 
-(define-key! [remap switch-to-buffer] #'selectrum/switch-buffer)
+(general-def [remap switch-to-buffer] #'selectrum/switch-buffer)
 #+end_src
 
 **** mark candidate for completing-read-mutiple
@@ -3499,7 +3498,7 @@ ourselves.
                          (-difference selected current)))
       (org-set-tags it))))
 
-(define-key! [remap org-set-tags-command] #'selectrum/org-select-tags)
+(general-def [remap org-set-tags-command] #'selectrum/org-select-tags)
 #+end_src
 
 ***** TODO select capture templates
@@ -3547,7 +3546,7 @@ Embark allows for using actions on candidates.
 (use-package! embark
   :ensure (:host github :repo "oantolin/embark"))
 
-(define-key! '(insert emacs) selectrum-minibuffer-map "C-a" #'embark-act)
+(general-def '(insert emacs) selectrum-minibuffer-map "C-a" #'embark-act)
 
 (defun refresh-selectrum ()
   (setq selectrum--previous-input-string nil))
@@ -3998,7 +3997,7 @@ If there is no match, return POSSIBLE-NAME."
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal mu4e-headers-mode-map
+(general-def 'normal mu4e-headers-mode-map
   "q" #'kill-buffer-and-window
   "i" #'ignore
   "I" #'ignore
@@ -4013,7 +4012,7 @@ If there is no match, return POSSIBLE-NAME."
   "r" #'mu4e-compose-reply
   "RET" #'mu4e-headers-view-message)
 
-(define-key! 'normal mu4e-view-mode-map
+(general-def 'normal mu4e-view-mode-map
   "q" #'kill-buffer-and-window)
 
 (define-localleader-key! mu4e-compose-mode-map
@@ -4318,7 +4317,7 @@ javascript code.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal w3m-mode-map
+(general-def 'normal w3m-mode-map
   "o" #'w3m-search
   "O" #'w3m-search-new-session
   ;; Jump to a link with avy in the current session.
@@ -5116,7 +5115,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :END:
 
 #+begin_src emacs-lisp
-(define-key! evil-inner-text-objects-map
+(general-def evil-inner-text-objects-map
   "a" #'lispyville-inner-atom
   "l" #'lispyville-inner-list
   "x" #'lispyville-inner-sexp
@@ -5126,7 +5125,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
   ;; overriding inner-sentence.
   "s" #'lispyville-inner-string)
 
-(define-key! evil-outer-text-objects-map
+(general-def evil-outer-text-objects-map
   "a" #'lispyville-a-atom
   "l" #'lispyville-a-list
   "x" #'lispyville-a-sexp
@@ -5143,7 +5142,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal lispyville-mode-map
+(general-def 'normal lispyville-mode-map
   ">" #'lispyville-slurp
   "<" #'lispyville-barf)
 #+end_src
@@ -5160,7 +5159,7 @@ to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]]
 Sometimes =evil-normal-state= enters visual state.
 
 #+begin_src emacs-lisp
-(define-key! '(emacs insert) lispyville-mode-map [escape] #'lispyville-normal-state)
+(general-def '(emacs insert) lispyville-mode-map [escape] #'lispyville-normal-state)
 (advice-add #'lispyville-normal-state :after #'evil:dwim-abort-after-escape-a)
 #+end_src
 
@@ -5170,11 +5169,11 @@ Sometimes =evil-normal-state= enters visual state.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! '(emacs insert) lispyville-mode-map
+(general-def '(emacs insert) lispyville-mode-map
   "SPC" #'lispy-space
   ";"   #'lispy-comment)
 
-(define-key! '(normal visual) lispyville-mode-map
+(general-def '(normal visual) lispyville-mode-map
   "M-j" #'lispyville-drag-forward
   "M-k" #'lispyville-drag-backward
   "M-R" #'lispyville-raise-list
@@ -5460,7 +5459,7 @@ This variable will be nil when the minibuffer is closed.")
 We want escape to be a general "quit everything".
 
 #+begin_src emacs-lisp
-(define-key! :states '(emacs insert) [escape] #'evil-force-normal-state)
+(general-def :states '(emacs insert) [escape] #'evil-force-normal-state)
 
 (defadvice! evil:dwim-abort-after-escape-a ()
   "Exits out of whatever is happening after escape."
@@ -5488,7 +5487,7 @@ This is better than evil escape as it only binds in insert.
   :after-call (evil-insert-state evil-emacs-state)
   :defer-config
   (quiet! (key-chord-mode 1))
-  (define-key! :states '(visual insert)
+  (general-def :states '(visual insert)
     (general-chord "jk") 'evil-force-normal-state
     (general-chord "kj") 'evil-force-normal-state))
 #+end_src
@@ -5557,9 +5556,9 @@ practice, this is rarely an issue.
         (evil-range beg end 'inclusive :expanded t)
       (error "No surrounding form found.")))
 
-  (define-key! evil-inner-text-objects-map
+  (general-def evil-inner-text-objects-map
     "f" #'evil:textobj-inner-form)
-  (define-key! evil-outer-text-objects-map
+  (general-def evil-outer-text-objects-map
     "f" #'evil:textobj-outer-form))
 #+end_src
 
@@ -5583,7 +5582,7 @@ Why not just go to the end of the ="= like any other around operator?
         (evil-range beg end 'exclusive :expanded t)
       (error "Not inside a comment.")))
 
-  (define-key! evil-outer-text-objects-map
+  (general-def evil-outer-text-objects-map
     "\"" #'evil:textobj-a-string))
 #+end_src
 
@@ -5635,7 +5634,7 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(define-key!
+(general-def
   (:map Info-mode-map)
   (:m "h"   #'Info-backward-node)
   (:m "l"   #'Info-forward-node)
@@ -5775,7 +5774,7 @@ Why not just go to the end of the ="= like any other around operator?
 
 #+begin_src emacs-lisp
 (after! (evil lispy)
-  (define-key!
+  (general-def
     (:map evil-lispy-state-map)
     ("l" #'lispy-right)
     ("h" #'lispy-left)
@@ -5819,7 +5818,7 @@ Package [[https://github.com/Dewdrops/evil-exchange][evil-exchange]] lets me swa
 (use-package! evil-exchange
   :commands evil-exchange
   :init
-  (define-key! 'normal
+  (general-def 'normal
     :prefix "g"
     "X" (list :def #'evil-exchange-cancel :wk "cancel")
     "x" (list :def #'evil-exchange :wk "exchange")))
@@ -5852,7 +5851,7 @@ larger text objects. It's saves me keystrokes.
 (use-package! expand-region
   :commands (er/expand-region er/contract-region er/mark-symbol er/mark-word)
   :init
-  (define-key! 'visual
+  (general-def 'visual
     "V" #'er/contract-region
     "v" #'er/expand-region)
   :defer-config
@@ -5938,7 +5937,7 @@ larger text objects. It's saves me keystrokes.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal
+(general-def 'normal
   "f" #'avy-goto-char
   "w" #'void/evil-beginning-of-word
   "W" #'void/evil-beginning-of-WORD
@@ -6604,7 +6603,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal ranger-mode-map
+(general-def 'normal ranger-mode-map
   "m" #'dired-mark
   "d" #'dired-do-delete
   "s" #'dired-do-symlink
@@ -6627,7 +6626,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal ranger-mode-map
+(general-def 'normal ranger-mode-map
   "A" #'dired-do-find-regexp
   "C" #'dired-do-copy
   "B" #'dired-do-byte-compile
@@ -6654,7 +6653,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal ranger-mode-map
+(general-def 'normal ranger-mode-map
   "["                   #'dired-prev-dirline
   "]"                   #'dired-next-dirline
   "<"                   #'dired-prev-dirline
@@ -6675,7 +6674,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal ranger-mode-map
+(general-def 'normal ranger-mode-map
   :prefix "%"
   "u" #'dired-upcase
   "l" #'dired-downcase
@@ -6694,7 +6693,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal ranger-mode-map
+(general-def 'normal ranger-mode-map
   :prefix "*"
   "*"         #'dired-mark-executables
   "/"         #'dired-mark-directories
@@ -6721,7 +6720,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal ranger-mode-map
+(general-def 'normal ranger-mode-map
   [remap read-only-mode]   #'dired-toggle-read-only
   [remap toggle-read-only] #'dired-toggle-read-only
   "<delete>"               #'dired-unmark-backward
@@ -6735,7 +6734,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal ranger-mode-map
+(general-def 'normal ranger-mode-map
   ";" #'execute-extended-command)
 #+end_src
 
@@ -7105,7 +7104,7 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 :END:
 
 #+begin_src emacs-lisp
-(define-key! 'normal pdf-view-mode-map
+(general-def 'normal pdf-view-mode-map
   "j" #'pdf-view-next-line-or-next-page
   "k" #'pdf-view-previous-line-or-previous-page
   "0" #'pdf-view-first-page
@@ -7494,7 +7493,7 @@ from elisp to org. My [[helpvar:VOID-INIT-FILE][void:init-file]] is written with
 (use-package! outshine
   :hook emacs-lisp-mode-hook
   :defer-config
-  (define-key! '(normal) emacs-lisp-mode-map
+  (general-def '(normal) emacs-lisp-mode-map
     "TAB" #'outline-toggle-children))
 #+end_src
 
@@ -8362,7 +8361,7 @@ it's installed, otherwise it defaults to bringing up an regular emacs help buffe
 :END:
 
 #+begin_src emacs-lisp
-(define-key!
+(general-def
   (:localleader "t")
   (:map org-mode-map)
   ("l" #'org-toggle-link-display)
@@ -8633,7 +8632,7 @@ diary/journal using =org-mode=.
 :END:
 
 #+begin_src emacs-lisp
-(define-key!
+(general-def
   (:localleader "n")
   (:map org-mode-map)
   (:wk "Narrow" "" nil)
@@ -8653,12 +8652,12 @@ work in =org-mode= but I'd rather use the folding commands provided by =outline.
 The outline api actually seems pretty solid; better coded and simpler than the org api it seems.
 
 #+begin_src emacs-lisp
-;; (define-key!
+;; (general-def
 ;;   (:leader "z")
 ;;   (:n "a" #'outline-show-all)
 ;;   (:n "m" #'outline:hide-all-sublevels))
 
-(define-key! 'normal org-mode-map
+(general-def 'normal org-mode-map
   [tab] #'outline-toggle-children
   "TAB" #'outline-toggle-children)
 
@@ -8666,7 +8665,7 @@ The outline api actually seems pretty solid; better coded and simpler than the o
   (interactive)
   (outline-hide-sublevels 1))
 
-(define-key! 'normal org-mode-map
+(general-def 'normal org-mode-map
   "j" #'org/dwim-next-line
   "k" #'org/dwim-previous-line
   "b" #'org/dwim-insert-elisp-block
@@ -9367,11 +9366,11 @@ press as well and even faster than =SPC SPC=.
 #+begin_src emacs-lisp
 (define-leader-key! "SPC" (list :def #'execute-extended-command :wk "M-x"))
 
-(define-key!
+(general-def
   "A-x" #'execute-extended-command
   "M-x" #'execute-extended-command)
 
-(define-key! 'normal ";" #'execute-extended-command
+(general-def 'normal ";" #'execute-extended-command
   "q" #'delete-window)
 #+end_src
 
@@ -9385,7 +9384,7 @@ I scroll pages all the time. The default binding for scrolling pages in evil are
 common commands however, so I bound them to =J= and =K= respectively.
 
 #+begin_src emacs-lisp
-(define-key! 'normal
+(general-def 'normal
   "K" #'evil-scroll-page-up
   "J" #'evil-scroll-page-down)
 #+end_src
@@ -9398,7 +9397,7 @@ common commands however, so I bound them to =J= and =K= respectively.
 As someone who spends much of his day on the computer.
 
 #+begin_src emacs-lisp
-(define-key! '(emacs normal)
+(general-def '(emacs normal)
   "M--" #'text-scale-decrease
   "M-=" #'text-scale-increase)
 #+end_src
