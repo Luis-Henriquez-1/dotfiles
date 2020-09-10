@@ -9302,7 +9302,8 @@ graphical interface but.
 
 (use-package! tao-theme)
 
-(use-package! one-themes)
+(use-package! one-themes
+  :setq (emacs-one-use-variable-pitch . nil))
 
 (use-package! avk-emacs-themes)
 
