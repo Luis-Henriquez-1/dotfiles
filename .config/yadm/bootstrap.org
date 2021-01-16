@@ -1,0 +1,36 @@
+* the purpose of this file is to bootstrap.
+:PROPERTIES:
+:ID:       2e198e16-18b7-4279-af19-b3345ab4fdfc
+:END:
+
+#+begin_src emacs-lisp
+(require 'org)
+
+;; Load my config first so we can get my packages installed.
+
+;; Put different prompts here.
+(org-babel-tangle)
+#+end_src
+
+* init.el file first
+:PROPERTIES:
+:ID:       34d10410-cf2b-4274-9411-c14681f293c9
+:END:
+
+I don't like writing elisp without using libraries like [[][dash]] and
+[[][loopy]]. Some of the side-effects that I wrote in [[][my readme]] use these
+libraries. So we do this first before tangling.
+
+#+begin_src emacs-lisp
+(with-current-buffer )
+#+end_src
+
+* tangle everything
+:PROPERTIES:
+:ID:       e201a827-a9ab-40a3-a249-989511c5623c
+:END:
+
+#+begin_src emacs-lisp
+(org-babel-tangle-file )
+#+end_src
+
