@@ -4063,7 +4063,7 @@ Making sure that tempo can completing read.
   (push #'tempo:C-keyword tempo-user-elements))
 #+end_src
 
-*** Utilityalias yadm '~/.yadm-project/yadm $*'
+*** Utility
 
 **** avy
 :PROPERTIES:
@@ -4976,7 +4976,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
     (add-to-list 'eshell-visual-commands it)))
 #+end_src
 
-****** em-aliases
+****** em-alias
 :PROPERTIES:
 :ID:       694a8c17-8318-4222-b461-abfc1d8a78ea
 :END:
