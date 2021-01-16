@@ -346,7 +346,11 @@ initialization of the emacs frame.
 
 (defun xl-most-preferred-font-available ()
   "Return the most prefered font that's available."
-  (cl-first (-any-p (string-match-p it) xl-backup-fonts) xl-backup-fonts))
+  (loopy ((list font xl-backup-fonts)
+	  (expr available-fonts (x-list-fonts it))
+	  (when available-fonts
+	    (return (-last-item available-fonts))))
+	 (return nil)))
 
 (xl-most-preferred-font-available)
 #+end_src
