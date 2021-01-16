@@ -7,7 +7,17 @@ This single org file contains the contents of all my dotfiles and
 configurations. Upon tangling it will dynamically generate all of them in the
 correct locations.
 
-* evaluation nowebs
+* helpers
+:PROPERTIES:
+:ID:       67138086-b894-43b7-8c97-1980acad52b8
+:END:
+
+** general config
+:PROPERTIES:
+:ID:       3564e7a3-1db7-4bd7-aea5-e28956ebac41
+:END:
+
+** evaluation nowebs
 :PROPERTIES:
 :ID:       8d68503c-75a2-463b-b286-6490c9c8b97b
 :END:
@@ -21,7 +31,7 @@ One way you could insert the evaluated code is by using <<noweb()>>.
 
 Although nowebs are nice, I do find them lacking.
 
-** give =org= the ability to evaluate sexps in noweb
+*** give =org= the ability to evaluate sexps in noweb
 :PROPERTIES:
 :ID:       56390470-b5a6-4bc9-a4db-349bc8377e6e
 :END:
@@ -31,7 +41,7 @@ Although nowebs are nice, I do find them lacking.
 string
 #+end_src
 
-** as a string
+*** as a string
 :PROPERTIES:
 :ID:       b857023e-1ad5-4ad5-8d61-6e5aeef6aba5
 :END:
@@ -41,7 +51,7 @@ string
 (format "%S" string)
 #+end_src
 
-** function that takes an org-id
+*** function that takes an org-id
 :PROPERTIES:
 :ID:       ce115a7d-ab3e-4921-9f20-c34fb81241dc
 :END:
@@ -9307,6 +9317,17 @@ These are keybindings I use most frequently.
 :PROPERTIES:
 :ID:       80df9191-15ae-4559-a666-88869796e287
 :END:
+
+** convert to string
+:PROPERTIES:
+:ID:       d9014e42-cddf-4547-85c7-c3fa6ce54f36
+:END:
+
+#+begin_src emacs-lisp
+(defun dotfiles:plist-to-config-string (&rest plist)
+  "Return the arguments of dotfiles as a plist."
+  ())
+#+end_src
 
 ** mbsync
 :PROPERTIES:
