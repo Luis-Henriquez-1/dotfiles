@@ -3,7 +3,8 @@
 :ID:       a8a7a227-5172-4399-a739-963951118a18
 :END:
 
-The purpose of this file is for bootstrapping my readme.
+The purpose of this file is for bootstrapping my readme. And by this I mean,
+tangle all the files I need.
 
 * get org-mode
 :PROPERTIES:
@@ -25,8 +26,9 @@ libraries. So we do this first before tangling.
 
 #+begin_src emacs-lisp
 (with-temp-buffer
-  (insert-file-contents )
-  (re-search-forward)
+  (insert-file-contents (expand-file-name "~/README.org"))
+  ;; this is the id of the init.el.
+  (re-search-forward "44daab3a-14bd-4c47-a117-88579e89a0e2" nil t nil)
   (org-back-to-heading)
   (org-babel-execute-subtree))
 #+end_src
