@@ -57,6 +57,7 @@ Evaluating source blocks whose id.
 * xinit
 :PROPERTIES:
 :ID:       cf328230-ca3a-48a2-8dda-b4e9e4ff1e4c
+:HEADER-ARGS: :tangle ~/.xinitrc
 :END:
 
 ** first remap caps lock with escape
@@ -64,7 +65,7 @@ Evaluating source blocks whose id.
 :ID:       fa0904bb-1597-45bf-a944-8b48955cef0c
 :END:
 
-#+begin_src sh :tangle ~/.xinitrc
+#+begin_src sh
 setxkbmap -option caps:swapescape
 #+end_src
 
@@ -73,7 +74,7 @@ setxkbmap -option caps:swapescape
 :ID:       af14d611-79a0-4604-8c02-24bc608d32fb
 :END:
 
-#+begin_src sh :tangle ~/.xinitrc
+#+begin_src sh
 exec emacs
 #+end_src
 
@@ -100,9 +101,10 @@ $DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
 * gpg-agent
 :PROPERTIES:
 :ID:       58a65d49-cd9f-4b5d-86d7-d43209424cf3
+:HEADER-ARGS: :tangle ~/.gnupg/gpg-agent.conf
 :END:
 
-#+begin_src conf :tangle ~/.gnupg/gpg-agent.conf
+#+begin_src conf
 pinentry-program <<eval((executable-find "pinentry-emacs"))>>
 allow-loopback-pinentry
 allow-emacs-pinentry
@@ -112,9 +114,10 @@ default-cache-ttl 60000
 * git config
 :PROPERTIES:
 :ID:       a4cf5803-05b1-4133-bd73-01638673d2e3
+:HEADER-ARGS: ~/.config/git/config
 :END:
 
-#+begin_src conf :tangle ~/.config/git/config :noweb tangle
+#+begin_src conf
 [user]
 	name = Luis Henriquez-Perez
 	email = luis@luishp.xyz
