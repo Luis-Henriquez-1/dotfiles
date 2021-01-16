@@ -12,8 +12,10 @@ correct locations.
 :ID:       8d68503c-75a2-463b-b286-6490c9c8b97b
 :END:
 
-=nowebs= are what I mean when I say "dynamic" generation. It allows me to add
-the result of a lisp expression that was computed when the org file was tangled.
+=nowebs= are what I mean when I say "dynamic" generation. Typically nowebs are
+used to insert a block of code somewhere else, but they can also be used to
+insert the result of evaluating a block of code. It allows me to add the result of
+a lisp expression that was computed when the org file was tangled.
 
 One way you could insert the evaluated code is by using <<noweb()>>.
 
@@ -341,7 +343,7 @@ initialization of the emacs frame.
 
 #+name: font
 #+begin_src emacs-lisp :tangle no
-(defvar xl-backup-fonts (list "hermit" "mononoki" "iosevka")
+(defvar xl-backup-fonts (list "hermit" "mononoki" "iosevka" "anonymous-pro")
   "List of fonts that should be used.")
 
 (defun xl-most-preferred-font-available ()
