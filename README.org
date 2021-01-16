@@ -9332,12 +9332,28 @@ The setup for mbsync contains many repetative aspects.
      :Port $in-port)))
 #+end_src
 
+*** set up config
+:PROPERTIES:
+:ID:       371436cf-420b-45d5-9135-8a766e770f29
+:END:
+
+#+begin_src emacs-lisp
+(defun dotfiles:setup-config ()
+  (loopy ((list account accounts)
+	  (expr account-block (dotfiles:mbsyncrc-account account))
+	  (expr )
+	  (expr )
+	  (collect config (list account-block this that)))
+	 (finally-return)))
+#+end_src
+
 *** mbsyncrc
 :PROPERTIES:
 :ID:       d2c2a9e3-a0a8-4fc2-bf1e-32e33129b1e7
 :END:
 
 #+begin_src conf
+<<mbsyncrc-setup()>>
 #+end_src
 
 ** msmtprc
@@ -9346,6 +9362,8 @@ The setup for mbsync contains many repetative aspects.
 :HEADER-ARGS: :tangle ~/config/msmtp/msmtprc
 :END:
 
-#+begin_src conf
-#+end_src
+*** setup
+:PROPERTIES:
+:ID:       56f1b4e0-f1fc-4e51-b300-94ae7f4f4606
+:END:
 
