@@ -128,6 +128,7 @@ default-cache-ttl 60000
 * nyxt browser
 :PROPERTIES:
 :ID:       069672ed-29ad-4973-b2cd-1eb275d7e6d4
+:HEADER-ARGS: :tangle ~/.config/nyxt/init.lisp
 :END:
 
 * emacs
@@ -140,6 +141,7 @@ This heading is for Emacs.
 ** early-init
 :PROPERTIES:
 :ID:       1b29f0d7-63ab-46b8-abf4-51cb930d8be8
+:HEADER-ARGS: :tangle ~/.config/emacs/early-init.el
 :END:
 
 The early-init file.
@@ -179,7 +181,7 @@ initialization of the emacs frame.
 
 Emacs by default uses dynamic binding. Lexical binding is a known.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/early-init.el
+#+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
 #+end_src
 
@@ -190,7 +192,7 @@ Emacs by default uses dynamic binding. Lexical binding is a known.
 
 Defer garbage collection further back in the startup process.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/early-init.el
+#+begin_src emacs-lisp
 (setq gc-cons-threshold most-positive-fixnum)
 #+end_src
 
@@ -208,7 +210,7 @@ time. Before the advent of the [[helpvar:early-init-file][early-init-file]], the
 to set up [[https://wiki.archlinux.org/index.php/X_resources][xresources]]. Prevent the glimpse of un-styled Emacs by disabling
 these UI elements early.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/early-init.el
+#+begin_src emacs-lisp
 (push '(menu-bar-lines . 0) default-frame-alist)
 (push '(tool-bar-lines . 0) default-frame-alist)
 (push '(vertical-scroll-bars) default-frame-alist)
@@ -222,7 +224,7 @@ these UI elements early.
 This is the most efficient way to set the font. It's done before the
 initialization of the frame.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/early-init.el :noweb yes
+#+begin_src emacs-lisp
 (push (cons 'font <<font()>>) default-frame-alist)
 #+end_src
 
@@ -231,7 +233,7 @@ initialization of the frame.
 :ID:       bb1264f6-1580-4463-9d72-d2913771ebb4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/early-init.el
+#+begin_src emacs-lisp
 (push (cons 'left-fringe 0) default-frame-alist)
 (push (cons 'right-fringe 0) default-frame-alist)
 #+end_src
@@ -244,7 +246,7 @@ initialization of the frame.
 In Emacs 27+, package initialization occurs before [[helpvar:user-init-file][user-init-file]] is
 loaded, but after [[helpvar:early-init-file][early-init-file]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/early-init.el
+#+begin_src emacs-lisp
 (setq package-enable-at-startup nil)
 (advice-add #'package--ensure-init-file :override #'ignore)
 #+end_src
@@ -258,7 +260,7 @@ Ignore X resources; its settings would be redundant with the other settings
 in this file and can conflict with later config (particularly where the
 cursor color is concerned).
 
-#+begin_src elisp :tangle ~/.config/emacs/early-init.el
+#+begin_src elisp
 (advice-add #'x-apply-session-resources :override #'ignore)
 #+end_src
 
@@ -269,7 +271,7 @@ cursor color is concerned).
 
 Prevent early display of the modeline.
 
-#+begin_src elisp :tangle ~/.config/emacs/early-init.el
+#+begin_src elisp
 (unless after-init-time
   (setq-default mode-line-format nil))
 #+end_src
@@ -277,6 +279,7 @@ Prevent early display of the modeline.
 ** init.el
 :PROPERTIES:
 :ID:       44daab3a-14bd-4c47-a117-88579e89a0e2
+:HEADER-ARGS: :tangle ~/.config/emacs/init.el
 :END:
 
 *** Core
@@ -292,6 +295,17 @@ Prevent early display of the modeline.
 This headline is for things I need to do before anything else. The main thing I
 do here is declare directory names.
 
+***** ensure lexical binding
+:PROPERTIES:
+:ID:       2b8148c3-1418-4896-ba53-1673d2d82659
+:END:
+
+Emacs by default uses dynamic binding. Lexical binding is a known.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t -*-
+#+end_src
+
 ***** don't garbage collect during initialization
 :PROPERTIES:
 :ID:       4913461b-8421-4a64-b09a-18c54673d7d7
@@ -299,7 +313,7 @@ do here is declare directory names.
 
 [[id:86653a5a-f273-4ce4-b89b-f288d5d46d44][gcmh]] will take care of setting the gc-cons-threshold back to normal.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq gc-cons-threshold most-positive-fixnum)
 #+end_src
 
@@ -313,7 +327,7 @@ do here is declare directory names.
 :ID:       ebdf095e-f302-45c3-aef4-a4f9a84d4e02
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro xl-dir! (name value &optional docstring)
   "Macro used for declaring `xl' directories.
 Declare a variable named NAME with value VALUE and docstring DOCSTRING.
@@ -333,7 +347,7 @@ path VALUE. Create a function."
 :ID:       17fd696e-6140-4d9b-9d17-053c2dced786
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (xl-dir! XL-EMACS-DIR (file-truename user-emacs-directory)
   "Path to `user-emacs-directory'.")
 
@@ -359,7 +373,7 @@ Files that need to exist, but I don't typically want to see go here.")
 :ID:       d01a33a8-c6e8-433c-9850-6bd7ea0488f9
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defconst XL-INIT-FILE (concat XL-EMACS-DIR "init.el")
   "Path to the elisp file that bootstraps Void startup.")
 
@@ -380,7 +394,7 @@ is to serve as an indicator of whether the current Void instance is run for
 debugging. When Void is set up for debugging it prints out many messages about
 what its doing via [[hfn:void-log][xl-log]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar xl-debug-p (or (getenv "DEBUG") init-file-debug)
   "When non-nil print debug messages.
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
@@ -411,7 +425,7 @@ another machine by installing the same packages with the same versions.
 :ID:       9dff9894-667c-4e74-9624-8aee533f8f70
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq straight-vc-git-default-clone-depth 1)
 (setq straight-base-dir XL-PACKAGES-DIR)
 (setq straight-use-package-version 'straight)
@@ -429,7 +443,7 @@ another machine by installing the same packages with the same versions.
 :ID:       ab38beca-2f26-4718-ab73-e4e4409f1563
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-init-straight ()
   (defvar bootstrap-version)
   (let* ((straight-base-dir straight-base-dir)
@@ -452,7 +466,7 @@ another machine by installing the same packages with the same versions.
 :ID:       a694267f-b37d-487b-ac68-c1da9e1fe776
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (xl-init-straight)
 
 (dolist (package '(dash anaphora db use-package))
@@ -486,7 +500,7 @@ there's only one keyword argument, but any more and it starts to get crowded. It
 doesn't help that emacs functions tend towards longer names due to a lack of
 namespaces. Therefore, I support keyword args in the function body.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl--keyword-macro-args (body)
   "Return list of (docstring KEYWORD-ARGS BODY)."
   (let ((docstring (when (stringp (car body)) (pop body)))
@@ -510,7 +524,7 @@ macro-writing.
 :ID: 659e8389-84c5-4ac4-a9ba-7dd40599191d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-symbol-intern (&rest args)
   "Return ARGS as a symbol."
   (declare (pure t) (side-effect-free t))
@@ -525,7 +539,7 @@ macro-writing.
 Sometimes I want to create a keyword by interning a string or a symbol. This
 commands saves me having to add the colon at the beginning before interning.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-keyword-intern (&rest args)
   "Return ARGS as a keyword."
   (declare (pure t) (side-effect-free t))
@@ -541,7 +555,7 @@ Calling [[helpfn:symbol-name][symbol-name]] on a keyword returns the keyword as 
 don't want the prepended colon on they keyword. This function is for that
 occasion.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-keyword-name (keyword)
   "Return the name of the KEYWORD without the prepended `:'."
   (declare (pure t) (side-effect-free t))
@@ -556,7 +570,7 @@ occasion.
 This function is for converting something to a string, no questions asked. I use
 it when I don't want to be bothered with details and just want a string.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-to-string (&rest args)
   "Return ARGS as a string."
   (declare (pure t) (side-effect-free t))
@@ -569,7 +583,7 @@ it when I don't want to be bothered with details and just want a string.
 :ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-hook-symbol-p (symbol)
   "Return true if symbol is a hook symbol."
   (s-matches-p ".+-hook\\'" (symbol-name symbol)))
@@ -580,7 +594,7 @@ it when I don't want to be bothered with details and just want a string.
 :ID:       b308a172-6e99-491c-a382-7ee28e9fc1ae
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-hookify (symbol)
   "Return SYMBOL converted to hook.
 If SYMBOL is already a hook symbol, return it unchanged."
@@ -594,7 +608,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
 :ID:       ec25e275-c36f-4cee-be04-1fdf8c974857
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-mode-symbol-p (symbol)
   "Return non-nil if symbol is a mode symbol."
   (s-matches-p ".+-mode\\'" (symbol-name symbol)))
@@ -605,7 +619,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
 :ID:       61fa29a7-9697-4171-8b6f-f4c0b487c02c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-modeify (symbol)
   "Return SYMBOL converted to hook.
 If SYMBOL is already a hook symbol, return it unchanged."
@@ -619,7 +633,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
 :ID:       43089182-316b-4191-a3f1-6f2d1b1b971e
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsubst xl-true-list-p (obj)
   "Return t if OBJ is a list and not a cons cell."
   (and (listp obj) (not (-cons-pair-p obj))))
@@ -634,7 +648,7 @@ This might seem trivial or wasteful, but the two numbers I most often have to
 check for are one and zero. Emacs already has a function for checking is a value
 is zero, [[helpfn:zerop][zerop]]. But it doesn't have one for one.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsubst xl-one-p (obj)
   "Return t if OBJ is equal to one."
   (= 1 obj))
@@ -651,7 +665,7 @@ macro makes this problem much easier.
 
 The original idea for this macro came from.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-wrap-form (wrappers form)
   "Wrap FORM with each wrapper in WRAPPERS.
 WRAPPERS are a list of forms to wrap around FORM."
@@ -684,7 +698,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 :ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defconst XL-ANAPHORIC-SYMBOL-REGEXP
   (eval-when-compile (rx "<" (group (1+ (not (any white ">" "<")))) ">"))
   "Regular expression that matches an anaphoric symbol.")
@@ -695,7 +709,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 :ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-anaphoric-symbol-p (obj)
   "Return non-nil if OBJ is an anaphoric symbol."
   (and (symbolp obj)
@@ -707,7 +721,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 :ID:       2833cd75-9c85-4c0e-9523-4489d387150a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-anaphoric-true-symbol (symbol)
   "Return the symbol that corresponds to the anaphoric symbol."
   (save-match-data
@@ -720,7 +734,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 :ID:       4b89588e-f3c3-49d3-8851-fdd214cee563
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-anaphoric-symbol (symbol)
   "Return anaphoric form of symbol."
   (xl-symbol-intern '< symbol '>))
@@ -731,7 +745,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 :ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-anaphoric-symbols (body)
   "Return all the anaphoric symbols in body."
   (->> (-flatten body)
@@ -744,7 +758,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 :ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-anaphoric-symbols-in-obj (obj)
   "Return a list of anaphoric symbols in OBJ."
   (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
@@ -770,7 +784,7 @@ been loaded.
 We intentionally avoid with-eval-after-load to prevent eager macro expansion
 from pulling (or failing to pull) in autoloaded macros/features.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro after! (features &rest body)
   "Wrapper around `with-eval-after-load'."
   (declare (indent defun) (debug t))
@@ -798,7 +812,7 @@ Emacs is for the most part operating system agnostic. Packages written in elisp
 should work across operating systems. Nevertheless, there are a handful of
 settings that should favors particular operating systems over others.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro with-os! (os &rest body)
   "If OS is current system's operating system, execute body.
 OS can be either `mac', `linux' or `windows'(unquoted)."
@@ -819,7 +833,7 @@ OS can be either `mac', `linux' or `windows'(unquoted)."
 :ID:       e0173863-5b27-4afc-879a-17a6dce7ecd0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro ignore! (&rest _)
   "Do nothing and return nil."
   nil)
@@ -839,7 +853,7 @@ feature, the error will happening. I think it might be that because the form was
 not successfully evaluated =eval-after-load= does not realize it should stop
 loading it. To remedy this I wrap the block with [[][condition-case]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro eval-after-load! (feature &rest body)
   "A wrapper around `eval-after-load!' with error catching."
   (declare (indent defun))
@@ -860,7 +874,7 @@ loading it. To remedy this I wrap the block with [[][condition-case]].
 :ID: f314672c-f9f3-4630-9402-a9a65215c153
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro append! (sym &rest lists)
   "Append LISTS to SYM.
 SYM is a symbol that stores a list."
@@ -873,7 +887,7 @@ SYM is a symbol that stores a list."
 :ID: 3395dec3-0915-49cd-9445-d3db2b1ffe7f
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro prepend! (sym &rest lists)
   (declare (indent defun))
   `(setq ,sym (append ,@lists ,sym)))
@@ -884,7 +898,7 @@ SYM is a symbol that stores a list."
 :ID: b24d1d8f-f3e1-4dca-afdb-8fb73d5299c3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro nconc! (sym &rest lists)
   "Append LISTS to SYM by altering them in place."
   (declare (indent 1))
@@ -906,7 +920,7 @@ For this reason I use =setq= as a replacement for =setq=.
 [[https://opensource.com/article/20/3/variables-emacs][This article]] provides
 a brilliant synopsis of emacs variables.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro set! (sym val)
   `(funcall (or (get ',sym 'custom-set) 'set) ',sym ,val))
 #+end_src
@@ -916,7 +930,7 @@ a brilliant synopsis of emacs variables.
 :ID:       bc6b7560-fb71-4fc7-a53b-98f92c657d92
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro set-default! (sym val)
   `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
 #+end_src
@@ -936,7 +950,7 @@ does. Essentially, it provides a uniform syntax for cross configuring different
 packages. So you can say it configures packages. And therefore, I choose to call
 the macro =use-package!=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defalias 'use-package! #'use-package)
 
 (defmacro use-feature! (package &rest body)
@@ -952,7 +966,7 @@ the macro =use-package!=.
 :ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! use-package
   :init
   (push '(:xl-ensure t t) use-package-defaults)
@@ -965,7 +979,7 @@ the macro =use-package!=.
 :ID:       e317d512-cab1-41a8-9dfa-522d5b32a4f1
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar use-package:orig-keywords use-package-keywords)
 #+end_src
 
@@ -974,7 +988,7 @@ the macro =use-package!=.
 :ID:       4968a708-05f2-4a3b-8395-850a3c119fd2
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun use-package:insert-keyword (where place key)
   (--splice (eq place it)
 	    (funcall (if (eq where 'before) #'identity #'reverse) (list key it))
@@ -986,7 +1000,7 @@ the macro =use-package!=.
 :ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun use-package:autoload (package fn)
   "Return form for FN."
   `(unless (fboundp ',fn)
@@ -1003,7 +1017,7 @@ the macro =use-package!=.
 :ID:       e0b3a061-f4c3-43df-8d71-1337d7eadf53
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar use-package:default-place '(after :init)
   "Place where keywords should be inserted by default.")
 #+end_src
@@ -1013,7 +1027,7 @@ the macro =use-package!=.
 :ID:       03ba5359-010d-4442-897f-a1a7354d7b9b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar use-package:handler-args '(name key value rest state)
   "Args passed into handler functions.")
 #+end_src
@@ -1023,7 +1037,7 @@ the macro =use-package!=.
 :ID:       1cfacfde-621e-4d4d-b55a-8bb24c5bb220
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro use-package:defhander! (name args &rest body)
   "Define a `use-package' handler."
   (declare (indent defun))
@@ -1040,7 +1054,7 @@ the macro =use-package!=.
 :ID:       254c2e3a-7b33-4412-91d1-8c6910e60635
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar use-package:normalize-args '(name key args)
   "Args passed into normalize functions.")
 #+end_src
@@ -1050,7 +1064,7 @@ the macro =use-package!=.
 :ID:       1a9bef3e-be39-48ce-a19b-7c6e66d448d5
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro use-package:defnormalize! (key args &rest body)
   "Define a `use-package' normalizer."
   (declare (indent defun))
@@ -1076,7 +1090,7 @@ list. This makes things much more complicated and it makes.
 Here I override the default hook keyword with my own which uses =void-add-hook=
 instead of =add-hook=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun use-package:normalize-cons (cons-pair)
   (-table-flat #'cons
 	       (-list (car cons-pair))
@@ -1104,7 +1118,7 @@ instead of =add-hook=.
 :ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-before-call))
 
@@ -1127,7 +1141,7 @@ instead of =add-hook=.
 :ID:       2c7dd1a8-c0ee-42cd-b76f-8a72c94be848
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'after :hook :xl-after-call))
 
@@ -1150,7 +1164,7 @@ instead of =add-hook=.
 :ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-silence))
 
@@ -1169,7 +1183,7 @@ instead of =add-hook=.
 :ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-ignore))
 
@@ -1188,7 +1202,7 @@ instead of =add-hook=.
 :ID:       9948a4ae-f80a-4b13-b97a-0895481021a6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-set))
 
@@ -1206,7 +1220,7 @@ instead of =add-hook=.
 :ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-rule))
 
@@ -1224,7 +1238,7 @@ instead of =add-hook=.
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-idle-require))
 
@@ -1242,7 +1256,7 @@ instead of =add-hook=.
 :ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-config))
 
@@ -1259,7 +1273,7 @@ instead of =add-hook=.
 :ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-alias))
 
@@ -1278,7 +1292,7 @@ instead of =add-hook=.
 :ID:       aab32568-2c8c-4777-90ec-c4ad1bebaad8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :ensure :xl-ensure))
 
@@ -1302,7 +1316,7 @@ instead of =add-hook=.
 The keyword pauses emacs gargbage collection (e.g increases the [[helpvar:gc-cons-threshold][gc-cons-threshold]]
 to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that it's passed in.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-gc-pause))
 
@@ -1323,7 +1337,7 @@ to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of f
 
 This keyword provides integration with.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-nameless))
 
@@ -1360,7 +1374,7 @@ output of any forms within it. Emacs itself and many emacs packages spew
 messages. While these messages can be nice to know, more often than not I get it
 now and I don't want to see them again.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! shut-up
   :demand t)
 #+end_src
@@ -1378,7 +1392,7 @@ some are even more efficient than built-in cl functions. Additionally, it's
 already used as a dependency of very many packages so I'll likely end up loading
 it anyway.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! dash
   :demand t)
 #+end_src
@@ -1392,7 +1406,7 @@ it anyway.
 one or more functions as arguments and return a function. One example of this is
 emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! dash-functional
   :demand t)
 #+end_src
@@ -1404,7 +1418,7 @@ emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 
 =s= is an api for strings inspired by [[id:704fc35f-0ad0-4eb3-9eb5-d8335465dbd8][dash]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! s
   :demand t)
 #+end_src
@@ -1418,7 +1432,7 @@ It's common to want to refer to the thing you're operating on in lisp and in
 many other languages. In lisp this often requires assigning the variable a name.
 But if you're only.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! anaphora
   :demand t)
 #+end_src
@@ -1439,7 +1453,7 @@ statements or return statements).
 :ID:       3102adee-0474-4cf4-847a-011c2f8f48cd
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! loopy
   :xl-ensure (:host github :type git :repo "okamsn/loopy")
   :demand t)
@@ -1450,7 +1464,7 @@ statements or return statements).
 :ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! noflet
   :demand t)
 #+end_src
@@ -1467,7 +1481,7 @@ For now, I haven't found a buffer I'd like to display in any place other than
 the bottom. I don't like it when buffer text is cutt off or truncated on the
 side windows.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! dbc
   :xl-ensure (:host gitlab :type git :repo "matsievskiysv/display-buffer-control")
   :demand t)
@@ -1478,7 +1492,7 @@ side windows.
 :ID:       7bcd5e24-e1cc-423a-917e-d737211f0740
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! dbc :config
   (dbc-add-ruleset "bottom"
 		   '(display-buffer-in-side-window . ((side . bottom) (window-height . 0.5))))
@@ -1500,7 +1514,7 @@ side windows.
 :ID:       7cfa6d24-447a-4fb2-aa78-647e71ad21ee
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! db :demand t)
 #+end_src
 
@@ -1512,7 +1526,7 @@ side windows.
 =elog= is a library for generating logging functions. I use [[][]] to generate a
 function that logs to the buffer =*xl-log*=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! elog
   :demand t
   :xl-config
@@ -1540,7 +1554,7 @@ them.
 
 Often I want to silence the output of certain functions.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl--silence-output-advice (orig-fn &rest args)
   "Silence output for the duration of ORIGN-FN."
   (shut-up (apply orig-fn args)))
@@ -1557,7 +1571,7 @@ Often I want to silence the output of certain functions.
 
 Some functions are very expensive and deserve.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl--pause-garbage-collection-advice (orign-fn &rest args)
   "Pause garbage collection for the duration of ORIGN-FN."
   (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
@@ -1573,7 +1587,7 @@ Some functions are very expensive and deserve.
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl--message-with-xl-log-advice (orign-fn &rest args)
   "Use `xl-log' instead of `message'."
   (cl-letf (((symbol-function 'message) #'xl-log))
@@ -1589,7 +1603,7 @@ Some functions are very expensive and deserve.
 :ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-ignore (fn &rest fns)
   "Ignore FN and FNS."
   (xl-add-advice (cons fn fns) :override #'ignore))
@@ -1614,7 +1628,7 @@ In this headline, I strive to establish a common naming convention for
 :ID:       1995a309-e1d3-40e5-b6b1-fbcd81dda0bb
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-defined-hook-symbol-p (symbol)
   "Return non-nil if SYMBOL is a xl-specific hook."
   (alet "\\`[^[:space:]]+&[^[:space:]]+\\'"
@@ -1633,7 +1647,7 @@ This section pertains to functions that help with the naming convention.
 :ID:       4c093dca-87fc-4c61-ba45-a43b326d1ae0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsubst xl--hook-info (hook-fn i)
   (intern (nth i (split-string (symbol-name hook-fn) "&" t))))
 #+end_src
@@ -1648,7 +1662,7 @@ which hook variable a function resides in based on looking at the name
 (=emacs-startup-hook&do-something= would be a hook in =emacs-starup-hook= for
 example). This proves to be useful for [[id:8506fa78-c781-4ca8-bd58-169cce23a504][expire advice]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsubst xl-hook-variable (hook-fn)
   "Return the hook variable HOOK-FN is in.
 HOOK-FN is a function named with Void naming conventions."
@@ -1660,7 +1674,7 @@ HOOK-FN is a function named with Void naming conventions."
 :ID:       fa705f26-31f0-43c3-80a6-6741e74ab0ea
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-hook-function (hook-fn)
   "Return the function HOOK-FN."
   (xl--hook-info hook-fn 1))
@@ -1677,7 +1691,7 @@ should be in the form of some action so that the hook name will be of the form
 actually read through hook functions like reading a todo-list. It will be
 apparent what's being done.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-hook-function-name (hook function)
   "Return name to give to xl-defined hook function."
   (alet (acond ((xl-mode-symbol-p function)
@@ -1705,7 +1719,7 @@ I would prefer an elegant failure. By this, I mean I'd like the "problem"
 function to report the problem to me without short-circuiting. This is why I
 wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-generate-hook-function (hook function)
   "Return a Void hook function.
 The function does the same thing as FUNCTION, but errors are caught."
@@ -1732,7 +1746,7 @@ The function does the same thing as FUNCTION, but errors are caught."
 Add a hook that follow naming conventions. When adding a hook, if it is a void
 function, change it to a hook.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl--add-hook (hook function &optional depth local expire-fn)
   "Generate a Void hook function and add it to HOOK."
   (let ((hook-fn (xl-generate-hook-function hook function)))
@@ -1751,7 +1765,7 @@ function, change it to a hook.
 This is a simple wrapper around [[id:][xl--add-hook]] that handles multiple hook
 variables and hook functions.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-add-hook (hooks functions &optional depth local expire-fn)
   "Generate Void hook functions and add them to HOOKS."
   (dolist (hook (-list hooks))
@@ -1764,7 +1778,7 @@ variables and hook functions.
 :ID:       99708d72-a8d4-42ba-b6ae-ba692fbafec8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-remove-hook (fn)
   "Remove a void hook."
   (remove-hook (xl-hook-var fn) fn))
@@ -1778,7 +1792,7 @@ variables and hook functions.
 =defhook= provides a declarative way declare hook functions. It uses a familiar
 defun-like syntax.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro defhook! (name args &rest body)
   "Define a hook function and attatch it to HOOK and HOOKS.
 DEPTH and LOCAL are the same as in `add-hook'. BODY is the body of the hook
@@ -1824,7 +1838,7 @@ introduced by [[helpfn:define-advice][define-advice]].
 This function should be used to distinguish advices I add to functions over
 advices that have been added by Emacs or other packages.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-defined-advice-symbol-p (fn)
   "Return non-nil if FN is a void advice."
   (s-matches-p (rx (1+ (not white)) "@" (1+ (not white)))
@@ -1845,7 +1859,7 @@ want to log it differently.
 :ID:       f0f4d5fd-2ce2-408c-8a4d-f55e39744132
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl--log-message (fn)
   "Return the message logged."
   (pcase fn
@@ -1869,7 +1883,7 @@ want to log it differently.
 Maybe it's overkill having an advice just to log a function. But it helps
 maintain maximum purity and extensibility.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-log-function (fn &optional after)
   "Log calls to FN.
 Add a log to *xl-log* after function is called.
@@ -1890,7 +1904,7 @@ log function that is added to FN."
 :ID:       74aee21a-3549-488b-b6f1-de9549e7e358
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-advice-symbol-p (symbol)
   (s-match "\\(.+\\)@.+" (symbol-name symbol)))
 #+end_src
@@ -1906,7 +1920,7 @@ what which function a given advice is advising. Another complicaiton is that
 it's possible for a given advice to advise multiple functions. With the naming
 system I provide, doing this is trivial.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-advice-symbol (fn)
   "Return the symbol."
   (->> (symbol-name fn)
@@ -1922,7 +1936,7 @@ system I provide, doing this is trivial.
 
 This is where I try to convert a symbol and an advice into a symbol@action.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-advice-name (symbol advice)
   "Return advice name that meets Void naming conventions."
   (alet (nth 1 (s-match "xl--\\(.+\\)-advice" (symbol-name advice)))
@@ -1946,7 +1960,7 @@ instead of defining my own advices. To maintain consistency with the naming
 convention I created [[helpfn:xl-add-advice][xl-add-advice]]. It will create an advice with an
 appropriate name to target.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl--add-advice (symbol where fn &optional props expire-fn)
   "Advise SYMBOLS with Void ADVICES."
   (let ((advice (xl-advice-name symbol fn)))
@@ -1963,7 +1977,7 @@ appropriate name to target.
 :ID:       1298ea9d-870c-45da-9424-9cf8c66f7403
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-add-advice (symbols where advices &optional props expire-fn)
   "Advise TARGETS with Void ADVICES."
   (dolist (symbol (-list symbols))
@@ -1979,7 +1993,7 @@ appropriate name to target.
 Since we can get the advisee from the advise name, or remove advice only needs
 one argument--the advice to remove.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-remove-advice (advice)
   "Remove advice."
   (advice-remove (xl-advice-symbol advice) advice))
@@ -1990,7 +2004,7 @@ one argument--the advice to remove.
 :ID:       f15279e9-cd0c-4a74-bc74-389d14a4b82a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-advice-function (advice)
   "Return the action for advice."
   (->> (symbol-name advice)
@@ -2011,7 +2025,7 @@ The way I handle this situation is by creating a function that generates an
 
 Note that this function returns must be evaluated with lexical binding to work.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-expire-advice (fn &optional expire-fn unbind)
   "Return an advice that causes FN to expire when EXPIRE-FN returns true.
 FN is a function. EXPIRE-FN is a function that returns true when FN
@@ -2050,7 +2064,7 @@ The only difference between this and [[helpfn:define-advice][define-advice]] is 
 switched. In my opinion, the unique part of the function name being first is
 more consistent with =defun=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro define-advice! (name args &rest body)
   "A wrapper around `define-advice'.
 The only difference is that this switches the order the arguments have to be
@@ -2077,7 +2091,7 @@ arguments and you want to use them, you can do so via [[id:9938b1e1-6c6e-4a45-a8
 Note that [[helpfn:help-function-arglist][help-function-arglist]] returns =t= when it fails to get the function
 arguments.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro anaphoric-define-advice! (name args &rest body)
   "A variant of `define-advice!'.
 Unlike `define-advice!', this macro does not take an arglist as an argument.
@@ -2108,7 +2122,7 @@ Instead, arguments are accessed via anaphoric variables.
 This macro takes care of allowing multiple advices and deciding between whether
 to use =defadvice!= or =anaphoric-defadvice!=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro defadvice! (name args &rest body)
   "Define and advice.
 
@@ -2141,7 +2155,7 @@ and convenient way to do this.
 :ID:       324e707b-2f44-4168-a846-037f5401dedb
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl--load-on-call (package where functions &optional enable)
   "Load packages FUNCTIONS are called."
   (alet (xl-symbol-intern 'xl--load- package '-advice)
@@ -2158,7 +2172,7 @@ and convenient way to do this.
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-load-before-call (package functions &optional enable)
   (xl--load-on-call package :before functions enable))
 #+end_src
@@ -2168,7 +2182,7 @@ and convenient way to do this.
 :ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-load-after-call (package functions &optional enable)
   (xl--load-on-call package :after functions enable))
 #+end_src
@@ -2192,7 +2206,7 @@ is to bind them in a tree-like fashion (see [[https://github.com/syl20bnr/spacem
 :ID: 143211d6-b868-4ffb-a5d0-25a77dee401f
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defconst XL-LEADER-KEY "SPC"
   "The evil leader prefix key.")
 
@@ -2205,7 +2219,7 @@ is to bind them in a tree-like fashion (see [[https://github.com/syl20bnr/spacem
 :ID: 45941bcb-209f-4aa3-829a-dee4e3ef2464
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defconst XL-LOCALLEADER-KEY "SPC m"
   "The localleader prefix key for major-mode specific commands.")
 
@@ -2235,7 +2249,7 @@ on. And with [[https://github.com/emacs-evil/evil.git][evil]] which [[id:73366b3
 :ID:       2d0487ba-0150-47f2-a3d5-9d3c26e64c31
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! general
   :demand t
   :xl-config (general-auto-unbind-keys))
@@ -2253,7 +2267,7 @@ this is binding =leader= or =localleader= keys like [[https://github.com/syl20bn
 
 This form creates a macro =define-leader-key!= that.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! general :xl-config
   (general-create-definer define-leader-key!
     :prefix XL-LEADER-KEY
@@ -2274,7 +2288,7 @@ bindings from just one root binding. This is a nice property to have. On the
 other hand, bindings can get a bit long. That one extra character can really
 make a difference. That's why.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro define-localleader-key! (&rest args)
   (declare (indent defun))
   (alet `(:keymaps 'override
@@ -2297,7 +2311,7 @@ make a difference. That's why.
 
 In addition to providing keybinding stuff, =general= also provides.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defalias 'define-key! 'general-def)
 #+end_src
 
@@ -2311,7 +2325,7 @@ In addition to providing keybinding stuff, =general= also provides.
 :ID:       2b253cbb-43c8-44de-9526-8d9fb5d0e226
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! hideshow
   :xl-hook (prog-mode-hook . hs-minor-mode))
 #+end_src
@@ -2321,7 +2335,7 @@ In addition to providing keybinding stuff, =general= also provides.
 :ID:       a8dcb1f6-05a0-46cb-95b5-1d0cd0ad4467
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! vc-hooks
   :xl-set
   (vc-follow-symlinks . t)
@@ -2333,7 +2347,7 @@ In addition to providing keybinding stuff, =general= also provides.
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! subr-x :demand t)
 #+end_src
 
@@ -2348,7 +2362,7 @@ So it's best just to override the function entirely.
 As per [[https://emacs.stackexchange.com/questions/18677/prevent-auto-save-list-directory-to-be-created][this stackoverflow question]], this prevents the =auto-save-directory= from
 being created.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! startup
   :xl-ignore display-startup-echo-area-message startup-echo-area-message
   :xl-set
@@ -2374,7 +2388,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
 :ID: 8ba80d6f-292e-4d44-acfe-d7b7ba939fa4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! paren
   :xl-hook (prog-mode . show-paren-mode)
   :xl-set
@@ -2386,7 +2400,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
 :ID: 60abb076-89b1-439b-8198-831b2df47782
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! clipboard
   :xl-set
   (selection-coding-system . 'utf-8)
@@ -2400,7 +2414,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
 :ID: 89df102a-a2c9-4ece-9acc-ed90e8064ed8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! simple
   :xl-rule ("bottom" "messages" :newname "\\*Messages\\*")
   :xl-set
@@ -2418,7 +2432,7 @@ These are *extremely* important lines if you use an external program as I do
 ([[https://wiki.archlinux.org/index.php/Msmtp][msmtp]]) to send your email. If you don't set these variables, emacs will
 think you want to use =smtp=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! loaddefs
   :xl-set
   (disabled-command-function . nil))
@@ -2429,7 +2443,7 @@ think you want to use =smtp=.
 :ID:       f55fe748-209b-4450-a948-b0a7f8861dcf
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq make-backup-files t)
 (setq delete-by-moving-to-trash t)
 (setq trash-directory (expand-file-name "~/Trash"))
@@ -2440,7 +2454,7 @@ think you want to use =smtp=.
 :ID: 2a7862da-c863-416b-a976-4cf7840a8712
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! files
   :xl-set
   (confirm-nonexistent-file-or-buffer . nil)
@@ -2468,7 +2482,7 @@ think you want to use =smtp=.
 
 Don't ping things that look like domain names.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! ffap
   :xl-set
   (ffap-machine-p-known . 'reject))
@@ -2479,7 +2493,7 @@ Don't ping things that look like domain names.
 :ID: 3ddeb65c-9df6-4ede-9644-eb106b3ba1dd
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! server
   :xl-set
   (server-auth-dir . (xl-data-dir "server/")))
@@ -2490,7 +2504,7 @@ Don't ping things that look like domain names.
 :ID: 3af0a4d6-bd08-4fe2-bc5c-79b1b811fc6b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! tramp
   :xl-set
   (tramp-backup-directory-alist . backup-directory-alist)
@@ -2503,7 +2517,7 @@ Don't ping things that look like domain names.
 :ID: 8bd5683d-91e1-4c1b-a8a5-3b39921e995d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! cus-edit
   (custom-file            . null-device)
   (custom-theme-directory . (xl-local-dir "themes/")))
@@ -2514,7 +2528,7 @@ Don't ping things that look like domain names.
 :ID: e4b5bfce-1111-48b2-bfee-da754974aa46
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! url
   :xl-set
   (url-cache-directory         . (xl-data-dir "url/cache/"))
@@ -2526,7 +2540,7 @@ Don't ping things that look like domain names.
 :ID:       6b375bfb-a8c3-473c-8dbd-530e692a15ab
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! bytecomp
   :xl-set
   (byte-compile-warnings . '(not free-vars unresolved noruntime lexical make-local))
@@ -2538,7 +2552,7 @@ Don't ping things that look like domain names.
 :ID:       913aa4f2-e42b-4b74-a2d4-e87b1738a5bd
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! compile
   :xl-set
   (compilation-ask-about-save . nil)
@@ -2551,7 +2565,7 @@ Don't ping things that look like domain names.
 :ID:       9ba2726b-3fef-4e9b-9387-a80ab09bdb7d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! uniquify
   :xl-set
   (uniquify-buffer-name-style . 'forward))
@@ -2562,7 +2576,7 @@ Don't ping things that look like domain names.
 :ID:       5feaab76-e5c1-450c-94a6-8fdfb95ddb94
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! ansi-color
   :xl-set
   (ansi-color-for-comint-mode . t))
@@ -2575,7 +2589,7 @@ Don't ping things that look like domain names.
 
 Non-nil means animated images loop forever, rather than playing once.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! image-mode
   :xl-set
   (image-animate-loop . t))
@@ -2586,7 +2600,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :ID:       af27cd7e-2096-4f6d-a749-63e4c38d136c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! window
   :xl-set
   (split-width-threshold . 160))
@@ -2597,7 +2611,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :ID:       a5d97d4d-3af9-4fde-ae14-953ad4d28edd
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! indent
   :xl-set
   (tab-always-indent . t))
@@ -2608,7 +2622,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :ID:       d0d6de11-50fa-4ae2-ad4b-69712f3e2c54
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! mouse
   :xl-set
   (mouse-yank-at-point . t))
@@ -2641,7 +2655,7 @@ Non-nil means animated images loop forever, rather than playing once.
 =gv= is what contains the code for the =setf= macro.
 https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-plist-get
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! gv
   :xl-config
   (gv-define-simple-setter plist-get plist-put))
@@ -2652,7 +2666,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
 :ID:       0ca7fc66-5312-4c69-a87d-7607292c7a2a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! nsm
   :xl-set
   (nsm-settings-file . (xl-data-dir "network-settings.data")))
@@ -2666,7 +2680,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
 =browse-url= is a built-in package that provides a useful abstraction for browsing
 the web.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! browse-url
   :xl-set
   (browse-url-firefox-new-window-is-tab . nil)
@@ -2683,7 +2697,7 @@ the web.
 :ID:       a4514b36-6e08-4a66-a595-cd40fc9acc0b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! bookmark
   :xl-set
   (bookmark-default-file . (xl-data-dir "bookmarks")))
@@ -2706,7 +2720,7 @@ This variable tells savehist not to record duplicate entries in history. Note
 this is not apart of savehist technically; it is a variable defined in C source
 code.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set! history-delete-duplicates t)
 #+end_src
 
@@ -2715,7 +2729,7 @@ code.
 :ID:       b8856ebe-6208-4271-ad5a-d352fabec8bb
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq-default echo-keystrokes 0)
 #+end_src
 
@@ -2739,7 +2753,7 @@ If you looked at my init file you'll see that I already defined a variant of
 this function. I define it here from scratch so this file will be independent of
 my =init.el=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-needs-tangling-p ()
   "Return t if void needs taggling."
   (or (not (file-exists-p XL-MAIN-ELISP-FILE))
@@ -2760,7 +2774,7 @@ into a lambda so I could essentially redefine the function in the new emacs
 process but that would only work if the function's definiton only depends on
 built-in emacs variables and functions.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-load-init-file-only ()
   "Load init file."
   (let ((old-fn (symbol-function 'load))
@@ -2781,7 +2795,7 @@ built-in emacs variables and functions.
 The purpose of this function is simply to log the outcome of whether tangling
 has been successful or not. It's used as the second argument of =async-start=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-log-tangling-outcome ()
   "Log whether tangling successful."
   (alet (if (xl-needs-tangling-p) "✕ failed" "✓ succeeded")
@@ -2798,7 +2812,7 @@ asynchronously--meaning that a separate emacs process does this tangling. Emacs
 is single-threaded, so doing it synchronously will likely cause a significant
 "hangs" or pauses after each save.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-tangle-async-maybe (&optional log-output-p)
   "Tangle `XL-MAIN-ORG-FILE' asynchronously."
   (when (xl-needs-tangling-p)
@@ -2811,7 +2825,7 @@ is single-threaded, so doing it synchronously will likely cause a significant
 :ID:       d7ee4164-61a3-4b82-bc68-4673446707b9
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (xl-add-hook 'kill-emacs-hook #'xl-tangle-async-maybe)
 #+end_src
 
@@ -2823,7 +2837,7 @@ is single-threaded, so doing it synchronously will likely cause a significant
 When saving from a file I also make sure that I'm saving the main org file so I
 don't tangle needlessly.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! tangle-async-maybe (after-save-hook)
   "When I'm saving from `XL-MAIN-ORG-FILE', tangle it."
   (when (aand (buffer-file-name)
@@ -2838,7 +2852,7 @@ don't tangle needlessly.
 
 I find it convenient to be able to view the init time in the =*xl-log*= buffer.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! log-init-time (emacs-startup-hook :append t)
   "Log the init time."
   (xl-log "emacs-init-time -> %s" (emacs-init-time)))
@@ -2851,7 +2865,7 @@ I find it convenient to be able to view the init time in the =*xl-log*= buffer.
 
 Fill column refers to the column where line-wrapping will occur.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq-default fill-column 80)
 #+end_src
 
@@ -2864,7 +2878,7 @@ This means that you can use the minibuffer while in the minibuffer. One
 situation where I use this feature is in the command [[helpfn:eval-expression][eval-expression]]. As I'm
 typing an expression, I get completion from the minibuffer.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq-default enable-recursive-minibuffers t)
 #+end_src
 
@@ -2875,7 +2889,7 @@ typing an expression, I get completion from the minibuffer.
 
 It suffices typing =y= or =n= as opposed to =yes= or =no=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (xl-add-advice #'yes-or-no-p :override #'y-or-n-p)
 #+end_src
 
@@ -2884,7 +2898,7 @@ It suffices typing =y= or =n= as opposed to =yes= or =no=.
 :ID:       26344072-c145-40bd-9ade-8c7f2eef54c8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq-default locale-coding-system 'utf-8)
 (setq-default buffer-file-coding-system 'utf-8)
 
@@ -2909,7 +2923,7 @@ It suffices typing =y= or =n= as opposed to =yes= or =no=.
 :ID:       6572e618-e5ef-445b-90d6-14dc2c24f1a4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (with-os! linux
   (set! x-underline-at-descent-line t)
   (set! x-gtk-use-system-tooltips nil))
@@ -2923,7 +2937,7 @@ It suffices typing =y= or =n= as opposed to =yes= or =no=.
 Disabling bidirectional text provides a small performance boost. Bidirectional
 text is useful for languages that read right to left.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set-default! bidi-display-reordering 'left-to-right)
 (set-default! bidi-paragraph-direction 'left-to-right)
 #+end_src
@@ -2933,7 +2947,7 @@ text is useful for languages that read right to left.
 :ID:       c91bcd0f-da83-44a3-9d9e-e1f55dcdb642
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set-default! hscroll-margin 2)
 (set-default! hscroll-step 1)
 (set-default! scroll-conservatively 1001)
@@ -2949,7 +2963,7 @@ text is useful for languages that read right to left.
 "More performant rapid scrolling over unfontified regions. May cause brief
 spells of inaccurate fontification immediately after scrolling."
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set! fast-but-imprecise-scrolling t)
 #+end_src
 
@@ -2960,7 +2974,7 @@ spells of inaccurate fontification immediately after scrolling."
 
 ;; https://github.com/baskerville/bspwm/issues/551#issuecomment-574975395
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set! window-resize-pixelwise t)
 (set! frame-resize-pixelwise t)
 #+end_src
@@ -2973,7 +2987,7 @@ spells of inaccurate fontification immediately after scrolling."
 By default the cursor blinks. The point is so that it is easier to find on the
 screen. Usually, however, I have no trouble finding it so I disable it.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! frame
   :config
   (blink-cursor-mode -1))
@@ -2984,7 +2998,7 @@ screen. Usually, however, I have no trouble finding it so I disable it.
 :ID:       2a83cb3a-ca2e-4d9c-a296-340d33855614
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set-default! ring-bell-function #'ignore)
 #+end_src
 
@@ -3008,7 +3022,7 @@ startup time. By default it is only 800 KB.
 I define three levels on frequency with which emacs should perform garbage
 collection.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defconst XL-GC-CONS-THRESHOLD-MAX most-positive-fixnum
   "The upper limit for `gc-cons-threshold'.
 When VOID is performing computationally intensive operations,
@@ -3034,7 +3048,7 @@ to garbage collect more frequently when it's idle.
 Note that I add gcmh mode hook at the end so that all the other hook commands
 are done before setting the =gc-cons-threshold= back to a normal value.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! gcmh
   :xl-hook emacs-startup-hook
   :xl-set
@@ -3067,7 +3081,7 @@ At first I thought of =entry= but after more thought I realized
 hook variables use action verbs in their names not nouns. So the =exit= in
 =minibuffer-exit-hook= is actually the verb =exit= not the noun.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvaralias 'minibuffer-enter-hook 'minibuffer-setup-hook)
 
 (defhook! boost-garbage-collection (minibuffer-enter-hook)
@@ -3096,7 +3110,7 @@ prompted.
 Loading a theme qualifies as an intensive operation as all the faces on the
 screen need to be redisplayed.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! custom
   :xl-gc-pause load-theme
   :xl-set
@@ -3111,7 +3125,7 @@ screen need to be redisplayed.
 Sometimes there are things that need tidying up after loading a theme. For
 example, if I'm using evil I need to update the cursor color.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar xl-after-load-theme-hook nil
   "Hook run after the theme is loaded with `load-theme'.")
 
@@ -3130,7 +3144,7 @@ Sometimes we end up with remants of the faces of old themes when we load a new
 one. For this reason, I make sure to disable any enabled themes before applying
 a new theme.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! disable-old-themes (:around load-theme)
   "Disable old themes before loading new ones."
   (mapc #'disable-theme custom-enabled-themes)
@@ -3144,7 +3158,7 @@ a new theme.
 
 When running emacs in terminal tty is *tremendously* slow.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (unless (display-graphic-p)
   (xl-add-advice #'tty-run-terminal-initialization :override #'ignore)
   (defhook! init-tty (window-setup-hook)
@@ -3160,7 +3174,7 @@ When running emacs in terminal tty is *tremendously* slow.
 I never want the =*scratch*= and =*Messages*= buffer to be killed. I owe this idea
 to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! lock-certain-buffers (after-init-hook)
   "Prevent certain buffers from being killed."
   (--each (list "*scratch*" "*Messages*")
@@ -3176,7 +3190,7 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 This package defines numerous aliases to existing commands in an attempt to make
 commands more discoverable and naming schemes more consistent.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! prefixed-core
   :demand t)
 #+end_src
@@ -3188,7 +3202,7 @@ commands more discoverable and naming schemes more consistent.
 
 =keyfreq= records the frequency of key strokes.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! keyfreq
   :xl-hook emacs-startup-hook)
 #+end_src
@@ -3214,7 +3228,7 @@ unless I'm debugging.
 Since we're evaluating a good amount of lisp expressions, we should boost
 garbage collection during this time.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! idle-require
   :demand t
   ;; :xl-use-xl-log idle-require-mode idle-require-load-next
@@ -3244,7 +3258,7 @@ every time you move from one candidate to another. If a preview is helpful and
 its benefit is not outweighed by the performance cost of previewing, then I
 favor using it.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! consult
   :xl-before-call ((consult-buffer-other-window consult-buffer) . recentf)
   :xl-set
@@ -3259,7 +3273,7 @@ favor using it.
 :ID:       f78a7e71-b70a-4067-b821-f581cf76fb84
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 ;; (use-package! consult)
 
 ;; (use-package! consult
@@ -3300,7 +3314,7 @@ address this problem.
 This function is designed to reveal the current outline branch hierarchy so that
 you can see the point where consult takes you.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +outline-show-branch-maybe ()
   "Reveal the current outline branch.
 Show all of the current headine's parents and their children. This includes this
@@ -3323,7 +3337,7 @@ headline."
 :ID:       1b502b03-3aa8-428e-ae93-ffb6769490ff
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (alet (list #'consult-outline #'consult-line)
   (xl-add-advice it :after #'+outline-show-branch-maybe))
 #+end_src
@@ -3344,7 +3358,7 @@ problem.
 
 By default when you search a subtree with consult, you end up.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +outline-display-children-in-window ()
   "Scroll up window to maximize view of unfolded subtree.
 If the subtree is unfolded and the end of the current subtree is outside of the
@@ -3372,7 +3386,7 @@ th subtree should always be visible)."
 :ID:       9ac87847-c116-4a0b-b2ab-544c1f02cdcf
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (alet (list #'consult-outline #'consult-line)
   (xl-add-advice it :after #'+outline-display-children-in-window))
 #+end_src
@@ -3382,7 +3396,7 @@ th subtree should always be visible)."
 :ID:       c08a6f82-0408-4899-8e91-e1c5a062a7b2
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key!
   [remap switch-to-buffer]              #'consult-buffer
   [remap switch-to-buffer-other-window] #'consult-buffer-other-window
@@ -3401,7 +3415,7 @@ I want to make sure I don't input 14 thinking about font size (it's
 happened before and it's a huge pain resetting the font-size when the
 font is super small). Therefore, I check the code.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/set-font-size ()
   "Set the font size interactively."
   (interactive)
@@ -3434,7 +3448,7 @@ font is super small). Therefore, I check the code.
 :ID:       f24d97b6-7c74-491a-a77c-ba3ec22a2b68
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/set-font-face ()
   "Apply an existing xfont to all graphical frames."
   (interactive)
@@ -3452,7 +3466,7 @@ font is super small). Therefore, I check the code.
 :ID:       08a3004c-6c37-401d-b584-c2c94577102d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/open-init-file ()
   "Switch to init file."
   (interactive)
@@ -3469,7 +3483,7 @@ font is super small). Therefore, I check the code.
 In Emacs, messages. The messages buffer is where messages displayed at the bottom
 of the Emacs frame are recorded after they expire.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/open-messages-buffer ()
   (interactive)
   (alet (get-buffer-create "*Messages*")
@@ -3481,7 +3495,7 @@ of the Emacs frame are recorded after they expire.
 :ID: 2accd21d-7316-4fa5-bd8f-8f40935ed621
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/switch-to-capture-file ()
   (interactive)
   (switch-to-buffer (find-file XL-CAPTURE-FILE)))
@@ -3497,7 +3511,7 @@ of the Emacs frame are recorded after they expire.
 :ID:       7d9af4b6-7744-437f-b088-ec9397056113
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/open-scratch ()
   "Pop scratch."
   (interactive)
@@ -3522,7 +3536,7 @@ of the Emacs frame are recorded after they expire.
 Sometimes something goes wrong with [[helpvar:kill-emacs-hook][kill-emacs-hook]] and because of that I can't
 close emacs. For that reason, I have this function.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/kill-emacs-no-hook ()
   "Kill emacs, ignoring `kill-emacs-hook'."
   (interactive)
@@ -3537,7 +3551,7 @@ close emacs. For that reason, I have this function.
 
 I've never had to use this. But better be safe than sorry.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/kill-emacs-brutally ()
   "Tell an external process to kill emacs."
   (interactive)
@@ -3550,7 +3564,7 @@ I've never had to use this. But better be safe than sorry.
 :ID: eaf80ec3-2bd4-4f05-8a9c-fa525894a6fe
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/open-emacs-instance ()
   "Open a new emacs instance in debug-mode."
   (interactive)
@@ -3568,7 +3582,7 @@ I've never had to use this. But better be safe than sorry.
 :ID: 913952e2-3727-4b38-aefc-4618c2771730
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/kill-emacs-processes ()
   (interactive)
   (let ((count 1) (process "emacs"))
@@ -3584,7 +3598,7 @@ I've never had to use this. But better be safe than sorry.
 :ID: c1ac481a-6ebd-49ce-a930-3b0593283aee
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/enable-debug-mode ()
   (interactive)
   (setq xl-debug-p t))
@@ -3595,7 +3609,7 @@ I've never had to use this. But better be safe than sorry.
 :ID: d530718a-2b42-4e9b-8d7d-7813e0ae6381
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/quit-emacs-no-prompt ()
   "Quit emacs without prompting."
   (interactive)
@@ -3632,7 +3646,7 @@ about Helm is that it's too bloated and slow.
 :ID:       19d42b82-03ec-4458-9771-d992ad25cd6b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! helm
   :commands helm-M-x
   :xl-hook emacs-startup-hook
@@ -3651,7 +3665,7 @@ about Helm is that it's too bloated and slow.
 :ID:       5659f309-43ec-4718-959b-a161e837fb92
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! helm-files
   :xl-ensure nil
   :xl-set
@@ -3675,7 +3689,7 @@ about Helm is that it's too bloated and slow.
 :ID:       8f42e055-50f6-42dd-b850-5e6eb09d6da2
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! helm-descbinds
   :xl-hook (helm-mode-hook . helm-descbinds-mode))
 #+end_src
@@ -3685,7 +3699,7 @@ about Helm is that it's too bloated and slow.
 :ID:       cb8b2bc0-9956-4e79-a7b0-b0463807eea0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (general-def '(emacs insert) helm-map
   "C-o"     #'helm-toggle-visible-mark-forward
   "C-j"     #'helm-next-line
@@ -3705,7 +3719,7 @@ about Helm is that it's too bloated and slow.
 
 [[https://github.com/emacs-helm/helm-system-packages][helm-system-packages]] incorporates helm with your operating system's package manager.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! helm-system-packages
   :commands helm-system-packages)
 #+end_src
@@ -3715,7 +3729,7 @@ about Helm is that it's too bloated and slow.
 :ID:       6dd9a08b-382d-4bb7-baa5-d65d0e136869
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! helm-dash
   :commands helm-dash
   :xl-set
@@ -3728,7 +3742,7 @@ about Helm is that it's too bloated and slow.
 :ID:       1e19a081-d107-4593-8af4-e72c84bbaeff
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! helm-org)
 #+end_src
 
@@ -3739,7 +3753,7 @@ about Helm is that it's too bloated and slow.
 
 [[https://github.com/cute-jumper/ace-jump-helm-line/issues][ace-jump-helm-line]] allows me to jump to helm candidates using [[https://github.com/abo-abo/avy][avy]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! ace-jump-helm-line
   :commands ace-jump-helm-line
   :init
@@ -3764,7 +3778,7 @@ about Helm is that it's too bloated and slow.
 :ID:       5e5393d9-9f58-45be-9ecc-1bc9f0316379
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! company
   :xl-hook prog-mode-hook
   :xl-set
@@ -3784,7 +3798,7 @@ about Helm is that it's too bloated and slow.
 :ID:       ba170d95-7d86-4827-af6b-dc5fd4c1b7e5
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! company-active-map
    [tab]     #'company-select-next
    [backtab] #'company-select-previous
@@ -3804,7 +3818,7 @@ about Helm is that it's too bloated and slow.
 
 [[https://stackoverflow.com/questions/1511737/how-do-you-list-the-active-minor-modes-in-emacs][listing active minor modes]]
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-active-minor-modes ()
   "Return active minor modes in current buffer."
   (--select (and (boundp it) (symbol-value it)) minor-mode-list))
@@ -3815,7 +3829,7 @@ about Helm is that it's too bloated and slow.
 :ID:       dac0a998-e1b1-424f-8c40-e1bc19843153
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar company:backend-alist
   '((text-mode :derived (company-dabbrev company-tempo company-ispell))
     (prog-mode :derived ((:separate company-capf company-tempo))))
@@ -3829,7 +3843,7 @@ about Helm is that it's too bloated and slow.
 
 When the user
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! setup-company-backends (company-mode-hook)
   "Set `company-backends' for the current buffer."
   (alet (company:backends-for-mode major-mode)
@@ -3842,7 +3856,7 @@ When the user
 :ID:       282a2c16-ae5f-4d81-acaa-8d60fb24e762
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (cl-defun company:backends-for-mode (&optional (current-major-mode major-mode))
   "Return a list of company backends for major-mode."
   (loopy (with (active-minor-modes (xl-active-minor-modes)))
@@ -3865,7 +3879,7 @@ When the user
 
 [[https://github.com/raxod502/prescient.el][company-prescient]] is the same as =prescient= but for =company= instead of =ivy=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! company-prescient
   :xl-hook company-mode-hook)
 #+end_src
@@ -3875,7 +3889,7 @@ When the user
 :ID: 750cc608-865e-4f69-a7b2-826fc66a7b71
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! close-tooltip (xl-escape-hook)
   "Close company tooltip."
   (when (and (boundp 'company-mode) (eq company-mode t))
@@ -3905,7 +3919,7 @@ once if you have alot.
 :ID:       535c8572-922c-48e1-829f-e0f005c26937
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! tempo
   :xl-config
   (after! company (set! company-tempo-expand t)))
@@ -3920,7 +3934,7 @@ once if you have alot.
 
 ****** tempo-snippets
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! tempo-snippets)
 #+end_src
 
@@ -3932,7 +3946,7 @@ once if you have alot.
 By default the tempo-snippet uses the standard =M-n= and =M-p=
 bindings. However, I prefer the more mainstream =TAB= and =BACKTAB=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (general-def '(insert normal) tempo-snippets-keymap
   "TAB" #'tempo-snippets-next-field
   [backtab] #'tempo-snippets-previous-field)
@@ -3963,7 +3977,7 @@ this headline is to address this problem.
 
 ******* taglist name
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun tempo:taglist-name (mode)
   "Return a variable name for taglist."
   (xl-symbol-intern 'tempo: mode '-taglist))
@@ -3978,7 +3992,7 @@ The purpose of this macro is to provide a "defun-like" syntax for defining tempo
 snippets. Additionally, it should be a uniform way to configure snippets across
 several different packages.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defmacro defsnippet! (name args docstring &rest body)
   "Define a `tempo' snippet for MODE.
 Define a snippet via `tempo-define-snippet'. Also create a taglist variable for
@@ -4015,7 +4029,7 @@ Making sure that tempo can completing read.
 :ID:       2995030d-3848-42b8-8954-3d2366db641c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun tempo:completing-read (save-name &rest args)
   (let ((insertion (apply #'completing-read args)))
     (when save-name
@@ -4030,7 +4044,7 @@ Making sure that tempo can completing read.
 
 [[helpfn:tempo-completing-read+][tempo-completing-read+]] already takes care of inserting the correct value.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! tempo
   (defun tempo:C-keyword (element)
     (when (eq (car-safe element) 'C)
@@ -4047,7 +4061,7 @@ Making sure that tempo can completing read.
 :ID:       78064d92-2dde-4067-8a10-208ca6e88852
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! avy
   :xl-set
   (avy-style . 'pre)
@@ -4059,7 +4073,7 @@ Making sure that tempo can completing read.
 :ID:       e8f53422-9d24-4119-9b0f-9b6d1e10c1b0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! hide-mode-line
   :commands hide-mode-line-mode)
 #+end_src
@@ -4069,7 +4083,7 @@ Making sure that tempo can completing read.
 :ID:       3982b034-90e1-4961-90d9-224e913c0b8c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! man
   :xl-rule ("left" "man" :newname "\\*man.+"))
 #+end_src
@@ -4084,7 +4098,7 @@ Making sure that tempo can completing read.
 :ID:       6f3268a1-4606-435d-9bf4-05d1c54c28a9
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! pass)
 #+end_src
 
@@ -4093,7 +4107,7 @@ Making sure that tempo can completing read.
 :ID:       3c57590c-1507-4369-b615-795965d4b182
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! password-store)
 #+end_src
 
@@ -4106,7 +4120,7 @@ Making sure that tempo can completing read.
 in. Shortening aliases allows for more concise, easier to read, and less
 redundant code.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! nameless
   :xl-hook emacs-lisp-mode-hook
   :xl-set (nameless-private-prefix . t))
@@ -4117,7 +4131,7 @@ redundant code.
 :ID:       8105dadd-4d4a-4f57-a5f9-5cae1b14ef3a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! fortune-cookie
   :commands fortune-cookie)
 #+end_src
@@ -4127,7 +4141,7 @@ redundant code.
 :ID:       b5be9427-a814-4a91-92ab-ad393375ec41
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! figlet :commands figlet)
 #+end_src
 
@@ -4136,7 +4150,7 @@ redundant code.
 :ID:       9d96a611-355a-4b62-bb0e-18e9d4af92c9
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! grugru)
 #+end_src
 
@@ -4148,7 +4162,7 @@ redundant code.
 =ht= is a package that tries to provide a consistently named API for dealing with
 hash-tables.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! ht)
 #+end_src
 
@@ -4167,7 +4181,7 @@ packages
 :ID:       08bf0487-2a57-483d-8d22-8253ebda6d9d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! system-packages
   :xl-rule ("bottom" "system-packages" :newname "\\*system-packages")
   :xl-set (system-packages-noconfirm . t))
@@ -4180,7 +4194,7 @@ packages
 
 If we're in arch and we have yay intalled, use that.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! system-packages
   (when (and (eq system-packages-package-manager 'pacman)
              (system-packages-package-installed-p "yay"))
@@ -4202,7 +4216,7 @@ If we're in arch and we have yay intalled, use that.
 quintessential =once-only= and =with-gensyms= macros which are used to prevent
 variable leaking.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! mmt)
 #+end_src
 
@@ -4211,7 +4225,7 @@ variable leaking.
 :ID:       e3590042-52fb-47ee-a5eb-a7860a3cdb17
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! ellocate
   :commands ellocate
   :xl-set
@@ -4227,7 +4241,7 @@ variable leaking.
 Setting these variables in coordination with configuring =gpgconf= lets me enter
 my gpg passphrase via emacs.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! epa-config
   :xl-set
   (epg-gpg-program . "gpg2")
@@ -4244,7 +4258,7 @@ my gpg passphrase via emacs.
 :ID: 163d8880-6a7d-4479-a7e4-e333e4f930da
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! pdf-tools
   :magic ("%PDF" . pdf-view-mode)
   :init
@@ -4256,7 +4270,7 @@ my gpg passphrase via emacs.
 :ID:       25826061-a4a7-4f8a-8d3b-bdd5a80f70d0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! build-pdf-into-program-maybe (:before pdf-view-mode)
   "Build the pdf-info program if it hasn't already been built."
   (unless (file-executable-p pdf-info-epdfinfo-program)
@@ -4284,7 +4298,7 @@ my gpg passphrase via emacs.
 :ID:       506c568c-0473-4db6-82b6-cc91174b0ce4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! pdf-tools
   :general
   (:states 'normal :keymaps 'pdf-view-mode-map
@@ -4310,7 +4324,7 @@ my gpg passphrase via emacs.
 :ID:       f5a2c47b-01df-4dcf-b012-b6311cf79683
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! engine-mode)
 #+end_src
 
@@ -4322,7 +4336,7 @@ my gpg passphrase via emacs.
 This package essentially automates the creation of an interactive web searching
 functions.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! engine-mode :xl-config
   (defengine amazon
     "http://www.amazon.com/s/ref=nb_sb_noss?url=search-alias%3Daps&field-keywords=%s")
@@ -4347,7 +4361,7 @@ functions.
 =eww= doesn't create new buffers by default when you do a new search. Instead, it
 replaces the existing buffer. I got this code snippet from [[https://stackoverflow.com/questions/28458784/emacs-and-eww-open-links-in-new-window][this-question]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! create-new-buffer (eww-after-render-hook)
   (let* ((title  (plist-get eww-data :title))
 	 (url    (plist-get eww-data :url))
@@ -4379,7 +4393,7 @@ javascript code.
 :ID:       7412bc2f-0db1-44e9-8ea7-0dc595a04fca
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! restart-emacs
   :commands restart-emacs)
 #+end_src
@@ -4411,7 +4425,7 @@ Another caviat for =escr= is that it doesn't seem to handle exwm.
 :ID:       a6a8610e-84b5-471d-8f07-2ad2c67c2998
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! escr
   :xl-ensure (:host github :type git :repo "atykhonov/escr")
   :commands (escr-window-screenshot
@@ -4433,7 +4447,7 @@ them. There's no way I'll recognize which screenshot is which based on the
 =escr='s default naming scheme. Therefore, I'd rather just name them properly in
 the first place.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun escr:get-filename ()
   "Return the filename."
   (alet (read-string "Image name: ")
@@ -4456,7 +4470,7 @@ function.
 The result is I get prompted for the filename, but if I leave it blank then it
 defaults to =escr='s default filename names.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! prompt-me-for-filename (:around escr--screenshot)
   (noflet ((format-time-string (&rest args) (or (escr:get-filename) (apply this-fn args))))
     (apply <orig-fn> <args>)))
@@ -4467,7 +4481,7 @@ defaults to =escr='s default filename names.
 :ID:       d8553132-c244-4319-bcc9-51905a296e34
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! gif-screencast
   :commands gif-screencast-start-or-stop
   :xl-set 
@@ -4492,7 +4506,7 @@ defaults to =escr='s default filename names.
 :ID: 5d28b703-a87f-47ca-b320-785e7589fea6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! emms
   :xl-set
   (emms-source-file-directory-tree-function . 'emms-source-file-directory-tree-find)
@@ -4508,7 +4522,7 @@ defaults to =escr='s default filename names.
 :ID: 545e6534-f289-4a89-838a-2a65ac74fe72
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! quit-emms (kill-emacs-hook)
   "Shut down EMMS."
   (when emms-player-playing-p (emms-pause))
@@ -4531,7 +4545,7 @@ defaults to =escr='s default filename names.
 For some reason outorg adds overlays to the outorg buffers. They make it look
 like the outorg buffer has less whitespace in between headlines than it should.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! dont-add-overlays-for-blanks (:around outorg-wrap-source-in-block)
   "Adding overlays for blank lines."
   (cl-letf (((symbol-function #'overlay-put) #'ignore))
@@ -4548,7 +4562,7 @@ like the outorg buffer has less whitespace in between headlines than it should.
 :ID:       5fbf293e-84ae-4f47-bdcd-850ff552465a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! ert
   :xl-rule ("bottom" "ert" :newname "\\*ert\\*"))
 #+end_src
@@ -4558,7 +4572,7 @@ like the outorg buffer has less whitespace in between headlines than it should.
 :ID:       3062b8a4-4261-49fc-9bdb-895ba75bbd19
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! ert-expectations)
 
 (autoload 'expect "ert-expectations" nil nil 'macro)
@@ -4570,7 +4584,7 @@ like the outorg buffer has less whitespace in between headlines than it should.
 :ID:       46df66b0-5820-4550-aa99-c913d3022fe1
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! el-mock)
 #+end_src
 
@@ -4595,7 +4609,7 @@ ways to read and send emails in Emacs.
 :ID:       48c3332f-975d-4f22-94a8-4ccd394ca82a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set! send-mail-function #'sendmail-send-it)
 (set! sendmail-program (executable-find "msmtp"))
 (set! mail-specify-envelope-from t)
@@ -4606,7 +4620,7 @@ ways to read and send emails in Emacs.
 :ID: 4dc1e0a6-5441-4b3e-8b75-ed3626a59154
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set! smtp-default-mail-server "mail.example.com")
 (set! smtp-smtp-server "mail.example.com")
 (set! smtpmail-smtp-service 587)
@@ -4618,7 +4632,7 @@ ways to read and send emails in Emacs.
 :ID:       4cf38804-18d6-470c-a9c3-e3327f2bebf9
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! message
   :xl-set
   (message-signature . user-full-name)
@@ -4651,7 +4665,7 @@ therefore, has the most support (in the form of setup blogs and packages).
 :ID:       bcd9b479-1ed6-48cb-bd2e-35a46cf614e2
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defconst XL-EMAIL-DIR "~/.mail/")
 
 (autoload #'mu4e "mu4e" nil t nil)
@@ -4662,7 +4676,7 @@ therefore, has the most support (in the form of setup blogs and packages).
 :ID:       11a37383-0316-49fa-900e-c06f830c0e3f
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq mu4e-completing-read-function #'completing-read)
 (setq mu4e-view-show-addresses t)
 (setq mu4e-view-show-images t)
@@ -4682,7 +4696,7 @@ therefore, has the most support (in the form of setup blogs and packages).
 
 I don't want mu4e to handle indexing. I can do it myself.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq mu4e-index-cleanup t)
 (setq mu4e-index-lazy-check nil)
 (setq mu4e-update-interval nil)
@@ -4694,7 +4708,7 @@ I don't want mu4e to handle indexing. I can do it myself.
 :ID: 565eff90-8626-4ec8-a576-4ff3dfb307ae
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq mu4e-header-fields '((:human-date . 12)
                            (:flags . 4)
                            (:from . 25)
@@ -4709,7 +4723,7 @@ I don't want mu4e to handle indexing. I can do it myself.
 :ID:       8ed2fe81-eda9-4343-a6e1-0a6a725866a4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun mu4e/init ()
   "Initialize mu4e."
   (interactive)
@@ -4730,7 +4744,7 @@ I don't want mu4e to handle indexing. I can do it myself.
 :ID:       8bc93633-f3a0-494d-ae61-c05f6490cd87
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! (mu4e all-the-icons)
   (setq mu4e-use-fancy-chars t)
   (setq mu4e-headers-draft-mark     (cons "D" (all-the-icons-faicon "pencil")))
@@ -4760,7 +4774,7 @@ it is definitely on my list of things to try out.
 :ID:       47c8d5d8-575f-4b73-9247-38f32cb706fd
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-mu4e
   :xl-ensure nil
   :xl-hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode)
@@ -4777,7 +4791,7 @@ it is definitely on my list of things to try out.
 Only render to html once. If the first send fails for whatever reason,
 org-mu4e would do so each time you try again.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! org-mu4e-render-html-only-once (message-send-hook)
   (setq-local org-mu4e-convert-to-html nil))
 #+end_src
@@ -4799,7 +4813,7 @@ reason I spent so much time setting this up is because.
 :ID:       3f7b1728-b855-447f-9f15-43bd79a94c14
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +pass-email-list ()
   "Return a list of emails."
   (->> (password-store-list)
@@ -4812,7 +4826,7 @@ reason I spent so much time setting this up is because.
 :ID:       8129ca16-8641-4f2f-a4b6-03477d5b78f3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +pass-email-account-plist (email)
   "Return a plist of the relevant values of an email."
   (shut-up
@@ -4832,7 +4846,7 @@ assign the corresponding mu4e variables. The way certain email servers name
 their directories varies. For example, outlook names its sent directory as =Sent
 Items=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +mu4e-guess-folder (base-dir possible-name &rest other-possible-names)
   "Return the first file in BASE-DIR that matches POSSIBLE-NAME or any POSSIBLE-NAMES.
 If there is no match, return POSSIBLE-NAME."
@@ -4848,7 +4862,7 @@ If there is no match, return POSSIBLE-NAME."
 :ID:       66d460d7-9647-4c29-8348-eb7b3d571630
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +mu4e--account-context (email)
   "Return an mu4e account context for specified EMAIL."
   (let* ((base-dir (concat XL-EMAIL-DIR email "/"))
@@ -4871,7 +4885,7 @@ If there is no match, return POSSIBLE-NAME."
 :ID: e56b64ac-ed36-4689-b8f4-8711c1f4f79f
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! setup-contexts (:before mu4e)
   "Initiaize context for each email account."
   (require 'password-store)
@@ -4907,7 +4921,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 :ID:       b2b473c8-78d7-4f41-9be3-842b6c5acdbb
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! eshell
   :xl-rule ("bottom" "eshell" :newname "\\*eshell\\*")
   :xl-set
@@ -4930,7 +4944,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 :ID:       aaea54da-bd51-4a73-9dad-fe0b49d0f617
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! em-hist
   :xl-idle-require t
   :xl-set
@@ -4945,7 +4959,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 :ID:       d2afb853-15c3-4d3f-b8fa-a1075f84bbac
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! em-term
   :xl-idle-require t
   :xl-config
@@ -4958,7 +4972,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 :ID: 497798a0-7b62-4779-bf15-f67500528f03
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! eshell-z
   :commands eshell-z
   :xl-set
@@ -4973,7 +4987,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 This is an Emacs package for quickly navigating to a specific parent directory
 in ~eshell~ without having to repeatedly typing ~cd ..~.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! eshell-up
   ;; :xl-alias
   ;; (eshell/up . eshell-up)
@@ -4992,7 +5006,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 :ID:       8e2fe483-5da1-47c7-8d80-a8e68b21fa39
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! all-the-icons-dired
   :xl-hook dired-mode-hook)
 #+end_src
@@ -5007,7 +5021,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 :ID:       8a5f8bb6-dce2-4fac-b9c4-068e39f4cfcc
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! dired
   :xl-set
   (dired-recursive-copies                      . 'always)
@@ -5021,7 +5035,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 :ID: 4b6c0ed8-dbf2-4a65-adcc-1ce326eac465
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! dired:sort-directories-first (dired-after-readin-hook)
   "List directories first in dired buffers."
   (save-excursion
@@ -5039,7 +5053,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 :ID: 66981d0c-fe40-4552-9f63-2c39a7d584d2
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun dired:create-non-existent-directory-h ()
   "Automatically create missing directories when creating new file."
   (let ((parent-directory (file-name-directory buffer-file-name)))
@@ -5064,7 +5078,7 @@ inspired file manager]] of also called =ranger=.
 :ID:       c63911ca-6d26-4d7c-be76-246639fb6c7a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (general-def 'normal ranger-mode-map
   ";" #'execute-extended-command
   "u" #'dired-unmark)
@@ -5075,7 +5089,7 @@ inspired file manager]] of also called =ranger=.
 :ID:       f69d31ab-1385-498c-9423-8fb3d5e4e94e
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (general-def 'normal ranger-mode-map
   "A" #'dired-do-find-regexp
   "C" #'dired-do-copy
@@ -5102,7 +5116,7 @@ inspired file manager]] of also called =ranger=.
 :ID: 2edf3f72-726f-4b31-9ff0-20e5e7d251b1
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! ranger
   :commands deer ranger
   :xl-set
@@ -5126,7 +5140,7 @@ inspired file manager]] of also called =ranger=.
 Ranger doesn't refresh the buffer after stuff like moving and pasting has
 happend. It results in a very jarring display.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! refresh-contents (:after ranger-paste dired-do-rename)
   "Refresh contents."
   (when (eq major-mode 'ranger-mode)
@@ -5141,7 +5155,7 @@ happend. It results in a very jarring display.
 There's this wierd intermidiate stage between =hidden= and =format= called =prefer= in
 which only some files are hidden. That's wierd, so I get rid of it.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! toggle-between-two-only (:override ranger-toggle-dotfiles)
   "Show/hide dot-files."
   (interactive)
@@ -5157,7 +5171,7 @@ which only some files are hidden. That's wierd, so I get rid of it.
 :ID: e9d83b37-1257-4d78-ae5f-863c4e7198d1
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (xl-silence-output #'ranger-window-check)
 #+end_src
 
@@ -5181,7 +5195,7 @@ you save your file--which for me is all the time because I use [[id:bd455e73-403
 :ID:       8a46cee4-624c-4440-8b99-c6b34d356a6b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! git-auto-commit-mode)
 (setq gac-automatically-push-p nil)
 (setq gac-ask-for-summary nil)
@@ -5200,7 +5214,7 @@ you save your file--which for me is all the time because I use [[id:bd455e73-403
 :ID:       36b71eb7-b71d-47a0-ad0a-5d62825fffa3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (autoload #'git-auto-commit-mode "git-auto-commit-mode" nil t nil)
 #+end_src
 
@@ -5218,7 +5232,7 @@ fails when you have a change that spans across multiple headlines (such as the
 replacement of a name throughout a document). This is something I plan to
 address later.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +gac-commit-message (file)
   "Return the commit message for changes to FILE."
   (format "Update %s" (f-base file)))
@@ -5234,7 +5248,7 @@ address later.
 :ID: baf64a0f-f9fa-4700-bebf-d996018f894f
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq transient-default-level 5)
 (setq transient-levels-file (xl-data-dir "transient/levels"))
 (setq transient-values-file (xl-data-dir "transient/values"))
@@ -5246,7 +5260,7 @@ address later.
 :ID: c8a37b6a-46c7-406e-8793-1186f14407e0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! magit
   :xl-idle-require f s with-editor git-commit package eieio lv transient
   :xl-rule ("bottom" "magit" :newname "magit: ")
@@ -5262,7 +5276,7 @@ address later.
 :ID: 49088c3e-6d3a-41b7-aee4-f0bb34c71a0c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun magit/quit ()
   "Clean up magit buffers after quitting `magit-status'."
   (interactive)
@@ -5276,7 +5290,7 @@ address later.
 :ID:       a86e7a69-4e0a-41fd-aca7-66e514332e7f
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! evil-magit
   :xl-silence evil-magit-init
   :xl-before-call magit-status
@@ -5292,7 +5306,7 @@ address later.
 :ID: 96f0c876-533c-4b1a-a4c1-7b6c9bf58c03
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! git-gutter
   :commands git-gutter-mode)
 #+end_src
@@ -5316,7 +5330,7 @@ This package takes you to the last point you were at when you visited a file.
 :ID:       dda57b64-b645-4eda-be54-9dda4af35404
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! recenter-on-load (:after-while save-place-find-file-hook)
   "Recenter on cursor when loading a saved place."
   (when buffer-file-name (ignore-errors (recenter))))
@@ -5331,7 +5345,7 @@ As its name suggests, =save-place= is a built-in package that stores the buffer
 location you left off at in a particular buffer. When you visit that buffer
 again, you are taken to the location you left off. This is very convenient.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! saveplace
   :xl-after-call after-find-file
   :xl-config
@@ -5350,7 +5364,7 @@ revisit. In practice, I look at this list of files in addition to the buffers I
 already have open using a [[id:f26bedb3-a172-4543-afd0-4c47f5872d15][completion-framework]]. Because of this I rarely
 have to set out to look for a file with =dired=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! recentf
   :xl-before-call find-file
   :xl-idle-require easymenu tree-widget timer
@@ -5381,7 +5395,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 :ID:       54183df6-b4f5-4b01-9ddb-4054ef0583b0
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! savehist
   :xl-idle-require custom
   :xl-hook emacs-startup-hook
@@ -5397,7 +5411,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 :ID:       da2b6c31-d251-48aa-a6ed-8f01b9fa0b8d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! unpropertize-kill-ring (kill-emacs-hook :append t)
   "Remove text properties from `kill-ring'."
   (setq kill-ring
@@ -5410,7 +5424,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 :ID: eef8ea28-4de2-44ab-a09d-26f58c0a75ac
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! shrink-path
   :commands shrink-path)
 #+end_src
@@ -5435,7 +5449,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 :ID:       bb63f5b2-cc45-454b-a032-be248f801636
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! tab-bar-mode
   :xl-hook (tab-bar-mode-hook . tab-bar-history-mode)
   :xl-set
@@ -5453,7 +5467,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 I want the tabs to exist as a concept, but (ironically) I don't actually want
 them displayed.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! inhibit-tab-display (:after tab-bar-mode make-frame)
   "Inhibit the display of tags in tab-bar-mode."
   (--each (frame-list)
@@ -5472,7 +5486,7 @@ them displayed.
 :ID:       e4c30275-db62-4e6d-890c-6199b0594fd8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! desktop
   :xl-set
   (desktop-save                 . t)
@@ -5498,7 +5512,7 @@ really have been done by =desktop.el= but oh well.
 :ID:       e1ce2616-2280-435d-85c4-8d71c30c6a75
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar desktop:base-dir (concat XL-DATA-DIR "desktops/")
   "Directory where desktops should go.")
 #+end_src
@@ -5508,7 +5522,7 @@ really have been done by =desktop.el= but oh well.
 :ID:       fa173f38-2888-465a-8de4-282233322363
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun desktop:dirname (name)
   "Return the path where desktop named NAME should go."
   (require 'f)
@@ -5520,7 +5534,7 @@ really have been done by =desktop.el= but oh well.
 :ID:       3662ceaa-aed9-4dbc-bea9-7e1878237c87
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! ensure-desktop-directory (desktop-mode-hook)
   "Make `desktop:base-dir' if it does not exist."
   (mkdir desktop:base-dir t))
@@ -5531,7 +5545,7 @@ really have been done by =desktop.el= but oh well.
 :ID:       5286a22f-dc93-4e32-8a35-3bfbdfda8668
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun desktop:list ()
   "Return a list of the names of all desktops."
   (-difference (directory-files desktop:base-dir)
@@ -5543,7 +5557,7 @@ really have been done by =desktop.el= but oh well.
 :ID:       331367bb-a1eb-414f-89ef-386ba6fc1e60
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun desktop:create-desktop (name)
   "Create a new desktop named NAME."
   (let ((desktop-dirname (desktop:dirname name)))
@@ -5557,7 +5571,7 @@ really have been done by =desktop.el= but oh well.
 :ID:       691dd9bf-b207-4885-9f7c-b8791d972dc1
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun desktop:load-desktop (name)
   (desktop-change-dir (desktop:dirname name)))
 #+end_src
@@ -5569,7 +5583,7 @@ really have been done by =desktop.el= but oh well.
 
 This is an integration with desktop and tab mode.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun desktop/create-desktop-in-new-tab (name)
   "Create desktop named NAME in new tab.
 The tab's new name is the same as the desktop name."
@@ -5585,7 +5599,7 @@ The tab's new name is the same as the desktop name."
 :ID:       391c0817-bb2f-4334-b320-f039ab23cfb7
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun desktop/load-desktop-in-new-tab (name)
   "Create desktop named NAME in new tab.
 The tab's new name is the same as the desktop name."
@@ -5606,7 +5620,7 @@ The tab's new name is the same as the desktop name."
 :ID:       f7d3a8ce-7115-47d6-b0ac-2d078741a49a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun desktop:restore-helpful-buffer ()
   "Restore helpful buffer.")
 #+end_src
@@ -5629,7 +5643,7 @@ use emacs's built-in serialization of window configs. Usually, it is better to
 use something that's built-in. However, emacs's serialization has the drawback
 that it's not a lisp object; implying that it is not.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! workgroups2
   :commands wg-switch-workgroup
   :xl-ignore wg-change-modeline
@@ -5656,7 +5670,7 @@ This package provides a command that temporarily makes a window occupy full
 screen. And then reverts the window configuration to what it was again
 afterwards.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! zoom-window
   :commands zoom-window)
 #+end_src
@@ -5676,7 +5690,7 @@ use a typical window manager, you have to.
 :ID:       7b83cab0-d599-46c4-b20c-19ff33345ae3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! exwm
   :xl-before-call browse-url)
 #+end_src
@@ -5701,7 +5715,7 @@ I always want exwm to assume that if I'm using another window manager,
 I don't want to use exwm. Only problem is =exwm= aborts with an annoying
 =user-error=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (alet #'xl--load-and-initialize-exwm-maybe-advice
   (xl-add-advice #'browse-url :before it nil t))
 
@@ -5736,7 +5750,7 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
 :ID:       ce78d409-e635-4d94-b20e-38c2034ab5e8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +exwm--title-info (title)
   "Return the webpage and the program."
   (-let [(_ webpage program) (s-match "\\([^z-a]+\\) - \\([^z-a]+\\)\\'" title)]
@@ -5755,7 +5769,7 @@ there anymore. As a solution for this I came upon [[https://wkhtmltopdf.org/][wk
 downloads a given webpage as pdf. A consequence of doing this is that you will
 have access to all the webpages you used for research offline.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl-download-webpage-as-pdf (url webpage-title)
   "Save the webpage at URL to `XL-SCREENSHOT-DIR'."
   (let* ((program "wkhtmltopdf")
@@ -5775,7 +5789,7 @@ have access to all the webpages you used for research offline.
 :ID:       4f0436c4-bc37-49b0-a8a3-894e212d4d13
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun exwm-input::fake-key-to-id (event id)
   "Fake a key event equivalent to Emacs event EVENT and send it
  to program with x window ID."
@@ -5811,7 +5825,7 @@ have access to all the webpages you used for research offline.
 Emacs simulates a keypress to firefox--specifically the keypresses to select the
 current url and to add it to the kill ring.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +exwm--firefox-url ()
   "Save the current firefox url to kill ring."
   ;; We get the xwindow id of the buffer named Firefox
@@ -5833,7 +5847,7 @@ current url and to add it to the kill ring.
 :ID:       822cbb61-60b4-445e-9756-4bf797500375
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +exwm--qutebrowser-url ()
   (interactive)
   (let ((fid (exwm--buffer->id (current-buffer))))
@@ -5857,7 +5871,7 @@ current url and to add it to the kill ring.
 By default each exwm buffer is named =*EXWM*=. We want them to have
 a more descriptive name.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! rename-buffer-to-title (exwm-update-title-hook)
   "Rename buffer to title."
   (exwm-workspace-rename-buffer exwm-title))
@@ -5883,7 +5897,7 @@ windows).
 :ID:       d1bf0601-a995-48f7-ab80-86755ba9269a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar +exwm-char-mode-apps (list "emacs" "next" "nyxt" "qutebrowser")
   "List of applications to exwm should start in char-mode.")
 #+end_src
@@ -5893,7 +5907,7 @@ windows).
 :ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! start-in-char-mode (exwm-manage-finish-hook)
   "Start a program in char-mode if it's in `+exwm-char-mode-apps'."
   (when (--any-p (string-prefix-p it exwm-instance-name) +exwm-char-mode-apps)
@@ -5916,7 +5930,7 @@ Emacs's text editing capabilities on it.
 Concerning the loading of exwm-edit. Ideally, I should load it after
 certain applications where I'd use it need to be loaded.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! exwm-edit
   :commands exwm-edit
   :xl-config
@@ -5930,7 +5944,7 @@ certain applications where I'd use it need to be loaded.
 :ID: 293bc7c5-1320-4f3f-af2b-198d56694f71
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! exwm
   (funcall (get 'exwm-input-global-keys 'custom-set)
            'exwm-input-global-keys
@@ -5972,7 +5986,7 @@ certain applications where I'd use it need to be loaded.
 :ID: 6cb60d94-723b-48e5-850a-3483e78f6647
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/window-split-right-and-focus ()
   "Split window right and select the window created with the split."
   (interactive)
@@ -5984,7 +5998,7 @@ certain applications where I'd use it need to be loaded.
 :ID: d6a4a81f-007d-4b7e-97a3-e0bba3ff97a4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun xl/window-split-below-and-focus ()
   "Split window below and select the window created with the split."
   (interactive)
@@ -6006,7 +6020,7 @@ These bindings pertain to manipulating windows.
 Efficient window management in Emacs crucial for success. These keys all pertain
 to window/workspace actions.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "w"
   ""  (list :ignore nil :wk "window"))
@@ -6021,7 +6035,7 @@ This headline is for bindings that involve traversing windows. The typical
 bindings for moving up, down, left and right between windows. And as a bonus, a
 binding to.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "w"
   "h" (list :def #'windmove-left  :wk "left")
@@ -6036,7 +6050,7 @@ binding to.
 :ID:       6c49babb-b749-4501-8699-dd2d7f885488
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "w"
   "S" (list :def #'xl/window-split-below-and-focus :wk "split below and focus")
@@ -6050,7 +6064,7 @@ binding to.
 :ID:       218f650f-f52f-4cdf-9731-032631612ad3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "w"
   "d" (list :def #'delete-window        :wk "delete current")
@@ -6062,7 +6076,7 @@ binding to.
 :ID:       0aed1e9d-acff-430c-8372-23a620726bae
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "w"
   "M" (list :def #'maximize-window  :wk "maximize")
@@ -6076,7 +6090,7 @@ binding to.
 :ID:       864e890f-d67c-40bc-8f72-49f4d6a21d5d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "w"
   "x" (list :def #'ace-swap-window :wk "swap windows")
@@ -6088,7 +6102,7 @@ binding to.
 :ID:       8cb7ee3d-6d9e-4fbf-a96a-5f7cdc2aa363
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "w"
   "w" (list :ignore t :wk "workgroup"))
@@ -6115,7 +6129,7 @@ binding to.
 :ID:       07021099-6cea-4016-929b-d9310ea305f8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! separedit
   :commands separedit)
 #+end_src
@@ -6133,7 +6147,7 @@ buffer. It's the same concept as org-src buffers but is not tied to org-mode.
 :ID:       d08adcae-ab17-41f1-94c9-1d9a8cb385d7
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! edit-indirect
   :commands edit-indirect)
 #+end_src
@@ -6151,7 +6165,7 @@ description and there's the case of a new one.
 
 ****** init
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-edit-paragraph
   :xl-ensure nil
   :xl-nameless ("oep" . "org-edit-paragraph")
@@ -6164,7 +6178,7 @@ description and there's the case of a new one.
 
 ****** set up tempo completion
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! enable-org-tempo-templates (org-edit-paragraph:mode-hook)
   (tempo-use-tag-list 'tempo:org-mode-taglist))
 
@@ -6180,7 +6194,7 @@ description and there's the case of a new one.
 :ID:       74367212-cbd0-4871-94d5-24980e997bd7
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-edit-paragraph:bounds ()
   "Return the bounds of description at headline.
 If there is no existing description return nil."
@@ -6207,7 +6221,7 @@ If there is no existing description return nil."
 It is my preference to have one blank line after a description--or any org item
 for that matter. I just find it much more readable and less cluttered.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar org-edit-paragraph:default-post-blanks 1
   "Number of blank lines that should follow a description.")
 #+end_src
@@ -6228,7 +6242,7 @@ Most of the time I will want to add to the end of a description. Therefore, I
 want the cursor to start at the last non-whitespace character of the
 description.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-edit-paragraph:goto-last-non-white ()
   (goto-char (point-max))
   (skip-chars-backward "\n\s"))
@@ -6244,7 +6258,7 @@ the description buffer so that if we end up committing a change the description
 will be placed properly in relation to what's below it. This hook is designed to
 make sure this happens.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-edit-paragraph:add-newlines ()
   "Add newlines."
   (save-excursion
@@ -6263,7 +6277,7 @@ the description buffer when there's no existing description, we could
 inadvertently edit the source buffer in this case. So this hook is to remove any
 newlines added in the case that nothing was changed.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-edit-paragraph:maybe-remove-newline ()
   "Remove newline if that's all there is."
   (alet (buffer-string)
@@ -6281,7 +6295,7 @@ The way I've set things up editing descriptions is it's own "thing". I'm going
 to be adding hooks and maybe even binding keys with editing descriptions in mind.
 Therefore, I think it's worthy to give it it's own mode.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-minor-mode org-edit-paragraph:mode
   "Mode for editing org descriptions.")
 #+end_src
@@ -6295,7 +6309,7 @@ The edit description function requires =org-ml= and =edit-indirect=. I don't
 know if this is the best way to declare these dependencies. It certaintly is
 efficient.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (xl-load-before-call 'org-ml #'org/dwim-edit-description)
 (xl-load-before-call 'edit-indirect #'org/dwim-edit-description)
 #+end_src
@@ -6313,7 +6327,7 @@ We need to make sure that we respect [[helpvar:edit-indirect-after-creation-hook
 our description management stuff before anything is done in that hook. It may be
 worth it to consider creating a hook specifically for org descriptions.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/dwim-edit-description ()
   (interactive)
   (-let* (((beg . end) (org-edit-paragraph:bounds))
@@ -6342,7 +6356,7 @@ up appending more commentary to the existing description. I think it will save
 me more time making that common case easier than the cost for the few situations
 where I don't do this.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! evil
   (xl-add-hook 'org-edit-paragraph:mode-hook #'evil-insert-state))
 #+end_src
@@ -6352,7 +6366,7 @@ where I don't do this.
 :ID:       240acf8a-621e-4e44-9c11-250b70a0e3dc
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (alet (list #'auto-capitalize-mode #'aggressive-fill-paragraph-mode
 	    #'org-link-minor-mode)
   (xl-add-hook 'org-edit-paragraph:mode-hook it))
@@ -6374,7 +6388,7 @@ source block editing tools used by org mode.
 :ID:       e0ed611a-e3ec-4d7b-9768-3d7e947d9c9e
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-source
   :xl-rule ("bottom" "org source blocks" :newname "\\*Org[[:space:]]\\(?:S\\(?:ource\\|rc\\)\\).+")
   :xl-before-call
@@ -6386,7 +6400,7 @@ source block editing tools used by org mode.
 :ID:       2605fd28-b61f-46b7-a212-6291e5fd0b0a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (alet (list #'org/dwim-edit-source-block #'org/dwim-edit-description)
   (xl-load-before-call 'org-ml it)
   (xl-load-before-call 'edit-indirect it))
@@ -6397,7 +6411,7 @@ source block editing tools used by org mode.
 :ID:       9e55d8ab-23d8-4b40-beac-ab0fb151f02f
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-minor-mode org-source:mode ())
 #+end_src
 
@@ -6411,7 +6425,7 @@ source block editing tools used by org mode.
 :ID:       adc49d00-604c-47c7-b8fd-df3a30eb243a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-source:remove-if-only-newline ()
   (when (string= (buffer-string) "\n")
     (erase-buffer)))
@@ -6425,7 +6439,7 @@ source block editing tools used by org mode.
 It is my preference to have one blank line after a description--or any org item
 for that matter. I just find it much more readable and less cluttered.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar org-source:default-post-blanks 1
   "Number of blank lines that should follow a description.")
 #+end_src
@@ -6443,7 +6457,7 @@ The style in which I wrote this function is different from the last because it
 was inconvenient to get the start and end points of the source block contents. I
 have not finished with this source block.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/dwim-edit-source-block ()
   "Edit org source block."
   (interactive)
@@ -6475,7 +6489,7 @@ A common annoyance is dealing accidentally leaving trailing whitespace in the
 source buffer and then finding out when you see it written to the org file. With
 this I never have to think about this again.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (xl-add-hook 'org-edit-source-mode-hook #'delete-trailing-whitespace)
 #+end_src
 
@@ -6488,7 +6502,7 @@ I want quick, convenient bindings I can use to abort or commit (which is
 =edit-indirect= lingo for writing the contents of the buffer back into its source
 file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-localleader-key!
   :keymaps 'edit-indirect-mode-map
   "," #'edit-indirect-commit
@@ -6509,7 +6523,7 @@ larger text objects. It's saves me keystrokes.
 :ID:       41a1cebc-8da8-4e5c-8258-2ce440f1af50
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! expand-region
   :commands er/expand-region er/contract-region er/mark-symbol)
 #+end_src
@@ -6519,7 +6533,7 @@ larger text objects. It's saves me keystrokes.
 :ID:       639824e1-0dcf-46bc-98b4-c70b9c7cb2a6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! quit-expand-region (:before evil-escape)
   "Properly abort an expand-region region."
   (when (memq last-command '(er/expand-region er/contract-region))
@@ -6531,7 +6545,7 @@ larger text objects. It's saves me keystrokes.
 :ID: 417c9c53-a776-4779-9afc-1eaa35a145c6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! 'visual
   "V" #'er/contract-region
   "v" #'er/expand-region)
@@ -6557,7 +6571,7 @@ convert a singular noun to a plural one. For example ~(plural-pluralize
 My intended use for this package is to help automate prompts, docstrings or the
 like that concern N number of things, where N could be 1 or more things.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! plural
   :commands plural-make-plural
   :xl-config
@@ -6574,7 +6588,7 @@ like that concern N number of things, where N could be 1 or more things.
 [[https://github.com/emacsmirror/auto-capitalize][auto-capitalize]] automatically capitalizes the first word of a sentence for me.
 It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capitalize-words]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! auto-capitalize
   :xl-hook text-mode-hook
   :xl-set
@@ -6586,7 +6600,7 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
 :ID:       8bf270a6-6003-4430-bb03-0b665d5a162f
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! spell-number
   :xl-set
   (spelln-language          . 'english-us)
@@ -6603,7 +6617,7 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
 This package is the inverse of =rx=. It takes a regular expression and returns the
 =rx= representation.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! xr :commands xr)
 #+end_src
 
@@ -6626,7 +6640,7 @@ time and after certain commands like [[helpfn:switch-to-buffer][switch-to-buffer
 Note that this is the same strategy employed by [[id:c550f82a-9608-47e6-972b-eca460015e3c][idle-require]] to load packages.
 Saving files like this reduces the likelihood of user delays.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! super-save
   :xl-before-call find-file
   :xl-set
@@ -6644,7 +6658,7 @@ Saving files like this reduces the likelihood of user delays.
 :ID: 4f57fd49-b466-4eea-b91a-2cc8f0b07297
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! aggressive-fill-paragraph)
 #+end_src
 
@@ -6656,7 +6670,7 @@ Saving files like this reduces the likelihood of user delays.
 [[https://github.com/Malabarba/aggressive-indent-mode][aggressive-indent]] indents portions of the text your working on as your typing
 it. It's pretty smart and very convenient.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! aggressive-indent
   :xl-hook emacs-lisp-mode-hook)
 #+end_src
@@ -6676,7 +6690,7 @@ it. It's pretty smart and very convenient.
 :ID:       e26f4c55-9585-4544-bed6-9733d50823e7
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! smartparens
   :xl-before-call evil-expression evil-ex
   :xl-hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode)
@@ -6697,7 +6711,7 @@ it. It's pretty smart and very convenient.
 :ID: f1c64411-ad51-4c24-8dad-b4aa7b8fc3b5
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! smartparens :config
   (defhook! init-smartparens-config (smartparens-mode-hook)
     (require 'smartparens-config)
@@ -6709,7 +6723,7 @@ it. It's pretty smart and very convenient.
 :ID: fda1875b-b3f7-4f43-83b1-873f3db3ae77
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! smartparens :config
   (defhook! disable-smartparens-navigate-skip-match (after-change-major-mode-hook)
     "Disable smartparents skip match feature."
@@ -6722,7 +6736,7 @@ it. It's pretty smart and very convenient.
 :ID: e860ce7e-aaac-477b-a373-a8b01957481d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! enable-smartparens-maybe (minibuffer-setup-hook)
   "Enable `smartparens-mode' in the minibuffer."
   (when (memq this-command '(eval-expression evil-ex))
@@ -6737,7 +6751,7 @@ it. It's pretty smart and very convenient.
 [[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] colors parentheses different colors based on level. This is a
 great idea! It makes it really easy to see which parentheses go together.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! rainbow-delimiters
   :xl-hook prog-mode-hook reb-mode-hook
   :xl-set
@@ -6749,7 +6763,7 @@ great idea! It makes it really easy to see which parentheses go together.
 :ID:       6aeccc22-2ebe-43c0-a245-5535b5bd6f6c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! outshine :commands outshine-mode)
 #+end_src
 
@@ -6794,7 +6808,7 @@ want =[]= or ={=}= or =()= or =""=. The main drawback you cannot distinguish bet
 surround characters at multiple levels--it just takes the closest one. In
 practice, this is rarely an issue.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! evil
   (evil-define-text-object evil:textobj-inner-form (count &rest _)
     "Inner sexp object."
@@ -6834,7 +6848,7 @@ selected instead of just "hello world".
 
 Why not just go to the end of the ="= like any other around operator?
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! evil
   (evil-define-text-object evil:textobj-a-string (count &rest _)
     "An outer comment text object as defined by `lispy--bounds-string'."
@@ -6853,7 +6867,7 @@ Why not just go to the end of the ="= like any other around operator?
 
 =evil-lion= provides a very useful way of aligning text.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! evil-lion
   :commands evil-lion-right evil-lion-left)
 
@@ -6870,7 +6884,7 @@ Why not just go to the end of the ="= like any other around operator?
 
 [[https://github.com/bling/evil-visualstar][evil-visualstar]]
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! evil-visualstar
   :general
   (:keymaps 'evil-visual-state-map
@@ -6883,7 +6897,7 @@ Why not just go to the end of the ="= like any other around operator?
 :ID:       9ab88644-3c33-463c-8f24-3b048209e082
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! evil-surround
   :xl-hook prog-mode-hook text-mode-hook)
 #+end_src
@@ -6902,7 +6916,7 @@ and provides facilities for writing custom extensions. Also see our page on
 :ID:       af3a9791-76ac-4fd5-96fe-d361cef3b5b3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! evil
   :demand t
   :xl-hook (window-setup-hook . evil-mode))
@@ -6913,7 +6927,7 @@ and provides facilities for writing custom extensions. Also see our page on
 :ID:       f7ece898-25e2-4b2c-94f3-e832a687114c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (custom-set-default 'evil-want-C-u-scroll t)
 #+end_src
 
@@ -6922,7 +6936,7 @@ and provides facilities for writing custom extensions. Also see our page on
 :ID:       9f184a21-ef04-4b3d-a1b7-88a16eaa7b97
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! evil
   :xl-set
   (evil-want-visual-char-semi-exclusive . t)
@@ -6960,7 +6974,7 @@ Changing the cursor shape and color depending on the state is a convenient and
 asthetically pleasing way of determining which state you're in. Some add some
 modeline indicator for this but I find that the cursor suffices.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! setup-cursor (evil-mode-hook)
   "Initialize the default cursor shape and size."
   (setq evil-insert-state-cursor   '((bar . 3)   "chartreuse3"))
@@ -6981,7 +6995,7 @@ After a theme is loaded, the cursor color won't automatically update. Therefore,
 I add a hook in [[helpvar:xl-after-load-theme-hook][xl-after-load-theme-hook]]. Now after a new theme is loaded, the
 cursor color will update.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! refresh-evil-cursor (xl-after-load-theme-hook)
   "Enable cursor refreshing after theme change."
   (when (bound-and-true-p evil-mode)
@@ -6995,7 +7009,7 @@ cursor color will update.
 
 Noctuid pointed out
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! make-normal-state-default (evil-mode-hook)
   "Make normal state the default `evil-mode' state."
   (setq evil-normal-state-modes (append evil-emacs-state-modes evil-normal-state-modes))
@@ -7026,7 +7040,7 @@ last state is normal state if the minibuffer is aborted. Using a
 =evil:state-before-minibuffer= ensures that the state will be reverted to
 the correct one.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! preserve-prior-evil-state (minibuffer-enter-hook)
   "Save state before entering the minibuffer and enter insert state."
   (when (bound-and-true-p evil-mode)
@@ -7052,7 +7066,7 @@ the correct one.
 
 We want escape to be a general "quit everything".
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (general-def :states '(emacs insert) [escape] #'evil-force-normal-state)
 
 (defadvice! exit-everything (:after evil-force-normal-state lispyville-normal-state)
@@ -7075,7 +7089,7 @@ press =jk= really quickly to invoke escape.
 
 This is better than evil escape as it only binds in insert.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! key-chord
   :xl-silence key-chord-mode
   :xl-before-call evil-insert-state evil-emacs-state
@@ -7113,7 +7127,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :ID:       fad4cb7c-ff1e-485d-99d1-f55384c26402
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! lispyville :xl-hook emacs-lisp-mode-hook)
 #+end_src
 
@@ -7122,7 +7136,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :ID: 5567b70d-60f2-4161-9a19-d6098f45cd95
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! lispyville
   :general
   (:keymaps 'lipsyville-mode-map
@@ -7144,7 +7158,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :ID:       f9f82ebe-5749-452f-ba49-269e60526b04
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! lispyville
   :general
   (:keymaps 'evil-inner-text-objects-map
@@ -7160,7 +7174,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :ID:       9dda9a1b-c76f-4537-9554-45ad3c77977a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! evil-outer-text-objects-map
   "a" #'lispyville-a-atom
   "l" #'lispyville-a-list
@@ -7174,7 +7188,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :ID: 21626641-98e3-4134-958d-03227e4da6b5
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! 'normal lispyville-mode-map
   ">" #'lispyville-slurp
   "<" #'lispyville-barf)
@@ -7191,7 +7205,7 @@ to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]]
 
 Sometimes =evil-normal-state= enters visual state.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! '(emacs insert) lispyville-mode-map [escape] #'lispyville-normal-state)
 #+end_src
 
@@ -7200,7 +7214,7 @@ Sometimes =evil-normal-state= enters visual state.
 :ID: 1fbafa78-87a0-45ee-9c7c-0c703df2ac66
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! '(emacs insert) lispyville-mode-map
   "SPC" #'lispy-space
   ";"   #'lispy-comment)
@@ -7225,7 +7239,7 @@ very useful to me.
 :ID:       37bd49d1-3e34-4579-87d2-e791278be017
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! lispy
   :xl-hook (emacs-lisp-mode-hook . lispy-mode))
 #+end_src
@@ -7235,7 +7249,7 @@ very useful to me.
 :ID:       20d99206-ddc4-42db-b4c1-8721decbaf8d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq lispy-avy-style-paren 'at-full)
 (setq lispy-eval-display-style 'overlay)
 (setq lispy-safe-delete t)
@@ -7256,7 +7270,7 @@ very useful to me.
 :ID:       55955252-d35f-493f-bb2c-73a2363ca1c6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! 'normal evil-lispy-mode-map
   "H" #'evil-lispy/enter-state-left
   "L" #'evil-lispy/enter-state-right)
@@ -7269,7 +7283,7 @@ very useful to me.
 
 Key themes are keybinding themes used for.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! lispy (lispy-set-key-theme '(special)))
 #+end_src
 
@@ -7285,7 +7299,7 @@ Key themes are keybinding themes used for.
 
 You'll get void variable if you don't do this.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! (avy lispy) (setq lispy-avy-keys avy-keys))
 #+end_src
 
@@ -7299,7 +7313,7 @@ You'll get void variable if you don't do this.
 :ID:       c44cf8dc-e80c-4be6-9c11-221b446cc87b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set! evil-lispy-state-cursor  '((bar . 4) "red"))
 #+end_src
 
@@ -7308,7 +7322,7 @@ You'll get void variable if you don't do this.
 :ID:       18173a29-7442-473e-a851-f46182f56447
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! evil-lispy
   :hook lispy-mode-hook)
 #+end_src
@@ -7320,7 +7334,7 @@ You'll get void variable if you don't do this.
 
 [[https://github.com/Fanael/highlight-quoted][highlight-quoted]] highlights quotes, backticks and.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! highlight-quoted
   :xl-hook emacs-lisp-mode-hook)
 #+end_src
@@ -7330,7 +7344,7 @@ You'll get void variable if you don't do this.
 :ID:       fefc5700-3bd7-4a89-ae7b-bf68368e8bc4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! macrostep
   :commands macrostep-expand
   :init
@@ -7365,7 +7379,7 @@ for the line at point. Since Fuco1 did not modify ~calculate-lisp-indent~ the
 of the problem. You can check out a more in-depth explanation looking at my
 [[https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of_quoted_lists/][reddit-post]] or looking at an answer I gave to [[https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned][this question]].
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! properly-calculate-indent (:override calculate-lisp-indent)
   "Add better indentation for quoted and backquoted lists.
 The change to this function."
@@ -7540,7 +7554,7 @@ recipe looks like. The problem is by default [[][]] prints something on one
 line. And to avoid long lines, emacs truncates the output so you can't even see
 the whole thing.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! ppp)
 #+end_src
 
@@ -7549,7 +7563,7 @@ the whole thing.
 :ID:       2c419004-a7c1-4de5-bada-8420505cea90
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! elisp-demos
   ;; :xl-advice (helpful-update :after #'elisp-demos-advice-helpful-update)
   )
@@ -7565,7 +7579,7 @@ the whole thing.
 :ID:       bbbba4d9-a2f4-47b1-8447-082f8ea4cf86
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsnippet! defvar ("dvar" emacs-lisp-mode)
   "Insert a defvar expression."
   '("(defvar " (p "var" varname) " " (p "initial-value" value)
@@ -7577,7 +7591,7 @@ the whole thing.
 :ID:       3fdb199e-b76e-41ea-85fb-4f62c398453d
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsnippet! defun ("defn" emacs-lisp-mode)
   "Insert a defun form"
   '("(defun " (p "name" name) " " "(" (p "args" it) ")"
@@ -7591,7 +7605,7 @@ the whole thing.
 :ID:       8eb34ddf-ae81-42dd-bf7a-4be9562ceae5
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsnippet! when ("when" emacs-lisp-mode)
   "Insert a when expression"
   '("(when " (p "condition" condition) n> (r "body" body) ")" (p "" last)))
@@ -7612,7 +7626,7 @@ the whole thing.
 :ID:       42e759b0-c676-4b87-ac84-20796500da5a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org
   :xl-ensure (:host github :type git :repo "yantar92/org"
 	      :branch "feature/org-fold" :files (:defaults "contrib/lisp/*.el"))
@@ -7627,7 +7641,7 @@ the whole thing.
 :ID:       97a3bb5a-f485-45d0-a7f4-4bdd3963a16b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar org-capture:file (concat org-directory "capture.org"))
 #+end_src
 
@@ -7636,7 +7650,7 @@ the whole thing.
 :ID:       b0aa3f0b-876a-4527-b8ba-4fdac5e7ebe8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org
   :xl-set
   (org-fontify-emphasized-text        . t)
@@ -7660,7 +7674,7 @@ the whole thing.
 :ID:       939d4fd6-85df-4ba2-8a67-23343d484bf9
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org
   :xl-idle-require
   calendar find-func format-spec org-macs org-compat org-faces org-entities
@@ -7675,7 +7689,7 @@ the whole thing.
 
 This hack should be improved, but for now it is what it is.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! org
   (when (zerop (string-to-number (org-version)))
     (defadvice! use-a-fake-version (:override org-version)
@@ -7700,7 +7714,7 @@ Org mode demands its own editing.
 :ID:       25a91495-073d-4557-8407-49ea63f13383
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! 'normal org-mode-map
   "j" #'org/dwim-next-line
   "k" #'org/dwim-previous-line)
@@ -7711,7 +7725,7 @@ Org mode demands its own editing.
 :ID:       a950d732-b0d2-46b9-82ce-1b9a474e7d76
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-localleader-key!
   :keymaps 'org-mode-map
   "o" (list :def #'outorg-edit-as-org         :wk "edit as org")
@@ -7735,7 +7749,7 @@ Org mode demands its own editing.
 Org mode just does not lend itself to typical evil bindings. These bindings are
 much more useful considering the specific structure of org mode documents.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (general-def 'normal org-mode-map
   "E" #'org/dwim-eval-block
   "e" #'org/dwim-eval-block
@@ -7764,7 +7778,7 @@ much more useful considering the specific structure of org mode documents.
 :ID:       3f4144ee-a780-478e-a1ad-47591f181ff3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-key! '(normal) org-mode-map
   ;; Doesn't work for some reason -> "TAB" #'outline-toggle-children
   "D" #'org-cut-subtree
@@ -7783,7 +7797,7 @@ much more useful considering the specific structure of org mode documents.
 :ID:       0431e49f-ef6b-4edb-854c-6427479e5ee2
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +org-heading-goto-start ()
   "Go to the end of headline."
   (save-match-data
@@ -7814,7 +7828,7 @@ This shows all headlines that make up the branch of the current headine and
 their children. This is the typical behavior you would expect in any outlining
 program.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +org-show-branch ()
   "Reveal the current org branch.
 Show all of the current headine's parents and their children. This includes this
@@ -7842,7 +7856,7 @@ Notably, I do not try to conserve the return value of =xl/goto-line= or
 =xl/jump-to-headline= because these functions are and should only be used for
 their side-effects.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! show-current-branch-in-org-mode (:after xl/goto-line org/goto-headline)
   "Properly unfold nearby headlines and reveal current headline."
   (when (eq major-mode 'org-mode)
@@ -7854,7 +7868,7 @@ their side-effects.
 :ID:       8314f2e0-da63-4f2f-ad89-b97987ca5843
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/dwim-return ()
   "Do what I mean."
   (interactive)
@@ -7869,7 +7883,7 @@ their side-effects.
 :ID: d8d118a7-78e8-4602-81b3-17fd1d8ab79c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/dwim-next-line (&optional backward)
   "Go to the start of the next heading.
 If DIR is a negative integer, go the opposite direction: the start of the
@@ -7890,7 +7904,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
 :ID: d8d118a7-78e8-4602-81b3-17fd1d8ab79c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/dwim-next-line (&optional backward)
   "Go to the start of the next heading.
 If DIR is a negative integer, go the opposite direction: the start of the
@@ -7906,7 +7920,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
 :ID: e7562921-77ca-4d90-be57-1d586ec26ee5
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/dwim-previous-line (&optional forward)
   (interactive)
   (funcall #'org/dwim-next-line (not forward)))
@@ -7927,7 +7941,7 @@ options. For this reason I wrote my own insert heading functions.
 :ID: e0dcf718-120c-488d-9d37-96243132bf0b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defvar +org-newlines-between-headings "\n\n"
   "Number of newlines between headings.")
 #+end_src
@@ -7937,7 +7951,7 @@ options. For this reason I wrote my own insert heading functions.
 :ID: 6c227dea-e10b-4f86-a01b-5d223d18e3a4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/insert-heading-above (&optional below)
   "Insert a heading above the current heading."
   (interactive)
@@ -7949,7 +7963,7 @@ options. For this reason I wrote my own insert heading functions.
 :ID: b059a431-e29c-4f2c-ab5e-8d2d02636405
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/insert-heading-below (&optional above)
   "Insert heading below."
   (interactive)
@@ -7974,7 +7988,7 @@ options. For this reason I wrote my own insert heading functions.
 :ID: cf910dcf-6250-4b6a-80d5-63ac457d4a81
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/insert-subheading ()
   "Insert subheading below current heading."
   (interactive)
@@ -7987,7 +8001,7 @@ options. For this reason I wrote my own insert heading functions.
 :ID:       e03149e3-500f-45d6-a4c1-b2f69947b4d5
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/dwim-insert-elisp-block ()
   "Insert elisp block."
   (interactive)
@@ -7997,7 +8011,7 @@ options. For this reason I wrote my own insert heading functions.
     (org-end-of-subtree)
     (goto-char (line-end-position))
     (insert (concat "\n\n"
-                    "#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el"
+                    "#+begin_src emacs-lisp
                     "\n"
                     "#+end_src"))
     (forward-line -1)))
@@ -8008,7 +8022,7 @@ options. For this reason I wrote my own insert heading functions.
 :ID:       b8b0c3a2-2cdc-424f-9cd6-ef3ad3d1512c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/choose-tags ()
   "Select tags to add to headline."
   (interactive)
@@ -8025,7 +8039,7 @@ options. For this reason I wrote my own insert heading functions.
 :ID: e804805a-ba96-41d0-aa6f-6756c65e9abf
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org/dwim-eval-block ()
   "Eval block contents."
   (interactive)
@@ -8053,7 +8067,7 @@ and painlessly.
 :ID:       cc0ae97d-4cce-42de-bea0-7e195bd6168b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsnippet! helpvar ("hvar" org-mode)
   "Help function link."
   `("[[helpvar:" (C var "variable: " ,obarray helpful--variable-p) "][" (s var) "]]"))
@@ -8064,7 +8078,7 @@ and painlessly.
 :ID:       7bd2651e-e3f8-4e76-822c-2208b71af0c3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsnippet! helpfn ("hfn" org-mode)
   "Help function link."
   '("[[helpfn:" (C fn "function: " help--symbol-completion-table) "][" (s fn) "]]"))
@@ -8080,7 +8094,7 @@ and painlessly.
 :ID:       c7a7e21c-88b9-485e-9ae3-874d324981b5
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq sl-backlink-prefix nil)
 (setq sl-related-into-drawer "LINKS")
 (setq sl-backlink-into-drawer "BACKLINKS")
@@ -8093,7 +8107,7 @@ and painlessly.
 
 This is a minor mode for displaying links in non-org buffers.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-link-minor-mode
   :xl-hook outshine-mode-hook)
 #+end_src
@@ -8109,7 +8123,7 @@ be fixed. When I use =todo= I feel obligated to write what I have to do and
 often I don't know that. Who knows? It could even be that nothing needs to be
 done.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (set! org-todo-keywords
       '((sequence "ISSUE" "CLOSED")
 	(sequence "TODO" "DONE")))
@@ -8120,7 +8134,7 @@ done.
 :ID:       7f3ec0ad-45f8-4100-970e-773cfb9a625b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-ml)
 #+end_src
 
@@ -8132,7 +8146,7 @@ done.
 =org-journal= is a package that provides functions to maintain a simple
 diary/journal using =org-mode=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-journal
   :commands org-journal-new-entry
   :xl-set
@@ -8146,7 +8160,7 @@ diary/journal using =org-mode=.
 :ID:       e00378a1-adcf-4e83-8533-b6b442b5f362
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! org-src
   :xl-rule ("bottom" "org source" :newfile "\\*Org Src")
   :xl-set
@@ -8173,7 +8187,7 @@ diary/journal using =org-mode=.
 Note that you should have bindings that are different for entering and exiting
 source blocks.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! enable-org-exit-src-bindings (org-src-mode-hook)
   (define-localleader-key!
     "," (list :def #'org-edit-src-exit  :wk "exit source block")
@@ -8191,7 +8205,7 @@ into your head while keeing disctractions to a minimum.
 
 ****** ts
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! ts)
 #+end_src
 
@@ -8203,7 +8217,7 @@ into your head while keeing disctractions to a minimum.
 Note, that I can't use =evil-set-initial-state= here because it only works
 for major modes.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! org-capture
   ;; :xl-before-call ((ts org-ml) . org-capture)
   :xl-rule ("bottom" "capture" :newname "\\`CAPTURE-.+")
@@ -8223,7 +8237,7 @@ for major modes.
 By default org capture templates display a header line. This was the answer to [[https://emacs.stackexchange.com/questions/53648/eliminate-org-capture-message][my
 question]]. I need to disable =org-capture's= header-line.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! disable-header-line (org-capture-mode-hook)
   "Turn of the header line message."
   (setq-local header-line-format nil))
@@ -8236,7 +8250,7 @@ question]]. I need to disable =org-capture's= header-line.
 
 =org-capture= deletes all the other windows in the frame.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! dont-delete-other-windows (:around org-capture-place-template)
   "Don't delete other windows when opening a capture template."
   (cl-letf (((symbol-function #'delete-other-windows) #'ignore))
@@ -8248,7 +8262,7 @@ question]]. I need to disable =org-capture's= header-line.
 :ID:       f7902aec-a02f-473b-a91e-662841d3d901
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 #+end_src
 
 ****** completing-read org-capture
@@ -8265,7 +8279,7 @@ let's me choose the template via completing-read.
 :ID:       c4fdb186-3509-42f1-9c3e-8bf80a5e6b47
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-capture:template-list ()
   "Return a list of capture templates."
   (thread-first org-capture-templates
@@ -8278,7 +8292,7 @@ let's me choose the template via completing-read.
 :ID:       4dd55ff4-7e6e-41f5-82f8-0db597959a17
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-capture/choose-template ()
   (interactive)
   (require 'org-capture)
@@ -8305,7 +8319,7 @@ template element as you're writing it.
 :ID:       0118ba87-219b-4611-9743-19228accaa2c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! doct
   :xl-before-call org-capture)
 #+end_src
@@ -8321,7 +8335,7 @@ Additionally, it removes any capture templates with the same key so that I can
 freely re-evaluate it without cluttering my capture templates with duplicate
 entries.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun doct:add-to-templates (declarations)
   "Set `org-capture-templates' to the result of (doct DECLARATIONS).
 Before adding result, remove any members of `org-capture-templates' with the
@@ -8347,7 +8361,7 @@ same key as the one(s) being added."
 
 For capture templates that have deadlines, I set a start and an end date.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-capture:-default-planning-node (&optional days-difference)
   "Return the default planning node for `org-capture-templates'."
   (let* ((days-difference (or days-difference 7))
@@ -8378,7 +8392,7 @@ This is a capture template for emacs usage.
 
 Instead of passing in the string I use =org-ml= to print the string.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun org-capture:emacs-template ()
   "Return emacs capture template."
   (->> (org-ml-build-headline! :title-text "%?")
@@ -8394,7 +8408,7 @@ Instead of passing in the string I use =org-ml= to print the string.
 :ID:       2682910c-9620-4cbf-ab71-371ed29e25a1
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (after! org-capture
   (doct:add-to-templates
    (list "emacs"
@@ -8413,7 +8427,7 @@ Instead of passing in the string I use =org-ml= to print the string.
 =org-clock= is a built-in package that provides time logging functions for
 tracking the time you spend on a particular task.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! org-clock
   :commands org-clock-in org-clock-goto
   :xl-hook (kill-emacs-hook . org-clock-save)
@@ -8438,7 +8452,7 @@ for a certain block of time is a must. =org-agenda= is this overview.
 :ID:       efa9d237-b055-4bfb-a1f9-86d964b5f007
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! org-agenda
   :xl-rule ("left" "org agenda" :newname "\\*Org Agenda\\*")
   :xl-gc-pause org-agenda-list
@@ -8461,7 +8475,7 @@ for a certain block of time is a must. =org-agenda= is this overview.
 =org= functions are known to try to configure buffer displays themselves. This
 forces agenda view to rely on [[helpvar:display-buffer-alist][display-buffer-alist]] for it's display.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! use-display-buffer (:override (abuf filter-alist) org-agenda-prepare-window)
   "Use `display-buffer' to display the agenda buffer.
 Unlike `org-agenda-prepare-window', this function does not store the window configuration."
@@ -8488,7 +8502,7 @@ org agenda buffer is displayed.
 :ID:       e1fdf658-1fe4-40d5-9dbf-626a39f7d2ae
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-super-agenda
   :xl-before-call org-agenda-list
   :xl-config
@@ -8500,7 +8514,7 @@ org agenda buffer is displayed.
 :ID:       6dfc0415-2945-4259-a782-b569fcb397ea
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! org-refile
   :xl-set
   (org-refile-targets                     . nil)
@@ -8519,7 +8533,7 @@ org agenda buffer is displayed.
 storing universally unique IDs. This is primarily used to disguish and
 referenance org headlines.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! org-id
   :xl-hook (org-insert-heading-hook . org-id-get-create)
   :xl-set
@@ -8534,7 +8548,7 @@ referenance org headlines.
 :ID:       c4428756-a804-47e8-9586-f63b82dd1561
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-superstar
   :xl-hook org-mode-hook
   :xl-set
@@ -8547,7 +8561,7 @@ referenance org headlines.
 :ID:       c4ff4407-774c-4028-bb9d-01412fdfc8d2
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-fancy-priorities
   :xl-hook org-mode-hook)
 #+end_src
@@ -8562,7 +8576,7 @@ referenance org headlines.
 :ID:       cc0ae97d-4cce-42de-bea0-7e195bd6168b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsnippet! helpvar ("hvar" org-mode)
   "Help function link."
   `("[[helpvar:" (C var "variable: " ,obarray helpful--variable-p) "][" (s var) "]]"))
@@ -8573,7 +8587,7 @@ referenance org headlines.
 :ID:       7bd2651e-e3f8-4e76-822c-2208b71af0c3
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defsnippet! helpfn ("hfn" org-mode)
   "Help function link."
   '("[[helpfn:" (C fn "function: " help--symbol-completion-table) "][" (s fn) "]]"))
@@ -8584,7 +8598,7 @@ referenance org headlines.
 :ID:       f6282ee4-a4b5-4cec-b275-947655516583
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! org-tanglesync
   :xl-set
   (org-tanglesync-watch-files . (-map #'expand-file-name '("~/README.org"))))
@@ -8618,7 +8632,7 @@ This package increases or decreases the font of the current frame. It differs
 from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale-decrease][text-scale-decrease]] in that it applies this
 "zooming" to the whole frame instead of the current buffer.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! zoom-frm
   :xl-set
   (frame-zoom-font-difference . 0.5)
@@ -8639,7 +8653,7 @@ These variables do stuff with displaying lines and separators to make the
 modeline more visible. I do that myself with =window-divider= so I don't need
 this.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! mini-modeline
   :demand t
   :xl-hook (emacs-startup-hook . mini-modeline-mode)
@@ -8657,7 +8671,7 @@ If you don't set this, mini-modeline's background color won't
 update with the theme. This is probably what the default value of this
 variable should be anyway.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! mini-modeline
   :xl-set
   (mini-modeline-face-attr . '(:inherit default)))
@@ -8668,7 +8682,7 @@ variable should be anyway.
 :ID:       a7d11a8b-e792-43e5-9992-10df562e17ea
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq mini-modeline-l-format
       '("%e" mode-line-buffer-identification))
 #+end_src
@@ -8678,7 +8692,7 @@ variable should be anyway.
 :ID:       fd79e9cb-40d7-4320-9b1d-248da4330bca
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (setq mini-modeline-r-format
       '("%e"
 	(:eval (awhen (mini-modeline:display-current-workgroup)
@@ -8691,7 +8705,7 @@ variable should be anyway.
 :ID:       37f062a8-b9d9-4533-ba8e-d675a1d5f10a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun mini-modeline:display-current-workgroup ()
   "Return the name of the current workgroup."
   (awhen (and (featurep 'workgroups2)
@@ -8708,7 +8722,7 @@ Enabling =mini-modeline-mode= triggers a call to [[helpfn:redisplay][redisplay]]
 takes a long time and makes emacs unresponsive for a few seconds. This redisplay
 does not seem to be needed (feebleline doesn't do it and it works fine).
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! dont-redisplay (:around mini-modeline-mode)
   (cl-letf (((symbol-function #'redisplay) #'ignore))
     (apply <orig-fn> <args>)))
@@ -8721,7 +8735,7 @@ does not seem to be needed (feebleline doesn't do it and it works fine).
 
 This headline is for customizing info nodes.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! info
   :xl-rule ("top" "info" :newname "\\*info"))
 #+end_src
@@ -8735,7 +8749,7 @@ This headline is for customizing info nodes.
 Emacs help facility which provides much more contextual information
 in a better format.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! helpful
   :xl-rule ("bottom" "help" :newname "\\*help.+")
   :general
@@ -8763,7 +8777,7 @@ you can "discover" the commands as you go along.
 :ID:       c4aedc23-0be3-46fe-b046-32b5f0738c6b
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! which-key
   :xl-hook emacs-startup-hook
   :xl-set
@@ -8782,7 +8796,7 @@ you can "discover" the commands as you go along.
 :ID:       6abb35f4-c648-4bed-b59a-5a0636857fd8
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! set-line-spacing (which-key-init-buffer-hook)
   (setq line-spacing 3))
 #+end_src
@@ -8792,7 +8806,7 @@ you can "discover" the commands as you go along.
 :ID:       1df41291-32c3-44ca-89a9-f042fb2bbd6c
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! which-key :xl-config
   (which-key-add-key-based-replacements XL-LEADER-KEY "<leader>")
   (which-key-add-key-based-replacements XL-LOCALLEADER-KEY "<localleader>"))
@@ -8822,7 +8836,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 :ID:       80e5fa17-d18a-4ec0-af8d-728d77843c69
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun dashboard:random-logo ()
   "Display a random logo."
   (seq-random-elt
@@ -8834,7 +8848,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 :ID:       73d00f99-4b70-44d1-8359-01bd2c94b330
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-package! dashboard
   :demand t
   :xl-hook (window-setup-hook . dashboard-insert-startupify-lists)
@@ -8850,7 +8864,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 :ID:       1bcc371e-61fa-480e-bdae-4a999d3b10c9
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! open-dashboard-instead (:around xl-initial-buffer-choice)
   (if xl-debug-p
       (apply <orig-fn> <args>)
@@ -8865,7 +8879,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 [[helpvar:xl-init-time][xl-init-time]] is more accurate than dashboard's init time measure. So I use it
 instead.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defadvice! show-package-load-time (:before dashboard-insert-startupify-lists)
   (setq dashboard-init-info
         (format "%d packages loaded in %.2f seconds"
@@ -8881,7 +8895,7 @@ instead.
 :ID:       d4714639-919c-4691-9f7f-004cfa627089
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 #+end_src
 
 **** window divider
@@ -8904,7 +8918,7 @@ makes emacs feel like a window manager with gaps.
 :ID:       c3e2fda8-89c8-4f3b-951a-113e936d6206
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (use-feature! window-divider
   :xl-hook (window-setup-hook . window-divider-mode)
   :xl-set
@@ -8918,7 +8932,7 @@ makes emacs feel like a window manager with gaps.
 :ID:       61157149-dcce-40a9-8bfa-76a6af24838a
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! set-window-divider-face (load-theme)
   :config window-divider
   (set-face-foreground 'window-divider "black"))
@@ -8929,7 +8943,7 @@ makes emacs feel like a window manager with gaps.
 :ID: 342bd557-889b-4dbd-8e76-5cd9da3b0f74
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defhook! update-window-divider (xl-after-load-theme-hook)
   "Ensure window divider persists after theme change."
   :config window-divider
@@ -8949,7 +8963,7 @@ makes emacs feel like a window manager with gaps.
 
 Somtimes I might want to adjust this.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun +frame-adjust-window-divider-size (amount)
   "Adjust the gap size of window-divider by AMOUNT."
   (general-setq window-divider-default-bottom-width
@@ -8963,7 +8977,7 @@ Somtimes I might want to adjust this.
 :ID:       ebd6b013-6213-42a1-9e95-fefc7e7da991
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun frame/increment-window-divider-size ()
   "Increase window divider size."
   (interactive)
@@ -8975,7 +8989,7 @@ Somtimes I might want to adjust this.
 :ID:       6b1eb1cd-1cfd-4b82-a413-cb61fa13e0a4
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (defun frame/decrement-window-divider-size ()
   "Decrease window divider size."
   (interactive)
@@ -9005,7 +9019,7 @@ bindings. I chose to give it =SPC SPC= and =;=. =SPC SPC= is short and quick to
 type as well as consistent with other =SPC= bindings. While =;= is super fast to
 press as well and even faster than =SPC SPC=.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key! "SPC"
   (list :def #'execute-extended-command :wk "M-x"))
 
@@ -9022,7 +9036,7 @@ press as well and even faster than =SPC SPC=.
 :ID:       cfb08f5e-9e6e-4e9f-ab85-92f9cc26f1bd
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-localleader-key!
   "a" (list :def #'org-agenda         :wk "agenda")
   "s" (list :def #'xl/open-scratch  :wk "scratch")
@@ -9045,7 +9059,7 @@ press as well and even faster than =SPC SPC=.
 :ID: afa6be08-a38c-45f1-867a-5620fc290aac
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key! "e" (list :ignore t :wk "eval"))
 
 (define-leader-key!
@@ -9068,7 +9082,7 @@ press as well and even faster than =SPC SPC=.
 :ID: d3286920-ead4-4f7c-bf9d-8a6ed3d7ba46
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "p"
   ""  (list :ignore t                       :wk "package")
@@ -9083,7 +9097,7 @@ press as well and even faster than =SPC SPC=.
 :ID: 87ba6613-6606-423c-84ec-f7c9ae10c9a6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "g"
   ""  (list :ignore t           :wk "git")
@@ -9096,7 +9110,7 @@ press as well and even faster than =SPC SPC=.
 :ID: 10d6851b-6af6-4185-8976-0ad65b3d1d28
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key! "t" (list :ignore t :wk "toggle/set"))
 
 (define-leader-key!
@@ -9122,7 +9136,7 @@ press as well and even faster than =SPC SPC=.
 There's a lot of documentation finding and information searching involved in
 Emacs and for that we need all the help we can get.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "h"
   ""  (list :ignore t                :wk "help")
@@ -9147,7 +9161,7 @@ had been working on. Sometimes, when I'm testing something and I mess up
 Most of the time, I know what I'm doing when I quit Emacs, so I don't want a
 prompt asking me if I'm sure.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "q"
   ""  (list :ignore t                        :wk "quit")
@@ -9166,7 +9180,7 @@ prompt asking me if I'm sure.
 :ID: e3eec4f8-88d8-4010-adb5-2f8e05f14677
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "b"
   ""  (list :def nil                             :wk "buffer")
@@ -9196,7 +9210,7 @@ prompt asking me if I'm sure.
 
 These bindings are for generally working with code.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key! "c" (list :ignore t :wk "code"))
 
 (define-leader-key!
@@ -9213,7 +9227,7 @@ These bindings are for generally working with code.
 
 These are keybindings I use most frequently.
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key! "a" (list :ignore t :wk "app"))
 
 (define-leader-key!
@@ -9243,7 +9257,7 @@ These are keybindings I use most frequently.
 :ID: b50ed0da-652d-4d20-8a4e-e0cf053548a6
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/emacs/init.el
+#+begin_src emacs-lisp
 (define-leader-key!
   :infix "s"
   ""  (list :ignore t                       :wk "search")
@@ -9262,7 +9276,33 @@ These are keybindings I use most frequently.
 :ID:       80df9191-15ae-4559-a666-88869796e287
 :END:
 
-** mbsyncrc
+** mbsync
+:PROPERTIES:
+:ID:       532cd56a-45c8-4cd3-819f-cd1f5fca3e5d
+:END:
+
+The setup for mbsync contains many repetative aspects.
+
+*** mbsync account setup
+:PROPERTIES:
+:ID:       1e503ace-8af6-46a1-9ec0-62cef1372adf
+:END:
+
+#+begin_src emacs-lisp :tangle no
+(defun dotfiles:mbsyncrc-imap-account-setup (mail)
+  "Return the account part of the."
+  (with-password-entries! mail
+    (dotfiles:convert-to-string
+     :IMAPAccount $account
+     :Host $server
+     :User $email
+     :PassCmd (dotfiles:string "pass email/%s | head -n 1" $email)
+     :SSLType 'IMAPS
+     :CertificateFile '/etc/ssl/certs/ca-certificates.crt
+     :Port $in-port)))
+#+end_src
+
+*** mbsyncrc
 :PROPERTIES:
 :ID:       d2c2a9e3-a0a8-4fc2-bf1e-32e33129b1e7
 :END:
