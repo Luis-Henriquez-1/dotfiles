@@ -4063,7 +4063,7 @@ Making sure that tempo can completing read.
   (push #'tempo:C-keyword tempo-user-elements))
 #+end_src
 
-*** Utility
+*** Utilityalias yadm '~/.yadm-project/yadm $*'
 
 **** avy
 :PROPERTIES:
@@ -4974,6 +4974,16 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   :xl-config
   (--each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
     (add-to-list 'eshell-visual-commands it)))
+#+end_src
+
+****** em-aliases
+:PROPERTIES:
+:ID:       694a8c17-8318-4222-b461-abfc1d8a78ea
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! em-alias
+  :idle-require t)
 #+end_src
 
 ****** eshell-z
