@@ -1,15 +1,17 @@
-* the purpose of this file is to bootstrap.
+* about
+:PROPERTIES:
+:ID:       a8a7a227-5172-4399-a739-963951118a18
+:END:
+
+The purpose of this file is for bootstrapping my readme.
+
+* get org-mode
 :PROPERTIES:
 :ID:       2e198e16-18b7-4279-af19-b3345ab4fdfc
 :END:
 
 #+begin_src emacs-lisp
 (require 'org)
-
-;; Load my config first so we can get my packages installed.
-
-;; Put different prompts here.
-(org-babel-tangle)
 #+end_src
 
 * init.el file first
@@ -22,7 +24,11 @@ I don't like writing elisp without using libraries like [[][dash]] and
 libraries. So we do this first before tangling.
 
 #+begin_src emacs-lisp
-(with-current-buffer )
+(with-temp-buffer
+  (insert-file-contents )
+  (re-search-forward)
+  (org-back-to-heading)
+  (org-babel-execute-subtree))
 #+end_src
 
 * tangle everything
@@ -30,7 +36,11 @@ libraries. So we do this first before tangling.
 :ID:       e201a827-a9ab-40a3-a249-989511c5623c
 :END:
 
+In the future, I'll add prompts here so that I can interactively determine what
+I'd like tangled. If I'm on a mac or windows computer, for example, I may not
+want to tangle my stumpwm config. Then again, it's not a huge deal so we'll see.
+
 #+begin_src emacs-lisp
-(org-babel-tangle-file )
+(org-babel-tangle-file "~/README.org")
 #+end_src
 

@@ -144,6 +144,9 @@ default-cache-ttl 60000
 :ID:       f505e5ac-cb88-4e50-8cbd-e9a5b5cfddbc
 :END:
 
+#+begin_src emacs-lisp
+#+end_src
+
 * stumpwm
 :PROPERTIES:
 :ID:       4358b82c-1736-4609-aebe-02447d9c1703
@@ -9311,7 +9314,8 @@ These are keybindings I use most frequently.
 :HEADER-ARGS: :tangle ~/.config/isync/mbsyncrc
 :END:
 
-The setup for mbsync contains many repetative aspects.
+The setup for mbsync contains many repetative blocks of it's DSL which are
+multiplied by the number of.
 
 *** mbsync account setup
 :PROPERTIES:
@@ -9321,15 +9325,14 @@ The setup for mbsync contains many repetative aspects.
 #+begin_src emacs-lisp :tangle no
 (defun dotfiles:mbsyncrc-imap-account-setup (mail)
   "Return the account part of the."
-  (with-password-entries! mail
-    (dotfiles:convert-to-string
-     :IMAPAccount $account
-     :Host $server
-     :User $email
-     :PassCmd (dotfiles:string "pass email/%s | head -n 1" $email)
-     :SSLType 'IMAPS
-     :CertificateFile '/etc/ssl/certs/ca-certificates.crt
-     :Port $in-port)))
+  (dotfiles:convert-to-string
+   :IMAPAccount $account
+   :Host $server
+   :User $email
+   :PassCmd (dotfiles:string "pass email/%s | head -n 1" $email)
+   :SSLType 'IMAPS
+   :CertificateFile '/etc/ssl/certs/ca-certificates.crt
+   :Port $in-port))
 #+end_src
 
 *** set up config
@@ -9337,8 +9340,11 @@ The setup for mbsync contains many repetative aspects.
 :ID:       371436cf-420b-45d5-9135-8a766e770f29
 :END:
 
+concatenta
+
 #+begin_src emacs-lisp
 (defun dotfiles:setup-config ()
+  "Return."
   (loopy ((list account accounts)
 	  (expr account-block (dotfiles:mbsyncrc-account account))
 	  (expr )
