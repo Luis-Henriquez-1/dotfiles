@@ -54,36 +54,6 @@ Evaluating source blocks whose id.
 (require 'org-id)
 #+end_src
 
-* yadm
-:PROPERTIES:
-:ID:       02d273d2-9d00-437f-91c2-c783da9f2b5b
-:END:
-
-=yadm= is a dotfile manager. It's mantra is that "if you know git, you know
-yadm". What I like about it is that it's easy to pickup since it really does
-closely follow git; and that it stays out of your way. Other dotfile managers
-change the names of your files and symlink them. Although it can be nice to
-remove the =.= from dotfiles in an attempt to make them more readable, it is
-also adds another layer of complexity. Yadm requires no symlinks and it keeps
-your files the same name.
-
-** install yadm
-:PROPERTIES:
-:ID:       631b8a3a-85bb-4a31-a962-0a8809e26682
-:END:
-
-#+begin_src emacs-lisp
-(shell-command "https://github.com/TheLoce/.yadm-project")
-#+end_src
-
-** add yadm to load-path
-:PROPERTIES:
-:ID:       5f700bc6-74ac-4657-a37d-ef52c92ef8e2
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
 * xinit
 :PROPERTIES:
 :ID:       cf328230-ca3a-48a2-8dda-b4e9e4ff1e4c
@@ -127,110 +97,6 @@ $DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
 	       -modulepath $DIR/lib/xorg/modules
 #+end_src
 
-** config.scm
-:PROPERTIES:
-:ID:       1842dbb7-0b15-4ab8-ae68-1e420badd400
-:END:
-
-The =config.scm= is the file that determines the configuration of the entier
-Guix operating system.
-
-*** miscellaneous
-:PROPERTIES:
-:ID:       9cbaa260-6072-4734-bd04-e3f8959058ac
-:END:
-
-#+begin_src emacs-lisp
-(locale "en_US.utf8")
-(timezone "America/New_York")
-(keyboard-layout (keyboard-layout "us"))
-(host-name "antelope")
-#+end_src
-
-*** configure the bootloader
-:PROPERTIES:
-:ID:       e87fb064-1827-4b8c-b6c5-4bd1deff3d91
-:END:
-
-#+begin_src emacs-lisp
-(bootloader
- (bootloader-configuration
-  (bootloader grub-bootloader)
-  (target "/dev/sda")
-  (keyboard-layout keyboard-layout)))
-#+end_src
-
-*** user accounts
-:PROPERTIES:
-:ID:       bed74fa7-9238-4dcf-8d3e-a5a8d8e81832
-:END:
-
-#+begin_src emacs-lisp
-(users (cons* (user-account
-               (name "luis")
-	       (comment "Luis")
-               (group "users")
-               (home-directory "/home/luis")
-               (supplementary-groups
-                '("wheel" "netdev" "audio" "video")))
-              %base-user-accounts))
-#+end_src
-
-*** services
-:PROPERTIES:
-:ID:       9d8608e3-acbf-420e-b37a-a8da1496bfdc
-:END:
-
-**** elogind service
-:PROPERTIES:
-:ID:       75b86c4a-e1f6-4060-89e4-ffc052a924f2
-:END:
-
-By default =elogind= does not hibernate or suspend the computer when the lid is
-closed if that computer is connected to a powersource. In my experience, laptops
-I've seen suspend when their lid is closed; and personally, I prefer this.
-
-#+begin_src emacs-lisp
-(elogind-service-type config =>
-		      (handle-lid-switch-docked suspend)
-		      (handle-lid-switch-external-power suspend)
-		      (idle-action ignore)
-		      (idle-action-seconds (* 30 60)))
-#+end_src
-
-*** packages
-:PROPERTIES:
-:ID:       85a7f8ca-f29f-4e2d-9670-d3331be986b2
-:END:
-
-#+begin_src emacs-lisp
-(packages
- (append
-  (map #~specification->package)
-  (list (specification->package "sway")
-	(specification->package "swaybg")
-	(specification->package "swayidle")
-	(specification->package "swaylock")
-	(specification->package "emacs")
-	(specification->package "git")
-        (specification->package "nss-certs"))
-  %base-packages))
-#+end_src
-
-*** full operating system declaration
-:PROPERTIES:
-:ID:       375877df-54ef-4f8c-8eff-0f27e2f1fb14
-:END:
-
-#+begin_src emacs-lisp :tangle ~/.config/guix/config.scm
-(operating-system
- <<miscellaneous>>
- <<user-accounts>>
- <<bootloader>>
- <<services>>
- <<packages>>)
-#+end_src
-
 * gpg-agent
 :PROPERTIES:
 :ID:       58a65d49-cd9f-4b5d-86d7-d43209424cf3
@@ -248,7 +114,7 @@ default-cache-ttl 60000
 :ID:       a4cf5803-05b1-4133-bd73-01638673d2e3
 :END:
 
-#+begin_src conf :tangle ~/test.txt :noweb tangle
+#+begin_src conf :tangle ~/.config/git/config :noweb tangle
 [user]
 	name = Luis Henriquez-Perez
 	email = luis@luishp.xyz
@@ -263,57 +129,6 @@ default-cache-ttl 60000
 :PROPERTIES:
 :ID:       069672ed-29ad-4973-b2cd-1eb275d7e6d4
 :END:
-
-* xdg specification
-:PROPERTIES:
-:ID:       3800bbf1-1bb6-427f-a339-eb793a75a401
-:END:
-
-The xdg specification is a standard for how dotfiles required by a system
-package should be stored. It says that dotfiles should be stored in a path of
-the form =~/.config/PACKAGE/=, where PACKAGE is a directory whose name is the
-name of the package. So, for example, under the XDG specification emacs dotfiles
-are stored in =~/.config/emacs/=.
-
-This XDG specification hasn't always existed so there are several system
-packages that write dotfiles in other places. This headline is where I declare
-bash variables that specify where these directories should go.
-
-** xdg data and config
-:PROPERTIES:
-:ID:       50606e70-a834-4207-b5e9-4f53e3c267e3
-:END:
-
-#+begin_src emacs-lisp
-;; the "data" refers to files.
-(eshell/export "XDG-DATA-HOME" (expand-file-name "~/.local/share"))
-
-;; the "config" refers to configuration files.
-(eshell/export "XDG-CONFIG-HOME" (expand-file-name "~/.local/share"))
-#+end_src
-
-** editors
-:PROPERTIES:
-:ID:       81752047-43cc-481f-9fe0-7ae66124e9fa
-:END:
-
-#+begin_src emacs-lisp
-;; Default Programs.
-(eshell/export "EDITOR" "emacs")
-(eshell/export "TERMINAL" "xterm")
-(eshell/export "BROWSER" "icecat")
-#+end_src
-
-** gpg
-:PROPERTIES:
-:ID:       404d28db-4e9a-4e87-a1cb-92c46bd80363
-:END:
-
-#+begin_src emacs-lisp
-;; Directories.
-(eshell/export "GNUPGHOME" (expand-file-name "gnupg" xdg-data-home))
-(eshell/export "lesshistfile" "-")
-#+end_src
 
 * emacs
 :PROPERTIES:
@@ -390,7 +205,7 @@ initialization of the frame, it used to be the case that it was inevitable to
 catch a glipse of these UI elements during your emacs initializaition. Not only
 was it ugly to see, but it also contributed significantly to startup
 time. Before the advent of the [[helpvar:early-init-file][early-init-file]], the only way to prevent it was
-to set up [[][xresources]]. Prevent the glimpse of un-styled Emacs by disabling
+to set up [[https://wiki.archlinux.org/index.php/X_resources][xresources]]. Prevent the glimpse of un-styled Emacs by disabling
 these UI elements early.
 
 #+begin_src emacs-lisp :tangle ~/.config/emacs/early-init.el
@@ -9446,54 +9261,6 @@ These are keybindings I use most frequently.
 :PROPERTIES:
 :ID:       80df9191-15ae-4559-a666-88869796e287
 :END:
-
-** helpers
-:PROPERTIES:
-:ID:       04332f62-7554-477d-a6a3-d6f5a93317aa
-:END:
-
-*** convert
-:PROPERTIES:
-:ID:       67ecf9f7-8c43-4538-b581-d3a363ff8eec
-:END:
-
-Many configuration files in linux are written in the form of a DSL with
-key-value pairs. This function takes in a plist and converts it to a string of
-key value pairs. I'll then write this string to a file and voila!
-
-#+begin_src emacs-lisp :tangle no
-(defun dotfiles:convert-to-string (&rest plist)
-  "Return a plist as a stirng."
-  (s-join "\n"
-          (mapcar (-lambda ((keyword value))
-                    (format (concat "%s" (when value " %s")) (void-keyword-name keyword) value))
-                  (-partition-before-pred #'keywordp plist))))
-#+end_src
-
-*** conf string
-:PROPERTIES:
-:ID:       f4933510-0f19-4ce0-82cf-d215b670e188
-:END:
-
-#+begin_src emacs-lisp :tangle no
-(defun dotfiles:string (input &rest args)
-  (format "%S" (apply #'format input args)))
-#+end_src
-
-*** with password entries
-:PROPERTIES:
-:ID:       613f48cc-5c17-4306-ae30-2745c27105b8
-:END:
-
-This is a convenience anaphoric macro for quickly getting password entries.
-
-#+begin_src emacs-lisp
-(defmacro with-password-entries! (entry &rest body)
-  (declare (indent defun))
-  `(let ,(--map (list it `(password-store-get-field ,entry ,(void-anaphoric-true-symbol it)))
-                (void-anaphoric-symbols body))
-     ,@body))
-#+end_src
 
 ** mbsyncrc
 :PROPERTIES:
