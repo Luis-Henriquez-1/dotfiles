@@ -134,6 +134,11 @@ default-cache-ttl 60000
 :HEADER-ARGS: :tangle ~/.config/nyxt/init.lisp
 :END:
 
+* stumpwm
+:PROPERTIES:
+:ID:       4358b82c-1736-4609-aebe-02447d9c1703
+:END:
+
 * emacs
 :PROPERTIES:
 :ID:       8c10b42b-9317-49a8-8ce0-128a2efc8905
@@ -9282,6 +9287,7 @@ These are keybindings I use most frequently.
 ** mbsync
 :PROPERTIES:
 :ID:       532cd56a-45c8-4cd3-819f-cd1f5fca3e5d
+:HEADER-ARGS: :tangle ~/.config/isync/mbsyncrc
 :END:
 
 The setup for mbsync contains many repetative aspects.
@@ -9316,6 +9322,7 @@ The setup for mbsync contains many repetative aspects.
 ** msmtprc
 :PROPERTIES:
 :ID:       881dfeda-6370-4cbd-b385-f2e49bf042c0
+:HEADER-ARGS: :tangle ~/config/msmtp/msmtprc
 :END:
 
 #+begin_src conf
