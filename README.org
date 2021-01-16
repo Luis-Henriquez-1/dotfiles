@@ -98,6 +98,11 @@ $DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
 	       -modulepath $DIR/lib/xorg/modules
 #+end_src
 
+** config.scm
+:PROPERTIES:
+:ID:       4af8c932-566c-480f-ad35-2667ae7d3cf2
+:END:
+
 * gpg-agent
 :PROPERTIES:
 :ID:       58a65d49-cd9f-4b5d-86d7-d43209424cf3
@@ -132,6 +137,11 @@ default-cache-ttl 60000
 :PROPERTIES:
 :ID:       069672ed-29ad-4973-b2cd-1eb275d7e6d4
 :HEADER-ARGS: :tangle ~/.config/nyxt/init.lisp
+:END:
+
+** setup vim mode
+:PROPERTIES:
+:ID:       f505e5ac-cb88-4e50-8cbd-e9a5b5cfddbc
 :END:
 
 * stumpwm
