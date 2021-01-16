@@ -101,7 +101,7 @@ $DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
 * gpg-agent
 :PROPERTIES:
 :ID:       58a65d49-cd9f-4b5d-86d7-d43209424cf3
-:HEADER-ARGS: :tangle ~/.gnupg/gpg-agent.conf
+:HEADER-ARGS: :tangle ~/.config/gnupg/gpg-agent.conf
 :END:
 
 #+begin_src conf
@@ -137,6 +137,7 @@ default-cache-ttl 60000
 * stumpwm
 :PROPERTIES:
 :ID:       4358b82c-1736-4609-aebe-02447d9c1703
+:HEADER-ARGS: :tangle ~/.config/stumpwm/stumwmrc
 :END:
 
 * emacs
