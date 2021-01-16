@@ -9441,6 +9441,54 @@ These are keybindings I use most frequently.
 :ID:       80df9191-15ae-4559-a666-88869796e287
 :END:
 
+** helpers
+:PROPERTIES:
+:ID:       04332f62-7554-477d-a6a3-d6f5a93317aa
+:END:
+
+*** convert
+:PROPERTIES:
+:ID:       67ecf9f7-8c43-4538-b581-d3a363ff8eec
+:END:
+
+Many configuration files in linux are written in the form of a DSL with
+key-value pairs. This function takes in a plist and converts it to a string of
+key value pairs. I'll then write this string to a file and voila!
+
+#+begin_src emacs-lisp :tangle no
+(defun dotfiles:convert-to-string (&rest plist)
+  "Return a plist as a stirng."
+  (s-join "\n"
+          (mapcar (-lambda ((keyword value))
+                    (format (concat "%s" (when value " %s")) (void-keyword-name keyword) value))
+                  (-partition-before-pred #'keywordp plist))))
+#+end_src
+
+*** conf string
+:PROPERTIES:
+:ID:       f4933510-0f19-4ce0-82cf-d215b670e188
+:END:
+
+#+begin_src emacs-lisp :tangle no
+(defun dotfiles:string (input &rest args)
+  (format "%S" (apply #'format input args)))
+#+end_src
+
+*** with password entries
+:PROPERTIES:
+:ID:       613f48cc-5c17-4306-ae30-2745c27105b8
+:END:
+
+This is a convenience anaphoric macro for quickly getting password entries.
+
+#+begin_src emacs-lisp
+(defmacro with-password-entries! (entry &rest body)
+  (declare (indent defun))
+  `(let ,(--map (list it `(password-store-get-field ,entry ,(void-anaphoric-true-symbol it)))
+                (void-anaphoric-symbols body))
+     ,@body))
+#+end_src
+
 ** mbsyncrc
 :PROPERTIES:
 :ID:       d2c2a9e3-a0a8-4fc2-bf1e-32e33129b1e7
