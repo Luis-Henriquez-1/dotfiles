@@ -63,11 +63,6 @@ different. When using a mac you might want one thing and when using a.
 I use [[https://yadm.io/][yadm]] to manage my dotfiles (more on that here). To initialize yadm you
 use [[][]] to bootstrap. First =yadm clone=.
 
-** highlights
-:PROPERTIES:
-:ID:       25684c50-da42-429e-8eb4-2d45a0bbdfb5
-:END:
-
 * helpers
 :PROPERTIES:
 :ID:       67138086-b894-43b7-8c97-1980acad52b8
@@ -83,10 +78,13 @@ use [[][]] to bootstrap. First =yadm clone=.
 :ID:       8d68503c-75a2-463b-b286-6490c9c8b97b
 :END:
 
-=nowebs= are what I mean when I say "dynamic" generation. Typically nowebs are
-used to insert a block of code somewhere else, but they can also be used to
-insert the result of evaluating a block of code. It allows me to add the result of
-a lisp expression that was computed when the org file was tangled.
+=nowebs= are what I mean when I say [[id:f77797b8-172e-4482-87a4-5ede829b3b13][dynamic]] generation. Typically nowebs are
+used to insert a block of code somewhere else, kind of like a copy paste sort of
+things. This can be useful, specifically when you want to talk about with lisp
+code that is in one form such as the [[id][config.scm]].
+
+It allows me to add the result of a lisp expression that was computed when the
+org file was tangled.
 
 One way you could insert the evaluated code is by using <<noweb()>>.
 
@@ -4216,6 +4214,9 @@ mark. I need to call.
 =tempo-snippets= doesn't handle user elements. If you defined any, they will be
 ignored. Specifically, the original value is overwritten in *. The purpose of
 this headline is to address this problem.
+
+#+begin_src emacs-lisp
+#+end_src
 
 ****** defining snippets
 
