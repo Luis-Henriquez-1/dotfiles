@@ -21,18 +21,19 @@ interrelated. By linking to eachother.
 :ID:       ed3ac468-ef9b-4be5-8f2d-44fb29a6ac77
 :END:
 
-For one thing it is simpler to have everything (except a small amount of
-bootstrap code) in one file as opposed to having a complex heirarchy of files
-and directories.
+It is simpler to have everything (except a small amount of bootstrap code) in
+one file as opposed to having a complex heirarchy of files and directories.
 
 *** consistent documentation throughout
 :PROPERTIES:
 :ID:       4fb4fd3b-508c-4454-b831-db7e8827e035
 :END:
 
-Having my configuration files in an org-mode files means I can have consistent
-documentation that's all in the same syntax--and even better, with markup
-capabilities. 
+Configuration files are often in different languages. Different languages have
+different comment syntax. Having my configuration files in an org-mode files
+means I can have consistent documentation that's all in the same
+syntax. Moreover, the structure of an Org file does well to homogenize the
+varying differences of a language.
 
 *** more expressive documentation
 :PROPERTIES:
@@ -40,9 +41,10 @@ capabilities.
 :END:
 
 Documentation comments are not expressive enough. Sometimes, I want to show a
-picture or a gif of what I'm talking about. Just as often, I want to reference
+picture or a gif of what I'm talking about. Other times, I want to reference
 some other file or some place in a file or a link to a website. Even adding
-emphasis to certain things could be useful. Comments can't do any of this.
+emphasis to certain things could be useful. Comments can't do any of this, but
+[[https://orgmode.org/][Org]] can.
 
 *** dynamism
 :PROPERTIES:
@@ -57,7 +59,12 @@ different. When using a mac you might want one thing and when using a.
 :ID:       e208e820-cb37-40f5-912e-bad4abf1fd5a
 :END:
 
-First =yadm clone=.
+I use [[][]] to manage my dotfiles (more on that here). First =yadm clone=.
+
+** highlights
+:PROPERTIES:
+:ID:       25684c50-da42-429e-8eb4-2d45a0bbdfb5
+:END:
 
 * helpers
 :PROPERTIES:
