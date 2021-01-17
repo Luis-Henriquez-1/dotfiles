@@ -3975,6 +3975,7 @@ about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (use-package! helm-org
+  :xl-before-call (org-capture . helm-org-capture-templates)
   :init
   (general-def [remap org-capture] #'helm-org-capture-templates))
 #+end_src
