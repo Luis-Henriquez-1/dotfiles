@@ -4,7 +4,7 @@
 :END:
 
 This single org file contains the contents of all my dotfiles and
-configurations. Upon tangling it will dynamically generate all of them in the
+configurations. Upon [[https://orgmode.org/manual/Extracting-Source-Code.html][tangling]] it will dynamically generate all of them in the
 correct locations.
 
 ** why set up my dot files this way?
@@ -13,9 +13,7 @@ correct locations.
 :END:
 
 It took me a long time to come to the conclusion to set up my dotfiles like
-this. It's certainly unorthodox. However, I was convinced by the
-benefits. Moreover, more often than not configuration files are interrelated. By
-linking to eachother.
+this. It's certainly unorthodox. However, I was convinced by the benefits.
 
 *** simple file/directory structure
 :PROPERTIES:
@@ -52,8 +50,7 @@ emphasis to certain things could be useful. Comments can't do any of this, but
 :ID:       f77797b8-172e-4482-87a4-5ede829b3b13
 :END:
 
-When you initialize documentation on different machine settings can be
-different. When using a mac you might want one thing and when using a.
+When you initialize dotfiles on different machine settings can be different.
 
 ** how it's tangled
 :PROPERTIES:
@@ -3953,7 +3950,9 @@ about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (use-package! helm-system-packages
-  :commands helm-system-packages)
+  :commands helm-system-packages
+  :xl-set
+  (helm-system-packages-cache-file . (xl-data-dir "helm-system-packages-cache")))
 #+end_src
 
 ***** helm-dash
@@ -4640,77 +4639,127 @@ javascript code.
 :ID:       5675cbbc-beb1-4470-a1d2-08f253bb4535
 :END:
 
-***** escr
+***** screenshots
 :PROPERTIES:
-:ID:       d0ff59fe-4de8-4ddc-9f64-4732014585b6
+:ID:       26d59d00-72e3-4b8c-9845-e5d9627cd4aa
 :END:
 
-Pictures or GIFs of behaviors can relate emacs behaviors in away descriptions
-cannot. From my experience looking at posts on [[https://emacs.stackexchange.com/][emacs stackexchange]] or
-[[https://www.reddit.com/r/emacs/][emacs-reddit]] or even other [[https://github.com/caisah/emacs.dz][emacs configs]], screenshots are underutilized (or
-often not utilized at all).
+This headline contains utilities for taking screenshots. As I see it,
+screenshots are vital. I use maim to take screenshots because. I will note that
+when I used [[][escr]] to take screenshots, those screenshots would not show
+exwm windows. =escr= used [[][]]'s import.
 
-There are three screenshot packages I know of [[https://github.com/emacsmirror/screenshot][screenshot]], [[https://github.com/dakra/scrot.el][scrot]] and [[https://github.com/atykhonov/escr][escr]]. But
-they all have their downsides. Screenshot's main command, =screenshot=, assumes
-that you want. =escr= doesn't provide prompt you for the filename or provide any
-option you can customize to prompt you for the file name.
-
-Another caviat for =escr= is that it doesn't seem to handle exwm.
-
-****** init
+****** screenshot name
 :PROPERTIES:
-:ID:       a6a8610e-84b5-471d-8f07-2ad2c67c2998
+:ID:       7210e8a8-7cbc-40ec-bd70-f8cfc6a32c56
+:END:
+
+The name for the screenshot.
+
+******* xl-screenshot-path
+:PROPERTIES:
+:ID:       a6a75a8c-8d00-4f26-9df0-7f24af577e87
 :END:
 
 #+begin_src emacs-lisp
-(use-package! escr
-  :xl-ensure (:host github :type git :repo "atykhonov/escr")
-  :commands (escr-window-screenshot
-	     escr-frame-screenshot
-	     escr-region-screenshot)
-  :xl-set
-  (escr-screenshot-directory . (xl-emacs-dir "screenshots")))
+(defun xl-screenshot-path (name)
+  "Return the full path where screenshot named NAME should go."
+  (format "%s%s.png" (xl-screenshot-dir) name))
 #+end_src
 
-****** function for getting screenshot filename
+******* whether to prompt for screenshots
+:PROPERTIES:
+:ID:       1c280e62-2a1b-41f8-8ff9-039528652fcf
+:END:
+
+#+begin_src emacs-lisp
+(defvar xl-prompt-for-screenshot-name-p t
+  "If non-nil, prompt for screenshot name.")
+#+end_src
+
+******* name passed into prompt
+:PROPERTIES:
+:ID:       e8a21618-50f6-45ba-9a38-bff5c6d0a924
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-prompt-screenshot-name ()
+  "Prompt for screenshot name."
+  (when xl-prompt-for-screenshot-name-p
+    (alet (read-string "Image Name: ")
+      (unless (string-empty-p it)
+	(xl-screenshot-path it)))))
+#+end_src
+
+******* default screenshot name
 :PROPERTIES:
 :ID:       58405f4f-e891-494e-afc7-a227415ec12b
 :END:
 
-=escr= doesn't prompt for the filename. While this is faster in the shortrun and
-may be useful for situations when I'm short on time, it does mean that I'll need
-to invest time in looking at the screenshots again so you can properly name
-them. There's no way I'll recognize which screenshot is which based on the
-=escr='s default naming scheme. Therefore, I'd rather just name them properly in
-the first place.
-
 #+begin_src emacs-lisp
-(defun escr:get-filename ()
-  "Return the filename."
-  (alet (read-string "Image name: ")
-    (when (not (seq-empty-p it))
-      (format "%s.png" it))))
+(defun xl-default-screenshot-name ()
+  "Return the default screenshot name."
+  (alet (format-time-string "%Y-%m-%d-%H%M%S" (current-time))
+    (xl-screenshot-path it)))
 #+end_src
 
-****** make =escr= prompt for filename
+****** interactive screenshot functions
 :PROPERTIES:
-:ID:       8ee6a3fa-e9bb-4cc8-ac5c-5796583747c9
+:ID:       27089aef-5937-4a7e-9af1-794fbeb835f2
 :END:
 
-The way that =escr= was written makes it difficult to get it to return the
-filename without some [[helpfn:flet][flet]] hack or ovewritting one if it's functions. I hate
-completely rewriting functions that already mostly work. The particular function
-=escr= computes the filename in is [[helpfn:escr--screenshot][escr--screenshot]]. This function uses
-[[helpfn:format-time-string][format-time-string]] to compute the screenshot name. So I just hijack that
-function.
+When I first implemented these functions I prompted for the name first, but this
+had the side-effect of displaying the prompt in the screenshot which is not what
+I want. To avoid this, I decided to create the screenshot with the default name
+and then prompt to rename the file afterwards.
 
-The result is I get prompted for the filename, but if I leave it blank then it
-defaults to =escr='s default filename names.
+******* fullscreen
+:PROPERTIES:
+:ID:       5cb29bb2-459a-4c84-9bf8-df179d2d2e8e
+:END:
+
+Take a s
 
 #+begin_src emacs-lisp
-(defadvice! prompt-me-for-filename (:around escr--screenshot)
-  (noflet ((format-time-string (&rest args) (or (escr:get-filename) (apply this-fn args))))
-    (apply <orig-fn> <args>)))
+(defun xl/take-fullscreen-screenshot ()
+  "Take a fullscreen screenshot."
+  (interactive)
+  (let ((name (xl-default-screenshot-name)))
+    (call-process "maim" nil nil nil "-u" name)
+    (awhen (xl-prompt-screenshot-name)
+      (rename-file name it t))))
+#+end_src
+
+******* window
+:PROPERTIES:
+:ID:       1a8724bb-24be-43fd-a3f6-3a41f7380fe8
+:END:
+
+#+begin_src emacs-lisp
+(defun xl/take-window-screenshot ()
+  "Take a screenshot of the current Emacs window."
+  (interactive)
+  (-let* ((name (xl-default-screenshot-name))
+	  ((x y w h) (window-pixel-edges))
+	  (geometry (format "%dx%d+%d+%d" w h x y)))
+    (call-process "maim" nil nil nil "-u" "--geometry" geometry name)
+    (awhen (xl-prompt-screenshot-name)
+      (rename-file name it t))))
+#+end_src
+
+****** bindings
+:PROPERTIES:
+:ID:       52ae5883-6520-49d5-8d91-04c5c11e33c3
+:END:
+
+#+begin_src emacs-lisp
+(define-leader-key! "as" (list :ignore nil :wk "screenshot"))
+
+(define-leader-key!
+  :infix "as"
+  "s" (list :def #'xl/take-screenshot-fullscreen :wk "screenshot")
+  "w" (list :def #'escr-window-screenshot :wk "window")
+  "f" (list :def #'xl/take-screenshot-fullscreen  :wk "fullscreen"))
 #+end_src
 
 ***** gif-screencast
@@ -9487,14 +9536,6 @@ These are keybindings I use most frequently.
   "q" (list :def #'engine/search-duckduckgo    :wk "browse web")
   "j" (list :def #'org/avy-goto-headline       :wk "heading jump")
   "c" (list :def #'org-capture :wk "capture"))
-
-(define-leader-key! "as" (list :ignore nil :wk "screenshot"))
-
-(define-leader-key!
-  :infix "as"
-  "s" (list :def #'escr-window-screenshot :wk "screenshot")
-  "w" (list :def #'escr-window-screenshot :wk "window")
-  "f" (list :def #'escr-frame-screenshot  :wk "frame"))
 #+end_src
 
 ***** search
