@@ -467,7 +467,7 @@ prevent it was to set up an [[https://wiki.archlinux.org/index.php/X_resources][
 This is the most efficient way to set the font. It's done before the
 initialization of the frame.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :noweb yes
 (push (cons 'font <<font()>>) default-frame-alist)
 #+end_src
 
@@ -5211,7 +5211,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 
 #+begin_src emacs-lisp
 (use-feature! em-alias
-  :idle-require t)
+  :xl-idle-require t)
 #+end_src
 
 ****** eshell-z
@@ -8256,7 +8256,7 @@ options. For this reason I wrote my own insert heading functions.
     (org-end-of-subtree)
     (goto-char (line-end-position))
     (insert (concat "\n\n"
-                    "#+begin_src emacs-lisp
+                    "#+begin_src emacs-lisp"
                     "\n"
                     "#+end_src"))
     (forward-line -1)))
