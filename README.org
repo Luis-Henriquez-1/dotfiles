@@ -8705,7 +8705,6 @@ Instead of passing in the string I use =org-ml= to print the string.
        (org-ml-headline-set-node-property "ID" (org-id-new))
        (org-ml-headline-set-node-property "CREATED" (ts-format))
        (org-ml-set-property :todo-keyword "ISSUE")
-       (org-ml-set-property :tags '("emacs"))
        (org-ml-to-trimmed-string)))
 #+end_src
 
