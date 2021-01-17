@@ -333,7 +333,8 @@ default-cache-ttl 60000
 :HEADER-ARGS: ~/.config/git/config
 :END:
 
-The [[][]] contains settings for git.
+The [[https://www.git-scm.com/book/en/v2/Customizing-Git-Git-Configuration][git-config]] contains settings you need for making a commit, such as your name
+and email and optionally your public gpg key.
 
 #+begin_src conf
 [user]
