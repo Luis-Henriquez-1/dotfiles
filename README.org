@@ -7948,7 +7948,9 @@ the whole thing.
 :END:
 
 #+begin_src emacs-lisp
-(defvar org-capture:file (concat org-directory "capture.org"))
+(defun xl-capture-file ()
+  "Return the file where org should capture to."
+  (xl-org-dir "capture.org"))
 #+end_src
 
 ****** general settings
@@ -8719,7 +8721,7 @@ Instead of passing in the string I use =org-ml= to print the string.
    (list "emacs"
 	 :keys "e"
 	 :template #'org-capture:emacs-template
-	 :file org-capture:file
+	 :file (xl-capture-file)
 	 :prepend t
 	 :empty-lines 1)))
 #+end_src
