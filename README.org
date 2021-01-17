@@ -12,8 +12,11 @@ this. It's certainly unorthodox. However, I was convinced by the benefits. For
 one thing it is simpler to have everything (except a small amount of bootstrap
 code) in one file as opposed to having a complex heirarchy of files and
 directories. Having my configuration files in an org-mode files means I can have
-consistent documentation throughout. Moreover, more often than not configuration
-files are interrelated.
+consistent documentation that's all in the same syntax--and even better, with
+markup capabilities. Documentation comments, in my opinion, are antiquated; they
+are not expressive enough. Sometimes, I want to show a picture or a gif of what
+I'm talking about. Moreover, more often than not configuration files are
+interrelated.
 
 * helpers
 :PROPERTIES:
@@ -299,6 +302,8 @@ The [[][]] contains settings for git.
 :ID:       069672ed-29ad-4973-b2cd-1eb275d7e6d4
 :HEADER-ARGS: :tangle ~/.config/nyxt/init.lisp
 :END:
+
+The [[][nyxt browser]] is a web browser written entirely in common lisp.
 
 ** setup vim mode
 :PROPERTIES:
@@ -9491,7 +9496,7 @@ These are keybindings I use most frequently.
 :HEADER-ARGS: :tangle ~/.config/isync/mbsyncrc
 :END:
 
-The setup for mbsync contains many repetative blocks of it's DSL which are
+The. The setup for mbsync contains many repetative blocks of it's DSL which are
 multiplied by the number of.
 
 *** mbsync account setup
