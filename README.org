@@ -138,7 +138,7 @@ graphical environment.
 Coming from a vim background and currently using [[git][evil]], I've come to rely on the
 escape key heavily as a "quit everything" binding. I press it much more often
 than the caps-lock key--actually I think I don't ever use the caps-lock
-key. Even in emacs, there's [[][caps-lock]], so I'm not sure if I need it at all.
+key. Even in emacs, there's [[https://github.com/emacs-straight/caps-lock][caps-lock]], so I'm not sure if I need it at all.
 
 #+begin_src sh
 setxkbmap -option caps:swapescape
@@ -352,7 +352,7 @@ The [[][]] contains settings for git.
 :HEADER-ARGS: :tangle ~/.config/nyxt/init.lisp
 :END:
 
-The [[][nyxt browser]] is a web browser written entirely in common lisp.
+The [[https://nyxt.atlas.engineer/][nyxt browser]] is a web browser written entirely in common lisp.
 
 ** setup vim mode
 :PROPERTIES:
@@ -441,14 +441,16 @@ Defer garbage collection further back in the startup process.
 :ID:       f439de9a-b2b1-4926-a4ae-3d94ff83d05a
 :END:
 
-By default the frame is initialized with several UI elements. Many people, like me,
-prefer not to see these things. But because emacs loads the init file after the
-initialization of the frame, it used to be the case that it was inevitable to
-catch a glipse of these UI elements during your emacs initializaition. Not only
-was it ugly to see, but it also contributed significantly to startup
-time. Before the advent of the [[helpvar:early-init-file][early-init-file]], the only way to prevent it was
-to set up [[https://wiki.archlinux.org/index.php/X_resources][xresources]]. Prevent the glimpse of un-styled Emacs by disabling
-these UI elements early.
+By default the frame is initialized with the tool-bar, menu-bar, and
+scroll-bar. Many emacs users, me included, prefer not to see these
+things. Since I operate via keybindings I would never use them anyway. But
+because emacs loads the init file after the initialization of the frame, it
+used to be the case that it was inevitable to catch a glipse of these UI
+elements during your emacs initializaition. Not is it distracting, but
+rendering those things also contributed significantly to startup time.
+
+Before the advent of the [[helpvar:early-init-file][early-init-file]], the only way to
+prevent it was to set up an [[https://wiki.archlinux.org/index.php/X_resources][xresources]].
 
 #+begin_src emacs-lisp
 (push '(menu-bar-lines . 0) default-frame-alist)
@@ -544,17 +546,6 @@ Emacs by default uses dynamic binding. Lexical binding is a known.
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
-#+end_src
-
-***** don't garbage collect during initialization
-:PROPERTIES:
-:ID:       4913461b-8421-4a64-b09a-18c54673d7d7
-:END:
-
-[[id:86653a5a-f273-4ce4-b89b-f288d5d46d44][gcmh]] will take care of setting the gc-cons-threshold back to normal.
-
-#+begin_src emacs-lisp
-(setq gc-cons-threshold most-positive-fixnum)
 #+end_src
 
 ***** config files and directores
@@ -7883,8 +7874,6 @@ the whole thing.
 
 #+begin_src emacs-lisp
 (use-package! org
-  :xl-ensure (:host github :type git :repo "yantar92/org"
-	      :branch "feature/org-fold" :files (:defaults "contrib/lisp/*.el"))
   :xl-set
   (org-directory          . (xl-emacs-dir "org/"))
   (org-archive-location   . (concat org-directory "archive.org"))
