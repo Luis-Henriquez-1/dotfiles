@@ -132,6 +132,11 @@ The =config.scm= is the file the determines everything about the guix operating
 system. If you've installed arch or another linux distro from scratch or if you
 have some knowledge about OS setup you should find many of these fields familiar.
 
+*** module declaration
+:PROPERTIES:
+:ID:       46a8e991-e102-44cf-9646-d52e67f41413
+:END:
+
 *** miscellaneous
 :PROPERTIES:
 :ID:       5179b9e5-c40a-4839-85de-bd38abfd373e
@@ -149,6 +154,8 @@ have some knowledge about OS setup you should find many of these fields familiar
 :ID:       8ecad680-34d8-4e5c-b239-ae3767293036
 :END:
 
+The bootloader is what is repsonsible for booting your system.
+
 #+begin_src emacs-lisp
 (bootloader
  (bootloader-configuration
@@ -161,6 +168,8 @@ have some knowledge about OS setup you should find many of these fields familiar
 :PROPERTIES:
 :ID:       23bef30c-77f5-443e-acb0-cb01a2072ab0
 :END:
+
+I'm the only one who uses my computer.
 
 #+begin_src emacs-lisp
 (users (cons* (user-account
@@ -178,17 +187,50 @@ have some knowledge about OS setup you should find many of these fields familiar
 :ID:       d33e0c8e-e1a8-4db9-aa9c-4a862616adeb
 :END:
 
-This field corresponds to the place where packages should go.
+This field corresponds to the place where packages should go. In the future I
+want to add package versions to these packages so that I can make my dotfiles
+truly reproducable.
 
 #+begin_src emacs-lisp
 (packages
  (append
   (list (specification->package "emacs")
         (specification->package "emacs-exwm")
-        (specification->package
-         "emacs-desktop-environment")
+        (specification->package "emacs-desktop-environment")
         (specification->package "nss-certs"))
   %base-packages))
+#+end_src
+
+*** services
+:PROPERTIES:
+:ID:       a29f1980-9af4-4bf0-a463-1897f1551cab
+:END:
+
+**** laptop lid
+:PROPERTIES:
+:ID:       8f8801dd-7dce-4c26-bce4-39dc9df43917
+:END:
+
+Guix uses [[][elogind]]. Elogind controls things like user login. It also
+controls what happens during certain events such as laptop lid open and
+close. By default elogind.
+
+#+begin_src emacs-lisp
+()
+#+end_src
+
+*** whole config
+:PROPERTIES:
+:ID:       6c44a3c0-379f-410c-918b-71f03171d514
+:END:
+
+#+begin_src emacs-lisp :tangle ~/.config/guix/config.scm
+(operating-system
+ <<module-declaration>>
+ <<bootloader>>
+ <<users>>
+ <<packages>>
+ <<services>>)
 #+end_src
 
 * gpg-agent
