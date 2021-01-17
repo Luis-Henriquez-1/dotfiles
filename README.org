@@ -13,8 +13,9 @@ correct locations.
 :END:
 
 It took me a long time to come to the conclusion to set up my dotfiles like
-this. It's certainly unorthodox. However, I was convinced by the benefits. Moreover, more often than not configuration files are
-interrelated. By linking to eachother.
+this. It's certainly unorthodox. However, I was convinced by the
+benefits. Moreover, more often than not configuration files are interrelated. By
+linking to eachother.
 
 *** simple file/directory structure
 :PROPERTIES:
