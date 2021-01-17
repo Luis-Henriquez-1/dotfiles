@@ -3980,6 +3980,17 @@ about Helm is that it's too bloated and slow.
   (general-def [remap org-capture] #'helm-org-capture-templates))
 #+end_src
 
+***** helm-themes
+:PROPERTIES:
+:ID:       6681a9ff-a51c-42ce-a6a6-570e8ef5ecfe
+:END:
+
+#+begin_src emacs-lisp
+(use-package helm-themes
+  :init
+  (general-def [remap load-theme] #'helm-themes))
+#+end_src
+
 ***** ace-helm-jump-line
 :PROPERTIES:
 :ID:       e74e6b9b-cdd7-4d6b-888f-0e9ec9584b32
