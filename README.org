@@ -87,7 +87,7 @@ setxkbmap -option caps:swapescape
 :ID:       af14d611-79a0-4604-8c02-24bc608d32fb
 :END:
 
-Obviously, we load our OS.
+Obviously, we load our OS. In the future, I may figure out how to use a.
 
 #+begin_src sh
 exec emacs
@@ -98,10 +98,20 @@ exec emacs
 :ID:       3bc3c0b2-a45b-4ce1-86c7-f4d88a8e69bd
 :END:
 
+My main OS currently is [[https://guix.gnu.org/][guix]].
+
 ** starting org on guix
 :PROPERTIES:
 :ID:       9bd14aeb-1b7d-4cdd-8c79-5e92da7606dc
 :END:
+
+I'm am not keen on paying the cost of starting a [[https://wiki.archlinux.org/index.php/Display_Manager#Console][login manager]] at startup. I
+don't see a great benefit to having a graphical login manager and I prefer the
+flexibility of being able to use the command line before initializing a
+graphical display.
+
+Right now, shepard is admittedly rather slow in starting up. It's even slower
+when it has to begin a display manager.
 
 #+begin_src sh :tangle ~/xinit.sh
 #!/bin/sh
@@ -118,11 +128,77 @@ $DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
 :ID:       4af8c932-566c-480f-ad35-2667ae7d3cf2
 :END:
 
+The =config.scm= is the file the determines everything about the guix operating
+system. If you've installed arch or another linux distro from scratch or if you
+have some knowledge about OS setup you should find many of these fields familiar.
+
+*** miscellaneous
+:PROPERTIES:
+:ID:       5179b9e5-c40a-4839-85de-bd38abfd373e
+:END:
+
+#+begin_src emacs-lisp
+(locale "en_US.utf8")
+(timezone "America/New_York")
+(keyboard-layout (keyboard-layout "us"))
+(host-name "antelope")
+#+end_src
+
+*** bootloader 
+:PROPERTIES:
+:ID:       8ecad680-34d8-4e5c-b239-ae3767293036
+:END:
+
+#+begin_src emacs-lisp
+(bootloader
+ (bootloader-configuration
+  (bootloader grub-bootloader)
+  (target "/dev/sda")
+  (keyboard-layout keyboard-layout)))
+#+end_src
+
+*** users
+:PROPERTIES:
+:ID:       23bef30c-77f5-443e-acb0-cb01a2072ab0
+:END:
+
+#+begin_src emacs-lisp
+(users (cons* (user-account
+               (name "luis")
+	       (comment "Luis")
+               (group "users")
+               (home-directory "/home/luis")
+               (supplementary-groups
+                '("wheel" "netdev" "audio" "video")))
+              %base-user-accounts))
+#+end_src
+
+*** packages
+:PROPERTIES:
+:ID:       d33e0c8e-e1a8-4db9-aa9c-4a862616adeb
+:END:
+
+This field corresponds to the place where packages should go.
+
+#+begin_src emacs-lisp
+(packages
+ (append
+  (list (specification->package "emacs")
+        (specification->package "emacs-exwm")
+        (specification->package
+         "emacs-desktop-environment")
+        (specification->package "nss-certs"))
+  %base-packages))
+#+end_src
+
 * gpg-agent
 :PROPERTIES:
 :ID:       58a65d49-cd9f-4b5d-86d7-d43209424cf3
 :HEADER-ARGS: :tangle ~/.config/gnupg/gpg-agent.conf
 :END:
+
+Of course we want emacs to manage our pinentry. While it may be less secure I
+like not being prompted for a gpg password.
 
 #+begin_src conf
 pinentry-program <<eval((executable-find "pinentry-emacs"))>>
@@ -136,6 +212,8 @@ default-cache-ttl 60000
 :ID:       a4cf5803-05b1-4133-bd73-01638673d2e3
 :HEADER-ARGS: ~/.config/git/config
 :END:
+
+The [[][]] contains settings for git.
 
 #+begin_src conf
 [user]
@@ -167,6 +245,9 @@ default-cache-ttl 60000
 :ID:       4358b82c-1736-4609-aebe-02447d9c1703
 :HEADER-ARGS: :tangle ~/.config/stumpwm/stumwmrc
 :END:
+
+I have this os installed in case I want to play around or in case exwm crashes
+and my emacs is in an inconvenient to fix place (although I can always go back).
 
 * emacs
 :PROPERTIES:
