@@ -7,7 +7,7 @@ This single org file contains the contents of all my dotfiles and
 configurations. Upon tangling it will dynamically generate all of them in the
 correct locations.
 
-** Why set up my dot files this way?
+** why set up my dot files this way?
 :PROPERTIES:
 :ID:       59aa853c-1764-41f6-bee4-b01bea1733ff
 :END:
@@ -47,7 +47,9 @@ picture or a gif of what I'm talking about.
 :ID:       f77797b8-172e-4482-87a4-5ede829b3b13
 :END:
 
-** how it's loaded
+When you initialize documentation on different machine settings can be different.
+
+** how it's tangled
 :PROPERTIES:
 :ID:       e208e820-cb37-40f5-912e-bad4abf1fd5a
 :END:
