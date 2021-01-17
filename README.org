@@ -59,7 +59,8 @@ different. When using a mac you might want one thing and when using a.
 :ID:       e208e820-cb37-40f5-912e-bad4abf1fd5a
 :END:
 
-I use [[][]] to manage my dotfiles (more on that here). First =yadm clone=.
+I use [[][]] to manage my dotfiles (more on that here). To initialize yadm you
+use [[][]] to bootstrap. First =yadm clone=.
 
 ** highlights
 :PROPERTIES:
