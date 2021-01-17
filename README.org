@@ -59,7 +59,7 @@ different. When using a mac you might want one thing and when using a.
 :ID:       e208e820-cb37-40f5-912e-bad4abf1fd5a
 :END:
 
-I use [[][]] to manage my dotfiles (more on that here). To initialize yadm you
+I use [[https://yadm.io/][yadm]] to manage my dotfiles (more on that here). To initialize yadm you
 use [[][]] to bootstrap. First =yadm clone=.
 
 ** highlights
@@ -150,7 +150,8 @@ setxkbmap -option caps:swapescape
 :ID:       af14d611-79a0-4604-8c02-24bc608d32fb
 :END:
 
-Obviously, we load our OS. In the future, I may figure out how to use a.
+Obviously, we load our OS. In the future, I may use a display manager so I can
+easily switch between emacs, stumpwm or any other window manager of my choosing.
 
 #+begin_src sh
 exec emacs
@@ -601,10 +602,10 @@ Files that need to exist, but I don't typically want to see go here.")
 (xl-dir! XL-PACKAGES-DIR (xl-local-dir "packages/")
   "Path to the directory where packages are stored.")
 
-(xl-dir! XL-ORG-DIR (xl-emacs-dir "org/")
+(xl-dir! XL-ORG-DIR (expand-file-name "~/Documents/org/")
   "Directory where org files should go.")
 
-(xl-dir! XL-SCREENSHOT-DIR (expand-file-name "~/Multimedia/Screenshots/")
+(xl-dir! XL-SCREENSHOT-DIR (expand-file-name "~/Multimedia/screenshots/")
   "Directory where screenshots should go.")
 #+end_src
 
