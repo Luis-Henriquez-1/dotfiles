@@ -40,14 +40,17 @@ capabilities.
 :END:
 
 Documentation comments are not expressive enough. Sometimes, I want to show a
-picture or a gif of what I'm talking about.
+picture or a gif of what I'm talking about. Just as often, I want to reference
+some other file or some place in a file or a link to a website. Even adding
+emphasis to certain things could be useful. Comments can't do any of this.
 
 *** dynamism
 :PROPERTIES:
 :ID:       f77797b8-172e-4482-87a4-5ede829b3b13
 :END:
 
-When you initialize documentation on different machine settings can be different.
+When you initialize documentation on different machine settings can be
+different. When using a mac you might want one thing and when using a.
 
 ** how it's tangled
 :PROPERTIES:
