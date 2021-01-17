@@ -29,8 +29,6 @@ a lisp expression that was computed when the org file was tangled.
 
 One way you could insert the evaluated code is by using <<noweb()>>.
 
-Although nowebs are nice, I do find them lacking.
-
 *** give =org= the ability to evaluate sexps in noweb
 :PROPERTIES:
 :ID:       56390470-b5a6-4bc9-a4db-349bc8377e6e
@@ -137,6 +135,13 @@ have some knowledge about OS setup you should find many of these fields familiar
 :ID:       46a8e991-e102-44cf-9646-d52e67f41413
 :END:
 
+#+name: modules
+#+begin_src emacs-lisp
+(use-modules (gnu)
+	     (srfi srfi-1)
+	     (gnu services desktop))
+#+end_src
+
 *** miscellaneous
 :PROPERTIES:
 :ID:       5179b9e5-c40a-4839-85de-bd38abfd373e
@@ -156,6 +161,7 @@ have some knowledge about OS setup you should find many of these fields familiar
 
 The bootloader is what is repsonsible for booting your system.
 
+#+name: bootloader
 #+begin_src emacs-lisp
 (bootloader
  (bootloader-configuration
@@ -171,6 +177,7 @@ The bootloader is what is repsonsible for booting your system.
 
 I'm the only one who uses my computer.
 
+#+name: users
 #+begin_src emacs-lisp
 (users (cons* (user-account
                (name "luis")
@@ -191,6 +198,7 @@ This field corresponds to the place where packages should go. In the future I
 want to add package versions to these packages so that I can make my dotfiles
 truly reproducable.
 
+#+name: packages
 #+begin_src emacs-lisp
 (packages
  (append
@@ -218,6 +226,11 @@ close. By default elogind.
 #+begin_src emacs-lisp
 ()
 #+end_src
+
+**** all services
+:PROPERTIES:
+:ID:       f85713f7-8ebf-46ca-8933-28002bef98a8
+:END:
 
 *** whole config
 :PROPERTIES:
@@ -524,7 +537,7 @@ Files that need to exist, but I don't typically want to see go here.")
 (xl-dir! XL-ORG-DIR (xl-emacs-dir "org/")
   "Directory where org files should go.")
 
-(xl-dir! XL-SCREENSHOT-DIR (xl-emacs-dir "screenshots/")
+(xl-dir! XL-SCREENSHOT-DIR (expand-file-name "~/Multimedia/Screenshots/")
   "Directory where screenshots should go.")
 #+end_src
 
@@ -3903,7 +3916,9 @@ about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-org)
+(use-package! helm-org
+  :init
+  (general-def [remap org-capture] #'helm-org-capture-templates))
 #+end_src
 
 ***** ace-helm-jump-line
@@ -7933,7 +7948,7 @@ much more useful considering the specific structure of org mode documents.
   ">" #'org-shiftmetaright
   "<" #'org-shiftmetaleft
   "t" #'org-set-tags-command
-  "r" #'org/choose-capture-template
+  "r" #'org-capture
   "s" #'org/dwim-edit-source-block
   "R" #'org-refile
   "T" #'org-todo
@@ -9411,7 +9426,7 @@ These are keybindings I use most frequently.
   "e" (list :def #'xl/open-emacs-instance    :wk "emacs")
   "q" (list :def #'engine/search-duckduckgo    :wk "browse web")
   "j" (list :def #'org/avy-goto-headline       :wk "heading jump")
-  "c" (list :def #'org-capture/choose-template :wk "capture"))
+  "c" (list :def #'org-capture :wk "capture"))
 
 (define-leader-key! "as" (list :ignore nil :wk "screenshot"))
 
