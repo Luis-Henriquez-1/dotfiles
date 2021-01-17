@@ -7,6 +7,11 @@ This single org file contains the contents of all my dotfiles and
 configurations. Upon tangling it will dynamically generate all of them in the
 correct locations.
 
+** Why set up my dot files this way?
+:PROPERTIES:
+:ID:       59aa853c-1764-41f6-bee4-b01bea1733ff
+:END:
+
 It took me a long time to come to the conclusion to set up my dotfiles like
 this. It's certainly unorthodox. However, I was convinced by the benefits. For
 one thing it is simpler to have everything (except a small amount of bootstrap
@@ -16,7 +21,34 @@ consistent documentation that's all in the same syntax--and even better, with
 markup capabilities. Documentation comments, in my opinion, are antiquated; they
 are not expressive enough. Sometimes, I want to show a picture or a gif of what
 I'm talking about. Moreover, more often than not configuration files are
-interrelated.
+interrelated. By linking to eachother.
+
+*** simple file/directory structure
+:PROPERTIES:
+:ID:       ed3ac468-ef9b-4be5-8f2d-44fb29a6ac77
+:END:
+
+*** consistent documentation throughout
+:PROPERTIES:
+:ID:       4fb4fd3b-508c-4454-b831-db7e8827e035
+:END:
+
+*** more expressive documentation
+:PROPERTIES:
+:ID:       d55cdbb7-f2c1-4cae-a80f-0ff22652f1c4
+:END:
+
+*** dynamism
+:PROPERTIES:
+:ID:       f77797b8-172e-4482-87a4-5ede829b3b13
+:END:
+
+** how it's loaded
+:PROPERTIES:
+:ID:       e208e820-cb37-40f5-912e-bad4abf1fd5a
+:END:
+
+First =yadm clone=.
 
 * helpers
 :PROPERTIES:
