@@ -75,6 +75,9 @@ Evaluating source blocks whose id.
 :ID:       fa0904bb-1597-45bf-a944-8b48955cef0c
 :END:
 
+Coming from a vim background and currently using [[git][evil]], I've come to rely on the
+escape key heavily as a "quit everything" binding.
+
 #+begin_src sh
 setxkbmap -option caps:swapescape
 #+end_src
@@ -83,6 +86,8 @@ setxkbmap -option caps:swapescape
 :PROPERTIES:
 :ID:       af14d611-79a0-4604-8c02-24bc608d32fb
 :END:
+
+Obviously, we load our OS.
 
 #+begin_src sh
 exec emacs
