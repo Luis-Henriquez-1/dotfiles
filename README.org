@@ -7,6 +7,14 @@ This single org file contains the contents of all my dotfiles and
 configurations. Upon tangling it will dynamically generate all of them in the
 correct locations.
 
+It took me a long time to come to the conclusion to set up my dotfiles like
+this. It's certainly unorthodox. However, I was convinced by the benefits. For
+one thing it is simpler to have everything (except a small amount of bootstrap
+code) in one file as opposed to having a complex heirarchy of files and
+directories. Having my configuration files in an org-mode files means I can have
+consistent documentation throughout. Moreover, more often than not configuration
+files are interrelated.
+
 * helpers
 :PROPERTIES:
 :ID:       67138086-b894-43b7-8c97-1980acad52b8
@@ -68,13 +76,18 @@ Evaluating source blocks whose id.
 :HEADER-ARGS: :tangle ~/.xinitrc
 :END:
 
+The [[https://wiki.archlinux.org/index.php/Xinit#xinitrc][.xinitrc]] is what [[https://wiki.archlinux.org/index.php/Xorg][xorg]] uses to determine how to set up a
+graphical environment.
+
 ** first remap caps lock with escape
 :PROPERTIES:
 :ID:       fa0904bb-1597-45bf-a944-8b48955cef0c
 :END:
 
 Coming from a vim background and currently using [[git][evil]], I've come to rely on the
-escape key heavily as a "quit everything" binding.
+escape key heavily as a "quit everything" binding. I press it much more often
+than the caps-lock key--actually I think I don't ever use the caps-lock
+key. Even in emacs, there's [[][caps-lock]], so I'm not sure if I need it at all.
 
 #+begin_src sh
 setxkbmap -option caps:swapescape
