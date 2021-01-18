@@ -539,6 +539,8 @@ full screen, especially when I'm using emacs as my window manager.
 :ID:       d68434bf-be6a-471f-ab65-e151f4f1c111
 :END:
 
+This is the heart of my emacs config. It contains the library.
+
 **** Initialize
 :PROPERTIES:
 :ID:       71dbf82e-cf4f-4e8a-b14d-df78bea5b20f
