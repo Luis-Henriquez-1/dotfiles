@@ -3935,18 +3935,19 @@ about Helm is that it's too bloated and slow.
   :xl-ensure nil
   :xl-set
   (helm-ff-auto-update-initial-value . nil)
-  (helm-ff-lynx-style-map . nil)
-  (helm-find-files-doc-header . nil)
+  (helm-ff-lynx-style-map            . nil)
+  (helm-find-files-doc-header        . nil)
   :bind
-  ([remap apropos]                  . helm-apropos)
-  ([remap find-library]             . helm-locate-library)
-  ([remap execute-extended-command] . helm-M-x)
-  ([remap find-file]                . helm-find-files)
-  ([remap locate]                   . helm-locate)
-  ([remap imenu]                    . helm-semantic-or-imenu)
-  ([remap noop-show-kill-ring]      . helm-show-kill-ring)
-  ([remap recentf]                  . helm-recentf)
-  ([remap switch-to-buffer]         . helm-mini))
+  ([remap info]                      . helm-info)
+  ([remap apropos]                   . helm-apropos)
+  ([remap find-library]              . helm-locate-library)
+  ([remap execute-extended-command]  . helm-M-x)
+  ([remap find-file]                 . helm-find-files)
+  ([remap locate]                    . helm-locate)
+  ([remap imenu]                     . helm-semantic-or-imenu)
+  ([remap noop-show-kill-ring]       . helm-show-kill-ring)
+  ([remap recentf]                   . helm-recentf)
+  ([remap switch-to-buffer]          . helm-mini))
 #+end_src
 
 ***** helm descbinds
