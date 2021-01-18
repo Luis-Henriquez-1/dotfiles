@@ -8749,8 +8749,13 @@ Instead of passing in the string I use =org-ml= to print the string.
 
 The purpose of this capture template is to take a "webshot" of the current
 webpage. Let me explain. The website is a source of extremely valuable
-information. Almost always when I have a question I peruse. Over time the content
-of a webpage may change or the webpage itself may be taken down entirely.
+information. Almost always when I have a question I peruse duckduckgo or (if
+that fails) google. The problem is that typically I'll need to look at a
+solution I find again. It can take a long time to find the exact place. What's
+worse, I have no guarantee of finding the same information again. Over time the
+content of a webpage may change or the webpage itself may be taken down
+entirely. That's why I want to collect offline copies of webpages that are
+useful to me.
 
 ******* use exwm to get the link of the website
 :PROPERTIES:
