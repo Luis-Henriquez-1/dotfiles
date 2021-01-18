@@ -529,6 +529,8 @@ full screen, especially when I'm using emacs as my window manager.
 :HEADER-ARGS: :tangle ~/.config/emacs/init.el
 :END:
 
+This is where the magic really happens.
+
 *** Core
 :PROPERTIES:
 :ID:       d68434bf-be6a-471f-ab65-e151f4f1c111
@@ -549,7 +551,7 @@ do here is declare directory names.
 :ID:       2b8148c3-1418-4896-ba53-1673d2d82659
 :END:
 
-Emacs by default uses dynamic binding. Lexical binding is a known.
+See my [[][previous reasoning]] on lexical binding.
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
@@ -604,6 +606,14 @@ Files that need to exist, but I don't typically want to see go here.")
 
 (xl-dir! XL-SCREENSHOT-DIR (expand-file-name "~/Multimedia/screenshots/")
   "Directory where screenshots should go.")
+#+end_src
+
+****** system directories
+:PROPERTIES:
+:ID:       dc011bac-1734-49b5-9c30-128063520b1c
+:END:
+
+#+begin_src emacs-lisp
 #+end_src
 
 ****** important files
@@ -4215,6 +4225,43 @@ once if you have alot.
   (after! company (set! company-tempo-expand t)))
 #+end_src
 
+***** add completing read to tempo
+:PROPERTIES:
+:ID:       ef9b06b1-826f-4030-950e-1884ce546654
+:END:
+
+Making sure that tempo can completing read.
+
+****** tempo completing read
+:PROPERTIES:
+:ID:       2995030d-3848-42b8-8954-3d2366db641c
+:END:
+
+#+begin_src emacs-lisp
+(defun tempo:completing-read (save-name &rest args)
+  (let ((insertion (apply #'completing-read args)))
+    (when save-name
+      (tempo-save-named save-name insertion))
+    (insert insertion)))
+#+end_src
+
+****** C keyword
+:PROPERTIES:
+:ID:       35e24bac-7b64-4e7f-b127-59c8e870aa56
+:END:
+
+[[helpfn:tempo-completing-read+][tempo-completing-read+]] already takes care of inserting the correct value.
+
+#+begin_src emacs-lisp
+(after! tempo
+  (defun tempo:C-keyword (element)
+    (when (eq (car-safe element) 'C)
+      (let ((tempo-interactive t))
+	(apply 'tempo:completing-read (cdr element)))
+      ""))
+  (push #'tempo:C-keyword tempo-user-elements))
+#+end_src
+
 ***** tempo-snippets
 :PROPERTIES:
 :ID:       fa5d20be-f873-4b64-b218-33fc0a54bea6
@@ -4254,9 +4301,9 @@ bindings. However, I prefer the more mainstream =TAB= and =BACKTAB=.
 The overlays from =tempo-snippets= don't disappear after you reach the last
 mark. I need to call.
 
-****** handle =tempo-user-elements=
+****** handle user elements
 :PROPERTIES:
-:ID:       c0253e53-c5a7-4fb9-9bff-668a962ca64c
+:ID:       c2d4ce64-636b-4b7e-b023-df17c9f82ca4
 :END:
 
 =tempo-snippets= doesn't handle user elements. The writers of =tempo-snippets=
@@ -4264,10 +4311,18 @@ actually have [[][a FIXME line]] where they say they haven't done this yet. So
 if you're like me and defined any, they will be ignored. The purpose of this
 headline is to address this problem.
 
-Unfortunately, the function where I need to fix this already.
+Unfortunately, the function where I need to fix this doesn't have a clean way
+for me to do it cleanly. I need to change its [[][let binding]].
 
 #+begin_src emacs-lisp
-(defadvice!)
+(alet `(lambda (orig-fn &rest args)
+	 (let ((tempo-user-elements ',tempo-user-elements)
+	       (element (car args)))
+	   (alet (or (tempo-is-user-element element) element)
+	     (apply orig-fn (list it)))))
+  (let ((name (xl-advice-name #'tempo-snippets-insert-form 'handle-user-elements)))
+    (fset name it)
+    (advice-add #'tempo-snippets-insert-form :around name)))
 #+end_src
 
 ****** defining snippets
@@ -4314,44 +4369,16 @@ MODE if one does not exist."
 	   '((defsnippet! ,name (,tag ,other-modes) ,docstring ,body))))))
 #+end_src
 
-***** add completing read to tempo
-:PROPERTIES:
-:ID:       ef9b06b1-826f-4030-950e-1884ce546654
-:END:
-
-Making sure that tempo can completing read.
-
-****** tempo completing read
-:PROPERTIES:
-:ID:       2995030d-3848-42b8-8954-3d2366db641c
-:END:
-
-#+begin_src emacs-lisp
-(defun tempo:completing-read (save-name &rest args)
-  (let ((insertion (apply #'completing-read args)))
-    (when save-name
-      (tempo-save-named save-name insertion))
-    (insert insertion)))
-#+end_src
-
-****** C keyword
-:PROPERTIES:
-:ID:       35e24bac-7b64-4e7f-b127-59c8e870aa56
-:END:
-
-[[helpfn:tempo-completing-read+][tempo-completing-read+]] already takes care of inserting the correct value.
-
-#+begin_src emacs-lisp
-(after! tempo
-  (defun tempo:C-keyword (element)
-    (when (eq (car-safe element) 'C)
-      (let ((tempo-interactive t))
-	(apply 'tempo:completing-read (cdr element)))
-      ""))
-  (push #'tempo:C-keyword tempo-user-elements))
-#+end_src
-
 *** Utility
+
+**** elfeed
+:PROPERTIES:
+:ID:       6aa4ece0-0b94-48b6-9a99-4b85cd1f7ccd
+:END:
+
+#+begin_src emacs-lisp
+(use-package! elfeed)
+#+end_src
 
 **** chess
 :PROPERTIES:
@@ -4850,6 +4877,21 @@ Take a s
 (define-key! "<f9>" 'gif-screencast-start-or-stop)
 #+end_src
 
+***** videos
+:PROPERTIES:
+:ID:       a8c1f6aa-25f6-47aa-a625-2c870f322a8c
+:END:
+
+****** ytel
+:PROPERTIES:
+:ID:       dea17f59-bebc-426e-ae7a-56f8d8971260
+:END:
+
+******* get video
+:PROPERTIES:
+:ID:       2a0e30c8-7a82-4bea-a79c-6d77eca6893a
+:END:
+
 ***** emms
 :PROPERTIES:
 :ID:       6f3eaa69-bbbb-458e-bcad-1c121a3174e9
@@ -4857,7 +4899,7 @@ Take a s
 
 [[https://www.gnu.org/software/emms/][emms]] is a very complete music player.
 
-****** init
+****** emms
 :PROPERTIES:
 :ID: 5d28b703-a87f-47ca-b320-785e7589fea6
 :END:
@@ -4882,10 +4924,7 @@ Take a s
 (defhook! quit-emms (kill-emacs-hook)
   "Shut down EMMS."
   (when emms-player-playing-p (emms-pause))
-  (emms-stop)
-  ;; kill any existing mpd processes
-  (when (member 'emms-player-mpd emms-player-list)
-    (call-process "killall" nil nil nil "mpd")))
+  (emms-stop))
 #+end_src
 
 **** outorg
