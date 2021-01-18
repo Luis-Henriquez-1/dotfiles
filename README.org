@@ -4306,13 +4306,19 @@ mark. I need to call.
 :ID:       c2d4ce64-636b-4b7e-b023-df17c9f82ca4
 :END:
 
-=tempo-snippets= doesn't handle user elements. The writers of =tempo-snippets=
-actually have [[][a FIXME line]] where they say they haven't done this yet. So
-if you're like me and defined any, they will be ignored. The purpose of this
-headline is to address this problem.
+=tempo-snippets= doesn't handle [[helpvar:tempo-user-elements][tempo-user-elements]]. =tempo-user-elements= are
+custom additions to the tempo syntax. The writers of =tempo-snippets= actually
+have [[][a FIXME line]] where they say they haven't done this yet. So if you're
+like me and defined any, they will be ignored. The purpose of this headline is
+to address this problem.
 
-Unfortunately, the function where I need to fix this doesn't have a clean way
-for me to do it cleanly. I need to change its [[][let binding]].
+The relevant function here is [[helpfn:tempo-snippets-insert-template][tempo-snippets-insert-template]]. In this function
+we can see that [[helpvar:tempo-user-elements][tempo-user-elements]] is let bound to a list of just one user
+element, [[helpfn:tempo-snippets-insert-form][tempo-snippets-insert-form]]. The problem is that
+=tempo-snippets-insert-form= doesn't know about the other tempo user elements. The
+following code injects that knowledge into =tempo-snippets-insert-form= via an
+around advice. Note that if later we add more user elements, we have to update
+this advice.
 
 #+begin_src emacs-lisp
 (alet `(lambda (orig-fn &rest args)
