@@ -474,8 +474,8 @@ initialization of the frame.
 :END:
 
 #+begin_src emacs-lisp
-(push (cons 'left-fringe 0) default-frame-alist)
-(push (cons 'right-fringe 0) default-frame-alist)
+(push '(left-fringe  . 0) default-frame-alist)
+(push '(right-fringe . 0) default-frame-alist)
 #+end_src
 
 *** stop package.el from writing in our init file
@@ -514,6 +514,18 @@ Prevent early display of the modeline.
 #+begin_src elisp
 (unless after-init-time
   (setq-default mode-line-format nil))
+#+end_src
+
+*** maximize frame
+:PROPERTIES:
+:ID:       3d208962-52ad-491a-8bf4-c9248c692fc7
+:END:
+
+Emacs is the interface with which I deal with everything else. I want it to be
+full screen, especially when I'm using emacs as my window manager.
+
+#+begin_src emacs-lisp
+(push '(fullscreen . maximized) default-frame-alist)
 #+end_src
 
 ** init.el
@@ -1354,13 +1366,13 @@ instead of =add-hook=.
 (use-package:defnormalize! xl-before-call ()
   (cl-assert (-all-p (-orfn #'symbolp #'listp) <args>))
   (->> <args>
-       (--map-when (symbolp it) (cons it <name>))
+       (--map-when (symbolp it) (cons <name> it))
        (-mapcat #'use-package:normalize-cons)))
 
 (use-package:defhander! xl-before-call ()
   `(,@(-map (-partial #'use-package:autoload <name>)
-	    (-map #'car <value>))
-    ,@(-map (-lambda ((fn . package)) `(xl-load-before-call #',fn ',package))
+	    (-map #'cdr <value>))
+    ,@(-map (-lambda ((package . fn)) `(xl-load-before-call #',package ',fn))
 	    <value>)
     ,@<body>))
 #+end_src
@@ -1377,13 +1389,13 @@ instead of =add-hook=.
 (use-package:defnormalize! xl-after-call ()
   (cl-assert (-all-p (-orfn #'symbolp #'listp) <args>))
   (->> <args>
-       (--map-when (symbolp it) (cons it <name>))
+       (--map-when (symbolp it) (cons <name> it))
        (-mapcat #'use-package:normalize-cons)))
 
 (use-package:defhander! xl-after-call ()
   `(,@(-map (-partial #'use-package:autoload <name>)
-	    (-map #'car <value>))
-    ,@(-map (-lambda ((fn . package)) `(xl-load-after-call #',fn ',package))
+	    (-map #'cdr <value>))
+    ,@(-map (-lambda ((package . fn)) `(xl-load-after-call ',package #',fn))
 	    <value>)
     ,@<body>))
 #+end_src
@@ -3489,7 +3501,8 @@ favor using it.
 
 #+begin_src emacs-lisp
 (use-package! consult
-  :xl-before-call ((consult-buffer-other-window consult-buffer) . recentf)
+  :xl-before-call
+  (recentf . (consult-buffer-other-window consult-buffer))
   :xl-set
   (consult-preview-theme   . nil)
   (consult-preview-outline . t)
@@ -4303,6 +4316,15 @@ Making sure that tempo can completing read.
 #+end_src
 
 *** Utility
+
+**** chess
+:PROPERTIES:
+:ID:       1197be6f-a2ff-4cf1-8b78-02ebceb43317
+:END:
+
+#+begin_src emacs-lisp
+(use-package! chess)
+#+end_src
 
 **** avy
 :PROPERTIES:
@@ -5646,7 +5668,7 @@ This package takes you to the last point you were at when you visited a file.
 
 ****** saveplace
 :PROPERTIES:
-:ID: 6da42724-3137-4d70-9aed-9a978357679f
+:ID:       63b04114-bcb9-4a2e-ad45-be4db8d4a269
 :END:
 
 As its name suggests, =save-place= is a built-in package that stores the buffer
@@ -5657,6 +5679,8 @@ again, you are taken to the location you left off. This is very convenient.
 (use-feature! saveplace
   :xl-after-call after-find-file
   :xl-config
+  (save-place-mode)
+  :xl-set
   (save-place-file . (concat XL-DATA-DIR "saveplace"))
   (save-place-limit . nil))
 #+end_src
@@ -8527,12 +8551,14 @@ for major modes.
 
 #+begin_src emacs-lisp
 (use-feature! org-capture
-  ;; :xl-before-call ((ts org-ml) . org-capture)
+  :xl-before-call
+  (ts     . org-capture)
+  (org-ml . org-capture)
   :xl-rule ("bottom" "capture" :newname "\\`CAPTURE-.+")
   :xl-config
-  (after! evil
-    (xl-add-hook 'org-capture-mode-hook #'evil-insert-state))
+  (after! evil (xl-add-hook 'org-capture-mode-hook #'evil-insert-state))
   :init
+  (after! org-agenda (push (xl-capture-file) org-agenda-files))
   (xl-load-before-call 'org-ml #'org-capture)
   (xl-load-before-call 'ts #'org-capture))
 #+end_src
@@ -8571,44 +8597,6 @@ question]]. I need to disable =org-capture's= header-line.
 :END:
 
 #+begin_src emacs-lisp
-#+end_src
-
-****** completing-read org-capture
-:PROPERTIES:
-:ID:       ad2cc056-edda-490a-8cf9-10b370a21dc0
-:END:
-
-Org provides it's own default interface for capturing. To be consistent with how
-we complete everything else--via [[helpfn:][completing-read]], I create a function which
-let's me choose the template via completing-read.
-
-******* capture templates
-:PROPERTIES:
-:ID:       c4fdb186-3509-42f1-9c3e-8bf80a5e6b47
-:END:
-
-#+begin_src emacs-lisp
-(defun org-capture:template-list ()
-  "Return a list of capture templates."
-  (thread-first org-capture-templates
-    (org-capture-upgrade-templates)
-    (org-contextualize-keys org-capture-templates-contexts)))
-#+end_src
-
-******* replacement for =org-capture=
-:PROPERTIES:
-:ID:       4dd55ff4-7e6e-41f5-82f8-0db597959a17
-:END:
-
-#+begin_src emacs-lisp
-(defun org-capture/choose-template ()
-  (interactive)
-  (require 'org-capture)
-  (let* ((read-string (--map (format "%s %s" (car it) (cadr it))
-			     (org-capture:template-list)))
-	 (selection (completing-read "Capture template: " read-string nil :require-match))
-	 (key (car (split-string selection "\s" t))))
-    (org-capture nil key)))
 #+end_src
 
 ****** doct
@@ -8707,6 +8695,7 @@ Instead of passing in the string I use =org-ml= to print the string.
        (org-ml-headline-set-node-property "ID" (org-id-new))
        (org-ml-headline-set-node-property "CREATED" (ts-format))
        (org-ml-set-property :todo-keyword "ISSUE")
+       ;; (org-ml-set-property :deadline)
        (org-ml-to-trimmed-string)))
 #+end_src
 
@@ -8766,7 +8755,7 @@ for a certain block of time is a must. =org-agenda= is this overview.
   :xl-set
   (org-agenda-text-search-extra-files . '(agenda-archives))
   (org-agenda-skip-unavailable-files  . t)
-  (org-agenda-files                   . (list org-capture:file))
+  (org-agenda-files                   . nil)
   (org-agenda-start-on-weekday        . 0)
   (org-agenda-timegrid-use-ampm       . nil)
   (org-agenda-time-leading-zero       . t)
@@ -8815,6 +8804,11 @@ org agenda buffer is displayed.
   :xl-config
   (org-super-agenda-mode))
 #+end_src
+
+******* top five overdue entries
+:PROPERTIES:
+:ID:       9c825b83-057e-4373-9256-047e3d09f693
+:END:
 
 ***** org-refile
 :PROPERTIES:
