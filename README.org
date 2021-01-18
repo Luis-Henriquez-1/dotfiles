@@ -3904,9 +3904,10 @@ of things that we actually want at this moment.
 
 Helm is the most popular emacs completion framework. It is full-featured and
 extremely customizable. I haven't found an official manual for it but I often
-see people reference [[http://tuhdo.github.io/helm-intro.html][this helm intro]] that showcase many useful helm commands. A huge
-advantage helm has is the breath of its support. The biggest complaint heard
-about Helm is that it's too bloated and slow.
+see people reference [[http://tuhdo.github.io/helm-intro.html][this helm intro]] that showcase many useful helm
+commands. Among the advatages helm has are the breath of support and it's
+maturity. I also like that it uses the buffer instead of the minibuffer. The
+biggest complaint heard about Helm is that it's too bloated and slow.
 
 ***** helm-core
 :PROPERTIES:
@@ -3940,6 +3941,7 @@ about Helm is that it's too bloated and slow.
   (helm-ff-lynx-style-map            . nil)
   (helm-find-files-doc-header        . nil)
   :bind
+  ([remap man]                       . helm-man-woman)
   ([remap info]                      . helm-info)
   ([remap apropos]                   . helm-apropos)
   ([remap find-library]              . helm-locate-library)
@@ -4028,6 +4030,15 @@ about Helm is that it's too bloated and slow.
 (use-package helm-themes
   :init
   (general-def [remap load-theme] #'helm-themes))
+#+end_src
+
+***** helm-xref
+:PROPERTIES:
+:ID:       fc1c71e1-775d-44a3-bd82-dedbca1e2ba6
+:END:
+
+#+begin_src emacs-lisp
+(use-package! helm-xref)
 #+end_src
 
 ***** ace-helm-jump-line
@@ -8584,9 +8595,7 @@ for major modes.
   :xl-config
   (after! evil (xl-add-hook 'org-capture-mode-hook #'evil-insert-state))
   :init
-  (after! org-agenda (push (xl-capture-file) org-agenda-files))
-  (xl-load-before-call 'org-ml #'org-capture)
-  (xl-load-before-call 'ts #'org-capture))
+  (after! org-agenda (push (xl-capture-file) org-agenda-files)))
 #+end_src
 
 ****** remove capture headerline
@@ -8615,14 +8624,6 @@ question]]. I need to disable =org-capture's= header-line.
   "Don't delete other windows when opening a capture template."
   (cl-letf (((symbol-function #'delete-other-windows) #'ignore))
     (apply <orig-fn> <args>)))
-#+end_src
-
-****** allow display-buffer-alist to control org-capture
-:PROPERTIES:
-:ID:       f7902aec-a02f-473b-a91e-662841d3d901
-:END:
-
-#+begin_src emacs-lisp
 #+end_src
 
 ****** doct
@@ -8684,7 +8685,7 @@ same key as the one(s) being added."
 For capture templates that have deadlines, I set a start and an end date.
 
 #+begin_src emacs-lisp
-(defun org-capture:-default-planning-node (&optional days-difference)
+(defun org-capture:default-planning-node (&optional days-difference)
   "Return the default planning node for `org-capture-templates'."
   (let* ((days-difference (or days-difference 7))
          (now (ts-now))
@@ -8735,6 +8736,66 @@ Instead of passing in the string I use =org-ml= to print the string.
   (doct:add-to-templates
    (list "emacs"
 	 :keys "e"
+	 :template #'org-capture:emacs-template
+	 :file (xl-capture-file)
+	 :prepend t
+	 :empty-lines 1)))
+#+end_src
+
+******* website
+:PROPERTIES:
+:ID:       c669df23-de45-4567-83b7-03534877c865
+:END:
+
+The purpose of this capture template is to take a "webshot" of the current
+webpage. Let me explain. The website is a source of extremely valuable
+information. Almost always when I have a question I peruse. Over time the content
+of a webpage may change or the webpage itself may be taken down entirely.
+
+******* use exwm to get the link of the website
+:PROPERTIES:
+:ID:       ecba4a3d-0926-4062-a5e7-34e7c2fceb36
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+******* use weasyprint to take screenshot
+:PROPERTIES:
+:ID:       f5f98244-da1a-4530-a6f9-83b07786c12f
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-take-webshot (url)
+  "Take a webshot of URL."
+  (call-process "weasyprint" nil nil nil url))
+#+end_src
+
+******* website capture string
+:PROPERTIES:
+:ID:       02ba52bd-9de7-4e5d-8f48-a961f2e0e5e8
+:END:
+
+#+begin_src emacs-lisp
+(defun org-capture:website-template ()
+  "Return emacs capture template."
+  (->> (org-ml-build-headline! :title-text "%?")
+       (org-ml-headline-set-node-property "ID" (org-id-new))
+       (org-ml-headline-set-node-property "CREATED" (ts-format))
+       (org-ml-headline-set-node-property "LINK" )
+       (org-ml-to-trimmed-string)))
+#+end_src
+
+******* template
+:PROPERTIES:
+:ID:       c96be217-04ef-4602-a78b-fb842cde6eee
+:END:
+
+#+begin_src emacs-lisp
+(after! org-capture
+  (doct:add-to-templates
+   (list "website"
+	 :keys "w"
 	 :template #'org-capture:emacs-template
 	 :file (xl-capture-file)
 	 :prepend t
@@ -8879,7 +8940,7 @@ referenance org headlines.
 (use-package! org-superstar
   :xl-hook org-mode-hook
   :xl-set
-  (org-superstar-leading-bullet . ?\s)
+  (org-superstar-leading-bullet     . ?\s)
   (org-superstar-special-todo-items . t))
 #+end_src
 
