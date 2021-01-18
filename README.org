@@ -65,11 +65,6 @@ use [[][]] to bootstrap. First =yadm clone=.
 :ID:       67138086-b894-43b7-8c97-1980acad52b8
 :END:
 
-** general config
-:PROPERTIES:
-:ID:       3564e7a3-1db7-4bd7-aea5-e28956ebac41
-:END:
-
 ** evaluation nowebs
 :PROPERTIES:
 :ID:       8d68503c-75a2-463b-b286-6490c9c8b97b
@@ -4264,11 +4259,15 @@ mark. I need to call.
 :ID:       c0253e53-c5a7-4fb9-9bff-668a962ca64c
 :END:
 
-=tempo-snippets= doesn't handle user elements. If you defined any, they will be
-ignored. Specifically, the original value is overwritten in *. The purpose of
-this headline is to address this problem.
+=tempo-snippets= doesn't handle user elements. The writers of =tempo-snippets=
+actually have [[][a FIXME line]] where they say they haven't done this yet. So
+if you're like me and defined any, they will be ignored. The purpose of this
+headline is to address this problem.
+
+Unfortunately, the function where I need to fix this already.
 
 #+begin_src emacs-lisp
+(defadvice!)
 #+end_src
 
 ****** defining snippets
@@ -9568,14 +9567,14 @@ prompt asking me if I'm sure.
 #+begin_src emacs-lisp
 (define-leader-key!
   :infix "q"
-  ""  (list :ignore t                        :wk "quit")
-  "q" (list :def #'evil-quit-all             :wk "normally")
+  ""  (list :ignore t                      :wk "quit")
+  "q" (list :def #'evil-quit-all           :wk "normally")
   "s" (list :def #'xl/quit-emacs-no-prompt :wk "with no prompt")
-  "Q" (list :def #'evil-save-and-quit        :wk "and save")
+  "Q" (list :def #'evil-save-and-quit      :wk "and save")
   "x" (list :def #'xl/kill-emacs-no-hook   :wk "with no hook")
   "e" (list :def #'xl/kill-emacs-processes :wk "emacs processes")
   "b" (list :def #'xl/kill-emacs-brutally  :wk "brutally")
-  ;; "r" (list :def #'restart-emacs             :wk "and restart")
+  ;; "r" (list :def #'restart-emacs           :wk "and restart")
   )
 #+end_src
 
