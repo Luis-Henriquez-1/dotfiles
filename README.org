@@ -8757,6 +8757,16 @@ content of a webpage may change or the webpage itself may be taken down
 entirely. That's why I want to collect offline copies of webpages that are
 useful to me.
 
+******* webshot directory
+:PROPERTIES:
+:ID:       d63904d7-0e65-4a75-b7a7-e68065811208
+:END:
+
+#+begin_src emacs-lisp
+(xl-dir! XL-WEBSHOT-DIR (xl-multimedia-dir "webshots")
+  "Directory where webshots should go.")
+#+end_src
+
 ******* use exwm to get the link of the website
 :PROPERTIES:
 :ID:       ecba4a3d-0926-4062-a5e7-34e7c2fceb36
@@ -8765,7 +8775,7 @@ useful to me.
 #+begin_src emacs-lisp
 #+end_src
 
-******* use weasyprint to take screenshot
+******* use weasyprint to take webshot
 :PROPERTIES:
 :ID:       f5f98244-da1a-4530-a6f9-83b07786c12f
 :END:
@@ -8773,7 +8783,8 @@ useful to me.
 #+begin_src emacs-lisp
 (defun xl-take-webshot (url)
   "Take a webshot of URL."
-  (call-process "weasyprint" nil nil nil url))
+  (let ((default-directory ()))
+    (call-process "weasyprint" nil nil nil url)))
 #+end_src
 
 ******* website capture string
