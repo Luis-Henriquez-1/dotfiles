@@ -1817,13 +1817,8 @@ side windows.
 :ID:       9b79f07b-8397-4f95-b79c-5e136a9b2079
 :END:
 
-******* db
-:PROPERTIES:
-:ID:       7cfa6d24-447a-4fb2-aa78-647e71ad21ee
-:END:
-
 #+begin_src emacs-lisp
-(use-package! db :demand t)
+(use-package! db)
 #+end_src
 
 ****** elog
