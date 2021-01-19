@@ -630,7 +630,7 @@ Files that need to exist, but I don't typically want to see go here.")
 (xl-dir! XL-MULTIMEDIA-DIR (xl-home-dir "Multimedia/")
   "Directory used to store multimedia.")
 
-(xl-dir! XL-SCREENSHOT-DIR (xl-multimedia-dir "screenshots")
+(xl-dir! XL-SCREENSHOT-DIR (xl-multimedia-dir "screenshots/")
   "Directory where screenshots should go.")
 
 (xl-dir! XL-PACKAGES-DIR (xl-local-dir "packages/")
