@@ -553,7 +553,14 @@ This is where the magic really happens.
 :ID:       d68434bf-be6a-471f-ab65-e151f4f1c111
 :END:
 
-This is the heart of my emacs config. It contains the library.
+This headline contains the core abstractions in my config. In emacs, there are
+several different packages, both built-in to emacs and external to it. Each
+package addresses some issue or task they want to solve or improve. Sometimes
+several packages need to work together. Sometimes one package can provide tools
+which would be useful in configuring another. As one begins building their emacs
+config they need to manage these packages and the several interactions between
+emacs and eachother. In this headline I try to develop tools which will help me
+deal with this web of interactions.
 
 **** Initialize
 :PROPERTIES:
