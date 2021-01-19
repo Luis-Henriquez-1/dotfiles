@@ -2468,14 +2468,12 @@ and convenient way to do this.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl--load-on-call (package where functions &optional enable)
+(defun xl--load-on-call (package where functions)
   "Load packages FUNCTIONS are called."
   (alet (xl-symbol-intern 'xl--load- package '-advice)
     (fset it `(lambda (&rest _)
                 (xl-log "Loading %s" ',package)
-                (require ',package)
-                (when ,enable
-                  (funcall-interactively #',(xl-symbol-intern package '-mode) 1))))
+                (require ',package)))
     (xl-add-advice functions where it nil t)))
 #+end_src
 
@@ -2485,8 +2483,8 @@ and convenient way to do this.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-load-before-call (package functions &optional enable)
-  (xl--load-on-call package :before functions enable))
+(defun xl-load-before-call (package functions)
+  (xl--load-on-call package :before functions))
 #+end_src
 
 ****** load after call
@@ -2495,8 +2493,8 @@ and convenient way to do this.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-load-after-call (package functions &optional enable)
-  (xl--load-on-call package :after functions enable))
+(defun xl-load-after-call (package functions)
+  (xl--load-on-call package :after functions))
 #+end_src
 
 
@@ -2637,9 +2635,21 @@ In addition to providing keybinding stuff, =general= also provides.
 :ID:       63fe8a26-512e-41c6-8b8d-a9f3ba495bc9
 :END:
 
+This built-in emacs package is opens a buffer with a list.
+
 #+begin_src emacs-lisp
 (use-feature! backtrace
   :xl-rule ("bottom" "backtrace" :newname "\\*Backtrace\\*"))
+#+end_src
+
+***** origami
+:PROPERTIES:
+:ID:       ac2cc043-331f-435b-b903-39681b84fefe
+:END:
+
+#+begin_src emacs-lisp
+(use-package! origami
+  :xl-hook prog-mode-hook)
 #+end_src
 
 ***** hideshow
@@ -2648,8 +2658,7 @@ In addition to providing keybinding stuff, =general= also provides.
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! hideshow
-  :xl-hook (prog-mode-hook . hs-minor-mode))
+(use-feature! hideshow)
 #+end_src
 
 ***** vc-hook
@@ -3866,8 +3875,8 @@ biggest complaint heard about Helm is that it's too bloated and slow.
   :xl-rule ("bottom" "helm" :newname "\\*Helm.+")
   :xl-set
   (helm-default-display-buffer-functions . nil)
-  (helm-display-buffer-height            . 0.6)
-  (helm-display-buffer-default-height    . 0.6)
+  ;; (helm-display-buffer-height            . 0.6)
+  ;; (helm-display-buffer-default-height    . 0.6)
   (helm-candidate-number-limit           . 50)
   (helm-display-header-line              . nil)
   (helm-mode-line-string                 . nil))
@@ -8013,9 +8022,9 @@ the whole thing.
 #+begin_src emacs-lisp
 (use-package! org
   :xl-set
-  (org-directory          . (xl-org-dir))
-  (org-archive-location   . (xl-org-dir "archive.org"))
-  (org-default-notes-file . (xl-org-dir "notes.org"))
+  (org-directory                      . (xl-org-dir))
+  (org-archive-location               . (xl-org-dir "archive.org::"))
+  (org-default-notes-file             . (xl-org-dir "notes.org"))
   (org-fontify-emphasized-text        . t)
   (org-hide-emphasis-markers          . t)
   (org-pretty-entities                . t)
@@ -8600,6 +8609,19 @@ question]]. I need to disable =org-capture's= header-line.
     (apply <orig-fn> <args>)))
 #+end_src
 
+****** make templates follow popup rules
+:PROPERTIES:
+:ID:       d1fafcb4-dcaf-4ba0-835d-cb12acb8e445
+:END:
+
+[[helpfn:org-capture-place-template][org-capture-place-template]] is what's responsible for displaying the org capture
+buffer. We need to try to make it use display buffer.
+
+#+begin_src emacs-lisp
+(defadvice! use-display-buffer (:around org-switch-to-buffer-other-window)
+  ())
+#+end_src
+
 ****** doct
 :PROPERTIES:
 :ID:       fa37f618-b58c-449b-a216-9d2f80ed12c6
@@ -8675,18 +8697,61 @@ For capture templates that have deadlines, I set a start and an end date.
 :ID:       a2a3f682-322a-450f-91bf-169d90f040c0
 :END:
 
-******* generic template
+******* macro for defining capture templates
+:PROPERTIES:
+:ID:       4ee166c6-34ed-42b0-9187-4968bf92be03
+:END:
+
+#+begin_src emacs-lisp
+(defmacro org-capture-template! (name &rest args)
+  "Convenience macro for declaratively defining a capture template."
+  `(after! org-capture
+     (doct:add-to-templates
+      (list ,name ,@args))))
+#+end_src
+
+******* generic template node
 :PROPERTIES:
 :ID:       3e8e8230-1732-48f8-8ec1-47333e0aea2d
 :END:
 
 #+begin_src emacs-lisp
+(defun org-capture:generic-template-node ()
+  "Return a generic capture template."
+  (->> (org-ml-build-headline! :title-text "%?")
+       (org-ml-headline-set-node-property "ID" (org-id-new))
+       (org-ml-headline-set-node-property "CREATED" (ts-format))
+       ;; (org-ml-set-property :todo-keyword "ISSUE")
+       ;; (org-ml-set-property :deadline)
+       ;; (org-ml-to-trimmed-string)
+       ))
 #+end_src
 
 ******* todo
 :PROPERTIES:
 :ID:       ba9efcea-c600-4304-8b0a-f478eb84a3aa
 :END:
+
+******** capture
+:PROPERTIES:
+:ID:       ae988ccd-f335-4158-8a32-e82873fbb5b4
+:END:
+
+******** org
+:PROPERTIES:
+:ID:       e484f0bb-b4b1-45a3-831d-8283e3a8a123
+:END:
+
+#+begin_src emacs-lisp
+(after! org-capture
+  (doct:add-to-templates
+   (list "todo"
+	 :keys "t"
+	 :template 
+	 :file (xl-capture-file)
+	 :prepend t
+	 :empty-lines 1)))
+#+end_src
 
 ******* issue
 :PROPERTIES:
@@ -8703,7 +8768,7 @@ This is a capture template for emacs usage.
 Instead of passing in the string I use =org-ml= to print the string.
 
 #+begin_src emacs-lisp
-(defun org-capture:emacs-template ()
+(defun org-capture:issue-template ()
   "Return emacs capture template."
   (->> (org-ml-build-headline! :title-text "%?")
        (org-ml-headline-set-node-property "ID" (org-id-new))
@@ -8721,9 +8786,9 @@ Instead of passing in the string I use =org-ml= to print the string.
 #+begin_src emacs-lisp
 (after! org-capture
   (doct:add-to-templates
-   (list "emacs"
-	 :keys "e"
-	 :template #'org-capture:emacs-template
+   (list "issue"
+	 :keys "i"
+	 :template #'org-capture:issue-template
 	 :file (xl-capture-file)
 	 :prepend t
 	 :empty-lines 1)))
@@ -8760,6 +8825,9 @@ useful to me.
 :END:
 
 #+begin_src emacs-lisp
+(defun exwm:website-link ()
+  "Return the link of the website."
+  (funcall exwm:website-link-fn))
 #+end_src
 
 ******** use weasyprint to take webshot
@@ -8770,7 +8838,7 @@ useful to me.
 #+begin_src emacs-lisp
 (defun xl-take-webshot (url)
   "Take a webshot of URL."
-  (let ((default-directory ()))
+  (let ((default-directory (xl-webshot-dir)))
     (call-process "weasyprint" nil nil nil url)))
 #+end_src
 
@@ -8781,7 +8849,6 @@ useful to me.
 
 #+begin_src emacs-lisp
 (defun org-capture:website-template ()
-  "Return emacs capture template."
   (->> (org-ml-build-headline! :title-text "%?")
        (org-ml-headline-set-node-property "ID" (org-id-new))
        (org-ml-headline-set-node-property "CREATED" (ts-format))
@@ -8996,7 +9063,7 @@ referenance org headlines.
 #+begin_src emacs-lisp
 (defsnippet! id-link ("scrot" org-mode)
   "Id link."
-  '("[[" (C fn "id: " (xl-screenshots)) "][" "hello" "]]"))
+  '("[[" (C fn "id: " ()) "][" "hello" "]]"))
 #+end_src
 
 ****** screenshot
