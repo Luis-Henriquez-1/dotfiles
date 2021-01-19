@@ -2636,6 +2636,16 @@ In addition to providing keybinding stuff, =general= also provides.
 :ID:       d5c0d112-319d-4271-a819-eb786a64bfc6
 :END:
 
+***** backtrace
+:PROPERTIES:
+:ID:       63fe8a26-512e-41c6-8b8d-a9f3ba495bc9
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! backtrace
+  :xl-rule ("bottom" "backtrace" :newname "\\*Backtrace\\*"))
+#+end_src
+
 ***** hideshow
 :PROPERTIES:
 :ID:       2b253cbb-43c8-44de-9526-8d9fb5d0e226
@@ -8556,15 +8566,15 @@ and painlessly.
 :ID:       f3eed884-408f-44cb-becc-17c1431060c5
 :END:
 
-******* settings
-:PROPERTIES:
-:ID:       c7a7e21c-88b9-485e-9ae3-874d324981b5
-:END:
-
 #+begin_src emacs-lisp
-(setq sl-backlink-prefix nil)
-(setq sl-related-into-drawer "LINKS")
-(setq sl-backlink-into-drawer "BACKLINKS")
+(use-package! org-superlinks
+  :xl-ensure
+  (:host github :type git :repo "toshism/org-super-links")
+  :commands org-super-links-link
+  :xl-set
+  (org-super-links-backlink-prefix      . nil)
+  (org-super-links-related-into-drawer  . "LINKS")
+  (org-super-links-backlink-into-drawer . "LINKS"))
 #+end_src
 
 ****** org-link-minor-mode
