@@ -3951,6 +3951,7 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 :END:
 
 #+begin_src emacs-lisp
+(use-package! helm-org-rifle)
 #+end_src
 
 ***** helm-org
