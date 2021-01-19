@@ -8801,6 +8801,14 @@ For capture templates that have deadlines, I set a start and an end date.
 :ID:       a2a3f682-322a-450f-91bf-169d90f040c0
 :END:
 
+******* generic template
+:PROPERTIES:
+:ID:       3e8e8230-1732-48f8-8ec1-47333e0aea2d
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 ******* todo
 :PROPERTIES:
 :ID:       ba9efcea-c600-4304-8b0a-f478eb84a3aa
