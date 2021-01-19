@@ -412,7 +412,9 @@ initialization of the emacs frame.
 :ID:       2b8148c3-1418-4896-ba53-1673d2d82659
 :END:
 
-Emacs by default uses dynamic binding. Lexical binding is a known.
+Emacs by default uses dynamic binding. Lexical binding is a [[https://nullprogram.com/blog/2016/12/22/][known way to boost
+startup speed]]. To enable it you add the following comment on the top of your
+elisp files. The comment creates [[][]].
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
@@ -423,7 +425,9 @@ Emacs by default uses dynamic binding. Lexical binding is a known.
 :ID:       33c4ed1f-9382-49ff-9706-6ce5c0fd0d7c
 :END:
 
-Defer garbage collection further back in the startup process.
+During computationally intensive tasks, it is better stop garbage collecting
+until the task is done. Initializing emacs is such a task. Therefore, I
+effectively stop garbage collection by setting the.
 
 #+begin_src emacs-lisp
 (setq gc-cons-threshold most-positive-fixnum)
@@ -457,7 +461,11 @@ prevent it was to set up an [[https://wiki.archlinux.org/index.php/X_resources][
 :END:
 
 This is the most efficient way to set the font. It's done before the
-initialization of the frame.
+initialization of the frame and it avoids the usage of. Only problem is this
+will cause your emacs to crash if the font you specify does not exist. And, you
+can't check the existing fonts at this time either because the [[][frame hasn't
+been initialized yet]] so functions like [] and [] will not return reliable
+values (trust me, I tried).
 
 #+begin_src emacs-lisp :noweb yes
 (push (cons 'font <<font()>>) default-frame-alist)
@@ -491,9 +499,9 @@ loaded, but after [[helpvar:early-init-file][early-init-file]].
 :ID:       51391771-ed2f-42f7-b904-3f655b86cac0
 :END:
 
-Ignore X resources; its settings would be redundant with the other settings
-in this file and can conflict with later config (particularly where the
-cursor color is concerned).
+Ignore X resources; its settings would be redundant with the other settings in
+this file and can conflict with later config (particularly where the cursor
+color is concerned). [[][Like I said], we no longer need xresources anymore.
 
 #+begin_src elisp
 (advice-add #'x-apply-session-resources :override #'ignore)
@@ -504,7 +512,14 @@ cursor color is concerned).
 :ID:       0177fd1a-617d-47c6-bd03-db64439fd4cc
 :END:
 
-Prevent early display of the modeline.
+While the modeline is a huge point of interest among emacs users, I find it
+distracting and space-consuming. The modeline is displayed in every buffer,
+which means that it does not scale well with vertical splits. It will consume an
+additional line for every additional window. And yet, I (and I suspect everyone
+else) only ever focus on one window at a time. This is why I opt for disabling
+the modeline (I use [[][mini-modeline]] instead). Similar to the gui bars it is enabled
+by default and will be rendered during the initialization of the frame. If I
+don't disable it here.
 
 #+begin_src elisp
 (unless after-init-time
@@ -517,7 +532,8 @@ Prevent early display of the modeline.
 :END:
 
 Emacs is the interface with which I deal with everything else. I want it to be
-full screen, especially when I'm using emacs as my window manager.
+full screen, especially when I'm using emacs as my window manager. For the same
+reasons that setting the font is efficient, this is too.
 
 #+begin_src emacs-lisp
 (push '(fullscreen . maximized) default-frame-alist)
@@ -562,6 +578,9 @@ See my [[][previous reasoning]] on lexical binding.
 :ID:       be8993d3-c8f7-451b-8cb4-04a9138e5c4e
 :END:
 
+It's useful to store directories which I reference frequently in variables and
+functions. This way I can reference the full path.
+
 ****** macro to define important directories
 :PROPERTIES:
 :ID:       ebdf095e-f302-45c3-aef4-a4f9a84d4e02
@@ -597,15 +616,6 @@ Files that need to exist, but I don't typically want to see go here.")
 
 (xl-dir! XL-DATA-DIR (xl-local-dir "data/")
   "Path to the directory where Void data files are stored.")
-
-(xl-dir! XL-PACKAGES-DIR (xl-local-dir "packages/")
-  "Path to the directory where packages are stored.")
-
-(xl-dir! XL-ORG-DIR (expand-file-name "~/Documents/org/")
-  "Directory where org files should go.")
-
-(xl-dir! XL-SCREENSHOT-DIR (expand-file-name "~/Multimedia/screenshots/")
-  "Directory where screenshots should go.")
 #+end_src
 
 ****** system directories
@@ -614,6 +624,28 @@ Files that need to exist, but I don't typically want to see go here.")
 :END:
 
 #+begin_src emacs-lisp
+(xl-dir! xl-home-dir (expand-file-name "~"))
+
+(xl-dir! xl-multimedia-dir (xl-home-dir "Multimedia")
+  "Directory used to store multimedia.")
+
+(xl-dir! XL-SCREENSHOT-DIR (xl-multimedia-dir "screenshots")
+  "Directory where screenshots should go.")
+
+(xl-dir! XL-PACKAGES-DIR (xl-local-dir "packages/")
+  "Path to the directory where packages are stored.")
+
+(xl-dir! XL-ORG-DIR (xl-documents-dir "org/")
+  "Directory where org files should go.")
+
+(xl-dir! XL-DOCUMENTS-DIR (expand-file-name "~/Documents/")
+  "Directory where documents are stored.")
+
+(xl-dir! XL-TRASH-DIR (expand-file-name "~/Downloads/")
+  "Directory where downloads are stored.")
+
+(xl-dir! xl-trash-dir (expand-file-name "~/Trash/")
+  "Directory where downloads are stored.")
 #+end_src
 
 ****** important files
@@ -3923,6 +3955,7 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 (use-package! helm
   :commands helm-M-x
   :xl-hook emacs-startup-hook
+  :xl-ignore helm-display-mode-line
   :xl-rule ("bottom" "helm" :newname "\\*Helm.+")
   :xl-set
   (helm-default-display-buffer-functions . nil)
@@ -3956,7 +3989,7 @@ biggest complaint heard about Helm is that it's too bloated and slow.
   ([remap imenu]                     . helm-semantic-or-imenu)
   ([remap noop-show-kill-ring]       . helm-show-kill-ring)
   ([remap recentf]                   . helm-recentf)
-  ([remap switch-to-buffer]          . helm-mini))
+  ([remap switch-to-buffer]          . helm-buffers-list))
 #+end_src
 
 ***** helm descbinds
@@ -4014,6 +4047,144 @@ biggest complaint heard about Helm is that it's too bloated and slow.
   (helm-dash-browser-func . (if (executable-find "w3m") #'w3m #'browse-url)))
 #+end_src
 
+***** helm org tags
+:PROPERTIES:
+:ID:       c4109ac4-1754-4159-b167-7a17b5945240
+:END:
+
+The purpose of this function is to make adding tags to headlines easy and
+painless.
+
+****** tag history
+:PROPERTIES:
+:ID:       398cb7dd-9992-47f0-b692-dbb3b1fa6093
+:END:
+
+#+begin_src emacs-lisp
+(defvar helm-org:tag-history nil
+  "History for helm tags.")
+#+end_src
+
+****** sources
+:PROPERTIES:
+:ID:       824657eb-930b-430d-b76b-d370871cebd0
+:END:
+
+******* main source
+:PROPERTIES:
+:ID:       c738b06f-0978-48e5-a396-426d8d927810
+:END:
+
+#+begin_src emacs-lisp
+(defun helm-org:set-tags-source ()
+  (helm-build-sync-source "Select Tag(s): "
+    :candidates (-uniq (-flatten (org-map-entries #'org-get-tags nil 'file)))
+    :action helm-org:tag-actions))
+#+end_src
+
+******* tag is not found
+:PROPERTIES:
+:ID:       52237aea-d5ff-41dd-acac-0d523b66a7e6
+:END:
+
+The function [[helpfn:helm-mini][helm-mini]] shows how gracefully helm can deal with a candidate that
+was not matched.
+
+#+begin_src emacs-lisp
+(defun helm-org:tag-not-found-source ()
+  (helm-build-dummy-source "Create a new tag"
+    :action (helm-make-actions "new tag" #'org-set-tags)))
+#+end_src
+
+****** actions
+:PROPERTIES:
+:ID:       05e8dca6-a563-4608-8a22-d96b9041991c
+:END:
+
+******* action variable
+:PROPERTIES:
+:ID:       89852f59-d81c-4676-92d2-2c40f74403da
+:END:
+
+This is the variable that stors the actions for this tag function.
+
+#+begin_src emacs-lisp
+(defvar helm-org:tag-actions nil
+  "List of actions for org tags.")
+#+end_src
+
+******* dwim set tags
+:PROPERTIES:
+:ID:       343b502b-c4f9-4bfd-9ed7-7d9a097c0310
+:END:
+
+#+begin_src emacs-lisp
+(push '("dwim tags" . helm-org:dwim-set-tags-action) helm-org:tag-actions)
+
+(defun helm-org:dwim-set-tags-action (tag)
+  "Set the tag."
+  (let ((selected (or (with-helm-buffer (helm-marked-candidates)) (list tag)))
+	(current (org-get-tags)))
+    (alet (append (-difference current selected)
+		  (-difference selected current))
+      (org-set-tags it))))
+#+end_src
+
+******* set tags
+:PROPERTIES:
+:ID:       351a0e4d-3f78-4913-b512-5a1c8c5710a3
+:END:
+
+#+begin_src emacs-lisp
+(push '("set tags" . helm-org:set-tags-action) helm-org:tag-actions)
+
+(defun helm-org:set-tags-action (tag)
+  "Set tags to choosen tags."
+  (alet (or (with-helm-buffer (helm-marked-candidates)) (list tag))
+    (org-set-tags selected)))
+#+end_src
+
+******* remove tags
+:PROPERTIES:
+:ID:       2e4fe319-3f26-48ff-a729-ed7c6f5dbefe
+:END:
+
+#+begin_src emacs-lisp
+(push '("remove tags" . helm-org:remove-tags-action) helm-org:tag-actions)
+
+(defun helm-org:remove-tags-action (tag)
+  "Set the tag."
+  (let ((selected (or (with-helm-buffer (helm-marked-candidates)) (list tag)))
+	(current (org-get-tags)))
+    (alet (-difference current selected)
+      (org-set-tags it))))
+#+end_src
+
+****** main function
+:PROPERTIES:
+:ID:       ae790418-8028-4989-9f81-835188184849
+:END:
+
+#+begin_src emacs-lisp
+(defun helm-org:set-tags ()
+  "Set tags for headline."
+  (interactive)
+  (helm :sources (helm-org:set-tags-source)
+	:buffer "*helm tags*"
+	:history helm-org:tag-history))
+#+end_src
+
+****** binding
+:PROPERTIES:
+:ID:       13eff3e2-f04b-493e-911e-8f641b36e91f
+:END:
+
+Here I make sure that.
+
+#+begin_src emacs-lisp
+(general-def [remap org-set-tags-command] #'helm-org:set-tags)
+#+end_src
+
 ***** helm-org
 :PROPERTIES:
 :ID:       1e19a081-d107-4593-8af4-e72c84bbaeff
@@ -4033,8 +4204,8 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (use-package helm-themes
-  :init
-  (general-def [remap load-theme] #'helm-themes))
+  :bind
+  ([remap load-theme] . helm-themes))
 #+end_src
 
 ***** helm-xref
@@ -4044,6 +4215,16 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (use-package! helm-xref)
+#+end_src
+
+***** swiper-helm
+:PROPERTIES:
+:ID:       b63c7612-5e2c-4431-83c3-3c6dd7926cbd
+:END:
+
+#+begin_src emacs-lisp
+(use-package! swiper-helm
+  :xl-gc-pause swiper-helm)
 #+end_src
 
 ***** ace-helm-jump-line
@@ -4860,9 +5041,9 @@ Take a s
 
 (define-leader-key!
   :infix "as"
-  "s" (list :def #'xl/take-screenshot-fullscreen :wk "screenshot")
-  "w" (list :def #'escr-window-screenshot :wk "window")
-  "f" (list :def #'xl/take-screenshot-fullscreen  :wk "fullscreen"))
+  "s" (list :def #'xl/take-fullscreen-screenshot :wk "screenshot")
+  "w" (list :def #'xl/take-window-screenshot     :wk "window")
+  "f" (list :def #'xl/take-fullscreen-screenshot :wk "fullscreen"))
 #+end_src
 
 ***** gif-screencast
@@ -8034,19 +8215,6 @@ the whole thing.
 :ID:       6d08d180-5b96-4f1f-98f9-53086c13561a
 :END:
 
-****** directories
-:PROPERTIES:
-:ID:       42e759b0-c676-4b87-ac84-20796500da5a
-:END:
-
-#+begin_src emacs-lisp
-(use-package! org
-  :xl-set
-  (org-directory          . (xl-emacs-dir "org/"))
-  (org-archive-location   . (concat org-directory "archive.org"))
-  (org-default-notes-file . (concat org-directory "notes.org")))
-#+end_src
-
 ****** define capture file
 :PROPERTIES:
 :ID:       97a3bb5a-f485-45d0-a7f4-4bdd3963a16b
@@ -8066,6 +8234,9 @@ the whole thing.
 #+begin_src emacs-lisp
 (use-package! org
   :xl-set
+  (org-directory          . (xl-org-dir))
+  (org-archive-location   . (xl-org-dir "archive.org"))
+  (org-default-notes-file . (xl-org-dir "notes.org"))
   (org-fontify-emphasized-text        . t)
   (org-hide-emphasis-markers          . t)
   (org-pretty-entities                . t)
@@ -8080,34 +8251,6 @@ the whole thing.
   (org-tags-column                    . -80)
   (org-tag-alist                      . nil)
   (org-log-done                       . 'time))
-#+end_src
-
-****** required packages
-:PROPERTIES:
-:ID:       939d4fd6-85df-4ba2-8a67-23343d484bf9
-:END:
-
-#+begin_src emacs-lisp
-(use-package! org
-  :xl-idle-require
-  calendar find-func format-spec org-macs org-compat org-faces org-entities
-  org-list org-pcomplete org-src org-footnote org-macro ob org org-agenda
-  org-capture)
-#+end_src
-
-****** org version problems
-:PROPERTIES:
-:ID:       a1d9c8d1-192e-4986-b78c-aa8f3c1fef95
-:END:
-
-This hack should be improved, but for now it is what it is.
-
-#+begin_src emacs-lisp
-(after! org
-  (when (zerop (string-to-number (org-version)))
-    (defadvice! use-a-fake-version (:override org-version)
-      "10")
-    (set! org-version (org-version))))
 #+end_src
 
 ***** customization
@@ -8211,7 +8354,7 @@ much more useful considering the specific structure of org mode documents.
 :END:
 
 #+begin_src emacs-lisp
-(defun +org-heading-goto-start ()
+(defun org:heading-goto-start ()
   "Go to the end of headline."
   (save-match-data
     (beginning-of-line)
@@ -8242,7 +8385,7 @@ their children. This is the typical behavior you would expect in any outlining
 program.
 
 #+begin_src emacs-lisp
-(defun +org-show-branch ()
+(defun org:show-branch ()
   "Reveal the current org branch.
 Show all of the current headine's parents and their children. This includes this
 headline."
@@ -8273,7 +8416,7 @@ their side-effects.
 (defadvice! show-current-branch-in-org-mode (:after xl/goto-line org/goto-headline)
   "Properly unfold nearby headlines and reveal current headline."
   (when (eq major-mode 'org-mode)
-    (+org-show-branch)))
+    (org:show-branch)))
 #+end_src
 
 ******* return
@@ -8304,7 +8447,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
   (interactive)
   (outline-next-visible-heading (if backward -1 1))
   (when (org-at-heading-p)
-    (+org-heading-goto-start)))
+    (org:heading-goto-start)))
 #+end_src
 
 ******* navigation
@@ -8325,7 +8468,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
   (interactive)
   (outline-next-visible-heading (if backward -1 1))
   (when (org-at-heading-p)
-    (+org-heading-goto-start)))
+    (org:heading-goto-start)))
 #+end_src
 
 ******** previous-line
@@ -8355,7 +8498,7 @@ options. For this reason I wrote my own insert heading functions.
 :END:
 
 #+begin_src emacs-lisp
-(defvar +org-newlines-between-headings "\n\n"
+(defvar org:newlines-between-headings "\n\n"
   "Number of newlines between headings.")
 #+end_src
 
@@ -8381,7 +8524,7 @@ options. For this reason I wrote my own insert heading functions.
   "Insert heading below."
   (interactive)
   (let* ((on-heading-p (ignore-errors (org-back-to-heading)))
-         (newlines +org-newlines-between-headings)
+         (newlines org:newlines-between-headings)
          (level (or (org-current-level) 1))
          (heading (concat (make-string level ?*) "\s")))
     (cond ((not on-heading-p)
@@ -8575,6 +8718,7 @@ diary/journal using =org-mode=.
 
 #+begin_src emacs-lisp
 (use-feature! org-src
+  :idle-require t
   :xl-rule ("bottom" "org source" :newfile "\\*Org Src")
   :xl-set
   (org-src-ask-before-returning-to-edit-buffer . nil)
@@ -8632,6 +8776,7 @@ for major modes.
 
 #+begin_src emacs-lisp
 (use-feature! org-capture
+  :idle-require t
   :xl-before-call
   (ts     . org-capture)
   (org-ml . org-capture)
@@ -8872,6 +9017,7 @@ tracking the time you spend on a particular task.
 
 #+begin_src emacs-lisp
 (use-feature! org-clock
+  :idle-require t
   :commands org-clock-in org-clock-goto
   :xl-hook (kill-emacs-hook . org-clock-save)
   :xl-set
@@ -8897,6 +9043,7 @@ for a certain block of time is a must. =org-agenda= is this overview.
 
 #+begin_src emacs-lisp
 (use-feature! org-agenda
+  :idle-require t
   :xl-rule ("left" "org agenda" :newname "\\*Org Agenda\\*")
   :xl-gc-pause org-agenda-list
   :xl-set
@@ -8964,6 +9111,7 @@ org agenda buffer is displayed.
 
 #+begin_src emacs-lisp
 (use-feature! org-refile
+  :idle-require t
   :xl-set
   (org-refile-targets                     . nil)
   (org-refile-use-outline-path            . 'file)
@@ -8983,6 +9131,7 @@ referenance org headlines.
 
 #+begin_src emacs-lisp
 (use-feature! org-id
+  :idle-require t
   :xl-hook (org-insert-heading-hook . org-id-get-create)
   :xl-set
   (org-id-locations-file-relative . t)
@@ -9039,6 +9188,35 @@ referenance org headlines.
 (defsnippet! helpfn ("hfn" org-mode)
   "Help function link."
   '("[[helpfn:" (C fn "function: " help--symbol-completion-table) "][" (s fn) "]]"))
+#+end_src
+
+****** ids
+:PROPERTIES:
+:ID:       532aa739-3a53-4339-8121-fb9dce2dd914
+:END:
+
+#+begin_src emacs-lisp
+(defsnippet! id-link ("scrot" org-mode)
+  "Id link."
+  '("[[" (C fn "id: " (xl-screenshots)) "][" "hello" "]]"))
+#+end_src
+
+****** screenshot
+:PROPERTIES:
+:ID:       a9efb825-33f4-43d6-8240-ac3f17f10fcf
+:END:
+
+This snippet provides me with a convenient way to add links of screenshots I
+have taken.
+
+#+begin_src emacs-lisp
+(defsnippet! screenshot-link ("scrot" org-mode)
+  "Screenshot link."
+  '("[[" (C fn "screenshots: " (xl-screenshots)) "][" "hello" "]]"))
+
+(defun xl-screenshots ()
+  "Return a list of all screenshots."
+  (cddr (directory-files (xl-screenshot-dir))))
 #+end_src
 
 ***** org-tanglesync
