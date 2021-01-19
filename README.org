@@ -461,12 +461,13 @@ prevent it was to set up an [[https://wiki.archlinux.org/index.php/X_resources][
 :ID:       54d9be27-74b3-49fd-9bdb-b6d1e024b80b
 :END:
 
-This is the most efficient way to set the font. It's done before the
-initialization of the frame and it avoids the usage of. Only problem is this
-will cause your emacs to crash if the font you specify does not exist. And, you
-can't check the existing fonts at this time either because the [[][frame hasn't
-been initialized yet]] so functions like [] and [] will not return reliable
-values (trust me, I tried).
+This is the most efficient way to set the font. Reason being, it's done before
+the initialization of the frame and it avoids the usage of functions like
+[[helpfn:set-frame-font][set-frame-font]], which more than just set the font. A caveat is that this will cause
+your emacs to crash if the font you specify does not exist. And, you can't check
+the existing fonts at this time either because the [[][frame hasn't been
+initialized yet]] so functions like [[helpfn:font-family-list][font-family-list]] and [] will not return reliable values
+(trust me, I tried).
 
 #+begin_src emacs-lisp :noweb yes
 (push (cons 'font <<font()>>) default-frame-alist)
@@ -546,7 +547,8 @@ reasons that setting the font is efficient, this is too.
 :HEADER-ARGS: :tangle ~/.config/emacs/init.el
 :END:
 
-This is where the magic really happens.
+This is where the magic really happens. The =init.el= is the file emacs looks
+for.
 
 *** Core
 :PROPERTIES:
