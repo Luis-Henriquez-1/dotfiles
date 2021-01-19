@@ -625,9 +625,9 @@ Files that need to exist, but I don't typically want to see go here.")
 :END:
 
 #+begin_src emacs-lisp
-(xl-dir! xl-home-dir (expand-file-name "~"))
+(xl-dir! XL-HOME-DIR (expand-file-name "~/"))
 
-(xl-dir! xl-multimedia-dir (xl-home-dir "Multimedia")
+(xl-dir! XL-MULTIMEDIA-DIR (xl-home-dir "Multimedia/")
   "Directory used to store multimedia.")
 
 (xl-dir! XL-SCREENSHOT-DIR (xl-multimedia-dir "screenshots")
@@ -636,16 +636,16 @@ Files that need to exist, but I don't typically want to see go here.")
 (xl-dir! XL-PACKAGES-DIR (xl-local-dir "packages/")
   "Path to the directory where packages are stored.")
 
+(xl-dir! XL-DOCUMENTS-DIR (xl-home-dir "Documents/")
+  "Directory where documents are stored.")
+
 (xl-dir! XL-ORG-DIR (xl-documents-dir "org/")
   "Directory where org files should go.")
 
-(xl-dir! XL-DOCUMENTS-DIR (expand-file-name "~/Documents/")
-  "Directory where documents are stored.")
-
-(xl-dir! XL-TRASH-DIR (expand-file-name "~/Downloads/")
+(xl-dir! XL-DOWNLOADS-DIR (xl-home-dir "Downloads/")
   "Directory where downloads are stored.")
 
-(xl-dir! xl-trash-dir (expand-file-name "~/Trash/")
+(xl-dir! XL-TRASH-DIR (xl-home-dir "Trash/")
   "Directory where downloads are stored.")
 #+end_src
 
@@ -1249,8 +1249,7 @@ a brilliant synopsis of emacs variables.
 :ID:       33cd9485-ccbd-4173-b44b-2145def4897c
 :END:
 
-The name "use-package" is not very descriptive as to what the leaf macro is or
-does. Essentially, it provides a uniform syntax for cross configuring different
+Essentially, it provides a uniform syntax for cross configuring different
 packages. So you can say it configures packages. And therefore, I choose to call
 the macro =use-package!=.
 
@@ -1422,6 +1421,11 @@ instead of =add-hook=.
 :ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
 :END:
 
+Packages don't live in an isolated enviroment. Often one package depends on one
+or more packages. Sometimes, I add customizations to a package using certain
+libraries and then I need to load them when that package is loaded. The purpose
+of this keyword is to load a package when a certain function is called.
+
 #+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-before-call))
@@ -1435,7 +1439,7 @@ instead of =add-hook=.
 (use-package:defhander! xl-before-call ()
   `(,@(-map (-partial #'use-package:autoload <name>)
 	    (-map #'cdr <value>))
-    ,@(-map (-lambda ((package . fn)) `(xl-load-before-call #',package ',fn))
+    ,@(-map (-lambda ((package . fn)) `(xl-load-before-call ',package #',fn))
 	    <value>)
     ,@<body>))
 #+end_src
@@ -1467,6 +1471,8 @@ instead of =add-hook=.
 :PROPERTIES:
 :ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
 :END:
+
+Many packages print some output to the messages buffer.
 
 #+begin_src emacs-lisp
 (setq use-package-keywords
@@ -1524,6 +1530,8 @@ instead of =add-hook=.
 :ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
 :END:
 
+This keyword integrates with [[][dbc]] (display buffer control).
+
 #+begin_src emacs-lisp
 (setq use-package-keywords
       (use-package:insert-keyword 'before :hook :xl-rule))
@@ -1541,6 +1549,8 @@ instead of =add-hook=.
 :PROPERTIES:
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
+
+This keyword integrates with [[][idle-require]].
 
 #+begin_src emacs-lisp
 (setq use-package-keywords
@@ -1617,8 +1627,10 @@ instead of =add-hook=.
 :ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
 :END:
 
-The keyword pauses emacs gargbage collection (e.g increases the [[helpvar:gc-cons-threshold][gc-cons-threshold]]
-to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that it's passed in.
+The keyword pauses emacs gargbage collection (e.g increases the
+[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
+it's passed in. It should be used on particularly computationally expensive
+functions that a package provides.
 
 #+begin_src emacs-lisp
 (setq use-package-keywords
@@ -3037,118 +3049,6 @@ code.
 (setq-default echo-keystrokes 0)
 #+end_src
 
-***** tangling
-:PROPERTIES:
-:ID:       adf94410-e747-4d5a-b9dc-7b7b249b8c76
-:END:
-
-The most inconvenient time to tangle an org file is during emacs startup because
-it can significantly increase startup time. Tangling at this time should be done
-only as a last resort. This heading provides hooks that try to sneak in a tangle
-during the current emacs session to minimize this "worst-case" scenario and
-thereby minimize startup time.
-
-****** determine whether to tangle
-:PROPERTIES:
-:ID:       9408329a-ab73-4bcc-9416-d2cea8fa37bb
-:END:
-
-If you looked at my init file you'll see that I already defined a variant of
-this function. I define it here from scratch so this file will be independent of
-my =init.el=.
-
-#+begin_src emacs-lisp
-(defun xl-needs-tangling-p ()
-  "Return t if void needs taggling."
-  (or (not (file-exists-p XL-MAIN-ELISP-FILE))
-      (file-newer-than-file-p XL-MAIN-ORG-FILE XL-MAIN-ORG-FILE)))
-#+end_src
-
-****** load tangling functions
-:PROPERTIES:
-:ID:       27c742d6-1145-4be1-9c24-46e1613df247
-:END:
-
-This function is meant to be used as the first argument for =async-start=. This
-function and [[][[] end up doing the same thing but this one is more indirect
-about it. It achieves tangling by evaluating the init file but without loading
-the main elisp file. I do it this way because my tangling function is not
-defined in a new emacs process. I considered injecting the raw function object
-into a lambda so I could essentially redefine the function in the new emacs
-process but that would only work if the function's definiton only depends on
-built-in emacs variables and functions.
-
-#+begin_src emacs-lisp
-(defun xl-load-init-file-only ()
-  "Load init file."
-  (let ((old-fn (symbol-function 'load))
-	(user-init-file (concat user-emacs-directory "init.el")))
-    (require 'cl-macs)
-    (cl-letf (((symbol-function 'load)
-	       (lambda (file &rest args)
-		 (when (string= user-init-file file)
-                   (apply old-fn file args)))))
-      (load user-init-file))))
-#+end_src
-
-****** indicate if tangling successful
-:PROPERTIES:
-:ID:       066857c8-b9bb-4660-899d-0bea725d2b15
-:END:
-
-The purpose of this function is simply to log the outcome of whether tangling
-has been successful or not. It's used as the second argument of =async-start=.
-
-#+begin_src emacs-lisp
-(defun xl-log-tangling-outcome ()
-  "Log whether tangling successful."
-  (alet (if (xl-needs-tangling-p) "✕ failed" "✓ succeeded")
-    (xl-log "%s tangling `XL-MAIN-ORG-FILE'." it)))
-#+end_src
-
-****** tangle asyncronously
-:PROPERTIES:
-:ID:       9f3cfe06-dae6-48e1-864d-914a176a177b
-:END:
-
-This hook tangles my org file during saves and, crucially, it does so
-asynchronously--meaning that a separate emacs process does this tangling. Emacs
-is single-threaded, so doing it synchronously will likely cause a significant
-"hangs" or pauses after each save.
-
-#+begin_src emacs-lisp
-(defun xl-tangle-async-maybe (&optional log-output-p)
-  "Tangle `XL-MAIN-ORG-FILE' asynchronously."
-  (when (xl-needs-tangling-p)
-    (async-start #'xl-load-init-file-only
-		 (when log-output-p #'xl-log-tangling-outcome))))
-#+end_src
-
-****** tangle on quit
-:PROPERTIES:
-:ID:       d7ee4164-61a3-4b82-bc68-4673446707b9
-:END:
-
-#+begin_src emacs-lisp
-(xl-add-hook 'kill-emacs-hook #'xl-tangle-async-maybe)
-#+end_src
-
-****** tangle on save
-:PROPERTIES:
-:ID:       585b1e28-950b-4901-ac90-487facdf0b70
-:END:
-
-When saving from a file I also make sure that I'm saving the main org file so I
-don't tangle needlessly.
-
-#+begin_src emacs-lisp
-(defhook! tangle-async-maybe (after-save-hook)
-  "When I'm saving from `XL-MAIN-ORG-FILE', tangle it."
-  (when (aand (buffer-file-name)
-	      (string= XL-MAIN-ELISP-FILE it))
-    (xl-tangle-async-maybe)))
-#+end_src
-
 ***** log the init time
 :PROPERTIES:
 :ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
@@ -3521,8 +3421,8 @@ idle time. The way to use this is to idle-require many small packages that
 individually don't take too much time. This helps ensure that in emacs loading
 of big packages like org-mode is snappy.
 
-When emacs goes idle for [[helpvar:idle-require-idle-delay][idle-require-idle-delay]] seconds, the features will
-start loading. [[helpvar:idle-require-load-break][idle-require-load-break]] is the break between features idle
+When emacs goes idle for [[helpvar:xl-idle-require-idle-delay][idle-require-idle-delay]] seconds, the features will
+start loading. [[helpvar:xl-idle-require-load-break][idle-require-load-break]] is the break between features idle
 require loads.
 
 =idle-require= messages us to tell us when a package is being idle required and
@@ -3990,7 +3890,7 @@ biggest complaint heard about Helm is that it's too bloated and slow.
   ([remap imenu]                     . helm-semantic-or-imenu)
   ([remap noop-show-kill-ring]       . helm-show-kill-ring)
   ([remap recentf]                   . helm-recentf)
-  ([remap switch-to-buffer]          . helm-buffers-list))
+  ([remap switch-to-buffer]          . helm-mini))
 #+end_src
 
 ***** helm descbinds
@@ -4503,14 +4403,15 @@ around advice. Note that if later we add more user elements, we have to update
 this advice.
 
 #+begin_src emacs-lisp
-(alet `(lambda (orig-fn &rest args)
-	 (let ((tempo-user-elements ',tempo-user-elements)
-	       (element (car args)))
-	   (alet (or (tempo-is-user-element element) element)
-	     (apply orig-fn (list it)))))
-  (let ((name (xl-advice-name #'tempo-snippets-insert-form 'handle-user-elements)))
-    (fset name it)
-    (advice-add #'tempo-snippets-insert-form :around name)))
+(after! tempo
+  (alet `(lambda (orig-fn &rest args)
+	   (let ((tempo-user-elements ',tempo-user-elements)
+		 (element (car args)))
+	     (alet (or (tempo-is-user-element element) element)
+	       (apply orig-fn (list it)))))
+    (let ((name (xl-advice-name #'tempo-snippets-insert-form 'handle-user-elements)))
+      (fset name it)
+      (advice-add #'tempo-snippets-insert-form :around name))))
 #+end_src
 
 ****** defining snippets
@@ -8254,6 +8155,15 @@ the whole thing.
   (org-log-done                       . 'time))
 #+end_src
 
+****** org-version
+:PROPERTIES:
+:ID:       0b2cfe2b-a75c-48ea-9470-19c92521e2cf
+:END:
+
+#+begin_src emacs-lisp
+(advice-add #'org-version :override (-const "10"))
+#+end_src
+
 ***** customization
 :PROPERTIES:
 :ID:       3f0570f0-436b-4a53-92c4-52b06ae26a15
@@ -8719,7 +8629,7 @@ diary/journal using =org-mode=.
 
 #+begin_src emacs-lisp
 (use-feature! org-src
-  :idle-require t
+  :xl-idle-require t
   :xl-rule ("bottom" "org source" :newfile "\\*Org Src")
   :xl-set
   (org-src-ask-before-returning-to-edit-buffer . nil)
@@ -8777,7 +8687,7 @@ for major modes.
 
 #+begin_src emacs-lisp
 (use-feature! org-capture
-  :idle-require t
+  :xl-idle-require t
   :xl-before-call
   (ts     . org-capture)
   (org-ml . org-capture)
@@ -8891,14 +8801,19 @@ For capture templates that have deadlines, I set a start and an end date.
 :ID:       a2a3f682-322a-450f-91bf-169d90f040c0
 :END:
 
-******* emacs
+******* todo
+:PROPERTIES:
+:ID:       ba9efcea-c600-4304-8b0a-f478eb84a3aa
+:END:
+
+******* issue
 :PROPERTIES:
 :ID:       ef103d28-b746-42ba-ac1a-0462a19f03cd
 :END:
 
 This is a capture template for emacs usage.
 
-******** emacs capture template string
+******** issue capture template string
 :PROPERTIES:
 :ID:       a58f1de7-2049-4195-abfb-daad93a6ff2a
 :END:
@@ -8916,7 +8831,7 @@ Instead of passing in the string I use =org-ml= to print the string.
        (org-ml-to-trimmed-string)))
 #+end_src
 
-******** emacs
+******** issue
 :PROPERTIES:
 :ID:       2682910c-9620-4cbf-ab71-371ed29e25a1
 :END:
@@ -8947,7 +8862,7 @@ content of a webpage may change or the webpage itself may be taken down
 entirely. That's why I want to collect offline copies of webpages that are
 useful to me.
 
-******* webshot directory
+******** webshot directory
 :PROPERTIES:
 :ID:       d63904d7-0e65-4a75-b7a7-e68065811208
 :END:
@@ -8957,7 +8872,7 @@ useful to me.
   "Directory where webshots should go.")
 #+end_src
 
-******* use exwm to get the link of the website
+******** use exwm to get the link of the website
 :PROPERTIES:
 :ID:       ecba4a3d-0926-4062-a5e7-34e7c2fceb36
 :END:
@@ -8965,7 +8880,7 @@ useful to me.
 #+begin_src emacs-lisp
 #+end_src
 
-******* use weasyprint to take webshot
+******** use weasyprint to take webshot
 :PROPERTIES:
 :ID:       f5f98244-da1a-4530-a6f9-83b07786c12f
 :END:
@@ -8977,7 +8892,7 @@ useful to me.
     (call-process "weasyprint" nil nil nil url)))
 #+end_src
 
-******* website capture string
+******** website capture string
 :PROPERTIES:
 :ID:       02ba52bd-9de7-4e5d-8f48-a961f2e0e5e8
 :END:
@@ -8992,7 +8907,7 @@ useful to me.
        (org-ml-to-trimmed-string)))
 #+end_src
 
-******* template
+******** template
 :PROPERTIES:
 :ID:       c96be217-04ef-4602-a78b-fb842cde6eee
 :END:
@@ -9018,7 +8933,7 @@ tracking the time you spend on a particular task.
 
 #+begin_src emacs-lisp
 (use-feature! org-clock
-  :idle-require t
+  :xl-idle-require t
   :commands org-clock-in org-clock-goto
   :xl-hook (kill-emacs-hook . org-clock-save)
   :xl-set
@@ -9044,7 +8959,7 @@ for a certain block of time is a must. =org-agenda= is this overview.
 
 #+begin_src emacs-lisp
 (use-feature! org-agenda
-  :idle-require t
+  :xl-idle-require t
   :xl-rule ("left" "org agenda" :newname "\\*Org Agenda\\*")
   :xl-gc-pause org-agenda-list
   :xl-set
@@ -9112,7 +9027,7 @@ org agenda buffer is displayed.
 
 #+begin_src emacs-lisp
 (use-feature! org-refile
-  :idle-require t
+  :xl-idle-require t
   :xl-set
   (org-refile-targets                     . nil)
   (org-refile-use-outline-path            . 'file)
@@ -9132,7 +9047,7 @@ referenance org headlines.
 
 #+begin_src emacs-lisp
 (use-feature! org-id
-  :idle-require t
+  :xl-idle-require t
   :xl-hook (org-insert-heading-hook . org-id-get-create)
   :xl-set
   (org-id-locations-file-relative . t)
