@@ -427,7 +427,8 @@ elisp files. The comment creates [[][]].
 
 During computationally intensive tasks, it is better stop garbage collecting
 until the task is done. Initializing emacs is such a task. Therefore, I
-effectively stop garbage collection by setting the.
+effectively stop garbage collection by setting the [[helpvar:gc-cons-threshold][gc-cons-threshold]] to
+[[helpvar:most-positive-fixnum][most-positive-fixnum]].
 
 #+begin_src emacs-lisp
 (setq gc-cons-threshold most-positive-fixnum)
