@@ -1800,24 +1800,16 @@ side windows.
 #+begin_src emacs-lisp
 (use-package! dbc
   :xl-ensure (:host gitlab :type git :repo "matsievskiysv/display-buffer-control")
-  :demand t)
-#+end_src
-
-****** rulesets
-:PROPERTIES:
-:ID:       7bcd5e24-e1cc-423a-917e-d737211f0740
-:END:
-
-#+begin_src emacs-lisp
-(use-package! dbc :config
-  (dbc-add-ruleset "bottom"
-		   '(display-buffer-in-side-window . ((side . bottom) (window-height . 0.5))))
-  (dbc-add-ruleset "top"
-		   '(display-buffer-in-side-window . ((side . top) (window-height . 0.4))))
-  (dbc-add-ruleset "left"
-		   '(display-buffer-in-side-window . ((side . left) (window-width 0.4))))
-  (dbc-add-ruleset "right"
-		   '(display-buffer-in-side-window . ((side . right) (window-width 0.4)))))
+  :demand t
+  :xl-config
+  (alet '(display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
+    (dbc-add-ruleset "bottom" it))
+  (alet '(display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
+    (dbc-add-ruleset "top" it))
+  (alet '(display-buffer-in-side-window . ((side . left) (window-width 0.4)))
+    (dbc-add-ruleset "left" it))
+  (alet '(display-buffer-in-side-window . ((side . right) (window-width 0.4)))
+    (dbc-add-ruleset "right" it)))
 #+end_src
 
 ****** db
