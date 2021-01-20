@@ -625,7 +625,7 @@ path VALUE. Create a function."
 Files that need to exist, but I don't typically want to see go here.")
 
 (xl-dir! XL-DATA-DIR (xl-local-dir "data/")
-  "Path to the directory where Void data files are stored.")
+  "Path to the directory where XL data files are stored.")
 #+end_src
 
 ****** system directories
@@ -665,7 +665,7 @@ Files that need to exist, but I don't typically want to see go here.")
 
 #+begin_src emacs-lisp
 (defconst XL-INIT-FILE (concat XL-EMACS-DIR "init.el")
-  "Path to the elisp file that bootstraps Void startup.")
+  "Path to the elisp file that bootstraps XL startup.")
 
 (defconst XL-MAIN-ORG-FILE (concat XL-EMACS-DIR "config.org")
   "Path to config file used for tangling.")
