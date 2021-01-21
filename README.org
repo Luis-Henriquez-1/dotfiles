@@ -1280,10 +1280,14 @@ the macro =use-package!=.
 :END:
 
 #+begin_src emacs-lisp
-(defun use-package:insert-keyword (where place key)
+(defun use-package:insert-keyword (where place key plist)
+  "Insert KEY at PLACE in PLIST.
+If WHERE is before, KEY is inserted before place. If WHERE is `after' it is
+inserted after PLACE."
   (--splice (eq place it)
-	    (funcall (if (eq where 'before) #'identity #'reverse) (list key it))
-	    use-package-keywords))
+	    (funcall (if (eq where 'before) #'identity #'reverse)
+		     (list key it))
+	    keyword-list))
 #+end_src
 
 ******** dwim insert
@@ -1297,8 +1301,8 @@ the idiom =(setq use-package-keywords...use-package-keywords)= all the time
 either.
 
 #+begin_src emacs-lisp
-(defun use-package:dwim-insert (key)
-  "Insert KEY."
+(defun use-package:dwim-insert (key &optional before place)
+  "Same as KEY but defaults to PLACE."
   (setq use-package-keywords
 	(use-package:insert-keyword 'before :hook key)))
 #+end_src
@@ -1322,7 +1326,7 @@ either.
 
 #+begin_src emacs-lisp
 (defun use-package:autoload (package fn)
-  "Return form for FN."
+  "Return a form that autoloads FN from PACKAGE."
   `(unless (fboundp ',fn)
      (autoload #',fn ,(symbol-name package) nil t nil)))
 #+end_src
