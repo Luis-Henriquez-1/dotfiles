@@ -1499,7 +1499,8 @@ of this keyword is to load a package when a certain function is called.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-after-call)
 
-(defalias 'use-package-normalize/:xl-after-call #'use-package-normalize/:xl-before-call)
+(defalias 'use-package-normalize/:xl-after-call
+  #'use-package-normalize/:xl-before-call)
 
 (defun use-package-handler/:xl-after-call (name key value rest state)
   `(,@(-map (-partial #'use-package:autoload name)
@@ -1517,13 +1518,13 @@ of this keyword is to load a package when a certain function is called.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-set)
 
-(defun use-package-normalize/:xl-set ()
-  (cl-assert (-all-p #'listp <args>))
-  <args>)
+(defun use-package-normalize/:xl-set (name key args)
+  (cl-assert (-all-p #'listp args))
+  args)
 
-(defun use-package-handler/:xl-set ()
-  `(,@(-map (-lambda ((var . val)) `(set! ,var ,val)) <value>)
-    ,@<body>))
+(defun use-package-handler/:xl-set (name key value rest state)
+  `(,@(-map (-lambda ((var . val)) `(set! ,var ,val)) value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* rule
