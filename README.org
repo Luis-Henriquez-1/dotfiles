@@ -2040,35 +2040,203 @@ function.
 :ID:       19b9021d-f310-485b-9258-4df19423c082
 :END:
 
-[[info:elisp#Advising Functions][Advising]] is one of the most powerful ways to customize emacs's behavior.
-
 I want to name advices so that they can be distinguished from other functions. I
 also want to be able to deduce the function being advised from the name.
 
-In this headline I provide a macro to concisely define functions that
-are specifically intended to advise other functions and to ensure that
-these functions are named properly. All user-defined advising
-functions should have the format =TARGET@ACTION=, where =TARGET= is the
-function being advised and =ACTION= is the action the advise is
-performing. This naming scheme is inspired and taken from the one
-introduced by [[helpfn:define-advice][define-advice]].
+****** regexp for XL advices
+:PROPERTIES:
+:ID:       7a0b9669-e15c-40c1-9cf2-adc7cb27b7ab
+:END:
 
-****** advice-p
+#+begin_src emacs-lisp
+(defconst XL-ADVICE-REGEXP (rx (1+ (not white)) "@" (1+ (not white)))
+  "Regexp used to match XL advices.")
+#+end_src
+
+****** whether a symbol is an XL advice
 :PROPERTIES:
 :ID:       0a84d983-39ad-48d1-af9d-b43589d63bcf
 :END:
 
-This function should be used to distinguish advices I add to functions over
-advices that have been added by Emacs or other packages.
-
 #+begin_src emacs-lisp
-(defun xl-defined-advice-symbol-p (fn)
-  "Return non-nil if FN is a void advice."
-  (s-matches-p (rx (1+ (not white)) "@" (1+ (not white)))
-               (symbol-name fn)))
+(defun xl-advice-fn-p (fn)
+  "Return non-nil if FN is an XL advice."
+  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
-****** logging certain functions
+****** access the adviced function
+:PROPERTIES:
+:ID:       74aee21a-3549-488b-b6f1-de9549e7e358
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-advised-fn (xl-advice-fn)
+  "Return the function that ADVICE-FN advices."
+  (->> (symbol-name xl-advice-fn)
+       (s-match XL-ADVICE-REGEXP)
+       (nth 1)
+       (intern)))
+#+end_src
+
+****** access the original advice
+:PROPERTIES:
+:ID:       f893fbe8-592b-409e-8de7-6060e936456f
+:END:
+
+It's easy to find which functions are advising a given function using
+[[helpfn:advice-mapc][advice-mapc]]. However, it's not as easy to go the other way around--to determine
+what which function a given advice is advising. Another complicaiton is that
+it's possible for a given advice to advise multiple functions. With the naming
+system I provide, doing this is trivial.
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-advice (xl-advice-fn)
+  "Return the symbol."
+  (->> (symbol-name fn)
+       (s-match XL-ADVICE-REGEXP)
+       (nth 1)
+       (intern)))
+#+end_src
+
+****** generate an advice name
+:PROPERTIES:
+:ID:       03416f82-ced7-42a0-843b-6975903f0b38
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-name (fn advice)
+  "Return XL advice symbol for FN and ADVICE"
+  (xl-symbol-intern fn '@ advice))
+#+end_src
+
+****** add XL advice
+:PROPERTIES:
+:ID:       3ab8947c-15f0-4fb7-bd75-f0baabc20ec1
+:END:
+
+Since adding an advice to multiple functions is done frequently.
+
+Often, I advise functions with other existing functions (such as =#'ignore=)
+instead of defining my own advices. To maintain consistency with the naming
+convention I created [[helpfn:xl-add-advice][xl-add-advice]]. It will create an advice with an
+appropriate name to target.
+
+#+begin_src emacs-lisp
+(defun xl-add-advice (symbol where fn &optional props expire-fn)
+  "Advise SYMBOLS with ADVICES."
+  (let ((advice (xl-advice-name symbol fn)))
+    (defalias advice fn)
+    (advice-add symbol where advice props)
+    (xl-log-function advice)
+    (when expire-fn
+      (alet (xl-expire-advice advice expire-fn t)
+	(advice-add advice :around it)))))
+#+end_src
+
+****** remove XL advice
+:PROPERTIES:
+:ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
+:END:
+
+Since we can get the advisee from the advise name, or remove advice only needs
+one argument--the advice to remove.
+
+#+begin_src emacs-lisp
+(defun xl-remove-advice (xl-advice-fn)
+  "Remove XL-ADVICE-FN from the function it is advising."
+  (advice-remove (xl-advice-orig-var xl-advice-fn) xl-advice-fn))
+#+end_src
+
+****** generic advices
+:PROPERTIES:
+:ID:       8fb485ec-5387-46da-820e-629dcf004962
+:END:
+
+There are some advices that are used so often that they do not lend themselves
+to =defadvice!=, which is better suited for a unique hook defined only once.
+
+******* around-advice macro
+:PROPERTIES:
+:ID:       f4f8e545-5ea1-4e94-8b6d-56a65131e6db
+:END:
+
+#+begin_src emacs-lisp
+(defmacro around-advice! (&rest body)
+  (declare (indent defun))
+  `(lambda (orig-fn &rest args) ,@body))
+#+end_src
+
+******* expiration
+:PROPERTIES:
+:ID:       c8092696-030e-4609-9485-89920eddaaec
+:END:
+
+Sometimes I am confronted with hooks or advices that either should'nt be or
+don't need to be called more than once. A common example is [[][loading a
+dependency for a package]].
+
+******** expire advice lambda
+:PROPERTIES:
+:ID:       c280627b-ca96-46e7-ba2d-9754afa991fc
+:END:
+
+When a function has expired, it is removed from any hooks or advices it is in,
+and, additionally, it is ignored. The expire advice remains on the function.
+
+#+begin_src emacs-lisp
+(defun xl-gen-expire-advice (expire-condition)
+  "Return an around advice that expires on EXPIRE-CONDITION."
+  (lambda (orig-fn &rest args)
+    (aprog1 (apply orig-fn args)
+      (when (funcall #',expire-condition)
+	(when (xl-advice-fn-p orig-fn)
+	  (xl-advice-remove orig-fn))
+	(when (xl-hook-fn-p orig-fn)
+	  (xl-hook-remove orig-fn))
+	(xl-log "%s has expired." orig-fn)))))
+#+end_src
+
+******** expire advice
+:PROPERTIES:
+:ID:       8506fa78-c781-4ca8-bd58-169cce23a504
+:END:
+
+Often there are functions you want to advise just once. For example, loading a
+feature just before a function that needs it is called. Although it's harmless,
+you don't want to keep reloading the feature everytime the function is called.
+The way I handle this situation is by creating a function that generates an
+=expire-advice=. When an =expire-advice= it will.
+
+Note that this function returns must be evaluated with lexical binding to work.
+
+#+begin_src emacs-lisp
+(defun xl-expire-advice (fn &optional expire-condition)
+  "Return an advice that causes FN to expire when EXPIRE-FN returns true.
+FN is a function. EXPIRE-FN is a function that returns true when FN
+should expire."
+  (alet (xl-expire-advice fn (or expire-condition (-const t)))
+    (fset name it)
+    (xl-advice-add fn :around expire-fn)))
+#+end_src
+
+******* silence
+:PROPERTIES:
+:ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
+:END:
+
+Many packages output to the messages buffer. Often, I either find these messages
+unecessary or, as an experienced user, I get it already. In these cases I prefer
+to silence the said messages.
+
+#+begin_src emacs-lisp
+(defun xl-silence-output (fn &optional props expire-fn)
+  "Silence output of FN."
+  (alet (xl-advice-name fn 'silence-output)
+    (fset it (around-advice! (shut-up (apply orig-fn args))))
+    (xl-advice-add fn :around it)))
+#+end_src
+
+******* logging certain functions
 :PROPERTIES:
 :ID:       1ccfaa39-924f-4b1d-82b2-e458511cbb1b
 :END:
@@ -2077,7 +2245,7 @@ I make distinctions between different kinds of functions such as advices, hook
 functions and interactive functions. Depending on which type of function it is I
 want to log it differently.
 
-******* log message
+******** log message
 :PROPERTIES:
 :ID:       f0f4d5fd-2ce2-408c-8a4d-f55e39744132
 :END:
@@ -2086,11 +2254,11 @@ want to log it differently.
 (defun xl--log-message (fn)
   "Return the message logged."
   (pcase fn
-    ((pred xl-defined-hook-symbol-p)
+    ((pred xl-hook-p)
      (format "& %s -> %s"
 	     (xl-hook-variable fn)
 	     (xl-hook-function fn)))
-    ((pred xl-defined-advice-symbol-p)
+    ((pred xl-advice-p)
      (format "@ %s -> %s"
 	     (xl-advice-symbol fn)
 	     (xl-advice-function fn)))
@@ -2098,7 +2266,7 @@ want to log it differently.
      (format "%s called" fn))))
 #+end_src
 
-******* log advice
+******** log advice
 :PROPERTIES:
 :ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
 :END:
@@ -2117,156 +2285,46 @@ log function that is added to FN."
     (advice-add fn (if after :after :before) it)))
 #+end_src
 
-****** naming advice
+******* reduce gc-cons-threshold
 :PROPERTIES:
-:ID:       d8773074-d384-48b8-aa89-f99c8098753a
+:ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
 
-******* advice symbol
-:PROPERTIES:
-:ID:       74aee21a-3549-488b-b6f1-de9549e7e358
-:END:
+Once in a while you come across a function that is computationally expensive,
+such as [[][helm-system-packages]].
 
 #+begin_src emacs-lisp
-(defun xl-advice-symbol-p (symbol)
-  (s-match "\\(.+\\)@.+" (symbol-name symbol)))
+(defun xl-pause-garbage-collection (fn &optional props expire-fn)
+  "Pause garbage collection for the duration of FN."
+  (around-advice!
+    (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
+      (apply orign-fn args)))
+  (xl-add-advice fn :around it props expire-fn))
 #+end_src
 
-******* advised symbol
+******* log
 :PROPERTIES:
-:ID:       f893fbe8-592b-409e-8de7-6060e936456f
+:ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
 
-It's easy to find which functions are advising a given function using
-[[helpfn:advice-mapc][advice-mapc]]. However, it's not as easy to go the other way around--to determine
-what which function a given advice is advising. Another complicaiton is that
-it's possible for a given advice to advise multiple functions. With the naming
-system I provide, doing this is trivial.
-
 #+begin_src emacs-lisp
-(defun xl-advice-symbol (fn)
-  "Return the symbol."
-  (->> (symbol-name fn)
-       (s-match "\\([^[:space:]]+\\)@[^[:space:]]+")
-       (nth 1)
-       (intern)))
+(defun xl-message-with-xl-log (fn &rest props expire-fn)
+  "Use `xl-log' instead of `message'."
+  (around-advice!
+    (cl-letf (((symbol-function 'message) #'xl-log))
+      (apply orig-fn args)))
+  (xl-add-advice fn :around it props expire-fn))
 #+end_src
 
-******* advice name
+******* ignore output
 :PROPERTIES:
-:ID:       03416f82-ced7-42a0-843b-6975903f0b38
-:END:
-
-This is where I try to convert a symbol and an advice into a symbol@action.
-
-#+begin_src emacs-lisp
-(defun xl-advice-name (symbol advice)
-  "Return advice name that meets Void naming conventions."
-  (alet (nth 1 (s-match "xl--\\(.+\\)-advice" (symbol-name advice)))
-    (xl-symbol-intern symbol '@ (or it advice))))
-#+end_src
-
-****** adding advice
-:PROPERTIES:
-:ID:       3ab8947c-15f0-4fb7-bd75-f0baabc20ec1
-:END:
-
-Since adding an advice to multiple functions is done frequently.
-
-******* helper
-:PROPERTIES:
-:ID:       4750f4dc-053b-4062-bd6c-aeeed6cdbcd9
-:END:
-
-Often, I advise functions with other existing functions (such as =#'ignore=)
-instead of defining my own advices. To maintain consistency with the naming
-convention I created [[helpfn:xl-add-advice][xl-add-advice]]. It will create an advice with an
-appropriate name to target.
-
-#+begin_src emacs-lisp
-(defun xl--add-advice (symbol where fn &optional props expire-fn)
-  "Advise SYMBOLS with Void ADVICES."
-  (let ((advice (xl-advice-name symbol fn)))
-    (defalias advice fn)
-    (advice-add symbol where advice props)
-    (xl-log-function advice)
-    (when expire-fn
-      (alet (xl-expire-advice advice expire-fn t)
-	(advice-add advice :around it)))))
-#+end_src
-
-******* adding advice
-:PROPERTIES:
-:ID:       1298ea9d-870c-45da-9424-9cf8c66f7403
+:ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-add-advice (symbols where advices &optional props expire-fn)
-  "Advise TARGETS with Void ADVICES."
-  (dolist (symbol (-list symbols))
-    (dolist (advice (-list advices))
-      (xl--add-advice symbol where advice props expire-fn))))
-#+end_src
-
-****** remove advice
-:PROPERTIES:
-:ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
-:END:
-
-Since we can get the advisee from the advise name, or remove advice only needs
-one argument--the advice to remove.
-
-#+begin_src emacs-lisp
-(defun xl-remove-advice (advice)
-  "Remove advice."
-  (advice-remove (xl-advice-symbol advice) advice))
-#+end_src
-
-****** advice action
-:PROPERTIES:
-:ID:       f15279e9-cd0c-4a74-bc74-389d14a4b82a
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-function (advice)
-  "Return the action for advice."
-  (->> (symbol-name advice)
-       (s-match (rx "@" (group (1+ (not (any "@" white)))) eos))
-       (nth 1)))
-#+end_src
-
-****** expire advice
-:PROPERTIES:
-:ID:       8506fa78-c781-4ca8-bd58-169cce23a504
-:END:
-
-Often there are functions you want to advise just once. For example, loading a
-feature just before a function that needs it is called. Although it's harmless,
-you don't want to keep reloading the feature everytime the function is called.
-The way I handle this situation is by creating a function that generates an
-=expire-advice=. When an =expire-advice= it will.
-
-Note that this function returns must be evaluated with lexical binding to work.
-
-#+begin_src emacs-lisp
-(defun xl-expire-advice (fn &optional expire-fn unbind)
-  "Return an advice that causes FN to expire when EXPIRE-FN returns true.
-FN is a function. EXPIRE-FN is a function that returns true when FN
-should expire."
-  (let ((expire-advice (xl-advice-name fn 'expire))
-        (expire-fn (or expire-fn t)))
-    (fset expire-advice
-          `(lambda (orig-fn &rest args)
-             (aprog1 (apply orig-fn args)
-               (when (or (eq t #',expire-fn) (funcall #',expire-fn))
-                 (when (xl-defined-advice-symbol-p #',fn)
-                   (xl-remove-advice #',fn))
-                 (when (xl-defined-hook-symbol-p #',fn)
-                   (xl-remove-hook #',fn))
-                 (advice-remove #',fn #',expire-advice)
-                 (when ,unbind (fmakunbound #',expire-advice))
-                 (xl-log "%s has expired." #',fn)
-                 (when ,unbind (fmakunbound #',fn))))))))
+(defun xl-ignore (fn &rest props expire-fn)
+  "Ignore FN."
+  (xl-add-advice fn :override #'ignore props expire-fn))
 #+end_src
 
 ****** defadvice!
