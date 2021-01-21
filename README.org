@@ -3017,6 +3017,9 @@ code.
 :ID:       b8856ebe-6208-4271-ad5a-d352fabec8bb
 :END:
 
+After you type a key, emacs echoes it into the echo area. I find this
+unnecessary. Additionally, if you use [[https://github.com/justbur/emacs-which-key][which-key]] this interferes with.
+
 #+begin_src emacs-lisp
 (setq-default echo-keystrokes 0)
 #+end_src
