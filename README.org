@@ -1285,6 +1285,30 @@ the macro =use-package!=.
 	    use-package-keywords))
 #+end_src
 
+****** dwim insert
+:PROPERTIES:
+:ID:       54fc11db-534a-4b59-836c-3165cf48b61d
+:END:
+
+#+begin_src emacs-lisp
+(defun use-package:dwim-insert (key)
+  ""
+  (setq use-package-keywords
+	(use-package:insert-keyword 'before :hook key)))
+#+end_src
+
+****** normalize cons
+:PROPERTIES:
+:ID:       d5beb18f-b18c-407b-9840-bda400ef52b4
+:END:
+
+#+begin_src emacs-lisp
+(defun use-package:normalize-cons (cons-pair)
+  (-table-flat #'cons
+	       (-list (car cons-pair))
+	       (-list (cdr cons-pair))))
+#+end_src
+
 ****** create autoloads
 :PROPERTIES:
 :ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
@@ -1295,73 +1319,6 @@ the macro =use-package!=.
   "Return form for FN."
   `(unless (fboundp ',fn)
      (autoload #',fn ,(symbol-name package) nil t nil)))
-#+end_src
-
-****** helper macros
-:PROPERTIES:
-:ID:       244ebd30-dfc8-45c9-b504-5f2dd8c0f12e
-:END:
-
-******* default insertion
-:PROPERTIES:
-:ID:       e0b3a061-f4c3-43df-8d71-1337d7eadf53
-:END:
-
-#+begin_src emacs-lisp
-(defvar use-package:default-place '(after :init)
-  "Place where keywords should be inserted by default.")
-#+end_src
-
-******* handler arguments
-:PROPERTIES:
-:ID:       03ba5359-010d-4442-897f-a1a7354d7b9b
-:END:
-
-#+begin_src emacs-lisp
-(defvar use-package:handler-args '(name key value rest state)
-  "Args passed into handler functions.")
-#+end_src
-
-******* handler
-:PROPERTIES:
-:ID:       1cfacfde-621e-4d4d-b55a-8bb24c5bb220
-:END:
-
-#+begin_src emacs-lisp
-(defmacro use-package:defhander! (name args &rest body)
-  "Define a `use-package' handler."
-  (declare (indent defun))
-  (let ((handler-name (xl-symbol-intern 'use-package-handler/: name))
-	(docstring (when (stringp (car body)) (pop body))))
-    `(defun ,handler-name (,@(-map #'xl-anaphoric-symbol use-package:handler-args))
-       ,docstring
-       (let ((<body> (use-package-process-keywords <name> <rest> <state>)))
-	 ,@body))))
-#+end_src
-
-******* normalize arguments
-:PROPERTIES:
-:ID:       254c2e3a-7b33-4412-91d1-8c6910e60635
-:END:
-
-#+begin_src emacs-lisp
-(defvar use-package:normalize-args '(name key args)
-  "Args passed into normalize functions.")
-#+end_src
-
-******* normalize
-:PROPERTIES:
-:ID:       1a9bef3e-be39-48ce-a19b-7c6e66d448d5
-:END:
-
-#+begin_src emacs-lisp
-(defmacro use-package:defnormalize! (key args &rest body)
-  "Define a `use-package' normalizer."
-  (declare (indent defun))
-  (let* ((prefix 'use-package-normalize/:)
-	 (name (xl-symbol-intern prefix key)))
-    `(defun ,name (,@(-map #'xl-anaphoric-symbol use-package:normalize-args))
-       ,@body)))
 #+end_src
 
 ****** custom keywords
@@ -1381,26 +1338,20 @@ Here I override the default hook keyword with my own which uses =xl-add-hook=
 instead of =add-hook=.
 
 #+begin_src emacs-lisp
-(defun use-package:normalize-cons (cons-pair)
-  (-table-flat #'cons
-	       (-list (car cons-pair))
-	       (-list (cdr cons-pair))))
+(use-package:dwim-insert :xl-hook)
 
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-hook))
-
-(use-package:defnormalize! xl-hook ()
-  (cl-assert (-all-p (-orfn #'-cons-pair-p #'symbolp) <args>))
-  (->> <args>
-       (--map-when (symbolp it) (cons it (xl-modeify <name>)))
+(defun use-package-normalize/:xl-hook ()
+  (cl-assert (-all-p (-orfn #'-cons-pair-p #'symbolp) args))
+  (->> args
+       (--map-when (symbolp it) (cons it (xl-modeify name)))
        (-mapcat #'use-package:normalize-cons)
        (--map (cons (xl-hookify (car it)) (cdr it)))))
 
-(use-package:defhander! xl-hook ()
+(defun use-package-handler/xl-hook ()
   "Expect an alist of (HOOK FN)."
-  `(,@(-map (-lambda ((hook . fn)) `(xl-add-hook ',hook ',fn)) <value>)
-    ,@(-map (-partial #'use-package:autoload <name>) (-map #'cdr <value>))
-    ,@<body>))
+  `(,@(-map (-lambda ((hook . fn)) `(xl-add-hook ',hook ',fn)) value)
+    ,@(-map (-partial #'use-package:autoload name) (-map #'cdr value))
+    ,@body))
 #+end_src
 
 ******* before-call
@@ -1414,21 +1365,20 @@ libraries and then I need to load them when that package is loaded. The purpose
 of this keyword is to load a package when a certain function is called.
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-before-call))
+(use-package:dwim-insert :xl-before-call)
 
-(use-package:defnormalize! xl-before-call ()
-  (cl-assert (-all-p (-orfn #'symbolp #'listp) <args>))
-  (->> <args>
-       (--map-when (symbolp it) (cons <name> it))
+(defun use-package/:xl-before-call (name key args)
+  (cl-assert (-all-p (-orfn #'symbolp #'listp) args))
+  (->> args
+       (--map-when (symbolp it) (cons name it))
        (-mapcat #'use-package:normalize-cons)))
 
-(use-package:defhander! xl-before-call ()
-  `(,@(-map (-partial #'use-package:autoload <name>)
-	    (-map #'cdr <value>))
+(defun use-package-handler/:xl-before-call (name key value rest state)
+  `(,@(-map (-partial #'use-package:autoload name)
+	    (-map #'cdr value))
     ,@(-map (-lambda ((package . fn)) `(xl-load-before-call ',package #',fn))
-	    <value>)
-    ,@<body>))
+	    value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* after-call
@@ -1440,18 +1390,18 @@ of this keyword is to load a package when a certain function is called.
 (setq use-package-keywords
       (use-package:insert-keyword 'after :hook :xl-after-call))
 
-(use-package:defnormalize! xl-after-call ()
-  (cl-assert (-all-p (-orfn #'symbolp #'listp) <args>))
-  (->> <args>
-       (--map-when (symbolp it) (cons <name> it))
+(defun use-package-normalize/:xl-after-call (name key args)
+  (cl-assert (-all-p (-orfn #'symbolp #'listp) args))
+  (->> args
+       (--map-when (symbolp it) (cons name it))
        (-mapcat #'use-package:normalize-cons)))
 
-(use-package:defhander! xl-after-call ()
-  `(,@(-map (-partial #'use-package:autoload <name>)
-	    (-map #'cdr <value>))
+(defun use-package-handler/:xl-after-call (name key value rest state)
+  `(,@(-map (-partial #'use-package:autoload name)
+	    (-map #'cdr value))
     ,@(-map (-lambda ((package . fn)) `(xl-load-after-call ',package #',fn))
-	    <value>)
-    ,@<body>))
+	    value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* silence
@@ -1462,17 +1412,16 @@ of this keyword is to load a package when a certain function is called.
 Many packages print some output to the messages buffer.
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-silence))
+(use-package:dwim-insert :xl-silence)
 
-(use-package:defnormalize! xl-silence ()
-  (cl-assert (-all-p #'symbolp <args>))
-  <args>)
+(defun use-package-normalize/:xl-silence (_ _ args)
+  (cl-assert (-all-p #'symbolp args))
+  args)
 
-(use-package:defhander! xl-silence ()
-  `(,@(-map (-partial #'use-package:autoload <name>) <value>)
-    ,@(--map `(xl-silence-output #',it) <value>)
-    ,@<body>))
+(defun use-package-handler/xl-silence (name _ value rest state)
+  `(,@(-map (-partial #'use-package:autoload <name) value)
+    ,@(--map `(xl-silence-output #',it) value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* ignore
@@ -1481,17 +1430,16 @@ Many packages print some output to the messages buffer.
 :END:
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-ignore))
+(use-package:dwim-insert :xl-ignore)
 
-(use-package:defnormalize! xl-ignore ()
-  (cl-assert (-all-p #'symbolp <args>))
-  <args>)
+(defun use-package-normalize/:xl-ignore ()
+  (cl-assert (-all-p #'symbolp args))
+  args)
 
-(use-package:defhander! xl-ignore ()
-  `(,@(-map (-partial #'use-package:autoload <name>) <value>)
-    ,@(--map `(xl-ignore #',it) <value>)
-    ,@<body>))
+(defun use-package-handler/:xl-ignore (name _ value rest state)
+  `(,@(-map (-partial #'use-package:autoload name) value)
+    ,@(--map `(xl-ignore #',it) value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* set
@@ -1500,8 +1448,7 @@ Many packages print some output to the messages buffer.
 :END:
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-set))
+(use-package:dwim-insert :xl-set)
 
 (use-package:defnormalize! xl-set ()
   (cl-assert (-all-p #'listp <args>))
@@ -1520,8 +1467,7 @@ Many packages print some output to the messages buffer.
 This keyword integrates with [[][dbc]] (display buffer control).
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-rule))
+(use-package:dwim-insert :xl-rule)
 
 (use-package:defnormalize! xl-rule ()
   (cl-assert (-all-p #'xl-true-list-p <args>))
@@ -1540,8 +1486,7 @@ This keyword integrates with [[][dbc]] (display buffer control).
 This keyword integrates with [[][idle-require]].
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-idle-require))
+(use-package:dwim-insert :xl-idle-require)
 
 (use-package:defnormalize! xl-idle-require ()
   (cl-assert (-all-p #'symbolp <args>))
@@ -2439,13 +2384,13 @@ and convenient way to do this.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl--load-on-call (package where functions)
-  "Load packages FUNCTIONS are called."
+(defun xl--load-on-call (package where fn)
+  "Load packages FN are called."
   (alet (xl-symbol-intern 'xl--load- package '-advice)
     (fset it `(lambda (&rest _)
                 (xl-log "Loading %s" ',package)
                 (require ',package)))
-    (xl-add-advice functions where it nil t)))
+    (xl-add-advice fn where it nil t)))
 #+end_src
 
 ****** load before call
@@ -2454,8 +2399,8 @@ and convenient way to do this.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-load-before-call (package functions)
-  (xl--load-on-call package :before functions))
+(defun xl-load-before-call (package fn)
+  (xl--load-on-call package :before fn))
 #+end_src
 
 ****** load after call
@@ -2464,8 +2409,8 @@ and convenient way to do this.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-load-after-call (package functions)
-  (xl--load-on-call package :after functions))
+(defun xl-load-after-call (package fn)
+  (xl--load-on-call package :after fn))
 #+end_src
 
 
