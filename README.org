@@ -2238,11 +2238,11 @@ want to log it differently.
 (defun xl--log-message (fn)
   "Return the message logged."
   (pcase fn
-    ((pred xl-hook-p)
+    ((pred xl-hook-fn-p)
      (format "& %s -> %s"
 	     (xl-hook-variable fn)
 	     (xl-hook-function fn)))
-    ((pred xl-advice-p)
+    ((pred xl-advice-fn-p)
      (format "@ %s -> %s"
 	     (xl-advice-symbol fn)
 	     (xl-advice-function fn)))
