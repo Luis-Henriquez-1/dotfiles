@@ -2147,7 +2147,8 @@ one argument--the advice to remove.
 #+begin_src emacs-lisp
 (defun xl-remove-advice (xl-advice-fn)
   "Remove XL-ADVICE-FN from the function it is advising."
-  (advice-remove (xl-advice-orig-var xl-advice-fn) xl-advice-fn))
+  (alet (xl-advice-orig-var xl-advice-fn)
+    (advice-remove it xl-advice-fn)))
 #+end_src
 
 ****** generic advices
@@ -2313,10 +2314,10 @@ such as [[][helm-system-packages]].
 #+begin_src emacs-lisp
 (defun xl-message-with-xl-log (fn &rest props expire-fn)
   "Use `xl-log' instead of `message'."
-  (around-advice!
-    (cl-letf (((symbol-function 'message) #'xl-log))
-      (apply orig-fn args)))
-  (xl-add-advice fn :around it props expire-fn))
+  (alet (around-advice!
+	  (cl-letf (((symbol-function 'message) #'xl-log))
+	    (apply orig-fn args)))
+    (xl-add-advice fn :around it props expire-fn)))
 #+end_src
 
 ******* ignore output
