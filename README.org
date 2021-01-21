@@ -4915,7 +4915,8 @@ like the outorg buffer has less whitespace in between headlines than it should.
 
 #+begin_src emacs-lisp
 (use-feature! ert
-  :xl-rule ("bottom" "ert" :newname "\\*ert\\*"))
+  :xl-rule ("bottom" "ert" :newname "\\*ert\\*")
+  :xl-always-yes ert-delete-all-tests)
 #+end_src
 
 ***** ert-expectations
