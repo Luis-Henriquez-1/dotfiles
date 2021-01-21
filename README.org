@@ -1607,16 +1607,16 @@ This keyword integrates with [[][idle-require]].
 #+begin_src emacs-lisp
 (use-package:insert-keyword :xl-ensure)
 
-(use-package:defnormalize! xl-ensure ()
+(defun use-package-normalize/:xl-ensure ()
   (cl-assert (alet (car-safe <args>)
 	       (or (listp it) (booleanp it))))
   (car <args>))
 
-(use-package:defhander! xl-ensure ()
-  `(,@(cond ((null <value>) nil)
-	    ((eq t <value>) `((straight-use-package ',<name>)))
-	    ((listp <value>) `((straight-use-package ',(cons <name> <value>)))))
-    ,@<body>))
+(defun use-package-handler/:xl-ensure (name _ value rest state)
+  `(,@(cond ((null value) nil)
+	    ((eq t value) `((straight-use-package ',name)))
+	    ((listp value) `((straight-use-package ',(cons name value)))))
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* nameless
@@ -1629,13 +1629,13 @@ This keyword provides integration with.
 #+begin_src emacs-lisp
 (use-package:insert-keyword :xl-namless)
 
-(use-package:defnormalize! xl-nameless ()
+(defun use-package-normalize/:xl-nameless ()
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'stringp #'symbolp) <args>))
   (--map-when (or (stringp it) (symbolp it))
 	      (cons (xl-to-string it) (xl-to-string <package>))
 	      <args>))
 
-(use-package:defhander! xl-nameless ()
+(defun use-package-handler/:xl-nameless ()
   `((after! nameless ,@(--map `(push ',it nameless-global-aliases) <value>))
     ,@<body>))
 #+end_src
