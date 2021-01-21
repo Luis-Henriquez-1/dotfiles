@@ -1413,11 +1413,11 @@ functions that a package provides.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-gc-pause)
 
-(use-package:defnormalize! xl-gc-pause ()
+(defun use-package-normalize/:xl-gc-pause ()
   (cl-assert (-all-p #'symbolp args))
   args)
 
-(use-package:defhander! xl-gc-pause ()
+(defun use-package-handler:xl-gc-pause ()
   `(,@(--map (use-package:autoload name it) value)
     ,@(--map `(xl-pause-garbage-collection #',it) value)
     ,@(use-package-process-keywords name rest state)))
