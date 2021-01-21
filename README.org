@@ -1410,17 +1410,16 @@ it's passed in. It should be used on particularly computationally expensive
 functions that a package provides.
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-gc-pause))
+(use-package:dwim-insert :xl-gc-pause)
 
 (use-package:defnormalize! xl-gc-pause ()
-  (cl-assert (-all-p #'symbolp <args>))
-  <args>)
+  (cl-assert (-all-p #'symbolp args))
+  args)
 
 (use-package:defhander! xl-gc-pause ()
-  `(,@(--map (use-package:autoload <name> it) <value>)
-    ,@(--map `(xl-pause-garbage-collection #',it) <value>)
-    ,@<body>))
+  `(,@(--map (use-package:autoload name it) value)
+    ,@(--map `(xl-pause-garbage-collection #',it) value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******** ignore
