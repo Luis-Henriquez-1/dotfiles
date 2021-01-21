@@ -1556,12 +1556,12 @@ This keyword integrates with [[][idle-require]].
 (use-package:dwim-insert :xl-idle-require)
 
 (defun use-package-normalize/:xl-idle-require ()
-  (cl-assert (-all-p #'symbolp <args>))
-  (--map-when (eq t it) <name> <args>))
+  (cl-assert (-all-p #'symbolp args))
+  (--map-when (eq t it) name args))
 
 (defun use-package-handler/:xl-idle-require ()
-  `(,@(--map `(idle-require ',it nil t) <value>)
-    ,@<body>))
+  `(,@(--map `(idle-require ',it nil t) value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* config
