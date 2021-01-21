@@ -1339,30 +1339,6 @@ This is the same as `use-package:insert-keyword' except WHERE and PLACE to
      (autoload #',fn ,(symbol-name package) nil t nil)))
 #+end_src
 
-****** automate simple use-package keywords
-:PROPERTIES:
-:ID:       b4902665-1c9b-4958-ab00-b70c365dac13
-:END:
-
-The keywords I'm using for [[8fb485ec-5387-46da-820e-629dcf004962][generic advices]] all follow the same pattern in
-terms of their handler and normalizer. I can automate this.
-
-******* general advice normalizer
-:PROPERTIES:
-:ID:       e53266ea-7158-4fd8-b4ec-f54ad1c82361
-:END:
-
-******* general advice handler
-:PROPERTIES:
-:ID:       903f0b00-8487-49bf-aa94-6b7f1fbe80f8
-:END:
-
-#+begin_src emacs-lisp
-(defun use-package-general-advice-handler (fn)
-  "Return a general advice handler for FN."
-  `(lambda ()))
-#+end_src
-
 ****** custom keywords
 :PROPERTIES:
 :ID:       62cec5ac-a2f9-435b-96a7-4db0d9691f25
@@ -1385,10 +1361,6 @@ Many packages print some output to the messages buffer.
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-silence)
-
-(defalias 'use-package-normalize/:xl-silence ())
-
-(defalias 'use-package-handler/:xl-silence ())
 
 (defun use-package-normalize/:xl-silence (_ _ args)
   (cl-assert (-all-p #'symbolp args))
@@ -1445,6 +1417,19 @@ functions that a package provides.
 :PROPERTIES:
 :ID:       f2d89960-ed41-4a72-847f-e150db56330b
 :END:
+
+#+begin_src emacs-lisp
+(use-package:dwim-insert :xl-always-yes)
+
+(defun use-package-normalize/:xl-always-yes ()
+  (cl-assert (-all-p #'symbolp args))
+  args)
+
+(defun use-package-handler/:xl-always-yes (name _ value rest state)
+  `(,@(-map (-partial #'use-package:autoload name) value)
+    ,@(--map `(xl-always-yes #',it) value)
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
 
 ******** log
 :PROPERTIES:
