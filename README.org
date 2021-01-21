@@ -1537,11 +1537,11 @@ This keyword integrates with [[][dbc]] (display buffer control).
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-rule)
 
-(defun use-package-normalize/:xl-rule ()
+(defun use-package-normalize/:xl-rule (name key args)
   (cl-assert (-all-p #'xl-true-list-p args))
   args)
 
-(defun use-package-handler/:xl-rule ()
+(defun use-package-handler/:xl-rule (name key value rest state)
   `(,@(--map `(dbc-add-rule ,@it) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
@@ -1556,11 +1556,11 @@ This keyword integrates with [[][idle-require]].
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-idle-require)
 
-(defun use-package-normalize/:xl-idle-require ()
+(defun use-package-normalize/:xl-idle-require (name _ args)
   (cl-assert (-all-p #'symbolp args))
   (--map-when (eq t it) name args))
 
-(defun use-package-handler/:xl-idle-require ()
+(defun use-package-handler/:xl-idle-require (name _ value rest state)
   `(,@(--map `(idle-require ',it nil t) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
@@ -1573,12 +1573,12 @@ This keyword integrates with [[][idle-require]].
 #+begin_src emacs-lisp
 (use-package:insert-keyword :xl-config)
 
-(use-package:defnormalize! xl-config ()
-  <args>)
+(defun use-package-normalize/:xl-config (_ _ args)
+  args)
 
-(use-package:defhander! xl-config ()
-  `((after! ,<name> ,@<value>)
-    ,@<body>))
+(defun use-package-handler/:xl-config (name _ value rest state)
+  `((after! ,name ,@value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* alias 
@@ -1589,14 +1589,14 @@ This keyword integrates with [[][idle-require]].
 #+begin_src emacs-lisp
 (use-package:insert-keyword :xl-alias)
 
-(use-package:defnormalize! xl-alias ()
-  <args>)
+(defun use-package-normalize/:xl-alias (_ _ args)
+  args)
 
-(use-package:defhander! xl-alias ()
-  `(,@(-map #'use-package:autoload (-map #'car <value>))
+(defun use-package-handler/:xl-alias (name _ value rest state)
+  `(,@(-map #'use-package:autoload (-map #'car value))
     ,@(--map (-lambda ((sym . def)) `(defalias ',sym #',def))
-	     <value>)
-    ,@<body>))
+	     value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* ensure
