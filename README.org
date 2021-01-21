@@ -5375,11 +5375,17 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 :ID:       8a5f8bb6-dce2-4fac-b9c4-068e39f4cfcc
 :END:
 
+If you don't set [[helpvar:dired-recursive-deletes][dired-recursive-deletes]], emacs will prompt you every time you
+try to delete a directory asking you whether you want to recursively delete its
+contents. If you're actually permenently deleting it this is a good idea to
+prevent accidental deletion, but I set [[helpvar:delete-by-moving-to-trash][delete-by-moving-to-trash]] to =t=. So
+worst case I'll accidentally move a directory to the trash folder.
+
 #+begin_src emacs-lisp
 (use-feature! dired
   :xl-set
   (dired-recursive-copies                      . 'always)
-  (dired-recursive-deletes                     . 'top)
+  (dired-recursive-deletes                     . 'always)
   (dired-hide-details-hide-symlink-targets     . nil)
   (dired-clean-confirm-killing-deleted-buffers . nil))
 #+end_src
