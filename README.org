@@ -1285,19 +1285,24 @@ the macro =use-package!=.
 	    use-package-keywords))
 #+end_src
 
-****** dwim insert
+******** dwim insert
 :PROPERTIES:
 :ID:       54fc11db-534a-4b59-836c-3165cf48b61d
 :END:
 
+I insert most =use-package= keywords in the same place. I don't want to have to
+specify it all the time. Additionally, I don't want to have to keep repeating
+the idiom =(setq use-package-keywords...use-package-keywords)= all the time
+either.
+
 #+begin_src emacs-lisp
 (defun use-package:dwim-insert (key)
-  ""
+  "Insert KEY."
   (setq use-package-keywords
 	(use-package:insert-keyword 'before :hook key)))
 #+end_src
 
-****** normalize cons
+******* normalize cons
 :PROPERTIES:
 :ID:       d5beb18f-b18c-407b-9840-bda400ef52b4
 :END:
@@ -1309,7 +1314,7 @@ the macro =use-package!=.
 	       (-list (cdr cons-pair))))
 #+end_src
 
-****** create autoloads
+******* create autoloads
 :PROPERTIES:
 :ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
 :END:
@@ -1321,6 +1326,30 @@ the macro =use-package!=.
      (autoload #',fn ,(symbol-name package) nil t nil)))
 #+end_src
 
+****** automate simple use-package keywords
+:PROPERTIES:
+:ID:       b4902665-1c9b-4958-ab00-b70c365dac13
+:END:
+
+The keywords I'm using for [[8fb485ec-5387-46da-820e-629dcf004962][generic advices]] all follow the same pattern in
+terms of their handler and normalizer. I can automate this.
+
+******* general advice normalizer
+:PROPERTIES:
+:ID:       e53266ea-7158-4fd8-b4ec-f54ad1c82361
+:END:
+
+******* general advice handler
+:PROPERTIES:
+:ID:       903f0b00-8487-49bf-aa94-6b7f1fbe80f8
+:END:
+
+#+begin_src emacs-lisp
+(defun use-package-general-advice-handler (fn)
+  "Return a general advice handler for FN."
+  `(lambda ()))
+#+end_src
+
 ****** custom keywords
 :PROPERTIES:
 :ID:       62cec5ac-a2f9-435b-96a7-4db0d9691f25
@@ -1328,6 +1357,87 @@ the macro =use-package!=.
 
 One thing to note is that I don't allow arguments to be optionally in a
 list. This makes things much more complicated and it makes.
+
+******* general advice keywords
+:PROPERTIES:
+:ID:       2bdd8dac-0770-4dbb-8cef-d51bd19da250
+:END:
+
+******** silence
+:PROPERTIES:
+:ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
+:END:
+
+Many packages print some output to the messages buffer.
+
+#+begin_src emacs-lisp
+(use-package:dwim-insert :xl-silence)
+
+(defalias 'use-package-normalize/:xl-silence ())
+
+(defalias 'use-package-handler/:xl-silence ())
+
+(defun use-package-normalize/:xl-silence (_ _ args)
+  (cl-assert (-all-p #'symbolp args))
+  args)
+
+(defun use-package-handler/xl-silence (name _ value rest state)
+  `(,@(-map (-partial #'use-package:autoload <name) value)
+    ,@(--map `(xl-silence-output #',it) value)
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+******** gc-pause
+:PROPERTIES:
+:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
+:END:
+
+The keyword pauses emacs gargbage collection (e.g increases the
+[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
+it's passed in. It should be used on particularly computationally expensive
+functions that a package provides.
+
+#+begin_src emacs-lisp
+(setq use-package-keywords
+      (use-package:insert-keyword 'before :hook :xl-gc-pause))
+
+(use-package:defnormalize! xl-gc-pause ()
+  (cl-assert (-all-p #'symbolp <args>))
+  <args>)
+
+(use-package:defhander! xl-gc-pause ()
+  `(,@(--map (use-package:autoload <name> it) <value>)
+    ,@(--map `(xl-pause-garbage-collection #',it) <value>)
+    ,@<body>))
+#+end_src
+
+******** ignore
+:PROPERTIES:
+:ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
+:END:
+
+#+begin_src emacs-lisp
+(use-package:dwim-insert :xl-ignore)
+
+(defun use-package-normalize/:xl-ignore ()
+  (cl-assert (-all-p #'symbolp args))
+  args)
+
+(defun use-package-handler/:xl-ignore (name _ value rest state)
+  `(,@(-map (-partial #'use-package:autoload name) value)
+    ,@(--map `(xl-ignore #',it) value)
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+******** always yes
+:PROPERTIES:
+:ID:       f2d89960-ed41-4a72-847f-e150db56330b
+:END:
+
+******** log
+:PROPERTIES:
+:ID:       46b23feb-eec6-45e6-b6c5-91eeda400f4b
+:END:
 
 ******* hook
 :PROPERTIES:
@@ -1340,18 +1450,18 @@ instead of =add-hook=.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-hook)
 
-(defun use-package-normalize/:xl-hook ()
+(defun use-package-normalize/:xl-hook (name key args)
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'symbolp) args))
   (->> args
        (--map-when (symbolp it) (cons it (xl-modeify name)))
        (-mapcat #'use-package:normalize-cons)
        (--map (cons (xl-hookify (car it)) (cdr it)))))
 
-(defun use-package-handler/xl-hook ()
+(defun use-package-handler/:xl-hook (name key value rest state)
   "Expect an alist of (HOOK FN)."
   `(,@(-map (-lambda ((hook . fn)) `(xl-add-hook ',hook ',fn)) value)
     ,@(-map (-partial #'use-package:autoload name) (-map #'cdr value))
-    ,@body))
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* before-call
@@ -1387,58 +1497,15 @@ of this keyword is to load a package when a certain function is called.
 :END:
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'after :hook :xl-after-call))
+(use-package:dwim-insert :xl-after-call)
 
-(defun use-package-normalize/:xl-after-call (name key args)
-  (cl-assert (-all-p (-orfn #'symbolp #'listp) args))
-  (->> args
-       (--map-when (symbolp it) (cons name it))
-       (-mapcat #'use-package:normalize-cons)))
+(defalias 'use-package-normalize/:xl-after-call #'use-package-normalize/:xl-before-call)
 
 (defun use-package-handler/:xl-after-call (name key value rest state)
   `(,@(-map (-partial #'use-package:autoload name)
 	    (-map #'cdr value))
     ,@(-map (-lambda ((package . fn)) `(xl-load-after-call ',package #',fn))
 	    value)
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-******* silence
-:PROPERTIES:
-:ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
-:END:
-
-Many packages print some output to the messages buffer.
-
-#+begin_src emacs-lisp
-(use-package:dwim-insert :xl-silence)
-
-(defun use-package-normalize/:xl-silence (_ _ args)
-  (cl-assert (-all-p #'symbolp args))
-  args)
-
-(defun use-package-handler/xl-silence (name _ value rest state)
-  `(,@(-map (-partial #'use-package:autoload <name) value)
-    ,@(--map `(xl-silence-output #',it) value)
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-******* ignore
-:PROPERTIES:
-:ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
-:END:
-
-#+begin_src emacs-lisp
-(use-package:dwim-insert :xl-ignore)
-
-(defun use-package-normalize/:xl-ignore ()
-  (cl-assert (-all-p #'symbolp args))
-  args)
-
-(defun use-package-handler/:xl-ignore (name _ value rest state)
-  `(,@(-map (-partial #'use-package:autoload name) value)
-    ,@(--map `(xl-ignore #',it) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1450,11 +1517,11 @@ Many packages print some output to the messages buffer.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-set)
 
-(use-package:defnormalize! xl-set ()
+(defun use-package-normalize/:xl-set ()
   (cl-assert (-all-p #'listp <args>))
   <args>)
 
-(use-package:defhander! xl-set ()
+(defun use-package-handler/:xl-set ()
   `(,@(-map (-lambda ((var . val)) `(set! ,var ,val)) <value>)
     ,@<body>))
 #+end_src
@@ -1469,13 +1536,13 @@ This keyword integrates with [[][dbc]] (display buffer control).
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-rule)
 
-(use-package:defnormalize! xl-rule ()
-  (cl-assert (-all-p #'xl-true-list-p <args>))
-  <args>)
+(defun use-package-normalize/:xl-rule ()
+  (cl-assert (-all-p #'xl-true-list-p args))
+  args)
 
-(use-package:defhander! xl-rule ()
-  `(,@(--map `(dbc-add-rule ,@it) <value>)
-    ,@<body>))
+(defun use-package-handler/:xl-rule ()
+  `(,@(--map `(dbc-add-rule ,@it) value)
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ******* idle-require
@@ -1488,11 +1555,11 @@ This keyword integrates with [[][idle-require]].
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-idle-require)
 
-(use-package:defnormalize! xl-idle-require ()
+(defun use-package-normalize/:xl-idle-require ()
   (cl-assert (-all-p #'symbolp <args>))
   (--map-when (eq t it) <name> <args>))
 
-(use-package:defhander! xl-idle-require ()
+(defun use-package-handler/:xl-idle-require ()
   `(,@(--map `(idle-require ',it nil t) <value>)
     ,@<body>))
 #+end_src
@@ -1503,8 +1570,7 @@ This keyword integrates with [[][idle-require]].
 :END:
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-config))
+(use-package:insert-keyword :xl-config)
 
 (use-package:defnormalize! xl-config ()
   <args>)
@@ -1520,8 +1586,7 @@ This keyword integrates with [[][idle-require]].
 :END:
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-alias))
+(use-package:insert-keyword :xl-alias)
 
 (use-package:defnormalize! xl-alias ()
   <args>)
@@ -1539,8 +1604,7 @@ This keyword integrates with [[][idle-require]].
 :END:
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :ensure :xl-ensure))
+(use-package:insert-keyword :xl-ensure)
 
 (use-package:defnormalize! xl-ensure ()
   (cl-assert (alet (car-safe <args>)
@@ -1554,30 +1618,6 @@ This keyword integrates with [[][idle-require]].
     ,@<body>))
 #+end_src
 
-******* gc-pause
-:PROPERTIES:
-:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
-:END:
-
-The keyword pauses emacs gargbage collection (e.g increases the
-[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
-it's passed in. It should be used on particularly computationally expensive
-functions that a package provides.
-
-#+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-gc-pause))
-
-(use-package:defnormalize! xl-gc-pause ()
-  (cl-assert (-all-p #'symbolp <args>))
-  <args>)
-
-(use-package:defhander! xl-gc-pause ()
-  `(,@(--map (use-package:autoload <name> it) <value>)
-    ,@(--map `(xl-pause-garbage-collection #',it) <value>)
-    ,@<body>))
-#+end_src
-
 ******* nameless
 :PROPERTIES:
 :ID:       e27d6d69-6efb-49c8-8c31-e477422a3d58
@@ -1586,8 +1626,7 @@ functions that a package provides.
 This keyword provides integration with.
 
 #+begin_src emacs-lisp
-(setq use-package-keywords
-      (use-package:insert-keyword 'before :hook :xl-nameless))
+(use-package:insert-keyword :xl-namless)
 
 (use-package:defnormalize! xl-nameless ()
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'stringp #'symbolp) <args>))
