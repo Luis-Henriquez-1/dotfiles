@@ -3977,8 +3977,8 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 :END:
 
 [[https://github.com/cute-jumper/ace-jump-helm-line/issues][ace-jump-helm-line]] is a package that provides a fast way to choose a candidates
-in a helm window. Specifically it uses [[https://github.com/abo-abo/avy][avy]] to letter the candidates. You
-can then enter call [[helpfn:ace-jump-helm-line][ace-jump-helm-line]] by pressing a key (I bound it to =C-'=),
+in a helm window. Specifically it uses [[https://github.com/abo-abo/avy][avy]] to letter the candidates. You can
+then enter call [[helpfn:ace-jump-helm-line][ace-jump-helm-line]] by pressing a key (I bound it to =C-'= and =,=),
 press the key corresponding to the candidate you want. It saves me from pressing
 =C-j= multiple times to scroll down the the candidate I want.
 
