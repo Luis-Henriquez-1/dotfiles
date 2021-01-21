@@ -1279,7 +1279,8 @@ the macro =use-package!=.
 :END:
 
 This is an implementation for inserting something into a list before or after a
-particular thing in the list.
+particular thing in the list. It is implemented in generally and without
+side-effects. That way, it's easily testable.
 
 #+begin_src emacs-lisp
 (defun use-package:insert-keyword (where place key list)
