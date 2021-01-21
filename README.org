@@ -1503,7 +1503,7 @@ of this keyword is to load a package when a certain function is called.
 (defalias 'use-package-normalize/:xl-after-call
   #'use-package-normalize/:xl-before-call)
 
-(defun use-package-handler/:xl-after-call (name key value rest state)
+(defun use-package-handler/:xl-after-call (name _ value rest state)
   `(,@(-map (-partial #'use-package:autoload name)
 	    (-map #'cdr value))
     ,@(-map (-lambda ((package . fn)) `(xl-load-after-call ',package #',fn))
@@ -1533,12 +1533,12 @@ of this keyword is to load a package when a certain function is called.
 :ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
 :END:
 
-This keyword integrates with [[][dbc]] (display buffer control).
+This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (display buffer control).
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-rule)
 
-(defun use-package-normalize/:xl-rule (name _ args)
+(defun use-package-normalize/:xl-rule (_ _ args)
   (cl-assert (-all-p #'xl-true-list-p args))
   args)
 
@@ -1552,7 +1552,7 @@ This keyword integrates with [[][dbc]] (display buffer control).
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
 
-This keyword integrates with [[][idle-require]].
+This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-require]].
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-idle-require)
@@ -1582,7 +1582,7 @@ This keyword integrates with [[][idle-require]].
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* alias 
+******* alias
 :PROPERTIES:
 :ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
 :END:
