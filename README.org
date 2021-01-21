@@ -3919,7 +3919,7 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (use-package! helm-system-packages
-  :commands helm-system-packages
+  :xl-gc-pause helm-system-packages
   :xl-set
   (helm-system-packages-cache-file . (xl-data-dir "helm-system-packages-cache")))
 #+end_src
