@@ -577,7 +577,7 @@ do here is declare directory names.
 :ID:       2b8148c3-1418-4896-ba53-1673d2d82659
 :END:
 
-See my [[][previous reasoning]] on lexical binding.
+See my [[2b8148c3-1418-4896-ba53-1673d2d82659][previous reasoning]] on why use lexical binding.
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
