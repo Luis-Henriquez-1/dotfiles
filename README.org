@@ -1922,7 +1922,12 @@ XL-HOOK-FN is a function named with Void naming conventions."
        (intern)))
 #+end_src
 
-****** produce an XL hook name
+****** generate an XL hook
+:PROPERTIES:
+:ID:       3e6176f0-75dd-4dd8-a87d-2f47be7f2abf
+:END:
+
+******* produce an XL hook name
 :PROPERTIES:
 :ID:       6b14ea72-b8ef-493d-82e2-962f889736a2
 :END:
@@ -1939,7 +1944,7 @@ apparent what's being done.
   (xl-symbol-intern hook '& function))
 #+end_src
 
-****** produce hook lambda
+******* produce hook lambda
 :PROPERTIES:
 :ID:       01cdecef-a345-45f0-b38e-5fe0b4939b08
 :END:
@@ -1966,7 +1971,7 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 	(xl-log "%s failed." ',function)))))
 #+end_src
 
-****** produce an XL xl-hook
+******* produce an XL xl-hook
 :PROPERTIES:
 :ID:       5081274d-61d8-4adf-8646-72b08ca2f3d6
 :END:
@@ -2011,8 +2016,7 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 :ID:       4daf2baf-ea7f-41f5-9f86-63168089149a
 :END:
 
-=defhook= provides a declarative way declare hook functions. It uses a familiar
-defun-like syntax.
+=defhook= provides a declarative way declare hook functions using [[helpfn:defun][defun]] syntax.
 
 #+begin_src emacs-lisp
 (defmacro defhook! (name args &rest body)
