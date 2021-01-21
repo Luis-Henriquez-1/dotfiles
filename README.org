@@ -1531,7 +1531,7 @@ of this keyword is to load a package when a certain function is called.
   (cl-assert (-all-p #'listp args))
   args)
 
-(defun use-package-handler/:xl-set (name key value rest state)
+(defun use-package-handler/:xl-set (name _ value rest state)
   `(,@(-map (-lambda ((var . val)) `(set! ,var ,val)) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
