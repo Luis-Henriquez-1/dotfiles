@@ -1451,14 +1451,14 @@ instead of =add-hook=.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-hook)
 
-(defun use-package-normalize/:xl-hook (name key args)
+(defun use-package-normalize/:xl-hook (name _ args)
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'symbolp) args))
   (->> args
        (--map-when (symbolp it) (cons it (xl-modeify name)))
        (-mapcat #'use-package:normalize-cons)
        (--map (cons (xl-hookify (car it)) (cdr it)))))
 
-(defun use-package-handler/:xl-hook (name key value rest state)
+(defun use-package-handler/:xl-hook (name _ value rest state)
   "Expect an alist of (HOOK FN)."
   `(,@(-map (-lambda ((hook . fn)) `(xl-add-hook ',hook ',fn)) value)
     ,@(-map (-partial #'use-package:autoload name) (-map #'cdr value))
@@ -1519,7 +1519,7 @@ of this keyword is to load a package when a certain function is called.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-set)
 
-(defun use-package-normalize/:xl-set (name key args)
+(defun use-package-normalize/:xl-set (_ _ args)
   (cl-assert (-all-p #'listp args))
   args)
 
