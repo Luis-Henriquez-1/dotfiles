@@ -1894,7 +1894,7 @@ XL-HOOK-FN is a function named with Void naming conventions."
 #+begin_src emacs-lisp
 (defun xl-hook-orig-fn (xl-hook-fn)
   "Return the function hook function that corresponds to XL-HOOK-FN."
-  (->> (symbol-name xl-hook)
+  (->> (symbol-name xl-hook-fn)
        (s-match XL-HOOK-REGEXP)
        (nth 2)
        (intern)))
@@ -1940,8 +1940,8 @@ function to report the problem to me without short-circuiting. This is why I
 wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 
 #+begin_src emacs-lisp
-(defun xl-gen-hook-lambda (function)
-  "Return a raw lambda."
+(defun xl-hook-lambda (function)
+  "Return a raw hook lambda."
   `(lambda (&rest args)
      (condition-case err
 	 (apply #',function args)
@@ -1957,8 +1957,8 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 #+begin_src emacs-lisp
 (defun xl-hook (hook fn)
   "Return a hook symbol based on HOOK and FN."
-  (alet (xl-gen-hook-symbol hook fn)
-    (fset it (xl-gen-hook-lambda fn))
+  (alet (xl-hook-name hook fn)
+    (fset it (xl-hook-lambda fn))
     it))
 #+end_src
 
@@ -1970,7 +1970,7 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 #+begin_src emacs-lisp
 (defun xl-add-hook (hook fn &optional depth local expire-fn)
   "Add an xl-hook-function to HOOK."
-  (let ((hook-fn (xl-gen-hook hook fn)))
+  (let ((hook-fn (xl-hook hook fn)))
     (add-hook hook hook-fn depth local)
     (xl-log-function hook-fn)
     (when expire-fn
