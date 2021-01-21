@@ -2201,6 +2201,25 @@ should expire."
     (xl-advice-add fn :around expire-fn)))
 #+end_src
 
+******* ignore yes-or-no prompt
+:PROPERTIES:
+:ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
+:END:
+
+Once in a while I come across a function that a [[helpfn:y-or-n-p][y-or-n-p]] prompt for things I
+don't want to be prompted for. Or, in other words, for me the cost of the extra
+second I spend typing =y= or =n= is not worth the benefit ([[helpfn:ert-delete-all-tests][ert-delete-all-tests]]
+is an example).
+
+#+begin_src emacs-lisp
+(defun xl-always-yes (fn &optional props expire-fn)
+  "Ignore yes or no prompt."
+  (let ((name (xl-advice-name name fn))
+	(body (noflet ((y-or-n-p (prompt) t)) (apply orig-fn args))))
+    (fset name `(lambda (orig-fn &rest args) ,body))
+    (xl-add-advice fn :around name props expire-fn)))
+#+end_src
+
 ******* silence
 :PROPERTIES:
 :ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
@@ -2272,8 +2291,9 @@ log function that is added to FN."
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
 
-Once in a while you come across a function that is computationally expensive,
-such as [[][helm-system-packages]].
+Sometimes you come across a function that is computationally expensive. An
+example is [[helpfn:helm-system-packages][helm-system-packages]], function that has to make a list of all system
+packages which can contain several thousand items.
 
 #+begin_src emacs-lisp
 (defun xl-pause-garbage-collection (fn &optional props expire-fn)
@@ -3018,7 +3038,8 @@ code.
 :END:
 
 After you type a key, emacs echoes it into the echo area. I find this
-unnecessary. Additionally, if you use [[https://github.com/justbur/emacs-which-key][which-key]] this interferes with.
+unnecessary. Additionally, this will interfere with [[https://github.com/justbur/emacs-which-key][which-key]]. The keystroke
+echoing in the mode line makes the which-key prompt disappear prematurely.
 
 #+begin_src emacs-lisp
 (setq-default echo-keystrokes 0)
@@ -3835,8 +3856,6 @@ biggest complaint heard about Helm is that it's too bloated and slow.
   :xl-rule ("bottom" "helm" :newname "\\*Helm.+")
   :xl-set
   (helm-default-display-buffer-functions . nil)
-  ;; (helm-display-buffer-height            . 0.6)
-  ;; (helm-display-buffer-default-height    . 0.6)
   (helm-candidate-number-limit           . 50)
   (helm-display-header-line              . nil)
   (helm-mode-line-string                 . nil))
@@ -3996,14 +4015,20 @@ press the key corresponding to the candidate you want. It saves me from pressing
   (ace-jump-helm-line-default-action . 'select)
   (ace-jump-helm-line-style          . 'pre)
   (ace-jump-helm-line-select-key     . ?e)
-  (ace-jump-helm-line-move-only-key  . ?o)
-  (ace-jump-helm-line-persistent-key . ?p)
+  (ace-jump-helm-line-move-only-key  . ?r)
+  (ace-jump-helm-line-persistent-key . ?s)
   :xl-config
   (after! helm
     (require 'ace-jump-helm-line)
     (ace-jump-helm-line-autoshow-mode)))
 #+end_src
 
+***** helm-posframe
+:PROPERTIES:
+:ID:       a24a4f6d-d3ed-4df8-a7e0-666cbdc873ff
+:END:
+
+#+begin_src emacs-lisp
 #+end_src
 
 **** company
