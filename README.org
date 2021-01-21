@@ -679,9 +679,9 @@ Files that need to exist, but I don't typically want to see go here.")
 :ID:       39197346-c420-4518-b8f8-8ea247d6decb
 :END:
 
-[[helpvar:void-debug-p][xl-debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable
-is to serve as an indicator of whether the current Void instance is run for
-debugging. When Void is set up for debugging it prints out many messages about
+[[helpvar:void-debug-p][xl-debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable is
+to serve as an indicator of whether the current Emacs instance is run for
+debugging. When Emacs is set up for debugging it prints out many messages about
 what its doing via [[hfn:void-log][xl-log]].
 
 #+begin_src emacs-lisp
@@ -952,7 +952,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
   (and (listp obj) (not (-cons-pair-p obj))))
 #+end_src
 
-****** one
+****** whether a number is the number one
 :PROPERTIES:
 :ID:       32ef30cf-3057-404e-a7b4-23d88b3b0d2e
 :END:
@@ -967,7 +967,7 @@ is zero, [[helpfn:zerop][zerop]]. But it doesn't have one for one.
   (= 1 obj))
 #+end_src
 
-****** wrap-form
+****** wrapping forms
 :PROPERTIES:
 :ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
 :END:
@@ -1399,7 +1399,7 @@ list. This makes things much more complicated and it makes.
 :ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
 :END:
 
-Here I override the default hook keyword with my own which uses =void-add-hook=
+Here I override the default hook keyword with my own which uses =xl-add-hook=
 instead of =add-hook=.
 
 #+begin_src emacs-lisp
@@ -1694,14 +1694,13 @@ leaves much to be desired.
 :ID:       71681f9f-2760-4cee-95a0-4aeb71191a42
 :END:
 
-This package provides a macro named =shut-up= that as its name suggests, silences
-output of any forms within it. Emacs itself and many emacs packages spew
-messages. While these messages can be nice to know, more often than not I get it
-now and I don't want to see them again.
+This package provides a macro named =shut-up= that as its name suggests,
+silences output of any forms within it. Emacs itself and many emacs packages
+spew messages. While I can see how in certain circumstances there messages can
+be useful, most of the time they are superfluous.
 
 #+begin_src emacs-lisp
-(use-package! shut-up
-  :demand t)
+(use-package! shut-up :demand t)
 #+end_src
 
 ****** dash
@@ -1709,13 +1708,13 @@ now and I don't want to see them again.
 :ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
 :END:
 
-Dash is rich list manipulation library. Many of the functions it has are already
-found in some form or another in emacs in features such as =cl-lib= and =seq= and
-=subr=, but dash has some very convenient functions and macros over emacs (such as
-=-let)=. Moreover, a lot of work has been put into making it's functions efficient;
-some are even more efficient than built-in cl functions. Additionally, it's
-already used as a dependency of very many packages so I'll likely end up loading
-it anyway.
+Dash is rich list manipulation library. Many of the functions it have already been
+found in some form or another in emacs in features such as =cl-lib= and =seq=
+and =subr=, but dash has some very convenient functions and macros over emacs
+(such as =-let)=. Moreover, a lot of work has been put into making it's
+functions efficient; some are even more efficient than built-in cl
+functions. Additionally, it's already used as a dependency of very many packages
+so I'll likely end up loading it anyway.
 
 #+begin_src emacs-lisp
 (use-package! dash
@@ -2619,6 +2618,12 @@ This built-in emacs package is opens a buffer with a list.
 #+begin_src emacs-lisp
 (use-package! origami
   :xl-hook prog-mode-hook)
+#+end_src
+
+***** ts
+
+#+begin_src emacs-lisp
+(use-package! ts)
 #+end_src
 
 ***** hideshow
