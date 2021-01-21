@@ -5550,26 +5550,14 @@ you save your file--which for me is all the time because I use [[id:bd455e73-403
 :END:
 
 #+begin_src emacs-lisp
-(use-package! git-auto-commit-mode)
-(setq gac-automatically-push-p nil)
-(setq gac-ask-for-summary nil)
-(setq gac-default-message #'+gac-commit-message)
-(setq gac-commit-additional-flag "-S")
-(setq gac-silent-message-p t)
-#+end_src
-
-****** toggle summary
-:PROPERTIES:
-:ID:       50641d0a-0908-4207-bcb9-8e7437e75159
-:END:
-
-****** auto-commit
-:PROPERTIES:
-:ID:       36b71eb7-b71d-47a0-ad0a-5d62825fffa3
-:END:
-
-#+begin_src emacs-lisp
-(autoload #'git-auto-commit-mode "git-auto-commit-mode" nil t nil)
+(use-package! git-auto-commit-mode
+  :commands git-auto-commit-mode
+  :xl-set
+  (gac-automatically-push-p   . nil)
+  (gac-ask-for-summary        . nil)
+  (gac-default-message        . #'gac:commit-message)
+  (gac-commit-additional-flag . "-S")
+  (gac-silent-message-p       . t))
 #+end_src
 
 ****** commit message
@@ -5587,7 +5575,7 @@ replacement of a name throughout a document). This is something I plan to
 address later.
 
 #+begin_src emacs-lisp
-(defun +gac-commit-message (file)
+(defun gac:commit-message (file)
   "Return the commit message for changes to FILE."
   (format "Update %s" (f-base file)))
 #+end_src
