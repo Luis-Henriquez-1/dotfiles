@@ -1278,15 +1278,18 @@ the macro =use-package!=.
 :ID:       4968a708-05f2-4a3b-8395-850a3c119fd2
 :END:
 
+This is an implementation for inserting something into a list before or after a
+particular thing in the list.
+
 #+begin_src emacs-lisp
-(defun use-package:insert-keyword (where place key plist)
+(defun use-package:insert-keyword (where place key list)
   "Insert KEY at PLACE in PLIST.
 If WHERE is before, KEY is inserted before place. If WHERE is `after' it is
 inserted after PLACE."
   (--splice (eq place it)
 	    (funcall (if (eq where 'before) #'identity #'reverse)
 		     (list key it))
-	    keyword-list))
+	    list))
 #+end_src
 
 ******** dwim insert
