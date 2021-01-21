@@ -3998,14 +3998,19 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 :ID:       e74e6b9b-cdd7-4d6b-888f-0e9ec9584b32
 :END:
 
-[[https://github.com/cute-jumper/ace-jump-helm-line/issues][ace-jump-helm-line]] allows me to jump to helm candidates using [[https://github.com/abo-abo/avy][avy]].
+[[https://github.com/cute-jumper/ace-jump-helm-line/issues][ace-jump-helm-line]] is a package that provides a fast way to choose a candidates
+in a helm window.
 
 #+begin_src emacs-lisp
 (use-package! ace-jump-helm-line
-  :commands ace-jump-helm-line
+  :xl-config
+  (after! helm
+    (require 'ace-jump-helm-line)
+    (ace-jump-helm-line-autoshow-mode))
   :init
-  (general-def '(insert emacs) helm-map "C-'" #'ace-jump-helm-line)
-  (general-def '(insert emacs) helm-map "C-;" #'ace-jump-helm-line)
+  (general-def '(insert emacs) helm-map
+    "C-'" #'ace-jump-helm-line
+    ","   #'ace-jump-helm-line)
   :xl-set
   (ace-jump-helm-line-idle-delay     . 0)
   (ace-jump-helm-line-default-action . 'select)
