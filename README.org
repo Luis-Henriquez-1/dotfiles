@@ -5472,6 +5472,7 @@ inspired file manager]] of also called =ranger=.
 #+begin_src emacs-lisp
 (use-package! ranger
   :commands deer ranger
+  :xl-silence ranger-window-check
   :xl-set
   (ranger-override-dired-mode . t)
   (ranger-cleanup-eagerly     . t)
