@@ -1231,7 +1231,7 @@ a brilliant synopsis of emacs variables.
 :ID:       29e1513a-e12a-4818-870e-8d5fab7fe1a0
 :END:
 
-****** different name for =use-package=
+****** rename use-package
 :PROPERTIES:
 :ID:       33cd9485-ccbd-4173-b44b-2145def4897c
 :END:
@@ -1259,7 +1259,6 @@ the macro =use-package!=.
 #+begin_src emacs-lisp
 (use-package! use-package
   :init
-  (push '(:xl-ensure t t) use-package-defaults)
   (setq use-package-expand-minimally t)
   (setq use-package-always-defer t))
 #+end_src
@@ -1302,7 +1301,9 @@ either.
 
 #+begin_src emacs-lisp
 (defun use-package:dwim-insert (key &optional where place)
-  "Same as KEY but defaults to PLACE."
+  "Convenience wrapper around `use-package:insert-keyword'.
+This is the same as `use-package:insert-keyword' except WHERE and PLACE to
+`before' and `:hook'."
   (let ((where (or where 'before))
 	(place (or place :hook)))
     (setq use-package-keywords
@@ -1614,6 +1615,7 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 
 #+begin_src emacs-lisp
 (use-package:insert-keyword :xl-ensure)
+(push '(:xl-ensure t t) use-package-defaults)
 
 (defun use-package-normalize/:xl-ensure (_ _ args)
   (cl-assert (alet (car-safe args)
