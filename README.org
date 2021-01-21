@@ -1311,7 +1311,7 @@ This is the same as `use-package:insert-keyword' except WHERE and PLACE to
   (let ((where (or where 'before))
 	(place (or place :hook)))
     (setq use-package-keywords
-	  (use-package:insert-keyword where place key))))
+	  (use-package:insert-keyword where place key use-package-keywords))))
 #+end_src
 
 ******* normalize cons
@@ -1568,7 +1568,7 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 :END:
 
 #+begin_src emacs-lisp
-(use-package:insert-keyword :xl-config)
+(use-package:dwim-insert :xl-config)
 
 (defun use-package-normalize/:xl-config (_ _ args)
   args)
@@ -1584,7 +1584,7 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 :END:
 
 #+begin_src emacs-lisp
-(use-package:insert-keyword :xl-alias)
+(use-package:dwim-insert :xl-alias)
 
 (defun use-package-normalize/:xl-alias (_ _ args)
   args)
@@ -1602,7 +1602,7 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 :END:
 
 #+begin_src emacs-lisp
-(use-package:insert-keyword :xl-ensure)
+(use-package:dwim-insert :xl-ensure)
 (push '(:xl-ensure t t) use-package-defaults)
 
 (defun use-package-normalize/:xl-ensure (_ _ args)
@@ -1625,7 +1625,7 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 This keyword provides integration with.
 
 #+begin_src emacs-lisp
-(use-package:insert-keyword :xl-namless)
+(use-package:dwim-insert :xl-namless)
 
 (defun use-package-normalize/:xl-nameless ()
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'stringp #'symbolp) <args>))
