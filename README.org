@@ -1264,16 +1264,17 @@ the macro =use-package!=.
   (setq use-package-always-defer t))
 #+end_src
 
-****** save the original keywords
+****** helpers
 :PROPERTIES:
-:ID:       e317d512-cab1-41a8-9dfa-522d5b32a4f1
+:ID:       c8a6f579-c4ff-4b0f-942e-f87dab208deb
 :END:
 
-#+begin_src emacs-lisp
-(defvar use-package:orig-keywords use-package-keywords)
-#+end_src
+******* inserting keywords
+:PROPERTIES:
+:ID:       86f9fa28-6842-4580-994a-24f5d4608ad4
+:END:
 
-****** miscellaneous
+******** functional =use-package= keyword insertion
 :PROPERTIES:
 :ID:       4968a708-05f2-4a3b-8395-850a3c119fd2
 :END:
@@ -1537,11 +1538,11 @@ This keyword integrates with [[][dbc]] (display buffer control).
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-rule)
 
-(defun use-package-normalize/:xl-rule (name key args)
+(defun use-package-normalize/:xl-rule (name _ args)
   (cl-assert (-all-p #'xl-true-list-p args))
   args)
 
-(defun use-package-handler/:xl-rule (name key value rest state)
+(defun use-package-handler/:xl-rule (name _ value rest state)
   `(,@(--map `(dbc-add-rule ,@it) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
@@ -1607,10 +1608,10 @@ This keyword integrates with [[][idle-require]].
 #+begin_src emacs-lisp
 (use-package:insert-keyword :xl-ensure)
 
-(defun use-package-normalize/:xl-ensure ()
-  (cl-assert (alet (car-safe <args>)
+(defun use-package-normalize/:xl-ensure (_ _ args)
+  (cl-assert (alet (car-safe args)
 	       (or (listp it) (booleanp it))))
-  (car <args>))
+  (car args))
 
 (defun use-package-handler/:xl-ensure (name _ value rest state)
   `(,@(cond ((null value) nil)
