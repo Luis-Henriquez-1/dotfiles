@@ -1850,77 +1850,6 @@ Accept the same arguments as `message'."
     (xl--log 1 (apply #'format format-string args))))
 #+end_src
 
-***** generic advices
-:PROPERTIES:
-:ID:       8fb485ec-5387-46da-820e-629dcf004962
-:END:
-
-There are some advices that are so generic and used so often that they do not
-lend themselves to =defadvice!=. This headline demonstrates how I deal with
-them.
-
-****** silence
-:PROPERTIES:
-:ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
-:END:
-
-Often I want to silence the output of certain functions.
-
-#+begin_src emacs-lisp
-(defun xl--silence-output-advice (orig-fn &rest args)
-  "Silence output for the duration of ORIGN-FN."
-  (shut-up (apply orig-fn args)))
-
-(defun xl-silence-output (fn &rest fns)
-  "Silence output of FN and FNS."
-  (xl-add-advice (cons fn fns) :around #'xl--silence-output-advice))
-#+end_src
-
-****** reduce gc-cons-threshold
-:PROPERTIES:
-:ID:       41e763bd-215f-4176-95c1-f41261864671
-:END:
-
-Some functions are very expensive and deserve.
-
-#+begin_src emacs-lisp
-(defun xl--pause-garbage-collection-advice (orign-fn &rest args)
-  "Pause garbage collection for the duration of ORIGN-FN."
-  (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
-    (apply orign-fn args)))
-
-(defun xl-pause-garbage-collection (fn &rest fns)
-  "Pause garbage collection for the duration of FN."
-  (xl-add-advice (cons fn fns) :around #'xl--pause-garbage-collection-advice))
-#+end_src
-
-****** log
-:PROPERTIES:
-:ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
-:END:
-
-#+begin_src emacs-lisp
-(defun xl--message-with-xl-log-advice (orign-fn &rest args)
-  "Use `xl-log' instead of `message'."
-  (cl-letf (((symbol-function 'message) #'xl-log))
-    (apply orig-fn args)))
-
-(defun xl-message-with-xl-log (fn &rest fns)
-  "Use `xl-log' instead of `message'."
-  (xl-add-advice (cons fn fns) :around #'xl--message-with-xl-log-advice))
-#+end_src
-
-****** ignore output
-:PROPERTIES:
-:ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-ignore (fn &rest fns)
-  "Ignore FN and FNS."
-  (xl-add-advice (cons fn fns) :override #'ignore))
-#+end_src
-
 ***** hooks
 :PROPERTIES:
 :ID:       a9fb6a01-ded5-405c-83ba-c401dbc06400
@@ -1932,67 +1861,69 @@ functions in hooks are run after certain events, such as starting and quitting
 emacs. Their purpose is to fascillitate customization of what happens before or
 after particular events.
 
-In this headline, I strive to establish a common naming convention for
-"xl-defined" hooks, so I can clearly distinguish them from pre-defined hooks.
+In this headline, I strive to establish a common naming convention for hooks
+that I define. I want there to be a clear destinction between hooks and regular
+functions.
 
-****** hook-p
+****** hook regexp
+:PROPERTIES:
+:ID:       aa93c9c5-aaaa-4732-9065-32e131e96031
+:END:
+
+#+begin_src emacs-lisp
+(defconst XL-HOOK-REGEXP (rx bos (group (1+ nonl)) "&" (group (1+ nonl)) eos)
+  "Regexp that matches an XL hook.
+This regexp contains two groups. One group one designates the hook variable
+(what is before the '&') and group two designates the hook function (this is
+what follows the '&').")
+#+end_src
+
+****** whether a symbol is an XL hook
 :PROPERTIES:
 :ID:       1995a309-e1d3-40e5-b6b1-fbcd81dda0bb
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-defined-hook-symbol-p (symbol)
-  "Return non-nil if SYMBOL is a xl-specific hook."
-  (alet "\\`[^[:space:]]+&[^[:space:]]+\\'"
-    (s-matches-p it (symbol-name symbol))))
+(defun xl-hook-fn-p (symbol)
+  "Return non-nil if SYMBOL is a xl-specific hook function symbol."
+  (s-matches-p XL-HOOK-REGEXP (symbol-name symbol)))
 #+end_src
 
-****** hook naming
-:PROPERTIES:
-:ID:       82e6a9e7-208a-48b0-b779-c14a0a7eca00
-:END:
-
-This section pertains to functions that help with the naming convention.
-
-******* hook info
-:PROPERTIES:
-:ID:       4c093dca-87fc-4c61-ba45-a43b326d1ae0
-:END:
-
-#+begin_src emacs-lisp
-(defsubst xl--hook-info (hook-fn i)
-  (intern (nth i (split-string (symbol-name hook-fn) "&" t))))
-#+end_src
-
-******* hook variable
+****** access the hook symbol
 :PROPERTIES:
 :ID:       77f45347-3688-438d-8674-39e6d476a2d1
 :END:
 
 A useful consequence of the hook naming convention is I can determine precisely
-which hook variable a function resides in based on looking at the name
+which hook symbol a function resides in based on looking at the name
 (=emacs-startup-hook&do-something= would be a hook in =emacs-starup-hook= for
 example). This proves to be useful for [[id:8506fa78-c781-4ca8-bd58-169cce23a504][expire advice]].
 
 #+begin_src emacs-lisp
-(defsubst xl-hook-variable (hook-fn)
-  "Return the hook variable HOOK-FN is in.
-HOOK-FN is a function named with Void naming conventions."
-  (xl--hook-info hook-fn 0))
+(defun xl-hook-hooked-var (xl-hook-fn)
+  "Return the hook variable XL-HOOK-FN is in.
+XL-HOOK-FN is a function named with Void naming conventions."
+  (->> (symbol-name xl-hook-fn)
+       (s-match XL-HOOK-REGEXP)
+       (nth 1)
+       (intern)))
 #+end_src
 
-******* hook function
+****** access the original hook function
 :PROPERTIES:
 :ID:       fa705f26-31f0-43c3-80a6-6741e74ab0ea
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-function (hook-fn)
-  "Return the function HOOK-FN."
-  (xl--hook-info hook-fn 1))
+(defun xl-hook-orig-fn (xl-hook-fn)
+  "Return the function hook function that corresponds to XL-HOOK-FN."
+  (->> (symbol-name xl-hook)
+       (s-match XL-HOOK-REGEXP)
+       (nth 2)
+       (intern)))
 #+end_src
 
-******* hook name
+****** produce an XL hook name
 :PROPERTIES:
 :ID:       6b14ea72-b8ef-493d-82e2-962f889736a2
 :END:
@@ -2004,96 +1935,76 @@ actually read through hook functions like reading a todo-list. It will be
 apparent what's being done.
 
 #+begin_src emacs-lisp
-(defun xl-hook-function-name (hook function)
-  "Return name to give to xl-defined hook function."
-  (alet (acond ((xl-mode-symbol-p function)
-		(xl-symbol-intern 'enable- function))
-	       ((nth 1 (s-match "xl--\\(.+\\)-hook" (symbol-name function)))
-		it)
-	       (t function))
-    (xl-symbol-intern hook '& it)))
+(defun xl-hook-name (hook function)
+  "Produce a valid xl-hook symbol."
+  (xl-symbol-intern hook '& function))
 #+end_src
 
-****** generate a hook
+****** produce hook lambda
 :PROPERTIES:
 :ID:       01cdecef-a345-45f0-b38e-5fe0b4939b08
 :END:
 
 When there's a bug with a function (also called a hook) added to a hook
-variable, it interferes with the running of the hook variable. Evaluation
-stops at the error; as a result hooks following the bugged function aren't
-evaluated. All in all, you get an unpleasant experience with partially
-evaluated code. I've faced this problem numerous times, mostly when I failed
-to autoload the hook for a mode and as a result get a =xl-function= error
-in the middle of the mode's hook.
+variable, it interferes with the running of the hook variable. Evaluation stops
+at the error. As a result, hooks following the bugged function aren't
+evaluated. All in all, you get an unpleasant experience with partially evaluated
+code. I've faced this problem numerous times, mostly when I failed to autoload
+the hook for a mode and as a result get a =xl-function= error in the middle of
+the mode's hook.
 
 I would prefer an elegant failure. By this, I mean I'd like the "problem"
 function to report the problem to me without short-circuiting. This is why I
 wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 
 #+begin_src emacs-lisp
-(defun xl-generate-hook-function (hook function)
-  "Return a Void hook function.
-The function does the same thing as FUNCTION, but errors are caught."
-  (alet (xl-hook-function-name hook function)
-    (fset it
-	  `(lambda (&rest args)
-	     (condition-case err
-		 (apply #',function args)
-	       (error
-		(xl-log "%s failed." ',function)))))
+(defun xl-gen-hook-lambda (function)
+  "Return a raw lambda."
+  `(lambda (&rest args)
+     (condition-case err
+	 (apply #',function args)
+       (error
+	(xl-log "%s failed." ',function)))))
+#+end_src
+
+****** produce an XL xl-hook
+:PROPERTIES:
+:ID:       5081274d-61d8-4adf-8646-72b08ca2f3d6
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-hook (hook fn)
+  "Return a hook symbol based on HOOK and FN."
+  (alet (xl-gen-hook-symbol hook fn)
+    (fset it (xl-gen-hook-lambda fn))
     it))
 #+end_src
 
-****** adding hooks
+****** add an XL hook
 :PROPERTIES:
 :ID:       882bc5d2-a0e2-4ea7-b9d2-ab64b3407f82
 :END:
 
-******* internal helper
-:PROPERTIES:
-:ID:       aaf7ab9a-0648-4f1b-b30e-85ce0acac602
-:END:
-
-Add a hook that follow naming conventions. When adding a hook, if it is a void
-function, change it to a hook.
-
 #+begin_src emacs-lisp
-(defun xl--add-hook (hook function &optional depth local expire-fn)
-  "Generate a Void hook function and add it to HOOK."
-  (let ((hook-fn (xl-generate-hook-function hook function)))
+(defun xl-add-hook (hook fn &optional depth local expire-fn)
+  "Add an xl-hook-function to HOOK."
+  (let ((hook-fn (xl-gen-hook hook fn)))
     (add-hook hook hook-fn depth local)
     (xl-log-function hook-fn)
     (when expire-fn
       (alet (xl-expire-advice hook-fn expire-fn t)
-	(advice-add new-hook :around it)))))
+	(advice-add hook-fn :around it)))))
 #+end_src
 
-******* adding hooks
-:PROPERTIES:
-:ID:       10dcca8f-7dd0-45da-a413-43608c098b10
-:END:
-
-This is a simple wrapper around [[id:][xl--add-hook]] that handles multiple hook
-variables and hook functions.
-
-#+begin_src emacs-lisp
-(defun xl-add-hook (hooks functions &optional depth local expire-fn)
-  "Generate Void hook functions and add them to HOOKS."
-  (dolist (hook (-list hooks))
-    (dolist (fn (-list functions))
-      (xl--add-hook hook fn depth local expire-fn))))
-#+end_src
-
-****** removing hooks
+****** remove an XL hook
 :PROPERTIES:
 :ID:       99708d72-a8d4-42ba-b6ae-ba692fbafec8
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-remove-hook (fn)
-  "Remove a void hook."
-  (remove-hook (xl-hook-var fn) fn))
+(defun xl-remove-hook (xl-hook-fn)
+  "Remove an XL-HOOK-FN from its hook symbol."
+  (remove-hook (xl-hook-orig-var xl-hook-fn) xl-hook-fn))
 #+end_src
 
 ****** defhook!
