@@ -1389,7 +1389,7 @@ functions that a package provides.
   (cl-assert (-all-p #'symbolp args))
   args)
 
-(defun use-package-handler:xl-gc-pause (name _ value rest state)
+(defun use-package-handler/:xl-gc-pause (name _ value rest state)
   `(,@(--map (use-package:autoload name it) value)
     ,@(--map `(xl-pause-garbage-collection #',it) value)
     ,@(use-package-process-keywords name rest state)))
