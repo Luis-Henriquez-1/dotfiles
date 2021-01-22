@@ -2056,7 +2056,7 @@ system I provide, doing this is trivial.
 #+begin_src emacs-lisp
 (defun xl-advice-orig-advice (xl-advice-fn)
   "Return the symbol."
-  (->> (symbol-name fn)
+  (->> (symbol-name xl-advice-fn)
        (s-match XL-ADVICE-REGEXP)
        (nth 1)
        (intern)))
@@ -2176,9 +2176,7 @@ Note that this function returns must be evaluated with lexical binding to work.
 
 #+begin_src emacs-lisp
 (defun xl-expire-advice (fn &optional expire-condition)
-  "Return an advice that causes FN to expire when EXPIRE-FN returns true.
-FN is a function. EXPIRE-FN is a function that returns true when FN
-should expire."
+  "Cause FN to expire when EXPIRE-CONDITION is true."
   (alet (xl-expire-advice fn (or expire-condition (-const t)))
     (fset name it)
     (xl-advice-add fn :around expire-fn)))
@@ -2245,7 +2243,7 @@ want to log it differently.
     ((pred xl-advice-fn-p)
      (format "@ %s -> %s"
 	     (xl-advice-advised-fn fn)
-	     (xl-advice-orig-fn fn)))
+	     (xl-advice-orig-advice fn)))
     (_
      (format "%s called" fn))))
 #+end_src
@@ -2281,10 +2279,10 @@ packages which can contain several thousand items.
 #+begin_src emacs-lisp
 (defun xl-pause-garbage-collection (fn &optional props expire-fn)
   "Pause garbage collection for the duration of FN."
-  (around-advice!
-    (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
-      (apply orign-fn args)))
-  (xl-add-advice fn :around it props expire-fn))
+  (alet (lambda (orig-fn &rest args)
+	  (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
+	    (apply orig-fn args)))
+    (xl-add-advice fn :around it props expire-fn)))
 #+end_src
 
 ******* log
@@ -2295,7 +2293,7 @@ packages which can contain several thousand items.
 #+begin_src emacs-lisp
 (defun xl-message-with-xl-log (fn &rest props expire-fn)
   "Use `xl-log' instead of `message'."
-  (alet (around-advice!
+  (alet (lambda (orig-fn &rest args)
 	  (cl-letf (((symbol-function 'message) #'xl-log))
 	    (apply orig-fn args)))
     (xl-add-advice fn :around it props expire-fn)))
