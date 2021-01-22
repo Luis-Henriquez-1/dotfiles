@@ -2013,7 +2013,7 @@ also want to be able to deduce the function being advised from the name.
 :END:
 
 #+begin_src emacs-lisp
-(defconst XL-ADVICE-REGEXP (rx (1+ (not white)) "@" (1+ (not white)))
+(defconst XL-ADVICE-REGEXP (rx (group (1+ (not white))) "@" (group (1+ (not white))))
   "Regexp used to match XL advices.")
 #+end_src
 
