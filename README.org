@@ -2080,7 +2080,7 @@ system I provide, doing this is trivial.
   "Return the symbol."
   (->> (symbol-name xl-advice-fn)
        (s-match XL-ADVICE-REGEXP)
-       (nth 1)
+       (nth 2)
        (intern)))
 #+end_src
 
