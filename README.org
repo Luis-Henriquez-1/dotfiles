@@ -1391,7 +1391,7 @@ functions that a package provides.
 
 (defun use-package-handler/:xl-gc-pause (name _ value rest state)
   `(,@(--map (use-package:autoload name it) value)
-    ,@(--map `(xl-pause-garbage-collection #',it) value)
+    ,@(--map `(xl-pause-gc #',it) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -2175,11 +2175,9 @@ The way I handle this situation is by creating a function that generates an
 Note that this function returns must be evaluated with lexical binding to work.
 
 #+begin_src emacs-lisp
-(defun xl-expire-advice (fn &optional expire-condition)
+(defun xl-expire (fn &optional expire-condition)
   "Cause FN to expire when EXPIRE-CONDITION is true."
-  (alet (xl-expire-advice fn (or expire-condition (-const t)))
-    (fset name it)
-    (xl-advice-add fn :around expire-fn)))
+  (xl-advice-add fn :around (xl-gen-expire-advice expire-condition)))
 #+end_src
 
 ******* ignore yes-or-no prompt
@@ -2195,10 +2193,11 @@ is an example).
 #+begin_src emacs-lisp
 (defun xl-always-yes (fn &optional props expire-fn)
   "Ignore yes or no prompt."
-  (let ((name (xl-advice-name name fn))
-	(body (noflet ((y-or-n-p (prompt) t)) (apply orig-fn args))))
-    (fset name `(lambda (orig-fn &rest args) ,body))
-    (xl-add-advice fn :around name props expire-fn)))
+  (xl-add-advice fn :around #'xl-always-yes-advice props expire-fn))
+
+(defun xl-always-yes-advice (orig-fn &rest args)
+  "An advice that makes `y-or-n-p' return t without prompt."
+  (noflet ((y-or-n-p (prompt) t)) (apply orig-fn args)))
 #+end_src
 
 ******* silence
@@ -2211,11 +2210,13 @@ unecessary or, as an experienced user, I get it already. In these cases I prefer
 to silence the said messages.
 
 #+begin_src emacs-lisp
+(defun xl-silence-output-advice (orig-fn &rest args)
+  "Around advice for silencing output."
+  (shut-up (apply orig-fn args)))
+
 (defun xl-silence-output (fn &optional props expire-fn)
   "Silence output of FN."
-  (alet (xl-advice-name fn 'silence-output)
-    (fset it (around-advice! (shut-up (apply orig-fn args))))
-    (xl-advice-add fn :around it)))
+  (xl-advice-add fn :around #'xl-silence-output-advice))
 #+end_src
 
 ******* logging certain functions
@@ -2277,12 +2278,14 @@ example is [[helpfn:helm-system-packages][helm-system-packages]], function that 
 packages which can contain several thousand items.
 
 #+begin_src emacs-lisp
-(defun xl-pause-garbage-collection (fn &optional props expire-fn)
+(defun xl-pause-gc (fn &optional props expire-fn)
   "Pause garbage collection for the duration of FN."
-  (alet (lambda (orig-fn &rest args)
-	  (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
-	    (apply orig-fn args)))
-    (xl-add-advice fn :around it props expire-fn)))
+  (xl-add-advice fn :around #'xl-pause-gc-advice props expire-fn))
+
+(defun xl-pause-gc-advice (orig-fn &rest args)
+  "An around advice that pauses `gc-cons-threshold'."
+  (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
+    (apply orig-fn args)))
 #+end_src
 
 ******* log
@@ -2293,10 +2296,12 @@ packages which can contain several thousand items.
 #+begin_src emacs-lisp
 (defun xl-message-with-xl-log (fn &rest props expire-fn)
   "Use `xl-log' instead of `message'."
-  (alet (lambda (orig-fn &rest args)
-	  (cl-letf (((symbol-function 'message) #'xl-log))
-	    (apply orig-fn args)))
-    (xl-add-advice fn :around it props expire-fn)))
+  (xl-add-advice fn :around #'xl-message-xl-log-advice props expire-fn))
+
+(defun xl-message-xl-log-advice (orig-fn &rest args)
+  "An advice that makes calls to message happen with `xl-log'."
+  (cl-letf (((symbol-function 'message) #'xl-log))
+    (apply orig-fn args)))
 #+end_src
 
 ******* ignore output
