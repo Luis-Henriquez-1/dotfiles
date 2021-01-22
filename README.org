@@ -2188,7 +2188,9 @@ Note that this function returns must be evaluated with lexical binding to work.
 #+begin_src emacs-lisp
 (defun xl-expire (fn &optional expire-condition)
   "Cause FN to expire when EXPIRE-CONDITION is true."
-  (xl-advice-add fn :around (xl-gen-expire-advice expire-condition)))
+  (alet (gensym "xl-expire-")
+    (fset it (xl-gen-expire-advice expire-condition))
+    (xl-advice-add fn :around it)))
 #+end_src
 
 ******* ignore yes-or-no prompt
@@ -2294,7 +2296,7 @@ packages which can contain several thousand items.
 #+begin_src emacs-lisp
 (defun xl-pause-gc (fn &optional props expire-fn)
   "Pause garbage collection for the duration of FN."
-  (xl-add-advice fn :around #'xl-pause-gc-advice props expire-fn))
+  (xl-advice-add fn :around #'xl-pause-gc-advice props expire-fn))
 
 (defun xl-pause-gc-advice (orig-fn &rest args)
   "An around advice that pauses `gc-cons-threshold'."
