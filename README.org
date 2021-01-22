@@ -1385,11 +1385,11 @@ functions that a package provides.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-gc-pause)
 
-(defun use-package-normalize/:xl-gc-pause ()
+(defun use-package-normalize/:xl-gc-pause (_ _ args)
   (cl-assert (-all-p #'symbolp args))
   args)
 
-(defun use-package-handler:xl-gc-pause ()
+(defun use-package-handler:xl-gc-pause (name _ value rest state)
   `(,@(--map (use-package:autoload name it) value)
     ,@(--map `(xl-pause-garbage-collection #',it) value)
     ,@(use-package-process-keywords name rest state)))
@@ -1403,7 +1403,7 @@ functions that a package provides.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-ignore)
 
-(defun use-package-normalize/:xl-ignore ()
+(defun use-package-normalize/:xl-ignore (_ _ args)
   (cl-assert (-all-p #'symbolp args))
   args)
 
@@ -2240,12 +2240,12 @@ want to log it differently.
   (pcase fn
     ((pred xl-hook-fn-p)
      (format "& %s -> %s"
-	     (xl-hook-variable fn)
-	     (xl-hook-function fn)))
+	     (xl-hook-hooked-var fn)
+	     (xl-hook-orig-fn fn)))
     ((pred xl-advice-fn-p)
      (format "@ %s -> %s"
-	     (xl-advice-symbol fn)
-	     (xl-advice-function fn)))
+	     (xl-advice-advised-fn fn)
+	     (xl-advice-orig-fn fn)))
     (_
      (format "%s called" fn))))
 #+end_src
@@ -3999,11 +3999,7 @@ press the key corresponding to the candidate you want. It saves me from pressing
   (ace-jump-helm-line-style          . 'pre)
   (ace-jump-helm-line-select-key     . ?e)
   (ace-jump-helm-line-move-only-key  . ?r)
-  (ace-jump-helm-line-persistent-key . ?s)
-  :xl-config
-  (after! helm
-    (require 'ace-jump-helm-line)
-    (ace-jump-helm-line-autoshow-mode)))
+  (ace-jump-helm-line-persistent-key . ?s))
 #+end_src
 
 ***** helm-posframe
