@@ -2128,7 +2128,7 @@ Since we can get the advisee from the advise name, or remove advice only needs
 one argument--the advice to remove.
 
 #+begin_src emacs-lisp
-(defun xl-remove-advice (xl-advice-fn)
+(defun xl-advice-remove (xl-advice-fn)
   "Remove XL-ADVICE-FN from the function it is advising."
   (alet (xl-advice-orig-var xl-advice-fn)
     (advice-remove it xl-advice-fn)))
