@@ -919,6 +919,28 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-mode)))
 #+end_src
 
+****** macro keyword arguments
+:PROPERTIES:
+:ID:       dc7a63e6-041b-4855-b206-6d72ef732de1
+:END:
+
+Following past examples (such as that of), I initially opted for allowing
+keyword arguments in the "function args" part of defun-like macros. This is fine
+when there's only one keyword argument, but any more and it starts to get
+crowded. It doesn't help that emacs functions tend towards longer names due to a
+lack of namespaces. Therefore, I support keyword args in the function body.
+
+#+begin_src emacs-lisp
+(defun xl--keyword-macro-args (body)
+  "Return list of (docstring KEYWORD-ARGS BODY)."
+  (let ((docstring (when (stringp (car body)) (pop body)))
+	(plist))
+    (while (keywordp (car body))
+      (push (pop body) plist)
+      (push (pop body) plist))
+    (list docstring (nreverse plist) body)))
+#+end_src
+
 ****** true-list-p
 :PROPERTIES:
 :ID:       43089182-316b-4191-a3f1-6f2d1b1b971e
