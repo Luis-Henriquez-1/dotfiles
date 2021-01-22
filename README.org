@@ -2120,17 +2120,6 @@ one argument--the advice to remove.
 There are some advices that are used so often that they do not lend themselves
 to =defadvice!=, which is better suited for a unique hook defined only once.
 
-******* around-advice macro
-:PROPERTIES:
-:ID:       f4f8e545-5ea1-4e94-8b6d-56a65131e6db
-:END:
-
-#+begin_src emacs-lisp
-(defmacro around-advice! (&rest body)
-  (declare (indent defun))
-  `(lambda (orig-fn &rest args) ,@body))
-#+end_src
-
 ******* expiration
 :PROPERTIES:
 :ID:       c8092696-030e-4609-9485-89920eddaaec
@@ -2263,9 +2252,12 @@ maintain maximum purity and extensibility.
 Add a log to *xl-log* after function is called.
 This function should be primarly used for side-effect but does incidentally return the
 log function that is added to FN."
-  (aprog1 (xl-symbol-intern fn '@ 'log)
-    (fset it `(lambda (&rest _) (xl-log ,(xl--log-message fn))))
-    (advice-add fn (if after :after :before) it)))
+  (xl-add-advice fn (if after :after :before) (xl-new-log-advice fn)))
+
+(defun xl-new-log-advice (fn)
+  "Return new log advice for FN."
+  (alet (gensym (format "xl-log-%s-" fn))
+    (fset it `(lambda (&rest _) (xl-log ,(xl--log-message fn))))))
 #+end_src
 
 ******* reduce gc-cons-threshold
