@@ -3254,10 +3254,10 @@ are done before setting the =gc-cons-threshold= back to a normal value.
 (use-package! gcmh
   :xl-hook emacs-startup-hook
   :xl-set
-  (gcmh-idle-delay . 5)
-  (gcmh-verbose . xl-debug-p)
+  (gcmh-idle-delay          . 5)
+  (gcmh-verbose             . xl-debug-p)
   (gcmh-high-cons-threshold . XL-GC-CONS-THRESHOLD)
-  (gcmh-low-cons-threshold . XL-GC-CONS-THRESHOLD-MIN))
+  (gcmh-low-cons-threshold  . XL-GC-CONS-THRESHOLD-MIN))
 #+end_src
 
 ****** minibuffer
