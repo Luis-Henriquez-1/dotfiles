@@ -1463,7 +1463,7 @@ functions that a package provides.
 :ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
 :END:
 
-Here I override the default hook keyword with my own which uses =xl-add-hook=
+Here I override the default hook keyword with my own which uses =xl-hook-add=
 instead of =add-hook=.
 
 #+begin_src emacs-lisp
@@ -1478,7 +1478,7 @@ instead of =add-hook=.
 
 (defun use-package-handler/:xl-hook (name _ value rest state)
   "Expect an alist of (HOOK FN)."
-  `(,@(-map (-lambda ((hook . fn)) `(xl-add-hook ',hook ',fn)) value)
+  `(,@(-map (-lambda ((hook . fn)) `(xl-hook-add ',hook ',fn)) value)
     ,@(-map (-partial #'use-package:autoload name) (-map #'cdr value))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
@@ -1973,7 +1973,7 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-add-hook (hook fn &optional depth local expire-fn)
+(defun xl-hook-add (hook fn &optional depth local expire-fn)
   "Add an xl-hook-function to HOOK."
   (let ((hook-fn (xl-hook hook fn)))
     (add-hook hook hook-fn depth local)
@@ -2017,7 +2017,7 @@ function.
     `(progn
        ,@(mapcar (lambda (hook)
                    `(aprog1 (defun ,hook-name (&rest _) ,docstring ,@body)
-                      (xl-add-hook ',hook it ,depth ,local)))
+                      (xl-hook-add ',hook it ,depth ,local)))
                  hooks))))
 #+end_src
 
@@ -2104,11 +2104,11 @@ Since adding an advice to multiple functions is done frequently.
 
 Often, I advise functions with other existing functions (such as =#'ignore=)
 instead of defining my own advices. To maintain consistency with the naming
-convention I created [[helpfn:xl-add-advice][xl-add-advice]]. It will create an advice with an
+convention I created [[helpfn:xl-advice-add][xl-add-advice]]. It will create an advice with an
 appropriate name to target.
 
 #+begin_src emacs-lisp
-(defun xl-add-advice (symbol where fn &optional props expire-fn)
+(defun xl-advice-add (symbol where fn &optional props expire-fn)
   "Advise SYMBOLS with ADVICES."
   (let ((advice (xl-advice-name symbol fn)))
     (defalias advice fn)
@@ -2206,7 +2206,7 @@ is an example).
 #+begin_src emacs-lisp
 (defun xl-always-yes (fn &optional props expire-fn)
   "Ignore yes or no prompt."
-  (xl-add-advice fn :around #'xl-always-yes-advice props expire-fn))
+  (xl-advice-add fn :around #'xl-always-yes-advice props expire-fn))
 
 (defun xl-always-yes-advice (orig-fn &rest args)
   "An advice that makes `y-or-n-p' return t without prompt."
@@ -2276,7 +2276,7 @@ maintain maximum purity and extensibility.
 Add a log to *xl-log* after function is called.
 This function should be primarly used for side-effect but does incidentally return the
 log function that is added to FN."
-  (xl-add-advice fn (if after :after :before) (xl-new-log-advice fn)))
+  (xl-advice-add fn (if after :after :before) (xl-new-log-advice fn)))
 
 (defun xl-new-log-advice (fn)
   "Return new log advice for FN."
@@ -2312,7 +2312,7 @@ packages which can contain several thousand items.
 #+begin_src emacs-lisp
 (defun xl-message-with-xl-log (fn &rest props expire-fn)
   "Use `xl-log' instead of `message'."
-  (xl-add-advice fn :around #'xl-message-xl-log-advice props expire-fn))
+  (xl-advice-add fn :around #'xl-message-xl-log-advice props expire-fn))
 
 (defun xl-message-xl-log-advice (orig-fn &rest args)
   "An advice that makes calls to message happen with `xl-log'."
@@ -2328,7 +2328,7 @@ packages which can contain several thousand items.
 #+begin_src emacs-lisp
 (defun xl-ignore (fn &rest props expire-fn)
   "Ignore FN."
-  (xl-add-advice fn :override #'ignore props expire-fn))
+  (xl-advice-add fn :override #'ignore props expire-fn))
 #+end_src
 
 ****** defadvice!
@@ -2362,7 +2362,7 @@ passed in.
   (-let (((where lambda-args fn props) args)
          (advice-name (intern (format "xl--%s-advice" name))))
     `(aprog1 (defun ,name ,lambda-args ,@body)
-       (xl-add-advice #',fn ,where it ,props))))
+       (xl-advice-add #',fn ,where it ,props))))
 #+end_src
 
 ******* anaphoric defadvice!
@@ -2447,7 +2447,7 @@ and convenient way to do this.
     (fset it `(lambda (&rest _)
                 (xl-log "Loading %s" ',package)
                 (require ',package)))
-    (xl-add-advice fn where it nil t)))
+    (xl-advice-add fn where it nil t)))
 #+end_src
 
 ****** load before call
@@ -3092,7 +3092,7 @@ typing an expression, I get completion from the minibuffer.
 It suffices typing =y= or =n= as opposed to =yes= or =no=.
 
 #+begin_src emacs-lisp
-(xl-add-advice #'yes-or-no-p :override #'y-or-n-p)
+(xl-advice-add #'yes-or-no-p :override #'y-or-n-p)
 #+end_src
 
 ***** utf-8 text encoding
@@ -3362,7 +3362,7 @@ When running emacs in terminal tty is *tremendously* slow.
 
 #+begin_src emacs-lisp
 (unless (display-graphic-p)
-  (xl-add-advice #'tty-run-terminal-initialization :override #'ignore)
+  (xl-advice-add #'tty-run-terminal-initialization :override #'ignore)
   (defhook! init-tty (window-setup-hook)
     (advice-remove #'tty-run-terminal-initialization #'ignore)
     (tty-run-terminal-initialization (selected-frame) nil t)))
@@ -3542,7 +3542,7 @@ headline."
 
 #+begin_src emacs-lisp
 (alet (list #'consult-outline #'consult-line)
-  (xl-add-advice it :after #'+outline-show-branch-maybe))
+  (xl-advice-add it :after #'+outline-show-branch-maybe))
 #+end_src
 
 ******* window display
@@ -3591,7 +3591,7 @@ th subtree should always be visible)."
 
 #+begin_src emacs-lisp
 (alet (list #'consult-outline #'consult-line)
-  (xl-add-advice it :after #'+outline-display-children-in-window))
+  (xl-advice-add it :after #'+outline-display-children-in-window))
 #+end_src
 
 ****** bindings
@@ -6088,7 +6088,7 @@ I don't want to use exwm. Only problem is =exwm= aborts with an annoying
 
 #+begin_src emacs-lisp
 (alet #'xl--load-and-initialize-exwm-maybe-advice
-  (xl-add-advice #'browse-url :before it nil t))
+  (xl-advice-add #'browse-url :before it nil t))
 
 (defun xl--load-and-initialize-exwm-maybe-advice (&rest _)
   "Try to initialize exwm.
@@ -6544,7 +6544,7 @@ description and there's the case of a new one.
   ;; :xl-before-call ()
   :xl-config
   (after! (evil evil-surround)
-    (xl-add-hook 'org-edit-paragraph:mode-hook #'evil-surround-mode)))
+    (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-surround-mode)))
 #+end_src
 
 ****** set up tempo completion
@@ -6553,7 +6553,7 @@ description and there's the case of a new one.
 (defhook! enable-org-tempo-templates (org-edit-paragraph:mode-hook)
   (tempo-use-tag-list 'tempo:org-mode-taglist))
 
-(xl-add-hook 'org-edit-paragraph:mode-hook #'company-mode)
+(xl-hook-add 'org-edit-paragraph:mode-hook #'company-mode)
 
 ;; Add an element to the company alist.
 (after! company
@@ -6729,7 +6729,7 @@ where I don't do this.
 
 #+begin_src emacs-lisp
 (after! evil
-  (xl-add-hook 'org-edit-paragraph:mode-hook #'evil-insert-state))
+  (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-insert-state))
 #+end_src
 
 ****** custom hooks
@@ -6740,7 +6740,7 @@ where I don't do this.
 #+begin_src emacs-lisp
 (alet (list #'auto-capitalize-mode #'aggressive-fill-paragraph-mode
 	    #'org-link-minor-mode)
-  (xl-add-hook 'org-edit-paragraph:mode-hook it))
+  (xl-hook-add 'org-edit-paragraph:mode-hook it))
 #+end_src
 
 ***** editing org source blocks
@@ -6861,7 +6861,7 @@ source buffer and then finding out when you see it written to the org file. With
 this I never have to think about this again.
 
 #+begin_src emacs-lisp
-(xl-add-hook 'org-edit-source-mode-hook #'delete-trailing-whitespace)
+(xl-hook-add 'org-edit-source-mode-hook #'delete-trailing-whitespace)
 #+end_src
 
 ***** bindings inside edit-indirect
@@ -7396,7 +7396,7 @@ Noctuid pointed out
   (-let (((mode state) <args>))
     (funcall <orig-fn> mode (if (eq state 'motion) 'normal state))))
 
-(xl-add-advice #'evil-motion-state :override #'evil-normal-state)
+(xl-advice-add #'evil-motion-state :override #'evil-normal-state)
 #+end_src
 
 ******* insert state in minibuffer
@@ -8559,7 +8559,7 @@ into your head while keeing disctractions to a minimum.
   (org-ml . org-capture)
   :xl-rule ("bottom" "capture" :newname "\\`CAPTURE-.+")
   :xl-config
-  (after! evil (xl-add-hook 'org-capture-mode-hook #'evil-insert-state))
+  (after! evil (xl-hook-add 'org-capture-mode-hook #'evil-insert-state))
   :init
   (after! org-agenda (push (xl-capture-file) org-agenda-files)))
 #+end_src
