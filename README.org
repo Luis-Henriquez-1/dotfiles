@@ -3933,16 +3933,6 @@ biggest complaint heard about Helm is that it's too bloated and slow.
   ([remap switch-to-buffer]          . helm-mini))
 #+end_src
 
-***** helm descbinds
-:PROPERTIES:
-:ID:       8f42e055-50f6-42dd-b850-5e6eb09d6da2
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-descbinds
-  :xl-hook (helm-mode-hook . helm-descbinds-mode))
-#+end_src
-
 ***** helm-map
 :PROPERTIES:
 :ID:       cb8b2bc0-9956-4e79-a7b0-b0463807eea0
