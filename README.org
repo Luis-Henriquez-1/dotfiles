@@ -6634,7 +6634,7 @@ source block editing tools used by org mode.
 :END:
 
 #+begin_src emacs-lisp
-(alet (list #'org/dwim-edit-source-block #'org/dwim-edit-description)
+(--each (list #'org/dwim-edit-source-block #'org/dwim-edit-description)
   (xl-load-before-call 'org-ml it)
   (xl-load-before-call 'edit-indirect it))
 #+end_src
