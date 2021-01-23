@@ -3842,7 +3842,7 @@ of things that we actually want at this moment.
 Helm is the most popular emacs completion framework. It is full-featured and
 extremely customizable. I haven't found an official manual for it but I often
 see people reference [[http://tuhdo.github.io/helm-intro.html][this helm intro]] that showcase many useful helm
-commands. Among the advatages helm has are the breath of support and it's
+commands. Among the advantages helm has are the breath of support and it's
 maturity. I also like that it uses the buffer instead of the minibuffer. The
 biggest complaint heard about Helm is that it's too bloated and slow.
 
