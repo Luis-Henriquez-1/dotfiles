@@ -1671,15 +1671,15 @@ This keyword provides integration with.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-namless)
 
-(defun use-package-normalize/:xl-nameless ()
-  (cl-assert (-all-p (-orfn #'-cons-pair-p #'stringp #'symbolp) <args>))
+(defun use-package-normalize/:xl-nameless (package _ args)
+  (cl-assert (-all-p (-orfn #'-cons-pair-p #'stringp #'symbolp) args))
   (--map-when (or (stringp it) (symbolp it))
-	      (cons (xl-to-string it) (xl-to-string <package>))
-	      <args>))
+	      (cons (xl-to-string it) (xl-to-string package))
+	      args))
 
-(defun use-package-handler/:xl-nameless ()
-  `((after! nameless ,@(--map `(push ',it nameless-global-aliases) <value>))
-    ,@<body>))
+(defun use-package-handler/:xl-nameless (name _ value rest state)
+  `((after! nameless ,@(--map `(push ',it nameless-global-aliases) value))
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ***** essential libraries
@@ -6404,7 +6404,6 @@ description and there's the case of a new one.
   :xl-ensure nil
   :xl-nameless ("oep" . "org-edit-paragraph")
   :xl-rule ("bottom" "org description" :newname "\\*Org Desc - .+")
-  ;; :xl-before-call ()
   :xl-config
   (after! (evil evil-surround)
     (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-surround-mode)))
