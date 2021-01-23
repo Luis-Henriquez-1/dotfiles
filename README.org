@@ -2276,7 +2276,7 @@ maintain maximum purity and extensibility.
 Add a log to *xl-log* after function is called.
 This function should be primarly used for side-effect but does incidentally return the
 log function that is added to FN."
-  (xl-advice-add fn (if after :after :before) (xl-new-log-advice fn)))
+  (advice-add fn (if after :after :before) (xl-new-log-advice fn)))
 
 (defun xl-new-log-advice (fn)
   "Return new log advice for FN."
