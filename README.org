@@ -1443,7 +1443,7 @@ functions that a package provides.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-always-yes)
 
-(defun use-package-normalize/:xl-always-yes ()
+(defun use-package-normalize/:xl-always-yes (_ _ args)
   (cl-assert (-all-p #'symbolp args))
   args)
 
