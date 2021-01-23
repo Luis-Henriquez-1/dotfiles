@@ -1273,7 +1273,7 @@ the macro =use-package!=.
      ,@body))
 #+end_src
 
-****** initialize use-package
+****** init use-package
 :PROPERTIES:
 :ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
 :END:
@@ -2210,7 +2210,8 @@ is an example).
 
 (defun xl-always-yes-advice (orig-fn &rest args)
   "An advice that makes `y-or-n-p' return t without prompt."
-  (noflet ((y-or-n-p (prompt) t)) (apply orig-fn args)))
+  (noflet ((y-or-n-p (prompt) t))
+    (apply orig-fn args)))
 #+end_src
 
 ******* silence
