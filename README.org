@@ -1853,7 +1853,7 @@ functions.
 :END:
 
 #+begin_src emacs-lisp
-(defconst XL-HOOK-REGEXP (rx bos (group (1+ nonl)) "&" (group (1+ nonl)) eos)
+(defconst XL-HOOK-REGEXP "\\`\\(.+\\)&\\(.+\\)\\'"
   "Regexp that matches an XL hook.
 This regexp contains two groups. One group one designates the hook variable
 (what is before the '&') and group two designates the hook function (this is
@@ -2035,7 +2035,7 @@ also want to be able to deduce the function being advised from the name.
 :END:
 
 #+begin_src emacs-lisp
-(defconst XL-ADVICE-REGEXP (rx (group (1+ (not white))) "@" (group (1+ (not white))))
+(defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
   "Regexp used to match XL advices.")
 #+end_src
 
@@ -2084,6 +2084,16 @@ system I provide, doing this is trivial.
        (intern)))
 #+end_src
 
+****** internal advice name
+:PROPERTIES:
+:ID:       9ce4d727-7400-4b3e-83b8-0177005f2141
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-internal-advice-name (advice)
+  (nth 1 (s-match "xl--\\(.+\\)-advice" (symbol-name advice))))
+#+end_src
+
 ****** generate an advice name
 :PROPERTIES:
 :ID:       03416f82-ced7-42a0-843b-6975903f0b38
@@ -2092,7 +2102,8 @@ system I provide, doing this is trivial.
 #+begin_src emacs-lisp
 (defun xl-advice-name (fn advice)
   "Return XL advice symbol for FN and ADVICE"
-  (xl-symbol-intern fn '@ advice))
+  (alet (or (xl-internal-advice-name advice) advice)
+    (xl-symbol-intern fn '@ it)))
 #+end_src
 
 ****** add XL advice
@@ -2194,7 +2205,7 @@ Note that this function returns must be evaluated with lexical binding to work.
     (xl-log-function it)))
 #+end_src
 
-******* ignore yes-or-no prompt
+******* assume yes in prompts
 :PROPERTIES:
 :ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
 :END:
@@ -2229,12 +2240,12 @@ to silence the said messages.
   "Around advice for silencing output."
   (shut-up (apply orig-fn args)))
 
-(defun xl-silence-output (fn &optional props expire-fn)
+(defun xl-silence-output (fn)
   "Silence output of FN."
   (let ((alias (xl-symbol-intern fn '@ 'silence)))
     (defalias alias #'xl-silence-output-advice)
     (xl-log-function alias)
-    (advice-add fn :around alias props expire-fn)))
+    (advice-add fn :around alias)))
 #+end_src
 
 ******* logging certain functions
@@ -2304,7 +2315,7 @@ packages which can contain several thousand items.
   (let ((alias (xl-symbol-intern fn '@ 'pauce-gc)))
     (defalias alias #'xl-pause-gc-advice)
     (xl-log-function alias)
-    (advice-add fn :around alias props expire-fn)))
+    (advice-add fn :around alias)))
 
 (defun xl-pause-gc-advice (orig-fn &rest args)
   "An around advice that pauses `gc-cons-threshold'."
