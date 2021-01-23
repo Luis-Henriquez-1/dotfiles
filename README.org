@@ -1518,7 +1518,7 @@ of this keyword is to load a package when a certain function is called.
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-before-call)
 
-(defun use-package/:xl-before-call (name key args)
+(defun use-package-normalize/:xl-before-call (name key args)
   (cl-assert (-all-p (-orfn #'symbolp #'listp) args))
   (->> args
        (--map-when (symbolp it) (cons name it))
@@ -6107,7 +6107,7 @@ use a typical window manager, you have to.
 
 #+begin_src emacs-lisp
 (use-package! exwm
-  :os (not linux)
+  :os linux
   :xl-before-call browse-url)
 #+end_src
 
