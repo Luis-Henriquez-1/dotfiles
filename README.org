@@ -1441,15 +1441,15 @@ functions that a package provides.
 :END:
 
 #+begin_src emacs-lisp
-(use-package:dwim-insert :xl-always-yes)
+(use-package:dwim-insert :xl-assume-yes)
 
-(defun use-package-normalize/:xl-always-yes (_ _ args)
+(defun use-package-normalize/:xl-assume-yes (_ _ args)
   (cl-assert (-all-p #'symbolp args))
   args)
 
-(defun use-package-handler/:xl-always-yes (name _ value rest state)
+(defun use-package-handler/:xl-assume-yes (name _ value rest state)
   `(,@(-map (-partial #'use-package:autoload name) value)
-    ,@(--map `(xl-always-yes #',it) value)
+    ,@(--map `(xl-assume-yes #',it) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -2188,9 +2188,10 @@ Note that this function returns must be evaluated with lexical binding to work.
 #+begin_src emacs-lisp
 (defun xl-expire (fn &optional expire-condition)
   "Cause FN to expire when EXPIRE-CONDITION is true."
-  (alet (gensym "xl-expire-")
+  (alet (xl-symbol-intern fn '@expire)
     (fset it (xl-gen-expire-advice expire-condition))
-    (xl-advice-add fn :around it)))
+    (advice-add fn :around it)
+    (xl-log-function it)))
 #+end_src
 
 ******* ignore yes-or-no prompt
@@ -2204,11 +2205,11 @@ second I spend typing =y= or =n= is not worth the benefit ([[helpfn:ert-delete-a
 is an example).
 
 #+begin_src emacs-lisp
-(defun xl-always-yes (fn &optional props expire-fn)
+(defun xl-assume-yes (fn &optional props expire-fn)
   "Ignore yes or no prompt."
-  (xl-advice-add fn :around #'xl-always-yes-advice props expire-fn))
+  (xl-advice-add fn :around #'xl-assume-yes-advice props expire-fn))
 
-(defun xl-always-yes-advice (orig-fn &rest args)
+(defun xl-assume-yes-advice (orig-fn &rest args)
   "An advice that makes `y-or-n-p' return t without prompt."
   (noflet ((y-or-n-p (prompt) t))
     (apply orig-fn args)))
@@ -2230,7 +2231,10 @@ to silence the said messages.
 
 (defun xl-silence-output (fn &optional props expire-fn)
   "Silence output of FN."
-  (xl-advice-add fn :around #'xl-silence-output-advice))
+  (let ((alias (xl-symbol-intern fn '@ 'silence)))
+    (defalias alias #'xl-silence-output-advice)
+    (xl-log-function alias)
+    (advice-add fn :around alias props expire-fn)))
 #+end_src
 
 ******* logging certain functions
@@ -2295,9 +2299,12 @@ example is [[helpfn:helm-system-packages][helm-system-packages]], function that 
 packages which can contain several thousand items.
 
 #+begin_src emacs-lisp
-(defun xl-pause-gc (fn &optional props expire-fn)
+(defun xl-pause-gc (fn)
   "Pause garbage collection for the duration of FN."
-  (xl-advice-add fn :around #'xl-pause-gc-advice props expire-fn))
+  (let ((alias (xl-symbol-intern fn '@ 'pauce-gc)))
+    (defalias alias #'xl-pause-gc-advice)
+    (xl-log-function alias)
+    (advice-add fn :around alias props expire-fn)))
 
 (defun xl-pause-gc-advice (orig-fn &rest args)
   "An around advice that pauses `gc-cons-threshold'."
@@ -2327,9 +2334,9 @@ packages which can contain several thousand items.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-ignore (fn &rest props expire-fn)
+(defun xl-ignore (fn)
   "Ignore FN."
-  (xl-advice-add fn :override #'ignore props expire-fn))
+  (xl-advice-add fn :override #'ignore))
 #+end_src
 
 ****** defadvice!
@@ -4929,7 +4936,7 @@ like the outorg buffer has less whitespace in between headlines than it should.
 #+begin_src emacs-lisp
 (use-feature! ert
   :xl-rule ("bottom" "ert" :newname "\\*ert\\*")
-  :xl-always-yes ert-delete-all-tests)
+  :xl-assume-yes ert-delete-all-tests)
 #+end_src
 
 ***** ert-expectations
