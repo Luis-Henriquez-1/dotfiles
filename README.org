@@ -919,6 +919,17 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-mode)))
 #+end_src
 
+******* internal XL symbol
+:PROPERTIES:
+:ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-internal-symbol-p (symbol)
+  "Return non-nil if symbol is an internal XL symbol."
+  (s-matches-p "\\`xl--.+" (symbol-name symbol)))
+#+end_src
+
 ****** macro keyword arguments
 :PROPERTIES:
 :ID:       dc7a63e6-041b-4855-b206-6d72ef732de1
@@ -1933,9 +1944,16 @@ actually read through hook functions like reading a todo-list. It will be
 apparent what's being done.
 
 #+begin_src emacs-lisp
-(defun xl-hook-name (hook function)
+(defun xl-hook-name (hook fn)
   "Produce a valid xl-hook symbol."
-  (xl-symbol-intern hook '& function))
+  (alet (cond ((xl-internal-symbol-p fn)
+	       (->> (symbol-name fn)
+		    (s-chomp-suffix "-hook")
+		    (s-chop-prefix "xl--")
+		    (intern)))
+	      ((t
+		fn)))
+    (xl-symbol-intern hook '& it)))
 #+end_src
 
 ******* produce hook lambda
@@ -2095,16 +2113,6 @@ system I provide, doing this is trivial.
        (intern)))
 #+end_src
 
-****** internal advice name
-:PROPERTIES:
-:ID:       9ce4d727-7400-4b3e-83b8-0177005f2141
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-internal-advice-name (advice)
-  (nth 1 (s-match "xl--\\(.+\\)-advice" (symbol-name advice))))
-#+end_src
-
 ****** generate an advice name
 :PROPERTIES:
 :ID:       03416f82-ced7-42a0-843b-6975903f0b38
@@ -2112,8 +2120,14 @@ system I provide, doing this is trivial.
 
 #+begin_src emacs-lisp
 (defun xl-advice-name (fn advice)
-  "Return XL advice symbol for FN and ADVICE"
-  (alet (or (xl-internal-advice-name advice) advice)
+  "Return XL advice symbol for FN and ADVICE."
+  (alet (cond ((xl-internal-symbol-p advice)
+	       (->> (symbol-name fn)
+		    (s-chomp-suffix "-advice")
+		    (s-chop-prefix "xl--")
+		    (intern)))
+	      (t
+	       advice))
     (xl-symbol-intern fn '@ it)))
 #+end_src
 
@@ -6093,45 +6107,32 @@ use a typical window manager, you have to.
 
 #+begin_src emacs-lisp
 (use-package! exwm
+  :os (not linux)
   :xl-before-call browse-url)
 #+end_src
 
-***** init
+***** trigger exwm on =browse-url=
 :PROPERTIES:
 :ID:       581b8529-00a0-4935-9363-60dba9dbe5f4
 :END:
-
-This isn't precise, I want exwm to trigger itself when I try to open
-any external application but right now I'm not sure of how to do that
-so I deal with my most often case--opening the browser. This assumes
-[[helpfn:browse-url][browse-url]] will be used to open an external browser, which might not
-be the case. I'll address this in time.
 
 =exwm= provides an option [[helpvar:exwm-replace][exwm-replace]] to deal with the case of an existing
 window manager when exwm is initializing itself. There are three
 ways. You could replace it with exwm without asking, ask whether to
 replace it, or abort the initialization of exwm.
 
-I always want exwm to assume that if I'm using another window manager,
-I don't want to use exwm. Only problem is =exwm= aborts with an annoying
-=user-error=.
-
 #+begin_src emacs-lisp
-(alet #'xl--load-and-initialize-exwm-maybe-advice
-  (xl-advice-add #'browse-url :before it nil t))
-
-(defun xl--load-and-initialize-exwm-maybe-advice (&rest _)
+(defadvice! init-exwm-maybe (:before browse-url)
   "Try to initialize exwm.
 If it's not possible, abort initialization gracefully."
-  (with-os! linux
-    (require 'exwm)
-    ;; Try to enable exwm.
-    (let ((exwm-replace nil))
-      (if (ignore-errors (exwm-init))
-	  ;; Enable the clipboard.
-	  (progn (require 'exwm-systemtray)
-		 (exwm-systemtray-enable))
-	(xl-log "Another window manager is present (or something went wrong).")))))
+  (require 'exwm)
+  ;; Try to enable exwm.
+  (let ((exwm-replace nil))
+    (if (ignore-errors (exwm-init))
+	;; Enable the clipboard.
+	(progn (require 'exwm-systemtray)
+	       (exwm-systemtray-enable))
+      (xl-log "Another window manager is present (or something went wrong)."))))
 #+end_src
 
 ***** org capture from an exwm buffer
@@ -6277,11 +6278,6 @@ a more descriptive name.
   "Rename buffer to title."
   (exwm-workspace-rename-buffer exwm-title))
 #+end_src
-
-***** popup rules for exwm buffers
-:PROPERTIES:
-:ID:       0ecf05ce-4a76-4130-855e-e8d0d7390df1
-:END:
 
 ***** to start in char mode
 :PROPERTIES:
