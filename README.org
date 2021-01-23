@@ -1913,13 +1913,13 @@ XL-HOOK-FN is a function named with Void naming conventions."
        (intern)))
 #+end_src
 
-****** access the original hook function
+****** hook action
 :PROPERTIES:
 :ID:       fa705f26-31f0-43c3-80a6-6741e74ab0ea
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-orig-fn (xl-hook-fn)
+(defun xl-hook-action (xl-hook-fn)
   "Return the function hook function that corresponds to XL-HOOK-FN."
   (->> (symbol-name xl-hook-fn)
        (s-match XL-HOOK-REGEXP)
@@ -2079,7 +2079,7 @@ also want to be able to deduce the function being advised from the name.
   (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
-****** access the adviced function
+****** advised function
 :PROPERTIES:
 :ID:       74aee21a-3549-488b-b6f1-de9549e7e358
 :END:
@@ -2093,19 +2093,13 @@ also want to be able to deduce the function being advised from the name.
        (intern)))
 #+end_src
 
-****** access the original advice
+****** advice action
 :PROPERTIES:
 :ID:       f893fbe8-592b-409e-8de7-6060e936456f
 :END:
 
-It's easy to find which functions are advising a given function using
-[[helpfn:advice-mapc][advice-mapc]]. However, it's not as easy to go the other way around--to determine
-what which function a given advice is advising. Another complicaiton is that
-it's possible for a given advice to advise multiple functions. With the naming
-system I provide, doing this is trivial.
-
 #+begin_src emacs-lisp
-(defun xl-advice-orig-advice (xl-advice-fn)
+(defun xl-advice-action (xl-advice-fn)
   "Return the symbol."
   (->> (symbol-name xl-advice-fn)
        (s-match XL-ADVICE-REGEXP)
@@ -2113,7 +2107,7 @@ system I provide, doing this is trivial.
        (intern)))
 #+end_src
 
-****** generate an advice name
+****** advice name
 :PROPERTIES:
 :ID:       03416f82-ced7-42a0-843b-6975903f0b38
 :END:
@@ -2151,8 +2145,7 @@ appropriate name to target.
     (advice-add symbol where advice props)
     (xl-log-function advice)
     (when expire-fn
-      (alet (xl-expire advice expire-fn)
-	(advice-add advice :around it)))))
+      (xl-expire advice expire-fn))))
 #+end_src
 
 ****** remove XL advice
@@ -2166,7 +2159,7 @@ one argument--the advice to remove.
 #+begin_src emacs-lisp
 (defun xl-advice-remove (xl-advice-fn)
   "Remove XL-ADVICE-FN from the function it is advising."
-  (alet (xl-advice-orig-var xl-advice-fn)
+  (alet (xl-advice-advised-fn xl-advice-fn)
     (advice-remove it xl-advice-fn)))
 #+end_src
 
@@ -2196,16 +2189,15 @@ When a function has expired, it is removed from any hooks or advices it is in,
 and, additionally, it is ignored. The expire advice remains on the function.
 
 #+begin_src emacs-lisp
-(defun xl-gen-expire-advice (expire-condition)
+(defun xl-expire-lambda (fn expire-condition)
   "Return an around advice that expires on EXPIRE-CONDITION."
-  (lambda (orig-fn &rest args)
-    (aprog1 (apply orig-fn args)
-      (when (funcall #',expire-condition)
-	(when (xl-advice-fn-p orig-fn)
-	  (xl-advice-remove orig-fn))
-	(when (xl-hook-fn-p orig-fn)
-	  (xl-hook-remove orig-fn))
-	(xl-log "%s has expired." orig-fn)))))
+  `(lambda (&rest _)
+     (when (funcall #',expire-condition)
+       (when (xl-advice-fn-p #',fn)
+	 (xl-advice-remove #',fn))
+       (when (xl-hook-fn-p #',fn)
+	 (xl-hook-remove #',fn))
+       (xl-log "%s has expired." #',fn))))
 #+end_src
 
 ******** expire advice
@@ -2224,10 +2216,13 @@ Note that this function returns must be evaluated with lexical binding to work.
 #+begin_src emacs-lisp
 (defun xl-expire (fn &optional expire-condition)
   "Cause FN to expire when EXPIRE-CONDITION is true."
-  (alet (xl-symbol-intern fn '@expire)
-    (fset it (xl-gen-expire-advice expire-condition))
-    (advice-add fn :around it)
-    (xl-log-function it)))
+  (let ((expire-fn (xl-symbol-intern fn '@expire))
+	(expire-condition (if (booleanp expire-condition)
+			      '(lambda () t)
+			    expire-condition)))
+    (fset expire-fn (xl-expire-lambda fn expire-condition))
+    (xl-log-function expire-fn)
+    (advice-add fn :after expire-fn)))
 #+end_src
 
 ******* assume yes in prompts
@@ -2293,11 +2288,11 @@ want to log it differently.
   (cond ((xl-hook-fn-p fn)
 	 (format "& %s -> %s"
 		 (xl-hook-hooked-var fn)
-		 (xl-hook-orig-fn fn)))
+		 (xl-hook-action fn)))
 	((xl-advice-fn-p fn)
 	 (format "@ %s -> %s"
 		 (xl-advice-advised-fn fn)
-		 (xl-advice-orig-advice fn)))
+		 (xl-advice-action fn)))
 	(t
 	 (format "%s called" fn))))
 #+end_src
@@ -2320,7 +2315,7 @@ log function that is added to FN."
 
 (defun xl-new-log-advice (fn)
   "Return new log advice for FN."
-  (alet (gensym (format "xl-log-%s-" fn))
+  (alet (xl-symbol-intern "xl-log-" fn)
     (fset it `(lambda (&rest _) (xl-log ,(xl--log-message fn))))
     it))
 #+end_src
