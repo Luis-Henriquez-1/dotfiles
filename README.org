@@ -1948,11 +1948,11 @@ apparent what's being done.
   "Produce a valid xl-hook symbol."
   (alet (cond ((xl-internal-symbol-p fn)
 	       (->> (symbol-name fn)
-		    (s-chomp-suffix "-hook")
+		    (s-chop-suffix "-hook")
 		    (s-chop-prefix "xl--")
 		    (intern)))
-	      ((t
-		fn)))
+	      (t
+	       fn))
     (xl-symbol-intern hook '& it)))
 #+end_src
 
@@ -2122,8 +2122,8 @@ system I provide, doing this is trivial.
 (defun xl-advice-name (fn advice)
   "Return XL advice symbol for FN and ADVICE."
   (alet (cond ((xl-internal-symbol-p advice)
-	       (->> (symbol-name fn)
-		    (s-chomp-suffix "-advice")
+	       (->> (symbol-name advice)
+		    (s-chop-suffix "-advice")
 		    (s-chop-prefix "xl--")
 		    (intern)))
 	      (t
@@ -6764,8 +6764,8 @@ where I don't do this.
 :END:
 
 #+begin_src emacs-lisp
-(alet (list #'auto-capitalize-mode #'aggressive-fill-paragraph-mode
-	    #'org-link-minor-mode)
+(--each (list #'auto-capitalize-mode #'aggressive-fill-paragraph-mode
+	      #'org-link-minor-mode)
   (xl-hook-add 'org-edit-paragraph:mode-hook it))
 #+end_src
 
