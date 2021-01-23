@@ -1128,7 +1128,7 @@ settings that should favors particular operating systems over others.
 #+begin_src emacs-lisp
 (defmacro with-os! (os &rest body)
   "If OS is current system's operating system, execute body.
-OS can be either `mac', `linux' or `windows'(unquoted)."
+OS can be either `mac', `linux' or `windows' (unquoted)."
   (declare (indent defun))
   (when (funcall (cond ((eq :not (car-safe os)) (-not #'member))
                        (t #'member))
@@ -1453,10 +1453,21 @@ functions that a package provides.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******** log
+******* os
 :PROPERTIES:
-:ID:       46b23feb-eec6-45e6-b6c5-91eeda400f4b
+:ID:       9d78d90a-0309-44c6-be96-82bd6608546a
 :END:
+
+#+begin_src emacs-lisp
+(use-package:dwim-insert :os)
+
+(defun use-package-normalize/:os (_ _ args)
+  (car args))
+
+(defun use-package-handler/:os (name _ value rest state)
+  `((with-os! ,value
+      ,@(use-package-process-keywords name rest state))))
+#+end_src
 
 ******* hook
 :PROPERTIES:
