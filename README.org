@@ -1388,8 +1388,8 @@ Many packages print some output to the messages buffer.
   (cl-assert (-all-p #'symbolp args))
   args)
 
-(defun use-package-handler/xl-silence (name _ value rest state)
-  `(,@(-map (-partial #'use-package:autoload <name) value)
+(defun use-package-handler/:xl-silence (name _ value rest state)
+  `(,@(-map (-partial #'use-package:autoload name) value)
     ,@(--map `(xl-silence-output #',it) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
@@ -1945,13 +1945,13 @@ function to report the problem to me without short-circuiting. This is why I
 wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 
 #+begin_src emacs-lisp
-(defun xl-hook-lambda (function)
+(defun xl-hook-lambda (fn)
   "Return a raw hook lambda."
   `(lambda (&rest args)
      (condition-case err
-	 (apply #',function args)
+	 (apply #',fn args)
        (error
-	(xl-log "%s failed." ',function)))))
+	(xl-log "%s failed." ',fn)))))
 #+end_src
 
 ******* produce an XL xl-hook
@@ -2249,17 +2249,16 @@ want to log it differently.
 #+begin_src emacs-lisp
 (defun xl--log-message (fn)
   "Return the message logged."
-  (pcase fn
-    ((pred xl-hook-fn-p)
-     (format "& %s -> %s"
-	     (xl-hook-hooked-var fn)
-	     (xl-hook-orig-fn fn)))
-    ((pred xl-advice-fn-p)
-     (format "@ %s -> %s"
-	     (xl-advice-advised-fn fn)
-	     (xl-advice-orig-advice fn)))
-    (_
-     (format "%s called" fn))))
+  (cond ((xl-hook-fn-p fn)
+	 (format "& %s -> %s"
+		 (xl-hook-hooked-var fn)
+		 (xl-hook-orig-fn fn)))
+	((xl-advice-fn-p fn)
+	 (format "@ %s -> %s"
+		 (xl-advice-advised-fn fn)
+		 (xl-advice-orig-advice fn)))
+	(t
+	 (format "%s called" fn))))
 #+end_src
 
 ******** log advice
@@ -2281,7 +2280,8 @@ log function that is added to FN."
 (defun xl-new-log-advice (fn)
   "Return new log advice for FN."
   (alet (gensym (format "xl-log-%s-" fn))
-    (fset it `(lambda (&rest _) (xl-log ,(xl--log-message fn))))))
+    (fset it `(lambda (&rest _) (xl-log ,(xl--log-message fn))))
+    it))
 #+end_src
 
 ******* reduce gc-cons-threshold
@@ -3518,7 +3518,7 @@ This function is designed to reveal the current outline branch hierarchy so that
 you can see the point where consult takes you.
 
 #+begin_src emacs-lisp
-(defun +outline-show-branch-maybe ()
+(defun outline:show-branch-maybe ()
   "Reveal the current outline branch.
 Show all of the current headine's parents and their children. This includes this
 headline."
@@ -3541,8 +3541,8 @@ headline."
 :END:
 
 #+begin_src emacs-lisp
-(alet (list #'consult-outline #'consult-line)
-  (xl-advice-add it :after #'+outline-show-branch-maybe))
+(--each (list #'consult-outline #'consult-line)
+  (xl-advice-add it :after #'outline:show-branch-maybe))
 #+end_src
 
 ******* window display
@@ -3562,7 +3562,7 @@ problem.
 By default when you search a subtree with consult, you end up.
 
 #+begin_src emacs-lisp
-(defun +outline-display-children-in-window ()
+(defun outline:display-children-in-window ()
   "Scroll up window to maximize view of unfolded subtree.
 If the subtree is unfolded and the end of the current subtree is outside of the
 visible window, scroll up until the whole subtree is visible. If the whole
@@ -3590,8 +3590,8 @@ th subtree should always be visible)."
 :END:
 
 #+begin_src emacs-lisp
-(alet (list #'consult-outline #'consult-line)
-  (xl-advice-add it :after #'+outline-display-children-in-window))
+(--each (list #'consult-outline #'consult-line)
+  (xl-advice-add it :after #'outline:display-children-in-window))
 #+end_src
 
 ****** bindings
@@ -6122,7 +6122,7 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
 :END:
 
 #+begin_src emacs-lisp
-(defun +exwm--title-info (title)
+(defun exwm::title-info (title)
   "Return the webpage and the program."
   (-let [(_ webpage program) (s-match "\\([^z-a]+\\) - \\([^z-a]+\\)\\'" title)]
     (list webpage program)))
@@ -6197,7 +6197,7 @@ Emacs simulates a keypress to firefox--specifically the keypresses to select the
 current url and to add it to the kill ring.
 
 #+begin_src emacs-lisp
-(defun +exwm--firefox-url ()
+(defun exwm::firefox-url ()
   "Save the current firefox url to kill ring."
   ;; We get the xwindow id of the buffer named Firefox
   (let ((fid (exwm--buffer->id (current-buffer))))
@@ -6219,7 +6219,7 @@ current url and to add it to the kill ring.
 :END:
 
 #+begin_src emacs-lisp
-(defun +exwm--qutebrowser-url ()
+(defun exwm::qutebrowser-url ()
   (interactive)
   (let ((fid (exwm--buffer->id (current-buffer))))
     (sleep-for 0 300)
@@ -6269,7 +6269,7 @@ windows).
 :END:
 
 #+begin_src emacs-lisp
-(defvar +exwm-char-mode-apps (list "emacs" "next" "nyxt" "qutebrowser")
+(defvar exwm:char-mode-apps (list "emacs" "next" "nyxt" "qutebrowser")
   "List of applications to exwm should start in char-mode.")
 #+end_src
 
@@ -6280,8 +6280,8 @@ windows).
 
 #+begin_src emacs-lisp
 (defhook! start-in-char-mode (exwm-manage-finish-hook)
-  "Start a program in char-mode if it's in `+exwm-char-mode-apps'."
-  (when (--any-p (string-prefix-p it exwm-instance-name) +exwm-char-mode-apps)
+  "Start a program in char-mode if it's in `exwm:char-mode-apps'."
+  (when (--any-p (string-prefix-p it exwm-instance-name) exwm:char-mode-apps)
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
 
@@ -7487,7 +7487,7 @@ code.
 
 ***** lispyville
 :PROPERTIES:
-:ID: 9d22714a-086d-49a1-9f8b-66da3b646110
+:ID:       120baacb-4835-4e96-a7cb-e8bb7496d7be
 :END:
 
 [[https://github.com/noctuid/lispyville][lispyville]] helps vim commands work better with lisp by providing
@@ -7730,7 +7730,7 @@ You'll get void variable if you don't do this.
 
 ****** fix elisp indentation
 :PROPERTIES:
-:ID: aa7f846f-8802-4c75-88d8-a438e2f63ccd
+:ID:       834eff05-1b96-4295-a46c-d14f81b43ad6
 :END:
 
 A problem with elisp indentation is indents quoted lists the way functions
