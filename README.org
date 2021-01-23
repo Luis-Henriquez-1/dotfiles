@@ -3907,6 +3907,15 @@ biggest complaint heard about Helm is that it's too bloated and slow.
   (helm-mode-line-string                 . nil))
 #+end_src
 
+***** helm-buffer
+:PROPERTIES:
+:ID:       db9440d4-7701-4120-b381-598572c186c6
+:END:
+
+#+begin_src emacs-lisp
+(use-feature! helm-buffer)
+#+end_src
+
 ***** helm-mode
 :PROPERTIES:
 :ID:       5659f309-43ec-4718-959b-a161e837fb92
@@ -8605,19 +8614,6 @@ question]]. I need to disable =org-capture's= header-line.
   "Don't delete other windows when opening a capture template."
   (cl-letf (((symbol-function #'delete-other-windows) #'ignore))
     (apply <orig-fn> <args>)))
-#+end_src
-
-****** make templates follow popup rules
-:PROPERTIES:
-:ID:       d1fafcb4-dcaf-4ba0-835d-cb12acb8e445
-:END:
-
-[[helpfn:org-capture-place-template][org-capture-place-template]] is what's responsible for displaying the org capture
-buffer. We need to try to make it use display buffer.
-
-#+begin_src emacs-lisp
-(defadvice! use-display-buffer (:around org-switch-to-buffer-other-window)
-  ())
 #+end_src
 
 ****** doct
