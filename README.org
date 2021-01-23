@@ -564,7 +564,7 @@ config they need to manage these packages and the several interactions between
 emacs and eachother. In this headline I try to develop tools which will help me
 deal with this web of interactions.
 
-**** Initialize
+**** Init
 :PROPERTIES:
 :ID:       71dbf82e-cf4f-4e8a-b14d-df78bea5b20f
 :END:
@@ -2115,7 +2115,7 @@ appropriate name to target.
     (advice-add symbol where advice props)
     (xl-log-function advice)
     (when expire-fn
-      (alet (xl-expire-advice advice expire-fn t)
+      (alet (xl-expire advice expire-fn)
 	(advice-add advice :around it)))))
 #+end_src
 
