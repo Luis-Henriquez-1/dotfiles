@@ -6279,7 +6279,7 @@ a more descriptive name.
   (exwm-workspace-rename-buffer exwm-title))
 #+end_src
 
-***** to start in char mode
+***** char mode
 :PROPERTIES:
 :ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
 :END:
@@ -6788,7 +6788,6 @@ source block editing tools used by org mode.
 #+begin_src emacs-lisp
 (use-package! org-source
   :xl-rule ("bottom" "org source blocks" :newname "\\*Org[[:space:]]\\(?:S\\(?:ource\\|rc\\)\\).+")
-  :xl-before-call
   :xl-ensure nil)
 #+end_src
 
