@@ -1669,7 +1669,7 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 This keyword provides integration with.
 
 #+begin_src emacs-lisp
-(use-package:dwim-insert :xl-namless)
+(use-package:dwim-insert :xl-nameless)
 
 (defun use-package-normalize/:xl-nameless (package _ args)
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'stringp #'symbolp) args))
