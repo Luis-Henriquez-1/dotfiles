@@ -1688,6 +1688,31 @@ This keyword provides integration with.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
+******* enable-on-load
+:PROPERTIES:
+:ID:       28635c17-129f-4d5f-99ba-dde187ce7bb0
+:END:
+
+I want to enable some packages (like [[id:8fd1bcdc-c4b3-4fee-b91b-dcdf96167582][key-chord]]) immediately upon loading them. I
+could use the =:config= keyword or enabling these packages, but it happens often
+enough that I consider it worth it to give it its own keyword.
+
+#+begin_src emacs-lisp
+(use-package:dwim-insert :enable-on-load)
+
+(defun use-package-normalize/:enable-on-load (_ _ args)
+  (cl-assert (and (xl-one-p (length args))
+		  (booleanp (car args))))
+  (car args))
+
+(defun use-package-handler/:enable-on-load (name _ value rest state)
+  (let ((mode-name (xl-modeify name)))
+    `((after! ,name
+	(xl-log "enable %S" mode-name)
+	(,mode-name))
+      ,@(use-package-process-keywords name rest state))))
+#+end_src
+
 ***** essential libraries
 :PROPERTIES:
 :ID:       18602d49-dcc3-47c3-8579-62f7a7b7a83a
