@@ -3812,6 +3812,8 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 :ID:       6dd9a08b-382d-4bb7-baa5-d65d0e136869
 :END:
 
+This package downloads docsets from online.
+
 #+begin_src emacs-lisp
 (use-package! helm-dash
   :commands helm-dash
@@ -3895,14 +3897,6 @@ press the key corresponding to the candidate you want. It saves me from pressing
   (ace-jump-helm-line-select-key     . ?e)
   (ace-jump-helm-line-move-only-key  . ?r)
   (ace-jump-helm-line-persistent-key . ?s))
-#+end_src
-
-***** helm-posframe
-:PROPERTIES:
-:ID:       a24a4f6d-d3ed-4df8-a7e0-666cbdc873ff
-:END:
-
-#+begin_src emacs-lisp
 #+end_src
 
 **** company
@@ -5927,10 +5921,10 @@ afterwards.
 :ID: dbb69880-2180-4ecc-897d-78ff72a6358b
 :END:
 
-[[https://github.com/ch11ng/exwm][EXWM]] (Emacs X-Window Manager) is a full-featured window manager in Emacs.
-There are benefits and drawbacks to making emacs your window manager. One
-benefit is that you get a super consistent window management experience. If you
-use a typical window manager, you have to.
+[[https://github.com/ch11ng/exwm][EXWM]] (Emacs X-Window Manager) is a full-featured window manager in Emacs.  There
+are benefits and drawbacks to making emacs your window manager. One benefit is
+that you get a super consistent window management experience. One drawback is
+that if Emacs hangs or crashes you need to restart your computer.
 
 ***** init
 :PROPERTIES:
@@ -5991,31 +5985,15 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
     (list webpage program)))
 #+end_src
 
-****** download webpage as pdf
+****** download webpage
 :PROPERTIES:
-:ID:       bd7165df-9dae-4954-b153-96335678e296
+:ID:       3798402c-cd8b-43e2-aec5-f54736aafdd4
 :END:
 
-Storing the links is better, but not good enough. Webpages die. They can be
-taken off by a third-party or removed by the owner themselves. Even if they
-aren't though, they can be modified so that what you originally found isn't
-there anymore. As a solution for this I came upon [[https://wkhtmltopdf.org/][wkhtmltopdf]], a command that
-downloads a given webpage as pdf. A consequence of doing this is that you will
-have access to all the webpages you used for research offline.
-
 #+begin_src emacs-lisp
-(defun xl-download-webpage-as-pdf (url webpage-title)
-  "Save the webpage at URL to `XL-SCREENSHOT-DIR'."
-  (let* ((program "wkhtmltopdf")
-         (process-name (format "%s - %s" program (ts-format)))
-         (webpage-title (s-replace "/" "~" webpage-title))
-         (pdf-path (format "%s%s.pdf" XL-SCREENSHOT-DIR webpage-title))
-         (fn `(lambda (&rest _)
-                (if (file-exists-p ,pdf-path)
-                    (message "Webpage saved succesfully.")
-                  (warn "Failed to save webpage %s to %s." ,url ,pdf-path)))))
-    (message "%s <-- %s" (f-abbrev pdf-path) url)
-    (async-start-process process-name "firejail" fn program url pdf-path)))
+(defun xl-download-webpage (url)
+  "Download webpage at url to webpage folder."
+  (call-process "weasyprint" nil nil nil url))
 #+end_src
 
 ****** replacement for fake id
@@ -9303,7 +9281,8 @@ Emacs and for that we need all the help we can get.
   "c" (list :def #'describe-char     :wk "char")
   "k" (list :def #'describe-key      :wk "key")
   "f" (list :def #'describe-function :wk "function")
-  "a" (list :def #'apropos           :wk "apropos"))
+  "a" (list :def #'apropos           :wk "apropos")
+  "w" (list :def #'woman             :wk "woman"))
 #+end_src
 
 ***** quit
@@ -9408,10 +9387,10 @@ These are keybindings I use most frequently.
 #+begin_src emacs-lisp
 (define-leader-key!
   :infix "s"
-  ""  (list :ignore t                       :wk "search")
-  "s" (list :def #'consult-line             :wk "jump to line")
-  "w" (list :def #'engine/search-duckduckgo :wk "web")
-  "h" (list :def #'consult-outline          :wk "jump to outline heading"))
+  ""  (list :ignore t                          :wk "search")
+  "s" (list :def #'swiper-helm                 :wk "jump to line")
+  "w" (list :def #'engine/search-duckduckgo    :wk "web")
+  "h" (list :def #'helm-org-in-buffer-headings :wk "jump to outline heading"))
 #+end_src
 
 * email
