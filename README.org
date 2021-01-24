@@ -3766,7 +3766,7 @@ biggest complaint heard about Helm is that it's too bloated and slow.
   :commands helm-M-x
   :hook emacs-startup-hook
   :ignore helm-display-mode-line
-  :popup ("bottom" "helm" :newname "\\*Helm.+")
+  :popup ("helm" "helm" :newname "\\*[Hh]elm.+")
   :set
   (helm-default-display-buffer-functions . nil)
   (helm-candidate-number-limit           . 50)
