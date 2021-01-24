@@ -1503,6 +1503,9 @@ instead of =add-hook=.
   `(,@(-map (-lambda ((hook . fn)) `(xl-hook-add ',hook ',fn)) value)
     ,@(-map (-partial #'use-package:autoload name) (-map #'cdr value))
     ,@(use-package-process-keywords name rest state)))
+
+(advice-add #'use-package-normalize/:hook :override #'use-package-normalize/:xl-hook)
+(advice-add #'use-package-handler/:hook :override #'use-package-handler/:xl-hook)
 #+end_src
 
 ******* before-call
@@ -2661,7 +2664,7 @@ This built-in emacs package is opens a buffer with a list.
 
 #+begin_src emacs-lisp
 (use-package! origami
-  :xl-hook prog-mode-hook)
+  :hook prog-mode-hook)
 #+end_src
 
 ***** ts
@@ -2739,7 +2742,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
 
 #+begin_src emacs-lisp
 (use-feature! paren
-  :xl-hook (prog-mode . show-paren-mode)
+  :hook (prog-mode . show-paren-mode)
   :set
   (show-paren-delay . 0))
 #+end_src
@@ -3291,7 +3294,7 @@ are done before setting the =gc-cons-threshold= back to a normal value.
 
 #+begin_src emacs-lisp
 (use-package! gcmh
-  :xl-hook emacs-startup-hook
+  :hook emacs-startup-hook
   :set
   (gcmh-idle-delay          . 5)
   (gcmh-verbose             . xl-debug-p)
@@ -3445,7 +3448,7 @@ commands more discoverable and naming schemes more consistent.
 
 #+begin_src emacs-lisp
 (use-package! keyfreq
-  :xl-hook emacs-startup-hook)
+  :hook emacs-startup-hook)
 #+end_src
 
 ***** idle-require
@@ -3730,7 +3733,7 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 #+begin_src emacs-lisp
 (use-package! helm
   :commands helm-M-x
-  :xl-hook emacs-startup-hook
+  :hook emacs-startup-hook
   :ignore helm-display-mode-line
   :popup ("bottom" "helm" :newname "\\*Helm.+")
   :set
@@ -3911,7 +3914,7 @@ press the key corresponding to the candidate you want. It saves me from pressing
 
 #+begin_src emacs-lisp
 (use-package! company
-  :xl-hook prog-mode-hook
+  :hook prog-mode-hook
   :set
   (company-tooltip-align-annotations . t)
   (company-minimum-prefix-length     . 1)
@@ -4012,7 +4015,7 @@ When the user
 
 #+begin_src emacs-lisp
 (use-package! company-prescient
-  :xl-hook company-mode-hook)
+  :hook company-mode-hook)
 #+end_src
 
 ***** close company on escape
@@ -4293,7 +4296,7 @@ redundant code.
 
 #+begin_src emacs-lisp
 (use-package! nameless
-  :xl-hook emacs-lisp-mode-hook
+  :hook emacs-lisp-mode-hook
   :set (nameless-private-prefix . t))
 #+end_src
 
@@ -5011,7 +5014,7 @@ it is definitely on my list of things to try out.
 #+begin_src emacs-lisp
 (use-package! org-mu4e
   :xl-ensure nil
-  :xl-hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode)
+  :hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode)
   :set
   (org-mu4e-link-query-in-headers-mode . nil)
   (org-mu4e-convert-to-html . t))
@@ -5252,7 +5255,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 
 #+begin_src emacs-lisp
 (use-package! all-the-icons-dired
-  :xl-hook dired-mode-hook)
+  :hook dired-mode-hook)
 #+end_src
 
 ***** dired
@@ -5503,7 +5506,7 @@ address later.
 (use-package! magit
   :idle-require f s with-editor git-commit package eieio lv transient
   :popup ("bottom" "magit" :newname "magit: ")
-  ;; :xl-hook (magit-popup-mode-hook . hide-mode-line-hook)
+  ;; :hook (magit-popup-mode-hook . hide-mode-line-hook)
   :set
   (magit-completing-read-function . #'completing-read)
   (magit-diff-refine-hunk . t)
@@ -5639,7 +5642,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 #+begin_src emacs-lisp
 (use-feature! savehist
   :idle-require custom
-  :xl-hook emacs-startup-hook
+  :hook emacs-startup-hook
   :set
   (savehist-file . (concat XL-DATA-DIR "savehist"))
   (savehist-additional-variables . '(kill-ring search-ring regexp-search-ring))
@@ -5692,7 +5695,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 
 #+begin_src emacs-lisp
 (use-feature! tab-bar-mode
-  :xl-hook (tab-bar-mode-hook . tab-bar-history-mode)
+  :hook (tab-bar-mode-hook . tab-bar-history-mode)
   :set
   (tab-bar-new-tab-choice . "*scratch*")
   (tab-bar-history-limit  . 25)
@@ -6795,7 +6798,7 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
 
 #+begin_src emacs-lisp
 (use-package! auto-capitalize
-  :xl-hook text-mode-hook
+  :hook text-mode-hook
   :set
   (auto-capitalize-words . '("I" "English")))
 #+end_src
@@ -6877,7 +6880,7 @@ it. It's pretty smart and very convenient.
 
 #+begin_src emacs-lisp
 (use-package! aggressive-indent
-  :xl-hook emacs-lisp-mode-hook)
+  :hook emacs-lisp-mode-hook)
 #+end_src
 
 **** parentheses
@@ -6898,7 +6901,7 @@ it. It's pretty smart and very convenient.
 #+begin_src emacs-lisp
 (use-package! smartparens
   :before-call evil-expression evil-ex
-  :xl-hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode)
+  :hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode)
   :set
   (sp-highlight-pair-overlay . nil)
   (sp-highlight-wrap-overlay . nil)
@@ -6958,7 +6961,7 @@ great idea! It makes it really easy to see which parentheses go together.
 
 #+begin_src emacs-lisp
 (use-package! rainbow-delimiters
-  :xl-hook prog-mode-hook reb-mode-hook
+  :hook prog-mode-hook reb-mode-hook
   :set
   (rainbow-delimiters-max-face-count . 9))
 #+end_src
@@ -7104,7 +7107,7 @@ Why not just go to the end of the ="= like any other around operator?
 
 #+begin_src emacs-lisp
 (use-package! evil-surround
-  :xl-hook prog-mode-hook text-mode-hook)
+  :hook prog-mode-hook text-mode-hook)
 #+end_src
 
 ****** evil
@@ -7124,7 +7127,7 @@ and provides facilities for writing custom extensions. Also see our page on
 #+begin_src emacs-lisp
 (use-package! evil
   :demand t
-  :xl-hook (window-setup-hook . evil-mode))
+  :hook (window-setup-hook . evil-mode))
 #+end_src
 
 ******* custom
@@ -7333,7 +7336,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :END:
 
 #+begin_src emacs-lisp
-(use-package! lispyville :xl-hook emacs-lisp-mode-hook)
+(use-package! lispyville :hook emacs-lisp-mode-hook)
 #+end_src
 
 ****** remappings
@@ -7446,7 +7449,7 @@ very useful to me.
 
 #+begin_src emacs-lisp
 (use-package! lispy
-  :xl-hook (emacs-lisp-mode-hook . lispy-mode))
+  :hook (emacs-lisp-mode-hook . lispy-mode))
 #+end_src
 
 ****** settings
@@ -7541,7 +7544,7 @@ You'll get void variable if you don't do this.
 
 #+begin_src emacs-lisp
 (use-package! highlight-quoted
-  :xl-hook emacs-lisp-mode-hook)
+  :hook emacs-lisp-mode-hook)
 #+end_src
 
 ***** macrostep
@@ -8285,7 +8288,7 @@ This is a minor mode for displaying links in non-org buffers.
 
 #+begin_src emacs-lisp
 (use-package! org-link-minor-mode
-  :xl-hook outshine-mode-hook)
+  :hook outshine-mode-hook)
 #+end_src
 
 ***** org-todo-keywords
@@ -8527,7 +8530,7 @@ tracking the time you spend on a particular task.
 (use-feature! org-clock
   :idle-require t
   :commands org-clock-in org-clock-goto
-  :xl-hook (kill-emacs-hook . org-clock-save)
+  :hook (kill-emacs-hook . org-clock-save)
   :set
   (org-clock-persist      . 'history)
   (org-clock-persist-file . (concat XL-DATA-DIR "org-clock-save.el"))
@@ -8640,7 +8643,7 @@ referenance org headlines.
 #+begin_src emacs-lisp
 (use-feature! org-id
   :idle-require t
-  :xl-hook (org-insert-heading-hook . org-id-get-create)
+  :hook (org-insert-heading-hook . org-id-get-create)
   :set
   (org-id-locations-file-relative . t)
   (org-id-link-to-org-use-id      . 'create-if-interactive-and-no-custom-id)
@@ -8655,7 +8658,7 @@ referenance org headlines.
 
 #+begin_src emacs-lisp
 (use-package! org-superstar
-  :xl-hook org-mode-hook
+  :hook org-mode-hook
   :set
   (org-superstar-leading-bullet     . ?\s)
   (org-superstar-special-todo-items . t))
@@ -8668,7 +8671,7 @@ referenance org headlines.
 
 #+begin_src emacs-lisp
 (use-package! org-fancy-priorities
-  :xl-hook org-mode-hook)
+  :hook org-mode-hook)
 #+end_src
 
 ***** org mode snippets
@@ -8790,7 +8793,7 @@ this.
 #+begin_src emacs-lisp
 (use-package! mini-modeline
   :demand t
-  :xl-hook (emacs-startup-hook . mini-modeline-mode)
+  :hook (emacs-startup-hook . mini-modeline-mode)
   :set
   (mini-modeline-enhance-visual . nil)
   (mini-modeline-display-gui-line . nil))
@@ -8913,7 +8916,7 @@ you can "discover" the commands as you go along.
 
 #+begin_src emacs-lisp
 (use-package! which-key
-  :xl-hook emacs-startup-hook
+  :hook emacs-startup-hook
   :set
   (which-key-sort-uppercase-first . nil)
   (which-key-max-display-columns  . nil)
@@ -8985,7 +8988,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 #+begin_src emacs-lisp
 (use-package! dashboard
   :demand t
-  :xl-hook (window-setup-hook . dashboard-insert-startupify-lists)
+  :hook (window-setup-hook . dashboard-insert-startupify-lists)
   :set
   (dashboard-items . nil)
   (dashboard-startup-banner . (dashboard:random-logo))
@@ -9054,7 +9057,7 @@ makes emacs feel like a window manager with gaps.
 
 #+begin_src emacs-lisp
 (use-feature! window-divider
-  :xl-hook (window-setup-hook . window-divider-mode)
+  :hook (window-setup-hook . window-divider-mode)
   :set
   (window-divider-default-bottom-width . 7)
   (window-divider-default-right-width  . 7)
