@@ -1193,7 +1193,7 @@ loading it. To remedy this I wrap the block with [[][condition-case]].
 :ID:       d9f77404-5c29-4305-ae53-e409e1b06b99
 :END:
 
-******** append!
+******* append!
 :PROPERTIES:
 :ID: f314672c-f9f3-4630-9402-a9a65215c153
 :END:
@@ -1206,7 +1206,7 @@ SYM is a symbol that stores a list."
   `(setq ,sym (append ,sym ,@lists)))
 #+end_src
 
-******** prepend!
+******* prepend!
 :PROPERTIES:
 :ID: 3395dec3-0915-49cd-9445-d3db2b1ffe7f
 :END:
@@ -1217,7 +1217,7 @@ SYM is a symbol that stores a list."
   `(setq ,sym (append ,@lists ,sym)))
 #+end_src
 
-******** nconc!
+******* nconc!
 :PROPERTIES:
 :ID: b24d1d8f-f3e1-4dca-afdb-8fb73d5299c3
 :END:
