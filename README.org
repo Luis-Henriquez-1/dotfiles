@@ -3907,6 +3907,21 @@ This package downloads docsets from online.
   :gc-pause swiper-helm)
 #+end_src
 
+***** helm-swoop
+:PROPERTIES:
+:ID:       87c958ef-4834-4514-9e31-bdd21cbad98f
+:END:
+
+=helm-swoop= is like =swiper-helm= but has a lot more features.
+
+#+begin_src emacs-lisp
+(use-package! helm-swoop
+  :gc-pause helm-swoop
+  :set
+  (helm-swoop-speed-or-color . nil)
+  (helm-swoop-pre-input-function . #'ignore))
+#+end_src
+
 ***** ace-helm-jump-line
 :PROPERTIES:
 :ID:       e74e6b9b-cdd7-4d6b-888f-0e9ec9584b32
