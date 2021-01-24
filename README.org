@@ -1280,7 +1280,7 @@ the macro =use-package!=.
   "Same as `use-package!' but with :ensure set to nil by default."
   (declare (indent defun))
   `(use-package! ,package
-     :xl-ensure nil
+     :ensure nil
      ,@body))
 #+end_src
 
@@ -1649,8 +1649,9 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 :END:
 
 #+begin_src emacs-lisp
-(use-package:dwim-insert :xl-ensure)
-(push '(:xl-ensure t t) use-package-defaults)
+;; (use-package:dwim-insert :xl-ensure)
+;; (setq use-package-always-ensure t)
+(push '(:ensure t t) use-package-defaults)
 
 (defun use-package-normalize/:xl-ensure (_ _ args)
   (cl-assert (alet (car-safe args)
@@ -7329,8 +7330,7 @@ This is better than evil escape as it only binds in insert.
 (use-package! key-chord
   :silence key-chord-mode
   :before-call evil-insert-state evil-emacs-state
-  :xl-config
-  (key-chord-mode 1)
+  :enable-on-load t
   :general
   (:states '(visual insert)
    (general-chord "jk") 'evil-force-normal-state
