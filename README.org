@@ -3756,6 +3756,16 @@ commands. Among the advantages helm has are the breath of support and it's
 maturity. I also like that it uses the buffer instead of the minibuffer. The
 biggest complaint heard about Helm is that it's too bloated and slow.
 
+***** new popup rule just for helm
+:PROPERTIES:
+:ID:       1923fbb0-b68b-4ca6-8eaf-34276ea3c811
+:END:
+
+#+begin_src emacs-lisp
+(alet '(display-buffer-in-side-window . ((side . bottom) (window-height . 0.6)))
+  (dbc-add-ruleset "helm" it))
+#+end_src
+
 ***** helm-core
 :PROPERTIES:
 :ID:       19d42b82-03ec-4458-9771-d992ad25cd6b
