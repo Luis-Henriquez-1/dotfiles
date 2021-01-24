@@ -957,6 +957,10 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 :ID:       43089182-316b-4191-a3f1-6f2d1b1b971e
 :END:
 
+Sometimes I want to know whether something is a list and not a cons
+cell. Usually, this happens when I want to know whether I can loop over
+something--you can loop over a list but not a cons cell.
+
 #+begin_src emacs-lisp
 (defsubst xl-true-list-p (obj)
   "Return t if OBJ is a list and not a cons cell."
