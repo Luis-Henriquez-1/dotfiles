@@ -1662,6 +1662,9 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 	    ((eq t value) `((straight-use-package ',name)))
 	    ((listp value) `((straight-use-package ',(cons name value)))))
     ,@(use-package-process-keywords name rest state)))
+
+(advice-add #'use-package-normalize/:ensure :override #'use-package-normalize/:xl-ensure)
+(advice-add #'use-package-handler/:ensure :override #'use-package-handler/:xl-ensure)
 #+end_src
 
 ******* nameless
@@ -1787,7 +1790,7 @@ statements or return statements).
 
 #+begin_src emacs-lisp
 (use-package! loopy
-  :xl-ensure (:host github :type git :repo "okamsn/loopy")
+  :ensure (:host github :type git :repo "okamsn/loopy")
   :demand t)
 #+end_src
 
@@ -1815,7 +1818,7 @@ side windows.
 
 #+begin_src emacs-lisp
 (use-package! dbc
-  :xl-ensure (:host gitlab :type git :repo "matsievskiysv/display-buffer-control")
+  :ensure (:host gitlab :type git :repo "matsievskiysv/display-buffer-control")
   :demand t
   :xl-config
   (alet '(display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
@@ -3759,7 +3762,7 @@ biggest complaint heard about Helm is that it's too bloated and slow.
 
 #+begin_src emacs-lisp
 (use-package! helm-files
-  :xl-ensure nil
+  :ensure nil
   :set
   (helm-ff-auto-update-initial-value . nil)
   (helm-ff-lynx-style-map            . nil)
@@ -5013,7 +5016,7 @@ it is definitely on my list of things to try out.
 
 #+begin_src emacs-lisp
 (use-package! org-mu4e
-  :xl-ensure nil
+  :ensure nil
   :hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode)
   :set
   (org-mu4e-link-query-in-headers-mode . nil)
@@ -6377,7 +6380,7 @@ description and there's the case of a new one.
 
 #+begin_src emacs-lisp
 (use-package! org-edit-paragraph
-  :xl-ensure nil
+  :ensure nil
   :nameless ("oep" . "org-edit-paragraph")
   :popup ("bottom" "org description" :newname "\\*Org Desc - .+")
   :xl-config
@@ -6600,7 +6603,7 @@ source block editing tools used by org mode.
 #+begin_src emacs-lisp
 (use-package! org-source
   :popup ("bottom" "org source blocks" :newname "\\*Org[[:space:]]\\(?:S\\(?:ource\\|rc\\)\\).+")
-  :xl-ensure nil)
+  :ensure nil)
 #+end_src
 
 ****** before load
@@ -8270,7 +8273,7 @@ and painlessly.
 
 #+begin_src emacs-lisp
 (use-package! org-superlinks
-  :xl-ensure
+  :ensure
   (:host github :type git :repo "toshism/org-super-links")
   :commands org-super-links-link
   :set
