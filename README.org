@@ -1653,8 +1653,6 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 :END:
 
 #+begin_src emacs-lisp
-;; (use-package:dwim-insert :xl-ensure)
-;; (setq use-package-always-ensure t)
 (push '(:ensure t t) use-package-defaults)
 
 (defun use-package-normalize/:xl-ensure (_ _ args)
