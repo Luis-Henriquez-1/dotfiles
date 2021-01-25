@@ -15,7 +15,8 @@ correct locations.
 The main goal of my dotfiles is to provide me with a completely reproducable
 setup. I want to be able to generate my complete workspace with just two things,
 a usb containing my private gpg key and my dotfiles stored on github. By the
-way, by completely I mean /completely/. Moreover,
+way, by completely I mean /completely/--I should be able to not only reproduce
+the packages I have but their versions as well.
 
 ** highlights
 :PROPERTIES:
@@ -191,7 +192,8 @@ setxkbmap -option caps:swapescape
 :END:
 
 Obviously, we load our OS. In the future, I may use a display manager so I can
-easily switch between emacs, stumpwm or any other window manager of my choosing.
+easily switch between emacs, stumpwm or any other window manager of my
+choosing. I don't use the default display manager provied with =guix= because.
 
 #+begin_src sh
 exec emacs
@@ -1022,6 +1024,8 @@ If SYMBOL is already a hook symbol, return it unchanged."
 :ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
 :END:
 
+To avoid.
+
 #+begin_src emacs-lisp
 (defun xl-internal-symbol-p (symbol)
   "Return non-nil if symbol is an internal XL symbol."
@@ -1190,6 +1194,17 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
 #+end_src
 
+****** const
+:PROPERTIES:
+:ID:       667fcf91-8939-402f-9fd1-2a6e7713633b
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-const-fn (atom)
+  "Return a constant function from ATOM."
+  `(lambda () ,atom))
+#+end_src
+
 ***** custom macros
 :PROPERTIES:
 :ID:       cfe0d468-92ee-4a4f-9908-4ea0b1964ac4
@@ -1322,9 +1337,9 @@ SYM is a symbol that stores a list."
 
 ****** set!
 
-Some variables in emacs have [[][custom setters]]. I don't want to have to figure out
-which ones do and do not have these setters. This macro sets the custom setter
-of there is any.
+Some variables in emacs have [[][custom setters]]. I don't want to have to
+figure out which ones do and do not have these setters. This macro sets the
+custom setter of there is any.
 
 There's also the issue of global versus buffer-local variables. In general, when
 I set a variable I want it enabled globally. When there comes a case in which I
@@ -1343,6 +1358,8 @@ For this reason I use =setq= as a replacement for =setq=.
 :PROPERTIES:
 :ID:       bc6b7560-fb71-4fc7-a53b-98f92c657d92
 :END:
+
+=set-default= is used for.
 
 #+begin_src emacs-lisp
 (defmacro set-default! (sym val)
@@ -1476,6 +1493,9 @@ forms.
 :END:
 
 #+begin_src emacs-lisp
+(defun use-package:normalize (key)
+  "Return an appropriate normalize symbol for key."
+  (xl-symbol-intern 'use-package-normalize/ key))
 #+end_src
 
 ******* generate a handler
@@ -1502,8 +1522,9 @@ override the corresponding normalizer and handler. The purpose of this function
 is to provide an easy way to do this.
 
 #+begin_src emacs-lisp
-(defun use-package:override-keyword (old new)
-  "Overrides OLD key with NEW."
+(defun use-package:override (old new)
+  "Overrides OLD with NEW.
+OLD is an existing use-package keyword. NEW is the keyword to override OLD with."
   (advice-add (use-package:normalize old) :override (use-package:normalize new))
   (advice-add (use-package:handler old) :override (use-package:handler new)))
 #+end_src
@@ -1683,6 +1704,8 @@ of this keyword is to load a package when a certain function is called.
 :ID:       2c7dd1a8-c0ee-42cd-b76f-8a72c94be848
 :END:
 
+The.
+
 #+begin_src emacs-lisp
 (use-package:dwim-insert :after-call)
 
@@ -1861,7 +1884,7 @@ enough that I consider it worth it to give this case its own keyword.
 (defun use-package-handler/:enable-on-load (name _ value rest state)
   (let ((mode-name (xl-emacs-modeify name)))
     `((after! ,name
-	(xl-log "enable %S" mode-name)
+	(xl-log "Enable %s" ',mode-name)
 	(,mode-name))
       ,@(use-package-process-keywords name rest state))))
 #+end_src
@@ -2047,6 +2070,15 @@ Accept the same arguments as `message'."
     (xl--log 1 (apply #'format format-string args))))
 #+end_src
 
+****** mmt
+:PROPERTIES:
+:ID:       6d4d5426-a733-474f-9f87-2d18323459e0
+:END:
+
+#+begin_src emacs-lisp
+(use-package! mmt)
+#+end_src
+
 ***** hooks
 :PROPERTIES:
 :ID:       a9fb6a01-ded5-405c-83ba-c401dbc06400
@@ -2213,12 +2245,12 @@ This is a replacement to [[helpfn:add-hook][add-hook]], the main difference bein
   "Add an XL hook function to HOOK.
 Alias FN to abide by XL hook naming conventions. Then add that alias to
 HOOK. DEPTH and LOCAL are the same as in `add-hook'."
-  (let ((hook-fn (xl-hook hook fn)))
-    (add-hook hook hook-fn depth local)
-    (xl-log-function hook-fn)
-    (when expire-fn
-      (alet (xl-expire-advice hook-fn expire-fn t)
-	(advice-add hook-fn :around it)))))
+  (alet (xl-hook-name hook fn)
+    (defalias it fn)
+    (add-hook hook it depth local)
+    (xl-log-function it)
+    (xl-report-error it)
+    (xl-expire it expire-fn)))
 #+end_src
 
 ****** remove an XL hook
@@ -2389,14 +2421,44 @@ one argument--the advice to remove.
 There are some advices that are used so often that they do not lend themselves
 to =defadvice!=, which is better suited for a unique hook defined only once.
 
+******* catch errors
+:PROPERTIES:
+:ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
+:END:
+
+One important note here. I first wrote [[helpfn:xl--report-error-advice][xl--report-error-advice]] as an around
+advice that should be added to functions. The problem here is that sometimes I
+advise compiled functions; and when I do, the variable =orig-fn= is bound to a
+compiled function instead of a symbol. This is why this function has to
+pre-emptively insert FN. A similar situation occurs with [[][generic expiring
+advice]].
+
+#+begin_src emacs-lisp
+(defun xl--report-error-advice (fn)
+  "Advice that catches errors from ORIG-FN."
+  `(lambda (orig-fn &rest args)
+     (condition-case error
+	 (apply orig-fn args)
+       (error (xl-log "Failed evaluating %S because of: %S"
+		      #',fn
+		      (error-message-string error))))))
+
+(defun xl-report-error (fn)
+  "Advise a function to gracefully report an error."
+  (let ((alias (xl-symbol-intern fn '@report-error)))
+    (defalias alias (xl--report-error-advice fn))
+    ;; (xl-log-function alias)
+    (advice-add fn :around alias)))
+#+end_src
+
 ******* expiration
 :PROPERTIES:
 :ID:       c8092696-030e-4609-9485-89920eddaaec
 :END:
 
-Sometimes I am confronted with hooks or advices that either should'nt be or
-don't need to be called more than once. A common example is [[][loading a
-dependency for a package]].
+Sometimes I am confronted with hooks or advices that either should'nt be be
+called more than once. A common example is [[][loading a dependency for a
+package]]. 
 
 ******** expire advice lambda
 :PROPERTIES:
@@ -2433,14 +2495,14 @@ Note that this function returns must be evaluated with lexical binding to work.
 
 #+begin_src emacs-lisp
 (defun xl-expire (fn &optional expire-condition)
-  "Cause FN to expire when EXPIRE-CONDITION is true."
-  (let ((expire-fn (xl-symbol-intern fn '@expire))
-	(expire-condition (if (booleanp expire-condition)
-			      '(lambda () t)
-			    expire-condition)))
-    (fset expire-fn (xl-expire-lambda fn expire-condition))
-    (xl-log-function expire-fn)
-    (advice-add fn :after expire-fn)))
+  "Cause FN to expire when EXPIRE-CONDITION is true.
+If EXPIRE-CONDITION is nil, do nothing."
+  (when expire-condition
+    (let ((expire-fn (xl-symbol-intern fn '@expire))
+	  (pred (if (eq t expire-condition) (xl-const-fn t) expire-condition)))
+      (fset expire-fn (xl-expire-lambda fn pred))
+      (xl-log-function expire-fn)
+      (advice-add fn :after expire-fn))))
 #+end_src
 
 ******* assume yes in prompts
