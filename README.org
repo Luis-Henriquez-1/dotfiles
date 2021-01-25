@@ -1749,8 +1749,7 @@ functions. Additionally, it's already used as a dependency of very many packages
 so I'll likely end up loading it anyway.
 
 #+begin_src emacs-lisp
-(use-package! dash
-  :demand t)
+(use-package! dash :demand t)
 #+end_src
 
 ****** dash-functional
@@ -1892,6 +1891,11 @@ functions in hooks are run after certain events, such as starting and quitting
 emacs. Their purpose is to fascillitate customization of what happens before or
 after particular events.
 
+I want hooks to be easily inspectable (if that's a word). For me this means
+naming hooks in such a way that the variable they are hooked to is obvious. This
+also means *always* naming hooks, no matter how small (code-wise) they may be. I
+want to know exactly what's going on when I inspect hook variables.
+
 In this headline, I strive to establish a common naming convention for hooks
 that I define. I want there to be a clear destinction between hooks and regular
 functions.
@@ -1900,6 +1904,9 @@ functions.
 :PROPERTIES:
 :ID:       aa93c9c5-aaaa-4732-9065-32e131e96031
 :END:
+
+The naming convention with hook functions is =HOOK-VAR@HOOK-ACTION=, where
+=HOOK-VAR= is the hook variable the hook.
 
 #+begin_src emacs-lisp
 (defconst XL-HOOK-REGEXP "\\`\\(.+\\)&\\(.+\\)\\'"
@@ -1944,6 +1951,10 @@ XL-HOOK-FN is a function named with Void naming conventions."
 :PROPERTIES:
 :ID:       fa705f26-31f0-43c3-80a6-6741e74ab0ea
 :END:
+
+The "action" I speak of is the latter part of the hook. This will most often
+correspond to the name of the variable attached to the hook [[][but not
+always]].
 
 #+begin_src emacs-lisp
 (defun xl-hook-action (xl-hook-fn)
@@ -2090,6 +2101,9 @@ also want to be able to deduce the function being advised from the name.
 :ID:       7a0b9669-e15c-40c1-9cf2-adc7cb27b7ab
 :END:
 
+The naming convenion for advices is similar to [[][that of hooks]] but the
+symbol separating the advised function from its advice is an =@=.
+
 #+begin_src emacs-lisp
 (defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
   "Regexp used to match XL advices.")
@@ -2124,6 +2138,10 @@ also want to be able to deduce the function being advised from the name.
 :PROPERTIES:
 :ID:       f893fbe8-592b-409e-8de7-6060e936456f
 :END:
+
+Similar to hooks, the action will usually correspond to the advice but [[][there
+are exceptions]]. To access the original function used for creating the advice,
+[[helpfn:indirect-function][indirect-function]] should be used.
 
 #+begin_src emacs-lisp
 (defun xl-advice-action (xl-advice-fn)
