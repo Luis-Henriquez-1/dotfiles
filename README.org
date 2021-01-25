@@ -793,8 +793,14 @@ macro-writing.
 
 ******* symbol intern
 :PROPERTIES:
-:ID: 659e8389-84c5-4ac4-a9ba-7dd40599191d
+:ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
 :END:
+
+This is a convenience function for quickly banging out a custom symbol. It's
+advantage over just plain [[helpfn:intern][intern]] is that it will coerce its arguments to a
+symbol. This is useful when writing macros where it is a common occurance to
+have a mix of different objects (usually strings and symbols) that you want to
+put together into one symbol. This function is meant to just do what I mean.
 
 #+begin_src emacs-lisp
 (defun xl-symbol-intern (&rest args)
@@ -823,9 +829,9 @@ commands saves me having to add the colon at the beginning before interning.
 :ID: fb867938-d62b-42fc-bf07-092f10b64f22
 :END:
 
-Calling [[helpfn:symbol-name][symbol-name]] on a keyword returns the keyword as a string. However often we
-don't want the prepended colon on they keyword. This function is for that
-occasion.
+Calling [[helpfn:symbol-name][symbol-name]] on a keyword returns the keyword as a string. However,
+sometimes we don't want the prepended colon on they keyword. This function is
+for that occasion.
 
 #+begin_src emacs-lisp
 (defun xl-keyword-name (keyword)
@@ -839,8 +845,9 @@ occasion.
 :ID: 4ef52875-4ce6-4940-8b7e-13c96bedcb3d
 :END:
 
-This function is for converting something to a string, no questions asked. I use
-it when I don't want to be bothered with details and just want a string.
+This function is for converting something to a string, no questions
+asked. Similar to [[id:06bfc6f7-4c51-44e7-b32e-1434a602b55b][xl-symbol-intern]], I use it when I don't want to be bothered
+with details and just want a string.
 
 #+begin_src emacs-lisp
 (defun xl-to-string (&rest args)
