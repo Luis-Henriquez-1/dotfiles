@@ -205,7 +205,7 @@ exec emacs
 :END:
 
 My main OS currently is [[https://guix.gnu.org/][guix]]. Guix is one of two OSes that strive to be
-completely reproducable--the other is [[][Nix OS]].
+completely reproducable--the other is [[https://nixos.org/][Nix OS]].
 
 ** starting org on guix
 :PROPERTIES:
@@ -245,7 +245,7 @@ have some knowledge about OS setup you should find many of these fields familiar
 :END:
 
 #+name: modules
-#+begin_src emacs-lisp
+#+begin_src scheme
 (use-modules (gnu)
 	     (srfi srfi-1)
 	     (gnu services desktop))
@@ -256,7 +256,7 @@ have some knowledge about OS setup you should find many of these fields familiar
 :ID:       5179b9e5-c40a-4839-85de-bd38abfd373e
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src scheme
 (locale "en_US.utf8")
 (timezone "America/New_York")
 (keyboard-layout (keyboard-layout "us"))
@@ -271,7 +271,7 @@ have some knowledge about OS setup you should find many of these fields familiar
 The bootloader is what is repsonsible for booting your system.
 
 #+name: bootloader
-#+begin_src emacs-lisp
+#+begin_src scheme
 (bootloader
  (bootloader-configuration
   (bootloader grub-bootloader)
@@ -287,7 +287,7 @@ The bootloader is what is repsonsible for booting your system.
 I'm the only one who uses my computer.
 
 #+name: users
-#+begin_src emacs-lisp
+#+begin_src scheme
 (users (cons* (user-account
                (name "luis")
 	       (comment "Luis")
@@ -308,7 +308,7 @@ want to add package versions to these packages so that I can make my dotfiles
 truly reproducable.
 
 #+name: packages
-#+begin_src emacs-lisp
+#+begin_src scheme
 (packages
  (append
   (list (specification->package "emacs")
@@ -328,11 +328,12 @@ truly reproducable.
 :ID:       8f8801dd-7dce-4c26-bce4-39dc9df43917
 :END:
 
-Guix uses [[][elogind]]. Elogind controls things like user login. It also
+Guix uses [[https://github.com/elogind/elogind][elogind]]. Elogind controls things like user login. It also
 controls what happens during certain events such as laptop lid open and
 close. By default elogind.
 
-#+begin_src emacs-lisp
+#+name: laptop-lid
+#+begin_src scheme
 ()
 #+end_src
 
@@ -341,12 +342,15 @@ close. By default elogind.
 :ID:       f85713f7-8ebf-46ca-8933-28002bef98a8
 :END:
 
+#+begin_src scheme
+#+end_src
+
 *** whole config
 :PROPERTIES:
 :ID:       6c44a3c0-379f-410c-918b-71f03171d514
 :END:
 
-#+begin_src emacs-lisp :tangle ~/.config/guix/config.scm
+#+begin_src scheme :tangle ~/.config/guix/config.scm
 (operating-system
  <<module-declaration>>
  <<bootloader>>
@@ -416,7 +420,9 @@ The [[https://nyxt.atlas.engineer/][nyxt browser]] is a web browser written enti
 I have this os installed in case I want to play around or in case exwm crashes
 and my emacs is in an inconvenient to fix whatever problem I might have. The
 reason I favor [[https://github.com/ch11ng/exwm][exwm]] over [[https://github.com/stumpwm/stumpwm][stumpwm]] is that the former is more tightly integrated
-into Emacs.
+into Emacs. I haven't really configured stumpwm. Maybe I will in the future, but
+I don't know--Emacs is really time consuming and I already use exwm anyway. Good
+to have nevertheless.
 
 * emacs
 :PROPERTIES:
@@ -1507,7 +1513,7 @@ list. This makes things much more complicated and it makes.
 :ID:       2bdd8dac-0770-4dbb-8cef-d51bd19da250
 :END:
 
-These keywords correspond to.
+These keywords correspond to [[id:8fb485ec-5387-46da-820e-629dcf004962][generic advices]].
 
 ******** silence
 :PROPERTIES:
@@ -1987,6 +1993,9 @@ play.
 :PROPERTIES:
 :ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
 :END:
+
+This package provides an alternative to the built-in =cl-fllet= called
+=noflet=. The [[][]] is that.
 
 #+begin_src emacs-lisp
 (use-package! noflet :demand t)
@@ -2909,6 +2918,19 @@ In addition to providing keybinding stuff, =general= also provides.
 (defalias 'define-key! 'general-def)
 #+end_src
 
+***** define-key!
+:PROPERTIES:
+:ID:       bcac5f74-d2ce-434c-9ddc-91df64872791
+:END:
+
+This is a convenience macro I've written around general def that binds keys
+according to a syntax which I think is minimal and convenient.
+
+****** process bindings
+:PROPERTIES:
+:ID:       e4b87b17-f0ed-4c1e-98ac-0ad92dc9e965
+:END:
+
 **** Packages
 :PROPERTIES:
 :ID:       d5c0d112-319d-4271-a819-eb786a64bfc6
@@ -3271,6 +3293,14 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
 
 ***** browse-url
 :PROPERTIES:
+:ID:       ab7cf98c-47ca-49e1-ba8c-ee52ce04debe
+:END:
+
+=browse-url= is a built-in package that provides a uniform interface for
+browsing the web.
+
+****** browse-url
+:PROPERTIES:
 :ID:       e59dc362-5615-45a8-8010-a111ddc5e835
 :END:
 
@@ -3404,7 +3434,8 @@ It suffices typing =y= or =n= as opposed to =yes= or =no=.
 (set-keyboard-coding-system 'utf-8)
 
 (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
-;; (unless IS-WINDOWS
+
+;; (with-os! (:not windows)
 ;;   (setq selection-coding-system 'utf-8))
 
 (when (fboundp 'set-charset-priority)
@@ -6239,6 +6270,11 @@ use emacs's built-in serialization of window configs. Usually, it is better to
 use something that's built-in. However, emacs's serialization has the drawback
 that it's not a lisp object; implying that it is not.
 
+****** workgroups2
+:PROPERTIES:
+:ID:       890c8e5b-524d-44b6-b90e-c830436b9da8
+:END:
+
 #+begin_src emacs-lisp
 (use-package! workgroups2
   :commands wg-switch-workgroup
@@ -6511,10 +6547,11 @@ certain applications where I'd use it need to be loaded.
 #+begin_src emacs-lisp
 (use-package! exwm-edit
   :commands exwm-edit
-  :xl-config
-  (funcall (get 'exwm-input-global-keys 'custom-set)
-	   'exwm-input-global-keys
-	   `((,(kbd "C-'") . exwm-edit))))
+  :init
+  (after! exwm
+    (funcall (get 'exwm-input-global-keys 'custom-set)
+	     'exwm-input-global-keys
+	     `((,(kbd "C-'") . exwm-edit)))))
 #+end_src
 
 ***** keybindings
@@ -8192,6 +8229,8 @@ the whole thing.
 :ID:       63748940-c1b9-47ea-b1ce-d6519453ad03
 :END:
 
+=org= mode.
+
 ***** init
 :PROPERTIES:
 :ID:       6d08d180-5b96-4f1f-98f9-53086c13561a
@@ -8663,6 +8702,23 @@ This is a minor mode for displaying links in non-org buffers.
   :hook outshine-mode-hook)
 #+end_src
 
+****** functions to insert certain links
+:PROPERTIES:
+:ID:       bbe9bd55-5f7d-4fd4-99b6-8fab27037f3c
+:END:
+
+For far too long I've been dissatisfied with functions that insert links.
+
+******* choose from link types
+:PROPERTIES:
+:ID:       28075cac-714e-4d85-a0fb-e968c42df9f0
+:END:
+
+******* select IDs
+:PROPERTIES:
+:ID:       eaafbfbd-0994-4abb-9d83-1e8df4fc2389
+:END:
+
 ***** org-todo-keywords
 :PROPERTIES:
 :ID:       aaa98680-d9b4-4726-b3ba-a50b3442e8e8
@@ -9053,10 +9109,20 @@ org agenda buffer is displayed.
 :ID:       9c825b83-057e-4373-9256-047e3d09f693
 :END:
 
+#+begin_src emacs-lisp
+(defvar org-super-agenda:top-five-overdue-entries
+  '(:name "Overdue"
+    :time-grid t
+    :deadline past)
+  "Org Agenda group for top five overdue entries.")
+#+end_src
+
 ***** org-refile
 :PROPERTIES:
 :ID:       6dfc0415-2945-4259-a782-b569fcb397ea
 :END:
+
+=org-refile= is a built-in package that.
 
 #+begin_src emacs-lisp
 (use-feature! org-refile
@@ -9172,6 +9238,8 @@ have taken.
 :PROPERTIES:
 :ID:       f6282ee4-a4b5-4cec-b275-947655516583
 :END:
+
+This package.
 
 #+begin_src emacs-lisp
 (use-package! org-tanglesync
