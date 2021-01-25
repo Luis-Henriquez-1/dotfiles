@@ -735,6 +735,7 @@ another machine by installing the same packages with the same versions.
 
 #+begin_src emacs-lisp
 (defun xl-init-straight ()
+  "Ensure that straight is installed and load it."
   (defvar bootstrap-version)
   (let* ((straight-base-dir straight-base-dir)
 	 (straight-repo-dir (concat straight-base-dir "straight/repos/"))
@@ -751,33 +752,13 @@ another machine by installing the same packages with the same versions.
     (load bootstrap-file nil 'nomessage)))
 #+end_src
 
-****** view package readme
-:PROPERTIES:
-:ID:       89d354fa-dc69-4b8c-b006-5fc883b834ef
-:END:
-
-Inevitably you will end up having some question about how to set up a package or
-how a package is supposed to work. A few packages provide info nodes you can
-look at but most don't. However, many packages do provide a README--particularly
-packages written on github. Reading the readme of packages is something I do so
-often, that it's worth having a function to do it for me (as opposed to having
-to search for the package in straight's repo dir).
-
-#+begin_src emacs-lisp
-(defun straight:view-package-dir (package)
-  "Try to open the readme of package if it has one."
-  ;; goto a the package's directory.
-  ()
-  ;; see if there's anything named README
-  ;; if there is open it
-  ;; otherwise open a dired buffer to package directory
-  )
-#+end_src
-
 ***** install packages
 :PROPERTIES:
 :ID:       a694267f-b37d-487b-ac68-c1da9e1fe776
 :END:
+
+Here I initialize straight and load all the packages I use for configuring
+use-package and, of course, use-package itself.
 
 #+begin_src emacs-lisp
 (xl-init-straight)
