@@ -811,7 +811,7 @@ put together into one symbol. This function is meant to just do what I mean.
 
 ******* keyword intern
 :PROPERTIES:
-:ID: f2668044-13b2-46e7-bf84-fcf998591e37
+:ID:       0618b8d7-e0a4-4e3e-8d89-b7d0ebe43917
 :END:
 
 Sometimes I want to create a keyword by interning a string or a symbol. This
@@ -826,7 +826,7 @@ commands saves me having to add the colon at the beginning before interning.
 
 ******* keyword name
 :PROPERTIES:
-:ID: fb867938-d62b-42fc-bf07-092f10b64f22
+:ID:       e853603a-851d-429f-9201-f2e93734dfaf
 :END:
 
 Calling [[helpfn:symbol-name][symbol-name]] on a keyword returns the keyword as a string. However,
@@ -842,7 +842,7 @@ for that occasion.
 
 ******* convert to string
 :PROPERTIES:
-:ID: 4ef52875-4ce6-4940-8b7e-13c96bedcb3d
+:ID:       60f22f98-8204-45ae-9943-f19cdfe60459
 :END:
 
 This function is for converting something to a string, no questions
@@ -857,52 +857,57 @@ with details and just want a string.
     (mapc #'princ args)))
 #+end_src
 
-******* hook symbol
+******* detect emacs symbols
+:PROPERTIES:
+:ID:       207ed522-51f3-45e7-91ba-8afb828d950b
+:END:
+
+******** hook symbol
 :PROPERTIES:
 :ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-symbol-p (symbol)
+(defun xl-emacs-hook-p (symbol)
   "Return true if symbol is a hook symbol."
   (s-matches-p ".+-hook\\'" (symbol-name symbol)))
 #+end_src
 
-******* hookify symbol
+******** hookify symbol
 :PROPERTIES:
 :ID:       b308a172-6e99-491c-a382-7ee28e9fc1ae
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hookify (symbol)
+(defun xl-emacs-hookify (symbol)
   "Return SYMBOL converted to hook.
 If SYMBOL is already a hook symbol, return it unchanged."
-  (if (xl-hook-symbol-p symbol)
+  (if (xl-emacs-hook-p symbol)
       symbol
     (xl-symbol-intern symbol '-hook)))
 #+end_src
 
-******* mode symbol
+******** mode symbol
 :PROPERTIES:
 :ID:       ec25e275-c36f-4cee-be04-1fdf8c974857
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-mode-symbol-p (symbol)
+(defun xl-emacs-mode-p (symbol)
   "Return non-nil if symbol is a mode symbol."
   (s-matches-p ".+-mode\\'" (symbol-name symbol)))
 #+end_src
 
-******* modeify symbol
+******** modeify symbol
 :PROPERTIES:
 :ID:       61fa29a7-9697-4171-8b6f-f4c0b487c02c
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-modeify (symbol)
+(defun xl-emacs-modeify (symbol)
   "Return SYMBOL converted to hook.
 If SYMBOL is already a hook symbol, return it unchanged."
-  (if (xl-mode-symbol-p symbol)
+  (if (xl-emacs-mode-p symbol)
       symbol
     (xl-symbol-intern symbol '-mode)))
 #+end_src
@@ -962,7 +967,7 @@ something--you can loop over a list but not a cons cell.
 
 This might seem trivial or wasteful, but the two numbers I most often have to
 check for are one and zero. Emacs already has a function for checking is a value
-is zero, [[helpfn:zerop][zerop]]. But it doesn't have one for one.
+is zero, [[helpfn:zerop][zerop]]. But it doesn't have one for one. So here we are.
 
 #+begin_src emacs-lisp
 (defsubst xl-one-p (obj)
@@ -1486,9 +1491,9 @@ instead of =add-hook=.
 (defun use-package-normalize/:xl-hook (name _ args)
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'symbolp) args))
   (->> args
-       (--map-when (symbolp it) (cons it (xl-modeify name)))
+       (--map-when (symbolp it) (cons it (xl-emacs-modeify name)))
        (-mapcat #'use-package:normalize-cons)
-       (--map (cons (xl-hookify (car it)) (cdr it)))))
+       (--map (cons (xl-emacs-hookify (car it)) (cdr it)))))
 
 (defun use-package-handler/:xl-hook (name _ value rest state)
   "Expect an alist of (HOOK FN)."
@@ -1697,7 +1702,7 @@ enough that I consider it worth it to give it its own keyword.
   (car args))
 
 (defun use-package-handler/:enable-on-load (name _ value rest state)
-  (let ((mode-name (xl-modeify name)))
+  (let ((mode-name (xl-emacs-modeify name)))
     `((after! ,name
 	(xl-log "enable %S" mode-name)
 	(,mode-name))
