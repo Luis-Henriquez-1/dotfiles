@@ -100,6 +100,15 @@ When you initialize dotfiles on different machine settings can be different.
 I use [[https://yadm.io/][yadm]] to manage my dotfiles (more on that here). To initialize yadm you
 use [[][]] to bootstrap. First =yadm clone=.
 
+** why Emacs as an OS
+:PROPERTIES:
+:ID:       d5dd828b-43bc-4909-84f1-d841340dc3ab
+:END:
+
+You'll notice that I use Emacs as my window manager, which is pretty unorthodox
+not only compared to the population as a whole but also even relative to
+programmers and linux users. I believe that Emacs.
+
 * helpers
 :PROPERTIES:
 :ID:       67138086-b894-43b7-8c97-1980acad52b8
@@ -159,8 +168,8 @@ Evaluating source blocks whose id.
 :HEADER-ARGS: :tangle ~/.xinitrc
 :END:
 
-The [[https://wiki.archlinux.org/index.php/Xinit#xinitrc][.xinitrc]] is what [[https://wiki.archlinux.org/index.php/Xorg][xorg]] uses to determine how to set up a
-graphical environment.
+The [[https://wiki.archlinux.org/index.php/Xinit#xinitrc][.xinitrc]] is what [[https://wiki.archlinux.org/index.php/Xorg][xorg]] uses to determine how to set up a graphical
+environment.
 
 ** first remap caps lock with escape
 :PROPERTIES:
@@ -404,7 +413,8 @@ The [[https://nyxt.atlas.engineer/][nyxt browser]] is a web browser written enti
 
 I have this os installed in case I want to play around or in case exwm crashes
 and my emacs is in an inconvenient to fix whatever problem I might have. The
-reason I favor [[][exwm]] over [[][stumpwm]] is that.
+reason I favor [[https://github.com/ch11ng/exwm][exwm]] over [[https://github.com/stumpwm/stumpwm][stumpwm]] is that the former is more tightly integrated
+into Emacs.
 
 * emacs
 :PROPERTIES:
@@ -2196,9 +2206,13 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 :ID:       882bc5d2-a0e2-4ea7-b9d2-ab64b3407f82
 :END:
 
+This is a replacement to [[helpfn:add-hook][add-hook]], the main difference being that.
+
 #+begin_src emacs-lisp
 (defun xl-hook-add (hook fn &optional depth local expire-fn)
-  "Add an xl-hook-function to HOOK."
+  "Add an XL hook function to HOOK.
+Alias FN to abide by XL hook naming conventions. Then add that alias to
+HOOK. DEPTH and LOCAL are the same as in `add-hook'."
   (let ((hook-fn (xl-hook hook fn)))
     (add-hook hook hook-fn depth local)
     (xl-log-function hook-fn)
@@ -2211,6 +2225,8 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 :PROPERTIES:
 :ID:       99708d72-a8d4-42ba-b6ae-ba692fbafec8
 :END:
+
+A consequence of my naming scheme and, in particular, the fact that.
 
 #+begin_src emacs-lisp
 (defun xl-remove-hook (xl-hook-fn)
