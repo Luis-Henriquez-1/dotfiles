@@ -369,7 +369,8 @@ and my emacs is in an inconvenient to fix place (although I can always go back).
 :ID:       8c10b42b-9317-49a8-8ce0-128a2efc8905
 :END:
 
-This heading is for Emacs.
+This heading is for Emacs. Emacs is a lisp-interpreter which just happens to
+have very useful libraries for editing text.
 
 ** early-init
 :PROPERTIES:
@@ -377,7 +378,7 @@ This heading is for Emacs.
 :HEADER-ARGS: :tangle ~/.config/emacs/early-init.el
 :END:
 
-The early-init file.
+The early-init file is loaded before the frame is initialized.
 
 *** compute the font upon tangling
 :PROPERTIES:
@@ -463,11 +464,11 @@ prevent it was to set up an [[https://wiki.archlinux.org/index.php/X_resources][
 
 This is the most efficient way to set the font. Reason being, it's done before
 the initialization of the frame and it avoids the usage of functions like
-[[helpfn:set-frame-font][set-frame-font]], which more than just set the font. A caveat is that this will cause
-your emacs to crash if the font you specify does not exist. And, you can't check
-the existing fonts at this time either because the [[][frame hasn't been
-initialized yet]] so functions like [[helpfn:font-family-list][font-family-list]] and [] will not return reliable values
-(trust me, I tried).
+[[helpfn:set-frame-font][set-frame-font]], which more than just set the font. A caveat is that this will
+cause your emacs to crash if the font you specify does not exist. And, you can't
+check the existing fonts at this time either because the [[https://emacs.stackexchange.com/questions/62318/storing-string-in-variable-fails-to-work-in-early-init-el/62320?noredirect=1#comment98194_62320][frame hasn't been
+initialized yet]] so functions like [[helpfn:font-family-list][font-family-list]] and [[helpfn:find-font][find-font]] will not return
+reliable values (trust me, I tried).
 
 #+begin_src emacs-lisp :noweb yes
 (push (cons 'font <<font()>>) default-frame-alist)
@@ -503,7 +504,7 @@ loaded, but after [[helpvar:early-init-file][early-init-file]].
 
 Ignore X resources; its settings would be redundant with the other settings in
 this file and can conflict with later config (particularly where the cursor
-color is concerned). [[][Like I said], we no longer need xresources anymore.
+color is concerned). [[id:f439de9a-b2b1-4926-a4ae-3d94ff83d05a][Like I said]], we no longer need xresources anymore.
 
 #+begin_src elisp
 (advice-add #'x-apply-session-resources :override #'ignore)
@@ -519,7 +520,7 @@ distracting and space-consuming. The modeline is displayed in every buffer,
 which means that it does not scale well with vertical splits. It will consume an
 additional line for every additional window. And yet, I (and I suspect everyone
 else) only ever focus on one window at a time. This is why I opt for disabling
-the modeline (I use [[][mini-modeline]] instead). Similar to the gui bars it is enabled
+the modeline (I use [[https://github.com/kiennq/emacs-mini-modeline][mini-modeline]] instead). Similar to the gui bars it is enabled
 by default and will be rendered during the initialization of the frame. If I
 don't disable it here.
 
@@ -1264,8 +1265,7 @@ don't want that I'll use [[helpfn:setq][setq]].
 
 For this reason I use =setq= as a replacement for =setq=.
 
-[[https://opensource.com/article/20/3/variables-emacs][This article]] provides
-a brilliant synopsis of emacs variables.
+[[https://opensource.com/article/20/3/variables-emacs][This article]] provides a brilliant synopsis of emacs variables.
 
 #+begin_src emacs-lisp
 (defmacro set! (sym val)
@@ -1287,7 +1287,7 @@ a brilliant synopsis of emacs variables.
 :ID:       29e1513a-e12a-4818-870e-8d5fab7fe1a0
 :END:
 
-[[][use-package]] provides a uniform syntax for cross-configuring different
+[[https://github.com/jwiegley/use-package][use-package]] provides a uniform syntax for cross-configuring different
 packages and features. It is widely used among the emacs community. In this
 headline I build upon it and adapt it to my needs.
 
@@ -1672,7 +1672,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
 
-This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-require]].
+This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-require]]. It can accept a boolean.
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :idle-require)
@@ -1781,7 +1781,7 @@ This keyword provides integration with.
 
 I want to enable some packages (like [[id:8fd1bcdc-c4b3-4fee-b91b-dcdf96167582][key-chord]]) immediately upon loading them. I
 could use the =:config= keyword or enabling these packages, but it happens often
-enough that I consider it worth it to give it its own keyword.
+enough that I consider it worth it to give this case its own keyword.
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :enable-on-load)
@@ -1883,8 +1883,7 @@ emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 =s= is an api for strings inspired by [[id:704fc35f-0ad0-4eb3-9eb5-d8335465dbd8][dash]].
 
 #+begin_src emacs-lisp
-(use-package! s
-  :demand t)
+(use-package! s :demand t)
 #+end_src
 
 ****** anaphora
@@ -1911,11 +1910,6 @@ cases. But they are not as good in my opinion when you're dealing with a complex
 loop that involves accumulating several variables or atypical control-flow (as
 in, break statements or return statements). This is where =loopy= comes into
 play.
-
-******* init
-:PROPERTIES:
-:ID:       3102adee-0474-4cf4-847a-011c2f8f48cd
-:END:
 
 #+begin_src emacs-lisp
 (use-package! loopy
@@ -2818,6 +2812,8 @@ This built-in emacs package is opens a buffer with a list.
 :ID:       ac2cc043-331f-435b-b903-39681b84fefe
 :END:
 
+=origami= is, as its name suggests, a package that handles folding.
+
 #+begin_src emacs-lisp
 (use-package! origami
   :hook prog-mode-hook)
@@ -2855,8 +2851,10 @@ This built-in emacs package is opens a buffer with a list.
 :ID: 9725b7e0-54b8-4ab4-aa00-d950345d0aea
 :END:
 
-If you just set [[helpvar:inhibit-startup-echo-area-message][inhibit-startup-echo-area-message]] to =t= the word =nil= is messaged.
-So it's best just to override the function entirely.
+As it's name suggests, the built-in startup feature in Emacs.
+
+If you just set [[helpvar:inhibit-startup-echo-area-message][inhibit-startup-echo-area-message]] to =t= the word =nil= is
+messaged.  So it's best just to override the function entirely.
 
 As per [[https://emacs.stackexchange.com/questions/18677/prevent-auto-save-list-directory-to-be-created][this stackoverflow question]], this prevents the =auto-save-directory= from
 being created.
@@ -2872,10 +2870,10 @@ being created.
   (inhibit-default-init        . t)
   (inhibit-spash-screen        . t)
   (initial-scratch-message     . nil)
-  (initial-buffer-choice       . #'xl-initial-buffer-choice)
+  (initial-buffer-choice       . #'startup:initial-buffer-choice)
   (initial-major-mode          . 'fundamental-mode)
   :init
-  (defun xl-initial-buffer-choice ()
+  (defun startup:initial-buffer-choice ()
     "Return the initial buffer to be displayed.
 This function is meant to be used as the value of `initial-buffer-choice'."
     (alet (if xl-debug-p "*xl-log*" "*scratch*")
@@ -3241,7 +3239,9 @@ echoing in the mode line makes the which-key prompt disappear prematurely.
 :ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
 :END:
 
-I find it convenient to be able to view the init time in the =*xl-log*= buffer.
+I find it convenient to be able to view the init time in the =*xl-log*=
+buffer. Speed is important to me and I want to know how fast my Emacs is at
+initializing. :race-car:
 
 #+begin_src emacs-lisp
 (defhook! log-init-time (emacs-startup-hook :append t)
@@ -3579,11 +3579,13 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 :END:
 
 This package defines numerous aliases to existing commands in an attempt to make
-commands more discoverable and naming schemes more consistent.
+commands more discoverable and naming schemes more consistent. For example, it
+aliases the function [[helpfn:set-frame-font][set-frame-font]] to [[helpfn:frame-set-font][frame-set-font]] because if you were
+looking for function that involved the frame, the first thing you'd look for is
+for functions namespaced =frame=.
 
 #+begin_src emacs-lisp
-(use-package! prefixed-core
-  :demand t)
+(use-package! prefixed-core :demand t)
 #+end_src
 
 ***** keyfreq
@@ -3909,6 +3911,9 @@ packages are just ivy and helm wrappers around existing commands.
 :ID:       70668ed8-9c83-42d2-8dce-d8f7de923569
 :END:
 
+The variable names can get really long, no? :joy: Maybe it's better to have sort
+of a =:nameless-set= keyword that implies a namespace the same as a package. :bulb:
+
 #+begin_src emacs-lisp
 (use-package! selectrum-prescient
   :hook selectrum-mode-hook
@@ -3921,8 +3926,8 @@ packages are just ivy and helm wrappers around existing commands.
 :ID:       1e39a4d2-8d4a-4413-a86e-3f92547cff14
 :END:
 
-For most functions, sorting their candidates is good. This is advice
-specifically designed to disable selectrum sorting.
+For most functions, sorting their candidates is good. But for some, it doesn't
+make sense. This is advice specifically designed to disable selectrum sorting.
 
 #+begin_src emacs-lisp
 (defun selectrum:disable-selectrum-sorting-advice (orig-fn &rest args)
@@ -3954,7 +3959,7 @@ down the alphabet.
 I want to select candidates efficiently. For me this means not having to press
 =C-j= multiple times to reach a candidate that's lower in the list (imagine the
 number of indices displayed is 15 and the candidate I want is the 14th one). To
-address this I create this function which.
+address this I create this function. It displays letters next to the candidates.
 
 #+begin_src emacs-lisp
 (defun selectrum:select-candidate-by-letter ()
@@ -4063,10 +4068,18 @@ something. Setting it to =nil= makes the frame start at the size you specified.
 :ID:       9e6a5fc3-5a7f-4067-b35e-ef9fb0605fb8
 :END:
 
+This package provides a way of adding actions (think helm) to commands. The
+special thing about it is a generic way to do so. Honestly, reading it's
+documentation can be a bit dizzying :dizzy-face:; not because the it's bad but
+because it is hard to wrap your mind around such a package without seeing it in
+action.
+
 ****** embark
 :PROPERTIES:
 :ID:       45768441-4ec6-475b-99c6-cfb587edb81d
 :END:
+
+As I learn more about embark I will improve this documentation over time.
 
 #+begin_src emacs-lisp
 (use-package! embark
@@ -6065,7 +6078,7 @@ The tab's new name is the same as the desktop name."
 
 ***** workgroups2
 :PROPERTIES:
-:ID:       890c8e5b-524d-44b6-b90e-c830436b9da8
+:ID:       b5452102-a8fb-409f-8c36-35d404b5a5a6
 :END:
 
 There is a need to save buffers and window configurations in their own groups.
@@ -9055,6 +9068,23 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
   (zoom-frame/buffer          . 'buffer))
 #+end_src
 
+**** emojis
+:PROPERTIES:
+:ID:       d3e15439-f690-4ced-b701-0882fb911a5c
+:END:
+
+This is a package that displays emojis! :D A major focus of my config is having
+the ability to express myself well--in ways that is simply impossible with mere
+documentation. This includes using emojis. Also, using emojis makes
+documentation *much* more fun. :joy-cat:
+
+#+begin_src emacs-lisp
+(use-package! emojify
+  :hook org-mode-hook
+  :set
+  (emojify-emojis-dir . (xl-data-dir "emojis/")))
+#+end_src
+
 **** mini-modeline
 :PROPERTIES:
 :ID:       51768ba1-170f-497b-9479-541e7c6aadd6
@@ -9272,7 +9302,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
   (dashboard-items . nil)
   (dashboard-startup-banner . (dashboard:random-logo))
   (dashboard-center-content . t)
-  (initial-buffer-choice . #'xl-initial-buffer-choice))
+  (initial-buffer-choice . #'startup:initial-buffer-choice))
 #+end_src
 
 ****** open dashboard at startup
