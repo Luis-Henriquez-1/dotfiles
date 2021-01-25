@@ -1294,47 +1294,6 @@ loading it. To remedy this I wrap the block with [[][condition-case]].
          (message "Error in `eval-after-load': %S" error)))))
 #+end_src
 
-****** list mutation
-:PROPERTIES:
-:ID:       d9f77404-5c29-4305-ae53-e409e1b06b99
-:END:
-
-******* append!
-:PROPERTIES:
-:ID: f314672c-f9f3-4630-9402-a9a65215c153
-:END:
-
-#+begin_src emacs-lisp
-(defmacro append! (sym &rest lists)
-  "Append LISTS to SYM.
-SYM is a symbol that stores a list."
-  (declare (indent 1))
-  `(setq ,sym (append ,sym ,@lists)))
-#+end_src
-
-******* prepend!
-:PROPERTIES:
-:ID: 3395dec3-0915-49cd-9445-d3db2b1ffe7f
-:END:
-
-#+begin_src emacs-lisp
-(defmacro prepend! (sym &rest lists)
-  (declare (indent defun))
-  `(setq ,sym (append ,@lists ,sym)))
-#+end_src
-
-******* nconc!
-:PROPERTIES:
-:ID: b24d1d8f-f3e1-4dca-afdb-8fb73d5299c3
-:END:
-
-#+begin_src emacs-lisp
-(defmacro nconc! (sym &rest lists)
-  "Append LISTS to SYM by altering them in place."
-  (declare (indent 1))
-  `(setq ,sym (nconc ,sym ,@lists)))
-#+end_src
-
 ****** set!
 
 Some variables in emacs have [[][custom setters]]. I don't want to have to
@@ -3979,6 +3938,8 @@ I've never had to use this. But better be safe than sorry.
 :PROPERTIES:
 :ID:       744ac652-aebc-4f5b-883a-4464dd7b07cd
 :END:
+
+In this headline I focus on packages that.
 
 **** minibuffer candidate completion
 :PROPERTIES:
@@ -7218,6 +7179,8 @@ Saving files like this reduces the likelihood of user delays.
 :ID: 4f57fd49-b466-4eea-b91a-2cc8f0b07297
 :END:
 
+Emacs is very minimal by default. Most reading this will likely be used to.
+
 #+begin_src emacs-lisp
 (use-package! aggressive-fill-paragraph)
 #+end_src
@@ -9439,7 +9402,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! open-dashboard-instead (:around xl-initial-buffer-choice)
+(defadvice! open-dashboard-instead (:around startup:initial-buffer-choice)
   (if xl-debug-p
       (apply <orig-fn> <args>)
     (get-buffer-create "*dashboard*")))
