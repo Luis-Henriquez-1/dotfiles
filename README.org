@@ -1261,14 +1261,13 @@ a brilliant synopsis of emacs variables.
 :ID:       29e1513a-e12a-4818-870e-8d5fab7fe1a0
 :END:
 
+[[][use-package]] provides a uniform syntax for cross-configuring different
+packages and features. It is widely used among the emacs community.
+
 ****** rename use-package
 :PROPERTIES:
 :ID:       33cd9485-ccbd-4173-b44b-2145def4897c
 :END:
-
-Essentially, it provides a uniform syntax for cross configuring different
-packages. So you can say it configures packages. And therefore, I choose to call
-the macro =use-package!=.
 
 #+begin_src emacs-lisp
 (defalias 'use-package! #'use-package)
@@ -1797,11 +1796,12 @@ But if you're only.
 :ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
 :END:
 
-=loopy= is an alternative to =cl-loop= that preserves lisp structure. It is akin to
-[[][Common Lisp's iter]]. dash's functions and macros are good for most
-cases. But they are not as good in my opinion when you're dealing with a complex loop
-that involves accumulating several variables or atypical control-flow (as in, break
-statements or return statements).
+=loopy= is an alternative to =cl-loop= that preserves lisp structure. It is akin
+to [[][Common Lisp's iter]]. dash's functions and macros are good for most
+cases. But they are not as good in my opinion when you're dealing with a complex
+loop that involves accumulating several variables or atypical control-flow (as
+in, break statements or return statements). This is where =loopy= comes into
+play.
 
 ******* init
 :PROPERTIES:
@@ -2157,6 +2157,8 @@ are exceptions]]. To access the original function used for creating the advice,
 :ID:       03416f82-ced7-42a0-843b-6975903f0b38
 :END:
 
+Most of the time I will.
+
 #+begin_src emacs-lisp
 (defun xl-advice-name (fn advice)
   "Return XL advice symbol for FN and ADVICE."
@@ -2174,8 +2176,6 @@ are exceptions]]. To access the original function used for creating the advice,
 :PROPERTIES:
 :ID:       3ab8947c-15f0-4fb7-bd75-f0baabc20ec1
 :END:
-
-Since adding an advice to multiple functions is done frequently.
 
 Often, I advise functions with other existing functions (such as =#'ignore=)
 instead of defining my own advices. To maintain consistency with the naming
@@ -2524,9 +2524,13 @@ and convenient way to do this.
 :ID:       324e707b-2f44-4168-a846-037f5401dedb
 :END:
 
+This is the internal function which I use to build the others. It loads a
+package before or after (you specify) a particular function is called. To do
+this it adds an =XL= advice that loads the feature to the function.
+
 #+begin_src emacs-lisp
 (defun xl--load-on-call (package where fn)
-  "Load packages FN are called."
+  "Load PACKAGE before or after FN is called."
   (alet (xl-symbol-intern 'xl--load- package '-advice)
     (fset it `(lambda (&rest _)
                 (xl-log "Loading %s" ',package)
@@ -2539,8 +2543,12 @@ and convenient way to do this.
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
 
+For convenience, I provide [[helpfn:xl-load-before-call][xl-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
+not to have to specify the advice keyword.
+
 #+begin_src emacs-lisp
 (defun xl-load-before-call (package fn)
+  "Load PACKAGE before FN is called."
   (xl--load-on-call package :before fn))
 #+end_src
 
@@ -2551,6 +2559,7 @@ and convenient way to do this.
 
 #+begin_src emacs-lisp
 (defun xl-load-after-call (package fn)
+  "Load PACKAGE after FN is called."
   (xl--load-on-call package :after fn))
 #+end_src
 
@@ -4287,7 +4296,7 @@ MODE if one does not exist."
        (defvar ,taglist nil
 	 ,(format "List of `tempo' tags for `%s'" mode))
        (unless (fboundp ',hook)
-	 (defhook! ,hook (,(xl-hookify mode))
+	 (defhook! ,hook (,(xl-emacs-hookify mode))
 	   ,(format "Set taglist to be used for `%s'." mode)
 	   (require 'tempo)
 	   (tempo-use-tag-list ',taglist)))
@@ -4485,6 +4494,8 @@ variable leaking.
 :PROPERTIES:
 :ID:       e3590042-52fb-47ee-a5eb-a7860a3cdb17
 :END:
+
+=ellocate= is replacement for.
 
 #+begin_src emacs-lisp
 (use-package! ellocate
@@ -8752,8 +8763,34 @@ org agenda buffer is displayed.
 #+begin_src emacs-lisp
 (use-package! org-super-agenda
   :before-call org-agenda-list
-  :xl-config
-  (org-super-agenda-mode))
+  :enable-on-load t)
+#+end_src
+
+******* testing org-super-agenda
+:PROPERTIES:
+:ID:       5d1a87bd-8d37-4ec0-abe9-73088b5754e8
+:END:
+
+#+begin_src emacs-lisp
+(defun org-agenda/main-function ()
+  "Return main function for org agenda."
+  (interactive)
+  (alet (list org-super-agenda:top-five-overdue-entries
+	      org-super-agenda:due-today)
+    (let ((org-super-agenda-groups it))
+      (org-agenda-list))))
+#+end_src
+
+******* due today
+:PROPERTIES:
+:ID:       d2eb5003-d8d6-4451-918c-0a5b2b609f4f
+:END:
+
+#+begin_src emacs-lisp
+(defvar org-super-agenda:due-today
+  '(:name "Due Today"
+    :deadline today)
+  "Items due today.")
 #+end_src
 
 ******* top five overdue entries
