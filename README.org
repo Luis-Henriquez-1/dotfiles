@@ -1093,7 +1093,7 @@ When writing macros in lisp it is not uncommon to need to write a macro that can
 nest a form within some number of other forms (for an example, see [[id][after!]]). This
 macro makes this problem much easier.
 
-The original idea for this macro came from [[https://gitlab.common-lisp.net/iterate/iterate/-/blob/master/iterate.lisp][iter's source coe]].
+The original idea for this macro came from [[https://gitlab.common-lisp.net/iterate/iterate/-/blob/master/iterate.lisp][iter's source code]].
 
 #+begin_src emacs-lisp
 (defun xl-wrap-form (wrappers form)
@@ -1296,15 +1296,17 @@ loading it. To remedy this I wrap the block with [[][condition-case]].
 
 ****** set!
 
-Some variables in emacs have [[][custom setters]]. I don't want to have to
-figure out which ones do and do not have these setters. This macro sets the
-custom setter of there is any.
+One "gotcha" in Emacs is the existence of custom variables. Unlike typical
+variables custom variables sometimes rely on certain code being executed when
+they're initialized or when their values are changed. If you just set the
+variable normally with [[helpfn:setq][setq]] you'd change it's value but you wouldn't be running
+it's corresponding code so the change you think would happen, might not happen
+at all.
 
-There's also the issue of global versus buffer-local variables. In general, when
-I set a variable I want it enabled globally. When there comes a case in which I
-don't want that I'll use [[helpfn:setq][setq]].
+Rather than keeping track of which variables have custom setters and which do
+not, I opt to just use this macro.
 
-For this reason I use =setq= as a replacement for =setq=.
+For this reason I use =set!= as a replacement for =setq=.
 
 [[https://opensource.com/article/20/3/variables-emacs][This article]] provides a brilliant synopsis of emacs variables.
 
@@ -1351,8 +1353,8 @@ macro I wrote. Oh well, we'll see. :shrug:
 :ID:       722de3ce-71ae-4315-8c39-660990ce18f5
 :END:
 
-I got the idea of this macro from [[][Radian]]. It differentiates built-in
-packages from external ones.
+I got the idea of this macro from [[https://github.com/raxod502/radian][Radian]]. It differentiates built-in packages
+from external ones.
 
 #+begin_src emacs-lisp
 (defmacro use-feature! (package &rest body)
@@ -1450,6 +1452,10 @@ forms.
 :PROPERTIES:
 :ID:       f287aa5b-51ed-40da-bbc1-9a40586a1f83
 :END:
+
+I only use this function and [[id:495d3d70-f19f-420d-86ef-d75c49a77b66][its counterpart]] once so maybe putting this in
+functions is rather overkill. But I like doing things right. And who knows?
+Might be useful later. :shrug:
 
 #+begin_src emacs-lisp
 (defun use-package:normalize (key)
@@ -1591,6 +1597,8 @@ There are a number of functions in Emacs that prompt.
 :ID:       9d78d90a-0309-44c6-be96-82bd6608546a
 :END:
 
+This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70-4137-a525-5be4bc63c3a2][with-os!]].
+
 #+begin_src emacs-lisp
 (use-package:dwim-insert :os)
 
@@ -1683,6 +1691,8 @@ The.
 :PROPERTIES:
 :ID:       9948a4ae-f80a-4b13-b97a-0895481021a6
 :END:
+
+I should give credit. I got this idea from the leaf macro.
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :set)
@@ -1779,7 +1789,9 @@ Sometimes I want to alias certain.
 :END:
 
 I know, I know. I can just use the =:straight= keyword provided by
-[[][straight]]. The reason I define my own. :P
+[[][straight]]. :stuck_out_tongue: The reason I define my own is I will likely
+want to do more complex things in the future (such as caching the load-path and
+only installing the package if its path is not in the cache).
 
 #+begin_src emacs-lisp
 (push '(:ensure t t) use-package-defaults)
@@ -1797,9 +1809,6 @@ I know, I know. I can just use the =:straight= keyword provided by
 	    ((eq t value)  `((straight-use-package ',name)))
 	    ((listp value) `((straight-use-package ',(cons name value)))))
     ,@(use-package-process-keywords name rest state)))
-
-(advice-add #'use-package-normalize/:ensure :override #'use-package-normalize/:xl-ensure)
-(advice-add #'use-package-handler/:ensure :override #'use-package-handler/:xl-ensure)
 #+end_src
 
 ******* nameless
@@ -1831,6 +1840,10 @@ This keyword provides integration with.
 I want to enable some packages (like [[id:8fd1bcdc-c4b3-4fee-b91b-dcdf96167582][key-chord]]) immediately upon loading them. I
 could use the =:config= keyword or enabling these packages, but it happens often
 enough that I consider it worth it to give this case its own keyword.
+
+It's worth noted that this package guesses the mode name based on the package
+name. So it won't work with packages that don't follow the
+convention. Fortunately, most do. :smirk:
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :enable-on-load)
@@ -4510,12 +4523,45 @@ MODE if one does not exist."
 
 **** elfeed
 :PROPERTIES:
+:ID:       45a52b98-9eba-45ab-9269-e8f930499e1c
+:END:
+
+=elfeed= is a newsfeed reader to Emacs. It's used over gnus because it is
+generally faster and more "modern".
+
+***** elfeed
+:PROPERTIES:
 :ID:       6aa4ece0-0b94-48b6-9a99-4b85cd1f7ccd
 :END:
 
 #+begin_src emacs-lisp
-(use-package! elfeed)
+(use-package! elfeed
+  :popup ("right" "elfeed" :newname "\\*elfeed\\*")
+  :commands elfeed)
 #+end_src
+
+***** elfeed-score
+:PROPERTIES:
+:ID:       20d1a501-4a52-43b8-b124-be1f62265b73
+:END:
+
+#+begin_src emacs-lisp
+(use-package! elfeed-score)
+#+end_src
+
+***** elfeed-org
+:PROPERTIES:
+:ID:       f646640b-6982-478f-bd1b-babd0ee00165
+:END:
+
+#+begin_src emacs-lisp
+(use-package! elfeed-org)
+#+end_src
+
+***** newsfeeds
+:PROPERTIES:
+:ID:       6d64a62c-a3f7-449c-833d-0738c1e5f28a
+:END:
 
 **** chess
 :PROPERTIES:
