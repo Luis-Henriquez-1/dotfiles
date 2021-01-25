@@ -3736,226 +3736,246 @@ I've never had to use this. But better be safe than sorry.
 :ID:       744ac652-aebc-4f5b-883a-4464dd7b07cd
 :END:
 
-Completion has certainly become an integral part of any efficient workflow. One
-commonality among things like searching emails, code-completing a word, surfing
-the web is that in one way or another all of these things involve the suggestion
-of likely candidates from a population that is too time consuming to look
-through on our own. It's not much different in Emacs. We're constantly sifting
-though files, buffers, commands, words--all to try to get through to the subset
-of things that we actually want at this moment.
-
-**** helm
+**** minibuffer candidate completion
 :PROPERTIES:
-:ID:       4123691d-216b-4ba5-8d3d-b09f83143f60
+:ID:       ec3295f0-24b9-4b35-9de6-9498c08e4f15
 :END:
 
-Helm is the most popular emacs completion framework. It is full-featured and
-extremely customizable. I haven't found an official manual for it but I often
-see people reference [[http://tuhdo.github.io/helm-intro.html][this helm intro]] that showcase many useful helm
-commands. Among the advantages helm has are the breath of support and it's
-maturity. I also like that it uses the buffer instead of the minibuffer. The
-biggest complaint heard about Helm is that it's too bloated and slow.
+Candidate completion is a must in emacs. I had tried helm but it was too slow
+for my needs.
 
-***** new popup rule just for helm
+***** selectrum
 :PROPERTIES:
-:ID:       1923fbb0-b68b-4ca6-8eaf-34276ea3c811
+:ID:       f8a9cdba-a4a9-42aa-a505-e88ad0b4114d
 :END:
+
+Selectrum is another completion framework. It distinguishes itself from the rest
+by striving to work with the built-in emacs [[helpfn:completing-read][completing-read]] instead of
+replacing it like [[https://github.com/emacs-helm/helm][helm]] and [[https://github.com/emacs-helm/helm][ivy]] do.
+
+****** init
+:PROPERTIES:
+:ID:       6e670980-7794-4505-a285-184416a5b377
+:END:
+
+In contrast, any command defined via completing-read should work consistently with
+selectrum and its provided features.
+
+Because helm and ivy replace the existing framework, it means that whenever you
+want a command be capable of using all of helm or ivy's features, you need to
+define it their way. Otherwise, there's no guarantee their features will work at
+least any features besides the basic choosing of a single candidate. That's a
+big reason why there are [[][so many]] helm and ivy packages: many of those
+packages are just ivy and helm wrappers around existing commands.
 
 #+begin_src emacs-lisp
-(alet '(display-buffer-in-side-window . ((side . bottom) (window-height . 0.6)))
-  (dbc-add-ruleset "helm" it))
-#+end_src
-
-***** helm-core
-:PROPERTIES:
-:ID:       19d42b82-03ec-4458-9771-d992ad25cd6b
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm
-  :commands helm-M-x
+(use-package! selectrum
   :hook emacs-startup-hook
-  :ignore helm-display-mode-line
-  :popup ("helm" "helm" :newname "\\*[Hh]elm.+")
   :set
-  (helm-default-display-buffer-functions . nil)
-  (helm-candidate-number-limit           . 50)
-  (helm-display-header-line              . nil)
-  (helm-mode-line-string                 . nil))
+  (selectrum-max-window-height        . 15)
+  (selectrum-num-candidates-displayed . 15)
+  (selectrum-fix-minibuffer-height    . t)
+  (selectrum-should-sort-p            . t)
+  (selectrum-count-style              . nil)
+  ;; :xl-bind
+  ;; (:state (insert emacs) :map selectrum-minibuffer-map)
+  ;; ("TAB" #'selectrum-next-candidate)
+  ;; ("C-k" #'selectrum-previous-candidate)
+  ;; ("C-j" #'selectrum-next-candidate)
+  ;; ("C-;" #'selectrum-insert-current-candidate)
+  ;; ("C-l" #'selectrum/mark-candidate)
+  ;; ([backtab] #'selectrum-previous-candidate)
+  )
 #+end_src
 
-***** helm-buffer
+****** selectrum-prescient
 :PROPERTIES:
-:ID:       db9440d4-7701-4120-b381-598572c186c6
+:ID:       70668ed8-9c83-42d2-8dce-d8f7de923569
 :END:
 
 #+begin_src emacs-lisp
-(use-feature! helm-buffer)
-#+end_src
-
-***** helm-mode
-:PROPERTIES:
-:ID:       5659f309-43ec-4718-959b-a161e837fb92
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-files
-  :ensure nil
+(use-package! selectrum-prescient
+  :hook selectrum-mode-hook
   :set
-  (helm-ff-auto-update-initial-value . nil)
-  (helm-ff-lynx-style-map            . nil)
-  (helm-find-files-doc-header        . nil)
-  :bind
-  ([remap man]                       . helm-man-woman)
-  ([remap info]                      . helm-info)
-  ([remap apropos]                   . helm-apropos)
-  ([remap find-library]              . helm-locate-library)
-  ([remap execute-extended-command]  . helm-M-x)
-  ([remap find-file]                 . helm-find-files)
-  ([remap locate]                    . helm-locate)
-  ([remap imenu]                     . helm-semantic-or-imenu)
-  ([remap noop-show-kill-ring]       . helm-show-kill-ring)
-  ([remap recentf]                   . helm-recentf)
-  ([remap switch-to-buffer]          . helm-mini))
+  (selectrum-preprocess-candidates-function . #'selectrum-prescient--preprocess))
 #+end_src
 
-***** helm-map
+****** advice for disable
 :PROPERTIES:
-:ID:       cb8b2bc0-9956-4e79-a7b0-b0463807eea0
+:ID:       1e39a4d2-8d4a-4413-a86e-3f92547cff14
+:END:
+
+For most functions, sorting their candidates is good. This is advice
+specifically designed to disable selectrum sorting.
+
+#+begin_src emacs-lisp
+(defun selectrum:disable-selectrum-sorting-advice (orig-fn &rest args)
+  (if (bound-and-true-p selectrum-mode)
+      (let (selectrum-should-sort-p) (apply orig-fn args))
+    (apply orig-fn args)))
+#+end_src
+
+****** lettered candidate index
+:PROPERTIES:
+:ID:       aae96baa-4acb-43cd-9d1d-0106abc762fd
+:END:
+
+When the variable [[helpvar:selectrum-show-indices][selectrum-show-indices]] is set to this function, selectrum
+displays letters starting at =a= to [[helpvar:selectrum-num-candidates-displayed][selectrum-num-candidates-displayed]] times
+down the alphabet.
+
+#+begin_src emacs-lisp
+(defun selectrum:show-letter-index-fn (i)
+  "Return letter corresponding to index."
+  (format "%c " (+ 97 (% (1- i) selectrum-num-candidates-displayed))))
+#+end_src
+
+****** show indicators
+:PROPERTIES:
+:ID:       d0d61c43-88cd-49ed-bd1a-515405c2fa94
+:END:
+
+I want to select candidates efficiently. For me this means not having to press
+=C-j= multiple times to reach a candidate that's lower in the list (imagine the
+number of indices displayed is 15 and the candidate I want is the 14th one). To
+address this I create this function which.
+
+#+begin_src emacs-lisp
+(defun selectrum:select-candidate-by-letter ()
+  "Choose selectrum candidate by letter."
+  (interactive)
+  (let ((selectrum-show-indices #'selectrum:show-letter-index-fn))
+    (selectrum--update)
+    (alet (read-key)
+      (unless (= it 27)
+	(selectrum-select-current-candidate (- (1+ it) 97))))))
+
+(general-def '(emacs insert) selectrum-minibuffer-map
+  "," #'selectrum:select-candidate-by-letter)
+#+end_src
+
+***** prescient
+:PROPERTIES:
+:ID:       4445c814-9899-4d54-affe-0cee38642690
 :END:
 
 #+begin_src emacs-lisp
-(general-def '(emacs insert) helm-map
-  "C-o"     #'helm-toggle-visible-mark-forward
-  "C-j"     #'helm-next-line
-  "C-k"     #'helm-previous-line
-  "C-n"     #'helm-next-page
-  "C-a"     #'helm-select-action
-  "TAB"     #'helm-next-line
-  "C-l"     #'helm-execute-persistent-action
-  [backtab] #'helm-previous-line
-  "<RET>"   #'helm-maybe-exit-minibuffer)
-#+end_src
-
-***** helm-system-packages
-:PROPERTIES:
-:ID:       72e73fd5-4c63-4b96-98d7-2dd123e62436
-:END:
-
-[[https://github.com/emacs-helm/helm-system-packages][helm-system-packages]] incorporates helm with your operating system's package manager.
-
-#+begin_src emacs-lisp
-(use-package! helm-system-packages
-  :gc-pause helm-system-packages
+(use-package! prescient
   :set
-  (helm-system-packages-cache-file . (xl-data-dir "helm-system-packages-cache")))
+  (prescient-save-file . (xl-data-dir "prescient-save-file"))
+  :config
+  (prescient-persist-mode))
 #+end_src
 
-***** helm-dash
+***** orderless
 :PROPERTIES:
-:ID:       6dd9a08b-382d-4bb7-baa5-d65d0e136869
+:ID:       c70fae56-33b4-4b9d-9dd7-12c7a72de2ec
 :END:
 
-This package downloads docsets from online.
+****** orderless
+:PROPERTIES:
+:ID:       9702810e-2013-4c41-ba12-0b55de6ceb38
+:END:
 
 #+begin_src emacs-lisp
-(use-package! helm-dash
-  :commands helm-dash
+(use-package! orderless
+  :commands orderless-filter orderless-highlight-matches
   :set
-  (helm-dash-docsets-path . (xl-data-dir "/dash-docsets"))
-  (helm-dash-browser-func . (if (executable-find "w3m") #'w3m #'browse-url)))
+  (selectrum-refine-candidates-function    . #'orderless-filter)
+  (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
 #+end_src
 
-***** helm-org-rifle
+****** stop selectrum filtering and highlight
 :PROPERTIES:
-:ID:       232e2ec6-c66a-410c-bc6a-11e3300b14cf
+:ID:       a6720cdc-9d51-463b-9ffe-f9341c6bd967
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-org-rifle)
+(defadvice! inhibit-filtering-and-highlighting (:around selectrum-prescient-mode)
+  "Don't let `selectrum-prescient' filter or highlight. "
+  (let ((selectrum-refine-candidates-function selectrum-refine-candidates-function)
+	(selectrum-highlight-candidates-function selectrum-highlight-candidates-function))
+    (apply <orig-fn> <args>)))
 #+end_src
 
-***** helm-org
+***** consult
 :PROPERTIES:
-:ID:       1e19a081-d107-4593-8af4-e72c84bbaeff
+:ID:       921ce22e-59ae-4de1-bef0-66a20e320df5
 :END:
 
 #+begin_src emacs-lisp
-(use-package! helm-org
-  :before-call (org-capture . helm-org-capture-templates)
+(use-package! consult
+  :gc-pause consult-outline consult-line)
+#+end_src
+
+***** mini-frame
+:PROPERTIES:
+:ID:       1e93b22f-e918-4a6e-9753-9e7657cbfcab
+:END:
+
+This package opens the minibuffer in a new frame. Using the default minibuffer
+creates a disturbance in the your window configuration when it pops up. The
+advantage that this offers over the minibuffer is that.
+
+Note that by default, [[helpvar:mini-frame-resize][mini-frame-resize]] is set to =t=. The problem I have with
+this is that when I first call a minibuffer completion command the candidates
+are not immediately visible. They are only visible when I type
+something. Setting it to =nil= makes the frame start at the size you specified.
+
+#+begin_src emacs-lisp
+(use-package! mini-frame
+  :hook emacs-startup-hook
+  :set
+  (mini-frame-resize . nil)
+  (mini-frame-show-parameters . '((top . 10)
+				  (width . 0.95)
+				  (left . 0.5)
+				  (height . 15))))
+#+end_src
+
+***** marginalia
+:PROPERTIES:
+:ID:       0ce9957b-8805-4b2b-b5cb-52dc425a3dee
+:END:
+
+#+begin_src emacs-lisp
+(use-package! marginalia)
+#+end_src
+
+***** emark
+:PROPERTIES:
+:ID:       9e6a5fc3-5a7f-4067-b35e-ef9fb0605fb8
+:END:
+
+****** embark
+:PROPERTIES:
+:ID:       45768441-4ec6-475b-99c6-cfb587edb81d
+:END:
+
+#+begin_src emacs-lisp
+(use-package! embark
   :init
-  (general-def [remap org-capture] #'helm-org-capture-templates))
+  (general-def '(insert emacs) selectrum-minibuffer-map
+    "C-a" #'embark-act))
+
+(defhook! pause-selectrum (embark-collect-mode-hook)
+  (when (eq embark-collect--kind :live)
+    (with-selected-window (active-minibuffer-window)
+      (shrink-window selectrum-num-candidates-displayed)
+      (setq-local selectrum-num-candidates-displayed 0))))
 #+end_src
 
-***** helm-themes
+****** which-key integration
 :PROPERTIES:
-:ID:       6681a9ff-a51c-42ce-a6a6-570e8ef5ecfe
+:ID:       c70ea165-50cd-418c-a74d-696dea915714
 :END:
 
 #+begin_src emacs-lisp
-(use-package helm-themes
-  :bind
-  ([remap load-theme] . helm-themes))
-#+end_src
-
-***** helm-xref
-:PROPERTIES:
-:ID:       fc1c71e1-775d-44a3-bd82-dedbca1e2ba6
-:END:
-
-#+begin_src emacs-lisp
-(use-package! helm-xref)
-#+end_src
-
-***** swiper-helm
-:PROPERTIES:
-:ID:       b63c7612-5e2c-4431-83c3-3c6dd7926cbd
-:END:
-
-#+begin_src emacs-lisp
-(use-package! swiper-helm
-  :gc-pause swiper-helm)
-#+end_src
-
-***** helm-swoop
-:PROPERTIES:
-:ID:       87c958ef-4834-4514-9e31-bdd21cbad98f
-:END:
-
-=helm-swoop= is like =swiper-helm= but has a lot more features.
-
-#+begin_src emacs-lisp
-(use-package! helm-swoop
-  :gc-pause helm-swoop
-  :set
-  (helm-swoop-speed-or-color . nil)
-  (helm-swoop-pre-input-function . #'ignore))
-#+end_src
-
-***** ace-helm-jump-line
-:PROPERTIES:
-:ID:       e74e6b9b-cdd7-4d6b-888f-0e9ec9584b32
-:END:
-
-[[https://github.com/cute-jumper/ace-jump-helm-line/issues][ace-jump-helm-line]] is a package that provides a fast way to choose a candidates
-in a helm window. Specifically it uses [[https://github.com/abo-abo/avy][avy]] to letter the candidates. You can
-then enter call [[helpfn:ace-jump-helm-line][ace-jump-helm-line]] by pressing a key (I bound it to =C-'= and =,=),
-press the key corresponding to the candidate you want. It saves me from pressing
-=C-j= multiple times to scroll down the the candidate I want.
-
-#+begin_src emacs-lisp
-(use-package! ace-jump-helm-line
-  :init
-  (general-def '(insert emacs) helm-map
-    "C-'" #'ace-jump-helm-line
-    ","   #'ace-jump-helm-line)
-  :set
-  (ace-jump-helm-line-idle-delay     . 0)
-  (ace-jump-helm-line-default-action . 'select)
-  (ace-jump-helm-line-style          . 'pre)
-  (ace-jump-helm-line-select-key     . ?e)
-  (ace-jump-helm-line-move-only-key  . ?r)
-  (ace-jump-helm-line-persistent-key . ?s))
+(setq embark-action-indicator
+      (lambda (map)
+        (which-key--show-keymap "Embark" map nil nil 'no-paging)
+        #'which-key--hide-popup-ignore-command)
+      embark-become-indicator embark-action-indicator)
 #+end_src
 
 **** company
@@ -9505,10 +9525,10 @@ These are keybindings I use most frequently.
 #+begin_src emacs-lisp
 (define-leader-key!
   :infix "s"
-  ""  (list :ignore t                          :wk "search")
-  "s" (list :def #'swiper-helm                 :wk "jump to line")
-  "w" (list :def #'engine/search-duckduckgo    :wk "web")
-  "h" (list :def #'helm-org-in-buffer-headings :wk "jump to outline heading"))
+  ""  (list :ignore t                       :wk "search")
+  "s" (list :def #'consult-line             :wk "jump to line")
+  "w" (list :def #'engine/search-duckduckgo :wk "web")
+  "h" (list :def #'consult-outline          :wk "jump to outline heading"))
 #+end_src
 
 * email
