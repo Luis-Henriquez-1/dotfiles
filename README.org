@@ -1135,9 +1135,9 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 =after!= is yet another wrapper around == that can accept multiple features or
 even a specification of features using =and= or =or=.
 
-The reason that we check for the feature is to prevent [[hvar:eval-after-load][eval-after-load]] from polluting the
-[[hvar:after-load-list][after-load-list]]. =eval-after-load= adds an entry to =after-load-list= whether or not it has
-been loaded.
+The reason that we check for the feature is to prevent [[hvar:eval-after-load][eval-after-load]] from
+polluting the [[hvar:after-load-list][after-load-list]]. =eval-after-load= adds an entry to
+=after-load-list= whether or not it has been loaded.
 
 We intentionally avoid with-eval-after-load to prevent eager macro expansion
 from pulling (or failing to pull) in autoloaded macros/features.
@@ -1184,17 +1184,6 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
                    (_ nil))
                  (-list os))
     `(progn ,@body)))
-#+end_src
-
-****** ignore!
-:PROPERTIES:
-:ID:       e0173863-5b27-4afc-879a-17a6dce7ecd0
-:END:
-
-#+begin_src emacs-lisp
-(defmacro ignore! (&rest _)
-  "Do nothing and return nil."
-  nil)
 #+end_src
 
 ****** eval-after-load!
@@ -1299,16 +1288,30 @@ a brilliant synopsis of emacs variables.
 :END:
 
 [[][use-package]] provides a uniform syntax for cross-configuring different
-packages and features. It is widely used among the emacs community.
+packages and features. It is widely used among the emacs community. In this
+headline I build upon it and adapt it to my needs.
 
 ****** rename use-package
 :PROPERTIES:
 :ID:       33cd9485-ccbd-4173-b44b-2145def4897c
 :END:
 
+This is a stylistic thing. Maybe this isn't a good idea because this isn't a
+macro I wrote. Oh well, we'll see. :shrug:
+
 #+begin_src emacs-lisp
 (defalias 'use-package! #'use-package)
+#+end_src
 
+****** differentiate built-in packages
+:PROPERTIES:
+:ID:       722de3ce-71ae-4315-8c39-660990ce18f5
+:END:
+
+I got the idea of this macro from [[][Radian]]. It differentiates built-in
+packages from external ones.
+
+#+begin_src emacs-lisp
 (defmacro use-feature! (package &rest body)
   "Same as `use-package!' but with :ensure set to nil by default."
   (declare (indent defun))
@@ -1317,27 +1320,19 @@ packages and features. It is widely used among the emacs community.
      ,@body))
 #+end_src
 
-****** init use-package
-:PROPERTIES:
-:ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
-:END:
-
-#+begin_src emacs-lisp
-(use-package! use-package
-  :init
-  (setq use-package-expand-minimally t)
-  (setq use-package-always-defer t))
-#+end_src
-
 ****** helpers
 :PROPERTIES:
 :ID:       c8a6f579-c4ff-4b0f-942e-f87dab208deb
 :END:
 
+When it comes to helping myself with helper functions I spare no expense.
+
 ******* inserting keywords
 :PROPERTIES:
 :ID:       86f9fa28-6842-4580-994a-24f5d4608ad4
 :END:
+
+=use-package= has a built-in way of inserting keywords.
 
 ******** functional =use-package= keyword insertion
 :PROPERTIES:
@@ -1398,11 +1393,52 @@ This is the same as `use-package:insert-keyword' except WHERE and PLACE to
 :ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
 :END:
 
+Perhaps the most code saved with =use-package= is in it's generation of autoload
+forms.
+
 #+begin_src emacs-lisp
 (defun use-package:autoload (package fn)
   "Return a form that autoloads FN from PACKAGE."
   `(unless (fboundp ',fn)
      (autoload #',fn ,(symbol-name package) nil t nil)))
+#+end_src
+
+******* generate normalizer
+:PROPERTIES:
+:ID:       f287aa5b-51ed-40da-bbc1-9a40586a1f83
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+******* generate a handler
+:PROPERTIES:
+:ID:       495d3d70-f19f-420d-86ef-d75c49a77b66
+:END:
+
+#+begin_src emacs-lisp
+(defun use-package:handler (key)
+  "Return an appropriate handler symbol for key."
+  (xl-symbol-intern 'use-package-handler/ key))
+#+end_src
+
+******* override keyword
+:PROPERTIES:
+:ID:       aff6cbbe-7657-4287-9632-31dab7310c63
+:END:
+
+I want to override some existing =use-package= keywords. Use package keywords
+are defined by three things: the existence of the keyword in
+[[helpvar:use-package-keywords][use-package-keywords]], the existence of a [[][handler]], and the existence of a
+[[][normalizer]]. To overwrite an existing keyword all you have to do is
+override the corresponding normalizer and handler. The purpose of this function
+is to provide an easy way to do this.
+
+#+begin_src emacs-lisp
+(defun use-package:override-keyword (old new)
+  "Overrides OLD key with NEW."
+  (advice-add (use-package:normalize old) :override (use-package:normalize new))
+  (advice-add (use-package:handler old) :override (use-package:handler new)))
 #+end_src
 
 ****** custom keywords
@@ -1417,6 +1453,8 @@ list. This makes things much more complicated and it makes.
 :PROPERTIES:
 :ID:       2bdd8dac-0770-4dbb-8cef-d51bd19da250
 :END:
+
+These keywords correspond to.
 
 ******** silence
 :PROPERTIES:
@@ -1466,6 +1504,8 @@ functions that a package provides.
 :ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
 :END:
 
+Sometimes I want to ignore certain functions.
+
 #+begin_src emacs-lisp
 (use-package:dwim-insert :ignore)
 
@@ -1483,6 +1523,8 @@ functions that a package provides.
 :PROPERTIES:
 :ID:       f2d89960-ed41-4a72-847f-e150db56330b
 :END:
+
+There are a number of functions in Emacs that prompt.
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :assume-yes)
@@ -1532,10 +1574,10 @@ instead of =add-hook=.
        (-mapcat #'use-package:normalize-cons)
        (--map (cons (xl-emacs-hookify (car it)) (cdr it)))))
 
-(defun use-package-handler/:xl-hook (name _ value rest state)
-  "Expect an alist of (HOOK FN)."
-  `(,@(-map (-lambda ((hook . fn)) `(xl-hook-add ',hook ',fn)) value)
-    ,@(-map (-partial #'use-package:autoload name) (-map #'cdr value))
+(defun use-package-handler/:xl-hook (name _ hook-alist rest state)
+  "Use `xl-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
+  `(,@(-map (-lambda ((hook . fn)) `(xl-hook-add ',hook ',fn)) hook-alist)
+    ,@(-map (-partial #'use-package:autoload name) (-map #'cdr hook-alist))
     ,@(use-package-process-keywords name rest state)))
 
 (advice-add #'use-package-normalize/:hook :override #'use-package-normalize/:xl-hook)
@@ -1610,7 +1652,7 @@ of this keyword is to load a package when a certain function is called.
 :ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
 :END:
 
-This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (display buffer control).
+This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (display buffer control). What it does is.
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :popup)
@@ -1620,6 +1662,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
   args)
 
 (defun use-package-handler/:popup (name _ value rest state)
+  "Add a popup rule."
   `(,@(--map `(dbc-add-rule ,@it) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
@@ -1664,13 +1707,17 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 :ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
 :END:
 
+Sometimes I want to alias certain.
+
 #+begin_src emacs-lisp
 (use-package:dwim-insert :alias)
 
 (defun use-package-normalize/:alias (_ _ args)
+  (cl-assert (-all-p #'-cons-pair-p args))
   args)
 
 (defun use-package-handler/:alias (name _ value rest state)
+  ""
   `(,@(-map #'use-package:autoload (-map #'car value))
     ,@(--map (-lambda ((sym . def)) `(defalias ',sym #',def))
 	     value)
@@ -1682,17 +1729,23 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
 :ID:       aab32568-2c8c-4777-90ec-c4ad1bebaad8
 :END:
 
+I know, I know. I can just use the =:straight= keyword provided by
+[[][straight]]. The reason I define my own. :P
+
 #+begin_src emacs-lisp
 (push '(:ensure t t) use-package-defaults)
+(use-package:override :ensure :xl-ensure)
 
 (defun use-package-normalize/:xl-ensure (_ _ args)
+  "Accept a list of."
   (cl-assert (alet (car-safe args)
 	       (or (listp it) (booleanp it))))
   (car args))
 
 (defun use-package-handler/:xl-ensure (name _ value rest state)
-  `(,@(cond ((null value) nil)
-	    ((eq t value) `((straight-use-package ',name)))
+  "Ensure a package is installed."
+  `(,@(cond ((null value)  nil)
+	    ((eq t value)  `((straight-use-package ',name)))
 	    ((listp value) `((straight-use-package ',(cons name value)))))
     ,@(use-package-process-keywords name rest state)))
 
@@ -1744,6 +1797,25 @@ enough that I consider it worth it to give it its own keyword.
 	(xl-log "enable %S" mode-name)
 	(,mode-name))
       ,@(use-package-process-keywords name rest state))))
+#+end_src
+
+****** init use-package
+:PROPERTIES:
+:ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
+:END:
+
+Finally, we get to use =use-package= to configure itself! :smile: By default,
+=use-package= provides its own messages and error handling. This can make the
+macro expansion of a =use-package= form crowded and much more difficult to
+read. Setting [[helpvar:use-package-expand-minimally][use-package-expand-minimally]] tells =use-package=.
+
+Also, remember [[][I mentioned]] I want a fast startup time.
+
+#+begin_src emacs-lisp
+(use-package! use-package
+  :set
+  (use-package-expand-minimally . t)
+  (use-package-always-defer . t))
 #+end_src
 
 ***** essential libraries
@@ -1825,8 +1897,7 @@ many other languages. In lisp this often requires assigning the variable a name.
 But if you're only.
 
 #+begin_src emacs-lisp
-(use-package! anaphora
-  :demand t)
+(use-package! anaphora :demand t)
 #+end_src
 
 ****** loopy
@@ -1858,8 +1929,7 @@ play.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! noflet
-  :demand t)
+(use-package! noflet :demand t)
 #+end_src
 
 ****** dbc
@@ -1867,12 +1937,9 @@ play.
 :ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
 :END:
 
-=dbc= stands for "display-buffer-control". This package provides an interface for
-working with [[helpfn:display-buffer-alist][display-buffer-alist]].
-
-For now, I haven't found a buffer I'd like to display in any place other than
-the bottom. I don't like it when buffer text is cutt off or truncated on the
-side windows.
+=dbc= stands for "display-buffer-control". This package provides an interface
+for working with [[helpfn:display-buffer-alist][display-buffer-alist]]. In a nutshell, =display-buffer-alist= is
+a Emacs's built in way of allowing the user to customize how windows are opened.
 
 #+begin_src emacs-lisp
 (use-package! dbc
@@ -2760,15 +2827,6 @@ This built-in emacs package is opens a buffer with a list.
 
 #+begin_src emacs-lisp
 (use-package! ts)
-#+end_src
-
-***** hideshow
-:PROPERTIES:
-:ID:       2b253cbb-43c8-44de-9526-8d9fb5d0e226
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! hideshow)
 #+end_src
 
 ***** vc-hook
@@ -6952,7 +7010,7 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
 (use-package! auto-capitalize
   :hook text-mode-hook
   :set
-  (auto-capitalize-words . '("I" "English")))
+  (auto-capitalize-words . '("I" "English" "Emacs")))
 #+end_src
 
 ***** spell-number
