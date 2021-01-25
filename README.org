@@ -8759,7 +8759,7 @@ org agenda buffer is displayed.
 (use-feature! org-refile
   :idle-require t
   :set
-  (org-refile-targets                     . (list (org:code-file)))
+  (org-refile-targets                     . `((,(org:code-file) . (:level . 1))))
   (org-refile-use-outline-path            . 'file)
   (org-refile-allow-creating-parent-nodes . t)
   (org-reverse-note-order                 . t)
