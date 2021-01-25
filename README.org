@@ -6020,6 +6020,22 @@ If it's not possible, abort initialization gracefully."
       (xl-log "Another window manager is present (or something went wrong)."))))
 #+end_src
 
+***** exwm-evil-firefox
+:PROPERTIES:
+:ID:       e5463b7a-9727-43b1-aa20-831a3617308f
+:END:
+
+This package lets you use exwm to control firefox and give it evil bindings. You
+can tell exwm to send "fake" keys to firefox corresponding to the key you've
+pressed. The only thing I find missing here is a way to quickly select links in
+an. One caveat is that mouse clicks only work in insert mode.
+
+#+begin_src emacs-lisp
+(use-package! exwm-firefox-evil
+  :hook (exwm-manage-finished-hook . exwm-firefox-evil-activate-if-firefox)
+  :before-call browse-url-firefox)
+#+end_src
+
 ***** org capture from an exwm buffer
 :PROPERTIES:
 :ID:       5428bdc1-c075-4387-b3ab-080d372c478f
