@@ -1892,7 +1892,8 @@ Lisp is a full-featured, turing-complete language. However, for some data
 structures like hash-tables and alists it is missing consistently named
 functions for performing operations on these data structures. This is improving
 slowly with the introduction of libraries like =seq.el= and =map.el= but still
-leaves much to be desired.
+leaves much to be desired. This sounds like a complaint, but it actually
+highlights the advantage of the extensibility of Emacs.
 
 ****** shut-up
 :PROPERTIES:
@@ -1900,9 +1901,9 @@ leaves much to be desired.
 :END:
 
 This package provides a macro named =shut-up= that as its name suggests,
-silences output of any forms within it. Emacs itself and many emacs packages
-spew messages. While I can see how in certain circumstances there messages can
-be useful, most of the time they are superfluous.
+silences output of any forms within it :speak-no-evil:. Emacs itself and many
+emacs packages spew messages. While I can see how in certain circumstances there
+messages can be useful, most of the time they are superfluous.
 
 #+begin_src emacs-lisp
 (use-package! shut-up :demand t)
@@ -1913,10 +1914,10 @@ be useful, most of the time they are superfluous.
 :ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
 :END:
 
-Dash is rich list manipulation library. Many of the functions it have already been
-found in some form or another in emacs in features such as =cl-lib= and =seq=
-and =subr=, but dash has some very convenient functions and macros over emacs
-(such as =-let)=. Moreover, a lot of work has been put into making it's
+Dash is rich list manipulation library. Many of the functions it have already
+been found in some form or another in emacs in features such as =cl-lib= and
+=seq= and =subr=, but dash has some very convenient functions and macros over
+emacs (such as =-let)=. Moreover, a lot of work has been put into making it's
 functions efficient; some are even more efficient than built-in cl
 functions. Additionally, it's already used as a dependency of very many packages
 so I'll likely end up loading it anyway.
@@ -2093,6 +2094,9 @@ what follows the '&').")
 :PROPERTIES:
 :ID:       1995a309-e1d3-40e5-b6b1-fbcd81dda0bb
 :END:
+
+Similar to some of the functions designed in [[][]], this function will be
+useful primarily in macros.
 
 #+begin_src emacs-lisp
 (defun xl-hook-fn-p (symbol)
@@ -3645,7 +3649,7 @@ a new theme.
 :ID: 63e351ad-9ef6-4034-9fca-861881c74d6a
 :END:
 
-When running emacs in terminal tty is *tremendously* slow.
+According to [[][]], when running emacs in terminal tty is *tremendously* slow.
 
 #+begin_src emacs-lisp
 (unless (display-graphic-p)
@@ -3952,7 +3956,7 @@ I've never had to use this. But better be safe than sorry.
 :ID:       744ac652-aebc-4f5b-883a-4464dd7b07cd
 :END:
 
-In this headline I focus on packages that.
+In this headline I focus on packages that perform some sort of completion.
 
 **** minibuffer candidate completion
 :PROPERTIES:
@@ -4080,6 +4084,8 @@ address this I create this function. It displays letters next to the candidates.
 :ID:       4445c814-9899-4d54-affe-0cee38642690
 :END:
 
+This package.
+
 #+begin_src emacs-lisp
 (use-package! prescient
   :set
@@ -4124,7 +4130,9 @@ address this I create this function. It displays letters next to the candidates.
 :ID:       921ce22e-59ae-4de1-bef0-66a20e320df5
 :END:
 
-=consult= is a package that's akin to =counsel=. It's a library.
+=consult= is a package that's akin to =counsel=. It's a library of generally
+useful functions which are written in such a way that they can be work across
+all the completion frameworks.
 
 #+begin_src emacs-lisp
 (use-package! consult
