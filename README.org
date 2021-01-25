@@ -7893,6 +7893,10 @@ the whole thing.
 (defun xl-capture-file ()
   "Return the file where org should capture to."
   (xl-org-dir "capture.org"))
+
+(defun org:code-file ()
+  "File where I store code I want to save in."
+  (xl-org-dir "code.org"))
 #+end_src
 
 ****** general settings
@@ -8679,7 +8683,7 @@ org agenda buffer is displayed.
 (use-feature! org-refile
   :idle-require t
   :set
-  (org-refile-targets                     . nil)
+  (org-refile-targets                     . (list (xl-capture-file)))
   (org-refile-use-outline-path            . 'file)
   (org-refile-allow-creating-parent-nodes . t)
   (org-reverse-note-order                 . t)
