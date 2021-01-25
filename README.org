@@ -699,7 +699,7 @@ The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 :ID:       00eaa1a5-b5fe-437d-9888-1846ea9a232b
 :END:
 
-Here I install the package manager.
+In this headline I install the package manager and load needed packages.
 
 ***** straight.el
 :PROPERTIES:
@@ -722,7 +722,6 @@ another machine by installing the same packages with the same versions.
 (setq straight-use-package-version 'straight)
 (setq straight-use-package-by-default nil)
 (setq straight-check-for-modifications nil)
-(setq straight-enable-package-integration nil)
 (setq straight-recipes-emacsmirror-use-mirror t)
 #+end_src
 
@@ -905,6 +904,9 @@ particular kinds.
 :ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
 :END:
 
+As I mentioned, the convention for hook symbols is that they are suffixed with
+=-hook=. This function checks for such variables.
+
 #+begin_src emacs-lisp
 (defun xl-emacs-hook-p (symbol)
   "Return true if symbol is a hook symbol."
@@ -1022,7 +1024,7 @@ When writing macros in lisp it is not uncommon to need to write a macro that can
 nest a form within some number of other forms (for an example, see [[id][after!]]). This
 macro makes this problem much easier.
 
-The original idea for this macro came from.
+The original idea for this macro came from [[https://gitlab.common-lisp.net/iterate/iterate/-/blob/master/iterate.lisp][iter's source coe]].
 
 #+begin_src emacs-lisp
 (defun xl-wrap-form (wrappers form)
@@ -1877,10 +1879,11 @@ emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 
 ****** s
 :PROPERTIES:
-:ID: 4b82deb0-bbe1-452c-8b60-ef734efb86d8
+:ID:       b96acb97-3963-4713-a03b-6294c65903fd
 :END:
 
-=s= is an api for strings inspired by [[id:704fc35f-0ad0-4eb3-9eb5-d8335465dbd8][dash]].
+=s= is an api for strings inspired by [[id:704fc35f-0ad0-4eb3-9eb5-d8335465dbd8][dash]]. It has many useful string functions
+that are not built-in to Emacs. Notably, it is functional.
 
 #+begin_src emacs-lisp
 (use-package! s :demand t)
@@ -3125,25 +3128,6 @@ Non-nil means animated images loop forever, rather than playing once.
   (mouse-yank-at-point . t))
 #+end_src
 
-***** calendar
-;; :PROPERTIES:
-;; :ID:       4ad7e704-f490-40e4-b2bc-8a30a10a7bb7
-;; :END:
-
-(setq diary-file (xl-data-dir "diary"))
-
-(after! calendar
-  (require 'f)
-  (unless (f-exists-p diary-file)
-    (f-touch diary-file)))
-
-***** mule-cmds
-:PROPERTIES:
-:ID:       e48e925e-1f1e-4c79-8652-c92aafe06290
-:END:
-
-(setq prefer-coding-system XL-DEFAULT-CODING-SYSTEM)
-
 ***** gv
 :PROPERTIES:
 :ID:       84cc5883-a303-453e-af91-644d4544e3f9
@@ -4023,6 +4007,8 @@ address this I create this function. It displays letters next to the candidates.
 :PROPERTIES:
 :ID:       921ce22e-59ae-4de1-bef0-66a20e320df5
 :END:
+
+=consult= is a package that's akin to =counsel=. It's a library.
 
 #+begin_src emacs-lisp
 (use-package! consult
@@ -9191,9 +9177,8 @@ This headline is for customizing info nodes.
 :ID:       5340ddb3-92bc-42e5-bf0e-9f9650c41cd9
 :END:
 
-[[github:wilfred/helpful][helpful]] provides a complete replacement for the built-in
-Emacs help facility which provides much more contextual information
-in a better format.
+[[github:wilfred/helpful][helpful]] provides a complete replacement for the built-in Emacs help facility
+which provides much more contextual information in a better format.
 
 #+begin_src emacs-lisp
 (use-package! helpful
