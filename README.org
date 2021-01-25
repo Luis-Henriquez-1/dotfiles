@@ -1899,7 +1899,9 @@ Finally, we get to use =use-package= to configure itself! :smile: By default,
 macro expansion of a =use-package= form crowded and much more difficult to
 read. Setting [[helpvar:use-package-expand-minimally][use-package-expand-minimally]] tells =use-package=.
 
-Also, remember [[][I mentioned]] I want a fast startup time.
+Also, remember [[][I mentioned]] I want a fast startup
+time. [[helpvar:use-package-always-defer][use-package-always-defer]] tells =use-package= not to load anything until I
+say so.
 
 #+begin_src emacs-lisp
 (use-package! use-package
@@ -2421,7 +2423,12 @@ one argument--the advice to remove.
 There are some advices that are used so often that they do not lend themselves
 to =defadvice!=, which is better suited for a unique hook defined only once.
 
-******* catch errors
+******* reporting errors
+:PROPERTIES:
+:ID:       ba191c78-f0e6-4edc-aac8-020eb1b6f1c8
+:END:
+
+******** catch errors
 :PROPERTIES:
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
@@ -2447,7 +2454,7 @@ advice]].
   "Advise a function to gracefully report an error."
   (let ((alias (xl-symbol-intern fn '@report-error)))
     (defalias alias (xl--report-error-advice fn))
-    ;; (xl-log-function alias)
+    (xl-log-function alias)
     (advice-add fn :around alias)))
 #+end_src
 
@@ -3371,7 +3378,9 @@ initializing. :race-car:
 :ID:       84d8e85a-a6a1-49cd-b46e-e5cd3f825438
 :END:
 
-Fill column refers to the column where line-wrapping will occur.
+Fill column refers to the column where line-wrapping will occur. The standard
+value for this is =80= but historically that was because. Now this is not the
+case so I don't think it's as much of a deal.
 
 #+begin_src emacs-lisp
 (setq-default fill-column 80)
@@ -4060,7 +4069,7 @@ make sense. This is advice specifically designed to disable selectrum sorting.
 
 When the variable [[helpvar:selectrum-show-indices][selectrum-show-indices]] is set to this function, selectrum
 displays letters starting at =a= to [[helpvar:selectrum-num-candidates-displayed][selectrum-num-candidates-displayed]] times
-down the alphabet.
+down the alphabet. Fun fact, I actually contributed this feature to selectrum. :confetti-ball:
 
 #+begin_src emacs-lisp
 (defun selectrum:show-letter-index-fn (i)
@@ -4230,6 +4239,8 @@ As I learn more about embark I will improve this documentation over time.
 :PROPERTIES:
 :ID:       5c0ed97e-da66-42ab-a033-381ac9dd8972
 :END:
+
+=company= is a package that creates a tooltip.
 
 ***** setup
 :PROPERTIES:
@@ -6682,8 +6693,7 @@ binding to.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! separedit
-  :commands separedit)
+(use-package! separedit :commands separedit)
 #+end_src
 
 **** edit-indirect
