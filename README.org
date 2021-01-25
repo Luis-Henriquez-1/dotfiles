@@ -8550,6 +8550,46 @@ same key as the one(s) being added."
           (clean (-concat (doct declarations) org-capture-templates)))))
 #+end_src
 
+****** completing-read org-capture
+:PROPERTIES:
+:ID:       ad2cc056-edda-490a-8cf9-10b370a21dc0
+:END:
+
+Org provides it's own default interface for capturing. To be consistent with how
+we complete everything else--via [[helpfn:][completing-read]], I create a function which
+let's me choose the template via completing-read.
+
+******* capture templates
+:PROPERTIES:
+:ID:       c4fdb186-3509-42f1-9c3e-8bf80a5e6b47
+:END:
+
+#+begin_src emacs-lisp
+(defun org-capture:template-list ()
+  "Return a list of capture templates."
+  (thread-first org-capture-templates
+    (org-capture-upgrade-templates)
+    (org-contextualize-keys org-capture-templates-contexts)))
+#+end_src
+
+******* replacement for =org-capture=
+:PROPERTIES:
+:ID:       4dd55ff4-7e6e-41f5-82f8-0db597959a17
+:END:
+
+#+begin_src emacs-lisp
+(defun org-capture/choose-template ()
+  (interactive)
+  (require 'org-capture)
+  (let* ((read-string (--map (format "%s %s" (car it) (cadr it))
+			     (org-capture:template-list)))
+	 (selection (completing-read "Capture template: " read-string nil :require-match))
+	 (key (car (split-string selection "\s" t))))
+    (org-capture nil key)))
+
+(general-def [remap org-capture] #'org-capture/choose-template)
+#+end_src
+
 ****** capture templates
 :PROPERTIES:
 :ID:       a2a3f682-322a-450f-91bf-169d90f040c0
