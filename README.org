@@ -589,12 +589,15 @@ See my [[2b8148c3-1418-4896-ba53-1673d2d82659][previous reasoning]] on why use l
 :END:
 
 It's useful to store directories which I reference frequently in variables and
-functions. This way I can reference the full path.
+functions. This way I can reference the full path. Certain directories are
+important; and I end up referencing them alot.
 
 ****** macro to define important directories
 :PROPERTIES:
 :ID:       ebdf095e-f302-45c3-aef4-a4f9a84d4e02
 :END:
+
+This macro.
 
 #+begin_src emacs-lisp
 (defmacro dir! (name value &optional docstring)
@@ -695,9 +698,7 @@ The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 :ID:       00eaa1a5-b5fe-437d-9888-1846ea9a232b
 :END:
 
-The purpose of this headline is to set up the package manager and install all of
-my packages so the rest of the file can assume the packages are already
-installed. The idea is to separate package installation and package configuration.
+Here I install the package manager.
 
 ***** straight.el
 :PROPERTIES:
@@ -716,16 +717,39 @@ another machine by installing the same packages with the same versions.
 :END:
 
 #+begin_src emacs-lisp
-(setq straight-vc-git-default-clone-depth 1)
 (setq straight-base-dir XL-PACKAGES-DIR)
 (setq straight-use-package-version 'straight)
 (setq straight-use-package-by-default nil)
-(setq straight-enable-package-integration t)
-(setq straight-disable-autoloads nil)
-(setq straight-cache-autoloads t)
 (setq straight-check-for-modifications nil)
 (setq straight-enable-package-integration nil)
 (setq straight-recipes-emacsmirror-use-mirror t)
+#+end_src
+
+****** don't clone everything
+:PROPERTIES:
+:ID:       7f06830d-764a-42e1-959e-763a808a37b4
+:END:
+
+We don't need to clone everything from the git repos. Setting the depth to one
+conserves some disk space.
+
+#+begin_src emacs-lisp
+(setq straight-vc-git-default-clone-depth 1)
+#+end_src
+
+****** handle autoloads for me
+:PROPERTIES:
+:ID:       d3b052e4-fc7e-4b64-bd53-a6aa4b8abd16
+:END:
+
+To save startup time, we don't want to load packages unnecessarily. Many
+packages have what I like to call (I just made this up :smirk-cat:) "entry-points", or
+commands that are used to trigger the loading of the package. =straight=
+optionally handles this for us.
+
+#+begin_src emacs-lisp
+(setq straight-disable-autoloads nil)
+(setq straight-cache-autoloads t)
 #+end_src
 
 ****** straight initialization code
@@ -774,7 +798,13 @@ use-package and, of course, use-package itself.
 :END:
 
 This headline contains all the the helper functions and macros I defined for
-customizing emacs.
+customizing Emacs. The main thing that's done in an Emacs configuration is
+configuring packages, both built-in packages and external packages. And in this
+process, there are often packages that augment and aid in the configuration of
+other packages. Additionally, if you care about startup time it's important to
+make sure packages are only loaded when they need to be. The major purpose of
+this library is to provide me the tools to configure these packages in a way
+that is concise and efficient.
 
 ***** macro writing tools
 :PROPERTIES:
@@ -861,6 +891,13 @@ with details and just want a string.
 :PROPERTIES:
 :ID:       207ed522-51f3-45e7-91ba-8afb828d950b
 :END:
+
+These headline contains functions to detect particular Emacs symbols. Certain
+Emacs symbols follow a convention. For example, most hooks end with the suffics
+=-hook=. It may be useful--particularly in macros--to know what kind of symbol
+we're dealing with. And, it may also be useful to be able to convert a normal
+symbol (by which I mean one that doesn't follow the conventions) to one of these
+particular kinds.
 
 ******** hook symbol
 :PROPERTIES:
@@ -1472,6 +1509,7 @@ functions that a package provides.
   (car args))
 
 (defun use-package-handler/:os (name _ value rest state)
+  "Wrap body form with `with-os!' macro."
   `((with-os! ,value
       ,@(use-package-process-keywords name rest state))))
 #+end_src
