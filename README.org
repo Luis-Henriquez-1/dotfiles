@@ -1,3 +1,38 @@
+* Tale of Contents                                                         :TOC:
+:PROPERTIES:
+:ID:       55f0c499-f347-49eb-b243-ad7afd705465
+:END:
+
+- [[#about][About]]
+  - [[#goal][goal]]
+  - [[#highlights][highlights]]
+  - [[#why-set-up-my-dot-files-this-way][why set up my dot files this way?]]
+  - [[#how-its-tangled][how it's tangled]]
+  - [[#why-emacs-as-an-os][why Emacs as an OS]]
+- [[#helpers][helpers]]
+  - [[#evaluation-nowebs][evaluation nowebs]]
+- [[#xinit][xinit]]
+  - [[#first-remap-caps-lock-with-escape][first remap caps lock with escape]]
+  - [[#the-load-emacs][the load emacs]]
+- [[#guix][guix]]
+  - [[#starting-org-on-guix][starting org on guix]]
+  - [[#configscm][config.scm]]
+- [[#gpg-agent][gpg-agent]]
+- [[#git-config][git config]]
+- [[#nyxt-browser][nyxt browser]]
+  - [[#setup-vim-mode][setup vim mode]]
+- [[#stumpwm][stumpwm]]
+- [[#emacs][emacs]]
+  - [[#early-init][early-init]]
+  - [[#initel][init.el]]
+- [[#email][email]]
+  - [[#noweb-helpers][noweb helpers]]
+  - [[#convert-to-string][convert to string]]
+  - [[#email-accounts][email accounts]]
+  - [[#dotfile-string][dotfile string]]
+  - [[#mbsync][mbsync]]
+  - [[#msmtprc][msmtprc]]
+
 * About
 :PROPERTIES:
 :ID:       35454181-33bc-412e-a4a6-4268909d26d7
