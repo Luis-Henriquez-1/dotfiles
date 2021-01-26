@@ -108,7 +108,9 @@ use [[][]] to bootstrap. First =yadm clone=.
 
 You'll notice that I use Emacs as my window manager, which is pretty unorthodox
 not only compared to the population as a whole but also even relative to
-programmers and linux users. I believe that Emacs.
+programmers and linux users. The desire of people like me to use Emacs as an OS
+belies a desire to have a truly programmable operating system written in
+primarily one language that is rich and turing complete--and is a lisp.
 
 * helpers
 :PROPERTIES:
@@ -220,6 +222,9 @@ graphical display.
 Right now, shepard is admittedly rather slow in starting up. It's even slower
 when it has to begin a display manager.
 
+So below I implement the advice given in [[https://lists.gnu.org/archive/html/help-guix/2018-07/msg00080.html][this email]] to create a command that can
+run =xorg= in guix. When I log in I run =sh xinit.sh= to start xorg.
+
 #+begin_src sh :tangle ~/xinit.sh
 #!/bin/sh
 
@@ -233,6 +238,7 @@ $DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
 ** config.scm
 :PROPERTIES:
 :ID:       4af8c932-566c-480f-ad35-2667ae7d3cf2
+:HEADER-ARGS: :tangle ~/Documents/config.scm
 :END:
 
 The =config.scm= is the file the determines everything about the guix operating
@@ -452,6 +458,9 @@ preference until you find the one that is available on your system. Moreover, to
 be efficient, you'd like to do this check before the frame is initialized.
 Problem is the functions emacs provide to check system fonts depend on the
 initialization of the emacs frame.
+
+Note I have not yet tested this. I'm not sure if the frame is created when I run
+Emacs from a script. :confused: I'm sure there's some way to do it.
 
 #+name: font
 #+begin_src emacs-lisp :tangle no
@@ -4031,6 +4040,14 @@ packages are just ivy and helm wrappers around existing commands.
   (selectrum-fix-minibuffer-height    . t)
   (selectrum-should-sort-p            . t)
   (selectrum-count-style              . nil)
+  :init
+  (general-def '(insert emacs) selectrum-minibuffer-map
+    "TAB" #'selectrum-next-candidate
+    "C-k" #'selectrum-previous-candidate
+    "C-j" #'selectrum-next-candidate
+    "C-;" #'selectrum-insert-current-candidate
+    "C-l" #'selectrum/mark-candidate
+    [backtab] #'selectrum-previous-candidate)
   ;; :xl-bind
   ;; (:state (insert emacs) :map selectrum-minibuffer-map)
   ;; ("TAB" #'selectrum-next-candidate)
@@ -4168,32 +4185,9 @@ all the completion frameworks.
 
 #+begin_src emacs-lisp
 (use-package! consult
-  :gc-pause consult-outline consult-line)
-#+end_src
-
-***** mini-frame
-:PROPERTIES:
-:ID:       1e93b22f-e918-4a6e-9753-9e7657cbfcab
-:END:
-
-This package opens the minibuffer in a new frame. Using the default minibuffer
-creates a disturbance in the your window configuration when it pops up. The
-advantage that this offers over the minibuffer is that.
-
-Note that by default, [[helpvar:mini-frame-resize][mini-frame-resize]] is set to =t=. The problem I have with
-this is that when I first call a minibuffer completion command the candidates
-are not immediately visible. They are only visible when I type
-something. Setting it to =nil= makes the frame start at the size you specified.
-
-#+begin_src emacs-lisp
-(use-package! mini-frame
-  :hook emacs-startup-hook
-  :set
-  (mini-frame-resize . nil)
-  (mini-frame-show-parameters . '((top . 10)
-				  (width . 0.95)
-				  (left . 0.5)
-				  (height . 15))))
+  :gc-pause consult-outline consult-line
+  :general
+  ([remap switch-to-buffer] #'consult-buffer))
 #+end_src
 
 ***** marginalia
@@ -4603,6 +4597,13 @@ generally faster and more "modern".
 :ID:       6d64a62c-a3f7-449c-833d-0738c1e5f28a
 :END:
 
+These are my newsfeed for =elfeed-org=.
+
+****** [[https://planet.emacslife.com/][planet emacslife]]
+:PROPERTIES:
+:ID:       c042350e-6c21-4c98-82b1-332ef808cba5
+:END:
+
 **** chess
 :PROPERTIES:
 :ID:       1197be6f-a2ff-4cf1-8b78-02ebceb43317
@@ -4648,6 +4649,8 @@ generally faster and more "modern".
 :PROPERTIES:
 :ID:       7ca7587e-d94b-408b-8656-c6a09d6ee8b6
 :END:
+
+I build my =mbsyncrc= and my =msmtprc= via tangling.
 
 ***** pass
 :PROPERTIES:
@@ -4788,7 +4791,7 @@ variable leaking.
   :commands ellocate
   :set
   (ellocate-scan-dirs . `(("~/" . ,(xl-data-dir "ellocate"))))
-  (ellocate-gc-mem . most-positive-fixnum))
+  (ellocate-gc-mem    . most-positive-fixnum))
 #+end_src
 
 **** epa
@@ -4796,13 +4799,13 @@ variable leaking.
 :ID:       ad3f6134-4fa6-492e-93a6-b94235ecad3d
 :END:
 
-Setting these variables in coordination with configuring =gpgconf= lets me enter
-my gpg passphrase via emacs.
+Setting these variables in coordination with [[id:58a65d49-cd9f-4b5d-86d7-d43209424cf3][my gpg-agent config]] lets me enter my
+gpg passphrase via emacs.
 
 #+begin_src emacs-lisp
 (use-feature! epa-config
   :set
-  (epg-gpg-program . "gpg2")
+  (epg-gpg-program   . "gpg2")
   (epa-pinentry-mode . 'loopback))
 #+end_src
 
@@ -8773,22 +8776,23 @@ diary/journal using =org-mode=.
   :idle-require t
   :popup ("bottom" "org source" :newfile "\\*Org Src")
   :set
+  (org-src-window-setup                        . 'plain)
   (org-src-ask-before-returning-to-edit-buffer . nil)
   (org-edit-src-persistent-message             . nil)
   (org-src-preserve-indentation                . t)
   (org-confirm-babel-evaluate                  . nil)
   (org-src-tab-acts-natively                   . t)
   (org-src-fontify-natively                    . t)
-  (org-babel-default-header-args . '((:session . "none")
-				     (:results . "silent")
-				     (:exports . "code")
-				     (:cache   .   "no")
-				     (:initeb  .  "no")
-				     (:hlines  .  "no")
-				     (:tangle  .  "yes"))))
+  (org-babel-default-header-args               . '((:session . "none")
+						   (:results . "silent")
+						   (:exports . "code")
+						   (:cache   .   "no")
+						   (:initeb  .  "no")
+						   (:hlines  .  "no")
+						   (:tangle  .  "yes"))))
 #+end_src
 
-****** bindings in source block
+******* bindings in source block
 :PROPERTIES:
 :ID:       df270638-f6a7-4f0e-abe7-dd0c4e7df7ce
 :END:
@@ -9179,6 +9183,32 @@ referenance org headlines.
   :hook org-mode-hook)
 #+end_src
 
+***** org-pretty-tags
+:PROPERTIES:
+:ID:       7f024968-89ea-4e24-90a9-63771d8342b3
+:END:
+
+#+begin_src emacs-lisp
+(use-package! org-pretty-tags
+  :hook org-mode-hook)
+#+end_src
+
+***** org-toc
+:PROPERTIES:
+:ID:       aca910e9-364f-4631-a7eb-d7d6275b6472
+:END:
+
+This package creates a table of contents for your org file at the first headline
+with the tag =:TOC:= on it. As you might have guessed [[helpvar:toc-org-max-depth][toc-org-max-depth]] is the
+maximum dept at which toc will make the table of contents.
+
+#+begin_src emacs-lisp
+(use-package! toc-org
+  :hook org-mode-hook
+  :set
+  (toc-org-max-depth . 2))
+#+end_src
+
 ***** org mode snippets
 :PROPERTIES:
 :ID:       cd25f425-a4db-4a4c-be9e-4b672116048c
@@ -9233,19 +9263,6 @@ have taken.
 (defun xl-screenshots ()
   "Return a list of all screenshots."
   (cddr (directory-files (xl-screenshot-dir))))
-#+end_src
-
-***** org-tanglesync
-:PROPERTIES:
-:ID:       f6282ee4-a4b5-4cec-b275-947655516583
-:END:
-
-This package.
-
-#+begin_src emacs-lisp
-(use-package! org-tanglesync
-  :set
-  (org-tanglesync-watch-files . (-map #'expand-file-name '("~/README.org"))))
 #+end_src
 
 *** Asthetic
@@ -9940,10 +9957,36 @@ These are keybindings I use most frequently.
   ())
 #+end_src
 
+** email accounts
+:PROPERTIES:
+:ID:       44e3c55d-2501-45d8-8d48-5ea92d5dac75
+:END:
+
+#+begin_src emacs-lisp
+(defun dotfiles:email-accounts ()
+  "Return a list of email account entries."
+  (require 'password-store)
+  (--filter (s-matches-p "\\`email/" it) (password-store-list)))
+#+end_src
+
+** dotfile string
+:PROPERTIES:
+:ID:       fb810e86-405b-4bf0-ae81-9a476b2cf19e
+:END:
+
+#+begin_src emacs-lisp
+(defun dotfiles:config-string (&rest plist)
+  "Convert PLIST into."
+  (loopy ((list (key value) (-partition 2 plist))
+	  (expr config-key (xl-keyword-name key))
+	  (expr config-val (xl-to-string value))
+	  (collect strings (format "%s %s" config-key config-val)))
+	 (finally-return (s-join "\n" strings))))
+#+end_src
+
 ** mbsync
 :PROPERTIES:
 :ID:       532cd56a-45c8-4cd3-819f-cd1f5fca3e5d
-:HEADER-ARGS: :tangle ~/.config/isync/mbsyncrc
 :END:
 
 The. The setup for mbsync contains many repetative blocks of it's DSL which are
@@ -9955,53 +9998,138 @@ multiplied by the number of.
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsyncrc-imap-account-setup (mail)
+(defun dotfiles:mbsyncrc-imap-account-setup (entry)
   "Return the account part of the."
-  (dotfiles:convert-to-string
-   :IMAPAccount $account
-   :Host $server
-   :User $email
-   :PassCmd (dotfiles:string "pass email/%s | head -n 1" $email)
-   :SSLType 'IMAPS
-   :CertificateFile '/etc/ssl/certs/ca-certificates.crt
-   :Port $in-port))
+  (with-pass-fields! netry
+    (dotfiles:config-string
+     :IMAPAccount     <account>
+     :Host            <server>
+     :User            <email>
+     :PassCmd         (format "\"pass email/%s | head -n 1\"" <email>)
+     :SSLType         'IMAPS
+     :CertificateFile '/etc/ssl/certs/ca-certificates.crt
+     :Port            <in-port>)))
 #+end_src
 
-*** set up config
+*** account store
 :PROPERTIES:
-:ID:       371436cf-420b-45d5-9135-8a766e770f29
+:ID:       855ccfb5-ae4c-441e-9c3c-dc5c9cd83d24
 :END:
-
-concatenta
 
 #+begin_src emacs-lisp
-(defun dotfiles:setup-config ()
-  "Return."
-  (loopy ((list account accounts)
-	  (expr account-block (dotfiles:mbsyncrc-account account))
-	  (expr )
-	  (expr )
-	  (collect config (list account-block this that)))
-	 (finally-return)))
+(defun dotfiles:mbsyncrc-imap-store-setup (entry)
+  "Return the remote part of mbsync."
+  (with-pass-fields! entry
+    (concat (dotfiles:convert-to-string
+	     :IMAPStore (format "%s-remote" <account>)
+	     :Account   <account>)
+            "\n\n"
+            (dotfiles:convert-to-string
+	     :MaildirStore (format "%s-local"         <account>)
+	     :Subfolders   'Verbatim
+	     :Path         (format "~/.mail/%s/"      <email>)
+	     :Inbox        (format "~/.mail/%s/Inbox" <email>)))))
 #+end_src
 
-*** mbsyncrc
+*** sync
 :PROPERTIES:
-:ID:       d2c2a9e3-a0a8-4fc2-bf1e-32e33129b1e7
+:ID:       ba6836ff-1554-4cb1-84a2-320afe38183f
 :END:
 
-#+begin_src conf
-<<mbsyncrc-setup()>>
+#+begin_src emacs-lisp
+(defun dotfiles:mbsyncrc-sync-all (entry)
+  "Return the sync all string of the mbsync."
+  (with-pass-fields! entry
+    (dotfiles:convert-to-string
+     :Channel   <account>
+     :Master    (format ":%s-remote:" <account>)
+     :Slave     (format ":%s-local:"  <account>)
+     :Patterns  '*
+     :Create    'Both
+     :SyncState '*)))
+#+end_src
+
+*** account
+:PROPERTIES:
+:ID:       20962e17-ddae-465f-9123-ae8918539c6a
+:END:
+
+#+begin_src emacs-lisp :tangle no
+(defun dotfiles:mbsyncrc-account-string (entry)
+  (alet (list (dotfiles:mbsyncrc-imap-account-setup entry)
+              (dotfiles:mbsyncrc-imap-store-setup entry)
+              (if (s-matches-p (rx "@gmail.com") entry)
+                  (dotfiles:mbsyncrc-sync-gmail entry)
+                (dotfiles:mbsyncrc-sync-all entry)))
+    (s-join "\n\n" it)))
+#+end_src
+
+*** full config
+:PROPERTIES:
+:ID:       a040b172-63f1-42fb-b35c-22a6aba5dd5a
+:END:
+
+#+begin_src conf :noweb yes
+<<eval ()
 #+end_src
 
 ** msmtprc
 :PROPERTIES:
 :ID:       881dfeda-6370-4cbd-b385-f2e49bf042c0
-:HEADER-ARGS: :tangle ~/config/msmtp/msmtprc
+:HEADER-ARGS: :tangle no
 :END:
 
-*** setup
+The =msmtprc= is where we configure sending emails. There's a lot of boilerplate
+here to process.
+
+*** account information
 :PROPERTIES:
-:ID:       56f1b4e0-f1fc-4e51-b300-94ae7f4f4606
+:ID:       7f888dc8-1c41-478c-accd-6a038a96ec3c
 :END:
+
+For each email account I have will need the information.
+
+#+begin_src emacs-lisp :tangle no
+(defun dotfiles:msmtprc-account-string (entry)
+  "Return account string for msmtprc."
+  (with-pass-fields! entry
+    (dotfiles:config-string
+     :account      <account>
+     :host         <out-host>
+     :from         <email>
+     :port         <out-port>
+     :user         <email>
+     :passwordeval (format "\"pass %s | head -n 1\"" entry))))
+#+end_src
+
+*** account-info
+:PROPERTIES:
+:ID:       82d845cb-685b-4f64-a194-99e840561c98
+:END:
+
+#+name: msmtprc-accounts
+#+begin_src emacs-lisp :tangle no
+(defun dotfiles:msmtprc-accounts ()
+  (thread-last (dotfiles:email-accounts)
+    (seq-map #'dotfiles:msmtprc-account-string)
+    (s-join "\n\n")))
+#+end_src
+
+*** main
+:PROPERTIES:
+:ID:       537fb697-f84c-46d7-80ac-0745ec3bddb1
+:HEADER-ARGS: :tangle ~/.config/msmtp/msmtprc
+:END:
+
+#+begin_src conf :noweb yes
+defaults
+auth on
+tls on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile ~/.msmtp.log
+
+<<eval((dotfiles:msmtprc-accounts))>>
+
+account default : luishp
+#+end_src
 
