@@ -4696,6 +4696,23 @@ I build my =mbsyncrc= and my =msmtprc= via tangling.
 (use-package! pass)
 #+end_src
 
+***** with-pass-fields!
+:PROPERTIES:
+:ID:       e8f8b57d-91a7-4ae8-884d-3d8bc7484ed7
+:END:
+
+This macro lets me get all the fields and stores them into variables.
+
+#+begin_src emacs-lisp :tangle no
+(defmacro with-pass-fields! (entry &rest body)
+  (declare (indent defun))
+  (alet (loopy ((list symbol (xl-anaphoric-symbols body))
+		(expr true-symbol (xl-to-string (xl-anaphoric-true-symbol symbol)))
+		(expr field `(password-store-get-field ,entry ,true-symbol))
+		(collect (list symbol field))))
+    `(let ,it ,@body)))
+#+end_src
+
 ***** password-store
 :PROPERTIES:
 :ID:       3c57590c-1507-4369-b615-795965d4b182
@@ -7022,126 +7039,6 @@ where I don't do this.
 (--each (list #'auto-capitalize-mode #'aggressive-fill-paragraph-mode
 	      #'org-link-minor-mode)
   (xl-hook-add 'org-edit-paragraph:mode-hook it))
-#+end_src
-
-***** editing org source blocks
-:PROPERTIES:
-:ID:       5d7edceb-9934-4bfe-a556-cdc0512288e0
-:END:
-
-Why reinvent the wheel? While we can already edit source blocks with org
-built-in [[helpfn:org-edit-src-code][org-edit-src-code]], I value consistency. Instead of using two different
-implementations for editing in an indirect buffer, I'd rather just use
-one. =edit-indirect= is simpler, more general and more customizable than the
-source block editing tools used by org mode.
-
-****** init
-:PROPERTIES:
-:ID:       e0ed611a-e3ec-4d7b-9768-3d7e947d9c9e
-:END:
-
-#+begin_src emacs-lisp
-(use-package! org-source
-  :popup ("bottom" "org source blocks" :newname "\\*Org[[:space:]]\\(?:S\\(?:ource\\|rc\\)\\).+")
-  :ensure nil)
-#+end_src
-
-****** before load
-:PROPERTIES:
-:ID:       2605fd28-b61f-46b7-a212-6291e5fd0b0a
-:END:
-
-#+begin_src emacs-lisp
-(--each (list #'org/dwim-edit-source-block #'org/dwim-edit-description)
-  (xl-load-before-call 'org-ml it)
-  (xl-load-before-call 'edit-indirect it))
-#+end_src
-
-****** minor mode for org source buffers
-:PROPERTIES:
-:ID:       9e55d8ab-23d8-4b40-beac-ab0fb151f02f
-:END:
-
-#+begin_src emacs-lisp
-(define-minor-mode org-source:mode ())
-#+end_src
-
-****** hooks
-:PROPERTIES:
-:ID:       84daf376-561e-4b12-a134-b3d50ec14efe
-:END:
-
-******* add newlines
-:PROPERTIES:
-:ID:       adc49d00-604c-47c7-b8fd-df3a30eb243a
-:END:
-
-#+begin_src emacs-lisp
-(defun org-source:remove-if-only-newline ()
-  (when (string= (buffer-string) "\n")
-    (erase-buffer)))
-#+end_src
-
-****** default post blanks
-:PROPERTIES:
-:ID:       117478bf-3759-4a00-b738-9b1aad99ed54
-:END:
-
-It is my preference to have one blank line after a description--or any org item
-for that matter. I just find it much more readable and less cluttered.
-
-#+begin_src emacs-lisp
-(defvar org-source:default-post-blanks 1
-  "Number of blank lines that should follow a description.")
-#+end_src
-
-****** main function for editing source block
-:PROPERTIES:
-:ID:       519013b5-258b-48e1-801b-84bda1175101
-:END:
-
-When editing a source block we face a similar problem to descriptions--namely,
-the case when the org source buffer is empty. In this case we need to add a
-newline and only commit if the user has added content to the source block.
-
-The style in which I wrote this function is different from the last because it
-was inconvenient to get the start and end points of the source block contents. I
-have not finished with this source block.
-
-#+begin_src emacs-lisp
-(defun org/dwim-edit-source-block ()
-  "Edit org source block."
-  (interactive)
-  (alet (-> (org-ml-parse-subtree-at (point))
-	    (org-element-map '(headline src-block) #'identity nil))
-    (-let* ((headline (car-safe (org-element-property :title (car it))))
-	    (source-block (--first (eq 'src-block (org-element-type it)) it))
-	    (edit-indirect-after-creation-hook edit-indirect-after-creation-hook)
-	    (lang (org-element-property :language source-block))
-	    ((beg end) (org-src--contents-area source-block)))
-      (with-current-buffer (edit-indirect-region beg end)
-	(rename-buffer (format "*Org Source - %s*" headline) t)
-	(funcall (org-src-get-lang-mode lang))
-	(when (= beg end)
-	  (goto-char (point-max))
-	  (insert "\n")
-	  (alet #'org-source:remove-if-only-newline
-	    (add-hook 'edit-indirect-before-commit-hook it nil t)))
-	(goto-char (point-min))
-	(select-window (display-buffer (buffer-name)))))))
-#+end_src
-
-****** trim any trailing whitespace
-:PROPERTIES:
-:ID:       3a3d2ddb-7f80-4627-9733-986f4af1d2d7
-:END:
-
-A common annoyance is dealing accidentally leaving trailing whitespace in the
-source buffer and then finding out when you see it written to the org file. With
-this I never have to think about this again.
-
-#+begin_src emacs-lisp
-(xl-hook-add 'org-edit-source-mode-hook #'delete-trailing-whitespace)
 #+end_src
 
 ***** bindings inside edit-indirect
