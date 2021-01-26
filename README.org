@@ -133,8 +133,7 @@ When you initialize dotfiles on different machine settings can be different.
 :ID:       e208e820-cb37-40f5-912e-bad4abf1fd5a
 :END:
 
-I use [[https://yadm.io/][yadm]] to manage my dotfiles (more on that here). To initialize yadm you
-use [[][]] to bootstrap. First =yadm clone=.
+I haven't worked out yet how this is going to work. :confounded:
 
 ** why Emacs as an OS
 :PROPERTIES:
