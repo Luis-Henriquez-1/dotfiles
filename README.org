@@ -256,6 +256,7 @@ have some knowledge about OS setup you should find many of these fields familiar
 :ID:       5179b9e5-c40a-4839-85de-bd38abfd373e
 :END:
 
+#+name: miscellaneous
 #+begin_src scheme
 (locale "en_US.utf8")
 (timezone "America/New_York")
@@ -356,7 +357,7 @@ close. By default elogind.
  <<bootloader>>
  <<users>>
  <<packages>>
- <<services>>)
+ <<laptop-lid>>)
 #+end_src
 
 * gpg-agent
