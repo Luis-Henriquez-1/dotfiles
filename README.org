@@ -1,16 +1,20 @@
-* Table of Contents                                                        :TOC:
+* table of contents                                                        :TOC:
 :PROPERTIES:
 :ID:       55f0c499-f347-49eb-b243-ad7afd705465
 :END:
 
 - [[#about][about]]
-  - [[#goals][goals]]
   - [[#highlights][highlights]]
+  - [[#goals][goals]]
   - [[#why-set-up-my-dot-files-this-way][why set up my dot files this way?]]
-  - [[#how-are-dotfiles-generated][how are dotfiles generated?]]
+  - [[#a-word-on-some-org-links][a word on some org links]]
   - [[#why-emacs-as-an-os][why Emacs as an OS]]
 - [[#bootstrap][bootstrap]]
-- [[#helpers][helpers]]
+  - [[#helpers][helpers]]
+  - [[#simple-generic-tangling][simple generic tangling]]
+  - [[#collecting-blocks][collecting blocks]]
+  - [[#ensuring-my-emacs-has-handles-errors-gracefully][ensuring my Emacs has handles errors gracefully]]
+- [[#helpers-1][helpers]]
   - [[#evaluation-nowebs][evaluation nowebs]]
 - [[#xinitrc][xinitrc]]
   - [[#first-remap-caps-lock-with-escape][first remap caps lock with escape]]
@@ -19,15 +23,14 @@
   - [[#starting-org-on-guix][starting org on guix]]
   - [[#configscm-1][config.scm]]
 - [[#gpg-agent][gpg-agent]]
-- [[#git-config][git config]]
-- [[#nyxt][nyxt]]
-- [[#stumpwm][stumpwm]]
+- [[#git-config][git-config]]
 - [[#emacs][emacs]]
+  - [[#naming-conventions][naming conventions]]
   - [[#early-init][early-init]]
   - [[#initel][init.el]]
 - [[#email][email]]
   - [[#some-notes-on-the-config][some notes on the config]]
-  - [[#helpers-1][helpers]]
+  - [[#helpers-2][helpers]]
   - [[#mbsync][mbsync]]
   - [[#msmtprc][msmtprc]]
 
@@ -36,49 +39,49 @@
 :ID:       35454181-33bc-412e-a4a6-4268909d26d7
 :END:
 
-This single org file contains the contents of all my dotfiles and
-configurations. Upon [[https://orgmode.org/manual/Extracting-Source-Code.html][tangling]] it will dynamically generate all of them in the
-correct locations.
-
-** goals
-:PROPERTIES:
-:ID:       a5988006-d29d-4718-bd1f-189ddd9702f2
-:END:
-
-*** goal
-:PROPERTIES:
-:ID:       5700ee45-a841-4223-9548-b3810e57f07d
-:END:
-
-The main goal of my dotfiles is to provide me with a completely reproducable
-setup. I want to be able to generate my complete workspace with just two things,
-a usb containing my private gpg key and my dotfiles stored on github. By the
-way, by completely I mean /completely/--I should be able to not only reproduce
-the packages I have but their versions as well.
-
-*** help others
-:PROPERTIES:
-:ID:       922c122d-990c-4144-9e00-ee58b777e2f2
-:END:
-
-I've spent *alot* of time on Emacs. I feel an obligation to society. Not to get
-to personal here, but I feel I am very fortunate to have learned so many
-things. And I feel that I have not contributed enough to my community.
+This README contains the information to generate my [[https://www.quora.com/What-are-dotfiles?share=1][dotfiles]]. It is written in
+[[https://html.duckduckgo.com/html?q=org%20mode%20%22emacs%22][Org]]. In a nutshell, they are for setting up my work environment on different
+computers. By "environment" I mean the packages and settings I have
+enabled. This repository is also for helping me manage this working environment.
 
 ** highlights
 :PROPERTIES:
 :ID:       acc521a7-7244-48de-88dc-fbf1f0ad72f5
 :END:
 
-*** an *extremely* powerful emacs configuration featuring...
+This headline contains things I think make my dotfiles special and unique. I
+don't expect the reader to have the time to go through this whole file. So I
+include this here as a quick resume.
+
+*** an *extremely* powerful emacs configuration
 :PROPERTIES:
 :ID:       bea8c3aa-8b2b-4269-ba6e-dcb037f32606
 :END:
 
-**** a rich set of custom use-package keywords
+My Emacs configuration is the centerpiece of my dotfiles. Emacs is the interace
+I use to do everything on my computer. This is why it is very heavily configured.
+
+**** heavy use of [[https://github.com/jwiegley/use-package][use-package]]
+:PROPERTIES:
+:ID:       527f3a4b-e1f9-4a6d-9452-5ea686368cee
+:END:
+
+To be honest I was very skeptical of use-package when I heard about it in the
+Emacs community. And, I've been on an off with it. When I decided to experiement
+not using it I feel that I've gained a deeper understanding of the reasoning
+behind the use-package macro.
+
+**** a rich set of [[id:62cec5ac-a2f9-435b-96a7-4db0d9691f25][custom use-package keywords]]
 :PROPERTIES:
 :ID:       82ced1c3-f08e-474a-9aa6-967404ca01f6
 :END:
+
+When creating use-package keywords I tried to think of things that I do often
+when configuring packages. I came up with many useful new use-package
+keywords. I think that even if a reader does not decide to incorporate the
+keywords I defined in their config, they can still benefit from seeing how
+use-package keywords are defined (to me at least =use-package= README wasn't
+enough).
 
 **** interesting custom macros
 :PROPERTIES:
@@ -90,12 +93,24 @@ things. And I feel that I have not contributed enough to my community.
 :ID:       a626c6c1-daa8-43eb-a553-6e3983ad8748
 :END:
 
+I have lots of.
+
 **** next-level documentation
 :PROPERTIES:
 :ID:       9b7b1fe0-50c3-4835-ba98-059ccf50c54b
 :END:
 
-Because I'm using an org configuration.
+Because I'm using an org configuration I can write rich documentation for my
+Emacs config where I link to other headlines, to screenshots or gifs I've taken,
+or to websites online. Using [[id:d3e15439-f690-4ced-b701-0882fb911a5c][emojis]] I can add.
+
+**** naming-convention
+:PROPERTIES:
+:ID:       1adf42e5-4928-4e37-9d5d-d86119558c4f
+:END:
+
+Naming conventions are important in my Emacs config. In fact, naming in general
+is very important--it is a part of documentation.
 
 **** introspectable
 :PROPERTIES:
@@ -104,10 +119,19 @@ Because I'm using an org configuration.
 
 Naming and log file.
 
-**** fast candidate selection featuring selectrum
+**** fast candidate selection featuring [[https://github.com/raxod502/selectrum][selectrum]]
 :PROPERTIES:
 :ID:       e3544a41-90fe-49e8-8afe-ee51d93fe9fb
 :END:
+
+**** a strong focus on speed and performance
+:PROPERTIES:
+:ID:       8505fa5c-e0eb-4349-bca0-d6d334910d7d
+:END:
+
+I use [[][]] as well as. In fact, I even have a [[][custom use-package keyword]]
+for pausing gargbage collection for a specific function. I go to many lengths to
+optimize startup time as well as in-session usage.
 
 *** guix =config.scm= configuration
 :PROPERTIES:
@@ -133,7 +157,51 @@ hard or I can't learn them but because elisp is just much more expressive.
 :END:
 
 I want to make the point with my config that it is possible to program with
-small functions.
+small functions. I avoid having too much code in one function. I think this
+makes each source block much easier to understand; and, overall, it makes it
+easier for me to make fine-grained changes. I find short blocks of well-written
+code to be easy to read and reason with than huge functions.
+
+** goals
+:PROPERTIES:
+:ID:       a5988006-d29d-4718-bd1f-189ddd9702f2
+:END:
+
+Here I describe in more depth what goals I had in mind when I wrote these
+dotfiles.
+
+*** reproducable and easy to set up
+:PROPERTIES:
+:ID:       5700ee45-a841-4223-9548-b3810e57f07d
+:END:
+
+The main goal of my dotfiles is to provide me with a completely reproducable
+setup. I want to be able to generate my complete workspace with just two things,
+a usb containing my private gpg key and my dotfiles stored on github. It is my
+goal to one day make the setup /completely/ reproducable down to the package
+versions. It is now possible to do this with [[][guix]] and [[][straight.el]].
+
+*** centered around emacs
+:PROPERTIES:
+:ID:       099f0d22-e47c-49cf-bc45-a5019160c5ad
+:END:
+
+I use Emacs every day. I feel that it is currently the most cutomizable and
+efficient way to use a computer. One goal is to avoid "leaving" Emacs as much as
+possible. By leaving Emacs I mean having to configure files in some other
+language.
+
+*** help others
+:PROPERTIES:
+:ID:       922c122d-990c-4144-9e00-ee58b777e2f2
+:END:
+
+I've spent *alot* of time on Emacs. I feel an obligation to others. I feel I am
+very fortunate to have learned so many things. So I want to do my part to share
+what I have learned. This is also by the way one of the reasons I choose org
+mode. With Org I can express myself better--and, in turn, better explain to
+others what I did, why I did it, how I did it, what my thoughts are about it,
+etc.
 
 ** why set up my dot files this way?
 :PROPERTIES:
@@ -182,18 +250,19 @@ When you initialize dotfiles on different machine settings can be
 different. Using elisp to generate my dotfiles allows me to have dotfiles which
 dynamically change depending on the situation.
 
-** how are dotfiles generated?
+** a word on some org links
 :PROPERTIES:
-:ID:       e208e820-cb37-40f5-912e-bad4abf1fd5a
+:ID:       c569cf46-4481-4e55-9adb-46ac87c691b0
 :END:
 
-I haven't worked out yet how this is going to work. :confounded:
-
-Some things to think about. Obviously, Emacs is the centerpiece of my
-dotfiles. It's essentially an interface with which I interact with an underlying
-OS.
-
-One thing is I don't want to tangle everything all at once.
+You may find some links don't work. The reason might just be because the website
+link is broken or I made a mistake on my end. But I wanted to note that there
+are some org links that a site hosting this repo wouldn't know about. Links I've
+defined myself fall under this category such as [[][helpvar]] and [[helpfn]]. These
+links need to execute elisp to work and I doubt any site will now how to do
+that, so these links would only work if you define them yourself in an Emacs
+session. There are also some links that such a site might simply not have
+support for, for instance.
 
 ** why Emacs as an OS
 :PROPERTIES:
@@ -208,7 +277,7 @@ primarily one language that is rich and turing complete--and is a lisp.
 
 * bootstrap
 :PROPERTIES:
-:ID:       7b8fc24d-7e1e-4e11-bb9d-925867631993
+:ID:       33e48baf-fada-40d6-a219-fec0116ae480
 :END:
 
 The purpose of this headline is to contain the code I need for bootstraping
@@ -217,18 +286,85 @@ Emacs.
 I'm not doing a typical tangle for a couple of reasons. One is that I want the
 Emacs subtree to be tangled first so that I can run Emacs before tangling
 anything else. The reason is I use some libraries not built-in to Emacs such as
-[[https://github.com/okamsn/loopy][loopy]] and [[https://github.com/magnars/dash.el][dash]]. Additionally, I want to have some choice between
-which dotfiles are tangled/generated and which are not. For sure I'm going to
-want Emacs tangled no matter what but I might not want to tangle other dotfiles.
-On a computer with Windows or Mac OS, for example, there's no point in tangling
-the =.xinitrc= because I can't use Xorg.
+[[https://github.com/okamsn/loopy][loopy]] and [[https://github.com/magnars/dash.el][dash]]. Additionally, I want to have some choice between which dotfiles
+are tangled/generated and which are not. For sure I'm going to want Emacs
+tangled no matter what but I might not want to tangle other dotfiles.  On a
+computer with Windows or Mac OS, for example, there's no point in tangling the
+=.xinitrc= because I can't use Xorg. Finally, I want to add some error catching
+functionality that would take advantage of the fact that my Emacs config is
+separated into blocks.
 
-Org does not have an =org-babel-tangle-subtree=, but it's possible to do
-something [[https://lists.gnu.org/r/emacs-orgmode/2011-01/msg01173.html][as mentioned here]].
+** helpers
+:PROPERTIES:
+:ID:       4e0bacda-d2e8-4ede-b2c8-3e2557d5996d
+:END:
+
+*** evaluate source block with headline
+:PROPERTIES:
+:ID:       d6b0d623-532f-4bb2-abb2-e2cc11fad9d5
+:END:
+
+I need to load specific org blocks.
 
 #+begin_src emacs-lisp
-(with-temp-buffer
-  (insert-file-contents (expand-file-name "~/README.org")))
+(defun org:load-subtree (id file)
+  "Evaluate the contents of source block at headline."
+  (let ((regexp (rx-to-string `(seq bol ":ID:" (1+ space) ,id))))
+    (with-temp-buffer
+      (insert-file-contents file)
+      (re-search-forward regexp nil t nil)
+      (org-back-to-heading)
+      (org-narrow-to-subtree)
+      (org-babel-execute-subtree))))
+#+end_src
+
+** simple generic tangling
+:PROPERTIES:
+:ID:       86586de0-8c3a-4cd1-83bd-ce05a5e57b8b
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-tangle-dotfiles (name)
+  "Tangle emacs dotfiles from `XL-README'."
+  (require 'org)
+  (with-current-buffer (get-file-buffer "~/README.org")
+    (save-excursion
+      (save-restriction
+	(widen)
+	(goto-char (point-min))
+	(re-search-forward (rx-to-string `(seq bol "*" space ,name)) nil t nil)
+	(org-back-to-heading)
+	(org-narrow-to-subtree)
+	(org-babel-tangle)))))
+#+end_src
+
+** collecting blocks
+:PROPERTIES:
+:ID:       7a645ddb-37f0-480b-a15d-ecee311ce8f0
+:END:
+
+#+begin_src emacs-lisp
+(with-temp-file user-init-file
+  (insert (org:block-contents-at-id ""))
+  (org-babel-map-src-blocks nil
+    (insert (xl-string-wrap-form :body))))
+#+end_src
+
+** ensuring my Emacs has handles errors gracefully
+:PROPERTIES:
+:ID:       f2a0e118-a1e7-45fa-a851-2cabf8bda993
+:END:
+
+After you modify your Emacs, you'll likely make some mistakes. It's always
+annoying to have to debug your Emacs config without actually having your Emacs
+config to do it. That's why I create a macro.
+
+#+begin_src emacs-lisp
+(defmacro elisp-block! (headline-data &rest body)
+  "Report errors in body."
+  `(condition-case error
+       (progn ,@body)
+     (error (message "error at %s %S"))))
 #+end_src
 
 * helpers
@@ -501,7 +637,7 @@ allow-emacs-pinentry
 default-cache-ttl 60000
 #+end_src
 
-* git config
+* git-config
 :PROPERTIES:
 :ID:       a4cf5803-05b1-4133-bd73-01638673d2e3
 :HEADER-ARGS: ~/.config/git/config
@@ -521,27 +657,6 @@ and email and optionally your public gpg key.
 	program = <<eval((executable-find "gpg"))>>
 #+end_src
 
-* nyxt
-:PROPERTIES:
-:ID:       069672ed-29ad-4973-b2cd-1eb275d7e6d4
-:HEADER-ARGS: :tangle ~/.config/nyxt/init.lisp
-:END:
-
-The [[https://nyxt.atlas.engineer/][nyxt browser]] is a web browser written entirely in common lisp.
-
-* stumpwm
-:PROPERTIES:
-:ID:       4358b82c-1736-4609-aebe-02447d9c1703
-:HEADER-ARGS: :tangle ~/.config/stumpwm/stumwmrc
-:END:
-
-I have this os installed in case I want to play around or in case exwm crashes
-and my emacs is in an inconvenient to fix whatever problem I might have. The
-reason I favor [[https://github.com/ch11ng/exwm][exwm]] over [[https://github.com/stumpwm/stumpwm][stumpwm]] is that the former is more tightly integrated
-into Emacs. I haven't really configured stumpwm. Maybe I will in the future, but
-I don't know--Emacs is really time consuming and I already use exwm anyway. Good
-to have nevertheless.
-
 * emacs
 :PROPERTIES:
 :ID:       8c10b42b-9317-49a8-8ce0-128a2efc8905
@@ -549,6 +664,37 @@ to have nevertheless.
 
 This heading is for Emacs. Emacs is a lisp-interpreter which just happens to
 have very useful libraries for editing text.
+
+** naming conventions
+:PROPERTIES:
+:ID:       2a6bc275-da71-4704-baec-904c5a750267
+:END:
+
+In this headline I describe the naming convenions I set for my Emacs functions
+and variables.
+
+*** summary
+:PROPERTIES:
+:ID:       c6272a6b-e712-4c5b-b49f-62e43b5a9ec4
+:END:
+
+*** *no anonymous lambdas allowed*
+:PROPERTIES:
+:ID:       88a5aead-9dc2-4f37-9d0d-a382c292042a
+:END:
+
+I will never use anonymous lambdas--not for advices, not for hooks and not for
+bindings. Every function should be named.
+
+*** hooks
+:PROPERTIES:
+:ID:       355a8d6b-c0dc-468e-a5d9-813f83652696
+:END:
+
+*** advice
+:PROPERTIES:
+:ID:       24c0e12e-22a6-4768-be46-13d45c8d90b5
+:END:
 
 ** early-init
 :PROPERTIES:
@@ -1330,6 +1476,27 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 (defun xl-const-fn (atom)
   "Return a constant function from ATOM."
   `(lambda () ,atom))
+#+end_src
+
+****** eval a form in a string
+:PROPERTIES:
+:ID:       79cfc39a-0924-468b-9fbc-83388323a39b
+:END:
+
+Sometimes it is useful to evaluate a lisp form that's in a string. One example,
+is when [[][evaluating code in source blocks]]. In general, this comes up
+whenever you have to evaluate code you've gotten from a buffer.
+
+You may be wondering why I first wrapped the form in the string with a [[helpfn:progn][progn]]
+form. The reason is that [[helpfn:read-from-string][read-from-string]] only takes reads one from from a
+string at a time.
+
+This function came from [[https://emacs.stackexchange.com/questions/19877/how-to-evaluate-elisp-code-contained-in-a-string][this stackexchange question]].
+
+#+begin_src emacs-lisp
+(defun xl-eval-from-string (string)
+  "Eval from from string."
+  (eval (car (read-from-string (format "(progn %s)" string)))))
 #+end_src
 
 ***** custom macros
@@ -3255,7 +3422,9 @@ Don't ping things that look like domain names.
 #+begin_src emacs-lisp
 (use-feature! server
   :set
-  (server-auth-dir . (xl-data-dir "server/")))
+  (server-auth-dir . (xl-data-dir "server/"))
+  :config
+  (unless (server-running-p) (server-start)))
 #+end_src
 
 ***** tramp
@@ -4187,10 +4356,33 @@ For most functions, sorting their candidates is good. But for some, it doesn't
 make sense. This is advice specifically designed to disable selectrum sorting.
 
 #+begin_src emacs-lisp
+(defun selectrum:disable-sorting (fn)
+  "Disable sorting for FN."
+  (let ((advice (xl-symbol-intern fn '@no-selectrum-sorting)))
+    (defalias advice #'selectrum:disable-selectrum-sorting-advice)
+    (xl-log-function advice)
+    (advice-add fn :around advice)))
+
 (defun selectrum:disable-selectrum-sorting-advice (orig-fn &rest args)
   (if (bound-and-true-p selectrum-mode)
       (let (selectrum-should-sort-p) (apply orig-fn args))
     (apply orig-fn args)))
+#+end_src
+
+****** use-package keyword for disabling sorting
+:PROPERTIES:
+:ID:       a647122b-f39f-4140-8c5f-a3e14bfe37f3
+:END:
+
+#+begin_src emacs-lisp
+(use-package:dwim-insert :no-sort)
+
+(defun use-package-handler/:no-sort (name _ fns rest state)
+  "Don't sort the functions with selectrum."
+  `(,@(--map `(selectrum:disable-sorting #'fn) fns)
+    ,@(use-package-process-keywords name rest state)))
+
+(defalias 'use-package-normalize/:no-sort 'use-package-normalize/:gc-pause)
 #+end_src
 
 ****** lettered candidate index
@@ -4289,7 +4481,7 @@ my T400 instantaneously.
 #+begin_src emacs-lisp
 (use-package! swiper-helm
   :no-sort swiper-helm
-  :pause-gc swiper-helm)
+  :gc-pause swiper-helm)
 #+end_src
 
 ***** prescient
@@ -4400,6 +4592,8 @@ As I learn more about embark I will improve this documentation over time.
 :PROPERTIES:
 :ID:       c70ea165-50cd-418c-a74d-696dea915714
 :END:
+
+I haven't seen this working yet.
 
 #+begin_src emacs-lisp
 (setq embark-action-indicator
@@ -4721,6 +4915,51 @@ MODE if one does not exist."
 
 *** Utility
 
+**** dotfiles
+:PROPERTIES:
+:ID:       2b54ccda-ae15-418e-8850-ce374ddb2137
+:END:
+
+The point of this headline is to provide utility functions to generate my
+dotfiles using this README. I want to have the choice of generating all my
+dotfiles, one of my dotfiles, or a praticular number of dotfiles.
+
+***** dotfile alist
+:PROPERTIES:
+:ID:       5d5d85e8-b1d8-4618-8d59-b9792d9bee18
+:END:
+
+#+begin_src emacs-lisp
+(defvar xl-dotfile-list nil
+  "An list of (dotfile-name path generate-fn) and where they should go.")
+#+end_src
+
+***** generate dotfile function
+:PROPERTIES:
+:ID:       080f0073-cd62-4767-b327-72e137f1d8b3
+:END:
+
+#+begin_src emacs-lisp
+(defun xl/generate-dotfile-default ()
+  "Default function for generating a dotfile."
+  (interactive)
+  (require 'org)
+  (with-current-buffer (get-file-buffer)
+    ()))
+#+end_src
+
+***** generate all dotfiles
+:PROPERTIES:
+:ID:       026489ae-b6d4-41d1-b45f-4f1376418691
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-generate-dotfiles ()
+  "Generate dotfiles."
+  (loopy ((list (headline path generate-fn) xl-dotfile-alist)
+	  (xl-get-))))
+#+end_src
+
 **** elfeed
 :PROPERTIES:
 :ID:       45a52b98-9eba-45ab-9269-e8f930499e1c
@@ -4736,8 +4975,11 @@ generally faster and more "modern".
 
 #+begin_src emacs-lisp
 (use-package! elfeed
-  :popup ("right" "elfeed" :newname "\\*elfeed\\*")
-  :commands elfeed)
+  :popup ("right" "elfeed" :newname "\\*elfeed.+")
+  :commands elfeed
+  :set
+  (elfeed-db-directory           . (xl-data-dir "elfeed"))
+  (elfeed-search-title-max-width . 100))
 #+end_src
 
 ***** elfeed-score
@@ -4755,7 +4997,13 @@ generally faster and more "modern".
 :END:
 
 #+begin_src emacs-lisp
-(use-package! elfeed-org)
+(use-package! elfeed-org
+  ;; :init
+  ;; (defvar elfeed-org:public-newsfeed-file (xl-org-dir "newsfeeds.org")
+  ;;   "Newsfeeds.")
+  ;; :set
+  ;; (rmh-elfeed-org-files . (list elfeed-org:public-newsfeed-file))
+  )
 #+end_src
 
 ***** newsfeeds
@@ -5377,312 +5625,6 @@ like the outorg buffer has less whitespace in between headlines than it should.
 #+begin_src emacs-lisp
 (use-package! el-mock)
 #+end_src
-
-**** email
-:PROPERTIES:
-:ID: b31fc41c-135d-45d9-9c05-5889d21d1cd4
-:END:
-
-In today's world communication is largely done via emails. Whether at work or at
-school it's common to receive emails every day. In fact, you hear of people that
-have 20,000+ emails in a particular account. Unsurprisingly, when we're getting
-so many emails, it's easy to become overwhelmed. Fortunately, there are numerous
-ways to read and send emails in Emacs.
-
-***** built-in settings
-:PROPERTIES:
-:ID:       f2f187ab-caef-4fa6-85e7-628f76e3da41
-:END:
-
-****** sendmail
-:PROPERTIES:
-:ID:       48c3332f-975d-4f22-94a8-4ccd394ca82a
-:END:
-
-#+begin_src emacs-lisp
-(set! send-mail-function #'sendmail-send-it)
-(set! sendmail-program (executable-find "msmtp"))
-(set! mail-specify-envelope-from t)
-#+end_src
-
-****** smtpmail
-:PROPERTIES:
-:ID: 4dc1e0a6-5441-4b3e-8b75-ed3626a59154
-:END:
-
-#+begin_src emacs-lisp
-(set! smtp-default-mail-server "mail.example.com")
-(set! smtp-smtp-server "mail.example.com")
-(set! smtpmail-smtp-service 587)
-(set! smtpmail-debug-info t)
-#+end_src
-
-****** message
-:PROPERTIES:
-:ID:       4cf38804-18d6-470c-a9c3-e3327f2bebf9
-:END:
-
-#+begin_src emacs-lisp
-(use-feature! message
-  :set
-  (message-signature . user-full-name)
-  (message-sendmail-envelope-from . 'header)
-  (message-send-mail-function . #'sendmail-send-it)
-  (message-kill-buffer-on-exit . t))
-#+end_src
-
-***** mu4e
-:PROPERTIES:
-:ID:       905ba1b5-bafc-4855-b772-fa750c294327
-:END:
-
-The most popular emacs mail client is =mu4e=. And, there is good reason why. =mu4e=
-has many juicy features. Overall, =mu4e= is definitely a great mail client.
-However, it's not all roses and rainbows; it does have a few annoying quicks.
-One is that unlike virtually all other emacs packages it does not come decoupled
-from =mu=. Another is that it is hard to set up multiple accounts properly despite
-it's [[explicit support]] for multiple accounts. =mu4e= comes bundled with =mu=. A
-significant advantage of using it is it's the most popular option and,
-therefore, has the most support (in the form of setup blogs and packages).
-
-****** init
-:PROPERTIES:
-:ID:       36b63d9a-a830-46de-b829-e4a6972af235
-:END:
-
-******* init
-:PROPERTIES:
-:ID:       bcd9b479-1ed6-48cb-bd2e-35a46cf614e2
-:END:
-
-#+begin_src emacs-lisp
-(defconst XL-EMAIL-DIR "~/.mail/")
-
-(autoload #'mu4e "mu4e" nil t nil)
-#+end_src
-
-******* settings
-:PROPERTIES:
-:ID:       11a37383-0316-49fa-900e-c06f830c0e3f
-:END:
-
-#+begin_src emacs-lisp
-(setq mu4e-completing-read-function #'completing-read)
-(setq mu4e-view-show-addresses t)
-(setq mu4e-view-show-images t)
-(setq mu4e-view-image-max-width 800)
-(setq mu4e-compose-signature-auto-include t)
-(setq mu4e-compose-format-flowed t)
-(setq mu4e-get-mail-command "mbsync -a")
-(setq mu4e-context-policy 'pick-first)
-(setq mu4e-compose-context-policy 'ask-if-none)
-(setq mu4e-confirm-quit nil)
-#+end_src
-
-******* indexing
-:PROPERTIES:
-:ID:       002f7170-60bf-425c-be60-39262a84d0a3
-:END:
-
-I don't want mu4e to handle indexing. I can do it myself.
-
-#+begin_src emacs-lisp
-(setq mu4e-index-cleanup t)
-(setq mu4e-index-lazy-check nil)
-(setq mu4e-update-interval nil)
-(setq mu4e-headers-auto-update t)
-#+end_src
-
-******* mu4e
-:PROPERTIES:
-:ID: 565eff90-8626-4ec8-a576-4ff3dfb307ae
-:END:
-
-#+begin_src emacs-lisp
-(setq mu4e-header-fields '((:human-date . 12)
-                           (:flags . 4)
-                           (:from . 25)
-                           (:subject)))
-
-(setq mu4e-html2text-command
-      (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text))
-#+end_src
-
-******* setup mu4e
-:PROPERTIES:
-:ID:       8ed2fe81-eda9-4343-a6e1-0a6a725866a4
-:END:
-
-#+begin_src emacs-lisp
-(defun mu4e/init ()
-  "Initialize mu4e."
-  (interactive)
-  (require 'password-store)
-  (shell-command (format "mu init -m %s" XL-EMAIL-DIR))
-  (mu4e-update-mail-and-index t))
-#+end_src
-
-******* mu4e headers
-:PROPERTIES:
-:ID:       8bc93633-f3a0-494d-ae61-c05f6490cd87
-:END:
-
-#+begin_src emacs-lisp
-(after! (mu4e all-the-icons)
-  (setq mu4e-use-fancy-chars t)
-  (setq mu4e-headers-draft-mark     (cons "D" (all-the-icons-faicon "pencil")))
-  (setq mu4e-headers-flagged-mark   (cons "F" (all-the-icons-faicon "flag")))
-  (setq mu4e-headers-new-mark       (cons "N" (all-the-icons-material "fiber_new")))
-  (setq mu4e-headers-passed-mark    (cons "P" (all-the-icons-faicon "arrow-right")))
-  (setq mu4e-headers-seen-mark      (cons "S" (all-the-icons-faicon "eye")))
-  (setq mu4e-headers-attach-mark    (cons "a" (all-the-icons-material "attach_file")))
-  (setq mu4e-headers-replied-mark   (cons "R" (all-the-icons-faicon "reply")))
-  (setq mu4e-headers-unread-mark    (cons "u" (all-the-icons-faicon "eye-slash")))
-  (setq mu4e-headers-encrypted-mark (cons "x" (all-the-icons-octicon "lock")))
-  (setq mu4e-headers-signed-mark    (cons "s" (all-the-icons-faicon "certificate")))
-  (setq mu4e-headers-trash-mark     (cons "T" (all-the-icons-faicon "trash"))))
-#+end_src
-
-****** org-mu4e
-:PROPERTIES:
-:ID:       eaa1577b-bcb9-4f6e-9927-8c6d8042dda2
-:END:
-
-Mu4e's org integration lets you write emails in org mode and convert it to html
-before sending--very interesting indeed. I have yet to explore this feature but
-it is definitely on my list of things to try out.
-
-******* init
-:PROPERTIES:
-:ID:       47c8d5d8-575f-4b73-9247-38f32cb706fd
-:END:
-
-#+begin_src emacs-lisp
-(use-package! org-mu4e
-  :ensure nil
-  :hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode)
-  :set
-  (org-mu4e-link-query-in-headers-mode . nil)
-  (org-mu4e-convert-to-html . t))
-#+end_src
-
-******* hook
-:PROPERTIES:
-:ID:       fcdbaa17-20c6-4322-baed-27df5a0ad9a2
-:END:
-
-Only render to html once. If the first send fails for whatever reason,
-org-mu4e would do so each time you try again.
-
-#+begin_src emacs-lisp
-(defhook! org-mu4e-render-html-only-once (message-send-hook)
-  (setq-local org-mu4e-convert-to-html nil))
-#+end_src
-
-****** multiple accounts
-:PROPERTIES:
-:ID: ad6de3a4-674c-490f-841e-19b8f891cd65
-:END:
-
-Mu4e certainly gave me some trouble setting up multiple accounts despite [its
-attempt] to make this easy. I have one directory =~/.mail= where which stores all
-my mail. The subdirectories of =~/.mail= correspond to my individual email
-accounts. Until I set multiple accounts correctly it keeps prompting me to
-create folders (such as =sent/=) in the =~/.mail= directory. I think part of the
-reason I spent so much time setting this up is because.
-
-******* return the list of emails with credentials
-:PROPERTIES:
-:ID:       3f7b1728-b855-447f-9f15-43bd79a94c14
-:END:
-
-#+begin_src emacs-lisp
-(defun +pass-email-list ()
-  "Return a list of emails."
-  (->> (password-store-list)
-       (--map (elt (s-match "email/\\(.*\\)" it) 1))
-       (-non-nil)))
-#+end_src
-
-******* return the stuff as a plist
-:PROPERTIES:
-:ID:       8129ca16-8641-4f2f-a4b6-03477d5b78f3
-:END:
-
-#+begin_src emacs-lisp
-(defun +pass-email-account-plist (email)
-  "Return a plist of the relevant values of an email."
-  (shut-up
-    (->> (cdr (password-store-parse-entry email))
-         (mapcar #'car)
-         (--mapcat (list (intern it)
-                         (password-store-get-field (concat "email/" email) it))))))
-#+end_src
-
-******* mu4e folder name alist
-:PROPERTIES:
-:ID:       2ef07842-e321-4fff-ae73-f19c41d263a4
-:END:
-
-Mu4e keeps prompting you for the sent, trash, and drafts directory if you do not
-assign the corresponding mu4e variables. The way certain email servers name
-their directories varies. For example, outlook names its sent directory as =Sent
-Items=.
-
-#+begin_src emacs-lisp
-(defun +mu4e-guess-folder (base-dir possible-name &rest other-possible-names)
-  "Return the first file in BASE-DIR that matches POSSIBLE-NAME or any POSSIBLE-NAMES.
-If there is no match, return POSSIBLE-NAME."
-  (alet (or (--first (-some-p (-cut s-contains-p <> it t)
-                              (cons possible-name other-possible-names))
-                     (cddr (directory-files base-dir)))
-            possible-name)
-    (format "/%s/%s" (f-filename base-dir) it)))
-#+end_src
-
-******* set up contexts for single account
-:PROPERTIES:
-:ID:       66d460d7-9647-4c29-8348-eb7b3d571630
-:END:
-
-#+begin_src emacs-lisp
-(defun +mu4e--account-context (email)
-  "Return an mu4e account context for specified EMAIL."
-  (let* ((base-dir (concat XL-EMAIL-DIR email "/"))
-         (name (cl-second (s-match ".*@\\([^.]*\\)" email)))
-         (account (+pass-email-account-plist email))
-         (out-host (plist-get 'out-host account))
-         (out-port (plist-get 'out-port account)))
-    (alet `((mu4e-sent-folder      . ,(+mu4e-guess-folder base-dir "sent"))
-            (mu4e-drafts-folder    . ,(+mu4e-guess-folder base-dir "draft"))
-            (mu4e-trash-folder     . ,(+mu4e-guess-folder base-dir "trash" "delete" "junk"))
-            (user-email-address    . ,email)
-            (smtpmail-smtp-server  . ,out-host)
-            (smtpmail-smtp-user    . ,base-dir)
-            (smtpmail-smtp-service . ,out-port))
-      (make-mu4e-context :name name :vars it))))
-#+end_src
-
-******* multiple contexts
-:PROPERTIES:
-:ID: e56b64ac-ed36-4689-b8f4-8711c1f4f79f
-:END:
-
-#+begin_src emacs-lisp
-(defadvice! setup-contexts (:before mu4e)
-  "Initiaize context for each email account."
-  (require 'password-store)
-  (--each (-map #'+mu4e--account-context (+pass-email-list))
-    (cl-pushnew it mu4e-contexts)))
-#+end_src
-
-****** truncate lines in messages
-;; :PROPERTIES:
-;; :ID: e6addd49-6aa4-4b9e-8e50-4f0ea43aedb7
-;; :END:
-
-(defhook! wrap-text-in-message (mu4e-view-mode-hook)
-  (setq-local truncate-lines nil))
 
 **** shells & terminals
 :PROPERTIES:
@@ -8852,6 +8794,31 @@ source blocks.
     "c" (list :def #'org-edit-src-exit  :wk "exit source block")))
 #+end_src
 
+****** init org-src bindings
+:PROPERTIES:
+:ID:       3e119db7-48a2-4c8e-a8df-a973433bb289
+:END:
+
+#+begin_src emacs-lisp
+(defhook! init-org-src-bindings (org-src-mode-hook)
+  (general-def '(normal insert) org-src-mode-map
+    ))
+#+end_src
+
+****** org/dwim-edit-src-block
+:PROPERTIES:
+:ID:       aedcd881-8ec3-4d23-bb80-d78a2eb0b430
+:END:
+
+#+begin_src emacs-lisp
+(defun org/dwim-edit-src-code ()
+  "Edit source block at point or under headline."
+  (interactive)
+  (unless (or (org-at-block-p) (org-in-src-block-p))
+    (org-next-block 1))
+  (call-interactively #'org-edit-src-code))
+#+end_src
+
 ***** org-capture
 :PROPERTIES:
 :ID:       3225bbc4-9685-4e7b-ae32-41a26780d191
@@ -9980,28 +9947,64 @@ These are keybindings I use most frequently.
   "h" (list :def #'consult-outline          :wk "jump to outline heading"))
 #+end_src
 
+#+begin_src emacs-lisp
+#+end_src
+
 * email
 :PROPERTIES:
 :ID:       cff26aaa-5e46-411f-bbca-f4a5545e8e51
+:HEADER-ARGS: :tangle no
 :END:
 
-** noweb helpers
+The purpose of the headline is to generate my =mbsyncrc= and my =msmtprc=.
+
+I do this for two reasons (1) because the DSL for these configs consumes a lot
+of boilerplate and (2) because I dynamically generate the config based on my
+accounts.
+
+** some notes on the config
+:PROPERTIES:
+:ID:       8e29608b-eb6d-4116-a25d-9060230b7c8f
+:END:
+
+*** design
+:PROPERTIES:
+:ID:       e3900bee-fdde-41d2-a370-4cb5e32b9c45
+:END:
+
+In terms of design im confused :confused:. I'm unsure how the control flow
+between this and the other code in my config should work. I think the =mbsyncrc=
+and the =msmtprc= should be created when my dotfiles are tangled. And I so that
+I have a good experience with my email I should probably asyncronously download
+it with Emacs.
+
+*** newlines between certain fields are *mandatory*
+:PROPERTIES:
+:ID:       9674bc60-a380-42d9-afc2-af342dec8bc8
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+*** the mail directory and the local directories *must* exist
+:PROPERTIES:
+:ID:       00f647ab-7903-44af-883d-df673c95e28f
+:END:
+
+This means that just generating these files and running =mbsync -a= will not
+work.
+
+** helpers
+:PROPERTIES:
+:ID:       f6e1e6b2-5f16-4c28-9591-260354a055e8
+:END:
+
+*** noweb helpers
 :PROPERTIES:
 :ID:       80df9191-15ae-4559-a666-88869796e287
 :END:
 
-** convert to string
-:PROPERTIES:
-:ID:       d9014e42-cddf-4547-85c7-c3fa6ce54f36
-:END:
-
-#+begin_src emacs-lisp
-(defun dotfiles:plist-to-config-string (&rest plist)
-  "Return the arguments of dotfiles as a plist."
-  ())
-#+end_src
-
-** email accounts
+*** email accounts
 :PROPERTIES:
 :ID:       44e3c55d-2501-45d8-8d48-5ea92d5dac75
 :END:
@@ -10013,7 +10016,24 @@ These are keybindings I use most frequently.
   (--filter (s-matches-p "\\`email/" it) (password-store-list)))
 #+end_src
 
-** dotfile string
+*** with-pass-fields!
+:PROPERTIES:
+:ID:       e8f8b57d-91a7-4ae8-884d-3d8bc7484ed7
+:END:
+
+This macro lets me get all the fields and stores them into variables.
+
+#+begin_src emacs-lisp :tangle no
+(defmacro with-pass-fields! (entry &rest body)
+  (declare (indent defun))
+  (alet (loopy ((list symbol (xl-anaphoric-symbols body))
+		(expr true-symbol (xl-to-string (xl-anaphoric-true-symbol symbol)))
+		(expr field `(password-store-get-field ,entry ,true-symbol))
+		(collect (list symbol field))))
+    `(let ,it ,@body)))
+#+end_src
+
+*** dotfile string
 :PROPERTIES:
 :ID:       fb810e86-405b-4bf0-ae81-9a476b2cf19e
 :END:
@@ -10042,10 +10062,10 @@ multiplied by the number of.
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsyncrc-imap-account-setup (entry)
+(defun xl-mbsync:mbsyncrc-imap-account-setup (entry)
   "Return the account part of the."
-  (with-pass-fields! netry
-    (dotfiles:config-string
+  (with-pass-fields! entry
+    (xl-mbsync:config-string
      :IMAPAccount     <account>
      :Host            <server>
      :User            <email>
@@ -10060,19 +10080,23 @@ multiplied by the number of.
 :ID:       855ccfb5-ae4c-441e-9c3c-dc5c9cd83d24
 :END:
 
-#+begin_src emacs-lisp
-(defun dotfiles:mbsyncrc-imap-store-setup (entry)
+Note that the newlines separating the [[helpfn:xl-mbsync:config-string][dotfiles:config-string]] calls are
+*mandatory*. Without them mbsync will produce an error.
+
+#+begin_src emacs-lisp :tangle no
+(defun xl-mbsync:mbsyncrc-imap-store-setup (entry)
   "Return the remote part of mbsync."
   (with-pass-fields! entry
-    (concat (dotfiles:convert-to-string
-	     :IMAPStore (format "%s-remote" <account>)
-	     :Account   <account>)
-            "\n\n"
-            (dotfiles:convert-to-string
-	     :MaildirStore (format "%s-local"         <account>)
-	     :Subfolders   'Verbatim
-	     :Path         (format "~/.mail/%s/"      <email>)
-	     :Inbox        (format "~/.mail/%s/Inbox" <email>)))))
+    (concat
+     (xl-mbsync:config-string
+      :IMAPStore    (format "%s-remote" <account>)
+      :Account      <account>)
+     "\n\n"
+     (xl-mbsync:config-string
+      :MaildirStore (format "%s-local"         <account>)
+      :Subfolders   'Verbatim
+      :Path         (format "~/.mail/%s/"      <email>)
+      :Inbox        (format "~/.mail/%s/Inbox" <email>)))))
 #+end_src
 
 *** sync
@@ -10081,10 +10105,10 @@ multiplied by the number of.
 :END:
 
 #+begin_src emacs-lisp
-(defun dotfiles:mbsyncrc-sync-all (entry)
+(defun xl-mbsync:mbsyncrc-sync-all (entry)
   "Return the sync all string of the mbsync."
   (with-pass-fields! entry
-    (dotfiles:convert-to-string
+    (xl-mbsync:config-string
      :Channel   <account>
      :Master    (format ":%s-remote:" <account>)
      :Slave     (format ":%s-local:"  <account>)
@@ -10099,22 +10123,50 @@ multiplied by the number of.
 :END:
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:mbsyncrc-account-string (entry)
-  (alet (list (dotfiles:mbsyncrc-imap-account-setup entry)
-              (dotfiles:mbsyncrc-imap-store-setup entry)
+(defun xl-mbsync:mbsyncrc-account-string (entry)
+  (alet (list (xl-mbsync:mbsyncrc-imap-account-setup entry)
+              (xl-mbsync:mbsyncrc-imap-store-setup entry)
               (if (s-matches-p (rx "@gmail.com") entry)
-                  (dotfiles:mbsyncrc-sync-gmail entry)
-                (dotfiles:mbsyncrc-sync-all entry)))
+                  (xl-mbsync:mbsyncrc-sync-gmail entry)
+                (xl-mbsync:mbsyncrc-sync-all entry)))
     (s-join "\n\n" it)))
 #+end_src
 
-*** full config
+*** gmail account sync settings
 :PROPERTIES:
-:ID:       a040b172-63f1-42fb-b35c-22a6aba5dd5a
+:ID:       39b9d98f-223e-46f4-a136-a79292d96617
 :END:
 
-#+begin_src conf :noweb yes
-<<eval ()
+#+begin_src emacs-lisp :tangle no
+(defun xl-mbsync:mbsyncrc-sync-gmail-section (name mailbox)
+  (xl-mbsync:config-string
+   :Channel (format "gmail-%s" name)
+   :Master (format ":gmail-remote:\"[Gmail]/%s\"" mailbox)
+   :Slave (format ":gmail-local:%s" name)
+   :Create 'Slave
+   :SyncState '*))
+
+(defun xl-mbsync:mbsyncrc-sync-gmail (entry)
+  (let* ((mailboxes '("All Mail" "Drafts" "Sent Mail" "Spam" "Starred" "Trash"))
+         (names (--map (downcase (-first-item (s-split-words it))) mailboxes)))
+    (alet (seq-map (-lambda ((n m)) (xl-mbsync:mbsyncrc-sync-gmail-section n m))
+                   (seq-mapn #'list names mailboxes))
+      (concat (s-join "\n\n" it)
+              "\n\n"
+              (s-join "\n" (cons "Group gmail" (--map (format "Channel gmail-%s" it) names)))))))
+#+end_src
+
+*** generate everything
+:PROPERTIES:
+:ID:       05e5b77b-20da-4185-8870-810aafb79c5d
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-mbsync:mbsync-contents ()
+  "Return the contents of the mbsync file."
+  (loopy ((list entry (xl-mbsync:email-accounts))
+	  (collect contents (xl-mbsync:mbsyncrc-account-string entry)))
+	 (return (s-join "\n" contents))))
 #+end_src
 
 ** msmtprc
@@ -10134,10 +10186,10 @@ here to process.
 For each email account I have will need the information.
 
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:msmtprc-account-string (entry)
+(defun xl-msmtp:account-block (entry)
   "Return account string for msmtprc."
   (with-pass-fields! entry
-    (dotfiles:config-string
+    (xl-msmtp:config-string
      :account      <account>
      :host         <out-host>
      :from         <email>
@@ -10151,29 +10203,52 @@ For each email account I have will need the information.
 :ID:       82d845cb-685b-4f64-a194-99e840561c98
 :END:
 
-#+name: msmtprc-accounts
 #+begin_src emacs-lisp :tangle no
-(defun dotfiles:msmtprc-accounts ()
-  (thread-last (dotfiles:email-accounts)
-    (seq-map #'dotfiles:msmtprc-account-string)
+(defun xl-msmtp:msmtprc-accounts ()
+  (thread-last (xl-msmtp:email-accounts)
+    (seq-map #'xl-msmtp:msmtprc-account-string)
     (s-join "\n\n")))
 #+end_src
 
-*** main
+*** header
 :PROPERTIES:
-:ID:       537fb697-f84c-46d7-80ac-0745ec3bddb1
-:HEADER-ARGS: :tangle ~/.config/msmtp/msmtprc
+:ID:       f67fe959-9db1-47b5-9faf-5ebfe98bf438
 :END:
 
-#+begin_src conf :noweb yes
-defaults
-auth on
-tls on
-tls_trust_file /etc/ssl/certs/ca-certificates.crt
-logfile ~/.msmtp.log
+#+begin_src emacs-lisp
+(defun xl-msmtp:header ()
+  "Header of the `msmtprc' file."
+  (concat
+   "defaults"
+   "\n\n"
+   (dotfiles:config-string
+    :auth           'on
+    :tls            'on
+    :tls_trust_file '/etc/ssl/certs/ca-certificates.crt
+    :logfile        '~/.msmtp.log)))
+#+end_src
 
-<<eval((dotfiles:msmtprc-accounts))>>
+*** default
+:PROPERTIES:
+:ID:       a97c4dd0-07e3-4368-b116-5cc567c437fa
+:END:
 
-account default : luishp
+#+begin_src emacs-lisp
+(defun xl-msmtp:account-default ()
+  "Return account default."
+  (format "account : default luishp"))
+#+end_src
+
+*** main function
+:PROPERTIES:
+:ID:       9a242a5e-afdb-418f-bd8f-eaacb64363f1
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-msmtp:generate-msmtprc (&optional path)
+  "Generate the msmtprc file."
+  (xl-msmtp:header)
+  (xl-msmtp:accounts)
+  (xl-msmtp:default-account))
 #+end_src
 
