@@ -1,39 +1,37 @@
-* Tale of Contents                                                         :TOC:
+* Table of Contents                                                        :TOC:
 :PROPERTIES:
 :ID:       55f0c499-f347-49eb-b243-ad7afd705465
 :END:
 
-- [[#about][About]]
-  - [[#goal][goal]]
+- [[#about][about]]
+  - [[#goals][goals]]
   - [[#highlights][highlights]]
   - [[#why-set-up-my-dot-files-this-way][why set up my dot files this way?]]
-  - [[#how-its-tangled][how it's tangled]]
+  - [[#how-are-dotfiles-generated][how are dotfiles generated?]]
   - [[#why-emacs-as-an-os][why Emacs as an OS]]
+- [[#bootstrap][bootstrap]]
 - [[#helpers][helpers]]
   - [[#evaluation-nowebs][evaluation nowebs]]
-- [[#xinit][xinit]]
+- [[#xinitrc][xinitrc]]
   - [[#first-remap-caps-lock-with-escape][first remap caps lock with escape]]
   - [[#the-load-emacs][the load emacs]]
-- [[#guix][guix]]
+- [[#configscm][config.scm]]
   - [[#starting-org-on-guix][starting org on guix]]
-  - [[#configscm][config.scm]]
+  - [[#configscm-1][config.scm]]
 - [[#gpg-agent][gpg-agent]]
 - [[#git-config][git config]]
-- [[#nyxt-browser][nyxt browser]]
-  - [[#setup-vim-mode][setup vim mode]]
+- [[#nyxt][nyxt]]
 - [[#stumpwm][stumpwm]]
 - [[#emacs][emacs]]
   - [[#early-init][early-init]]
   - [[#initel][init.el]]
 - [[#email][email]]
-  - [[#noweb-helpers][noweb helpers]]
-  - [[#convert-to-string][convert to string]]
-  - [[#email-accounts][email accounts]]
-  - [[#dotfile-string][dotfile string]]
+  - [[#some-notes-on-the-config][some notes on the config]]
+  - [[#helpers-1][helpers]]
   - [[#mbsync][mbsync]]
   - [[#msmtprc][msmtprc]]
 
-* About
+* about
 :PROPERTIES:
 :ID:       35454181-33bc-412e-a4a6-4268909d26d7
 :END:
@@ -42,7 +40,12 @@ This single org file contains the contents of all my dotfiles and
 configurations. Upon [[https://orgmode.org/manual/Extracting-Source-Code.html][tangling]] it will dynamically generate all of them in the
 correct locations.
 
-** goal
+** goals
+:PROPERTIES:
+:ID:       a5988006-d29d-4718-bd1f-189ddd9702f2
+:END:
+
+*** goal
 :PROPERTIES:
 :ID:       5700ee45-a841-4223-9548-b3810e57f07d
 :END:
@@ -52,6 +55,15 @@ setup. I want to be able to generate my complete workspace with just two things,
 a usb containing my private gpg key and my dotfiles stored on github. By the
 way, by completely I mean /completely/--I should be able to not only reproduce
 the packages I have but their versions as well.
+
+*** help others
+:PROPERTIES:
+:ID:       922c122d-990c-4144-9e00-ee58b777e2f2
+:END:
+
+I've spent *alot* of time on Emacs. I feel an obligation to society. Not to get
+to personal here, but I feel I am very fortunate to have learned so many
+things. And I feel that I have not contributed enough to my community.
 
 ** highlights
 :PROPERTIES:
@@ -68,6 +80,11 @@ the packages I have but their versions as well.
 :ID:       82ced1c3-f08e-474a-9aa6-967404ca01f6
 :END:
 
+**** interesting custom macros
+:PROPERTIES:
+:ID:       12caf923-a9f1-4536-85be-3c81e93fa3b4
+:END:
+
 **** a plethora of configured packages
 :PROPERTIES:
 :ID:       a626c6c1-daa8-43eb-a553-6e3983ad8748
@@ -78,10 +95,45 @@ the packages I have but their versions as well.
 :ID:       9b7b1fe0-50c3-4835-ba98-059ccf50c54b
 :END:
 
+Because I'm using an org configuration.
+
+**** introspectable
+:PROPERTIES:
+:ID:       914b6bff-cbde-425b-9730-7b06ba9fa843
+:END:
+
+Naming and log file.
+
+**** fast candidate selection featuring selectrum
+:PROPERTIES:
+:ID:       e3544a41-90fe-49e8-8afe-ee51d93fe9fb
+:END:
+
 *** guix =config.scm= configuration
 :PROPERTIES:
 :ID:       fdfd18ef-db82-422f-83fa-9f245238513a
 :END:
+
+=guix=.
+
+*** org-mode dotfile setup
+:PROPERTIES:
+:ID:       de124433-d177-4e76-aa93-5b0f3a5530c4
+:END:
+
+Org dotfile setups are extremely uncommon even among Emacs users. It is also
+uncommon--even among Emacs users--to completely center your OS around Emacs,
+using it even as your window manager. This configuration does both these
+things. I avoid using shell commands like the plauge, not because they're too
+hard or I can't learn them but because elisp is just much more expressive.
+
+*** clean code
+:PROPERTIES:
+:ID:       4750db36-7d1d-41e7-87d6-99a227e4ab01
+:END:
+
+I want to make the point with my config that it is possible to program with
+small functions.
 
 ** why set up my dot files this way?
 :PROPERTIES:
@@ -126,14 +178,22 @@ emphasis to certain things could be useful. Comments can't do any of this, but
 :ID:       f77797b8-172e-4482-87a4-5ede829b3b13
 :END:
 
-When you initialize dotfiles on different machine settings can be different.
+When you initialize dotfiles on different machine settings can be
+different. Using elisp to generate my dotfiles allows me to have dotfiles which
+dynamically change depending on the situation.
 
-** how it's tangled
+** how are dotfiles generated?
 :PROPERTIES:
 :ID:       e208e820-cb37-40f5-912e-bad4abf1fd5a
 :END:
 
 I haven't worked out yet how this is going to work. :confounded:
+
+Some things to think about. Obviously, Emacs is the centerpiece of my
+dotfiles. It's essentially an interface with which I interact with an underlying
+OS.
+
+One thing is I don't want to tangle everything all at once.
 
 ** why Emacs as an OS
 :PROPERTIES:
@@ -145,6 +205,31 @@ not only compared to the population as a whole but also even relative to
 programmers and linux users. The desire of people like me to use Emacs as an OS
 belies a desire to have a truly programmable operating system written in
 primarily one language that is rich and turing complete--and is a lisp.
+
+* bootstrap
+:PROPERTIES:
+:ID:       7b8fc24d-7e1e-4e11-bb9d-925867631993
+:END:
+
+The purpose of this headline is to contain the code I need for bootstraping
+Emacs.
+
+I'm not doing a typical tangle for a couple of reasons. One is that I want the
+Emacs subtree to be tangled first so that I can run Emacs before tangling
+anything else. The reason is I use some libraries not built-in to Emacs such as
+[[https://github.com/okamsn/loopy][loopy]] and [[https://github.com/magnars/dash.el][dash]]. Additionally, I want to have some choice between
+which dotfiles are tangled/generated and which are not. For sure I'm going to
+want Emacs tangled no matter what but I might not want to tangle other dotfiles.
+On a computer with Windows or Mac OS, for example, there's no point in tangling
+the =.xinitrc= because I can't use Xorg.
+
+Org does not have an =org-babel-tangle-subtree=, but it's possible to do
+something [[https://lists.gnu.org/r/emacs-orgmode/2011-01/msg01173.html][as mentioned here]].
+
+#+begin_src emacs-lisp
+(with-temp-buffer
+  (insert-file-contents (expand-file-name "~/README.org")))
+#+end_src
 
 * helpers
 :PROPERTIES:
@@ -199,7 +284,7 @@ Evaluating source blocks whose id.
 (require 'org-id)
 #+end_src
 
-* xinit
+* xinitrc
 :PROPERTIES:
 :ID:       cf328230-ca3a-48a2-8dda-b4e9e4ff1e4c
 :HEADER-ARGS: :tangle ~/.xinitrc
@@ -232,10 +317,10 @@ easily switch between emacs, stumpwm or any other window manager of my
 choosing. I don't use the default display manager provied with =guix= because.
 
 #+begin_src sh
-exec emacs
+exec emacs --daemon -c
 #+end_src
 
-* guix
+* config.scm
 :PROPERTIES:
 :ID:       3bc3c0b2-a45b-4ce1-86c7-f4d88a8e69bd
 :END:
@@ -436,21 +521,13 @@ and email and optionally your public gpg key.
 	program = <<eval((executable-find "gpg"))>>
 #+end_src
 
-* nyxt browser
+* nyxt
 :PROPERTIES:
 :ID:       069672ed-29ad-4973-b2cd-1eb275d7e6d4
 :HEADER-ARGS: :tangle ~/.config/nyxt/init.lisp
 :END:
 
 The [[https://nyxt.atlas.engineer/][nyxt browser]] is a web browser written entirely in common lisp.
-
-** setup vim mode
-:PROPERTIES:
-:ID:       f505e5ac-cb88-4e50-8cbd-e9a5b5cfddbc
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
 
 * stumpwm
 :PROPERTIES:
@@ -2842,7 +2919,7 @@ not to have to specify the advice keyword.
 
 ***** prefix bindings
 :PROPERTIES:
-:ID: b0b5b51c-155e-46fc-a80a-0d45a32440ba
+:ID:       d6535e9d-f55c-4281-a734-11917f9b5cdd
 :END:
 
 A popular strategy to mitigate the mental load of remembering many keybindings
@@ -4047,10 +4124,11 @@ for my needs.
 :END:
 
 Selectrum is another completion framework. It distinguishes itself from the rest
-by striving to work with the built-in emacs [[helpfn:completing-read][completing-read]] instead of
-replacing it like [[https://github.com/emacs-helm/helm][helm]] and [[https://github.com/emacs-helm/helm][ivy]] do.
+by striving to work with the built-in emacs [[helpfn:completing-read][completing-read]] instead of replacing
+it like [[https://github.com/emacs-helm/helm][helm]] and [[https://github.com/emacs-helm/helm][ivy]] do. It promises to work with the existing Emacs framework
+instead of replacing it as does Ivy and Helm. :recycle:
 
-****** init
+****** selectrum
 :PROPERTIES:
 :ID:       6e670980-7794-4505-a285-184416a5b377
 :END:
@@ -4062,8 +4140,9 @@ Because helm and ivy replace the existing framework, it means that whenever you
 want a command be capable of using all of helm or ivy's features, you need to
 define it their way. Otherwise, there's no guarantee their features will work at
 least any features besides the basic choosing of a single candidate. That's a
-big reason why there are [[][so many]] helm and ivy packages: many of those
-packages are just ivy and helm wrappers around existing commands.
+big reason why there are helm and ivy packages (there's 216 helm packages and 42
+ivy packages in [[helpfn:straight-use-package][straight-use-package]] completion): many of those packages are just ivy and
+helm wrappers around existing commands.
 
 #+begin_src emacs-lisp
 (use-package! selectrum
@@ -4081,16 +4160,7 @@ packages are just ivy and helm wrappers around existing commands.
     "C-j" #'selectrum-next-candidate
     "C-;" #'selectrum-insert-current-candidate
     "C-l" #'selectrum/mark-candidate
-    [backtab] #'selectrum-previous-candidate)
-  ;; :xl-bind
-  ;; (:state (insert emacs) :map selectrum-minibuffer-map)
-  ;; ("TAB" #'selectrum-next-candidate)
-  ;; ("C-k" #'selectrum-previous-candidate)
-  ;; ("C-j" #'selectrum-next-candidate)
-  ;; ("C-;" #'selectrum-insert-current-candidate)
-  ;; ("C-l" #'selectrum/mark-candidate)
-  ;; ([backtab] #'selectrum-previous-candidate)
-  )
+    [backtab] #'selectrum-previous-candidate))
 #+end_src
 
 ****** selectrum-prescient
@@ -4162,6 +4232,66 @@ address this I create this function. It displays letters next to the candidates.
   "," #'selectrum:select-candidate-by-letter)
 #+end_src
 
+***** helm
+:PROPERTIES:
+:ID:       2da24557-b05d-475e-8565-6a24e23309c0
+:END:
+
+The reason I have helm installed is because (1) helm has some useful functions
+that are not yet implemented for other completion frameworks and (2) selectrum
+has a [[helpfn:selectrum-helm-mode][selectrum-helm-mode]] which it can use to "selectrumify" helm functions--at
+least to some extent (sometimes the default action doesn't work).
+
+It seems like I may be able to add default actions via an advice. :shrug-tone4:
+We'll see. Basically, the idea would be to take reuse the code of helm commands
+for presenting candidates and then make the action selection work via an advice
+and, of course, add multiple actions via [[id][embark]].
+
+Oh and in regards for using selectrum instead of helm: the main reason is simply
+that helm is noticably slower with its command filtering. :turtle:
+
+****** helm
+:PROPERTIES:
+:ID:       0ef7946e-629b-4a4f-8e47-7d8826d04e7e
+:END:
+
+If you're scrolling down a list of candidates, you might be suprised to
+find. One "gotcha" in helm is the [[helpvar:helm-candidate-number-limit][helm-candidate-number-limit]]. By default helm
+limits the amount of candidates it displays to increase performace.
+
+Selectrum has no problem handling a large amount of candidates, particularly if
+you additionally pause garbage collection for the duration of expensive
+functions as I do. It handles the 16,143 candidates in [[helpfn:helm-system-packages][helm-system-packages]] on
+my T400 instantaneously.
+
+#+begin_src emacs-lisp
+(use-package! helm
+  :set
+  (helm-candidate-number-limit . nil))
+#+end_src
+
+****** helm-system-packages
+:PROPERTIES:
+:ID:       3e6dd0e6-0632-454d-a496-d34ecd33b60f
+:END:
+
+#+begin_src emacs-lisp
+(use-package! helm-system-packages
+  :gc-pause helm-system-packages
+  :no-sort helm-system-packages)
+#+end_src
+
+****** swiper-helm
+:PROPERTIES:
+:ID:       21a5285c-0447-452d-a7ef-e146b6bd60f0
+:END:
+
+#+begin_src emacs-lisp
+(use-package! swiper-helm
+  :no-sort swiper-helm
+  :pause-gc swiper-helm)
+#+end_src
+
 ***** prescient
 :PROPERTIES:
 :ID:       4445c814-9899-4d54-affe-0cee38642690
@@ -4228,6 +4358,8 @@ all the completion frameworks.
 :PROPERTIES:
 :ID:       0ce9957b-8805-4b2b-b5cb-52dc425a3dee
 :END:
+
+Marginalia adds descriptions to various commands.
 
 #+begin_src emacs-lisp
 (use-package! marginalia)
@@ -4693,23 +4825,6 @@ I build my =mbsyncrc= and my =msmtprc= via tangling.
 
 #+begin_src emacs-lisp
 (use-package! pass)
-#+end_src
-
-***** with-pass-fields!
-:PROPERTIES:
-:ID:       e8f8b57d-91a7-4ae8-884d-3d8bc7484ed7
-:END:
-
-This macro lets me get all the fields and stores them into variables.
-
-#+begin_src emacs-lisp :tangle no
-(defmacro with-pass-fields! (entry &rest body)
-  (declare (indent defun))
-  (alet (loopy ((list symbol (xl-anaphoric-symbols body))
-		(expr true-symbol (xl-to-string (xl-anaphoric-true-symbol symbol)))
-		(expr field `(password-store-get-field ,entry ,true-symbol))
-		(collect (list symbol field))))
-    `(let ,it ,@body)))
 #+end_src
 
 ***** password-store
@@ -5403,15 +5518,8 @@ I don't want mu4e to handle indexing. I can do it myself.
   "Initialize mu4e."
   (interactive)
   (require 'password-store)
-  (let* ((XL-EMAIL-DIR (expand-file-name "~/.mail/"))
-	 (email-dirs (--map (concat XL-EMAIL-DIR it) (+pass-email-list))))
-    (when (or (not (-all-p #'f-exists-p email-dirs))
-              (-some-p #'f-empty-p email-dirs))
-      (message "creating directories that don't exist.")
-      (--each email-dirs (mkdir it t))
-      (shell-command (format "mu init -m %s" XL-EMAIL-DIR))
-      (message "Updating mail...")
-      (mu4e-update-mail-and-index t))))
+  (shell-command (format "mu init -m %s" XL-EMAIL-DIR))
+  (mu4e-update-mail-and-index t))
 #+end_src
 
 ******* mu4e headers
@@ -8262,8 +8370,8 @@ Org mode demands its own editing.
   "j" (list :def #'org/avy-goto-headline      :wk "jump to headline")
   "E" (list :def #'org-babel-execute-subtree  :wk "execute subtree")
   "d" (list :def #'org/dwim-edit-description  :wk "edit description")
-  "e" (list :def #'org/dwim-edit-source-block :wk "edit source block")
-  "," (list :def #'org/dwim-edit-source-block :wk "edit source block"))
+  "e" (list :def #'org/dwim-edit-src-code :wk "edit source block")
+  "," (list :def #'org/dwim-edit-src-code :wk "edit source block"))
 #+end_src
 
 ******* generic org bindings
@@ -8697,7 +8805,12 @@ diary/journal using =org-mode=.
   (org-journal-dir       . (concat org-directory "journal/")))
 #+end_src
 
-***** org-src
+***** org src
+:PROPERTIES:
+:ID:       3294bf69-c10f-4ab6-9448-3c40d902935f
+:END:
+
+****** org-src
 :PROPERTIES:
 :ID:       e00378a1-adcf-4e83-8533-b6b442b5f362
 :END:
