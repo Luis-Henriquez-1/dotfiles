@@ -4899,6 +4899,20 @@ I build my =mbsyncrc= and my =msmtprc= via tangling.
 (use-package! password-store)
 #+end_src
 
+***** email accounts
+:PROPERTIES:
+:ID:       3a3c6778-dc5d-45cf-87d1-1c6aacbbae46
+:END:
+
+#+begin_src emacs-lisp
+(defun password-store:email-accounts ()
+  "Return a list of email accounts."
+  (->> (expand-file-name "email/" (password-store-dir))
+       (directory-files)
+       (cddr)
+       (mapcar (fn! (s-chop-suffix ".gpg" <>)))))
+#+end_src
+
 **** nameless
 :PROPERTIES:
 :ID:       695aeb73-89d3-47f8-bee8-2721111dd2bf
