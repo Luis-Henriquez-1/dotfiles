@@ -9,7 +9,6 @@
   - [[#why-set-up-my-dot-files-this-way][why set up my dot files this way?]]
   - [[#a-word-on-some-org-links][a word on some org links]]
   - [[#why-emacs-as-an-os][why Emacs as an OS]]
-  - [[#note-on-naming-and-libraries][note on naming and libraries]]
 - [[#bootstrap][bootstrap]]
   - [[#helpers][helpers]]
   - [[#simple-generic-tangling][simple generic tangling]]
@@ -2251,6 +2250,75 @@ Accept the same arguments as `message'."
 (use-package! mmt)
 #+end_src
 
+***** defhookvar!
+:PROPERTIES:
+:ID:       98630924-d2c3-4c86-b326-381b93c82ecd
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defhookvar! (name where value docstring)
+  "Create a hook variable after."
+  ()
+  (xl-advice-add ))
+#+end_src
+
+***** after-load-hook
+:PROPERTIES:
+:ID:       a0c6da0c-aca4-4b99-a785-02953c1f758e
+:END:
+
+In Emacs, the way you defer evaluation of a form until something is loaded is by
+using [[helpfn:eval-after-load][eval-after-load]]. I use the [[id][after!]] macro I wrote which is just a wrapper
+around =eval-after-load=. What I don't like about the =after!= macro is that it
+stores the form. So what I decided to do is for each package I use, create a
+=package:after-load-hook=. This hook will run. But what it will allow me to do
+is have better control over forms I want evaluated after the loading of a
+package. For instance, these forms will named hooks now. And, they'll be in a
+variable.
+
+#+begin_src emacs-lisp
+(defun xl-create-after-load-hook (package)
+  "Create an after load hook for package."
+  (let ((name (xl-symbol-intern package ':after-load-hook))
+	())
+    `(unless (boundp ',name)
+       (defvar ,name nil
+	 ,(format "Hook run after %s is loaded." package))
+
+       (if (featurep package)
+	   nil
+	 (eval-after-load package
+	   '(run-hooks ',package:after-load-hook))))))
+#+end_src
+
+***** anonymous functions
+:PROPERTIES:
+:ID:       2baa3c3a-45f6-4eb1-94d8-c2ef9ff3bd23
+:END:
+
+***** fn!
+:PROPERTIES:
+:ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
+:END:
+
+This is a macro for writing anaphoric lambdas. It is based on [[][fn!]], the
+main difference being that in a few special cases you can specify a named
+anaphoric variable. Also, I don't support the alternate =fn:= syntax.
+
+#+begin_src emacs-lisp
+(defmacro fn! (&rest body)
+  (let* ((argsym (make-symbol "ARGS"))
+	 (symbolic-placeholders (-uniq (xl-anaphoric-symbols body)))
+	 (number-fn (lambda (it) (s-matches-p "<[[:digit:]]>" (symbol-name it))))
+	 (numbers-p (-all-p number-fn symbolic-placeholders)))
+    (alet (if numbers-p
+	      (-sort (lambda (it other) (string-lessp (symbol-name it) (symbol-name other)))
+		     symbolic-placeholders)
+	    symbolic-placeholders)
+      `(lambda (&rest ,argsym)
+	 (-let [,it ,argsym] ,@body)))))
+#+end_src
+
 ***** hooks
 :PROPERTIES:
 :ID:       a9fb6a01-ded5-405c-83ba-c401dbc06400
@@ -2892,8 +2960,8 @@ Instead, arguments are accessed via anaphoric variables.
            (->> (alet (help-function-arglist #',target t)
 		  ;; kind of a hack...
 		  (if (eq t it) nil it))
-		(--remove (s-starts-with-p "@" (symbol-name it)))
-		(--map (intern (format "<%s>" (symbol-name it)))))
+		(-remove (fn! (s-starts-with-p "@" (symbol-name <>))))
+		(-map (fn! (intern (format "<%s>" (symbol-name <>))))))
 	   <args>
 	 ,@body))))
 #+end_src
@@ -4405,22 +4473,7 @@ As I learn more about embark I will improve this documentation over time.
       (setq-local selectrum-num-candidates-displayed 0))))
 #+end_src
 
-****** which-key integration
-:PROPERTIES:
-:ID:       c70ea165-50cd-418c-a74d-696dea915714
-:END:
-
-I haven't seen this working yet.
-
-#+begin_src emacs-lisp
-(setq embark-action-indicator
-      (lambda (map)
-        (which-key--show-keymap "Embark" map nil nil 'no-paging)
-        #'which-key--hide-popup-ignore-command)
-      embark-become-indicator embark-action-indicator)
-#+end_src
-
-******* company
+**** company
 :PROPERTIES:
 :ID:       5c0ed97e-da66-42ab-a033-381ac9dd8972
 :END:
@@ -4732,51 +4785,6 @@ MODE if one does not exist."
 
 *** Utility
 
-**** dotfiles
-:PROPERTIES:
-:ID:       2b54ccda-ae15-418e-8850-ce374ddb2137
-:END:
-
-The point of this headline is to provide utility functions to generate my
-dotfiles using this README. I want to have the choice of generating all my
-dotfiles, one of my dotfiles, or a praticular number of dotfiles.
-
-***** dotfile alist
-:PROPERTIES:
-:ID:       5d5d85e8-b1d8-4618-8d59-b9792d9bee18
-:END:
-
-#+begin_src emacs-lisp
-(defvar xl-dotfile-list nil
-  "An list of (dotfile-name path generate-fn) and where they should go.")
-#+end_src
-
-***** generate dotfile function
-:PROPERTIES:
-:ID:       080f0073-cd62-4767-b327-72e137f1d8b3
-:END:
-
-#+begin_src emacs-lisp
-(defun xl/generate-dotfile-default ()
-  "Default function for generating a dotfile."
-  (interactive)
-  (require 'org)
-  (with-current-buffer (get-file-buffer)
-    ()))
-#+end_src
-
-***** generate all dotfiles
-:PROPERTIES:
-:ID:       026489ae-b6d4-41d1-b45f-4f1376418691
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-generate-dotfiles ()
-  "Generate dotfiles."
-  (loopy ((list (headline path generate-fn) xl-dotfile-alist)
-	  (xl-get-))))
-#+end_src
-
 **** elfeed
 :PROPERTIES:
 :ID:       45a52b98-9eba-45ab-9269-e8f930499e1c
@@ -5086,10 +5094,10 @@ gpg passphrase via emacs.
     (let ((wconf (current-window-configuration)))
       (pdf-tools-install)
       (message "Building epdfinfo, this will take a moment...")
-      (--each (buffer-list)
-        (with-current-buffer it
-          (when (eq major-mode 'pdf-view-mode)
-            (fundamental-mode))))
+      (-each (buffer-list)
+        (fn! (with-current-buffer <buffer>
+	       (when (eq major-mode 'pdf-view-mode)
+		 (fundamental-mode)))))
       (while compilation-in-progress
         ;; Block until `pdf-tools-install' is done
         (redisplay)
@@ -5864,15 +5872,16 @@ address later.
   (evil-magit-state . 'normal))
 #+end_src
 
-
-***** git-gutter
+***** git-gutter+
 :PROPERTIES:
 :ID: 96f0c876-533c-4b1a-a4c1-7b6c9bf58c03
 :END:
 
+=git-gutter= indicates which parts of a file has been modified.
+
 #+begin_src emacs-lisp
-(use-package! git-gutter
-  :commands git-gutter-mode)
+(use-package! git-gutter+)
+(set! git-gutter+-git-executable (f-full "~/.yadm-project/yadm"))
 #+end_src
 
 **** persistence
@@ -5966,10 +5975,10 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
   :idle-require custom
   :hook emacs-startup-hook
   :set
-  (savehist-file . (concat XL-DATA-DIR "savehist"))
-  (savehist-additional-variables . '(kill-ring search-ring regexp-search-ring))
   (savehist-save-minibuffer-history . t)
-  (savehist-autosave-interval . nil))
+  (savehist-additional-variables    . '(kill-ring search-ring regexp-search-ring))
+  (savehist-autosave-interval       . nil)
+  (savehist-file                    . (xl-data-dir "savehist")))
 #+end_src
 
 ****** unpropertize kill ring
@@ -5990,8 +5999,411 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 :END:
 
 #+begin_src emacs-lisp
-(use-package! shrink-path
-  :commands shrink-path)
+(use-package! shrink-path :commands shrink-path)
+#+end_src
+
+**** email
+:PROPERTIES:
+:ID:       1586e613-85fe-40f5-8e77-9a4742e4c859
+:END:
+
+***** email directory
+:PROPERTIES:
+:ID:       86fc564e-76f3-4023-8228-f54fd5b3d52c
+:END:
+
+#+begin_src emacs-lisp
+(defconst xl-email-dir (expand-file-name "~/.mail/"))
+#+end_src
+
+***** mu4e
+:PROPERTIES:
+:ID:       905ba1b5-bafc-4855-b772-fa750c294327
+:END:
+
+=mu4e= is the most popular Emacs email client--and for good reason. It's fast,
+tag-based, and has great documentation. One annoying quirk for me is that unlike
+all other Emacs packages it does not come uncoupled from the external program it
+uses. What this means is that you need to tell Emacs where the mu4e =.el= files
+are :pouting_cat:. It also means it's more difficult to incorporate it with the
+contribution workflow that [[][straight.el]] encourages. I haven't figured out
+how to automate this across multiple OSes.
+
+This is annoying, but minor. =mu4e= itself is a great package.
+
+****** load-path
+:PROPERTIES:
+:ID:       8b4ab179-11c6-429c-9c8d-9296dfb215dc
+:END:
+
+#+begin_src emacs-lisp
+(alet (cl-find-if (fn! (string-match-p (rx (1+ alnum) "-" "mu") <path>))
+		  (cddr (directory-files "/gnu/store/")))
+  (add-to-list 'load-path it))
+#+end_src
+
+****** maildir
+:PROPERTIES:
+:ID:       49debca7-6ae7-40e4-9bd0-73c3bba40539
+:END:
+
+#+begin_src emacs-lisp
+(defalias 'mu4e:mail-dir 'xl-mail-dir)
+#+end_src
+
+****** list email accounts
+:PROPERTIES:
+:ID:       0b7dcf44-b245-4ca8-9407-3d3c043e1d96
+:END:
+
+I'm storing all my email account passwords using =pass=. I can use the encrypted
+files in my pass directory to determine what my email accounts are and, in turn,
+how to automate this.
+
+#+begin_src emacs-lisp
+(defalias 'mu4e:mail-acounts 'password-store:email-accounts)
+#+end_src
+
+****** add mu4e to the load-path
+:PROPERTIES:
+:ID:       9dccb5e4-5d8e-4da6-99ae-9f8ed3bd8a5d
+:END:
+
+#+begin_src emacs-lisp
+(use-package! mu4e
+  :ensure nil
+  ;; :load-path (-find (fn! (s-match)))
+  )
+#+end_src
+
+****** mu4e-vars
+:PROPERTIES:
+:ID:       25cf40b9-901b-40f4-800f-3fa577ee22c3
+:END:
+
+=mu4e-var= contains many miscellaneous variables. Some highlights.
+
+#+begin_src emacs-lisp
+(use-package! mu4e-vars
+  :ensure nil
+  :set
+  (mu4e-completing-read-function . #'completing-read)
+  (mu4e-get-mail-command         . "mbsync -a")
+  (mu4e-update-interval          . nil)
+  (mu4e-context-policy           . 'pick-first)
+  (mu4e-use-fancy-chars          . (display-graphic-p))
+  (mu4e-org-support              . t)
+  (mu4e-index-cleanup            . t)
+  (mu4e-split-view               . 'vertical)
+  (mu4e-index-lazy-check         . nil)
+  (mu4e-hide-index-messages      . t)
+  (mu4e-confirm-quit             . nil))
+#+end_src
+
+******* mu4e
+:PROPERTIES:
+:ID: 565eff90-8626-4ec8-a576-4ff3dfb307ae
+:END:
+
+#+begin_src emacs-lisp
+(setq mu4e-html2text-command
+      (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text))
+#+end_src
+
+****** mu4e-views
+:PROPERTIES:
+:ID:       5ebeddaa-94ae-4acc-9659-5aae8cb4a2f0
+:END:
+
+#+begin_src emacs-lisp
+(use-package! mu4e-view
+  :set
+  (mu4e-view-show-images     . t)
+  (mu4e-view-image-max-width . 800)
+  (mu4e-view-show-addresses  . t)
+  (mu4e-date-format          . "%c"))
+#+end_src
+
+****** mu4e-compose
+:PROPERTIES:
+:ID:       cd07286d-2a94-4953-99bf-8e06b3edcf15
+:END:
+
+#+begin_src emacs-lisp
+(use-package! mu4e-compose
+  :set
+  (mu4e-compose-context-policy . 'ask-if-none))
+#+end_src
+
+****** mu4e-drafts
+:PROPERTIES:
+:ID:       5de3eca7-968b-4228-a1d9-ca872f18f58b
+:END:
+
+#+begin_src emacs-lisp
+(use-package! mu4e-drafts
+  :set
+  (mu4e-compose-signature-auto-include . t)
+  (mu4e-compose-format-flowed          . t))
+#+end_src
+
+****** mu4e-headers
+:PROPERTIES:
+:ID:       8bc93633-f3a0-494d-ae61-c05f6490cd87
+:END:
+
+These are custom icons used to spice up the =mu4e= display.
+
+#+begin_src emacs-lisp
+(use-package! mu4e-headers
+  :ensure nil
+  :set
+  (mu4e-headers-auto-update    . t)
+  (mu4e-headers-draft-mark     . (cons "D" (all-the-icons-faicon "pencil")))
+  (mu4e-headers-flagged-mark   . (cons "F" (all-the-icons-faicon "flag")))
+  (mu4e-headers-new-mark       . (cons "N" (all-the-icons-material "fiber_new")))
+  (mu4e-headers-passed-mark    . (cons "P" (all-the-icons-faicon "arrow-right")))
+  (mu4e-headers-seen-mark      . (cons "S" (all-the-icons-faicon "eye")))
+  (mu4e-headers-attach-mark    . (cons "a" (all-the-icons-material "attach_file")))
+  (mu4e-headers-replied-mark   . (cons "R" (all-the-icons-faicon "reply")))
+  (mu4e-headers-unread-mark    . (cons "u" (all-the-icons-faicon "eye-slash")))
+  (mu4e-headers-encrypted-mark . (cons "x" (all-the-icons-octicon "lock")))
+  (mu4e-headers-signed-mark    . (cons "s" (all-the-icons-faicon "certificate")))
+  (mu4e-headers-trash-mark     . (cons "T" (all-the-icons-faicon "trash"))))
+#+end_src
+
+****** mu4e-org
+:PROPERTIES:
+:ID:       eaa1577b-bcb9-4f6e-9927-8c6d8042dda2
+:END:
+
+Mu4e's org integration lets you write emails in org mode and convert it to html
+before sending--very interesting indeed :grinning:. I have yet to explore this feature but
+it is definitely on my list of things to try out.
+
+#+begin_src emacs-lisp
+(use-package! mu4e-org
+  :ensure nil
+  :hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode)
+  :set
+  (mu4e-org-link-query-in-headers-mode . nil)
+  (mu4e-org-convert-to-html            . t))
+#+end_src
+
+******* hook
+:PROPERTIES:
+:ID:       fcdbaa17-20c6-4322-baed-27df5a0ad9a2
+:END:
+
+Only render to html once. If the first send fails for whatever reason,
+org-mu4e would do so each time you try again.
+
+#+begin_src emacs-lisp
+(defhook! org-mu4e-render-html-only-once (message-send-hook)
+  (setq-local org-mu4e-convert-to-html nil))
+#+end_src
+
+****** initializing mu4e
+:PROPERTIES:
+:ID:       93cffd11-a812-4cda-b7dd-a06f70367afe
+:END:
+
+This headline attempts to automate the initialization of mu4e. The goal is for
+me to do as little as possible by (by which I mean nothing :joy:) to get a
+working mu4e setup. In other words, after I initialize my dotfiles and install
+all my system packages, I want mu4e to /just work/. There should be no prompts
+asking me to run anything or do anything at all.
+
+The idea is to do preliminary things before the main entry point--the function
+[[helpfn:mu4e][mu4e]]--is called.
+
+******* mu4e database location
+:PROPERTIES:
+:ID:       fe8f10c1-3035-4a97-9657-98236f50d0a8
+:END:
+
+This is the place where the mu4e database is stored. The existence of this
+database is used to determine whether we'll run =mu init= or not.
+
+#+begin_src emacs-lisp
+(defvar mu4e:mu-database-path (expand-file-name "~/.cache/mu/xapian")
+  "Path where mu database should go.")
+#+end_src
+
+******* init mu4e database
+:PROPERTIES:
+:ID:       4d107050-db05-4d7e-ae44-4bf356a44fd0
+:END:
+
+The first time you run =mu= it needs to [initialize it's database]. This is done
+with the command =mu init --maildir=~/Maildir=.
+
+#+begin_src emacs-lisp
+(defadvice! init-database-maybe (:before mu4e)
+  "Initialize the mu4e database if it does not exist."
+  (unless (file-exists-p mu4e:mu-database-path)
+    (apply #'call-process
+	   (append (list "mu" nil nil nil)
+		   (list (format "--maildir=%s" (mu4e:mail-dir)))
+		   (mapcar (fn! (format "--my-address=%s" <account>))
+			   (mu4e:mail-accounts))))))
+#+end_src
+
+******* ensuring email directories
+:PROPERTIES:
+:ID:       704b7049-fac5-4fa7-b710-1bbfe50cea5f
+:END:
+
+Make sure mail directories exist. =mbsync= will fail if they don't.
+
+#+begin_src emacs-lisp
+(defadvice! ensure-mail-dirs (:before mu4e)
+  "Create mail directories if they don't exist."
+  (mapc (fn! (mkdir <dir> t))
+	(mapcar #'mu4e:mail-dir (mu4e:mail-accounts))))
+#+end_src
+
+******* alist of default
+:PROPERTIES:
+:ID:       db39c795-33f0-4a3c-a5a4-06f2b873c254
+:END:
+
+#+begin_src emacs-lisp
+(defvar mu4e-context:default-vars
+  `((mu4e-sent-folder      . ,(+mu4e-guess-folder base-dir "sent"))
+    (mu4e-drafts-folder    . ,(+mu4e-guess-folder base-dir "draft"))
+    (mu4e-trash-folder     . ,(+mu4e-guess-folder base-dir "trash" "delete" "junk"))
+    (user-email-address    . ,email)
+    (smtpmail-smtp-server  . ,out-host)
+    (smtpmail-smtp-user    . ,base-dir)
+    (smtpmail-smtp-service . ,out-port))
+  "Return an alist.")
+#+end_src
+
+******* contexts
+:PROPERTIES:
+:ID:       0e580010-d5b2-4708-a7dc-c586908409b5
+:END:
+
+[[info:mu4e#What are contexts][Contexts]]. This headline attempts to automate context creation. Context are
+probably the hardest part of setting up =mu4e= for elisp. [[https://jherrlin.github.io/posts/emacs-mu4e/][this article]]. If you
+don't make contexts, =mu4e= will be confused and think that.
+
+******** default enter and exit
+:PROPERTIES:
+:ID:       f2e2148b-dcab-4503-a1b1-75e48e35018f
+:END:
+
+Contexts provide the ability to specify an enter and exist function for each
+context. Right now I haven't had any special idea in mind for what the enter and
+leave function =mu4e= provides should do switching to a new context. So for now
+all I'll do is log the entering/leaving of a context for debugging purposes.
+
+#+begin_src emacs-lisp
+(defun mu4e-context:default-switch-fn (mail-address &optional leave)
+  "Return a function that enters the context of MAIL-ADDRESS."
+  (let* ((to (if leave 'leave 'enter))
+	 (name (xl-symbol-intern 'mu4e-context: mail-address '- to '-func))
+	 (message (format "%s %s context." to mail-address))
+	 (fn `(lambda () (xl-log ,message))))
+    (fset name fn)
+    name))
+#+end_src
+
+******** default match fn
+:PROPERTIES:
+:ID:       41ddf901-0ae9-4b00-bc06-b1b7b49ec8f2
+:END:
+
+The match fn take a =message= object. This is for dynamically setting the
+context based on what message you're dealing with. Right now, I don't have any
+special rules. The rule that I set basically uses the.
+
+#+begin_src emacs-lisp
+(defun mu4e-context:default-match-func (mail-address)
+  "Return a default matcher for MAIL-ADDRESS."
+  (fset (xl-symbol-intern 'mu4e-context: mail-address '-match-func)
+	`(lambda (msg)
+	   (when msg
+	     (-any-p (fn! (mu4e-message-contact-field-matches msg <field> ,mail-address))
+		     (list :to :from :cc :bcc))))))
+#+end_src
+
+******** default vars
+:PROPERTIES:
+:ID:       d8892b2c-7056-4d92-819b-8cb4d8c2eeb1
+:END:
+
+These are the default.
+
+#+begin_src emacs-lisp
+(defun mu4e-context:default-vars (mail-address)
+  "Return default variables for MAIL-ADDRESS."
+  (loopy ((list (key . fn) mu4e-context:default-var-alist)
+	  (expr value (funcall fn mail-address))
+	  (collect (cons key value)))))
+#+end_src
+
+******** get default values
+:PROPERTIES:
+:ID:       e52c3820-6ee3-4959-87fa-acf60a7ed0df
+:END:
+
+#+begin_src emacs-lisp
+(defun mu4e-context:default-values ()
+  "Return a list of default values for args."
+  (loopy ((list key '(:enter-func :leave-func :match-fn :vars))
+	  (expr keyname (xl-keyword-name key))
+	  (expr fn (xl-symbol-intern 'mu4e-context: keyname))
+	  (expr value (funcall fn mail-address))
+	  (append (list key value)))))
+#+end_src
+
+******** make a context
+:PROPERTIES:
+:ID:       4e45264d-e7cc-43f7-854b-8b22d4d4151e
+:END:
+
+Create a context.
+
+#+begin_src emacs-lisp
+(defun mu4e-context:make-context (mail-address)
+  "Create a new context with default values."
+  (apply #'make-mu4e-context :name mail-address (mu4e:default-values mail-address)))
+#+end_src
+
+******** add a context
+:PROPERTIES:
+:ID:       c488a02f-743a-492c-9775-5c8216f0b2b0
+:END:
+
+#+begin_src emacs-lisp
+(defun mu4e-context:add-context (mail-address)
+  "Create and add context."
+  (push (mu4e-context:make-context mail-address) mu4e-contexts))
+#+end_src
+
+******** init contexts
+:PROPERTIES:
+:ID:       e74512a7-1d1f-4241-b245-5863e7730398
+:END:
+
+After mu4e is loaded, setup contexts. In the future, perhaps add this as an
+advice before [[helpfn:mu4e][mu4e]] so that I can check if the right emails are set up every
+time. This could be useful if I add an email and don't want to restart Emacs.
+
+#+begin_src emacs-lisp
+(defhook! init-contexts (mu4e-after-load-hook)
+  "Define a context for each email account."
+  (-each (mu4e:mail-accounts) #'mu4e-context:add-context))
+#+end_src
+
+******** guess the right folder
+:PROPERTIES:
+:ID:       f2ce41fa-ee55-4d37-9023-6511e393666b
+:END:
+
+#+begin_src emacs-lisp
 #+end_src
 
 *** Window Management
@@ -7203,315 +7615,234 @@ great idea! It makes it really easy to see which parentheses go together.
 :ID:       175ad5b9-3f0e-445e-b0ae-da3bce144929
 :END:
 
-Modal editing is widely accepted to be more efficient than modeless editing.
+Modal editing is widely accepted to be more efficient than modeless editing. The
+most popular modal. There are several packages.
 
-***** evil - the "extensible VI layer"
+As much as I hate to say it, to really become efficient at editing you have to
+invest time to fine-tuning your editing commands at a fine-grained level. You
+need to objectively analize you're editing and find things that could be
+improved.
+
+***** modalka
 :PROPERTIES:
-:ID:       9639633f-ec3d-4499-9615-db0dcc9650c9
+:ID:       fccbf279-f4c4-4997-ac8d-acc31b2276dd
 :END:
 
-=evil= is the most complete vim emulation in existence.
+=modalka= is a modal editing framework.
 
-****** text objects
+The idea I belive is to make modalka normal state and treat the absence of
+modalka (essential default Emacs) as insert state.
+
+I started out as a vim user and then I moved to evil. However, as I begin to
+become a more advanced Emacs user and I looked at projects like [[][selectrum]]
+which try to take the "path of least resistance", I started to realize the value
+of aspiring to take advantage of already existing frameworks. Hate it or love
+it, Emacs comes with key-chord heavy bindings by default. And they're not
+random--[[][there is a logic behind them]]. What I want is to use them.
+
+It's easy to want to abandon work done on something and just do your own
+thing. It seems easier to create something than to understand and compromise an
+existing thing by authors that are not you. But often it is not. It is unwise to
+discredit the conscious thought and effort of others who have earnestly
+attempted to solve a problem without a very good reason and without trying to
+find a way to make things work.
+
+I think.
+
+****** init
 :PROPERTIES:
-:ID: 07366548-2960-49c6-9ab7-cb177b06ad70
+:ID:       96ceb340-30f9-4228-93ea-45dda153b2df
 :END:
-
-To edit text efficiently Vim has the concept of [[https://blog.carbonfive.com/2011/10/17/vim-text-objects-the-definitive-guide/][text objects]]. Text objects are
-structures that are seen in text. For example, a set of words followed by a
-period is a sentence. A words between two closing parentheses is a sexp.
-
-******* general delimiter text object
-:PROPERTIES:
-:ID: f551956d-440c-431b-8fb0-8e71c9714f11
-:END:
-
-I discovered this the =form= text object from using [[https://github.com/luxbock/evil-cleverparens][evil-cleverparens]] in the past.
-The package =evil-cleverparens= was too slow for my taste; noctuid's [[https://github.com/sp3ctum/evil-lispy][evil-lispy]] is
-much faster and gave me the functionality that I needed most from
-=evil-cleverparens=: deleting and copying text with parentheses intelligently.
-However, many of the ideas of =evil-cleverparens= were excellent. One particular
-idea was to have a general =form= text object. Instead of specifying the
-particular surrounding bounds when doing an evil operator command you just use a
-single key for them. It's kind of like a =Do-What-I-Mean= surround operator. This
-is suprisingly useful because it takes significant time to specify whether you
-want =[]= or ={=}= or =()= or =""=. The main drawback you cannot distinguish between
-surround characters at multiple levels--it just takes the closest one. In
-practice, this is rarely an issue.
 
 #+begin_src emacs-lisp
-(after! evil
-  (evil-define-text-object evil:textobj-inner-form (count &rest _)
-    "Inner sexp object."
-    (-if-let ((beg . end)
-              (->> (list (lispy--bounds-list) (lispy--bounds-string))
-                   (-non-nil)
-                   (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
-                   (car)))
-        (evil-range (1+ beg) (1- end) 'inclusive :expanded t)
-      (error "No surrounding form found.")))
-
-  (evil-define-text-object evil:textobj-outer-form (count &rest _)
-    "Smartparens inner sexp object."
-    (-if-let ((beg . end)
-              (->> (list (lispy--bounds-list) (lispy--bounds-string))
-                   (-non-nil)
-                   (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
-                   (car)))
-        (evil-range beg end 'inclusive :expanded t)
-      (error "No surrounding form found.")))
-
-  (general-def evil-inner-text-objects-map
-    "f" #'evil:textobj-inner-form)
-  (general-def evil-outer-text-objects-map
-    "f" #'evil:textobj-outer-form))
+(use-package! modalka)
 #+end_src
 
-******* fix vim/evil around =""=
+****** space bindings
 :PROPERTIES:
-:ID: b57bf245-3d63-4078-8bcb-2ec0b9952ab9
+:ID:       b311f414-67c3-451a-8cda-9a19388bda6e
 :END:
 
-=Vim= and =Evil= both have the interesting (inconsistent?) behavior that doing an
-outer text object operator on a comment grabs some whitespace on the left side.
-Try doing =va"= to ~(progn "hello world")~ and you'll see that =\s"hello world"= is
-selected instead of just "hello world".
-
-Why not just go to the end of the ="= like any other around operator?
-
 #+begin_src emacs-lisp
-(after! evil
-  (evil-define-text-object evil:textobj-a-string (count &rest _)
-    "An outer comment text object as defined by `lispy--bounds-string'."
-    (-if-let ((beg . end) (lispy--bounds-string))
-        (evil-range beg end 'exclusive :expanded t)
-      (error "Not inside a comment.")))
-
-  (general-def evil-outer-text-objects-map
-    "\"" #'evil:textobj-a-string))
+(modalka-define-kbd "W" "C-x")
+(modalka-define-kbd "W" "M-w")
+(modalka-define-kbd "Y" "M-y")
+(modalka-define-kbd "a" "C-a")
+(modalka-define-kbd "b" "C-b")
+(modalka-define-kbd "e" "C-e")
+(modalka-define-kbd "f" "C-f")
+(modalka-define-kbd "g" "C-g")
+(modalka-define-kbd "n" "C-n")
+(modalka-define-kbd "p" "C-p")
+(modalka-define-kbd "w" "C-w")
+(modalka-define-kbd "h" "C-h")
 #+end_src
 
-****** evil-lion
+****** create a space prefix
 :PROPERTIES:
-:ID:       95d248be-601e-4dbd-b318-febcd0e49d71
+:ID:       714b36d2-8d4a-490d-bec6-dc75fe3a1a54
 :END:
 
-=evil-lion= provides a very useful way of aligning text.
-
-#+begin_src emacs-lisp
-(use-package! evil-lion
-  :commands evil-lion-right evil-lion-left)
-
-(general-def 'normal
-  :infix "g"
-  "l" #'evil-lion-left
-  "L" #'evil-lion-right)
-#+end_src
-
-****** evil-visualstar
+***** ryo-modal
 :PROPERTIES:
-:ID: 6ebca72d-f90a-4423-9ecd-706f9d426002
+:ID:       3c5bc81c-2b14-448c-86c4-b19401795236
 :END:
 
-[[https://github.com/bling/evil-visualstar][evil-visualstar]]
+=ryo-modal= provides a modal editing framework to.
 
-#+begin_src emacs-lisp
-(use-package! evil-visualstar
-  :general
-  (:keymaps 'evil-visual-state-map
-   "#" #'evil-visualstar/begin-search-backward
-   "*" #'evil-visualstar/begin-search-forward))
-#+end_src
-
-****** evil-surround
+***** meow
 :PROPERTIES:
-:ID:       9ab88644-3c33-463c-8f24-3b048209e082
+:ID:       9353943c-c6a9-480b-a22b-9d1c0e0f48e3
+:END:
+
+=meow= stands for "Modal Editing On Wish". It's a package that provides its own
+[[][Kakourne]] like modal-editing scheme. Keep in mind that the distinguishing
+feature of Kakourne is that it combines [[][Vim's]] normal mode and visual mode
+into one. The idea is that you can interactively see what's selected before
+changing operating on that region.
+
+The main idea of meow is that to provide modal editing while taking advantage of
+as much existing Emacs bindings.
+
+What attracts me to meow is that it seems to be very well thought out.
+
+****** init
+:PROPERTIES:
+:ID:       5c7996a5-319b-4e9e-b28e-95b8b2e5cd0a
 :END:
 
 #+begin_src emacs-lisp
-(use-package! evil-surround
-  :hook prog-mode-hook text-mode-hook)
-#+end_src
-
-****** evil
-:PROPERTIES:
-:ID: 3b9aaf0c-a69c-474a-b1a3-f0e748e83558
-:END:
-
-[[https://github.com/emacs-evil/evil][evil]] is an extensible vi layer for Emacs. It emulates the main features of Vim,
-and provides facilities for writing custom extensions. Also see our page on
-[[emacswiki:Evil][EmacsWiki]]. See a brief [[https://bytebucket.org/lyro/evil/raw/default/doc/evil.pdf][manual]]. See the [[https://github.com/noctuid/evil-guide][evil-guide]] by noctuid.
-
-******* init
-:PROPERTIES:
-:ID:       af3a9791-76ac-4fd5-96fe-d361cef3b5b3
-:END:
-
-#+begin_src emacs-lisp
-(use-package! evil
-  :demand t
-  :hook (window-setup-hook . evil-mode))
-#+end_src
-
-******* custom
-:PROPERTIES:
-:ID:       f7ece898-25e2-4b2c-94f3-e832a687114c
-:END:
-
-#+begin_src emacs-lisp
-(custom-set-default 'evil-want-C-u-scroll t)
-#+end_src
-
-******* settings
-:PROPERTIES:
-:ID:       9f184a21-ef04-4b3d-a1b7-88a16eaa7b97
-:END:
-
-#+begin_src emacs-lisp
-(use-package! evil
+(use-package! meow
   :set
-  (evil-want-visual-char-semi-exclusive . t)
-  (evil-ex-search-vim-style-regexp      . t)
-  (evil-respect-visual-line-mode        . t)
-  (evil-insert-skip-empty-lines         . t)
-  (evil-want-C-w-in-emacs-state         . nil)
-  (evil-ex-substitute-global            . t)
-  (evil-ex-visual-char-range            . t)
-  (evil-move-beyond-eol                 . nil)
-  (evil-indent-convert-tabs             . t)
-  (evil-symbol-word-search              . t)
-  (evil-mode-line-format                . nil)
-  (evil-echo-state                      . nil)
-  (evil-magic                           . t))
+  (meow-cheatsheet-layout . 'meow-cheatsheet-layout-qwerty))
 #+end_src
 
-******* cursors
+****** bindings
 :PROPERTIES:
-:ID: a5f558fb-221c-4b33-a7cd-29308ef74b0d
+:ID:       9dea4b44-bece-416a-b338-ff42774cb17e
 :END:
 
-It's nice to have cursors change colors (and sometimes shape) depending on the
-current evil state. It makes it easy to tell which state you're in. I define
-some colors here. Evil has a cursor variable for each state. The cursor variable
-for insert state, for example, is [[helpvar:evil-insert-state-cursor][evil-insert-state-cursor]]. Its value is of the
-form: ~((CURSOR-SHAPE . CURSOR-WIDTH) COLOR)~.
-
-******** colors and shapes
+******* digit arguments
 :PROPERTIES:
-:ID: 3f3cd5c9-1f6d-4c3b-b73f-82c9ee00395e
+:ID:       af748fec-698c-49bb-9c1d-dd28e4d4a087
 :END:
-
-Changing the cursor shape and color depending on the state is a convenient and
-asthetically pleasing way of determining which state you're in. Some add some
-modeline indicator for this but I find that the cursor suffices.
 
 #+begin_src emacs-lisp
-(defhook! setup-cursor (evil-mode-hook)
-  "Initialize the default cursor shape and size."
-  (setq evil-insert-state-cursor   '((bar . 3)   "chartreuse3"))
-  (setq evil-emacs-state-cursor    '((bar . 3)   "SkyBlue2"))
-  (setq evil-normal-state-cursor   '( box        "DarkGoldenrod2"))
-  (setq evil-visual-state-cursor   '((hollow)    "dark gray"))
-  (setq evil-operator-state-cursor '((hbar . 10) "hot pink"))
-  (setq evil-replace-state-cursor  '( box        "chocolate"))
-  (setq evil-motion-state-cursor   '( box        "plum3")))
+(defun meow:setup-digit-arg-bindings (args)
+  "Set up digit argument bindings."
+  (meow-leader-define-key
+   ;; Use SPC (0-9) for digit arguments.
+   '("1" . meow-digit-argument)
+   '("2" . meow-digit-argument)
+   '("3" . meow-digit-argument)
+   '("4" . meow-digit-argument)
+   '("5" . meow-digit-argument)
+   '("6" . meow-digit-argument)
+   '("7" . meow-digit-argument)
+   '("8" . meow-digit-argument)
+   '("9" . meow-digit-argument)
+   '("0" . meow-digit-argument)))
 #+end_src
 
-******** updating cursors
+******* ensure j and k are used for up and down movements
 :PROPERTIES:
-:ID: ea4da6d4-4a2c-42cf-b397-cea1555781ce
+:ID:       7e91ed37-8046-47f2-ac37-178eb55be949
 :END:
-
-After a theme is loaded, the cursor color won't automatically update. Therefore,
-I add a hook in [[helpvar:xl-after-load-theme-hook][xl-after-load-theme-hook]]. Now after a new theme is loaded, the
-cursor color will update.
 
 #+begin_src emacs-lisp
-(defhook! refresh-evil-cursor (xl-after-load-theme-hook)
-  "Enable cursor refreshing after theme change."
-  (when (bound-and-true-p evil-mode)
-    (evil-refresh-cursor)))
+(defun meow:setup-j-and-k-bindings (args)
+  "Set up j and k bindings."
+  ;; SPC j/k will run the original command in MOTION state.
+  '("j" . meow-motion-origin-command)
+  '("k" . meow-motion-origin-command))
 #+end_src
 
-******* normal state everywhere
+******* normal bindings
 :PROPERTIES:
-:ID:       e6126bd7-94b8-4ce0-b547-0536b59437ea
+:ID:       ff4a7714-4ef9-4344-a125-ec477aac84d4
 :END:
-
-Noctuid pointed out
 
 #+begin_src emacs-lisp
-(defhook! make-normal-state-default (evil-mode-hook)
-  "Make normal state the default `evil-mode' state."
-  (setq evil-normal-state-modes (append evil-emacs-state-modes evil-normal-state-modes))
-  (setq evil-emacs-state-modes nil)
-  (setq evil-motion-state-modes nil))
-
-(defadvice! replace-motion-with-normal (:around evil-make-overriding-map)
-  "Advice for `evil-make-overriding-map' that inhibits motion state."
-  (-let (((keymap state copy) <args>))
-    (funcall <orig-fn> keymap (if (eq state 'motion) 'normal state) copy)))
-
-(defadvice! replace-motion-with-normal (:around evil-set-initial-state)
-  (-let (((mode state) <args>))
-    (funcall <orig-fn> mode (if (eq state 'motion) 'normal state))))
-
-(xl-advice-add #'evil-motion-state :override #'evil-normal-state)
+'("0" . meow-expand-0)
+'("9" . meow-expand-9)
+'("8" . meow-expand-8)
+'("7" . meow-expand-7)
+'("6" . meow-expand-6)
+'("5" . meow-expand-5)
+'("4" . meow-expand-4)
+'("3" . meow-expand-3)
+'("2" . meow-expand-2)
+'("1" . meow-expand-1)
+'("-" . negative-argument)
+'(";" . meow-reverse)
+'("," . meow-inner-of-thing)
+'("." . meow-bounds-of-thing)
+'("[" . meow-beginning-of-thing)
+'("]" . meow-end-of-thing)
+'("a" . meow-append)
+'("A" . meow-open-below)
+'("b" . meow-back-word)
+'("B" . meow-back-symbol)
+'("c" . meow-change)
+'("C" . meow-change-save)
+'("d" . meow-delete)
+'("x" . meow-line)
+'("f" . meow-find)
+'("F" . meow-find-expand)
+'("g" . meow-keyboard-quit)
+'("G" . meow-goto-line)
+'("h" . meow-left)
+'("H" . meow-left-expand)
+'("i" . meow-insert)
+'("I" . meow-open-above)
+'("m" . meow-join)
+'("M" . delete-indentation)
+'("s" . meow-kill)
+'("t" . meow-till)
+'("T" . meow-till-expand)
+'("w" . meow-mark-word)
+'("W" . meow-mark-symbol)
+'("j" . meow-next)
+'("J" . meow-next-expand)
+'("o" . meow-block)
+'("O" . meow-block-expand)
+'("k" . meow-prev)
+'("K" . meow-prev-expand)
+'("q" . meow-quit)
+'("r" . meow-replace)
+'("R" . meow-replace-save)
+'("n" . meow-search)
+'("N" . meow-pop-search)
+'("l" . meow-right)
+'("L" . meow-right-expand)
+'("u" . undo)
+'("v" . meow-visit)
+'("e" . meow-next-word)
+'("E" . meow-next-symbol)
+'("y" . meow-save)
+'("p" . meow-yank)
+'("z" . meow-pop-selection)
+'("Z" . meow-pop-all-selection)
+'("&" . meow-query-replace)
+'("%" . meow-query-replace-regexp)
 #+end_src
 
-******* insert state in minibuffer
+******* setup all bindings
 :PROPERTIES:
-:ID: a23137c5-62a0-4e77-9e51-6a7372dac703
+:ID:       3477d154-4a00-4106-8ed6-1b9710fc5d60
 :END:
-
-Before I just used ~(evil-change-state evil-previous-state)~ to revert the
-state back to what it last was. But this fails with ~evil-force-normal-state~
-which is what I'm currently using to exit the minibuffer because then the
-last state is normal state if the minibuffer is aborted. Using a
-=evil:state-before-minibuffer= ensures that the state will be reverted to
-the correct one.
 
 #+begin_src emacs-lisp
-(defhook! preserve-prior-evil-state (minibuffer-enter-hook)
-  "Save state before entering the minibuffer and enter insert state."
-  (when (bound-and-true-p evil-mode)
-    (setq evil:state-before-minibuffer evil-state)
-    (evil-insert-state)))
-
-(defhook! restore-prior-evil-state (minibuffer-exit-hook)
-  "Restore state after minibuffer."
-  (when (bound-and-true-p evil-mode)
-    (evil-change-state evil:state-before-minibuffer)
-    (setq evil:state-before-minibuffer nil)))
+(defun meow:setup-bindings ()
+  "docstring"
+  (meow:setup-digit-arguments)
+  (meow:setup-j-and-k-everywhere)
+  ())
 #+end_src
 
-******* escape
+****** meow setup
 :PROPERTIES:
-:ID:       e4b9d33d-c64d-47ef-9bff-baa80d1b34b2
-:END:
-
-******** escape
-:PROPERTIES:
-:ID: ea9378de-e5c5-482c-b53b-743a81e3bc8e
-:END:
-
-We want escape to be a general "quit everything".
-
-#+begin_src emacs-lisp
-(general-def :states '(emacs insert) [escape] #'evil-force-normal-state)
-
-(defadvice! exit-everything (:after evil-force-normal-state lispyville-normal-state)
-  "Exits out of whatever is happening after escape."
-  (cond ((minibuffer-window-active-p (minibuffer-window))
-         (abort-recursive-edit))
-        ((run-hook-with-args-until-success 'xl-escape-hook))
-        ((or defining-kbd-macro executing-kbd-macro) nil)
-        (t (keyboard-quit))))
-#+end_src
-
-******** key-chord
-:PROPERTIES:
-:ID:       8fd1bcdc-c4b3-4fee-b91b-dcdf96167582
+:ID:       240bb38e-073e-4294-88d7-36696c2e67b8
 :END:
 
 *** Languages
@@ -7637,107 +7968,6 @@ Sometimes =evil-normal-state= enters visual state.
   "M-k" #'lispyville-drag-backward
   "M-R" #'lispyville-raise-list
   "M-v" #'lispy-convolute-sexp)
-#+end_src
-
-***** lispy
-:PROPERTIES:
-:ID:       47f19607-13a7-4857-bb1a-33760f95cb7e
-:END:
-
-For learning how to use lispy. [[https://github.com/abo-abo/lispy][the README]] and the [[http://oremacs.com/lispy/#lispy-different][lispy function reference]] were
-very useful to me.
-
-****** hook
-:PROPERTIES:
-:ID:       37bd49d1-3e34-4579-87d2-e791278be017
-:END:
-
-#+begin_src emacs-lisp
-(use-package! lispy
-  :hook (emacs-lisp-mode-hook . lispy-mode))
-#+end_src
-
-****** settings
-:PROPERTIES:
-:ID:       20d99206-ddc4-42db-b4c1-8721decbaf8d
-:END:
-
-#+begin_src emacs-lisp
-(setq lispy-avy-style-paren 'at-full)
-(setq lispy-eval-display-style 'overlay)
-(setq lispy-safe-delete t)
-(setq lispy-safe-copy t)
-(setq lispy-safe-paste t)
-(setq lispy-safe-actions-no-pull-delimiters-into-comments t)
-(setq lispy-delete-sexp-from-within t)
-(setq lispy-parens-only-left-in-string-or-comment nil)
-(setq lispy-safe-threshold 5000)
-(setq lispy-use-sly t)
-;; allow space before asterisk for headings (e.g. ";; *")
-(setq lispy-outline "^;;\\(?:;[^#]\\|[[:space:]]*\\*+\\)")
-(setq lispy-key-theme nil)
-#+end_src
-
-****** enter lispy state via =H= and =L=
-:PROPERTIES:
-:ID:       55955252-d35f-493f-bb2c-73a2363ca1c6
-:END:
-
-#+begin_src emacs-lisp
-(define-key! 'normal evil-lispy-mode-map
-  "H" #'evil-lispy/enter-state-left
-  "L" #'evil-lispy/enter-state-right)
-#+end_src
-
-****** key-theme
-:PROPERTIES:
-:ID:       8977fd1e-5603-4acc-b3d7-c767f6b913fe
-:END:
-
-Key themes are keybinding themes used for.
-
-#+begin_src emacs-lisp
-(after! lispy (lispy-set-key-theme '(special)))
-#+end_src
-
-****** eros
-:PROPERTIES:
-:ID:       265b3b87-012e-452e-aa1f-c7c8e3308a73
-:END:
-
-****** avoid void variable error
-:PROPERTIES:
-:ID:       a73ff9be-1a3d-4007-ad40-5a34c38767f6
-:END:
-
-You'll get void variable if you don't do this.
-
-#+begin_src emacs-lisp
-(after! (avy lispy) (setq lispy-avy-keys avy-keys))
-#+end_src
-
-***** evil-lispy
-:PROPERTIES:
-:ID:       f79c2035-ce79-491a-acf6-5e80f72cffe9
-:END:
-
-****** lispy state cursor
-:PROPERTIES:
-:ID:       c44cf8dc-e80c-4be6-9c11-221b446cc87b
-:END:
-
-#+begin_src emacs-lisp
-(set! evil-lispy-state-cursor  '((bar . 4) "red"))
-#+end_src
-
-****** run after lispy
-:PROPERTIES:
-:ID:       18173a29-7442-473e-a851-f46182f56447
-:END:
-
-#+begin_src emacs-lisp
-(use-package! evil-lispy
-  :hook lispy-mode-hook)
 #+end_src
 
 ***** highlight-quoted
@@ -8765,8 +8995,8 @@ let's me choose the template via completing-read.
 (defun org-capture/choose-template ()
   (interactive)
   (require 'org-capture)
-  (let* ((read-string (mapcar (fn! (format "%s %s" (car <>) (cadr <>)))
-			      (org-capture:template-list)))
+  (let* ((read-string (-map (fn! (format "%s %s" (car <>) (cadr <>)))
+			    (org-capture:template-list)))
 	 (selection (completing-read "Capture template: " read-string nil :require-match))
 	 (key (car (split-string selection "\s" t))))
     (org-capture nil key)))
@@ -8854,12 +9084,12 @@ for a certain block of time is a must. =org-agenda= is this overview.
 #+begin_src emacs-lisp
 (use-feature! org-agenda
   :idle-require t
-  :popup ("left" "org agenda" :newname "\\*Org Agenda\\*")
+  :popup ("top" "org agenda" :newname "\\*Org Agenda\\*")
   :gc-pause org-agenda-list
   :set
   (org-agenda-text-search-extra-files . '(agenda-archives))
   (org-agenda-skip-unavailable-files  . t)
-  (org-agenda-files                   . nil)
+  (org-agenda-files                   . (list (xl-capture-file)))
   (org-agenda-start-on-weekday        . 0)
   (org-agenda-timegrid-use-ampm       . nil)
   (org-agenda-time-leading-zero       . t)
@@ -8939,6 +9169,8 @@ org agenda buffer is displayed.
 :PROPERTIES:
 :ID:       9c825b83-057e-4373-9256-047e3d09f693
 :END:
+
+This doesn't yet do the top five. :slight_frown:
 
 #+begin_src emacs-lisp
 (defvar org-super-agenda:top-five-overdue-entries
@@ -9504,6 +9736,39 @@ Somtimes I might want to adjust this.
 :ID:       fe176959-3134-4b18-8abb-a962347b8df0
 :END:
 
+**** themes
+:PROPERTIES:
+:ID:       62d543c2-19be-4483-bb1b-0995e84b57a2
+:END:
+
+Emacs theme changes the colors Emacs uses for display.
+
+***** use-theme!
+:PROPERTIES:
+:ID:       6b695326-ab06-4f9f-baf4-a8e1f30dbd14
+:END:
+
+#+begin_src emacs-lisp
+(use-package! use-theme
+  :ensure (:host github :type git :repo "canatella/use-theme"))
+(require 'use-theme)
+(use-theme spacemacs)
+#+end_src
+
+***** random-thme
+:PROPERTIES:
+:ID:       34705923-f5c6-4852-bd17-cbd8c9ce1ad9
+:END:
+
+***** theme-looper
+:PROPERTIES:
+:ID:       376fe082-cc91-468b-8a20-a3e299c7fd5f
+:END:
+
+#+begin_src emacs-lisp
+(use-package! theme-looper)
+#+end_src
+
 *** Keybindings
 :PROPERTIES:
 :ID:       e4605d42-4d57-40d9-8594-15b06f6196a4
@@ -9828,7 +10093,8 @@ work.
 (defun dotfiles:email-accounts ()
   "Return a list of email account entries."
   (require 'password-store)
-  (--filter (s-matches-p "\\`email/" it) (password-store-list)))
+  (-filter (fn (s-matches-p "\\`email/" <>))
+	   (password-store-list)))
 #+end_src
 
 *** with-pass-fields!
@@ -10020,9 +10286,9 @@ For each email account I have will need the information.
 
 #+begin_src emacs-lisp :tangle no
 (defun xl-msmtp:msmtprc-accounts ()
-  (thread-last (xl-msmtp:email-accounts)
-    (seq-map #'xl-msmtp:msmtprc-account-string)
-    (s-join "\n\n")))
+  (->> (xl-msmtp:email-accounts)
+       (seq-map #'xl-msmtp:msmtprc-account-string)
+       (s-join "\n\n")))
 #+end_src
 
 *** header
@@ -10048,7 +10314,7 @@ For each email account I have will need the information.
 :ID:       a97c4dd0-07e3-4368-b116-5cc567c437fa
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src ema                                                                                             cs-lisp
 (defun xl-msmtp:account-default ()
   "Return account default."
   (format "account : default luishp"))
