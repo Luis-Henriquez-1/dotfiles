@@ -1831,9 +1831,6 @@ instead of =add-hook=.
   `(,@(-map (-lambda ((hook . fn)) `(xl-hook-add ',hook ',fn)) hook-alist)
     ,@(-map (-partial #'use-package:autoload name) (-map #'cdr hook-alist))
     ,@(use-package-process-keywords name rest state)))
-
-(advice-add #'use-package-normalize/:hook :override #'use-package-normalize/:xl-hook)
-(advice-add #'use-package-handler/:hook :override #'use-package-handler/:xl-hook)
 #+end_src
 
 ******* before-call
