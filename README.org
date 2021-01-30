@@ -1151,6 +1151,7 @@ As I mentioned, the convention for hook symbols is that they are suffixed with
 #+begin_src emacs-lisp
 (defun xl-emacs-hook-p (symbol)
   "Return true if symbol is a hook symbol."
+  (declare (pure t) (side-effect-free t))
   (s-matches-p ".+-hook\\'" (symbol-name symbol)))
 #+end_src
 
@@ -1163,6 +1164,7 @@ As I mentioned, the convention for hook symbols is that they are suffixed with
 (defun xl-emacs-hookify (symbol)
   "Return SYMBOL converted to hook.
 If SYMBOL is already a hook symbol, return it unchanged."
+  (declare (pure t) (side-effect-free t))
   (if (xl-emacs-hook-p symbol)
       symbol
     (xl-symbol-intern symbol '-hook)))
@@ -1176,6 +1178,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
 #+begin_src emacs-lisp
 (defun xl-emacs-mode-p (symbol)
   "Return non-nil if symbol is a mode symbol."
+  (declare (pure t) (side-effect-free t))
   (s-matches-p ".+-mode\\'" (symbol-name symbol)))
 #+end_src
 
@@ -1188,6 +1191,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
 (defun xl-emacs-modeify (symbol)
   "Return SYMBOL converted to hook.
 If SYMBOL is already a hook symbol, return it unchanged."
+  (declare (pure t) (side-effect-free t))
   (if (xl-emacs-mode-p symbol)
       symbol
     (xl-symbol-intern symbol '-mode)))
@@ -1203,6 +1207,7 @@ To avoid.
 #+begin_src emacs-lisp
 (defun xl-internal-symbol-p (symbol)
   "Return non-nil if symbol is an internal XL symbol."
+  (declare (pure t) (side-effect-free t))
   (s-matches-p "\\`xl--.+" (symbol-name symbol)))
 #+end_src
 
@@ -2250,63 +2255,18 @@ Accept the same arguments as `message'."
 (use-package! mmt)
 #+end_src
 
-***** defhookvar!
-:PROPERTIES:
-:ID:       98630924-d2c3-4c86-b326-381b93c82ecd
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defhookvar! (name where value docstring)
-  "Create a hook variable after."
-  ()
-  (xl-advice-add ))
-#+end_src
-
-***** after-load-hook
-:PROPERTIES:
-:ID:       a0c6da0c-aca4-4b99-a785-02953c1f758e
-:END:
-
-In Emacs, the way you defer evaluation of a form until something is loaded is by
-using [[helpfn:eval-after-load][eval-after-load]]. I use the [[id][after!]] macro I wrote which is just a wrapper
-around =eval-after-load=. What I don't like about the =after!= macro is that it
-stores the form. So what I decided to do is for each package I use, create a
-=package:after-load-hook=. This hook will run. But what it will allow me to do
-is have better control over forms I want evaluated after the loading of a
-package. For instance, these forms will named hooks now. And, they'll be in a
-variable.
-
-#+begin_src emacs-lisp
-(defun xl-create-after-load-hook (package)
-  "Create an after load hook for package."
-  (let ((name (xl-symbol-intern package ':after-load-hook))
-	())
-    `(unless (boundp ',name)
-       (defvar ,name nil
-	 ,(format "Hook run after %s is loaded." package))
-
-       (if (featurep package)
-	   nil
-	 (eval-after-load package
-	   '(run-hooks ',package:after-load-hook))))))
-#+end_src
-
-***** anonymous functions
-:PROPERTIES:
-:ID:       2baa3c3a-45f6-4eb1-94d8-c2ef9ff3bd23
-:END:
-
 ***** fn!
 :PROPERTIES:
 :ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
 :END:
 
-This is a macro for writing anaphoric lambdas. It is based on [[][fn!]], the
+This is a macro for writing anaphoric lambdas. It is based on [[https://github.com/troyp/fn.el][fn]], the
 main difference being that in a few special cases you can specify a named
 anaphoric variable. Also, I don't support the alternate =fn:= syntax.
 
 #+begin_src emacs-lisp
 (defmacro fn! (&rest body)
+  "Expand into an anaphoric macro with body BODY."
   (let* ((argsym (make-symbol "ARGS"))
 	 (symbolic-placeholders (-uniq (xl-anaphoric-symbols body)))
 	 (number-fn (lambda (it) (s-matches-p "<[[:digit:]]>" (symbol-name it))))
