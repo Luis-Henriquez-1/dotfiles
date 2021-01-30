@@ -201,7 +201,7 @@ The main goal of my dotfiles is to provide me with a completely reproducable
 setup. I want to be able to generate my complete workspace with just two things,
 a usb containing my private gpg key and my dotfiles stored on github. It is my
 goal to one day make the setup /completely/ reproducable down to the package
-versions. It is now possible to do this with [[][guix]] and [[][straight.el]].
+versions. It is now possible to do this with [[https://guix.gnu.org/][guix]] and [[https://github.com/raxod502/straight.el][straight.el]].
 
 *** center everything around emacs
 :PROPERTIES:
