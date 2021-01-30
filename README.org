@@ -2917,8 +2917,8 @@ to use =defadvice!= or =anaphoric-defadvice!=.
                             'define-advice!
                           'anaphoric-define-advice!)))
     `(progn
-       ,@(--map `(,advice-macro ,name (,@before ,it ,@after) ,@body)
-                fns))))
+       ,@(-map (fn `(,advice-macro ,name (,@before ,<> ,@after) ,@body))
+               fns))))
 #+end_src
 
 ***** loading on call
@@ -3891,9 +3891,8 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 #+begin_src emacs-lisp
 (defhook! lock-certain-buffers (after-init-hook)
   "Prevent certain buffers from being killed."
-  (--each (list "*scratch*" "*Messages*")
-    (with-current-buffer it
-      (emacs-lock-mode 'kill))))
+  (-each (list "*scratch*" "*Messages*")
+    (fn! (with-current-buffer <buffer> (emacs-lock-mode 'kill)))))
 #+end_src
 
 ***** prefixed-core
@@ -4071,105 +4070,6 @@ of the Emacs frame are recorded after they expire.
   "Pop scratch."
   (interactive)
   (pop-to-buffer "*scratch*"))
-#+end_src
-
-***** void specific funtions
-:PROPERTIES:
-:ID: 1b49e07a-466f-41da-8b31-18c28421cf62
-:END:
-
-****** all
-:PROPERTIES:
-:ID: e97267e8-fca8-4bf2-9899-7ec694e8a767
-:END:
-
-******* quit emacs without hook
-:PROPERTIES:
-:ID: b82f721c-39f5-4d41-bb0f-d4c391238eb4
-:END:
-
-Sometimes something goes wrong with [[helpvar:kill-emacs-hook][kill-emacs-hook]] and because of that I can't
-close emacs. For that reason, I have this function.
-
-#+begin_src emacs-lisp
-(defun xl/kill-emacs-no-hook ()
-  "Kill emacs, ignoring `kill-emacs-hook'."
-  (interactive)
-  (when (yes-or-no-p "Quit without `kill-emacs-hook'?")
-    (let (kill-emacs-hook) (kill-emacs))))
-#+end_src
-
-******* quit emacs brutally
-:PROPERTIES:
-:ID: 8753217c-4722-4183-bbb3-049707a37e54
-:END:
-
-I've never had to use this. But better be safe than sorry.
-
-#+begin_src emacs-lisp
-(defun xl/kill-emacs-brutally ()
-  "Tell an external process to kill emacs."
-  (interactive)
-  (when (yes-or-no-p "Do you want to BRUTALLY kill emacs?")
-    (call-process "kill" nil nil nil "-9" (number-to-string (emacs-pid)))))
-#+end_src
-
-******* new emacs instance
-:PROPERTIES:
-:ID: eaf80ec3-2bd4-4f05-8a9c-fa525894a6fe
-:END:
-
-#+begin_src emacs-lisp
-(defun xl/open-emacs-instance ()
-  "Open a new emacs instance in debug-mode."
-  (interactive)
-
-  (cond ((eq system-type 'darwin)
-         (start-process-shell-command
-          "emacs"
-          nil "open -n /Applications/Emacs.app --args --debug-init"))
-        ((eq system-type 'gnu/linux)
-         (start-process "emacs" nil "emacs" "--debug-init"))))
-#+end_src
-
-******* kill all process of program
-:PROPERTIES:
-:ID: 913952e2-3727-4b38-aefc-4618c2771730
-:END:
-
-#+begin_src emacs-lisp
-(defun xl/kill-emacs-processes ()
-  (interactive)
-  (let ((count 1) (process "emacs"))
-    (kill-process process)
-    (while (ignore-errors (kill-process process))
-      (setq process (format "emacs<%d>" count))
-      (cl-incf count))
-    (message "killed %d processes" count)))
-#+end_src
-
-****** turn on debug-mode
-:PROPERTIES:
-:ID: c1ac481a-6ebd-49ce-a930-3b0593283aee
-:END:
-
-#+begin_src emacs-lisp
-(defun xl/enable-debug-mode ()
-  (interactive)
-  (setq xl-debug-p t))
-#+end_src
-
-****** quit emacs no prompt
-:PROPERTIES:
-:ID: d530718a-2b42-4e9b-8d7d-7813e0ae6381
-:END:
-
-#+begin_src emacs-lisp
-(defun xl/quit-emacs-no-prompt ()
-  "Quit emacs without prompting."
-  (interactive)
-  (let (confirm-kill-emacs)
-    (kill-emacs)))
 #+end_src
 
 *** Completion
@@ -4463,10 +4363,25 @@ Marginalia adds descriptions to various commands.
 :END:
 
 This package provides a way of adding actions (think helm) to commands. The
-special thing about it is a generic way to do so. Honestly, reading it's
-documentation can be a bit dizzying :dizzy-face:; not because the it's bad but
-because it is hard to wrap your mind around such a package without seeing it in
-action.
+special thing about it is a generic way to do so.
+
+The idea of actions is to minimize code duplication. The scenario is this: you
+have an existing commands that allows you to select a candidate from a prompt
+and do =X= with a candidate =c= from the set of candidates =C=. You want to
+select from the same prompt, but instead you want to do =Y= with =c= not =X=. So
+what do you do? You're faced with rewriting the command, copying the code for
+the prompt and adding the code to do =Y= (with something like =helm= you'd
+rewrite the code in terms of sources and actions). That's a lot of work!
+:tired-face: And it's not scalable either you'd need to do this for any other
+commands you come accross in the future. This explains why there are so many
+=helm= packages.
+
+=embark= provides a way to add actions to an existing command without having to
+rewrite it.
+
+Honestly, reading it's documentation can be a bit dizzying :dizzy-face:; not
+because the it's bad but because it is hard to wrap your mind around such a
+package without seeing it in action.
 
 ****** embark
 :PROPERTIES:
@@ -4558,7 +4473,7 @@ I haven't seen this working yet.
 #+begin_src emacs-lisp
 (defun xl-active-minor-modes ()
   "Return active minor modes in current buffer."
-  (--select (and (boundp it) (symbol-value it)) minor-mode-list))
+  (-select (-andfn #'boundp #'symbol-value) minor-mode-list))
 #+end_src
 
 ****** backends-alist
