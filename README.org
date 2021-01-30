@@ -1126,7 +1126,7 @@ with details and just want a string.
   "Return ARGS as a string."
   (declare (pure t) (side-effect-free t))
   (with-output-to-string
-    (mapc #'princ args)))
+    (-each args #'princ)))
 #+end_src
 
 ******* detect emacs symbols
@@ -1914,9 +1914,9 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
   (cl-assert (-all-p #'xl-true-list-p args))
   args)
 
-(defun use-package-handler/:popup (name _ value rest state)
+(defun use-package-handler/:popup (name _ rules rest state)
   "Add a popup rule."
-  `(,@(-map (fn! `(dbc-add-rule ,@<>)) value)
+  `(,@(-map (fn! `(dbc-add-rule ,@<rule>)) rules)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1969,11 +1969,11 @@ Sometimes I want to alias certain.
   (cl-assert (-all-p #'-cons-pair-p args))
   args)
 
-(defun use-package-handler/:alias (name _ value rest state)
+(defun use-package-handler/:alias (name _ alias rest state)
   ""
-  `(,@(mapcar #'use-package:autoload (mapcar #'car value))
-    ,@(mapcar (-lambda ((sym . def)) `(defalias ',sym #',def))
-	      value)
+  `(,@(-map #'use-package:autoload (-map #'car value))
+    ,@(-map (-lambda ((sym . def)) `(defalias ',sym #',def))
+	    alias)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1983,7 +1983,7 @@ Sometimes I want to alias certain.
 :END:
 
 I know, I know. I can just use the =:straight= keyword provided by
-[[][straight]]. :stuck-out-tongue: The reason I define my own is I will likely
+[[https://github.com/raxod502/straight.el][straight]]. :stuck-out-tongue: The reason I define my own is I will likely
 want to do more complex things in the future (such as caching the load-path and
 only installing the package if its path is not in the cache).
 
@@ -2022,7 +2022,7 @@ This keyword provides integration with.
 	     args))
 
 (defun use-package-handler/:nameless (name _ value rest state)
-  `((after! nameless ,@(mapcar (fn! `(push ',<> nameless-global-aliases)) value))
+  `((after! nameless ,@(-map (fn! `(push ',<> nameless-global-aliases)) value))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -2917,7 +2917,7 @@ to use =defadvice!= or =anaphoric-defadvice!=.
                             'define-advice!
                           'anaphoric-define-advice!)))
     `(progn
-       ,@(-map (fn `(,advice-macro ,name (,@before ,<> ,@after) ,@body))
+       ,@(-map (fn! `(,advice-macro ,name (,@before ,<fn> ,@after) ,@body))
                fns))))
 #+end_src
 
@@ -4179,7 +4179,7 @@ make sense. This is advice specifically designed to disable selectrum sorting.
 
 (defun use-package-handler/:no-sort (name _ fns rest state)
   "Don't sort the functions with selectrum."
-  `(,@(--map `(selectrum:disable-sorting #'fn) fns)
+  `(,@(-map (fn! `(selectrum:disable-sorting #',<fn>)) fns)
     ,@(use-package-process-keywords name rest state)))
 
 (defalias 'use-package-normalize/:no-sort 'use-package-normalize/:gc-pause)
@@ -4904,6 +4904,9 @@ I build my =mbsyncrc= and my =msmtprc= via tangling.
 :ID:       3a3c6778-dc5d-45cf-87d1-1c6aacbbae46
 :END:
 
+Whatever emails I may use, I'll be adding their password in my password store so
+why not use this as a way to get email information?
+
 #+begin_src emacs-lisp
 (defun password-store:email-accounts ()
   "Return a list of email accounts."
@@ -5517,8 +5520,8 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 (use-feature! em-term
   :idle-require t
   :config
-  (mapc (fn! (pushnew <> eshell-visual-commands))
-	'("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")))
+  (-each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
+    (fn! (pushnew <command> eshell-visual-commands))))
 #+end_src
 
 ****** em-alias
@@ -5975,9 +5978,8 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 #+begin_src emacs-lisp
 (defhook! unpropertize-kill-ring (kill-emacs-hook :append t)
   "Remove text properties from `kill-ring'."
-  (setq kill-ring
-        (--map (when (stringp it) (substring-no-properties it))
-               (-non-nil kill-ring))))
+  (alet (-map-when #'stringp #'substring-no-properties kill-ring)
+    (setq kill-ring it)))
 #+end_src
 
 **** shrink-path
