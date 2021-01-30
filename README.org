@@ -6756,7 +6756,7 @@ If there is no existing description return nil."
     (aif (car (-split-when (fn! (not (eq (org-element-type <elt>) 'paragraph))) nodes))
 	(cons (org-element-property :begin (-first-item it))
 	      (org-element-property :end (-last-item it)))
-      (-let* ((section (seq-find (fn! (eq (org-element-type <>) 'section)) nodes))
+      (-let* ((section (-first (fn! (eq (org-element-type <elt>) 'section)) nodes))
 	      ((property-drawer others) (org-element-contents section)))
 	(alet (org-element-property :end (if others property-drawer section))
 	  (cons it it))))))
