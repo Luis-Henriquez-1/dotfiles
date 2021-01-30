@@ -311,7 +311,7 @@ Emacs subtree to be tangled first so that I can run Emacs before tangling
 anything else. The reason is I use some libraries not built-in to Emacs such as
 [[https://github.com/okamsn/loopy][loopy]] and [[https://github.com/magnars/dash.el][dash]]. Additionally, I want to have some choice between which dotfiles
 are tangled/generated and which are not. For sure I'm going to want Emacs
-tangled no matter what but I might not want to tangle other dotfiles.  On a
+tangled no matter what but I might not want to tangle other dotfiles. On a
 computer with Windows or Mac OS, for example, there's no point in tangling the
 =.xinitrc= because I can't use Xorg. Finally, I want to add some error catching
 functionality that would take advantage of the fact that my Emacs config is
@@ -4129,7 +4129,9 @@ helm wrappers around existing commands.
     "C-j" #'selectrum-next-candidate
     "C-;" #'selectrum-insert-current-candidate
     "C-l" #'selectrum/mark-candidate
-    [backtab] #'selectrum-previous-candidate))
+    [backtab] #'selectrum-previous-candidate)
+  :config
+  (after! helm (selectrum-helm-mode)))
 #+end_src
 
 ****** selectrum-prescient
@@ -4418,7 +4420,7 @@ I haven't seen this working yet.
       embark-become-indicator embark-action-indicator)
 #+end_src
 
-**** company
+******* company
 :PROPERTIES:
 :ID:       5c0ed97e-da66-42ab-a033-381ac9dd8972
 :END:
