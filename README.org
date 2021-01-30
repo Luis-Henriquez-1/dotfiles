@@ -5516,9 +5516,9 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 #+begin_src emacs-lisp
 (use-feature! em-term
   :idle-require t
-  :xl-config
-  (--each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
-    (add-to-list 'eshell-visual-commands it)))
+  :config
+  (mapc (fn! (pushnew <> eshell-visual-commands))
+	'("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")))
 #+end_src
 
 ****** em-alias
