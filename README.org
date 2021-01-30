@@ -1353,9 +1353,9 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 #+begin_src emacs-lisp
 (defun xl-anaphoric-symbols (body)
   "Return all the anaphoric symbols in body."
-  (thread-last (-flatten body)
-    (seq-filter #'xl-anaphoric-symbol-p)
-    (seq-uniq)))
+  (->> (-flatten body)
+       (-filter #'xl-anaphoric-symbol-p)
+       (-uniq)))
 #+end_src
 
 ******* all anaphoric symbols in obj
