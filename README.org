@@ -1849,14 +1849,14 @@ of this keyword is to load a package when a certain function is called.
 (defun use-package-normalize/:before-call (name key args)
   (cl-assert (-all-p (-orfn #'symbolp #'listp) args))
   (->> args
-       (--map-when (symbolp it) (cons name it))
+       (-map-when #'symbolp (fn! (cons name <>)))
        (-mapcat #'use-package:normalize-cons)))
 
-(defun use-package-handler/:before-call (name key value rest state)
-  `(,@(-map (-partial #'use-package:autoload name)
-	    (-map #'cdr value))
+(defun use-package-handler/:before-call (name key alist rest state)
+  `(,@(-map (fn! (use-package:autoload name <fn>))
+	    (-map #'cdr alist))
     ,@(-map (-lambda ((package . fn)) `(xl-load-before-call ',package #',fn))
-	    value)
+	    alist)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1873,11 +1873,11 @@ The.
 (defalias 'use-package-normalize/:after-call
   #'use-package-normalize/:before-call)
 
-(defun use-package-handler/:after-call (name _ value rest state)
-  `(,@(-map (-partial #'use-package:autoload name)
-	    (-map #'cdr value))
+(defun use-package-handler/:after-call (name _ alist rest state)
+  `(,@(-map (fn! (use-package:autoload name <fn>))
+	    (-map #'cdr alist))
     ,@(-map (-lambda ((package . fn)) `(xl-load-after-call ',package #',fn))
-	    value)
+	    alist)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1916,7 +1916,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 
 (defun use-package-handler/:popup (name _ value rest state)
   "Add a popup rule."
-  `(,@(--map `(dbc-add-rule ,@it) value)
+  `(,@(-map (fn! `(dbc-add-rule ,@<>)) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1935,7 +1935,7 @@ This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-requir
   (--map-when (eq t it) name args))
 
 (defun use-package-handler/:idle-require (name _ value rest state)
-  `(,@(--map `(idle-require ',it nil t) value)
+  `(,@(-map (fn! `(idle-require ',<> nil t)) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1971,9 +1971,9 @@ Sometimes I want to alias certain.
 
 (defun use-package-handler/:alias (name _ value rest state)
   ""
-  `(,@(-map #'use-package:autoload (-map #'car value))
-    ,@(--map (-lambda ((sym . def)) `(defalias ',sym #',def))
-	     value)
+  `(,@(mapcar #'use-package:autoload (mapcar #'car value))
+    ,@(mapcar (-lambda ((sym . def)) `(defalias ',sym #',def))
+	      value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1983,7 +1983,7 @@ Sometimes I want to alias certain.
 :END:
 
 I know, I know. I can just use the =:straight= keyword provided by
-[[][straight]]. :stuck_out_tongue: The reason I define my own is I will likely
+[[][straight]]. :stuck-out-tongue: The reason I define my own is I will likely
 want to do more complex things in the future (such as caching the load-path and
 only installing the package if its path is not in the cache).
 
@@ -2017,12 +2017,12 @@ This keyword provides integration with.
 
 (defun use-package-normalize/:nameless (package _ args)
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'stringp #'symbolp) args))
-  (--map-when (or (stringp it) (symbolp it))
-	      (cons (xl-to-string it) (xl-to-string package))
-	      args))
+  (-map-when (-orfn #'stringp #'symbolp)
+	     (fn (cons (xl-to-string <>) (xl-to-string package)))
+	     args))
 
 (defun use-package-handler/:nameless (name _ value rest state)
-  `((after! nameless ,@(--map `(push ',it nameless-global-aliases) value))
+  `((after! nameless ,@(mapcar (fn! `(push ',<> nameless-global-aliases)) value))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -2233,7 +2233,7 @@ function that logs to the buffer =*xl-log*=.
 #+begin_src emacs-lisp
 (use-package! elog
   :demand t
-  :xl-config
+  :config
   (elog-open-log buffer "xl-" :buffer "*xl-log*" :fmt "XL %M")
   (defun xl-log (format-string &rest args)
     "Log to *Messages* if `xl-debug-p' is on.
