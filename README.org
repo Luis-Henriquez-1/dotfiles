@@ -9,6 +9,7 @@
   - [[#why-set-up-my-dot-files-this-way][why set up my dot files this way?]]
   - [[#a-word-on-some-org-links][a word on some org links]]
   - [[#why-emacs-as-an-os][why Emacs as an OS]]
+  - [[#note-on-naming-and-libraries][note on naming and libraries]]
 - [[#bootstrap][bootstrap]]
   - [[#helpers][helpers]]
   - [[#simple-generic-tangling][simple generic tangling]]
@@ -86,7 +87,7 @@ enough).
 :END:
 
 I have a good variety of macros to add useful syntax. Some of these include
-[[][after!]], 
+[[][after!]], block.
 
 **** a plethora of configured packages
 :PROPERTIES:
@@ -589,8 +590,13 @@ and variables.
 :ID:       88a5aead-9dc2-4f37-9d0d-a382c292042a
 :END:
 
-I will never use anonymous lambdas--not for advices, not for hooks and not for
-bindings. Every function should be named.
+I will never use an anonymous lambda for advices, for hooks or for
+bindings. Every function should be named. The only time an anonymous lambda is
+O.K. to use is in some calculation. It is not hard to name functions
+appropriately. And doing so increases the readability and introspectabilty of my
+config--now you can list hooks in a variable or advices on a function and get
+descriptive idea of what's happening. Moreover, removing unnamed hooks or
+advices can be more of a chore because you can't reference them by name.
 
 ** early-init
 :PROPERTIES:
