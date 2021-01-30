@@ -18,10 +18,9 @@
   - [[#evaluation-nowebs][evaluation nowebs]]
 - [[#xinitrc][xinitrc]]
   - [[#first-remap-caps-lock-with-escape][first remap caps lock with escape]]
-  - [[#the-load-emacs][the load emacs]]
-- [[#configscm][config.scm]]
+  - [[#then-load-emacs][then load emacs]]
+- [[#guix][guix]]
   - [[#starting-org-on-guix][starting org on guix]]
-  - [[#configscm-1][config.scm]]
 - [[#gpg-agent][gpg-agent]]
 - [[#git-config][git-config]]
 - [[#emacs][emacs]]
@@ -40,9 +39,7 @@
 :END:
 
 This README contains the information to generate my [[https://www.quora.com/What-are-dotfiles?share=1][dotfiles]]. It is written in
-[[https://html.duckduckgo.com/html?q=org%20mode%20%22emacs%22][Org]]. In a nutshell, they are for setting up my work environment on different
-computers. By "environment" I mean the packages and settings I have
-enabled. This repository is also for helping me manage this working environment.
+[[https://html.duckduckgo.com/html?q=org%20mode%20%22emacs%22][Org]] and centers around [[https://www.gnu.org/software/emacs/][Emacs]].
 
 ** highlights
 :PROPERTIES:
@@ -51,7 +48,7 @@ enabled. This repository is also for helping me manage this working environment.
 
 This headline contains things I think make my dotfiles special and unique. I
 don't expect the reader to have the time to go through this whole file. So I
-include this here as a quick resume.
+include this here as a quick summary.
 
 *** an *extremely* powerful emacs configuration
 :PROPERTIES:
@@ -83,17 +80,21 @@ keywords I defined in their config, they can still benefit from seeing how
 use-package keywords are defined (to me at least =use-package= README wasn't
 enough).
 
-**** interesting custom macros
+**** interesting [[id:cfe0d468-92ee-4a4f-9908-4ea0b1964ac4][custom macros]]
 :PROPERTIES:
 :ID:       12caf923-a9f1-4536-85be-3c81e93fa3b4
 :END:
+
+I have a good variety of macros to add useful syntax. Some of these include
+[[][after!]], 
 
 **** a plethora of configured packages
 :PROPERTIES:
 :ID:       a626c6c1-daa8-43eb-a553-6e3983ad8748
 :END:
 
-I have lots of.
+I have an ever-growing quanity of packages :package:. The list is great but some
+are...
 
 **** next-level documentation
 :PROPERTIES:
@@ -102,7 +103,10 @@ I have lots of.
 
 Because I'm using an org configuration I can write rich documentation for my
 Emacs config where I link to other headlines, to screenshots or gifs I've taken,
-or to websites online. Using [[id:d3e15439-f690-4ced-b701-0882fb911a5c][emojis]] I can add.
+or to websites online. Check out this [[https://orgmode.org/quickstart.html][org-quickstart]] for a taste of the ways I
+can spice up documentation.:paperclip: 
+
+Additionally, I use [[id:d3e15439-f690-4ced-b701-0882fb911a5c][emojis]]. Documentation doesn't have to be terse and dry.
 
 **** naming-convention
 :PROPERTIES:
@@ -110,14 +114,14 @@ or to websites online. Using [[id:d3e15439-f690-4ced-b701-0882fb911a5c][emojis]]
 :END:
 
 Naming conventions are important in my Emacs config. In fact, naming in general
-is very important--it is a part of documentation.
+is very important--it is a part of documentation.:name_badge: 
 
 **** introspectable
 :PROPERTIES:
 :ID:       914b6bff-cbde-425b-9730-7b06ba9fa843
 :END:
 
-Naming and log file.
+I log the actions of hooks and advices using [[id:d73fd7b1-5610-4d93-8802-1aa57c8c1918][elog]]. :mag-right:
 
 **** fast candidate selection featuring [[https://github.com/raxod502/selectrum][selectrum]]
 :PROPERTIES:
@@ -129,16 +133,34 @@ Naming and log file.
 :ID:       8505fa5c-e0eb-4349-bca0-d6d334910d7d
 :END:
 
-I use [[][]] as well as. In fact, I even have a [[][custom use-package keyword]]
-for pausing gargbage collection for a specific function. I go to many lengths to
-optimize startup time as well as in-session usage.
+I'll list some things that I do to improve performance.
+
+***** load certain packages before a function is called
+:PROPERTIES:
+:ID:       b196836f-588b-42ee-884f-fa4c4d683106
+:END:
+
+***** use a higher rate of garbage collection by default
+:PROPERTIES:
+:ID:       c5aefa48-2d51-4471-82a2-59fc48c8e5ad
+:END:
+
+***** pause garbage collection for performance intensive functions
+:PROPERTIES:
+:ID:       d0e6ff64-75fc-4cba-abc1-904106737dff
+:END:
+
+***** lazy load packages whenever possible
+:PROPERTIES:
+:ID:       9893f500-4073-411d-a7e4-784453120df0
+:END:
 
 *** guix =config.scm= configuration
 :PROPERTIES:
 :ID:       fdfd18ef-db82-422f-83fa-9f245238513a
 :END:
 
-=guix=.
+I have a working =config.scm= configuration.
 
 *** org-mode dotfile setup
 :PROPERTIES:
@@ -170,7 +192,7 @@ code to be easy to read and reason with than huge functions.
 Here I describe in more depth what goals I had in mind when I wrote these
 dotfiles.
 
-*** reproducable and easy to set up
+*** reproducability and easy set-up
 :PROPERTIES:
 :ID:       5700ee45-a841-4223-9548-b3810e57f07d
 :END:
@@ -181,7 +203,7 @@ a usb containing my private gpg key and my dotfiles stored on github. It is my
 goal to one day make the setup /completely/ reproducable down to the package
 versions. It is now possible to do this with [[][guix]] and [[][straight.el]].
 
-*** centered around emacs
+*** center everything around emacs
 :PROPERTIES:
 :ID:       099f0d22-e47c-49cf-bc45-a5019160c5ad
 :END:
@@ -443,7 +465,7 @@ key. Even in emacs, there's [[https://github.com/emacs-straight/caps-lock][caps-
 setxkbmap -option caps:swapescape
 #+end_src
 
-** the load emacs
+** then load emacs
 :PROPERTIES:
 :ID:       af14d611-79a0-4604-8c02-24bc608d32fb
 :END:
@@ -453,16 +475,13 @@ easily switch between emacs, stumpwm or any other window manager of my
 choosing. I don't use the default display manager provied with =guix= because.
 
 #+begin_src sh
-exec emacs --daemon -c
+exec emacs
 #+end_src
 
-* config.scm
+* guix
 :PROPERTIES:
-:ID:       3bc3c0b2-a45b-4ce1-86c7-f4d88a8e69bd
+:ID:       cf1f31f9-bf79-409e-bc58-9756896000e0
 :END:
-
-My main OS currently is [[https://guix.gnu.org/][guix]]. Guix is one of two OSes that strive to be
-completely reproducable--the other is [[https://nixos.org/][Nix OS]].
 
 ** starting org on guix
 :PROPERTIES:
@@ -488,137 +507,6 @@ DIR=$HOME/.guix-profile
 $DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
 	       -configdir $DIR/share/X11/xorg.conf.d \
 	       -modulepath $DIR/lib/xorg/modules
-#+end_src
-
-** config.scm
-:PROPERTIES:
-:ID:       4af8c932-566c-480f-ad35-2667ae7d3cf2
-:HEADER-ARGS: :tangle ~/Documents/config.scm
-:END:
-
-The =config.scm= is the file the determines everything about the guix operating
-system. If you've installed arch or another linux distro from scratch or if you
-have some knowledge about OS setup you should find many of these fields familiar.
-
-*** module declaration
-:PROPERTIES:
-:ID:       46a8e991-e102-44cf-9646-d52e67f41413
-:END:
-
-#+name: modules
-#+begin_src scheme
-(use-modules (gnu)
-	     (srfi srfi-1)
-	     (gnu services desktop))
-#+end_src
-
-*** miscellaneous
-:PROPERTIES:
-:ID:       5179b9e5-c40a-4839-85de-bd38abfd373e
-:END:
-
-#+name: miscellaneous
-#+begin_src scheme
-(locale "en_US.utf8")
-(timezone "America/New_York")
-(keyboard-layout (keyboard-layout "us"))
-(host-name "antelope")
-#+end_src
-
-*** bootloader 
-:PROPERTIES:
-:ID:       8ecad680-34d8-4e5c-b239-ae3767293036
-:END:
-
-The bootloader is what is repsonsible for booting your system.
-
-#+name: bootloader
-#+begin_src scheme
-(bootloader
- (bootloader-configuration
-  (bootloader grub-bootloader)
-  (target "/dev/sda")
-  (keyboard-layout keyboard-layout)))
-#+end_src
-
-*** users
-:PROPERTIES:
-:ID:       23bef30c-77f5-443e-acb0-cb01a2072ab0
-:END:
-
-I'm the only one who uses my computer.
-
-#+name: users
-#+begin_src scheme
-(users (cons* (user-account
-               (name "luis")
-	       (comment "Luis")
-               (group "users")
-               (home-directory "/home/luis")
-               (supplementary-groups
-                '("wheel" "netdev" "audio" "video")))
-              %base-user-accounts))
-#+end_src
-
-*** packages
-:PROPERTIES:
-:ID:       d33e0c8e-e1a8-4db9-aa9c-4a862616adeb
-:END:
-
-This field corresponds to the place where packages should go. In the future I
-want to add package versions to these packages so that I can make my dotfiles
-truly reproducable.
-
-#+name: packages
-#+begin_src scheme
-(packages
- (append
-  (list (specification->package "emacs")
-        (specification->package "emacs-exwm")
-        (specification->package "emacs-desktop-environment")
-        (specification->package "nss-certs"))
-  %base-packages))
-#+end_src
-
-*** services
-:PROPERTIES:
-:ID:       a29f1980-9af4-4bf0-a463-1897f1551cab
-:END:
-
-**** laptop lid
-:PROPERTIES:
-:ID:       8f8801dd-7dce-4c26-bce4-39dc9df43917
-:END:
-
-Guix uses [[https://github.com/elogind/elogind][elogind]]. Elogind controls things like user login. It also
-controls what happens during certain events such as laptop lid open and
-close. By default elogind.
-
-#+name: laptop-lid
-#+begin_src scheme
-()
-#+end_src
-
-**** all services
-:PROPERTIES:
-:ID:       f85713f7-8ebf-46ca-8933-28002bef98a8
-:END:
-
-#+begin_src scheme
-#+end_src
-
-*** whole config
-:PROPERTIES:
-:ID:       6c44a3c0-379f-410c-918b-71f03171d514
-:END:
-
-#+begin_src scheme :tangle ~/.config/guix/config.scm
-(operating-system
- <<module-declaration>>
- <<bootloader>>
- <<users>>
- <<packages>>
- <<laptop-lid>>)
 #+end_src
 
 * gpg-agent
@@ -678,6 +566,24 @@ and variables.
 :ID:       c6272a6b-e712-4c5b-b49f-62e43b5a9ec4
 :END:
 
+|----------------+---------------------+---------------------------------------------|
+| thing          | name                | description                                 |
+|----------------+---------------------+---------------------------------------------|
+| fn-I-wrote     | xl-fn               |                                             |
+|----------------+---------------------+---------------------------------------------|
+| feature-fn     | feature:fn          | An extension function to a feature/package. |
+|----------------+---------------------+---------------------------------------------|
+| macro          | macro!              | A macro I defined.                          |
+|----------------+---------------------+---------------------------------------------|
+| hook-fn        | hook-var&hook-fn    | A function added to a hook.                 |
+|----------------+---------------------+---------------------------------------------|
+| advice-fn      | some-fn@advice-fn   | A function added to as an advice.           |
+|----------------+---------------------+---------------------------------------------|
+| constant-var   | CONST-VAR           | A variable declared with defconst           |
+|----------------+---------------------+---------------------------------------------|
+| interactive-fn | feature/interactive | An interactive function.                    |
+|----------------+---------------------+---------------------------------------------|
+
 *** *no anonymous lambdas allowed*
 :PROPERTIES:
 :ID:       88a5aead-9dc2-4f37-9d0d-a382c292042a
@@ -685,16 +591,6 @@ and variables.
 
 I will never use anonymous lambdas--not for advices, not for hooks and not for
 bindings. Every function should be named.
-
-*** hooks
-:PROPERTIES:
-:ID:       355a8d6b-c0dc-468e-a5d9-813f83652696
-:END:
-
-*** advice
-:PROPERTIES:
-:ID:       24c0e12e-22a6-4768-be46-13d45c8d90b5
-:END:
 
 ** early-init
 :PROPERTIES:
@@ -741,8 +637,8 @@ Emacs from a script. :confused: I'm sure there's some way to do it.
 :END:
 
 Emacs by default uses dynamic binding. Lexical binding is a [[https://nullprogram.com/blog/2016/12/22/][known way to boost
-startup speed]]. To enable it you add the following comment on the top of your
-elisp files. The comment creates [[][]].
+startup speed]]. To enable it you add the following [[info:elisp#Using Lexical Binding][buffer-local variable]] on the
+top of your elisp file.
 
 #+begin_src emacs-lisp
 ;; -*- lexical-binding: t -*-
@@ -768,15 +664,15 @@ effectively stop garbage collection by setting the [[helpvar:gc-cons-threshold][
 :END:
 
 By default the frame is initialized with the tool-bar, menu-bar, and
-scroll-bar. Many emacs users, me included, prefer not to see these
-things. Since I operate via keybindings I would never use them anyway. But
-because emacs loads the init file after the initialization of the frame, it
-used to be the case that it was inevitable to catch a glipse of these UI
-elements during your emacs initializaition. Not is it distracting, but
-rendering those things also contributed significantly to startup time.
+scroll-bar. Many emacs users, me included, prefer not to see these things. Since
+I operate via keybindings I would never use them anyway. But because emacs loads
+the init file after the initialization of the frame, it used to be the case that
+it was inevitable to catch a glipse of these UI elements during your Emacs
+initializaition. Not is it distracting, but rendering those things also
+contributed significantly to startup time.
 
-Before the advent of the [[helpvar:early-init-file][early-init-file]], the only way to
-prevent it was to set up an [[https://wiki.archlinux.org/index.php/X_resources][xresources]].
+Before the advent of the [[helpvar:early-init-file][early-init-file]], the only way to prevent it was to set
+up an [[https://wiki.archlinux.org/index.php/X_resources][xresources]].
 
 #+begin_src emacs-lisp
 (push '(menu-bar-lines . 0) default-frame-alist)
@@ -1403,7 +1299,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 
 #+begin_src emacs-lisp
 (defconst XL-ANAPHORIC-SYMBOL-REGEXP
-  (eval-when-compile (rx "<" (group (1+ (not (any white ">" "<")))) ">"))
+  (eval-when-compile (rx "<" (group (+ (not (any white ">" "<")))) ">"))
   "Regular expression that matches an anaphoric symbol.")
 #+end_src
 
@@ -1451,9 +1347,9 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 #+begin_src emacs-lisp
 (defun xl-anaphoric-symbols (body)
   "Return all the anaphoric symbols in body."
-  (->> (-flatten body)
-       (-filter #'xl-anaphoric-symbol-p)
-       (-uniq)))
+  (thread-last (-flatten body)
+    (seq-filter #'xl-anaphoric-symbol-p)
+    (seq-uniq)))
 #+end_src
 
 ******* all anaphoric symbols in obj
@@ -1525,10 +1421,10 @@ from pulling (or failing to pull) in autoloaded macros/features.
   (declare (indent defun) (debug t))
   (cond ((eq 'or (car-safe features))
          (macroexp-progn
-          (--map `(after! ,it ,@body) (cdr features))))
+          (mapcar (fn! `(after! ,<feature> ,@body)) (cdr features))))
         ((eq 'and (car-safe features))
-         (xl-wrap-form (--map `(after! ,it) (cdr features))
-                         (macroexp-progn body)))
+         (xl-wrap-form (-map (fn `(after! ,<>)) (cdr features))
+                       (macroexp-progn body)))
         ((listp features)
          `(after! ,(cons 'and features) ,@body))
         ((symbolp features)
@@ -1819,7 +1715,7 @@ Many packages print some output to the messages buffer.
 
 (defun use-package-handler/:silence (name _ value rest state)
   `(,@(-map (-partial #'use-package:autoload name) value)
-    ,@(--map `(xl-silence-output #',it) value)
+    ,@(-map (fn! `(xl-silence-output #',<fn>)) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1840,9 +1736,9 @@ functions that a package provides.
   (cl-assert (-all-p #'symbolp args))
   args)
 
-(defun use-package-handler/:gc-pause (name _ value rest state)
-  `(,@(--map (use-package:autoload name it) value)
-    ,@(--map `(xl-pause-gc #',it) value)
+(defun use-package-handler/:gc-pause (name _ fns rest state)
+  `(,@(-map (fn! (use-package:autoload name <fn>)) fns)
+    ,@(-map (fn! `(xl-pause-gc #',<fn>)) fns)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1861,8 +1757,8 @@ Sometimes I want to ignore certain functions.
   args)
 
 (defun use-package-handler/:ignore (name _ value rest state)
-  `(,@(-map (-partial #'use-package:autoload name) value)
-    ,@(--map `(xl-ignore #',it) value)
+  `(,@(-map (fn! (use-package:autoload name <>)) value)
+    ,@(-map (fn! `(xl-ignore #',<>)) value)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1880,9 +1776,9 @@ There are a number of functions in Emacs that prompt.
   (cl-assert (-all-p #'symbolp args))
   args)
 
-(defun use-package-handler/:assume-yes (name _ value rest state)
-  `(,@(-map (-partial #'use-package:autoload name) value)
-    ,@(--map `(xl-assume-yes #',it) value)
+(defun use-package-handler/:assume-yes (name _ functions rest state)
+  `(,@(-map (fn! (use-package:autoload name <fn>)) functions)
+    ,@(-map (fn! `(xl-assume-yes #',<fn>)) functions)
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1915,13 +1811,14 @@ instead of =add-hook=.
 
 #+begin_src emacs-lisp
 (use-package:dwim-insert :xl-hook)
+(use-package:override :xl-hook :hook)
 
 (defun use-package-normalize/:xl-hook (name _ args)
   (cl-assert (-all-p (-orfn #'-cons-pair-p #'symbolp) args))
   (->> args
-       (--map-when (symbolp it) (cons it (xl-emacs-modeify name)))
+       (-map-when #'symbolp (fn! (cons <> (xl-emacs-modeify name))))
        (-mapcat #'use-package:normalize-cons)
-       (--map (cons (xl-emacs-hookify (car it)) (cdr it)))))
+       (-map (fn! (cons (xl-emacs-hookify (car <>)) (cdr <>))))))
 
 (defun use-package-handler/:xl-hook (name _ hook-alist rest state)
   "Use `xl-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
