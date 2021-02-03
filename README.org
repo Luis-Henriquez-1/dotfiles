@@ -1390,7 +1390,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 :END:
 
 Sometimes it is useful to evaluate a lisp form that's in a string. One example,
-is when [[][evaluating code in source blocks]]. In general, this comes up
+is when [[https://orgmode.org/manual/Evaluating-Code-Blocks.html#Evaluating-Code-Blocks][evaluating code in source blocks]]. In general, this comes up
 whenever you have to evaluate code you've gotten from a buffer.
 
 You may be wondering why I first wrapped the form in the string with a [[helpfn:progn][progn]]
@@ -1481,7 +1481,7 @@ feature as well as the form to be evaluated.
 Also, if an =eval-after-load= block contains an error and it is triggered by a
 feature, the error will happening. I think it might be that because the form was
 not successfully evaluated =eval-after-load= does not realize it should stop
-loading it. To remedy this I wrap the block with [[][condition-case]].
+loading it. To remedy this I wrap the block with [[helpfn:condition-case][condition-case]].
 
 #+begin_src emacs-lisp
 (defmacro eval-after-load! (feature &rest body)
@@ -1681,8 +1681,8 @@ Might be useful later. :shrug:
 
 I want to override some existing =use-package= keywords. Use package keywords
 are defined by three things: the existence of the keyword in
-[[helpvar:use-package-keywords][use-package-keywords]], the existence of a [[][handler]], and the existence of a
-[[][normalizer]]. To overwrite an existing keyword all you have to do is
+[[helpvar:use-package-keywords][use-package-keywords]], the existence of a [[https://github.com/jwiegley/use-package#third-step-create-a-handler][handler]], and the existence of a
+[[https://github.com/jwiegley/use-package#second-step-create-a-normalizer][normalizer]]. To overwrite an existing keyword all you have to do is
 override the corresponding normalizer and handler. The purpose of this function
 is to provide an easy way to do this.
 
@@ -4433,13 +4433,6 @@ As I learn more about embark I will improve this documentation over time.
       (setq-local selectrum-num-candidates-displayed 0))))
 #+end_src
 
-**** company
-:PROPERTIES:
-:ID:       5c0ed97e-da66-42ab-a033-381ac9dd8972
-:END:
-
-=company= is a package that creates a tooltip.
-
 ***** setup
 :PROPERTIES:
 :ID:       5e5393d9-9f58-45be-9ecc-1bc9f0316379
@@ -5842,6 +5835,9 @@ address later.
 #+begin_src emacs-lisp
 (use-package! git-gutter+)
 (set! git-gutter+-git-executable (f-full "~/.yadm-project/yadm"))
+
+;; I get an error that this function is not defined.
+(defun git-commit-mode-font-lock-keywords () nil)
 #+end_src
 
 **** persistence
@@ -7072,8 +7068,7 @@ buffer. It's the same concept as org-src buffers but is not tied to org-mode.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! edit-indirect
-  :commands edit-indirect)
+(use-package! edit-indirect :commands edit-indirect)
 #+end_src
 
 ***** editing org descriptions
@@ -7422,12 +7417,7 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 (use-package! xr :commands xr)
 #+end_src
 
-**** saving & backups
-:PROPERTIES:
-:ID:       58228a67-3f7f-4654-8452-81194e75da07
-:END:
-
-***** super-save
+**** super-save
 :PROPERTIES:
 :ID:       684e788c-6db9-4e6e-826b-d4871c0a3f90
 :END:
