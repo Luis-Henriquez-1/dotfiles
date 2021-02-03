@@ -7515,10 +7515,9 @@ it. It's pretty smart and very convenient.
 :END:
 
 #+begin_src emacs-lisp
-(use-package! smartparens :config
-  (defhook! init-smartparens-config (smartparens-mode-hook)
-    (require 'smartparens-config)
-    (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)))
+(defhook! init-smartparens-config (smartparens-mode-hook)
+  (require 'smartparens-config)
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
 #+end_src
 
 ****** disable =smartparens-navigate-skip-match=
@@ -9696,39 +9695,6 @@ Somtimes I might want to adjust this.
 :ID:       fe176959-3134-4b18-8abb-a962347b8df0
 :END:
 
-**** themes
-:PROPERTIES:
-:ID:       62d543c2-19be-4483-bb1b-0995e84b57a2
-:END:
-
-Emacs theme changes the colors Emacs uses for display.
-
-***** use-theme!
-:PROPERTIES:
-:ID:       6b695326-ab06-4f9f-baf4-a8e1f30dbd14
-:END:
-
-#+begin_src emacs-lisp
-(use-package! use-theme
-  :ensure (:host github :type git :repo "canatella/use-theme"))
-(require 'use-theme)
-(use-theme spacemacs)
-#+end_src
-
-***** random-thme
-:PROPERTIES:
-:ID:       34705923-f5c6-4852-bd17-cbd8c9ce1ad9
-:END:
-
-***** theme-looper
-:PROPERTIES:
-:ID:       376fe082-cc91-468b-8a20-a3e299c7fd5f
-:END:
-
-#+begin_src emacs-lisp
-(use-package! theme-looper)
-#+end_src
-
 *** Keybindings
 :PROPERTIES:
 :ID:       e4605d42-4d57-40d9-8594-15b06f6196a4
@@ -9985,9 +9951,6 @@ These are keybindings I use most frequently.
   "s" (list :def #'consult-line             :wk "jump to line")
   "w" (list :def #'engine/search-duckduckgo :wk "web")
   "h" (list :def #'consult-outline          :wk "jump to outline heading"))
-#+end_src
-
-#+begin_src emacs-lisp
 #+end_src
 
 * email
