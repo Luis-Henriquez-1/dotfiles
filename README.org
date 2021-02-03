@@ -5981,7 +5981,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 tag-based, and has great documentation. One annoying quirk for me is that unlike
 all other Emacs packages it does not come uncoupled from the external program it
 uses. What this means is that you need to tell Emacs where the mu4e =.el= files
-are :pouting_cat:. It also means it's more difficult to incorporate it with the
+are :pouting-cat:. It also means it's more difficult to incorporate it with the
 contribution workflow that [[][straight.el]] encourages. I haven't figured out
 how to automate this across multiple OSes.
 
@@ -6073,6 +6073,7 @@ how to automate this.
 
 #+begin_src emacs-lisp
 (use-package! mu4e-view
+  :ensure nil
   :set
   (mu4e-view-show-images     . t)
   (mu4e-view-image-max-width . 800)
@@ -6087,6 +6088,7 @@ how to automate this.
 
 #+begin_src emacs-lisp
 (use-package! mu4e-compose
+  :ensure nil
   :set
   (mu4e-compose-context-policy . 'ask-if-none))
 #+end_src
@@ -6219,23 +6221,6 @@ Make sure mail directories exist. =mbsync= will fail if they don't.
 	(mapcar #'mu4e:mail-dir (mu4e:mail-accounts))))
 #+end_src
 
-******* alist of default
-:PROPERTIES:
-:ID:       db39c795-33f0-4a3c-a5a4-06f2b873c254
-:END:
-
-#+begin_src emacs-lisp
-(defvar mu4e-context:default-vars
-  `((mu4e-sent-folder      . ,(+mu4e-guess-folder base-dir "sent"))
-    (mu4e-drafts-folder    . ,(+mu4e-guess-folder base-dir "draft"))
-    (mu4e-trash-folder     . ,(+mu4e-guess-folder base-dir "trash" "delete" "junk"))
-    (user-email-address    . ,email)
-    (smtpmail-smtp-server  . ,out-host)
-    (smtpmail-smtp-user    . ,base-dir)
-    (smtpmail-smtp-service . ,out-port))
-  "Return an alist.")
-#+end_src
-
 ******* contexts
 :PROPERTIES:
 :ID:       0e580010-d5b2-4708-a7dc-c586908409b5
@@ -6352,14 +6337,6 @@ time. This could be useful if I add an email and don't want to restart Emacs.
 (defhook! init-contexts (mu4e-after-load-hook)
   "Define a context for each email account."
   (-each (mu4e:mail-accounts) #'mu4e-context:add-context))
-#+end_src
-
-******** guess the right folder
-:PROPERTIES:
-:ID:       f2ce41fa-ee55-4d37-9023-6511e393666b
-:END:
-
-#+begin_src emacs-lisp
 #+end_src
 
 *** Window Management
@@ -7488,15 +7465,15 @@ it. It's pretty smart and very convenient.
   :before-call evil-expression evil-ex
   :hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode)
   :set
-  (sp-highlight-pair-overlay . nil)
-  (sp-highlight-wrap-overlay . nil)
-  (sp-highlight-wrap-tag-overlay . nil)
-  (sp-show-pair-from-inside . t)
   (sp-cancel-autoskip-on-backward-movement . nil)
-  (sp-show-pair-delay . 0.1)
-  (sp-max-pair-length . 4)
-  (sp-max-prefix-length . 50)
-  (sp-escape-quotes-after-insert . nil))
+  (sp-highlight-wrap-tag-overlay           . nil)
+  (sp-highlight-pair-overlay               . nil)
+  (sp-highlight-wrap-overlay               . nil)
+  (sp-show-pair-from-inside                . t)
+  (sp-show-pair-delay                      . 0.1)
+  (sp-max-pair-length                      . 4)
+  (sp-max-prefix-length                    . 50)
+  (sp-escape-quotes-after-insert           . nil))
 #+end_src
 
 ****** config
