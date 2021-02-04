@@ -2288,30 +2288,6 @@ Accept the same arguments as `message'."
 (use-package! mmt)
 #+end_src
 
-***** fn!
-:PROPERTIES:
-:ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
-:END:
-
-This is a macro for writing anaphoric lambdas. It is based on [[https://github.com/troyp/fn.el][fn]], the main
-difference being that in a few special cases you can specify a named anaphoric
-variable. Also, I don't support the alternate =fn:= syntax.
-
-#+begin_src emacs-lisp
-(defmacro fn! (&rest body)
-  "Expand into an anaphoric macro with body BODY."
-  (let* ((argsym (make-symbol "ARGS"))
-	 (symbolic-placeholders (-uniq (xl-anaphoric-symbols body)))
-	 (number-fn (lambda (it) (s-matches-p "<[[:digit:]]>" (symbol-name it))))
-	 (numbers-p (-all-p number-fn symbolic-placeholders)))
-    (alet (if numbers-p
-	      (-sort (lambda (it other) (string-lessp (symbol-name it) (symbol-name other)))
-		     symbolic-placeholders)
-	    symbolic-placeholders)
-      `(lambda (&rest ,argsym)
-	 (-let [,it ,argsym] ,@body)))))
-#+end_src
-
 ***** hooks
 :PROPERTIES:
 :ID:       a9fb6a01-ded5-405c-83ba-c401dbc06400
