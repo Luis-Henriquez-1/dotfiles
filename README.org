@@ -2097,9 +2097,9 @@ Finally, we get to use =use-package= to configure itself! :smile: By default,
 macro expansion of a =use-package= form crowded and much more difficult to
 read. Setting [[helpvar:use-package-expand-minimally][use-package-expand-minimally]] tells =use-package=.
 
-Also, remember [[][I mentioned]] I want a fast startup
-time. [[helpvar:use-package-always-defer][use-package-always-defer]] tells =use-package= not to load anything until I
-say so.
+By default =use-package= loads a package immediately. Setting
+[[helpvar:use-package-always-defer][use-package-always-defer]] tells =use-package= not to load it unless I explicitly
+request it (for example, with the =:demand= keyword).
 
 #+begin_src emacs-lisp
 (use-package! use-package
