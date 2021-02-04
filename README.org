@@ -3611,8 +3611,8 @@ initializing. :race-car:
 :END:
 
 Fill column refers to the column where line-wrapping will occur. The standard
-value for this is =80= but historically that was because. Now this is not the
-case so I don't think it's as much of a deal.
+value for this is =80= but historically that was because of the [[https://en.wikipedia.org/wiki/Punched_card][IBM punch
+card]]. Now this is not the case so I don't think it's as much of a deal.
 
 #+begin_src emacs-lisp
 (setq-default fill-column 80)
