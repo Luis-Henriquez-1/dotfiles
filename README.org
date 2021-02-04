@@ -2267,8 +2267,8 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 :ID:       d73fd7b1-5610-4d93-8802-1aa57c8c1918
 :END:
 
-=elog= is a library for generating logging functions. I use [[][]] to generate a
-function that logs to the buffer =*xl-log*=.
+=elog= is a library for generating logging functions. I use [[helpfn:elog-open-log][elog-open-log]] to
+generate a function that logs to the buffer =*xl-log*=.
 
 #+begin_src emacs-lisp
 (use-package! elog
