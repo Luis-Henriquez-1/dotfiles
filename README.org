@@ -3615,7 +3615,7 @@ value for this is =80= but historically that was because of the [[https://en.wik
 card]]. Now this is not the case so I don't think it's as much of a deal.
 
 #+begin_src emacs-lisp
-(setq-default fill-column 80)
+(set-default! fill-column 80)
 #+end_src
 
 ***** recursive minibuffers
@@ -3628,7 +3628,7 @@ situation where I use this feature is in the command [[helpfn:eval-expression][e
 typing an expression, I get completion from the minibuffer.
 
 #+begin_src emacs-lisp
-(setq-default enable-recursive-minibuffers t)
+(set-default! enable-recursive-minibuffers t)
 #+end_src
 
 ***** use yes or no
