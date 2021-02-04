@@ -2269,9 +2269,9 @@ Accept the same arguments as `message'."
 :ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
 :END:
 
-This is a macro for writing anaphoric lambdas. It is based on [[https://github.com/troyp/fn.el][fn]], the
-main difference being that in a few special cases you can specify a named
-anaphoric variable. Also, I don't support the alternate =fn:= syntax.
+This is a macro for writing anaphoric lambdas. It is based on [[https://github.com/troyp/fn.el][fn]], the main
+difference being that in a few special cases you can specify a named anaphoric
+variable. Also, I don't support the alternate =fn:= syntax.
 
 #+begin_src emacs-lisp
 (defmacro fn! (&rest body)
