@@ -2178,7 +2178,7 @@ But if you're only.
 :END:
 
 =loopy= is an alternative to =cl-loop= that preserves lisp structure. It is akin
-to [[][Common Lisp's iter]]. dash's functions and macros are good for most
+to [[https://common-lisp.net/project/iterate/][Common Lisp's iter]]. dash's functions and macros are good for most
 cases. But they are not as good in my opinion when you're dealing with a complex
 loop that involves accumulating several variables or atypical control-flow (as
 in, break statements or return statements). This is where =loopy= comes into
