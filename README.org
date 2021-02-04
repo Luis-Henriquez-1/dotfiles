@@ -3636,7 +3636,8 @@ typing an expression, I get completion from the minibuffer.
 :ID:       82a84315-2018-42e0-bd1a-74af7b722593
 :END:
 
-It suffices typing =y= or =n= as opposed to =yes= or =no=.
+Essentially, I am telling all Emacs functions that prompt the user for a =yes=
+or =no= to instead allow me to type =y= or =p=.
 
 #+begin_src emacs-lisp
 (xl-advice-add #'yes-or-no-p :override #'y-or-n-p)
