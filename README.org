@@ -1379,6 +1379,9 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
 :ID:       667fcf91-8939-402f-9fd1-2a6e7713633b
 :END:
 
+You might wonder why I have this function instead of the similar [[helpfn:-const][-const]] provided
+by dash. Dash's function returns a compiled function.
+
 #+begin_src emacs-lisp
 (defun xl-const-fn (atom)
   "Return a constant function from ATOM."
