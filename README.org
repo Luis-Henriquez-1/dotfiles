@@ -2241,16 +2241,21 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 #+begin_src emacs-lisp
 (use-package! dbc
   :ensure (:host gitlab :type git :repo "matsievskiysv/display-buffer-control")
-  :demand t
-  :xl-config
-  (alet '(display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
-    (dbc-add-ruleset "bottom" it))
-  (alet '(display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
-    (dbc-add-ruleset "top" it))
-  (alet '(display-buffer-in-side-window . ((side . left) (window-width 0.4)))
-    (dbc-add-ruleset "left" it))
-  (alet '(display-buffer-in-side-window . ((side . right) (window-width 0.4)))
-    (dbc-add-ruleset "right" it)))
+  :demand t)
+#+end_src
+
+****** enable buffer rules
+:PROPERTIES:
+:ID:       b642c12d-ff3e-4ee8-9998-aea360e7ed7d
+:END:
+
+#+begin_src emacs-lisp
+(defhook! enable-buffer-rules (emacs-startup-hook)
+  (--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
+	    (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
+	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
+	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
+    (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
 #+end_src
 
 ****** db
