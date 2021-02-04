@@ -2158,8 +2158,7 @@ one or more functions as arguments and return a function. One example of this is
 emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 
 #+begin_src emacs-lisp
-(use-package! dash-functional
-  :demand t)
+(use-package! dash-functional :demand t)
 #+end_src
 
 ****** s
@@ -2219,7 +2218,7 @@ play.
 :ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
 :END:
 
-This package provides an alternative to the built-in =cl-fllet= called
+This package provides an alternative to the built-in =cl-flet= called
 =noflet=. The [[][]] is that.
 
 #+begin_src emacs-lisp
@@ -2867,6 +2866,64 @@ packages which can contain several thousand items.
   (xl-advice-add fn :override #'ignore))
 #+end_src
 
+******* loading on call
+:PROPERTIES:
+:ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
+:END:
+
+Instead of loading all features on startup, we want to load features only when
+we need them--just in time. And by "just in time" I mean at the last possible
+moment or in practice just before a function that uses this feature is called.
+While I could use =defadvice!= for defining these advices, doing this would
+quickly become repetative because it's something that is done so often in
+package configuration. The function =before-call= and =after-call= provide a fast
+and convenient way to do this.
+
+******** load-on-call
+:PROPERTIES:
+:ID:       324e707b-2f44-4168-a846-037f5401dedb
+:END:
+
+This is the internal function which I use to build the others. It loads a
+package before or after (you specify) a particular function is called. To do
+this it adds an =XL= advice that loads the feature to the function.
+
+#+begin_src emacs-lisp
+(defun xl--load-on-call (package where fn)
+  "Load PACKAGE before or after FN is called."
+  (alet (xl-symbol-intern 'xl--load- package '-advice)
+    (fset it `(lambda (&rest _)
+                (xl-log "Loading %s" ',package)
+                (require ',package)))
+    (xl-advice-add fn where it nil t)))
+#+end_src
+
+******** load before call
+:PROPERTIES:
+:ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
+:END:
+
+For convenience, I provide [[helpfn:xl-load-before-call][xl-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
+not to have to specify the advice keyword.
+
+#+begin_src emacs-lisp
+(defun xl-load-before-call (package fn)
+  "Load PACKAGE before FN is called."
+  (xl--load-on-call package :before fn))
+#+end_src
+
+******** load after call
+:PROPERTIES:
+:ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-load-after-call (package fn)
+  "Load PACKAGE after FN is called."
+  (xl--load-on-call package :after fn))
+#+end_src
+
+
 ****** defadvice!
 :PROPERTIES:
 :ID:       1e0f3a27-a7d8-4e28-a359-f42ed7a16033
@@ -2957,64 +3014,6 @@ to use =defadvice!= or =anaphoric-defadvice!=.
        ,@(-map (fn! `(,advice-macro ,name (,@before ,<fn> ,@after) ,@body))
                fns))))
 #+end_src
-
-***** loading on call
-:PROPERTIES:
-:ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
-:END:
-
-Instead of loading all features on startup, we want to load features only when
-we need them--just in time. And by "just in time" I mean at the last possible
-moment or in practice just before a function that uses this feature is called.
-While I could use =defadvice!= for defining these advices, doing this would
-quickly become repetative because it's something that is done so often in
-package configuration. The function =before-call= and =after-call= provide a fast
-and convenient way to do this.
-
-****** load-on-call
-:PROPERTIES:
-:ID:       324e707b-2f44-4168-a846-037f5401dedb
-:END:
-
-This is the internal function which I use to build the others. It loads a
-package before or after (you specify) a particular function is called. To do
-this it adds an =XL= advice that loads the feature to the function.
-
-#+begin_src emacs-lisp
-(defun xl--load-on-call (package where fn)
-  "Load PACKAGE before or after FN is called."
-  (alet (xl-symbol-intern 'xl--load- package '-advice)
-    (fset it `(lambda (&rest _)
-                (xl-log "Loading %s" ',package)
-                (require ',package)))
-    (xl-advice-add fn where it nil t)))
-#+end_src
-
-****** load before call
-:PROPERTIES:
-:ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
-:END:
-
-For convenience, I provide [[helpfn:xl-load-before-call][xl-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
-not to have to specify the advice keyword.
-
-#+begin_src emacs-lisp
-(defun xl-load-before-call (package fn)
-  "Load PACKAGE before FN is called."
-  (xl--load-on-call package :before fn))
-#+end_src
-
-****** load after call
-:PROPERTIES:
-:ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-load-after-call (package fn)
-  "Load PACKAGE after FN is called."
-  (xl--load-on-call package :after fn))
-#+end_src
-
 
 **** Keybindings
 :PROPERTIES:
