@@ -7938,6 +7938,16 @@ working yet.
 (use-package tangld)
 #+end_src
 
+**** org-annotate-code
+:PROPERTIES:
+:ID:       a8c5199d-1f4d-44a5-b6f1-2f8f264b181d
+:END:
+
+#+begin_src emacs-lisp
+(use-package org-annotate-code
+  :set (org-annotate-code-org-file (concat XL-ORG-DIR "annotations.org")))
+#+end_src
+
 **** org-archive
 :PROPERTIES:
 :ID:       e53743e9-79ec-42b9-9a4e-5aa87fe936ac
