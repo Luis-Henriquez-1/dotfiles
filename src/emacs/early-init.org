@@ -64,7 +64,7 @@ up an [[https://wiki.archlinux.org/index.php/X_resources][xresources]].
 (push '(vertical-scroll-bars) default-frame-alist)
 #+end_src
 
-** set the font
+* set the font
 :PROPERTIES:
 :ID:       54d9be27-74b3-49fd-9bdb-b6d1e024b80b
 :END:
@@ -81,7 +81,7 @@ reliable values (trust me, I tried).
 (push (cons 'font <<font()>>) default-frame-alist)
 #+end_src
 
-** disable fringes
+* disable fringes
 :PROPERTIES:
 :ID:       bb1264f6-1580-4463-9d72-d2913771ebb4
 :END:
@@ -91,7 +91,7 @@ reliable values (trust me, I tried).
 (push '(right-fringe . 0) default-frame-alist)
 #+end_src
 
-** stop package.el from writing in our init file
+* stop package.el from writing in our init file
 :PROPERTIES:
 :ID:       c5df3859-6099-4d99-9780-8d33383c3626
 :END:
@@ -104,7 +104,7 @@ loaded, but after [[helpvar:early-init-file][early-init-file]].
 (advice-add #'package--ensure-init-file :override #'ignore)
 #+end_src
 
-** ignore x-resources
+* ignore x-resources
 :PROPERTIES:
 :ID:       51391771-ed2f-42f7-b904-3f655b86cac0
 :END:
@@ -117,7 +117,7 @@ color is concerned). [[id:f439de9a-b2b1-4926-a4ae-3d94ff83d05a][Like I said]], w
 (advice-add #'x-apply-session-resources :override #'ignore)
 #+end_src
 
-** prevent default mode line from showing
+* prevent default mode line from showing
 :PROPERTIES:
 :ID:       0177fd1a-617d-47c6-bd03-db64439fd4cc
 :END:
@@ -136,7 +136,7 @@ don't disable it here.
   (setq-default mode-line-format nil))
 #+end_src
 
-** maximize frame
+* maximize frame
 :PROPERTIES:
 :ID:       3d208962-52ad-491a-8bf4-c9248c692fc7
 :END:

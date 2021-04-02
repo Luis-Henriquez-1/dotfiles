@@ -1,4 +1,4 @@
-** ensure lexical binding
+* ensure lexical binding
 :PROPERTIES:
 :ID:       2b8148c3-1418-4896-ba53-1673d2d82659
 :HEADER-ARGS: :tangle ~/.config/emacs/early-init.el :tangle ~/.config/emacs/init.el
@@ -12,7 +12,7 @@ top of your elisp file.
 ;; -*- lexical-binding: t -*-
 #+end_src
 
-** core
+* core
 :PROPERTIES:
 :ID:       d82e84fc-0e6d-460d-a5bf-33dd56564795
 :END:
@@ -20,7 +20,7 @@ top of your elisp file.
 This headline sets up package management and defines the fundamental functions
 and macros I use for the rest of my configuration.
 
-*** config files and directores
+** config files and directores
 :PROPERTIES:
 :ID:       be8993d3-c8f7-451b-8cb4-04a9138e5c4e
 :END:
@@ -50,7 +50,7 @@ important; and I end up referencing them alot.
   "Directory where packages are stored.")
 #+end_src
 
-*** package management
+** package management
 :PROPERTIES:
 :ID:       00eaa1a5-b5fe-437d-9888-1846ea9a232b
 :END:
@@ -59,7 +59,7 @@ The goal I have with package management is to deal with it all in this headline.
 All package installation should happen here so that later we can use focus on
 configuring packages, pretending like all the packages I'm are built-in to Emacs.
 
-***** straight
+**** straight
 :PROPERTIES:
 :ID:       2e251cc7-04de-43f8-a31f-1574a54ad576
 :END:
@@ -70,12 +70,12 @@ that you have the history of every installed emacs package locally. Another
 consequence is that you can completely reproduce the state of your emacs on
 another machine by installing the same packages with the same versions.
 
-****** settings
+***** settings
 :PROPERTIES:
 :ID:       86037015-ca61-48f9-96bf-df8fc625a35d
 :END:
 
-******* variables
+****** variables
 :PROPERTIES:
 :ID:       9dff9894-667c-4e74-9624-8aee533f8f70
 :END:
@@ -92,7 +92,7 @@ conserves some disk space.
 (setq straight-vc-git-default-clone-depth 1)
 #+end_src
 
-******* handle autoloads for me
+****** handle autoloads for me
 :PROPERTIES:
 :ID:       d3b052e4-fc7e-4b64-bd53-a6aa4b8abd16
 :END:
@@ -107,7 +107,7 @@ optionally handles this for us.
 (setq straight-cache-autoloads t)
 #+end_src
 
-******* package integration
+****** package integration
 :PROPERTIES:
 :ID:       db1f9042-5b6c-41a9-a69c-d05d0493fdb0
 :END:
@@ -120,7 +120,7 @@ initialization. We don't need =straight= to do this for us because it is handled
 (setq straight-enable-package-integration nil)
 #+end_src
 
-****** load bootstrap file
+***** load bootstrap file
 :PROPERTIES:
 :ID:       544f1bbe-3981-4d1b-8b24-3395b27890b2
 :END:
@@ -134,7 +134,7 @@ initialization. We don't need =straight= to do this for us because it is handled
     (load bootstrap-file nil 'nomessage)))
 #+end_src
 
-****** whether installed
+***** whether installed
 :PROPERTIES:
 :ID:       9216f0b9-93d5-43fe-aa96-3796674ab520
 :END:
@@ -147,7 +147,7 @@ initialization. We don't need =straight= to do this for us because it is handled
 	 (file-exists-p (concat XL-PACKAGES-DIR "straight/repos/straight.el/bootstrap.el")))))
 #+end_src
 
-****** install
+***** install
 :PROPERTIES:
 :ID:       ab38beca-2f26-4718-ab73-e4e4409f1563
 :END:
@@ -166,7 +166,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
     (shell-command (format "git -C %s checkout %s" repo-dir commit))))
 #+end_src
 
-***** read recipes
+**** read recipes
 :PROPERTIES:
 :ID:       f7a3baa6-d876-40d3-84f5-74b1d9b4f432
 :END:
@@ -188,7 +188,7 @@ Upon startup I read this file and register all the recipes in it with =straight=
       (nreverse forms))))
 #+end_src
 
-***** generate load-path
+**** generate load-path
 :PROPERTIES:
 :ID:       498862a1-8491-4ec1-95ad-f0bafd818ddc
 :END:
@@ -213,7 +213,7 @@ Calls `straight-use-package' on each recipe as a side-effect."
     (cl-set-difference load-path old-load-path :test #'string=)))
 #+end_src
 
-***** set the load-path
+**** set the load-path
 :PROPERTIES:
 :ID:       ea592f75-e8dd-4ee7-a44e-c2da9d76191b
 :END:
@@ -227,7 +227,7 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 (cl-callf2 append (xl-generate-package-paths) load-path)
 #+end_src
 
-***** updating the recipe file
+**** updating the recipe file
 :PROPERTIES:
 :ID:       cc40b9ac-d061-44f2-84b6-2f5e782e2ed8
 :END:
@@ -238,7 +238,7 @@ straight. In the future I want more fine grained control, perhaps showing me the
 difference between the packages I installed in my current Emacs session compared
 with the last and allowing me to choose which ones to add.
 
-****** versions alist
+***** versions alist
 :PROPERTIES:
 :ID:       3db31fa0-86e3-49e3-a13c-c3966bd7d6f7
 :END:
@@ -257,7 +257,7 @@ with the last and allowing me to choose which ones to add.
     versions-alist))
 #+end_src
 
-****** update recipe file
+***** update recipe file
 :PROPERTIES:
 :ID:       63b9a6eb-bc36-4555-b0d6-0100841277ca
 :END:
@@ -285,7 +285,7 @@ with the last and allowing me to choose which ones to add.
 		 (insert ?\n))))))
 #+end_src
 
-*** library
+** library
 :PROPERTIES:
 :ID:       70af1291-6b16-4261-ba83-19bb16d0023e
 :END:
@@ -299,14 +299,14 @@ make sure packages are only loaded when they need to be. The major purpose of
 this library is to provide me the tools to configure these packages in a way
 that is concise and efficient.
 
-**** custom helpers
+*** custom helpers
 :PROPERTIES:
 :ID:       cfa16796-a4fe-4e2a-a021-fb9891950556
 :END:
 
 These are tools that are specifically designed to help me write macros.
 
-***** symbols
+**** symbols
 :PROPERTIES:
 :ID:       fa9a5fb6-381a-441f-8ecc-d3b4a5cab11d
 :END:
@@ -314,7 +314,7 @@ These are tools that are specifically designed to help me write macros.
 Conversion between symbols, keywords, and strings are prevalent in
 macro-writing.
 
-****** symbol intern
+***** symbol intern
 :PROPERTIES:
 :ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
 :END:
@@ -332,7 +332,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'xl-to-string args)))
 #+end_src
 
-****** keyword intern
+***** keyword intern
 :PROPERTIES:
 :ID:       0618b8d7-e0a4-4e3e-8d89-b7d0ebe43917
 :END:
@@ -347,7 +347,7 @@ commands saves me having to add the colon at the beginning before interning.
   (apply #'xl-symbol-intern ":" args))
 #+end_src
 
-****** keyword name
+***** keyword name
 :PROPERTIES:
 :ID:       e853603a-851d-429f-9201-f2e93734dfaf
 :END:
@@ -363,7 +363,7 @@ for that occasion.
   (substring-no-properties (xl-to-string keyword) 1))
 #+end_src
 
-****** convert to string
+***** convert to string
 :PROPERTIES:
 :ID:       60f22f98-8204-45ae-9943-f19cdfe60459
 :END:
@@ -380,7 +380,7 @@ with details and just want a string.
     (-each args #'princ)))
 #+end_src
 
-****** detect emacs symbols
+***** detect emacs symbols
 :PROPERTIES:
 :ID:       207ed522-51f3-45e7-91ba-8afb828d950b
 :END:
@@ -392,7 +392,7 @@ we're dealing with. And, it may also be useful to be able to convert a normal
 symbol (by which I mean one that doesn't follow the conventions) to one of these
 particular kinds.
 
-******* hook symbol
+****** hook symbol
 :PROPERTIES:
 :ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
 :END:
@@ -407,7 +407,7 @@ As I mentioned, the convention for hook symbols is that they are suffixed with
   (s-matches-p ".+-hook\\'" (symbol-name symbol)))
 #+end_src
 
-******* hookify symbol
+****** hookify symbol
 :PROPERTIES:
 :ID:       b308a172-6e99-491c-a382-7ee28e9fc1ae
 :END:
@@ -422,7 +422,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-hook)))
 #+end_src
 
-******* mode symbol
+****** mode symbol
 :PROPERTIES:
 :ID:       ec25e275-c36f-4cee-be04-1fdf8c974857
 :END:
@@ -434,7 +434,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
   (s-matches-p ".+-mode\\'" (symbol-name symbol)))
 #+end_src
 
-******* modeify symbol
+****** modeify symbol
 :PROPERTIES:
 :ID:       61fa29a7-9697-4171-8b6f-f4c0b487c02c
 :END:
@@ -449,7 +449,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-mode)))
 #+end_src
 
-******* map symbol
+****** map symbol
 :PROPERTIES:
 :ID:       b7ab2b84-ebea-46fe-8494-89a2aed2f6e8
 :END:
@@ -461,7 +461,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
        (s-suffix-p "-map" (symbol-name obj))))
 #+end_src
 
-****** internal XL symbol
+***** internal XL symbol
 :PROPERTIES:
 :ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
 :END:
@@ -475,7 +475,7 @@ To avoid.
   (s-matches-p "\\`xl-.+" (symbol-name symbol)))
 #+end_src
 
-***** quoting
+**** quoting
 :PROPERTIES:
 :ID:       95a2271b-a21b-4fed-a6b8-1e76ca821ed4
 :END:
@@ -488,7 +488,7 @@ a character that's used to abbreviate them as I will explain.
 The purpose of this headline is to provide functions that are useful for macro
 writing. What we deal with when writing macro is syntax itself.
 
-****** single-quoted
+***** single-quoted
 :PROPERTIES:
 :ID:       533945fc-c700-42ce-8b93-d6bd9e16d9c7
 :END:
@@ -507,7 +507,7 @@ just how emacs displays a quote for brevity. In reality something like ~'cat~ is
     (_ nil)))
 #+end_src
 
-****** sharp-quoted
+***** sharp-quoted
 :PROPERTIES:
 :ID:       6ba0980e-4391-47ef-a555-4c1dc3132f3b
 :END:
@@ -526,7 +526,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-****** backquoted
+***** backquoted
 :PROPERTIES:
 :ID:       2c7af958-3aa0-48d6-a852-fd5feae452a9
 :END:
@@ -540,7 +540,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-****** quoted
+***** quoted
 :PROPERTIES:
 :ID:       d1b6c539-c8ca-4dc4-b76d-e2f9406b1c04
 :END:
@@ -554,7 +554,7 @@ function symbol.
       (xl-backquoted-p symbol)))
 #+end_src
 
-****** unquote
+***** unquote
 :PROPERTIES:
 :ID:       dbf97264-95e9-478b-aa44-edcbd3f39665
 :END:
@@ -569,7 +569,7 @@ If object is already unquoted, return OBJ."
     (_ obj)))
 #+end_src
 
-***** macro keyword arguments
+**** macro keyword arguments
 :PROPERTIES:
 :ID:       dc7a63e6-041b-4855-b206-6d72ef732de1
 :END:
@@ -589,7 +589,7 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 	 (finally-return (list docstring plist body))))
 #+end_src
 
-***** true-list-p
+**** true-list-p
 :PROPERTIES:
 :ID:       43089182-316b-4191-a3f1-6f2d1b1b971e
 :END:
@@ -605,7 +605,7 @@ something--you can loop over a list but not a cons cell.
   (and (listp obj) (not (-cons-pair-p obj))))
 #+end_src
 
-***** wrapping forms
+**** wrapping forms
 :PROPERTIES:
 :ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
 :END:
@@ -629,7 +629,7 @@ WRAPPERS are a list of forms to wrap around FORM."
     form))
 #+end_src
 
-***** anaphora
+**** anaphora
 :PROPERTIES:
 :ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
 :END:
@@ -644,7 +644,7 @@ placeholder.
 
 https://en.wikipedia.org/wiki/Anaphoric_macro
 
-****** anaphoric symbol regexp
+***** anaphoric symbol regexp
 :PROPERTIES:
 :ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
 :END:
@@ -655,7 +655,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   "Regular expression that matches an anaphoric symbol.")
 #+end_src
 
-****** anaphoric symbol
+***** anaphoric symbol
 :PROPERTIES:
 :ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
 :END:
@@ -667,7 +667,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
        (string-match-p XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
 #+end_src
 
-****** true anaphora name
+***** true anaphora name
 :PROPERTIES:
 :ID:       2833cd75-9c85-4c0e-9523-4489d387150a
 :END:
@@ -680,7 +680,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
     (intern (match-string 1 (symbol-name symbol)))))
 #+end_src
 
-****** take symbol and return anaphoric symbol
+***** take symbol and return anaphoric symbol
 :PROPERTIES:
 :ID:       4b89588e-f3c3-49d3-8851-fdd214cee563
 :END:
@@ -691,7 +691,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (xl-symbol-intern '< symbol '>))
 #+end_src
 
-****** body symbols
+***** body symbols
 :PROPERTIES:
 :ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
 :END:
@@ -704,7 +704,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
        (-uniq)))
 #+end_src
 
-****** all anaphoric symbols in obj
+***** all anaphoric symbols in obj
 :PROPERTIES:
 :ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
 :END:
@@ -715,7 +715,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
 #+end_src
 
-***** xl-true
+**** xl-true
 :PROPERTIES:
 :ID:       25dcd81e-11a1-42b1-87a3-1df8c5a56cf1
 :END:
@@ -729,7 +729,7 @@ arguments. Unlike it, it always returns =t= instead of always returning =nil=.
   t)
 #+end_src
 
-***** xl-false
+**** xl-false
 :PROPERTIES:
 :ID:       0d1349cc-8bd5-4830-9c3b-9b4f9ebe25d0
 :END:
@@ -738,7 +738,7 @@ arguments. Unlike it, it always returns =t= instead of always returning =nil=.
 (defalias 'xl-false 'ignore)
 #+end_src
 
-***** eval a form in a string
+**** eval a form in a string
 :PROPERTIES:
 :ID:       79cfc39a-0924-468b-9fbc-83388323a39b
 :END:
@@ -759,7 +759,7 @@ This function came from [[https://emacs.stackexchange.com/questions/19877/how-to
   (eval (car (read-from-string (format "(progn %s)" string)))))
 #+end_src
 
-***** dwim single
+**** dwim single
 :PROPERTIES:
 :ID:       13c4df8f-86f6-46e8-8507-60c08b96fb14
 :END:
@@ -772,12 +772,12 @@ Otherwise, return OBJ."
   (if (= (safe-length obj) 1) (car obj) obj))
 #+end_src
 
-**** custom macros
+*** custom macros
 :PROPERTIES:
 :ID:       cfe0d468-92ee-4a4f-9908-4ea0b1964ac4
 :END:
 
-***** after!
+**** after!
 :PROPERTIES:
 :ID:       e209d256-86e0-4e30-a7d5-78a583729b42
 :END:
@@ -815,7 +815,7 @@ from pulling (or failing to pull) in autoloaded macros/features.
         (t (error "Invalid argument."))))
 #+end_src
 
-***** with-os!
+**** with-os!
 :PROPERTIES:
 :ID:       a3ea434a-3f70-4137-a525-5be4bc63c3a2
 :END:
@@ -840,7 +840,7 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
     `(progn ,@body)))
 #+end_src
 
-***** eval-after-load!
+**** eval-after-load!
 :PROPERTIES:
 :ID:       8d831084-539b-4072-a86a-b55afb09bf02
 :END:
@@ -865,7 +865,7 @@ loading it. To remedy this I wrap the block with [[helpfn:condition-case][condit
          (message "Error in `eval-after-load': %S" error)))))
 #+end_src
 
-***** set!
+**** set!
 
 One "gotcha" in Emacs is the existence of custom variables. Unlike typical
 variables custom variables sometimes rely on certain code being executed when
@@ -901,7 +901,7 @@ Note that I may depreciate this in favor of setf.
      (error "Invalid arguments."))))
 #+end_src
 
-***** set-default!
+**** set-default!
 :PROPERTIES:
 :ID:       bc6b7560-fb71-4fc7-a53b-98f92c657d92
 :END:
@@ -913,7 +913,7 @@ Note that I may depreciate this in favor of setf.
   `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
 #+end_src
 
-***** fn!
+**** fn!
 :PROPERTIES:
 :ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
 :END:
@@ -937,12 +937,12 @@ variable. Also, I don't support the alternate =fn:= syntax.
 	 (-let [,it ,argsym] ,@body)))))
 #+end_src
 
-**** use-package
+*** use-package
 :PROPERTIES:
 :ID:       4882e62d-4602-40a6-9fbb-5efb0b5f4bc2
 :END:
 
-***** init use-package
+**** init use-package
 :PROPERTIES:
 :ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
 :END:
@@ -970,7 +970,7 @@ request it (for example, with the =:demand= keyword).
 (defalias 'use-package! 'use-package)
 #+end_src
 
-***** use-package
+**** use-package
 :PROPERTIES:
 :ID:       29e1513a-e12a-4818-870e-8d5fab7fe1a0
 :END:
@@ -979,21 +979,21 @@ request it (for example, with the =:demand= keyword).
 packages and features. It is widely used among the emacs community. In this
 headline I build upon it and adapt it to my needs.
 
-****** helpers
+***** helpers
 :PROPERTIES:
 :ID:       c8a6f579-c4ff-4b0f-942e-f87dab208deb
 :END:
 
 When it comes to helping myself with helper functions I spare no expense.
 
-******* inserting keywords
+****** inserting keywords
 :PROPERTIES:
 :ID:       86f9fa28-6842-4580-994a-24f5d4608ad4
 :END:
 
 =use-package= has a built-in way of inserting keywords.
 
-******** functional =use-package= keyword insertion
+******* functional =use-package= keyword insertion
 :PROPERTIES:
 :ID:       4968a708-05f2-4a3b-8395-850a3c119fd2
 :END:
@@ -1013,7 +1013,7 @@ inserted after PLACE."
 	    list))
 #+end_src
 
-******** dwim insert
+******* dwim insert
 :PROPERTIES:
 :ID:       54fc11db-534a-4b59-836c-3165cf48b61d
 :END:
@@ -1034,7 +1034,7 @@ This is the same as `use-package%insert-keyword' except WHERE and PLACE to
 	  (use-package%insert-keyword where place key use-package-keywords))))
 #+end_src
 
-******* normalize cons
+****** normalize cons
 :PROPERTIES:
 :ID:       d5beb18f-b18c-407b-9840-bda400ef52b4
 :END:
@@ -1049,7 +1049,7 @@ This is the same as `use-package%insert-keyword' except WHERE and PLACE to
 	       (-list (cdr cons-pair))))
 #+end_src
 
-******* create autoloads
+****** create autoloads
 :PROPERTIES:
 :ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
 :END:
@@ -1064,7 +1064,7 @@ forms.
      (autoload #',fn ,(symbol-name package) nil t nil)))
 #+end_src
 
-******* generate normalizer
+****** generate normalizer
 :PROPERTIES:
 :ID:       f287aa5b-51ed-40da-bbc1-9a40586a1f83
 :END:
@@ -1079,7 +1079,7 @@ Might be useful later. :shrug:
   (xl-symbol-intern 'use-package-normalize/ key))
 #+end_src
 
-******* generate a handler
+****** generate a handler
 :PROPERTIES:
 :ID:       495d3d70-f19f-420d-86ef-d75c49a77b66
 :END:
@@ -1090,7 +1090,7 @@ Might be useful later. :shrug:
   (xl-symbol-intern 'use-package-handler/ key))
 #+end_src
 
-******* override keyword
+****** override keyword
 :PROPERTIES:
 :ID:       aff6cbbe-7657-4287-9632-31dab7310c63
 :END:
@@ -1110,7 +1110,7 @@ OLD is an existing use-package keyword. NEW is the keyword to override OLD with.
   (advice-add (use-package%handler old) :override (use-package%handler new)))
 #+end_src
 
-****** custom keywords
+***** custom keywords
 :PROPERTIES:
 :ID:       62cec5ac-a2f9-435b-96a7-4db0d9691f25
 :END:
@@ -1118,7 +1118,7 @@ OLD is an existing use-package keyword. NEW is the keyword to override OLD with.
 One thing to note is that I don't allow arguments to be optionally in a
 list. This makes things much more complicated and it makes.
 
-******* silence
+****** silence
 :PROPERTIES:
 :ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
 :END:
@@ -1144,7 +1144,7 @@ FNS is a list of function symbols."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* gc-pause
+****** gc-pause
 :PROPERTIES:
 :ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
 :END:
@@ -1167,7 +1167,7 @@ functions that a package provides.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* ignore
+****** ignore
 :PROPERTIES:
 :ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
 :END:
@@ -1187,7 +1187,7 @@ Sometimes I want to ignore certain functions.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* always yes
+****** always yes
 :PROPERTIES:
 :ID:       f2d89960-ed41-4a72-847f-e150db56330b
 :END:
@@ -1207,7 +1207,7 @@ There are a number of functions in Emacs that prompt.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* os
+****** os
 :PROPERTIES:
 :ID:       9d78d90a-0309-44c6-be96-82bd6608546a
 :END:
@@ -1226,7 +1226,7 @@ This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70
   `((with-os! ,os ,@(use-package-process-keywords name rest state))))
 #+end_src
 
-******* hook
+****** hook
 :PROPERTIES:
 :ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
 :END:
@@ -1257,7 +1257,7 @@ instead of =add-hook=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* before-call
+****** before-call
 :PROPERTIES:
 :ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
 :END:
@@ -1286,7 +1286,7 @@ of this keyword is to load a package when a certain function is called.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* after-call
+****** after-call
 :PROPERTIES:
 :ID:       2c7dd1a8-c0ee-42cd-b76f-8a72c94be848
 :END:
@@ -1306,7 +1306,7 @@ The.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* set
+****** set
 :PROPERTIES:
 :ID:       9948a4ae-f80a-4b13-b97a-0895481021a6
 :END:
@@ -1329,7 +1329,7 @@ I should give credit. I got this idea from the leaf macro.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* rule
+****** rule
 :PROPERTIES:
 :ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
 :END:
@@ -1351,7 +1351,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* idle-require
+****** idle-require
 :PROPERTIES:
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
@@ -1375,7 +1375,7 @@ If an element is t, convert it to PACKAGE."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* config
+****** config
 :PROPERTIES:
 :ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
 :END:
@@ -1396,7 +1396,7 @@ same thing, except it uses =after!= instead of =with-eval-after-load=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* alias
+****** alias
 :PROPERTIES:
 :ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
 :END:
@@ -1416,7 +1416,7 @@ Sometimes I want to alias certain.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* advice
+****** advice
 :PROPERTIES:
 :ID:       c8f56e77-7e95-493e-bf10-0bb8daccbd1e
 :END:
@@ -1446,7 +1446,7 @@ and EXPIRE-FN are optional."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* xl-advice
+****** xl-advice
 :PROPERTIES:
 :ID:       1a0d6ff0-0dcd-4374-b52c-79bf617b3a2b
 :END:
@@ -1475,7 +1475,7 @@ and EXPIRE-FN are optional."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-******* initial state
+****** initial state
 :PROPERTIES:
 :ID:       e923e94e-9051-4be8-8dda-6566601ba865
 :END:
@@ -1505,7 +1505,7 @@ packages.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-**** essential libraries
+*** essential libraries
 :PROPERTIES:
 :ID:       18602d49-dcc3-47c3-8579-62f7a7b7a83a
 :END:
@@ -1518,7 +1518,7 @@ slowly with the introduction of libraries like =seq.el= and =map.el= but still
 leaves much to be desired. This sounds like a complaint, but it actually
 highlights the advantage of the extensibility of Emacs.
 
-***** shut-up
+**** shut-up
 :PROPERTIES:
 :ID:       71681f9f-2760-4cee-95a0-4aeb71191a42
 :END:
@@ -1532,7 +1532,7 @@ messages can be useful, most of the time they are superfluous.
 (use-package shut-up :demand t)
 #+end_src
 
-***** mmt
+**** mmt
 :PROPERTIES:
 :ID:       a4377985-fe0e-4980-b839-08c334bde76c
 :END:
@@ -1545,7 +1545,7 @@ variable leaking.
 (use-package mmt)
 #+end_src
 
-***** dash
+**** dash
 :PROPERTIES:
 :ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
 :END:
@@ -1562,7 +1562,7 @@ so I'll likely end up loading it anyway.
 (use-package dash :demand t)
 #+end_src
 
-***** subr-x
+**** subr-x
 :PROPERTIES:
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
 :END:
@@ -1571,7 +1571,7 @@ so I'll likely end up loading it anyway.
 (use-package subr-x :demand t)
 #+end_src
 
-***** ht
+**** ht
 :PROPERTIES:
 :ID:       56bb0ff4-6ad1-44b7-a9a4-54abf48ed253
 :END:
@@ -1583,7 +1583,7 @@ hash-tables.
 (use-package ht)
 #+end_src
 
-***** dash-functional
+**** dash-functional
 :PROPERTIES:
 :ID:       704fc35f-0ad0-4eb3-9eb5-d8335465dbd8
 :END:
@@ -1596,7 +1596,7 @@ emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 (use-package dash-functional :demand t)
 #+end_src
 
-***** s
+**** s
 :PROPERTIES:
 :ID:       b96acb97-3963-4713-a03b-6294c65903fd
 :END:
@@ -1608,7 +1608,7 @@ that are not built-in to Emacs. Notably, it is functional.
 (use-package s :demand t)
 #+end_src
 
-***** f
+**** f
 :PROPERTIES:
 :ID:       f44da560-dc3f-4635-926e-eec4fd6d159d
 :END:
@@ -1617,7 +1617,7 @@ that are not built-in to Emacs. Notably, it is functional.
 (use-package f :demand t)
 #+end_src
 
-***** anaphora
+**** anaphora
 :PROPERTIES:
 :ID:       1c47bd8a-15f1-4b1c-9574-23547d27d968
 :END:
@@ -1630,7 +1630,7 @@ But if you're only.
 (use-package anaphora :demand t)
 #+end_src
 
-***** loopy
+**** loopy
 :PROPERTIES:
 :ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
 :END:
@@ -1650,7 +1650,7 @@ play.
 (use-package loopy-dash :demand t)
 #+end_src
 
-***** noflet
+**** noflet
 :PROPERTIES:
 :ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
 :END:
@@ -1662,7 +1662,7 @@ This package provides an alternative to the built-in =cl-flet= called
 (use-package noflet :demand t)
 #+end_src
 
-***** dbc
+**** dbc
 :PROPERTIES:
 :ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
 :END:
@@ -1682,7 +1682,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
     (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
 #+end_src
 
-***** db
+**** db
 :PROPERTIES:
 :ID:       9b79f07b-8397-4f95-b79c-5e136a9b2079
 :END:
@@ -1691,7 +1691,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package db)
 #+end_src
 
-***** log4e
+**** log4e
 :PROPERTIES:
 :ID:       8360e875-61a6-46f8-a401-2a98c9e517fa
 :END:
@@ -1706,13 +1706,13 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
   (defalias 'xl-log 'xl--log-info))
 #+end_src
 
-***** ts
+**** ts
 
 #+begin_src emacs-lisp
 (use-package ts)
 #+end_src
 
-***** a
+**** a
 :PROPERTIES:
 :ID:       32110690-9d0a-4e3d-a1d8-7695b42aeb30
 :END:
@@ -1723,7 +1723,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package a :demand t)
 #+end_src
 
-***** list-utils
+**** list-utils
 :PROPERTIES:
 :ID:       f87d570a-4b06-42ea-acaa-a0bedba0e623
 :END:
@@ -1732,7 +1732,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package list-utils :demand t)
 #+end_src
 
-***** require map
+**** require map
 :PROPERTIES:
 :ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
 :END:
@@ -1741,12 +1741,12 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package map :demand t)
 #+end_src
 
-**** aliases
+*** aliases
 :PROPERTIES:
 :ID:       bad5a570-2b94-4ada-88f0-de9f32fa9b7e
 :END:
 
-***** prefixed-core
+**** prefixed-core
 :PROPERTIES:
 :ID:       14b63dc9-1d95-4bd7-8b29-8b2b33bd1e69
 :END:
@@ -1761,7 +1761,7 @@ for functions namespaced =frame=.
 (use-package prefixed-core :demand t)
 #+end_src
 
-***** custom aliases
+**** custom aliases
 :PROPERTIES:
 :ID:       c32ede6e-05ae-4067-8505-ffe328295536
 :END:
@@ -1772,7 +1772,7 @@ for functions namespaced =frame=.
 (defalias 'buffer-previous 'previous-buffer)
 #+end_src
 
-**** debug-p
+*** debug-p
 :PROPERTIES:
 :ID:       39197346-c420-4518-b8f8-8ea247d6decb
 :END:
@@ -1788,7 +1788,7 @@ what its doing via [[hfn:void-log][xl-log]].
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
-**** hooks
+*** hooks
 :PROPERTIES:
 :ID:       a9fb6a01-ded5-405c-83ba-c401dbc06400
 :END:
@@ -1808,7 +1808,7 @@ In this headline, I strive to establish a common naming convention for hooks
 that I define. I want there to be a clear destinction between hooks and regular
 functions.
 
-***** hook regexp
+**** hook regexp
 :PROPERTIES:
 :ID:       aa93c9c5-aaaa-4732-9065-32e131e96031
 :END:
@@ -1824,7 +1824,7 @@ This regexp contains two groups. One group one designates the hook variable
 what follows the '&').")
 #+end_src
 
-***** whether a symbol is an XL hook
+**** whether a symbol is an XL hook
 :PROPERTIES:
 :ID:       1995a309-e1d3-40e5-b6b1-fbcd81dda0bb
 :END:
@@ -1838,7 +1838,7 @@ useful primarily in macros.
   (s-matches-p XL-HOOK-REGEXP (symbol-name symbol)))
 #+end_src
 
-***** access the hook symbol
+**** access the hook symbol
 :PROPERTIES:
 :ID:       77f45347-3688-438d-8674-39e6d476a2d1
 :END:
@@ -1858,7 +1858,7 @@ XL-HOOK-FN is a function named with Void naming conventions."
        (intern)))
 #+end_src
 
-***** hook action
+**** hook action
 :PROPERTIES:
 :ID:       fa705f26-31f0-43c3-80a6-6741e74ab0ea
 :END:
@@ -1876,12 +1876,12 @@ always]].
        (intern)))
 #+end_src
 
-***** generate an XL hook
+**** generate an XL hook
 :PROPERTIES:
 :ID:       3e6176f0-75dd-4dd8-a87d-2f47be7f2abf
 :END:
 
-****** produce an XL hook name
+***** produce an XL hook name
 :PROPERTIES:
 :ID:       6b14ea72-b8ef-493d-82e2-962f889736a2
 :END:
@@ -1905,7 +1905,7 @@ apparent what's being done.
     (xl-symbol-intern hook '& it)))
 #+end_src
 
-****** produce hook lambda
+***** produce hook lambda
 :PROPERTIES:
 :ID:       01cdecef-a345-45f0-b38e-5fe0b4939b08
 :END:
@@ -1932,7 +1932,7 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
 	(xl-log "%s failed." ',fn)))))
 #+end_src
 
-****** produce an XL xl-hook
+***** produce an XL xl-hook
 :PROPERTIES:
 :ID:       5081274d-61d8-4adf-8646-72b08ca2f3d6
 :END:
@@ -1945,7 +1945,7 @@ wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
     it))
 #+end_src
 
-***** add an XL hook
+**** add an XL hook
 :PROPERTIES:
 :ID:       882bc5d2-a0e2-4ea7-b9d2-ab64b3407f82
 :END:
@@ -1965,7 +1965,7 @@ HOOK. DEPTH and LOCAL are the same as in `add-hook'."
     (xl-expire it expire-fn)))
 #+end_src
 
-***** remove an XL hook
+**** remove an XL hook
 :PROPERTIES:
 :ID:       99708d72-a8d4-42ba-b6ae-ba692fbafec8
 :END:
@@ -1978,7 +1978,7 @@ A consequence of my naming scheme and, in particular, the fact that.
   (remove-hook (xl-hook-orig-var xl-hook-fn) xl-hook-fn))
 #+end_src
 
-***** defhook!
+**** defhook!
 :PROPERTIES:
 :ID:       4daf2baf-ea7f-41f5-9f86-63168089149a
 :END:
@@ -2005,7 +2005,7 @@ function.
                  hooks))))
 #+end_src
 
-**** advice
+*** advice
 :PROPERTIES:
 :ID:       19b9021d-f310-485b-9258-4df19423c082
 :END:
@@ -2013,7 +2013,7 @@ function.
 I want to name advices so that they can be distinguished from other functions. I
 also want to be able to deduce the function being advised from the name.
 
-***** regexp for XL advices
+**** regexp for XL advices
 :PROPERTIES:
 :ID:       7a0b9669-e15c-40c1-9cf2-adc7cb27b7ab
 :END:
@@ -2026,7 +2026,7 @@ symbol separating the advised function from its advice is an =@=.
   "Regexp used to match XL advices.")
 #+end_src
 
-***** whether a symbol is an XL advice
+**** whether a symbol is an XL advice
 :PROPERTIES:
 :ID:       0a84d983-39ad-48d1-af9d-b43589d63bcf
 :END:
@@ -2037,7 +2037,7 @@ symbol separating the advised function from its advice is an =@=.
   (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
-***** advised function
+**** advised function
 :PROPERTIES:
 :ID:       74aee21a-3549-488b-b6f1-de9549e7e358
 :END:
@@ -2051,7 +2051,7 @@ symbol separating the advised function from its advice is an =@=.
        (intern)))
 #+end_src
 
-***** advice action
+**** advice action
 :PROPERTIES:
 :ID:       f893fbe8-592b-409e-8de7-6060e936456f
 :END:
@@ -2069,7 +2069,7 @@ are exceptions]]. To access the original function used for creating the advice,
        (intern)))
 #+end_src
 
-***** advice name
+**** advice name
 :PROPERTIES:
 :ID:       03416f82-ced7-42a0-843b-6975903f0b38
 :END:
@@ -2089,7 +2089,7 @@ Most of the time I will.
     (xl-symbol-intern fn '@ it)))
 #+end_src
 
-***** add XL advice
+**** add XL advice
 :PROPERTIES:
 :ID:       3ab8947c-15f0-4fb7-bd75-f0baabc20ec1
 :END:
@@ -2110,7 +2110,7 @@ appropriate name to target.
       (xl-expire advice expire-fn))))
 #+end_src
 
-***** remove XL advice
+**** remove XL advice
 :PROPERTIES:
 :ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
 :END:
@@ -2125,7 +2125,7 @@ one argument--the advice to remove.
     (advice-remove it xl-advice-fn)))
 #+end_src
 
-***** generic advices
+**** generic advices
 :PROPERTIES:
 :ID:       8fb485ec-5387-46da-820e-629dcf004962
 :END:
@@ -2133,12 +2133,12 @@ one argument--the advice to remove.
 There are some advices that are used so often that they do not lend themselves
 to =defadvice!=, which is better suited for a unique hook defined only once.
 
-****** reporting errors
+***** reporting errors
 :PROPERTIES:
 :ID:       ba191c78-f0e6-4edc-aac8-020eb1b6f1c8
 :END:
 
-******* catch errors
+****** catch errors
 :PROPERTIES:
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
@@ -2168,7 +2168,7 @@ advice]].
     (advice-add fn :around alias)))
 #+end_src
 
-****** expiration
+***** expiration
 :PROPERTIES:
 :ID:       c8092696-030e-4609-9485-89920eddaaec
 :END:
@@ -2177,7 +2177,7 @@ Sometimes I am confronted with hooks or advices that either should'nt be be
 called more than once. A common example is [[][loading a dependency for a
 package]]. 
 
-******* expire advice lambda
+****** expire advice lambda
 :PROPERTIES:
 :ID:       c280627b-ca96-46e7-ba2d-9754afa991fc
 :END:
@@ -2197,7 +2197,7 @@ and, additionally, it is ignored. The expire advice remains on the function.
        (xl-log "%s has expired." #',fn))))
 #+end_src
 
-******* expire advice
+****** expire advice
 :PROPERTIES:
 :ID:       8506fa78-c781-4ca8-bd58-169cce23a504
 :END:
@@ -2222,7 +2222,7 @@ If EXPIRE-CONDITION is nil, do nothing."
       (advice-add fn :after expire-fn))))
 #+end_src
 
-****** assume yes in prompts
+***** assume yes in prompts
 :PROPERTIES:
 :ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
 :END:
@@ -2243,7 +2243,7 @@ is an example).
     (apply orig-fn args)))
 #+end_src
 
-****** silence
+***** silence
 :PROPERTIES:
 :ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
 :END:
@@ -2265,7 +2265,7 @@ to silence the said messages.
     (advice-add fn :around alias)))
 #+end_src
 
-****** logging certain functions
+***** logging certain functions
 :PROPERTIES:
 :ID:       1ccfaa39-924f-4b1d-82b2-e458511cbb1b
 :END:
@@ -2274,7 +2274,7 @@ I make distinctions between different kinds of functions such as advices, hook
 functions and interactive functions. Depending on which type of function it is I
 want to log it differently.
 
-******* log message
+****** log message
 :PROPERTIES:
 :ID:       f0f4d5fd-2ce2-408c-8a4d-f55e39744132
 :END:
@@ -2294,7 +2294,7 @@ want to log it differently.
 	 (format "%s called" fn))))
 #+end_src
 
-******* log advice
+****** log advice
 :PROPERTIES:
 :ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
 :END:
@@ -2317,7 +2317,7 @@ log function that is added to FN."
     it))
 #+end_src
 
-****** reduce gc-cons-threshold
+***** reduce gc-cons-threshold
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
@@ -2340,7 +2340,7 @@ packages which can contain several thousand items.
     (apply orig-fn args)))
 #+end_src
 
-****** log
+***** log
 :PROPERTIES:
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
@@ -2356,7 +2356,7 @@ packages which can contain several thousand items.
     (apply orig-fn args)))
 #+end_src
 
-****** ignore output
+***** ignore output
 :PROPERTIES:
 :ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
 :END:
@@ -2367,7 +2367,7 @@ packages which can contain several thousand items.
   (xl-advice-add fn :override #'ignore))
 #+end_src
 
-****** loading on call
+***** loading on call
 :PROPERTIES:
 :ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
 :END:
@@ -2380,7 +2380,7 @@ quickly become repetative because it's something that is done so often in
 package configuration. The function =before-call= and =after-call= provide a fast
 and convenient way to do this.
 
-******* load-on-call
+****** load-on-call
 :PROPERTIES:
 :ID:       324e707b-2f44-4168-a846-037f5401dedb
 :END:
@@ -2399,7 +2399,7 @@ this it adds an =XL= advice that loads the feature to the function.
     (xl-advice-add fn where it nil t)))
 #+end_src
 
-******* load before call
+****** load before call
 :PROPERTIES:
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
@@ -2413,7 +2413,7 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :before fn))
 #+end_src
 
-******* load after call
+****** load after call
 :PROPERTIES:
 :ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
 :END:
@@ -2425,7 +2425,7 @@ not to have to specify the advice keyword.
 #+end_src
 
 
-***** defadvice!
+**** defadvice!
 :PROPERTIES:
 :ID:       1e0f3a27-a7d8-4e28-a359-f42ed7a16033
 :END:
@@ -2434,7 +2434,7 @@ This section pertains to [[helpfn:defadvice!][defadvice!]], a replacement for [[
 provides a declarative way to define advices. This should be used for one-time
 advices that.
 
-****** define-advice!
+***** define-advice!
 :PROPERTIES:
 :ID:       cc161eaf-a8fb-4e24-853f-a76a49c28dcf
 :END:
@@ -2459,7 +2459,7 @@ passed in.
        (xl-advice-add #',fn ,where it ,props))))
 #+end_src
 
-****** anaphoric defadvice!
+***** anaphoric defadvice!
 :PROPERTIES:
 :ID:       98b2ce63-da31-4f7a-b776-1ee1747b5d57
 :END:
@@ -2493,7 +2493,7 @@ Instead, arguments are accessed via anaphoric variables.
 	 ,@body))))
 #+end_src
 
-****** defadvice!
+***** defadvice!
 :PROPERTIES:
 :ID:       d8773e00-1abe-4b03-82f0-07b47e93ccb4
 :END:
@@ -2516,7 +2516,7 @@ to use =defadvice!= or =anaphoric-defadvice!=.
                fns))))
 #+end_src
 
-**** keyfreq
+*** keyfreq
 :PROPERTIES:
 :ID:       626b35f7-eef1-4a75-b2dc-8600c1ac47b7
 :END:
@@ -2528,7 +2528,7 @@ to use =defadvice!= or =anaphoric-defadvice!=.
   :hook emacs-startup-hook)
 #+end_src
 
-**** idle-require
+*** idle-require
 :PROPERTIES:
 :ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
 :END:
@@ -2559,12 +2559,12 @@ garbage collection during this time.
   (idle-require-idle-delay . 10))
 #+end_src
 
-*** emacs settings
+** emacs settings
 :PROPERTIES:
 :ID:       b61797fe-a520-448b-8dfa-055b357ebfa7
 :END:
 
-**** custom commands
+*** custom commands
 :PROPERTIES:
 :ID:       b03e1f14-3f29-4abd-af47-3692998cf1a1
 :END:
@@ -2573,7 +2573,7 @@ This section is for commands that are really useful for me, but not present in
 Emacs or (as far as I know at least, in other packages). This headline is
 similar in goals to [[https://github.com/bbatsov/crux][crux]] (collection of ridiculously useful extensions for Emacs).
 
-***** font
+**** font
 :PROPERTIES:
 :ID:       d600fe06-7a61-43e1-93ea-4e193c69c9f3
 :END:
@@ -2584,7 +2584,7 @@ emacs. A well choosen font can make things very readable.
 Also, sometimes I have font "mania" where I keep toggling different fonts so see
 what I feel like using at the moment. Therefore, I need an easy way to toggle.
 
-****** font size
+***** font size
 :PROPERTIES:
 :ID:       3efd0698-a8d3-4fc0-b22b-7f0589de4661
 :END:
@@ -2607,7 +2607,7 @@ size to its default value.
       (setf (alist-get 'font default-frame-alist) new-font))))
 #+end_src
 
-****** font max and min size
+***** font max and min size
 :PROPERTIES:
 :ID:       309c572a-6aaa-4986-a79d-4774110e6ead
 :END:
@@ -2627,7 +2627,7 @@ The font size that `xl/set-font-size' should never go above.")
 The font size that `xl/set-font-size' should never go below.")
 #+end_src
 
-****** setting font size
+***** setting font size
 :PROPERTIES:
 :ID:       b138b662-4087-4199-abe5-ecacb22dfb2a
 :END:
@@ -2651,7 +2651,7 @@ Inhibit accidentally setting font size too high or too low."
 	   (message "Font set from %d to %d." old-size new-size)))))
 #+end_src
 
-****** font-face
+***** font-face
 :PROPERTIES:
 :ID:       1bf8b603-ba11-422f-80d2-53dd8483fdbb
 :END:
@@ -2668,7 +2668,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
     (set-frame-font it nil t)))
 #+end_src
 
-***** kill Emacs processes
+**** kill Emacs processes
 :PROPERTIES:
 :ID:       811f6b55-6f54-4854-9098-8754359b4f85
 :END:
@@ -2685,7 +2685,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
     (message "killed %d processes" count)))
 #+end_src
 
-***** important buffers
+**** important buffers
 :PROPERTIES:
 :ID:       14021345-8f7d-4219-9f79-ea81c23f8f40
 :END:
@@ -2693,7 +2693,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 Some buffers are so important that they merit a convenience function to switch
 specifically to them. One such buffer is the buffer for this README.
 
-****** emacs directory
+***** emacs directory
 :PROPERTIES:
 :ID:       7ea118cb-4eb6-4ffb-9d82-6ae65ff7a961
 :END:
@@ -2705,7 +2705,7 @@ specifically to them. One such buffer is the buffer for this README.
   (dired user-emacs-directory))
 #+end_src
 
-****** elisp init file
+***** elisp init file
 :PROPERTIES:
 :ID:       74ad3337-4a36-4524-87c1-6b46b2dc24dd
 :END:
@@ -2717,7 +2717,7 @@ specifically to them. One such buffer is the buffer for this README.
   (find-file user-init-file))
 #+end_src
 
-****** readme org file
+***** readme org file
 :PROPERTIES:
 :ID:       ceb0caee-f950-4ab5-a6e9-aad436334469
 :END:
@@ -2729,12 +2729,12 @@ specifically to them. One such buffer is the buffer for this README.
   (find-file (f-full "~/README.org")))
 #+end_src
 
-***** tangling
+**** tangling
 :PROPERTIES:
 :ID:       9e5695e0-82ac-4f49-a237-63ca70b1036f
 :END:
 
-****** tangle asynchronously
+***** tangle asynchronously
 :PROPERTIES:
 :ID:       9fcff539-5c1c-4ec8-8aa7-ac8fb82d3392
 :END:
@@ -2764,7 +2764,7 @@ a significant lag and Emacs is blocked while it is tangling.
 	     XL-README-FILE))))
 #+end_src
 
-****** do tangling on save
+***** do tangling on save
 :PROPERTIES:
 :ID:       b82cffda-bafd-469d-930a-be9c9603c4f7
 :END:
@@ -2779,7 +2779,7 @@ wasteful. I'd rather just make this just happen in the README buffer.
     (xl-tangle-readme-async)))
 #+end_src
 
-***** open Emacs instance
+**** open Emacs instance
 :PROPERTIES:
 :ID:       287537bc-f1a7-4c04-bbb6-c372df540e04
 :END:
@@ -2796,7 +2796,7 @@ wasteful. I'd rather just make this just happen in the README buffer.
          (start-process "emacs" nil "emacs" "--debug-init"))))
 #+end_src
 
-***** jump to line
+**** jump to line
 :PROPERTIES:
 :ID:       47480f9a-2e82-435a-a098-6a1a9a11c2f0
 :END:
@@ -2817,7 +2817,7 @@ headlines and would rather view the entire path.
   (when (eq major-mode 'org-mode) (org%show-branch)))
 #+end_src
 
-**** variables defined in c source code
+*** variables defined in c source code
 :PROPERTIES:
 :ID:       5d7f2962-8d10-40a4-b134-c368e2b1b4d5
 :END:
@@ -2826,7 +2826,7 @@ This headline contains variables that are defined in c-source code and thefore
 do not pertain to any particular package. For this reason I don't wrap these
 variables in a [[29e1513a-e12a-4818-870e-8d5fab7fe1a0][use-package]] block.
 
-***** delete duplicates in history
+**** delete duplicates in history
 :PROPERTIES:
 :ID:       1c381491-c4fa-4b5e-99de-ec6bd33df77c
 :END:
@@ -2839,7 +2839,7 @@ code.
 (set! history-delete-duplicates t)
 #+end_src
 
-***** don't echo keystrokes
+**** don't echo keystrokes
 :PROPERTIES:
 :ID:       b8856ebe-6208-4271-ad5a-d352fabec8bb
 :END:
@@ -2852,7 +2852,7 @@ echoing in the mode line makes the which-key prompt disappear prematurely.
 (set-default! echo-keystrokes 0)
 #+end_src
 
-***** set the fill-column
+**** set the fill-column
 :PROPERTIES:
 :ID:       84d8e85a-a6a1-49cd-b46e-e5cd3f825438
 :END:
@@ -2865,7 +2865,7 @@ card]]. Now this is not the case so I don't think it's as much of a deal.
 (set-default! fill-column 80)
 #+end_src
 
-***** recursive minibuffers
+**** recursive minibuffers
 :PROPERTIES:
 :ID:       7eb20f6d-75b4-4eec-8878-e7232c1a153d
 :END:
@@ -2878,7 +2878,7 @@ typing an expression, I get completion from the minibuffer.
 (set-default! enable-recursive-minibuffers t)
 #+end_src
 
-***** utf-8 text encoding
+**** utf-8 text encoding
 :PROPERTIES:
 :ID:       26344072-c145-40bd-9ade-8c7f2eef54c8
 :END:
@@ -2904,7 +2904,7 @@ typing an expression, I get completion from the minibuffer.
   (set-charset-priority 'unicode))
 #+end_src
 
-***** disable bi-directional text
+**** disable bi-directional text
 :PROPERTIES:
 :ID:       6c12f14c-75c7-4b30-9bb4-ca6e8d3cae47
 :END:
@@ -2917,7 +2917,7 @@ text is useful for languages that read right to left.
 (set-default! bidi-paragraph-direction 'left-to-right)
 #+end_src
 
-***** stop beeping
+**** stop beeping
 :PROPERTIES:
 :ID:       2a83cb3a-ca2e-4d9c-a296-340d33855614
 :END:
@@ -2926,7 +2926,7 @@ text is useful for languages that read right to left.
 (set-default! ring-bell-function #'ignore)
 #+end_src
 
-***** resize pixelwise
+**** resize pixelwise
 :PROPERTIES:
 :ID:       02daff3d-e532-4cfa-a217-81e27627e7a7
 :END:
@@ -2938,7 +2938,7 @@ text is useful for languages that read right to left.
 (set-default! frame-resize-pixelwise t)
 #+end_src
 
-***** use yes or no
+**** use yes or no
 :PROPERTIES:
 :ID:       82a84315-2018-42e0-bd1a-74af7b722593
 :END:
@@ -2951,7 +2951,7 @@ source code.
 (xl-advice-add #'yes-or-no-p :override #'y-or-n-p)
 #+end_src
 
-**** miscellaneous
+*** miscellaneous
 :PROPERTIES:
 :ID:       65edb4e7-0fe1-4e37-ae9b-027c9f15162a
 :END:
@@ -2959,7 +2959,7 @@ source code.
 This headline contains headings for which I have not yet determined a good
 hierarchy.
 
-***** log the init time
+**** log the init time
 :PROPERTIES:
 :ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
 :END:
@@ -2979,7 +2979,7 @@ circumstances. The one I'm referring to now is with general prefix bindings.
 (xl-hook-add 'emacs-startup-hook #'xl--log-init-time-hook t nil)
 #+end_src
 
-***** startup
+**** startup
 :PROPERTIES:
 :ID:       f9854e53-dd9d-4381-8e9c-8336736d4308
 :END:
@@ -3013,7 +3013,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
       (get-buffer-create it))))
 #+end_src
 
-***** cus-edit
+**** cus-edit
 :PROPERTIES:
 :ID:       a844ddb6-245b-463c-963d-743c931698ae
 :END:
@@ -3029,7 +3029,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (custom-theme-directory . (concat XL-LOCAL-DIR "themes/")))
 #+end_src
 
-***** server
+**** server
 :PROPERTIES:
 :ID:       3a1120f5-2809-42d6-938c-3916483033e0
 :END:
@@ -3044,7 +3044,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (server-auth-dir . (concat XL-CACHE-DIR "server/")))
 #+end_src
 
-***** linux
+**** linux
 :PROPERTIES:
 :ID:       6572e618-e5ef-445b-90d6-14dc2c24f1a4
 :END:
@@ -3055,7 +3055,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (set! x-gtk-use-system-tooltips nil))
 #+end_src
 
-***** scrolling
+**** scrolling
 :PROPERTIES:
 :ID:       c91bcd0f-da83-44a3-9d9e-e1f55dcdb642
 :END:
@@ -3068,7 +3068,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
 (set-default! scroll-preserve-screen-position t)
 #+end_src
 
-***** fast scrolling
+**** fast scrolling
 :PROPERTIES:
 :ID:       964a8b3e-37b4-4d6b-9298-3a1be3cfe6aa
 :END:
@@ -3080,7 +3080,7 @@ spells of inaccurate fontification immediately after scrolling."
 (set! fast-but-imprecise-scrolling t)
 #+end_src
 
-***** disable cursor blinking
+**** disable cursor blinking
 :PROPERTIES:
 :ID:       fe8a259b-12e6-4e58-a324-eab831283a86
 :END:
@@ -3094,7 +3094,7 @@ screen. Usually, however, I have no trouble finding it so I disable it.
   (blink-cursor-mode -1))
 #+end_src
 
-***** garbage collection
+**** garbage collection
 :PROPERTIES:
 :ID:       dda841d2-25f3-4595-ab6a-87cb1bb72dba
 :END:
@@ -3106,7 +3106,7 @@ increasing the value of [[helpvar:gc-cons-threshold][gc-cons-threshold]], the nu
 between garbage collections, is known to make a notable difference in user
 startup time. By default it is only 800 KB.
 
-****** gc cons threshold
+***** gc cons threshold
 :PROPERTIES:
 :ID:       50e19a55-a04b-4ca0-8024-a88b23b5b41f
 :END:
@@ -3128,7 +3128,7 @@ This is the value of `gc-cons-threshold' that should be used in typical usages."
   "The value for `gc-cons-threshold'.")
 #+end_src
 
-****** gcmh
+***** gcmh
 :PROPERTIES:
 :ID:       86653a5a-f273-4ce4-b89b-f288d5d46d44
 :END:
@@ -3150,7 +3150,7 @@ are done before setting the =gc-cons-threshold= back to a normal value.
   (gcmh-low-cons-threshold  . XL-GC-CONS-THRESHOLD-MIN))
 #+end_src
 
-****** minibuffer
+***** minibuffer
 :PROPERTIES:
 :ID:       8c02fc83-5e7e-4115-9768-020abcf82541
 :END:
@@ -3185,12 +3185,12 @@ hook variables use action verbs in their names not nouns. So the =exit= in
   (setq gc-cons-threshold XL-GC-CONS-THRESHOLD))
 #+end_src
 
-***** theme
+**** theme
 :PROPERTIES:
 :ID:       c35c131a-bcc5-49f9-bc24-a5f91cde785d
 :END:
 
-****** don't prompt me when loading theme
+***** don't prompt me when loading theme
 :PROPERTIES:
 :ID:       eaa6531c-1188-41c7-a645-a82d9f482449
 :END:
@@ -3209,7 +3209,7 @@ screen need to be redisplayed.
   (custom-safe-themes . t))
 #+end_src
 
-****** loading theme
+***** loading theme
 :PROPERTIES:
 :ID:       b4773208-5e96-46d2-90d0-1731f6581f1b
 :END:
@@ -3227,7 +3227,7 @@ example, if I'm using evil I need to update the cursor color.
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
-****** disable old themes first
+***** disable old themes first
 :PROPERTIES:
 :ID:       c2110d52-ce27-4f3a-b856-1e31200f597c
 :END:
@@ -3243,7 +3243,7 @@ a new theme.
   (apply <orig-fn> <args>))
 #+end_src
 
-***** disable terminal initialization
+**** disable terminal initialization
 :PROPERTIES:
 :ID:       540c1c5a-cd31-45cf-afaf-b8e48a76e68e
 :END:
@@ -3258,7 +3258,7 @@ According to Doom Emacs, when running emacs in terminal tty is *tremendously* sl
     (tty-run-terminal-initialization (selected-frame) nil t)))
 #+end_src
 
-***** prevent emacs from killing certain buffers
+**** prevent emacs from killing certain buffers
 :PROPERTIES:
 :ID:       ae935cf5-7322-499c-96d7-20209d9b6641
 :END:
@@ -3273,7 +3273,7 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
     (with-current-buffer buffer (emacs-lock-mode 'kill))))
 #+end_src
 
-*** keybindings
+** keybindings
 :PROPERTIES:
 :ID:       e4605d42-4d57-40d9-8594-15b06f6196a4
 :END:
@@ -3285,7 +3285,7 @@ inefficient, having to press =M-x= between any non built-in command. Its
 important to bind them and to do it in an organized way so you can always find
 the bindings you need when you need it.
 
-**** bind!
+*** bind!
 :PROPERTIES:
 :ID:       328d3e9f-8885-4c69-94b0-1f9984f33d61
 :END:
@@ -3297,7 +3297,7 @@ to provide a versatile, non-repetative, and extensible syntax that does what I
 mean. Overall I want to abstract the act of keybinding and to not concern myself
 with the automatable (not a word probably) details of binding keys.
 
-***** evil key to states
+**** evil key to states
 :PROPERTIES:
 :ID:       672841ed-1c4b-4351-ac68-e7107cc0bea2
 :END:
@@ -3324,7 +3324,7 @@ If any letter in EVIL-KEYWORD does not correspond to an evil state, return nil."
 	 (collect state)))
 #+end_src
 
-***** deferring keymaps
+**** deferring keymaps
 :PROPERTIES:
 :ID:       76200d2b-839d-4111-863a-08021e18c7e4
 :END:
@@ -3333,7 +3333,7 @@ As it stands =define-key= and friends raise an error if the keymap you specified
 has not been defined. We want the =bind!= macro to do what we mean: if a key's
 keymap is not defined, then bind the key when it is.
 
-****** deferred binding forms
+***** deferred binding forms
 :PROPERTIES:
 :ID:       e03e1a47-41d1-4dd8-9f1a-8151de76da2a
 :END:
@@ -3349,7 +3349,7 @@ KEYMAP is a keymap that has not yet been bound. BINDING-FORMS are the forms to
 be evaluated when KEYMAP is bound.")
 #+end_src
 
-****** updating deferred bindings
+***** updating deferred bindings
 :PROPERTIES:
 :ID:       fa345a49-e002-4efd-ba68-5f533d42aebb
 :END:
@@ -3369,7 +3369,7 @@ Return any keymaps whose keymaps still don't exist."
 		(collect elt)))))
 #+end_src
 
-****** hook for deferred bindings
+***** hook for deferred bindings
 :PROPERTIES:
 :ID:       a95d82f1-9614-4ec5-a2e5-a2f29f514e2b
 :END:
@@ -3385,7 +3385,7 @@ new keymaps.
   (cl-callf xl-bind%update-deferred-bindings xl-bind%deferred-bindings))
 #+end_src
 
-****** with-deferred-keymap!
+***** with-deferred-keymap!
 :PROPERTIES:
 :ID:       ddb17e5c-74e8-445e-b659-cf94f4831a46
 :END:
@@ -3406,12 +3406,12 @@ If MAP is already loaded, evaluate forms immediately."
      `(cl-callf a-update xl-bind%deferred-bindings ',map #'append ',forms))))
 #+end_src
 
-***** reading clauses
+**** reading clauses
 :PROPERTIES:
 :ID:       9038980a-be61-4ad5-a0b5-cd151b96d0d9
 :END:
 
-****** whether is a binding
+***** whether is a binding
 :PROPERTIES:
 :ID:       743e3fdb-fb0c-44ba-a5e9-7282b20cfdcc
 :END:
@@ -3424,7 +3424,7 @@ If MAP is already loaded, evaluate forms immediately."
     (_ nil)))
 #+end_src
 
-****** read a clause
+***** read a clause
 :PROPERTIES:
 :ID:       255730df-5715-4808-8a7d-6c37bd1333e5
 :END:
@@ -3442,7 +3442,7 @@ If MAP is already loaded, evaluate forms immediately."
 	 (finally-return (-map (-partial #'append common-args) bindings))))
 #+end_src
 
-***** normalization
+**** normalization
 :PROPERTIES:
 :ID:       56abc5a3-bcf7-4943-a941-939e16d46dea
 :END:
@@ -3450,7 +3450,7 @@ If MAP is already loaded, evaluate forms immediately."
 The purpose of normalization is to make the clauses homogenous and into a form
 that is easily.
 
-****** fix the keybinding
+***** fix the keybinding
 :PROPERTIES:
 :ID:       0202c1a2-75a3-45ac-a226-8b6b906d96ac
 :END:
@@ -3464,7 +3464,7 @@ This means that the keybinding should always be last.
 	  (-interleave '(:key :def) (-take-last 2 clause))))
 #+end_src
 
-****** fix the evil state
+***** fix the evil state
 :PROPERTIES:
 :ID:       1a8f4cf8-1013-4e0c-8fd1-21b69c2e6b8b
 :END:
@@ -3479,7 +3479,7 @@ This means that the keybinding should always be last.
     (_ clause)))
 #+end_src
 
-****** flatten plist values
+***** flatten plist values
 :PROPERTIES:
 :ID:       6be10885-4bbe-47e2-bd47-0c14f51b9065
 :END:
@@ -3502,7 +3502,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return (cons new flattened))))
 #+end_src
 
-****** make clause into proper plist
+***** make clause into proper plist
 :PROPERTIES:
 :ID:       e836329e-c2b9-4978-a3d7-9ba32c160f04
 :END:
@@ -3524,7 +3524,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return plist)))
 #+end_src
 
-****** merge multiple plist values
+***** merge multiple plist values
 :PROPERTIES:
 :ID:       d50cb073-54c0-4b96-8df1-2ae195ac4651
 :END:
@@ -3544,7 +3544,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 				(append (list key (xl-dwim-single (symbol-value var))))))))
 #+end_src
 
-****** normalize the list
+***** normalize the list
 :PROPERTIES:
 :ID:       377bcdf9-3798-4dff-83e5-13f3a59e112e
 :END:
@@ -3560,7 +3560,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return alist)))
 #+end_src
 
-****** ensure-keymap
+***** ensure-keymap
 :PROPERTIES:
 :ID:       1fb99451-7b0e-4bef-b980-7f4e038dd38d
 :END:
@@ -3572,7 +3572,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
     token))
 #+end_src
 
-****** apply-prefix
+***** apply-prefix
 :PROPERTIES:
 :ID:       5c1aa062-8660-453b-ba8e-04610bec043a
 :END:
@@ -3585,7 +3585,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
       token)))
 #+end_src
 
-****** convert lists
+***** convert lists
 :PROPERTIES:
 :ID:       74298919-c3f2-4e7e-8377-bd8a87def771
 :END:
@@ -3599,7 +3599,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 		(append (list key val))))))
 #+end_src
 
-***** converting tokens to forms
+**** converting tokens to forms
 :PROPERTIES:
 :ID:       aade9ecc-ee16-407d-a451-03da731daeb2
 :END:
@@ -3608,7 +3608,7 @@ This section is about actually converting define key clauses that have already
 been parsed and processed into lisp forms that actually correspond to
 bindings. The design of this step follows a =use-package=.
 
-****** convert logic
+***** convert logic
 :PROPERTIES:
 :ID:       9c779428-a8b5-4e2c-b3d3-c369f7f161b0
 :END:
@@ -3627,7 +3627,7 @@ certain circumstances.
     bind))
 #+end_src
 
-****** decide on which converters to use
+***** decide on which converters to use
 :PROPERTIES:
 :ID:       09ad63c3-c438-47d2-9e4e-789bc0a4b488
 :END:
@@ -3647,7 +3647,7 @@ Code that is split into appropriate parts is easier to read and write.
 	 (finally-return fns)))
 #+end_src
 
-****** convert token to forms
+***** convert token to forms
 :PROPERTIES:
 :ID:       10116109-b7a6-4e6e-94b2-6b41d4fc9f1f
 :END:
@@ -3659,7 +3659,7 @@ Code that is split into appropriate parts is easier to read and write.
     (funcall (or converter #'ignore) token rest)))
 #+end_src
 
-****** binding-forms
+***** binding-forms
 :PROPERTIES:
 :ID:       31d4d497-afac-4ccf-a426-afa8f159e242
 :END:
@@ -3674,12 +3674,12 @@ Return a list of forms that binds keys specified by BIND-TOKENS."
 	 (append forms)))
 #+end_src
 
-****** converting to forms
+***** converting to forms
 :PROPERTIES:
 :ID:       7fd1a756-b8aa-41e4-8dae-7a0dfdd1e17b
 :END:
 
-******* which-key
+****** which-key
 :PROPERTIES:
 :ID:       076b2b4d-7c12-4ebd-8f84-1d649487ae72
 :END:
@@ -3697,7 +3697,7 @@ Return a list of forms that binds keys specified by BIND-TOKENS."
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-******* evil which-key
+****** evil which-key
 :PROPERTIES:
 :ID:       290cceaf-30b1-48d0-a688-b7db49728f01
 :END:
@@ -3722,7 +3722,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
 	 (finally-return `((after! which-key ,@forms) ,@rest))))
 #+end_src
 
-******* evil-bind
+****** evil-bind
 :PROPERTIES:
 :ID:       7d69d323-2eeb-4d90-88c8-cfde7f7768d3
 :END:
@@ -3741,7 +3741,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-******* bind
+****** bind
 :PROPERTIES:
 :ID:       be633966-63b6-40ef-a5fe-79444218caf2
 :END:
@@ -3757,7 +3757,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-******* defer binding
+****** defer binding
 :PROPERTIES:
 :ID:       f8892022-1921-44de-b157-7182bbcba31c
 :END:
@@ -3771,7 +3771,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-******* kbd
+****** kbd
 :PROPERTIES:
 :ID:       cdf12c08-799d-4cbc-be73-88ca77efc16f
 :END:
@@ -3790,7 +3790,7 @@ function to generate binding forms. Obviously, this is very customizable.
 	(xl-bind%convert-token-to-forms converters))))
 #+end_src
 
-****** localleader
+***** localleader
 :PROPERTIES:
 :ID:       e83756c1-2472-4b69-8a9e-4a9328af32a7
 :END:
@@ -3813,7 +3813,7 @@ implement this macro as a =:localleader= keyword, so I can use just one macro,
       ,@clause)))
 #+end_src
 
-***** bind!
+**** bind!
 :PROPERTIES:
 :ID:       0ce28150-7971-466f-b9b7-3cf33c496393
 :END:
@@ -3838,7 +3838,7 @@ Finally, our main macro is here.
 	    (xl-bind%binding-forms))))
 #+end_src
 
-**** leaders
+*** leaders
 :PROPERTIES:
 :ID:       1e4dac95-9c16-41db-9f99-63a250b447c2
 :END:
@@ -3848,7 +3848,7 @@ keybinding tree. And once you know the leader, you can "discover" the other
 bindings as you need to. You can see the concept of the leader used in Emacs
 distributions such as [[https://github.com/syl20bnr/spacemacs][Spacemacs]] and [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
 
-***** evil leaders
+**** evil leaders
 :PROPERTIES:
 :ID:       47c4c3c5-3859-46a4-a4ef-3d27c552eec0
 :END:
@@ -3873,7 +3873,7 @@ want to shorten a key binding. Although obviously not as easy to remember as
   "A shorter alternative `xl-localleader-key'.")
 #+end_src
 
-***** emacs leaders
+**** emacs leaders
 :PROPERTIES:
 :ID:       f3299c73-837e-46f9-a29e-9932c4570858
 :END:
@@ -3896,7 +3896,7 @@ state--or even vanilla Emacs. The choice behind the bindings is the same as
   "A short non-normal  `xl-localleader-key'.")
 #+end_src
 
-**** prefix commands
+*** prefix commands
 :PROPERTIES:
 :ID:       2cf36d16-eafc-46d8-8b19-e1eb02d39c0d
 :END:
@@ -3913,7 +3913,7 @@ conjunction with :states -- an effective doubling of Doom's startup time!
 (define-prefix-command 'xl/leader 'xl-leader-map)
 #+end_src
 
-**** ensuring high keymap precedence
+*** ensuring high keymap precedence
 :PROPERTIES:
 :ID:       e06bcfa0-63e9-429e-8ff7-4263cbd4f9b1
 :END:
@@ -3922,7 +3922,7 @@ In Emacs, there's a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/
 keymap takes precedence. The steps I take in this headline are also in [[https://github.com/noctuid/evil-guide#preventing-certain-keys-from-being-overridden][noctuid's
 evil-guide]].
 
-***** minor mode
+**** minor mode
 :PROPERTIES:
 :ID:       9863dc90-fc8c-422c-918f-3d75d52e8a14
 :END:
@@ -3946,7 +3946,7 @@ immediately. This is why I set the advice dept to =-100=.
 (xl-hook-add 'emacs-startup-hook #'xl-override-mode -100)
 #+end_src
 
-***** take precedence over Emacs bindings
+**** take precedence over Emacs bindings
 :PROPERTIES:
 :ID:       9248fb7f-1901-4beb-8b3a-faded48cdddc
 :END:
@@ -3958,7 +3958,7 @@ there. The [[helpvar:emulation-mode-map-alists][emulation-mode-map-alists]] take
 (push '((xl-override-mode . xl-override-mode-map)) emulation-mode-map-alists)
 #+end_src
 
-***** make an overriding map
+**** make an overriding map
 :PROPERTIES:
 :ID:       f52fbd32-58a0-4b60-a382-b29112f5d972
 :END:
@@ -3972,7 +3972,7 @@ that will override all other keymaps, aptly named =XL-OVERRIDE-MAP=.
 (define-key xl-override-mode-map (kbd XL-EMACS-LEADER-KEY) #'xl/leader)
 #+end_src
 
-***** registering override map with evil
+**** registering override map with evil
 :PROPERTIES:
 :ID:       23b55b9c-ea38-485a-b986-ac62d60a6f75
 :END:
@@ -3990,7 +3990,7 @@ override an evil keymap).
     (evil-make-intercept-map xl-override-mode-map it t)))
 #+end_src
 
-***** binding the leader keys to the prefix map
+**** binding the leader keys to the prefix map
 :PROPERTIES:
 :ID:       d710cbf7-66c5-4934-a2d4-998fdb6f7731
 :END:
@@ -4007,7 +4007,7 @@ that have already been created by emacs (such as =*scratch*= and
  (:mnv XL-EVIL-LEADER-KEY 'xl/leader))
 #+end_src
 
-**** which-key
+*** which-key
 :PROPERTIES:
 :ID:       2ad092a3-ff63-49cd-91b9-380c91dbe9f5
 :END:
@@ -4019,7 +4019,7 @@ you'll remember the first few key strokes but struggle with the rest. To address
 this [[github:][which-key]] displays key binding sequences in the minibuffer as your typing
 them. By doing this you can "discover" the commands as you go along.
 
-***** init
+**** init
 :PROPERTIES:
 :ID:       c4aedc23-0be3-46fe-b046-32b5f0738c6b
 :END:
@@ -4038,7 +4038,7 @@ them. By doing this you can "discover" the commands as you go along.
   (which-key-idle-delay           . 0.8))
 #+end_src
 
-***** set line spacing
+**** set line spacing
 :PROPERTIES:
 :ID:       6abb35f4-c648-4bed-b59a-5a0636857fd8
 :END:
@@ -4048,7 +4048,7 @@ them. By doing this you can "discover" the commands as you go along.
   (setq line-spacing 3))
 #+end_src
 
-**** execute extended command
+*** execute extended command
 :PROPERTIES:
 :ID:       f17a6b64-f9df-4801-9728-235f6bbb9b4d
 :END:
@@ -4069,7 +4069,7 @@ super fast to press as well and even faster than =SPC SPC=.
   ("M-x" #'execute-extended-command))
 #+end_src
 
-**** space bindings
+*** space bindings
 :PROPERTIES:
 :ID:       ed4853ea-c9de-42c8-af93-9e697f2ea014
 :END:
@@ -4077,7 +4077,7 @@ super fast to press as well and even faster than =SPC SPC=.
 This headline contains generic leader bindings that are in my case triggered by
 =SPC=.
 
-***** generic app
+**** generic app
 :PROPERTIES:
 :ID:       68945ce0-82fb-4844-b53b-422c328558af
 :END:
@@ -4099,7 +4099,7 @@ This headline contains generic leader bindings that are in my case triggered by
   ("r" #'ranger))
 #+end_src
 
-***** help
+**** help
 :PROPERTIES:
 :ID:       f28081e3-451c-4005-80cc-bffeafe0051c
 :END:
@@ -4118,7 +4118,7 @@ This headline contains generic leader bindings that are in my case triggered by
   ("w" #'woman))
 #+end_src
 
-***** toggling
+**** toggling
 :PROPERTIES:
 :ID:       b962fa01-d63f-47a9-bf69-b2f82c8b1e61
 :END:
@@ -4137,7 +4137,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("f" #'xl/set-font-size))
 #+end_src
 
-***** buffer
+**** buffer
 :PROPERTIES:
 :ID:       5fd53168-3eee-4ed4-8213-28efba5d0200
 :END:
@@ -4156,7 +4156,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("b" #'consult-buffer))
 #+end_src
 
-***** file
+**** file
 :PROPERTIES:
 :ID:       3857a17c-1a14-4163-a23b-8811a2dad111
 :END:
@@ -4171,7 +4171,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("r" #'xl/switch-to-readme))
 #+end_src
 
-***** code
+**** code
 :PROPERTIES:
 :ID:       d6229bf2-9d8d-4f97-bb95-b07ef409e33f
 :END:
@@ -4184,12 +4184,12 @@ I have kind of a loose definition of "toggle" in this headline.
   ("c" #'lispyville-comment-or-uncomment))
 #+end_src
 
-***** window management
+**** window management
 :PROPERTIES:
 :ID:       a8b3223b-d5ba-4230-9fa8-a9601d60b5ad
 :END:
 
-****** window movement
+***** window movement
 :PROPERTIES:
 :ID:       f0152373-3b3f-4cf1-abaf-d025c93c64d3
 :END:
@@ -4210,7 +4210,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("t" #'transpose-frame))
 #+end_src
 
-****** window resizing
+***** window resizing
 :PROPERTIES:
 :ID:       373e3cf8-68ea-4791-ae71-e0c73b2f218a
 :END:
@@ -4225,7 +4225,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("z" #'zoom-window-zoom))
 #+end_src
 
-***** workspaces
+**** workspaces
 :PROPERTIES:
 :ID:       ba627c58-6008-42a2-abc2-7136f77d44d5
 :END:
@@ -4246,7 +4246,7 @@ I have kind of a loose definition of "toggle" in this headline.
    ("c" #'wg-save-wconfig)))
 #+end_src
 
-***** eval
+**** eval
 :PROPERTIES:
 :ID:       3947b258-fc46-4fc9-8350-3fd25a69d749
 :END:
@@ -4266,7 +4266,7 @@ I have kind of a loose definition of "toggle" in this headline.
  ("p" #'eval-print-last-sexp))
 #+end_src
 
-***** search
+**** search
 
 #+begin_src emacs-lisp
 (bind!
@@ -4283,7 +4283,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("o" #'xl/goto-org-heading))
 #+end_src
 
-***** version control
+**** version control
 :PROPERTIES:
 :ID:       31234afc-a11d-42a8-88af-e0647d44c1b1
 :END:
@@ -4301,7 +4301,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("s" #'magit-status))
 #+end_src
 
-***** packages
+**** packages
 :PROPERTIES:
 :ID:       0ec9aee0-8f9a-4700-8928-abff758357e1
 :END:
@@ -4317,7 +4317,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("d" #'visit-package-directory))
 #+end_src
 
-***** quit
+**** quit
 :PROPERTIES:
 :ID:       ae435361-79e7-41c8-b490-8ec0f8d23a59
 :END:
@@ -4340,12 +4340,12 @@ prompt asking me if I'm sure.
   ("b" #'xl/kill-emacs-brutally))
 #+end_src
 
-*** built-in packages
+** built-in packages
 :PROPERTIES:
 :ID:       64672bc4-5c7c-4aed-bd69-50c85cc77828
 :END:
 
-**** calc
+*** calc
 :PROPERTIES:
 :ID:       12d76812-a7c4-4680-ae81-0f61eb4827e7
 :END:
@@ -4357,7 +4357,7 @@ prompt asking me if I'm sure.
   (calc-symbolic-mode . t))
 #+end_src
 
-**** clipboard
+*** clipboard
 :PROPERTIES:
 :ID:       6aa6d0ac-6cf8-4f82-a724-c56d69cc062b
 :END:
@@ -4371,7 +4371,7 @@ prompt asking me if I'm sure.
   (x-select-request-type   . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
 
-**** simple
+*** simple
 :PROPERTIES:
 :ID: 89df102a-a2c9-4ece-9acc-ed90e8064ed8
 :END:
@@ -4385,7 +4385,7 @@ prompt asking me if I'm sure.
   (idle-update-delay     . 1))
 #+end_src
 
-***** loaddefs
+**** loaddefs
 :PROPERTIES:
 :ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
 :END:
@@ -4400,12 +4400,12 @@ think you want to use =smtp=.
   (disabled-command-function . nil))
 #+end_src
 
-**** files
+*** files
 :PROPERTIES:
 :ID:       3ef6cbfa-7b18-470e-9ca7-73da2f1b991a
 :END:
 
-***** auto-save stuff
+**** auto-save stuff
 :PROPERTIES:
 :ID:       55996779-fdde-469a-8192-033b118db8e5
 :END:
@@ -4424,12 +4424,12 @@ will change.
   (auto-save-timeout                  . 30))
 #+end_src
 
-***** confirmations
+**** confirmations
 :PROPERTIES:
 :ID:       b090f095-e368-47f0-a51f-47547423eaef
 :END:
 
-***** files
+**** files
 :PROPERTIES:
 :ID:       83549b5b-33e2-48b2-aeaf-cf4734ec4040
 :END:
@@ -4452,7 +4452,7 @@ will change.
   (version-control                    . nil))
 #+end_src
 
-**** ffap
+*** ffap
 :PROPERTIES:
 :ID:       acdd6407-c7db-40d7-9a7f-3a189d3c40eb
 :END:
@@ -4465,7 +4465,7 @@ Don't ping things that look like domain names.
   (ffap-machine-p-known . 'reject))
 #+end_src
 
-**** tramp
+*** tramp
 :PROPERTIES:
 :ID:       a3ccfafa-dc88-4aac-bbe9-fc4ae0f00997
 :END:
@@ -4478,7 +4478,7 @@ Don't ping things that look like domain names.
   (tramp-auto-save-directory    . (concat XL-CACHE-DIR "tramp-auto-save/")))
 #+end_src
 
-**** url
+*** url
 :PROPERTIES:
 :ID:       d4c0b77e-7c6c-4ab3-bf20-fb0d335eb771
 :END:
@@ -4490,7 +4490,7 @@ Don't ping things that look like domain names.
   (url-configuration-directory . (concat XL-CACHE-DIR "url/configuration/")))
 #+end_src
 
-**** bytecomp
+*** bytecomp
 :PROPERTIES:
 :ID:       6b375bfb-a8c3-473c-8dbd-530e692a15ab
 :END:
@@ -4502,7 +4502,7 @@ Don't ping things that look like domain names.
   (byte-compile-verbose  . xl-debug-p))
 #+end_src
 
-**** compile
+*** compile
 :PROPERTIES:
 :ID:       913aa4f2-e42b-4b74-a2d4-e87b1738a5bd
 :END:
@@ -4515,7 +4515,7 @@ Don't ping things that look like domain names.
   (compilation-always-kill    . t))
 #+end_src
 
-**** uniquify
+*** uniquify
 :PROPERTIES:
 :ID:       9ba2726b-3fef-4e9b-9387-a80ab09bdb7d
 :END:
@@ -4526,7 +4526,7 @@ Don't ping things that look like domain names.
   (uniquify-buffer-name-style . 'forward))
 #+end_src
 
-**** ansi-color
+*** ansi-color
 :PROPERTIES:
 :ID:       5feaab76-e5c1-450c-94a6-8fdfb95ddb94
 :END:
@@ -4537,7 +4537,7 @@ Don't ping things that look like domain names.
   (ansi-color-for-comint-mode . t))
 #+end_src
 
-**** image mode
+*** image mode
 :PROPERTIES:
 :ID:       32e2118a-c92b-4e8d-b2db-048428462783
 :END:
@@ -4550,7 +4550,7 @@ Non-nil means animated images loop forever, rather than playing once.
   (image-animate-loop . t))
 #+end_src
 
-**** mouse
+*** mouse
 :PROPERTIES:
 :ID:       d0d6de11-50fa-4ae2-ad4b-69712f3e2c54
 :END:
@@ -4561,7 +4561,7 @@ Non-nil means animated images loop forever, rather than playing once.
   (mouse-yank-at-point . t))
 #+end_src
 
-**** gv
+*** gv
 :PROPERTIES:
 :ID:       84cc5883-a303-453e-af91-644d4544e3f9
 :END:
@@ -4575,7 +4575,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
   (gv-define-simple-setter plist-get plist-put))
 #+end_src
 
-**** nsm
+*** nsm
 :PROPERTIES:
 :ID:       0ca7fc66-5312-4c69-a87d-7607292c7a2a
 :END:
@@ -4586,7 +4586,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
   (nsm-settings-file . (concat XL-CACHE-DIR "network-settings.data")))
 #+end_src
 
-**** bookmarks
+*** bookmarks
 :PROPERTIES:
 :ID:       a4514b36-6e08-4a66-a595-cd40fc9acc0b
 :END:
@@ -4597,7 +4597,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
   (bookmark-default-file . (concat XL-CACHE-DIR "bookmarks")))
 #+end_src
 
-** completion
+* completion
 :PROPERTIES:
 :ID:       744ac652-aebc-4f5b-883a-4464dd7b07cd
 :END:
@@ -4606,7 +4606,7 @@ In this headline I focus on packages that perform completion on a set of
 candidates. These candidates may either be in the minibuffer or as text to
 complete.
 
-*** minibuffer candidate completion
+** minibuffer candidate completion
 :PROPERTIES:
 :ID:       ec3295f0-24b9-4b35-9de6-9498c08e4f15
 :END:
@@ -4614,7 +4614,7 @@ complete.
 Candidate completion is a must in emacs. I had tried helm but it was too slow
 for my needs.
 
-**** selectrum
+*** selectrum
 :PROPERTIES:
 :ID:       f8a9cdba-a4a9-42aa-a505-e88ad0b4114d
 :END:
@@ -4624,7 +4624,7 @@ by striving to work with the built-in emacs [[helpfn:completing-read][completing
 it like [[https://github.com/emacs-helm/helm][helm]] and [[https://github.com/emacs-helm/helm][ivy]] do. It promises to work with the existing Emacs framework
 instead of replacing it as does Ivy and Helm. :recycle:
 
-***** selectrum
+**** selectrum
 :PROPERTIES:
 :ID:       6e670980-7794-4505-a285-184416a5b377
 :END:
@@ -4662,7 +4662,7 @@ helm wrappers around existing commands.
   (xl-hook-add 'helm-mode-hook #'selectrum-helm-mode))
 #+end_src
 
-***** selectrum-prescient
+**** selectrum-prescient
 :PROPERTIES:
 :ID:       70668ed8-9c83-42d2-8dce-d8f7de923569
 :END:
@@ -4677,7 +4677,7 @@ of a =:nameless-set= keyword that implies a namespace the same as a package. :bu
   (selectrum-preprocess-candidates-function . #'selectrum-prescient--preprocess))
 #+end_src
 
-***** advice for disable
+**** advice for disable
 :PROPERTIES:
 :ID:       1e39a4d2-8d4a-4413-a86e-3f92547cff14
 :END:
@@ -4699,7 +4699,7 @@ make sense. This is advice specifically designed to disable selectrum sorting.
     (apply orig-fn args)))
 #+end_src
 
-***** use-package keyword for disabling sorting
+**** use-package keyword for disabling sorting
 :PROPERTIES:
 :ID:       a647122b-f39f-4140-8c5f-a3e14bfe37f3
 :END:
@@ -4715,7 +4715,7 @@ make sense. This is advice specifically designed to disable selectrum sorting.
 (defalias 'use-package-normalize/:no-sort 'use-package-normalize/:gc-pause)
 #+end_src
 
-***** lettered candidate index
+**** lettered candidate index
 :PROPERTIES:
 :ID:       aae96baa-4acb-43cd-9d1d-0106abc762fd
 :END:
@@ -4730,7 +4730,7 @@ down the alphabet. Fun fact, I actually contributed this feature to selectrum. :
   (format "%c " (+ 97 (% (1- i) selectrum-num-candidates-displayed))))
 #+end_src
 
-***** show indicators
+**** show indicators
 :PROPERTIES:
 :ID:       d0d61c43-88cd-49ed-bd1a-515405c2fa94
 :END:
@@ -4755,7 +4755,7 @@ address this I create this function. It displays letters next to the candidates.
   (:ie "," #'selectrum:select-candidate-by-letter))
 #+end_src
 
-**** savehist
+*** savehist
 :PROPERTIES:
 :ID:       dd4b9da7-e54d-4d62-bb70-aa8f7f4a016f
 :END:
@@ -4765,7 +4765,7 @@ address this I create this function. It displays letters next to the candidates.
 variables which may or may not be related to minibuffer history. You add the
 ones you want to save to [[helpvar:savehist-additional-variables][savehist-additional-variables]].
 
-***** init
+**** init
 :PROPERTIES:
 :ID:       54183df6-b4f5-4b01-9ddb-4054ef0583b0
 :END:
@@ -4781,7 +4781,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
   (savehist-file                    . (concat XL-CACHE-DIR "savehist")))
 #+end_src
 
-***** unpropertize kill ring
+**** unpropertize kill ring
 :PROPERTIES:
 :ID:       da2b6c31-d251-48aa-a6ed-8f01b9fa0b8d
 :END:
@@ -4792,7 +4792,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
   (set! (-map-when #'stringp #'substring-no-properties <kill-ring>)))
 #+end_src
 
-**** helm
+*** helm
 :PROPERTIES:
 :ID:       2da24557-b05d-475e-8565-6a24e23309c0
 :END:
@@ -4810,7 +4810,7 @@ and, of course, add multiple actions via [[id][embark]].
 Oh and in regards for using selectrum instead of helm: the main reason is simply
 that helm is noticably slower with its command filtering. :turtle:
 
-***** helm
+**** helm
 :PROPERTIES:
 :ID:       0ef7946e-629b-4a4f-8e47-7d8826d04e7e
 :END:
@@ -4830,7 +4830,7 @@ my T400 instantaneously.
   (helm-candidate-number-limit . nil))
 #+end_src
 
-***** helm-system-packages
+**** helm-system-packages
 :PROPERTIES:
 :ID:       3e6dd0e6-0632-454d-a496-d34ecd33b60f
 :END:
@@ -4841,7 +4841,7 @@ my T400 instantaneously.
   :no-sort helm-system-packages)
 #+end_src
 
-***** swiper-helm
+**** swiper-helm
 :PROPERTIES:
 :ID:       21a5285c-0447-452d-a7ef-e146b6bd60f0
 :END:
@@ -4852,7 +4852,7 @@ my T400 instantaneously.
   :gc-pause swiper-helm)
 #+end_src
 
-**** prescient
+*** prescient
 :PROPERTIES:
 :ID:       4445c814-9899-4d54-affe-0cee38642690
 :END:
@@ -4867,12 +4867,12 @@ This package.
   (prescient-persist-mode))
 #+end_src
 
-**** orderless
+*** orderless
 :PROPERTIES:
 :ID:       c70fae56-33b4-4b9d-9dd7-12c7a72de2ec
 :END:
 
-***** orderless
+**** orderless
 :PROPERTIES:
 :ID:       9702810e-2013-4c41-ba12-0b55de6ceb38
 :END:
@@ -4885,7 +4885,7 @@ This package.
   (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
 #+end_src
 
-***** stop selectrum filtering and highlight
+**** stop selectrum filtering and highlight
 :PROPERTIES:
 :ID:       a6720cdc-9d51-463b-9ffe-f9341c6bd967
 :END:
@@ -4898,7 +4898,7 @@ This package.
     (apply <orig-fn> <args>)))
 #+end_src
 
-**** consult
+*** consult
 :PROPERTIES:
 :ID:       921ce22e-59ae-4de1-bef0-66a20e320df5
 :END:
@@ -4916,7 +4916,7 @@ all the completion frameworks.
   (bind! ([remap switch-to-buffer] #'consult-buffer)))
  #+end_src
 
-**** consult-selectrum
+*** consult-selectrum
 :PROPERTIES:
 :ID:       1620151c-77c9-4fe3-a1df-e9041ceca29d
 :END:
@@ -4929,7 +4929,7 @@ If I don't include this, I get an.
   :demand t)
 #+end_src
 
-**** marginalia
+*** marginalia
 :PROPERTIES:
 :ID:       0ce9957b-8805-4b2b-b5cb-52dc425a3dee
 :END:
@@ -4943,7 +4943,7 @@ Marginalia adds descriptions to various commands.
   (marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light nil)))
 #+end_src
 
-**** embark
+*** embark
 :PROPERTIES:
 :ID:       9e6a5fc3-5a7f-4067-b35e-ef9fb0605fb8
 :END:
@@ -4969,7 +4969,7 @@ Honestly, reading it's documentation can be a bit dizzying :dizzy-face:; not
 because the it's bad but because it is hard to wrap your mind around such a
 package without seeing it in action.
 
-***** embark
+**** embark
 :PROPERTIES:
 :ID:       45768441-4ec6-475b-99c6-cfb587edb81d
 :END:
@@ -4990,12 +4990,12 @@ As I learn more about embark I will improve this documentation over time.
       (setq-local selectrum-num-candidates-displayed 0))))
 #+end_src
 
-*** company
+** company
 :PROPERTIES:
 :ID:       5579b8d8-9778-4b2d-a56f-ec43754a8d18
 :END:
 
-**** setup
+*** setup
 :PROPERTIES:
 :ID:       5e5393d9-9f58-45be-9ecc-1bc9f0316379
 :END:
@@ -5015,7 +5015,7 @@ As I learn more about embark I will improve this documentation over time.
   (company-frontends                 . '(company-pseudo-tooltip-frontend)))
 #+end_src
 
-**** bindings
+*** bindings
 :PROPERTIES:
 :ID:       ba170d95-7d86-4827-af6b-dc5fd4c1b7e5
 :END:
@@ -5029,12 +5029,12 @@ As I learn more about embark I will improve this documentation over time.
   ("C-j"     #'company-select-next))
 #+end_src
 
-**** backends
+*** backends
 :PROPERTIES:
 :ID:       bd47ec52-6428-4f37-80d2-3795f5a42d02
 :END:
 
-***** determining which modes are active
+**** determining which modes are active
 :PROPERTIES:
 :ID:       b8603ca5-9a24-4684-a75b-e0c3845bfff0
 :END:
@@ -5047,7 +5047,7 @@ As I learn more about embark I will improve this documentation over time.
   (-select (-andfn #'boundp #'symbol-value) minor-mode-list))
 #+end_src
 
-***** backends-alist
+**** backends-alist
 :PROPERTIES:
 :ID:       dac0a998-e1b1-424f-8c40-e1bc19843153
 :END:
@@ -5059,7 +5059,7 @@ As I learn more about embark I will improve this documentation over time.
   "An alist modes to company backends.")
 #+end_src
 
-***** initialize backends
+**** initialize backends
 :PROPERTIES:
 :ID:       4e82e869-b144-44aa-bc19-bb58b8c5ff2a
 :END:
@@ -5074,7 +5074,7 @@ When the user
     (set (make-local-variable 'company-backends) it)))
 #+end_src
 
-***** get backends
+**** get backends
 :PROPERTIES:
 :ID:       282a2c16-ae5f-4d81-acaa-8d60fb24e762
 :END:
@@ -5095,7 +5095,7 @@ When the user
 		(append new-backends backends)))))
 #+end_src
 
-**** company-prescient
+*** company-prescient
 :PROPERTIES:
 :ID:       be4bc19d-a25c-4e2d-9f12-5d2946bc9931
 :END:
@@ -5107,7 +5107,7 @@ When the user
   :hook company-mode-hook)
 #+end_src
 
-**** close company on escape
+*** close company on escape
 :PROPERTIES:
 :ID:       a880c155-b860-4880-840d-4a891b4668c4
 :END:
@@ -5120,12 +5120,12 @@ When the user
     t))
 #+end_src
 
-*** snippets
+** snippets
 :PROPERTIES:
 :ID:       505986df-fd35-437f-930b-8ed27f78409f
 :END:
 
-**** yasnippet
+*** yasnippet
 :PROPERTIES:
 :ID:       2c359813-e928-4a2b-982e-b722bf44fac7
 :END:
@@ -5148,7 +5148,7 @@ When the user
     (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)))
 #+end_src
 
-**** snippet collection
+*** snippet collection
 :PROPERTIES:
 :ID:       57af5709-1597-4e3e-b895-77c17285f64d
 :END:
@@ -5161,12 +5161,12 @@ When the user
     (add-to-list 'yas-snippet-dirs it)))
 #+end_src
 
-** window management
+* window management
 :PROPERTIES:
 :ID:       f8f186bd-a701-4bd4-a249-86ec4faff83b
 :END:
 
-*** window
+** window
 :PROPERTIES:
 :ID:       af27cd7e-2096-4f6d-a749-63e4c38d136c
 :END:
@@ -5177,17 +5177,17 @@ When the user
   (split-width-threshold . 160))
 #+end_src
 
-*** workspaces
+** workspaces
 :PROPERTIES:
 :ID:       c979c631-4098-4204-b067-82f58b5b9ebe
 :END:
 
-**** tab-bar-mode
+*** tab-bar-mode
 :PROPERTIES:
 :ID:       0a72fe9a-1948-4022-a300-18a4881da382
 :END:
 
-***** settings
+**** settings
 :PROPERTIES:
 :ID:       bb63f5b2-cc45-454b-a032-be248f801636
 :END:
@@ -5202,7 +5202,7 @@ When the user
   (tab-bar-show           . nil))
 #+end_src
 
-***** dont actually display the tabs
+**** dont actually display the tabs
 :PROPERTIES:
 :ID:       e4cee146-f6ac-47f1-9e98-f209ae9f9bec
 :END:
@@ -5217,14 +5217,14 @@ them displayed.
     (set-frame-parameter frame 'tab-bar-lines 0)))
 #+end_src
 
-**** desktop
+*** desktop
 :PROPERTIES:
 :ID:       902a11fc-b9aa-4875-ba92-8d2561a12a50
 :END:
 
 =desktop= is a built-in emacs package for saving window configuration setup.
 
-***** some settings
+**** some settings
 :PROPERTIES:
 :ID:       e4c30275-db62-4e6d-890c-6199b0594fd8
 :END:
@@ -5241,7 +5241,7 @@ them displayed.
   (desktop-missing-file-warning . nil))
 #+end_src
 
-***** allowing desktops to go in one directory
+**** allowing desktops to go in one directory
 :PROPERTIES:
 :ID:       22b0be3a-ef36-47d4-8684-602f3a8c8462
 :END:
@@ -5250,7 +5250,7 @@ These functions are all based on the =desktop+= functions. The main thing it
 does is provide a directory where desktop files can be placed. This should
 really have been done by =desktop.el= but oh well.
 
-****** base directory
+***** base directory
 :PROPERTIES:
 :ID:       e1ce2616-2280-435d-85c4-8d71c30c6a75
 :END:
@@ -5260,7 +5260,7 @@ really have been done by =desktop.el= but oh well.
   "Directory where desktops should go.")
 #+end_src
 
-****** generate the base directory
+***** generate the base directory
 :PROPERTIES:
 :ID:       fa173f38-2888-465a-8de4-282233322363
 :END:
@@ -5272,7 +5272,7 @@ really have been done by =desktop.el= but oh well.
   (f-join desktop:base-dir name))
 #+end_src
 
-****** ensure the base directory
+***** ensure the base directory
 :PROPERTIES:
 :ID:       3662ceaa-aed9-4dbc-bea9-7e1878237c87
 :END:
@@ -5283,7 +5283,7 @@ really have been done by =desktop.el= but oh well.
   (mkdir desktop:base-dir t))
 #+end_src
 
-****** desktop names
+***** desktop names
 :PROPERTIES:
 :ID:       5286a22f-dc93-4e32-8a35-3bfbdfda8668
 :END:
@@ -5295,7 +5295,7 @@ really have been done by =desktop.el= but oh well.
 	       (list ".." ".")))
 #+end_src
 
-****** create a desktop
+***** create a desktop
 :PROPERTIES:
 :ID:       331367bb-a1eb-414f-89ef-386ba6fc1e60
 :END:
@@ -5309,7 +5309,7 @@ really have been done by =desktop.el= but oh well.
     (desktop-save desktop-dirname)))
 #+end_src
 
-****** load an existing desktop
+***** load an existing desktop
 :PROPERTIES:
 :ID:       691dd9bf-b207-4885-9f7c-b8791d972dc1
 :END:
@@ -5319,7 +5319,7 @@ really have been done by =desktop.el= but oh well.
   (desktop-change-dir (desktop:dirname name)))
 #+end_src
 
-***** create desktop in new tab
+**** create desktop in new tab
 :PROPERTIES:
 :ID:       4bbb0f3a-bc51-4552-b91f-8404ab19cdd8
 :END:
@@ -5337,7 +5337,7 @@ The tab's new name is the same as the desktop name."
   (desktop:create-desktop name))
 #+end_src
 
-***** load desktop in a new tab
+**** load desktop in a new tab
 :PROPERTIES:
 :ID:       391c0817-bb2f-4334-b320-f039ab23cfb7
 :END:
@@ -5353,12 +5353,12 @@ The tab's new name is the same as the desktop name."
   (desktop:load-desktop name))
 #+end_src
 
-***** desktop restore functions
+**** desktop restore functions
 :PROPERTIES:
 :ID:       0f82a1dc-d28e-4875-a622-e6116c0d3843
 :END:
 
-****** helpful-buffers
+***** helpful-buffers
 :PROPERTIES:
 :ID:       f7d3a8ce-7115-47d6-b0ac-2d078741a49a
 :END:
@@ -5368,7 +5368,7 @@ The tab's new name is the same as the desktop name."
   "Restore helpful buffer.")
 #+end_src
 
-**** workgroups2
+*** workgroups2
 :PROPERTIES:
 :ID:       b5452102-a8fb-409f-8c36-35d404b5a5a6
 :END:
@@ -5386,7 +5386,7 @@ use emacs's built-in serialization of window configs. Usually, it is better to
 use something that's built-in. However, emacs's serialization has the drawback
 that it's not a lisp object; implying that it is not.
 
-***** workgroups2
+**** workgroups2
 :PROPERTIES:
 :ID:       890c8e5b-524d-44b6-b90e-c830436b9da8
 :END:
@@ -5409,7 +5409,7 @@ that it's not a lisp object; implying that it is not.
   (wg-session-file                       . (concat XL-CACHE-DIR "wg-session")))
 #+end_src
 
-*** zoom-window
+** zoom-window
 :PROPERTIES:
 :ID:       d506fde5-d1bc-4807-a1d0-a8ed5c33def2
 :END:
@@ -5423,7 +5423,7 @@ afterwards.
   :commands zoom-window)
 #+end_src
 
-*** exwm
+** exwm
 :PROPERTIES:
 :ID:       ff30cdb0-5c9a-454d-9a6c-dbc8e3fa7cfe
 :END:
@@ -5433,7 +5433,7 @@ are benefits and drawbacks to making emacs your window manager. One benefit is
 that you get a super consistent window management experience. One drawback is
 that if Emacs hangs or crashes you need to restart your computer.
 
-**** init
+*** init
 :PROPERTIES:
 :ID:       7b83cab0-d599-46c4-b20c-19ff33345ae3
 :END:
@@ -5444,7 +5444,7 @@ that if Emacs hangs or crashes you need to restart your computer.
   :before-call browse-url)
 #+end_src
 
-**** trigger exwm on =browse-url=
+*** trigger exwm on =browse-url=
 :PROPERTIES:
 :ID:       581b8529-00a0-4935-9363-60dba9dbe5f4
 :END:
@@ -5468,7 +5468,7 @@ If it's not possible, abort initialization gracefully."
       (xl-log "Another window manager is present (or something went wrong)."))))
 #+end_src
 
-**** exwm-evil-firefox
+*** exwm-evil-firefox
 :PROPERTIES:
 :ID:       e5463b7a-9727-43b1-aa20-831a3617308f
 :END:
@@ -5484,7 +5484,7 @@ an. One caveat is that mouse clicks only work in insert mode.
   :before-call browse-url-firefox)
 #+end_src
 
-**** exwm-float
+*** exwm-float
 :PROPERTIES:
 :ID:       aa59c567-56b6-4ef7-b63c-cb8172e38965
 :END:
@@ -5502,7 +5502,7 @@ need to figure out the proper way to lazy load it.
   (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode))
 #+end_src
 
-**** org capture from an exwm buffer
+*** org capture from an exwm buffer
 :PROPERTIES:
 :ID:       5428bdc1-c075-4387-b3ab-080d372c478f
 :END:
@@ -5514,7 +5514,7 @@ via a hacky and difficult to set up [[https://orgmode.org/worg/org-contrib/org-p
 
 https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcapture_and_exwm/
 
-***** exwm title
+**** exwm title
 :PROPERTIES:
 :ID:       ce78d409-e635-4d94-b20e-38c2034ab5e8
 :END:
@@ -5526,7 +5526,7 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
     (list webpage program)))
 #+end_src
 
-***** download webpage
+**** download webpage
 :PROPERTIES:
 :ID:       3798402c-cd8b-43e2-aec5-f54736aafdd4
 :END:
@@ -5537,7 +5537,7 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
   (call-process "weasyprint" nil nil nil url))
 #+end_src
 
-***** replacement for fake id
+**** replacement for fake id
 :PROPERTIES:
 :ID:       4f0436c4-bc37-49b0-a8a3-894e212d4d13
 :END:
@@ -5570,7 +5570,7 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
     (xcb:flush exwm--connection)))
 #+end_src
 
-***** url from firefox
+**** url from firefox
 :PROPERTIES:
 :ID:       f407cc8c-0bb9-47fe-adeb-4e9d27b5c5b7
 :END:
@@ -5595,7 +5595,7 @@ current url and to add it to the kill ring.
     (current-kill 0)))
 #+end_src
 
-***** url from qutebrowser
+**** url from qutebrowser
 :PROPERTIES:
 :ID:       822cbb61-60b4-445e-9756-4bf797500375
 :END:
@@ -5616,7 +5616,7 @@ current url and to add it to the kill ring.
       (xl-log "Copied %S to the kill ring." it))))
 #+end_src
 
-**** appropriate name for exwm buffers
+*** appropriate name for exwm buffers
 :PROPERTIES:
 :ID: b9712cdc-2cf9-482f-8f62-b2e4f56b9c97
 :END:
@@ -5630,7 +5630,7 @@ a more descriptive name.
   (exwm-workspace-rename-buffer exwm-title))
 #+end_src
 
-**** char mode
+*** char mode
 :PROPERTIES:
 :ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
 :END:
@@ -5640,7 +5640,7 @@ start with =char-mode= because they both have keys that are important for their
 use (like =M-x=) which conflict with Emacs (the instance that's managing the
 windows).
 
-***** list of applications
+**** list of applications
 :PROPERTIES:
 :ID:       d1bf0601-a995-48f7-ab80-86755ba9269a
 :END:
@@ -5650,7 +5650,7 @@ windows).
   "List of applications to exwm should start in char-mode.")
 #+end_src
 
-***** to start in char mode
+**** to start in char mode
 :PROPERTIES:
 :ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
 :END:
@@ -5662,7 +5662,7 @@ windows).
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
 
-**** exwm-edit
+*** exwm-edit
 :PROPERTIES:
 :ID: 1a167827-b791-4a69-a90e-c2d30bd83abb
 :END:
@@ -5688,7 +5688,7 @@ certain applications where I'd use it need to be loaded.
 	     `((,(kbd "C-'") . exwm-edit)))))
 #+end_src
 
-**** keybindings
+*** keybindings
 :PROPERTIES:
 :ID:       8f8e7106-be2e-4c4f-8e4b-d236f805725b
 :END:
@@ -5714,7 +5714,7 @@ certain applications where I'd use it need to be loaded.
              (,(kbd "s-e") . xl/open-emacs-instance))))
 #+end_src
 
-*** split-right-and-focus
+** split-right-and-focus
 :PROPERTIES:
 :ID: 6cb60d94-723b-48e5-850a-3483e78f6647
 :END:
@@ -5726,7 +5726,7 @@ certain applications where I'd use it need to be loaded.
   (select-window (split-window-right)))
 #+end_src
 
-*** split-below-and-focus
+** split-below-and-focus
 :PROPERTIES:
 :ID: d6a4a81f-007d-4b7e-97a3-e0bba3ff97a4
 :END:
@@ -5738,12 +5738,12 @@ certain applications where I'd use it need to be loaded.
   (select-window (split-window-below)))
 #+end_src
 
-** text editing
+* text editing
 :PROPERTIES:
 :ID:       40fb1b29-b772-456f-aac6-cf4a3b5cde3f
 :END:
 
-*** undo-tree
+** undo-tree
 :PROPERTIES:
 :ID:       e54f42d0-f146-4816-8226-8798d0746533
 :END:
@@ -5754,7 +5754,7 @@ certain applications where I'd use it need to be loaded.
   (after! evil (setq evil-undo-system 'undo-tree)))
 #+end_src
 
-*** replace
+** replace
 :PROPERTIES:
 :ID:       be049cb6-40d2-43ff-884d-c0b1ea53b6b8
 :END:
@@ -5764,7 +5764,7 @@ certain applications where I'd use it need to be loaded.
   :rule ("bottom" "org-description" :newname "\\*Occur\\*"))
 #+end_src
 
-*** separedit
+** separedit
 :PROPERTIES:
 :ID:       07021099-6cea-4016-929b-d9310ea305f8
 :END:
@@ -5773,17 +5773,17 @@ certain applications where I'd use it need to be loaded.
 (use-package separedit :commands separedit)
 #+end_src
 
-*** files
+** files
 :PROPERTIES:
 :ID:       9877ecf6-174b-4068-83b7-a9910008bd13
 :END:
 
-**** version control
+*** version control
 :PROPERTIES:
 :ID:       891975f2-092b-4eb3-9bb3-f158127dead3
 :END:
 
-***** git-auto-commit-mode
+**** git-auto-commit-mode
 :PROPERTIES:
 :ID:       00a518e9-56ae-4c0b-b2cd-518fb4c5d201
 :END:
@@ -5793,7 +5793,7 @@ seconds or so. Obviously doing this manually on the command line (or even on
 [[id:d6088ed3-417a-44e8-822b-ce4743f497d0][magit]]) every time is a pain. This package commits your changes every time
 you save your file--which for me is all the time because I use [[id:bd455e73-4035-49b9-bbdf-3d59d4906c97][super-save]].
 
-****** settings
+***** settings
 :PROPERTIES:
 :ID:       8a46cee4-624c-4440-8b99-c6b34d356a6b
 :END:
@@ -5809,7 +5809,7 @@ you save your file--which for me is all the time because I use [[id:bd455e73-403
   (gac-silent-message-p       . t))
 #+end_src
 
-****** commit message
+***** commit message
 :PROPERTIES:
 :ID:       3f0297a0-5929-4217-a109-545a2a010473
 :END:
@@ -5829,12 +5829,12 @@ address later.
   (format "Update %s" (f-base file)))
 #+end_src
 
-***** magit
+**** magit
 :PROPERTIES:
 :ID:       d6088ed3-417a-44e8-822b-ce4743f497d0
 :END:
 
-****** transient
+***** transient
 :PROPERTIES:
 :ID:       1805bd2d-b190-47b6-9c7c-2a200f9cf6a1
 :END:
@@ -5848,7 +5848,7 @@ address later.
   (transient-history-file . (concat XL-CACHE-DIR "transient/history")))
 #+end_src
 
-****** magit
+***** magit
 :PROPERTIES:
 :ID:       820ce76e-53e4-4be8-9cad-3bf35efeefd7
 :END:
@@ -5865,7 +5865,7 @@ address later.
   (magit-auto-revert-mode . t))
 #+end_src
 
-****** quitting
+***** quitting
 :PROPERTIES:
 :ID:       8014eb34-416a-4c79-b21a-7960f77da75e
 :END:
@@ -5879,7 +5879,7 @@ address later.
     (mapc #'kill-buffer buffers)))
 #+end_src
 
-****** evil-magit
+***** evil-magit
 :PROPERTIES:
 :ID:       a86e7a69-4e0a-41fd-aca7-66e514332e7f
 :END:
@@ -5894,7 +5894,7 @@ address later.
   (evil-magit-state . 'normal))
 #+end_src
 
-***** git-gutter+
+**** git-gutter+
 :PROPERTIES:
 :ID:       77fb81e3-29c0-4eb3-a1ff-e1bdbfa41bf2
 :END:
@@ -5909,7 +5909,7 @@ address later.
 (defun git-commit-mode-font-lock-keywords () nil)
 #+end_src
 
-***** git-commit
+**** git-commit
 :PROPERTIES:
 :ID:       2edbbef6-dec3-4af7-a445-8a2c7b1c0397
 :END:
@@ -5919,7 +5919,7 @@ address later.
   :initial-state insert)
 #+end_src
 
-***** yadm and magit
+**** yadm and magit
 :PROPERTIES:
 :ID:       45e7cba9-e4a2-4323-83f8-808e26c2a411
 :END:
@@ -5930,7 +5930,7 @@ address later.
 (advice-add #'magit-git-version :override (lambda (&rest _) "3.0.2"))
 #+end_src
 
-**** backup
+*** backup
 :PROPERTIES:
 :ID:       f55fe748-209b-4450-a948-b0a7f8861dcf
 :END:
@@ -5941,7 +5941,7 @@ address later.
 (setq trash-directory (expand-file-name "~/Trash"))
 #+end_src
 
-**** super-save
+*** super-save
 :PROPERTIES:
 :ID:       684e788c-6db9-4e6e-826b-d4871c0a3f90
 :END:
@@ -5963,7 +5963,7 @@ Saving files like this reduces the likelihood of user delays.
   (super-save-idle-duration       . 5))
 #+end_src
 
-***** vc-hook
+**** vc-hook
 :PROPERTIES:
 :ID:       a8dcb1f6-05a0-46cb-95b5-1d0cd0ad4467
 :END:
@@ -5975,7 +5975,7 @@ Saving files like this reduces the likelihood of user delays.
   (vc-follow-link     . t))
 #+end_src
 
-*** origami
+** origami
 :PROPERTIES:
 :ID:       ac2cc043-331f-435b-b903-39681b84fefe
 :END:
@@ -5987,7 +5987,7 @@ Saving files like this reduces the likelihood of user delays.
   :hook prog-mode-hook)
 #+end_src
 
-*** edit-indirect
+** edit-indirect
 :PROPERTIES:
 :ID:       786b11a6-561b-4793-9c6c-f7630aba3774
 :END:
@@ -5995,7 +5995,7 @@ Saving files like this reduces the likelihood of user delays.
 =edit-indirect= is a package that provides a means to edit text in an indirect
 buffer. It's the same concept as org-src buffers but is not tied to org-mode.
 
-**** init
+*** init
 :PROPERTIES:
 :ID:       d08adcae-ab17-41f1-94c9-1d9a8cb385d7
 :END:
@@ -6004,7 +6004,7 @@ buffer. It's the same concept as org-src buffers but is not tied to org-mode.
 (use-package edit-indirect :commands edit-indirect)
 #+end_src
 
-**** editing org descriptions
+*** editing org descriptions
 :PROPERTIES:
 :ID:       bdabe0b9-4116-423b-9fc0-049651bed58a
 :END:
@@ -6015,7 +6015,7 @@ can use it to edit org descriptions in the same way that we edit source blocks.
 There are two cases when editing a description. There's the case of an existing
 description and there's the case of a new one.
 
-***** init
+**** init
 
 #+begin_src emacs-lisp
 (use-package org-edit-paragraph
@@ -6025,7 +6025,7 @@ description and there's the case of a new one.
     (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-surround-mode)))
 #+end_src
 
-***** description bounds
+**** description bounds
 :PROPERTIES:
 :ID:       74367212-cbd0-4871-94d5-24980e997bd7
 :END:
@@ -6049,7 +6049,7 @@ If there is no existing description return nil."
 	  (cons it it))))))
 #+end_src
 
-***** default post blanks
+**** default post blanks
 :PROPERTIES:
 :ID:       117478bf-3759-4a00-b738-9b1aad99ed54
 :END:
@@ -6062,14 +6062,14 @@ for that matter. I just find it much more readable and less cluttered.
   "Number of blank lines that should follow a description.")
 #+end_src
 
-***** hooks
+**** hooks
 :PROPERTIES:
 :ID:       6ab3a2cc-17aa-4166-aa3f-8627afe40c1a
 :END:
 
 =edit-indirect= has hooks for whenever you want to do a quick thing.
 
-****** goto last non-white
+***** goto last non-white
 :PROPERTIES:
 :ID:       f9afdc3d-ceea-4e9e-a986-9f6bb7e860f6
 :END:
@@ -6084,7 +6084,7 @@ description.
   (skip-chars-backward "\n\s"))
 #+end_src
 
-****** add newlines in the beginning
+***** add newlines in the beginning
 :PROPERTIES:
 :ID:       46917f50-8e0b-4c29-8f9b-1aab7e0e9550
 :END:
@@ -6102,7 +6102,7 @@ make sure this happens.
       (insert "\n"))))
 #+end_src
 
-****** maybe remove newline
+***** maybe remove newline
 :PROPERTIES:
 :ID:       cfa12a0f-fd23-4684-bb10-b86b2e4e5c58
 :END:
@@ -6121,7 +6121,7 @@ newlines added in the case that nothing was changed.
     (erase-buffer)))
 #+end_src
 
-***** define a minor mode for editing descriptions
+**** define a minor mode for editing descriptions
 :PROPERTIES:
 :ID:       8775acdc-0389-40af-a5f4-e74c78144944
 :END:
@@ -6135,7 +6135,7 @@ Therefore, I think it's worthy to give it it's own mode.
   "Mode for editing org descriptions.")
 #+end_src
 
-***** requirements for editing descriptions
+**** requirements for editing descriptions
 :PROPERTIES:
 :ID:       9a789e79-84b8-4415-b152-e11fca786587
 :END:
@@ -6149,7 +6149,7 @@ efficient.
 (xl-load-before-call 'edit-indirect #'org/dwim-edit-description)
 #+end_src
 
-***** edit description
+**** edit description
 :PROPERTIES:
 :ID:       3a7da5c8-f445-4592-b0c0-7fbff3be912e
 :END:
@@ -6181,7 +6181,7 @@ worth it to consider creating a hook specifically for org descriptions.
 	(select-window (display-buffer (buffer-name)))))))
 #+end_src
 
-***** evil support
+**** evil support
 :PROPERTIES:
 :ID:       f270092b-19ca-40ba-87aa-77b3d314c9a6
 :END:
@@ -6196,7 +6196,7 @@ where I don't do this.
   (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-insert-state))
 #+end_src
 
-***** custom hooks
+**** custom hooks
 :PROPERTIES:
 :ID:       240acf8a-621e-4e44-9c11-250b70a0e3dc
 :END:
@@ -6208,7 +6208,7 @@ where I don't do this.
   (xl-hook-add 'org-edit-paragraph:mode-hook mode))
 #+end_src
 
-**** bindings inside edit-indirect
+*** bindings inside edit-indirect
 :PROPERTIES:
 :ID: 42992d1e-5d65-4570-ba96-02b3be31b97b
 :END:
@@ -6225,7 +6225,7 @@ file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
  ("a" #'edit-indirect-abort))
 #+end_src
 
-*** expand-region
+** expand-region
 :PROPERTIES:
 :ID:       7e873fba-33ea-4720-ad79-bd8d557cc4b3
 :END:
@@ -6233,7 +6233,7 @@ file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
 [[https://github.com/magnars/expand-region.el][expand-region]] allows me to toggle a key ("v" in my case) to select progressively
 larger text objects. It's saves me keystrokes.
 
-**** init
+*** init
 :PROPERTIES:
 :ID:       41a1cebc-8da8-4e5c-8258-2ce440f1af50
 :END:
@@ -6243,7 +6243,7 @@ larger text objects. It's saves me keystrokes.
   :commands er/expand-region er/contract-region er/mark-symbol)
 #+end_src
 
-**** quit expand region
+*** quit expand region
 :PROPERTIES:
 :ID:       639824e1-0dcf-46bc-98b4-c70b9c7cb2a6
 :END:
@@ -6255,7 +6255,7 @@ larger text objects. It's saves me keystrokes.
     (er/contract-region 0)))
 #+end_src
 
-**** expand-region
+*** expand-region
 :PROPERTIES:
 :ID: 417c9c53-a776-4779-9afc-1eaa35a145c6
 :END:
@@ -6266,7 +6266,7 @@ larger text objects. It's saves me keystrokes.
   (:v "v" #'er/expand-region))
 #+end_src
 
-*** writing
+** writing
 :PROPERTIES:
 :ID:       98b567f1-00ad-4c99-aace-0a12f4d1b353
 :END:
@@ -6274,7 +6274,7 @@ larger text objects. It's saves me keystrokes.
 This headline is for packages and configuration related to writing such as spell
 and grammer checking.
 
-**** plural
+*** plural
 :PROPERTIES:
 :ID:       bf2ed9b7-144c-4d4b-92ae-74c93dfc6db5
 :END:
@@ -6295,7 +6295,7 @@ like that concern N number of things, where N could be 1 or more things.
   (push '("\\`this\\'" . "these") plural-knowledge))
 #+end_src
 
-**** auto-capitalize
+*** auto-capitalize
 :PROPERTIES:
 :ID:       4ddfacc1-a25e-466e-ab6b-2a5ec306f3be
 :END:
@@ -6310,7 +6310,7 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
   (auto-capitalize-words . '("I" "English" "Emacs")))
 #+end_src
 
-**** spell-number
+*** spell-number
 :PROPERTIES:
 :ID:       8bf270a6-6003-4430-bb03-0b665d5a162f
 :END:
@@ -6324,7 +6324,7 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
   (spelln-decimal-character . ?.))
 #+end_src
 
-**** paragraph
+*** paragraph
 :PROPERTIES:
 :ID:       aeb973cb-41ad-4891-94b2-d0ea5c1baa33
 :END:
@@ -6335,7 +6335,7 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
   (sentence-end-double-space . nil))
 #+end_src
 
-*** xr
+** xr
 :PROPERTIES:
 :ID: 75c56163-9ce1-4726-969a-350fcc56395f
 :END:
@@ -6347,12 +6347,12 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 (use-package xr :commands xr)
 #+end_src
 
-*** spacing & indentation
+** spacing & indentation
 :PROPERTIES:
 :ID:       ae5416cd-ffa2-456a-9c56-afcfc65a33f8
 :END:
 
-**** aggressive-fill-paragraph
+*** aggressive-fill-paragraph
 :PROPERTIES:
 :ID: 4f57fd49-b466-4eea-b91a-2cc8f0b07297
 :END:
@@ -6363,7 +6363,7 @@ Emacs is very minimal by default. Most reading this will likely be used to.
 (use-package aggressive-fill-paragraph)
 #+end_src
 
-**** aggressive-indent
+*** aggressive-indent
 :PROPERTIES:
 :ID: f1b9a36e-26e4-4305-99ae-cbcf6a90013d
 :END:
@@ -6376,7 +6376,7 @@ it. It's pretty smart and very convenient.
   :hook emacs-lisp-mode-hook)
 #+end_src
 
-**** indent
+*** indent
 :PROPERTIES:
 :ID:       a5d97d4d-3af9-4fde-ae14-953ad4d28edd
 :END:
@@ -6387,17 +6387,17 @@ it. It's pretty smart and very convenient.
   (tab-always-indent . t))
 #+end_src
 
-*** parentheses
+** parentheses
 :PROPERTIES:
 :ID:       e82d2b4e-659e-4c7d-8071-c413b8e540f7
 :END:
 
-**** smartparens
+*** smartparens
 :PROPERTIES:
 :ID:       f4ffbb57-1fb6-43ab-a747-470dfcfbd0ac
 :END:
 
-***** init
+**** init
 :PROPERTIES:
 :ID:       e26f4c55-9585-4544-bed6-9733d50823e7
 :END:
@@ -6418,7 +6418,7 @@ it. It's pretty smart and very convenient.
   (sp-escape-quotes-after-insert           . nil))
 #+end_src
 
-***** config
+**** config
 :PROPERTIES:
 :ID: f1c64411-ad51-4c24-8dad-b4aa7b8fc3b5
 :END:
@@ -6429,7 +6429,7 @@ it. It's pretty smart and very convenient.
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
 #+end_src
 
-***** disable =smartparens-navigate-skip-match=
+**** disable =smartparens-navigate-skip-match=
 :PROPERTIES:
 :ID: fda1875b-b3f7-4f43-83b1-873f3db3ae77
 :END:
@@ -6442,7 +6442,7 @@ it. It's pretty smart and very convenient.
     (setq sp-navigate-consider-sgml-tags nil)))
 #+end_src
 
-***** autopairing
+**** autopairing
 :PROPERTIES:
 :ID: e860ce7e-aaac-477b-a373-a8b01957481d
 :END:
@@ -6454,7 +6454,7 @@ it. It's pretty smart and very convenient.
     (smartparens-mode 1)))
 #+end_src
 
-**** rainbow-delimiters
+*** rainbow-delimiters
 :PROPERTIES:
 :ID:       5b58bb1c-5d3c-4f04-b4fb-c55f1588839e
 :END:
@@ -6469,14 +6469,14 @@ great idea! It makes it really easy to see which parentheses go together.
   (rainbow-delimiters-max-face-count . 9))
 #+end_src
 
-*** evil - the "extensible VI layer"
+** evil - the "extensible VI layer"
 :PROPERTIES:
 :ID:       9639633f-ec3d-4499-9615-db0dcc9650c9
 :END:
 
 =evil= is the most complete vim emulation in existence.
 
-**** evil
+*** evil
 :PROPERTIES:
 :ID:       e74cfb91-a1e8-4747-8c23-6b4fd19aef2e
 :END:
@@ -6485,7 +6485,7 @@ great idea! It makes it really easy to see which parentheses go together.
 and provides facilities for writing custom extensions. Also see our page on
 [[emacswiki:Evil][EmacsWiki]]. See a brief [[https://bytebucket.org/lyro/evil/raw/default/doc/evil.pdf][manual]]. See the [[https://github.com/noctuid/evil-guide][evil-guide]] by noctuid.
 
-***** evil
+**** evil
 :PROPERTIES:
 :ID:       e472e5d3-2760-420b-bbe1-2eb043368f67
 :END:
@@ -6494,7 +6494,7 @@ and provides facilities for writing custom extensions. Also see our page on
 (use-package evil)
 #+end_src
 
-***** evil-core
+**** evil-core
 :PROPERTIES:
 :ID:       9aa26d2c-d15a-4f36-a024-3ca9ce568385
 :END:
@@ -6504,7 +6504,7 @@ and provides facilities for writing custom extensions. Also see our page on
   :hook (emacs-startup-hook . evil-mode))
 #+end_src
 
-***** evil-vars
+**** evil-vars
 :PROPERTIES:
 :ID:       af3a9791-76ac-4fd5-96fe-d361cef3b5b3
 :END:
@@ -6528,7 +6528,7 @@ and provides facilities for writing custom extensions. Also see our page on
   (evil-magic                           . t))
 #+end_src
 
-***** custom
+**** custom
 :PROPERTIES:
 :ID:       f7ece898-25e2-4b2c-94f3-e832a687114c
 :END:
@@ -6537,7 +6537,7 @@ and provides facilities for writing custom extensions. Also see our page on
 (set-default! evil-want-C-u-scroll t)
 #+end_src
 
-***** normal state everywhere
+**** normal state everywhere
 :PROPERTIES:
 :ID:       e6126bd7-94b8-4ce0-b547-0536b59437ea
 :END:
@@ -6565,7 +6565,7 @@ state and disables it everywhere in favor of normal state.
 (xl-advice-add #'evil-motion-state :override #'evil-normal-state)
 #+end_src
 
-***** cursors
+**** cursors
 :PROPERTIES:
 :ID: a5f558fb-221c-4b33-a7cd-29308ef74b0d
 :END:
@@ -6576,7 +6576,7 @@ some colors here. Evil has a cursor variable for each state. The cursor variable
 for insert state, for example, is [[helpvar:evil-insert-state-cursor][evil-insert-state-cursor]]. Its value is of the
 form: ~((CURSOR-SHAPE . CURSOR-WIDTH) COLOR)~.
 
-****** colors and shapes
+***** colors and shapes
 :PROPERTIES:
 :ID: 3f3cd5c9-1f6d-4c3b-b73f-82c9ee00395e
 :END:
@@ -6597,7 +6597,7 @@ modeline indicator for this but I find that the cursor suffices.
   (setq evil-motion-state-cursor   '( box        "plum3")))
 #+end_src
 
-****** updating cursors
+***** updating cursors
 :PROPERTIES:
 :ID: ea4da6d4-4a2c-42cf-b397-cea1555781ce
 :END:
@@ -6613,7 +6613,7 @@ cursor color will update.
     (evil-refresh-cursor)))
 #+end_src
 
-***** insert state in minibuffer
+**** insert state in minibuffer
 :PROPERTIES:
 :ID: a23137c5-62a0-4e77-9e51-6a7372dac703
 :END:
@@ -6639,7 +6639,7 @@ the correct one.
     (setq evil:state-before-minibuffer nil)))
 #+end_src
 
-***** escape
+**** escape
 :PROPERTIES:
 :ID: ea9378de-e5c5-482c-b53b-743a81e3bc8e
 :END:
@@ -6658,7 +6658,7 @@ We want escape to be a "quit everything" keybinding.
         (t (keyboard-quit))))
 #+end_src
 
-***** text objects
+**** text objects
 :PROPERTIES:
 :ID:       0edef735-cec9-4015-bfd5-cf36e816cbc3
 :END:
@@ -6667,7 +6667,7 @@ To edit text efficiently Vim has the concept of [[https://blog.carbonfive.com/20
 structures that are seen in text. For example, a set of words followed by a
 period is a sentence. A words between two closing parentheses is a sexp.
 
-****** general delimiter text object
+***** general delimiter text object
 :PROPERTIES:
 :ID:       0066093b-7991-4193-8ce2-ef9f17af211a
 :END:
@@ -6685,7 +6685,7 @@ want =[]= or ={=}= or =()= or =""=. The main drawback you cannot distinguish bet
 surround characters at multiple levels--it just takes the closest one. In
 practice, this is rarely an issue.
 
-****** inner
+***** inner
 :PROPERTIES:
 :ID:       dc06e55b-ce4d-4921-b478-ae7b7927df82
 :END:
@@ -6703,7 +6703,7 @@ practice, this is rarely an issue.
       (error "No surrounding form found."))))
 #+end_src
 
-****** outer
+***** outer
 :PROPERTIES:
 :ID:       6068a56f-d162-4da2-801f-6f72357fdd62
 :END:
@@ -6721,7 +6721,7 @@ practice, this is rarely an issue.
       (error "No surrounding form found."))))
 #+end_src
 
-****** bindings
+***** bindings
 :PROPERTIES:
 :ID:       4bf10f8e-2ae6-44b1-9087-5d1e2af028f1
 :END:
@@ -6732,7 +6732,7 @@ practice, this is rarely an issue.
   (:map evil-outer-text-objects-map "f" #'evil:textobj-outer-form))
 #+end_src
 
-****** fix vim/evil around =""=
+***** fix vim/evil around =""=
 :PROPERTIES:
 :ID:       b91726b4-7e7e-442a-9858-df5d51c751c8
 :END:
@@ -6757,7 +6757,7 @@ Why not just go to the end of the ="= like any other around operator?
     ("\"" #'evil:textobj-a-string)))
 #+end_src
 
-**** evil-visualstar
+*** evil-visualstar
 :PROPERTIES:
 :ID:       ae15f6a4-59a5-49ca-9add-1b90d393b09c
 :END:
@@ -6772,7 +6772,7 @@ Why not just go to the end of the ="= like any other around operator?
   ("*" #'evil-visualstar/begin-search-forward))
 #+end_src
 
-**** evil-lion
+*** evil-lion
 :PROPERTIES:
 :ID:       95d248be-601e-4dbd-b318-febcd0e49d71
 :END:
@@ -6789,7 +6789,7 @@ Why not just go to the end of the ="= like any other around operator?
   (:nv "L" #'evil-lion-right))
 #+end_src
 
-**** evil-surround
+*** evil-surround
 :PROPERTIES:
 :ID:       9ab88644-3c33-463c-8f24-3b048209e082
 :END:
@@ -6799,7 +6799,7 @@ Why not just go to the end of the ="= like any other around operator?
   :hook prog-mode-hook text-mode-hook)
 #+end_src
 
-**** evil-easymotion
+*** evil-easymotion
 :PROPERTIES:
 :ID:       b18190a1-e0b3-4311-ad20-76d79f56c3a6
 :END:
@@ -6813,7 +6813,7 @@ Why not just go to the end of the ="= like any other around operator?
 ;; (general-def 'normal "f" #'evil-easymotion:find-char)
 #+end_src
 
-**** evil-goggles
+*** evil-goggles
 :PROPERTIES:
 :ID:       30d19955-dabf-472f-a485-22114e1eaaa4
 :END:
@@ -6822,12 +6822,12 @@ Why not just go to the end of the ="= like any other around operator?
 (use-package evil-goggles)
 #+end_src
 
-**** evil-god-state
+*** evil-god-state
 :PROPERTIES:
 :ID:       4374e82c-bac1-4c9e-9ab9-70799140f5a7
 :END:
 
-*** key-chord
+** key-chord
 :PROPERTIES:
 :ID:       20d6d9c1-50a1-4699-a67c-e6f04d3b5576
 :END:
@@ -6845,7 +6845,7 @@ This is better than evil escape as it only binds in insert.
   )
 #+end_src
 
-*** paren
+** paren
 :PROPERTIES:
 :ID:       c4d415da-a408-4e59-ac6a-c5ab17e2e32d
 :END:
@@ -6856,6 +6856,158 @@ This is better than evil escape as it only binds in insert.
   :set
   (show-paren-delay . 0))
 #+end_src
+
+** lispyville
+:PROPERTIES:
+:ID:       120baacb-4835-4e96-a7cb-e8bb7496d7be
+:END:
+
+[[https://github.com/noctuid/lispyville][lispyville]] helps vim commands work better with lisp by providing
+commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve parentheses.
+
+*** initialize
+:PROPERTIES:
+:ID:       fad4cb7c-ff1e-485d-99d1-f55384c26402
+:END:
+
+#+begin_src emacs-lisp
+(use-package lispyville :hook emacs-lisp-mode-hook)
+#+end_src
+
+*** remappings
+:PROPERTIES:
+:ID:       411cb6e1-311a-458a-a241-d9b9aef45d25
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  ([remap evil-yank]                 #'lispyville-yank)
+  ([remap evil-delete]               #'lispyville-delete)
+  ([remap evil-change]               #'lispyville-change)
+  ([remap evil-yank-line]            #'lispyville-yank-line)
+  ([remap evil-delete-line]          #'lispyville-delete-line)
+  ([remap evil-change-line]          #'lispyville-change-line)
+  ([remap evil-delete-char]          #'lispyville-delete-char-or-splice)
+  ([remap evil-delete-backward-char] #'lispyville-delete-char-or-splice-backwards)
+  ([remap evil-substitute]           #'lispyville-substitute)
+  ([remap evil-change-whole-line]    #'lispyville-change-whole-line)
+  ([remap evil-join]                 #'lispyville-join))
+#+end_src
+
+*** inner text objects
+:PROPERTIES:
+:ID:       f9f82ebe-5749-452f-ba49-269e60526b04
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map evil-inner-text-objects-map)
+  ("a" #'lispyville-inner-atom)
+  ("l" #'lispyville-inner-list)
+  ("x" #'lispyville-inner-sexp)
+  ("c" #'lispyville-inner-comment)
+  ("s" #'lispyville-inner-string))
+#+end_src
+
+*** outer text objects
+:PROPERTIES:
+:ID:       9dda9a1b-c76f-4537-9554-45ad3c77977a
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map evil-outer-text-objects-map)
+  ("a" #'lispyville-a-atom)
+  ("l" #'lispyville-a-list)
+  ("x" #'lispyville-a-sexp)
+  ("c" #'lispyville-a-comment)
+  ("s" #'lispyville-a-string))
+#+end_src
+
+*** slurp/barf
+:PROPERTIES:
+:ID:       2b70a90f-6d5a-437e-99e9-e72224d64079
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  (:n ">" #'lispyville-slurp)
+  (:n "<" #'lispyville-barf))
+#+end_src
+
+*** escape
+:PROPERTIES:
+:ID:       6469110b-e5bf-4276-a9de-a5c1e1eb2385
+:END:
+
+=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =xl-escape-hook=
+to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]] as advice to
+=lispyville-normal-state=.
+
+Sometimes =evil-normal-state= enters visual state.
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  ([escape] #'lispyville-normal-state))
+#+end_src
+
+*** additional
+:PROPERTIES:
+:ID:       af8b96f7-183a-4f87-a985-7f7328e6feb7
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  (:ei "SPC" #'lispy-space)
+  (:ei ";"   #'lispy-comment)
+  (:nv "M-j" #'lispyville-drag-forward)
+  (:nv "M-k" #'lispyville-drag-backward)
+  (:nv "M-R" #'lispyville-raise-list)
+  (:nv "M-v" #'lispy-convolute-sexp))
+#+end_src
+
+* notifications
+:PROPERTIES:
+:ID:       4b3bd59b-9867-4b2a-a29a-693fd0aa68b7
+:END:
+
+** ednc
+:PROPERTIES:
+:ID:       e72dfee2-3c80-4206-b2ea-d4a25fffc75c
+:END:
+
+This is a replacement for things like =dunst= except written completely en Emacs
+lisp.
+
+#+begin_src emacs-lisp
+(use-package ednc)
+#+end_src
+
+** egg-timer
+:PROPERTIES:
+:ID:       a98d0f06-5b2a-449d-8719-bcc8d3d0a241
+:END:
+
+#+begin_src emacs-lisp
+(use-package egg-timer)
+#+end_src
+
+* languages
+:PROPERTIES:
+:ID:       fa8dc2fc-96f4-4820-b368-4d61d1db0ee5
+:END:
+
+** lisp
+:PROPERTIES:
+:ID:       2b7db121-f807-4274-9347-70c996d3c6f7
+:END:
+
+This headline is for packages and configuration which pertain to editing lisp
+code.
 
 *** lispyville
 :PROPERTIES:
@@ -6876,7 +7028,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 
 **** remappings
 :PROPERTIES:
-:ID:       411cb6e1-311a-458a-a241-d9b9aef45d25
+:ID:       f14083fc-13d1-41c6-9fca-eb686a1d50a3
 :END:
 
 #+begin_src emacs-lisp
@@ -6902,12 +7054,12 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 
 #+begin_src emacs-lisp
 (bind!
-  (:map evil-inner-text-objects-map)
-  ("a" #'lispyville-inner-atom)
-  ("l" #'lispyville-inner-list)
-  ("x" #'lispyville-inner-sexp)
-  ("c" #'lispyville-inner-comment)
-  ("s" #'lispyville-inner-string))
+ (:map evil-inner-text-objects-map)
+ ("a" #'lispyville-inner-atom)
+ ("l" #'lispyville-inner-list)
+ ("x" #'lispyville-inner-sexp)
+ ("c" #'lispyville-inner-comment)
+ ("s" #'lispyville-inner-string))
 #+end_src
 
 **** outer text objects
@@ -6927,158 +7079,6 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 
 **** slurp/barf
 :PROPERTIES:
-:ID:       2b70a90f-6d5a-437e-99e9-e72224d64079
-:END:
-
-#+begin_src emacs-lisp
-(bind!
-  (:map lispyville-mode-map)
-  (:n ">" #'lispyville-slurp)
-  (:n "<" #'lispyville-barf))
-#+end_src
-
-**** escape
-:PROPERTIES:
-:ID:       6469110b-e5bf-4276-a9de-a5c1e1eb2385
-:END:
-
-=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =xl-escape-hook=
-to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]] as advice to
-=lispyville-normal-state=.
-
-Sometimes =evil-normal-state= enters visual state.
-
-#+begin_src emacs-lisp
-(bind!
-  (:map lispyville-mode-map)
-  ([escape] #'lispyville-normal-state))
-#+end_src
-
-**** additional
-:PROPERTIES:
-:ID:       af8b96f7-183a-4f87-a985-7f7328e6feb7
-:END:
-
-#+begin_src emacs-lisp
-(bind!
-  (:map lispyville-mode-map)
-  (:ei "SPC" #'lispy-space)
-  (:ei ";"   #'lispy-comment)
-  (:nv "M-j" #'lispyville-drag-forward)
-  (:nv "M-k" #'lispyville-drag-backward)
-  (:nv "M-R" #'lispyville-raise-list)
-  (:nv "M-v" #'lispy-convolute-sexp))
-#+end_src
-
-** notifications
-:PROPERTIES:
-:ID:       4b3bd59b-9867-4b2a-a29a-693fd0aa68b7
-:END:
-
-*** ednc
-:PROPERTIES:
-:ID:       e72dfee2-3c80-4206-b2ea-d4a25fffc75c
-:END:
-
-This is a replacement for things like =dunst= except written completely en Emacs
-lisp.
-
-#+begin_src emacs-lisp
-(use-package ednc)
-#+end_src
-
-*** egg-timer
-:PROPERTIES:
-:ID:       a98d0f06-5b2a-449d-8719-bcc8d3d0a241
-:END:
-
-#+begin_src emacs-lisp
-(use-package egg-timer)
-#+end_src
-
-** languages
-:PROPERTIES:
-:ID:       fa8dc2fc-96f4-4820-b368-4d61d1db0ee5
-:END:
-
-*** lisp
-:PROPERTIES:
-:ID:       2b7db121-f807-4274-9347-70c996d3c6f7
-:END:
-
-This headline is for packages and configuration which pertain to editing lisp
-code.
-
-**** lispyville
-:PROPERTIES:
-:ID:       120baacb-4835-4e96-a7cb-e8bb7496d7be
-:END:
-
-[[https://github.com/noctuid/lispyville][lispyville]] helps vim commands work better with lisp by providing
-commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve parentheses.
-
-***** initialize
-:PROPERTIES:
-:ID:       fad4cb7c-ff1e-485d-99d1-f55384c26402
-:END:
-
-#+begin_src emacs-lisp
-(use-package lispyville :hook emacs-lisp-mode-hook)
-#+end_src
-
-***** remappings
-:PROPERTIES:
-:ID:       f14083fc-13d1-41c6-9fca-eb686a1d50a3
-:END:
-
-#+begin_src emacs-lisp
-(bind!
-  (:map lispyville-mode-map)
-  ([remap evil-yank]                 #'lispyville-yank)
-  ([remap evil-delete]               #'lispyville-delete)
-  ([remap evil-change]               #'lispyville-change)
-  ([remap evil-yank-line]            #'lispyville-yank-line)
-  ([remap evil-delete-line]          #'lispyville-delete-line)
-  ([remap evil-change-line]          #'lispyville-change-line)
-  ([remap evil-delete-char]          #'lispyville-delete-char-or-splice)
-  ([remap evil-delete-backward-char] #'lispyville-delete-char-or-splice-backwards)
-  ([remap evil-substitute]           #'lispyville-substitute)
-  ([remap evil-change-whole-line]    #'lispyville-change-whole-line)
-  ([remap evil-join]                 #'lispyville-join))
-#+end_src
-
-***** inner text objects
-:PROPERTIES:
-:ID:       f9f82ebe-5749-452f-ba49-269e60526b04
-:END:
-
-#+begin_src emacs-lisp
-(bind!
- (:map evil-inner-text-objects-map)
- ("a" #'lispyville-inner-atom)
- ("l" #'lispyville-inner-list)
- ("x" #'lispyville-inner-sexp)
- ("c" #'lispyville-inner-comment)
- ("s" #'lispyville-inner-string))
-#+end_src
-
-***** outer text objects
-:PROPERTIES:
-:ID:       9dda9a1b-c76f-4537-9554-45ad3c77977a
-:END:
-
-#+begin_src emacs-lisp
-(bind!
-  (:map evil-outer-text-objects-map)
-  ("a" #'lispyville-a-atom)
-  ("l" #'lispyville-a-list)
-  ("x" #'lispyville-a-sexp)
-  ("c" #'lispyville-a-comment)
-  ("s" #'lispyville-a-string))
-#+end_src
-
-***** slurp/barf
-:PROPERTIES:
 :ID: 21626641-98e3-4134-958d-03227e4da6b5
 :END:
 
@@ -7089,7 +7089,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
   (:n "<" #'lispyville-barf))
 #+end_src
 
-***** escape
+**** escape
 :PROPERTIES:
 :ID: b355e1a1-6242-47f5-b357-5c3f5adbd200
 :END:
@@ -7106,7 +7106,7 @@ Sometimes =evil-normal-state= enters visual state.
   (:ei [escape] #'lispyville-normal-state))
 #+end_src
 
-***** additional
+**** additional
 :PROPERTIES:
 :ID: 1fbafa78-87a0-45ee-9c7c-0c703df2ac66
 :END:
@@ -7122,7 +7122,7 @@ Sometimes =evil-normal-state= enters visual state.
   (:nv "M-v" #'lispy-convolute-sexp))
 #+end_src
 
-**** highlight-quoted
+*** highlight-quoted
 :PROPERTIES:
 :ID:       d0973dce-693b-45ca-88e3-27da1bb217f7
 :END:
@@ -7134,7 +7134,7 @@ Sometimes =evil-normal-state= enters visual state.
   :hook emacs-lisp-mode-hook)
 #+end_src
 
-**** macrostep
+*** macrostep
 :PROPERTIES:
 :ID:       fefc5700-3bd7-4a89-ae7b-bf68368e8bc4
 :END:
@@ -7151,9 +7151,9 @@ Sometimes =evil-normal-state= enters visual state.
  ("C" #'macrostep-collapse-all))
 #+end_src
 
-**** elisp
+*** elisp
 
-***** eros
+**** eros
 :PROPERTIES:
 :ID:       76a70683-bd59-4ec4-9574-d307ccdc36cd
 :END:
@@ -7167,7 +7167,7 @@ Sometimes =evil-normal-state= enters visual state.
   :config (bind! ([remap eval-last-sexp] #'eros-eval-last-sexp)))
 #+end_src
 
-***** fix elisp indentation
+**** fix elisp indentation
 :PROPERTIES:
 :ID:       834eff05-1b96-4295-a46c-d14f81b43ad6
 :END:
@@ -7351,14 +7351,14 @@ The change to this function."
                normal-indent))))))
 #+end_src
 
-***** debugging
+**** debugging
 :PROPERTIES:
 :ID:       9390181f-fbe9-4316-beb6-c07c12e4f911
 :END:
 
 My config file is so large that bugs matter. I need reliable ways of determining.
 
-****** backtrace
+***** backtrace
 :PROPERTIES:
 :ID:       63fe8a26-512e-41c6-8b8d-a9f3ba495bc9
 :END:
@@ -7370,7 +7370,7 @@ This built-in emacs package is opens a buffer with a list.
   :rule ("bottom" "backtrace" :newname "\\*Backtrace\\*"))
 #+end_src
 
-****** ert
+***** ert
 :PROPERTIES:
 :ID:       5fbf293e-84ae-4f47-bdcd-850ff552465a
 :END:
@@ -7381,7 +7381,7 @@ This built-in emacs package is opens a buffer with a list.
   :assume-yes ert-delete-all-tests)
 #+end_src
 
-****** ert-expectations
+***** ert-expectations
 :PROPERTIES:
 :ID:       3062b8a4-4261-49fc-9bdb-895ba75bbd19
 :END:
@@ -7393,7 +7393,7 @@ This built-in emacs package is opens a buffer with a list.
 (autoload 'expectations "ert-expectations" nil nil 'macro)
 #+end_src
 
-****** el-mock
+***** el-mock
 :PROPERTIES:
 :ID:       46df66b0-5820-4550-aa99-c913d3022fe1
 :END:
@@ -7402,7 +7402,7 @@ This built-in emacs package is opens a buffer with a list.
 (use-package el-mock)
 #+end_src
 
-****** assess
+***** assess
 :PROPERTIES:
 :ID:       cea20fcd-0c75-42dc-be7f-e9eda7b932b1
 :END:
@@ -7414,7 +7414,7 @@ This built-in emacs package is opens a buffer with a list.
 (use-package assess)
 #+end_src
 
-****** bug-hunter
+***** bug-hunter
 :PROPERTIES:
 :ID:       30196ef6-7b34-4a6c-b084-8e613010abd4
 :END:
@@ -7427,7 +7427,7 @@ the culprit of a problem by [[][code bisection].
 (use-package bug-hunter)
 #+end_src
 
-***** ppp
+**** ppp
 :PROPERTIES:
 :ID:       82dbb88a-4bce-4ca3-90fe-38cfbea7abc6
 :END:
@@ -7444,7 +7444,7 @@ the whole thing.
 (use-package ppp)
 #+end_src
 
-***** elisp-demos
+**** elisp-demos
 :PROPERTIES:
 :ID:       2c419004-a7c1-4de5-bada-8420505cea90
 :END:
@@ -7462,14 +7462,14 @@ function?
   :advice (:after (helpful-update . elisp-demos-advice-helpful-update)))
 #+end_src
 
-*** org
+** org
 :PROPERTIES:
 :ID:       63748940-c1b9-47ea-b1ce-d6519453ad03
 :END:
 
 =org= mode.
 
-**** important files and directories
+*** important files and directories
 :PROPERTIES:
 :ID:       97a3bb5a-f485-45d0-a7f4-4bdd3963a16b
 :END:
@@ -7491,7 +7491,7 @@ directories that I need to reference multiple times.
   "Org file tests should go.")
 #+end_src
 
-**** org-version
+*** org-version
 :PROPERTIES:
 :ID:       0b2cfe2b-a75c-48ea-9470-19c92521e2cf
 :END:
@@ -7500,14 +7500,14 @@ directories that I need to reference multiple times.
 (advice-add #'org-version :override (-const "10"))
 #+end_src
 
-**** bindings
+*** bindings
 :PROPERTIES:
 :ID:       4ca3fe54-54b1-47ca-90f1-a14b3df1cc59
 :END:
 
 Org mode demands its own editing.
 
-***** define a state for org mode
+**** define a state for org mode
 :PROPERTIES:
 :ID:       9f548349-632e-41c3-b602-73ac97beb8dc
 :END:
@@ -7515,7 +7515,7 @@ Org mode demands its own editing.
 =org-mode= editing is so different that I think it's worth it to define an
 entirely new state for org mode.
 
-***** org mode local bindings
+**** org mode local bindings
 :PROPERTIES:
 :ID:       a950d732-b0d2-46b9-82ce-1b9a474e7d76
 :END:
@@ -7544,7 +7544,7 @@ entirely new state for org mode.
  ("," #'org/dwim-edit-source-block))
 #+end_src
 
-***** generic org bindings
+**** generic org bindings
 :PROPERTIES:
 :ID:       583bd7ac-64e0-48ea-bd75-5b6a20f2deae
 :END:
@@ -7581,7 +7581,7 @@ much more useful considering the specific structure of org mode documents.
   ("J" #'org-metadown))
 #+end_src
 
-***** bindings
+**** bindings
 :PROPERTIES:
 :ID:       3f4144ee-a780-478e-a1ad-47591f181ff3
 :END:
@@ -7590,12 +7590,12 @@ much more useful considering the specific structure of org mode documents.
 (bind! ([remap org-cycle] #'outline-toggle-children))
 #+end_src
 
-**** commands
+*** commands
 :PROPERTIES:
 :ID:       cdf84156-cbdb-4f08-a380-ecce4bbc98d2
 :END:
 
-***** goto start of heading
+**** goto start of heading
 :PROPERTIES:
 :ID:       0431e49f-ef6b-4edb-854c-6427479e5ee2
 :END:
@@ -7609,7 +7609,7 @@ much more useful considering the specific structure of org mode documents.
       (goto-char (1- (match-end 0))))))
 #+end_src
 
-***** do the right thing after jumping to headline
+**** do the right thing after jumping to headline
 :PROPERTIES:
 :ID:       2ca61454-a0ca-47b3-8622-91d7969653da
 :END:
@@ -7622,7 +7622,7 @@ the word =xl/goto-line= in my emacs. You can see that only the headline that has
 the target word is revealed but it's parents are (akwardly) hidden. I never want
 headlines to be unfolded like this.
 
-****** show branch
+***** show branch
 :PROPERTIES:
 :ID:       d95fab52-7d8f-439f-9221-188490f4ad5f
 :END:
@@ -7646,7 +7646,7 @@ headline."
 	   (do (outline-show-children)))))
 #+end_src
 
-****** show as much of the heading as possible
+***** show as much of the heading as possible
 :PROPERTIES:
 :ID:       26700e25-7939-459a-b483-56b882d41f66
 :END:
@@ -7656,7 +7656,7 @@ Typically when we jump to a headline we want to see its contents.
 #+begin_src emacs-lisp
 #+end_src
 
-****** show branch after jumping to point
+***** show branch after jumping to point
 :PROPERTIES:
 :ID:       251e5df0-0a7d-4bf9-8fd9-69991d89a074
 :END:
@@ -7676,7 +7676,7 @@ their side-effects.
     (org%show-branch)))
 #+end_src
 
-***** return
+**** return
 :PROPERTIES:
 :ID:       8314f2e0-da63-4f2f-ad89-b97987ca5843
 :END:
@@ -7691,7 +7691,7 @@ their side-effects.
          (call-interactively #'org-return))))
 #+end_src
 
-****** next-line
+***** next-line
 :PROPERTIES:
 :ID:       63c8c25d-4b79-41ac-96ef-276913ce5e51
 :END:
@@ -7707,12 +7707,12 @@ If DIR is a negative integer, go the opposite direction: the start of the
     (org%heading-goto-start)))
 #+end_src
 
-***** navigation
+**** navigation
 :PROPERTIES:
 :ID:       3d9ea885-e679-46e5-9541-dea0436d05ec
 :END:
 
-****** next-line
+***** next-line
 :PROPERTIES:
 :ID: d8d118a7-78e8-4602-81b3-17fd1d8ab79c
 :END:
@@ -7728,7 +7728,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
     (org%heading-goto-start)))
 #+end_src
 
-****** previous-line
+***** previous-line
 :PROPERTIES:
 :ID:       682ec141-fb93-4b55-9c3d-d40aacada205
 :END:
@@ -7739,7 +7739,7 @@ If DIR is a negative integer, go the opposite direction: the start of the
   (funcall #'org/dwim-next-line (not forward)))
 #+end_src
 
-***** inserting
+**** inserting
 :PROPERTIES:
 :ID:       9ff51c40-5b4a-4861-834f-df1ddb0fc709
 :END:
@@ -7749,7 +7749,7 @@ need to perform a simple task (like inserting a heading) but lose their
 fundamental purpose in their inclusion of numerous obscure and opinionated
 options. For this reason I wrote my own insert heading functions.
 
-****** newlines between headings
+***** newlines between headings
 :PROPERTIES:
 :ID:       995ac71b-8428-4eec-83ac-1ba50383f600
 :END:
@@ -7759,7 +7759,7 @@ options. For this reason I wrote my own insert heading functions.
   "Number of newlines between headings.")
 #+end_src
 
-****** heading above
+***** heading above
 :PROPERTIES:
 :ID:       545a9192-b312-4667-b4f0-000ddb47b4a1
 :END:
@@ -7771,7 +7771,7 @@ options. For this reason I wrote my own insert heading functions.
   (funcall #'org/insert-heading-below (not below)))
 #+end_src
 
-****** heading below
+***** heading below
 :PROPERTIES:
 :ID: b059a431-e29c-4f2c-ab5e-8d2d02636405
 :END:
@@ -7801,7 +7801,7 @@ options. For this reason I wrote my own insert heading functions.
     (run-hooks 'org-insert-heading-hook)))
 #+end_src
 
-****** subheading
+***** subheading
 :PROPERTIES:
 :ID:       38cc6c74-4b2c-4aa8-b672-86bb7f4fcd7d
 :END:
@@ -7814,7 +7814,7 @@ options. For this reason I wrote my own insert heading functions.
   (org-demote))
 #+end_src
 
-****** elisp block
+***** elisp block
 :PROPERTIES:
 :ID:       e03149e3-500f-45d6-a4c1-b2f69947b4d5
 :END:
@@ -7835,7 +7835,7 @@ options. For this reason I wrote my own insert heading functions.
     (forward-line -1)))
 #+end_src
 
-***** org choose tags
+**** org choose tags
 :PROPERTIES:
 :ID:       b8b0c3a2-2cdc-424f-9cd6-ef3ad3d1512c
 :END:
@@ -7852,7 +7852,7 @@ options. For this reason I wrote my own insert heading functions.
       (org-set-tags it))))
 #+end_src
 
-***** dwim insert source block
+**** dwim insert source block
 :PROPERTIES:
 :ID:       0025e89d-23a9-42bf-87bb-a4f6d8fbe5a3
 :END:
@@ -7866,7 +7866,7 @@ options. For this reason I wrote my own insert heading functions.
   (org-edit-src-code))
 #+end_src
 
-***** eval
+**** eval
 :PROPERTIES:
 :ID:       1a7d5dde-ab85-4159-b3c7-9da093a30de0
 :END:
@@ -7881,7 +7881,7 @@ options. For this reason I wrote my own insert heading functions.
     (org-babel-execute-subtree)))
 #+end_src
 
-**** suppress deleting-windows
+*** suppress deleting-windows
 :PROPERTIES:
 :ID:       9a991acc-a24c-4b28-bafa-876a7f973b90
 :END:
@@ -7897,7 +7897,7 @@ various functions in org mode.
     (apply orig-fn args)))
 #+end_src
 
-**** org
+*** org
 :PROPERTIES:
 :ID:       b0aa3f0b-876a-4527-b8ba-4fdac5e7ebe8
 :END:
@@ -7926,7 +7926,7 @@ various functions in org mode.
   (org-log-done                       . 'time))
 #+end_src
 
-**** tangld
+*** tangld
 :PROPERTIES:
 :ID:       03016895-7b3a-4809-a72d-ae635c3f0d01
 :END:
@@ -7950,7 +7950,7 @@ This package lets you annotate files in a separate org file.
   :set (org-annotate-code-org-file . (concat XL-ORG-DIR "annotations.org")))
 #+end_src
 
-**** org-archive
+*** org-archive
 :PROPERTIES:
 :ID:       e53743e9-79ec-42b9-9a4e-5aa87fe936ac
 :END:
@@ -7961,7 +7961,7 @@ This package lets you annotate files in a separate org file.
   (org-archive-location . (concat org-directory "archive.org::")))
 #+end_src
 
-**** org-super-links
+*** org-super-links
 :PROPERTIES:
 :ID:       f3eed884-408f-44cb-becc-17c1431060c5
 :END:
@@ -7975,7 +7975,7 @@ This package lets you annotate files in a separate org file.
   (org-super-links-backlink-into-drawer . "LINKS"))
 #+end_src
 
-**** org-link-minor-mode
+*** org-link-minor-mode
 :PROPERTIES:
 :ID:       25b93a1f-b105-47aa-9647-5015d23a4ac3
 :END:
@@ -7987,7 +7987,7 @@ This is a minor mode for displaying links in non-org buffers.
   :hook outshine-mode-hook)
 #+end_src
 
-**** org-todo-keywords
+*** org-todo-keywords
 :PROPERTIES:
 :ID:       aaa98680-d9b4-4726-b3ba-a50b3442e8e8
 :END:
@@ -8003,7 +8003,7 @@ done.
       '((sequence "TODO" "NEXT" "|" "DONE" "CANCELLED")))
 #+end_src
 
-**** org-ml
+*** org-ml
 :PROPERTIES:
 :ID:       7f3ec0ad-45f8-4100-970e-773cfb9a625b
 :END:
@@ -8012,7 +8012,7 @@ done.
 (use-package org-ml)
 #+end_src
 
-**** org-journal
+*** org-journal
 :PROPERTIES:
 :ID:       c3056303-5fa1-49f9-ae2d-294942e25f54
 :END:
@@ -8029,7 +8029,7 @@ diary/journal using =org-mode=.
   (org-journal-dir       . (concat org-directory "journal/")))
 #+end_src
 
-**** org-src
+*** org-src
 :PROPERTIES:
 :ID:       e00378a1-adcf-4e83-8533-b6b442b5f362
 :END:
@@ -8055,7 +8055,7 @@ diary/journal using =org-mode=.
 						   (:tangle  .  "yes"))))
 #+end_src
 
-***** bindings in source block
+**** bindings in source block
 :PROPERTIES:
 :ID:       df270638-f6a7-4f0e-abe7-dd0c4e7df7ce
 :END:
@@ -8071,7 +8071,7 @@ source blocks.
   )
 #+end_src
 
-**** org-capture
+*** org-capture
 :PROPERTIES:
 :ID:       3225bbc4-9685-4e7b-ae32-41a26780d191
 :END:
@@ -8079,7 +8079,7 @@ source blocks.
 =org-capture= is a feature that allows you to quickly save a thought that popped
 into your head while keeing disctractions to a minimum.
 
-***** org-capture
+**** org-capture
 :PROPERTIES:
 :ID:       8fc5d248-ff21-45e4-a48b-57cecd57b7a3
 :END:
@@ -8100,7 +8100,7 @@ before org-capture is loaded.
     (cl-adjoin XL-CAPTURE-FILE org-agenda-files :test #'string=)))
 #+end_src
 
-***** remove capture headerline
+**** remove capture headerline
 :PROPERTIES:
 :ID:       dacaf33d-3914-49e4-a1d0-e6bb41b1a44e
 :END:
@@ -8114,7 +8114,7 @@ question]]. I need to disable =org-capture's= header-line.
   (setq-local header-line-format nil))
 #+end_src
 
-***** doct
+**** doct
 :PROPERTIES:
 :ID:       fa37f618-b58c-449b-a216-9d2f80ed12c6
 :END:
@@ -8130,7 +8130,7 @@ template element as you're writing it.
   :before-call org-capture)
 #+end_src
 
-***** completing-read org-capture
+**** completing-read org-capture
 :PROPERTIES:
 :ID:       ad2cc056-edda-490a-8cf9-10b370a21dc0
 :END:
@@ -8139,7 +8139,7 @@ Org provides it's own default interface for capturing. To be consistent with how
 we complete everything else--via [[helpfn:][completing-read]], I create a function which
 let's me choose the template via completing-read.
 
-****** capture templates
+***** capture templates
 :PROPERTIES:
 :ID:       c4fdb186-3509-42f1-9c3e-8bf80a5e6b47
 :END:
@@ -8152,7 +8152,7 @@ let's me choose the template via completing-read.
     (org-contextualize-keys org-capture-templates-contexts)))
 #+end_src
 
-****** replacement for =org-capture=
+***** replacement for =org-capture=
 :PROPERTIES:
 :ID:       4dd55ff4-7e6e-41f5-82f8-0db597959a17
 :END:
@@ -8170,17 +8170,17 @@ let's me choose the template via completing-read.
 (bind! ([remap org-capture] #'org-capture/choose-template))
 #+end_src
 
-***** capture templates
+**** capture templates
 :PROPERTIES:
 :ID:       a2a3f682-322a-450f-91bf-169d90f040c0
 :END:
 
-****** todo
+***** todo
 :PROPERTIES:
 :ID:       ef103d28-b746-42ba-ac1a-0462a19f03cd
 :END:
 
-******* todo capture template string
+****** todo capture template string
 :PROPERTIES:
 :ID:       a58f1de7-2049-4195-abfb-daad93a6ff2a
 :END:
@@ -8196,7 +8196,7 @@ Instead of passing in the string I use =org-ml= to print the string.
        (org-ml-to-trimmed-string)))
 #+end_src
 
-******* template
+****** template
 :PROPERTIES:
 :ID:       5fd30ac2-57c1-4249-a5e7-4048e9597dc1
 :END:
@@ -8210,7 +8210,7 @@ Instead of passing in the string I use =org-ml= to print the string.
        (cl-callf2 cl-adjoin (car it) org-capture-templates))))
 #+end_src
 
-******* todo
+****** todo
 :PROPERTIES:
 :ID:       2682910c-9620-4cbf-ab71-371ed29e25a1
 :END:
@@ -8224,7 +8224,21 @@ Instead of passing in the string I use =org-ml= to print the string.
   :empty-lines 1)
 #+end_src
 
-****** test
+****** annotation
+:PROPERTIES:
+:ID:       4ec64ef5-b005-4974-8ed8-fbcdc05d828c
+:END:
+
+#+begin_src emacs-lisp
+(doct%set-template! "annotate"
+  :keys "a"
+  :type 'plain
+  :target #'org-annotate-code-capture-finding-location
+  :file org-annotate-code-org-file
+  :template "%?")
+#+end_src
+
+***** test
 :PROPERTIES:
 :ID:       e5f5fc62-4791-4f25-ae0a-1517ac5ed598
 :HEADER-ARGS: :tangle no
@@ -8233,7 +8247,7 @@ Instead of passing in the string I use =org-ml= to print the string.
 The purpose of this template is to create tests for specific blocks of code.
 This template will add a headline to.
 
-******* template
+****** template
 :PROPERTIES:
 :ID:       12a0bbc8-24a3-4d28-b14c-0050d268f901
 :HEADER-ARGS: :tangle no
@@ -8247,7 +8261,7 @@ This template will add a headline to.
        (org-ml-to-trimmed-string)))
 #+end_src
 
-******* test
+****** test
 :PROPERTIES:
 :ID:       c5456618-d2d8-4347-aa2a-dfbf487046bd
 :END:
@@ -8261,7 +8275,7 @@ This template will add a headline to.
   :empty-lines 1)
 #+end_src
 
-****** question
+***** question
 :PROPERTIES:
 :ID:       28b75872-0ed1-4852-8838-f015f0000bd5
 :HEADER-ARGS: :tangle no
@@ -8270,7 +8284,7 @@ This template will add a headline to.
 The purpose of this template is to create headlines for questions I'd like
 answered.
 
-**** org-clock
+*** org-clock
 :PROPERTIES:
 :ID:       d378471c-89df-48c9-a755-b79880f27308
 :END:
@@ -8291,7 +8305,7 @@ tracking the time you spend on a particular task.
   (org-clock-persistence-insinuate))
 #+end_src
 
-**** org-ql
+*** org-ql
 :PROPERTIES:
 :ID:       f2b2f464-f9f0-4ba4-9808-4bf5cb75aaf8
 :END:
@@ -8302,7 +8316,7 @@ This package provides an org query language for looking up org headline.
 (use-package org-ql)
 #+end_src
 
-**** calfw
+*** calfw
 :PROPERTIES:
 :ID:       4b317202-0f4c-40e9-b708-484cd995c9b8
 :END:
@@ -8313,7 +8327,7 @@ This package displays a calendar.
 (use-package calfw)
 #+end_src
 
-**** org-agenda
+*** org-agenda
 :PROPERTIES:
 :ID:       389bcdde-e2fb-401d-b4ec-47c73c8cf545
 :END:
@@ -8321,7 +8335,7 @@ This package displays a calendar.
 For any todo workflow, having a way to get an overview of the essential tasks
 for a certain block of time is a must. =org-agenda= is this overview.
 
-***** org-agenda
+**** org-agenda
 :PROPERTIES:
 :ID:       efa9d237-b055-4bfb-a1f9-86d964b5f007
 :END:
@@ -8348,7 +8362,7 @@ for a certain block of time is a must. =org-agenda= is this overview.
   (org-agenda-inhibit-startup         . t))
 #+end_src
 
-***** respect display-buffer
+**** respect display-buffer
 :PROPERTIES:
 :ID:       50933d82-1208-481d-8dc7-42630f3f3b41
 :END:
@@ -8370,7 +8384,7 @@ Unlike `org-agenda-prepare-window', this function does not store the window conf
     (pop-to-buffer-same-window abuf)))
 #+end_src
 
-***** filter candidates in agenda command
+**** filter candidates in agenda command
 :PROPERTIES:
 :ID:       377ded57-7431-4929-8be9-e04f8f172c38
 :END:
@@ -8400,7 +8414,7 @@ which is perfect for getting the agenda.
       (org-entry-end-position))))
 #+end_src
 
-***** org-agenda-custom-commands
+**** org-agenda-custom-commands
 :PROPERTIES:
 :ID:       b7023041-df49-4750-8b27-91b7175bd1ee
 :END:
@@ -8437,7 +8451,7 @@ variables?) so that I can easily piece together different agenda views.
 	    (org-agenda-max-entries 5)))))))
 #+end_src
 
-***** call custom agenda directly
+**** call custom agenda directly
 :PROPERTIES:
 :ID:       bb813af0-118a-49ff-ae69-4d4995dadcac
 :END:
@@ -8451,12 +8465,12 @@ be exact. Therefore, I define a function I can use instead.
   (org-agenda nil "c"))
 #+end_src
 
-**** org-refile
+*** org-refile
 :PROPERTIES:
 :ID:       84874c02-f683-4d24-9f17-b11c8940a0b2
 :END:
 
-***** org-refile
+**** org-refile
 :PROPERTIES:
 :ID:       6dfc0415-2945-4259-a782-b569fcb397ea
 :END:
@@ -8474,7 +8488,7 @@ be exact. Therefore, I define a function I can use instead.
   (org-outline-path-complete-in-steps     . nil))
 #+end_src
 
-***** refile in current buffer
+**** refile in current buffer
 :PROPERTIES:
 :ID:       c24b2065-4533-4e43-80a9-c1b2c891ead8
 :END:
@@ -8490,7 +8504,7 @@ be exact. Therefore, I define a function I can use instead.
     (call-interactively #'org-refile)))
 #+end_src
 
-**** org-goto
+*** org-goto
 :PROPERTIES:
 :ID:       900250ad-ed09-4000-ab1c-be9f4d461951
 :END:
@@ -8500,7 +8514,7 @@ be exact. Therefore, I define a function I can use instead.
   :xl-advice (org-goto-location . suppress-delete-windows))
 #+end_src
 
-**** ox
+*** ox
 :PROPERTIES:
 :ID:       5f8eac7d-cc1f-4bba-bd65-77ead98c8e0c
 :END:
@@ -8512,7 +8526,7 @@ This package stands for "org-export".
   :xl-advice (org-export--dispatch-ui . suppress-delete-windows))
 #+end_src
 
-**** org-id
+*** org-id
 :PROPERTIES:
 :ID:       95f2a096-2cf4-4634-aa32-13f00b31ea19
 :END:
@@ -8532,7 +8546,7 @@ referenance org headlines.
   (org-id-files                   . (list (f-full "~/README.org"))))
 #+end_src
 
-**** org-superstar
+*** org-superstar
 :PROPERTIES:
 :ID:       c4428756-a804-47e8-9586-f63b82dd1561
 :END:
@@ -8545,7 +8559,7 @@ referenance org headlines.
   (org-superstar-special-todo-items . t))
 #+end_src
 
-**** org-fancy-priorities
+*** org-fancy-priorities
 :PROPERTIES:
 :ID:       c4ff4407-774c-4028-bb9d-01412fdfc8d2
 :END:
@@ -8555,7 +8569,7 @@ referenance org headlines.
   :hook org-mode-hook)
 #+end_src
 
-**** org-pretty-tags
+*** org-pretty-tags
 :PROPERTIES:
 :ID:       7f024968-89ea-4e24-90a9-63771d8342b3
 :END:
@@ -8565,7 +8579,7 @@ referenance org headlines.
   :hook org-mode-hook)
 #+end_src
 
-**** org-toc
+*** org-toc
 :PROPERTIES:
 :ID:       aca910e9-364f-4631-a7eb-d7d6275b6472
 :END:
@@ -8581,7 +8595,7 @@ maximum dept at which toc will make the table of contents.
   (toc-org-max-depth . 2))
 #+end_src
 
-**** org-babel
+*** org-babel
 :PROPERTIES:
 :ID:       bac221d6-ab49-425f-8f89-d2bf741d3b3d
 :END:
