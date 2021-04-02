@@ -8608,7 +8608,7 @@ even increasing the gc-cons-threshold will help enough. But here goes nothing.
   :gc-pause org-babel-tangle)
 #+end_src
 
-** asthetic
+* asthetic
 :PROPERTIES:
 :ID:       d7d657d2-6eb7-4840-ae67-b3a84b100fd9
 :END:
@@ -8616,7 +8616,7 @@ even increasing the gc-cons-threshold will help enough. But here goes nothing.
 It's easy to underestimate how much of a difference having an asthetically
 pleasing Emacs configuration can have. Ugliness really can take its toll.
 
-*** text scaling
+** text scaling
 :PROPERTIES:
 :ID:       5d242d0e-eeab-46de-bcee-ecfd79b2bffc
 :END:
@@ -8627,7 +8627,7 @@ document at a glance. However, when I'm doing something like editing a source
 block I want to focus on a very specific thing totally; therefore, I want the
 text to take up most of the screen.
 
-**** zoom-frm
+*** zoom-frm
 :PROPERTIES:
 :ID:       15b8577e-3f98-420a-81a5-c7b91292aca3
 :END:
@@ -8643,7 +8643,7 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
   (zoom-frame/buffer          . 'buffer))
 #+end_src
 
-*** hide-mode-line
+** hide-mode-line
 :PROPERTIES:
 :ID:       e8f53422-9d24-4119-9b0f-9b6d1e10c1b0
 :END:
@@ -8653,7 +8653,7 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
   :commands hide-mode-line-mode)
 #+end_src
 
-*** emojis
+** emojis
 :PROPERTIES:
 :ID:       d3e15439-f690-4ced-b701-0882fb911a5c
 :END:
@@ -8671,12 +8671,12 @@ documentation *much* more fun. :joy-cat:
   (emojify-emojis-dir . (concat XL-CACHE-DIR "emojis/")))
 #+end_src
 
-*** mini-modeline
+** mini-modeline
 :PROPERTIES:
 :ID:       51768ba1-170f-497b-9479-541e7c6aadd6
 :END:
 
-**** setup
+*** setup
 :PROPERTIES:
 :ID:       d9acb47b-089f-4b18-8fdd-94ffefb2ef86
 :END:
@@ -8694,7 +8694,7 @@ this.
   (mini-modeline-display-gui-line . nil))
 #+end_src
 
-**** default face
+*** default face
 :PROPERTIES:
 :ID:       1aab03cd-83b2-4d3a-bf3b-71f52dc6158d
 :END:
@@ -8709,7 +8709,7 @@ variable should be anyway.
   (mini-modeline-face-attr . '(:inherit default)))
 #+end_src
 
-**** left format
+*** left format
 :PROPERTIES:
 :ID:       a7d11a8b-e792-43e5-9992-10df562e17ea
 :END:
@@ -8719,7 +8719,7 @@ variable should be anyway.
       '("%e" mode-line-buffer-identification))
 #+end_src
 
-**** right format
+*** right format
 :PROPERTIES:
 :ID:       fd79e9cb-40d7-4320-9b1d-248da4330bca
 :END:
@@ -8732,7 +8732,7 @@ variable should be anyway.
 	(:eval (format-time-string "%a %m/%d %T"))))
 #+end_src
 
-**** set the modeline display
+*** set the modeline display
 :PROPERTIES:
 :ID:       37f062a8-b9d9-4533-ba8e-d675a1d5f10a
 :END:
@@ -8745,7 +8745,7 @@ variable should be anyway.
     it))
 #+end_src
 
-**** dont redisplay
+*** dont redisplay
 :PROPERTIES:
 :ID:       b3afd056-7b0a-485f-8691-5cc7e4765ca1
 :END:
@@ -8760,7 +8760,7 @@ does not seem to be needed (feebleline doesn't do it and it works fine).
     (apply <orig-fn> <args>)))
 #+end_src
 
-*** info
+** info
 :PROPERTIES:
 :ID:       d49f83c4-ba8f-477e-beef-8156ed8b974b
 :END:
@@ -8772,7 +8772,7 @@ This headline is for customizing info nodes.
   :rule ("top" "info" :newname "\\*info"))
 #+end_src
 
-*** helpful
+** helpful
 :PROPERTIES:
 :ID:       5340ddb3-92bc-42e5-bf0e-9f9650c41cd9
 :END:
@@ -8791,7 +8791,7 @@ which provides much more contextual information in a better format.
  ([remap describe-key]      #'helpful-key))
 #+end_src
 
-*** dashboard
+** dashboard
 :PROPERTIES:
 :ID: 20926522-b78b-4bca-b70e-9ef4213c4344
 :END:
@@ -8805,7 +8805,7 @@ buffer and I've wanted to have the scratch buffer start off with
 =emacs-lisp-mode=, but I don't want it to trigger =company=, =yasnippet=, etc. on
 startup. If I start my emacs with =dashboard= I can avoid this.
 
-**** random logo
+*** random logo
 :PROPERTIES:
 :ID:       80e5fa17-d18a-4ec0-af8d-728d77843c69
 :END:
@@ -8820,7 +8820,7 @@ images which referred to by the symbols =official= and =logo=.
    (append '(1 2 3) (if (display-graphic-p) '(official logo)))))
 #+end_src
 
-**** require
+*** require
 :PROPERTIES:
 :ID:       73d00f99-4b70-44d1-8359-01bd2c94b330
 :END:
@@ -8836,7 +8836,7 @@ images which referred to by the symbols =official= and =logo=.
   (initial-buffer-choice . #'startup%initial-buffer-choice))
 #+end_src
 
-**** open dashboard at startup
+*** open dashboard at startup
 :PROPERTIES:
 :ID:       1bcc371e-61fa-480e-bdae-4a999d3b10c9
 :END:
@@ -8846,7 +8846,7 @@ images which referred to by the symbols =official= and =logo=.
   (get-buffer-create "*dashboard*"))
 #+end_src
 
-**** dashboard-init-info
+*** dashboard-init-info
 :PROPERTIES:
 :ID:       09019b05-a696-4b15-a5f8-b36b23c42e1a
 :END:
@@ -8867,7 +8867,7 @@ instead.
                 (string-to-number (emacs-init-time)))))
 #+end_src
 
-**** add icons to dashboard
+*** add icons to dashboard
 :PROPERTIES:
 :ID:       d4714639-919c-4691-9f7f-004cfa627089
 :END:
@@ -8875,7 +8875,7 @@ instead.
 #+begin_src emacs-lisp
 #+end_src
 
-*** window divider
+** window divider
 :PROPERTIES:
 :ID:       2cdd6e24-5153-4585-8f1f-206b33445359
 :END:
@@ -8890,7 +8890,7 @@ Window dividers are useful in general so I don't get confused about when one
 window ends and another begins (see [[helpfn:window-divider-mode][window-divider-mode]]). When using [[I like emacs][exwm]] it
 makes emacs feel like a window manager with gaps.
 
-**** init
+*** init
 :PROPERTIES:
 :ID:       c3e2fda8-89c8-4f3b-951a-113e936d6206
 :END:
@@ -8904,7 +8904,7 @@ makes emacs feel like a window manager with gaps.
   (window-divider-default-places       . t))
 #+end_src
 
-**** window divider face
+*** window divider face
 :PROPERTIES:
 :ID:       61157149-dcce-40a9-8bfa-76a6af24838a
 :END:
@@ -8915,7 +8915,7 @@ makes emacs feel like a window manager with gaps.
   (set-face-foreground 'window-divider "black"))
 #+end_src
 
-**** update on theme change
+*** update on theme change
 :PROPERTIES:
 :ID:       ceff91e5-8172-4b26-81de-681c0864bc4b
 :END:
@@ -8928,12 +8928,12 @@ makes emacs feel like a window manager with gaps.
     (window-divider-mode 1)))
 #+end_src
 
-**** adjust window divider gap size
+*** adjust window divider gap size
 :PROPERTIES:
 :ID:       5485c926-fac0-4e87-ae97-f7bf25d0a55c
 :END:
 
-***** TODO increase gap size
+**** TODO increase gap size
 :PROPERTIES:
 :ID:       867fad5c-b4d4-4cba-929e-0dc23f007c5b
 :END:
@@ -8949,7 +8949,7 @@ Somtimes I might want to adjust this.
                 (+ amount window-divider-default-right-width)))
 #+end_src
 
-***** increase
+**** increase
 :PROPERTIES:
 :ID:       ebd6b013-6213-42a1-9e95-fefc7e7da991
 :END:
@@ -8961,7 +8961,7 @@ Somtimes I might want to adjust this.
   (frame:adjust-window-divider-size 1))
 #+end_src
 
-***** decrease
+**** decrease
 :PROPERTIES:
 :ID:       6b1eb1cd-1cfd-4b82-a413-cb61fa13e0a4
 :END:
@@ -8973,7 +8973,7 @@ Somtimes I might want to adjust this.
   (frame:adjust-window-divider-size -1))
 #+end_src
 
-*** zone
+** zone
 :PROPERTIES:
 :ID:       fe176959-3134-4b18-8abb-a962347b8df0
 :END:
@@ -8982,17 +8982,17 @@ Somtimes I might want to adjust this.
 (use-package zone)
 #+end_src
 
-** web browsing
+* web browsing
 :PROPERTIES:
 :ID:       0be0a36f-67dc-4db5-8d0a-321d19bae08a
 :END:
 
-*** engine-mode
+** engine-mode
 :PROPERTIES:
 :ID:       d701f44f-85eb-4849-8f2d-15423eb41a02
 :END:
 
-**** init
+*** init
 :PROPERTIES:
 :ID:       f5a2c47b-01df-4dcf-b012-b6311cf79683
 :END:
@@ -9001,7 +9001,7 @@ Somtimes I might want to adjust this.
 (use-package engine-mode)
 #+end_src
 
-**** different engines
+*** different engines
 :PROPERTIES:
 :ID:       2f5c974e-b26e-4080-a9b3-acd6406ab118
 :END:
@@ -9021,7 +9021,7 @@ functions.
     "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"))
 #+end_src
 
-*** browse-url
+** browse-url
 :PROPERTIES:
 :ID:       ab7cf98c-47ca-49e1-ba8c-ee52ce04debe
 :END:
@@ -9029,7 +9029,7 @@ functions.
 =browse-url= is a built-in package that provides a uniform interface for
 browsing the web.
 
-**** browse-url
+*** browse-url
 :PROPERTIES:
 :ID:       e59dc362-5615-45a8-8010-a111ddc5e835
 :END:
@@ -9049,12 +9049,12 @@ the web.
     (setq browse-url-browser-function it)))
 #+end_src
 
-*** eww
+** eww
 :PROPERTIES:
 :ID:       77d23774-7f42-45ee-90ec-5f28efddee65
 :END:
 
-**** ability to add new windows
+*** ability to add new windows
 :PROPERTIES:
 :ID:       54dc52bb-f7e5-4a86-a306-aa42482cbd6d
 :END:
@@ -9073,7 +9073,7 @@ replaces the existing buffer. I got this code snippet from [[https://stackoverfl
     (rename-buffer result t)))
 #+end_src
 
-*** w3m
+** w3m
 :PROPERTIES:
 :ID: e5e13423-bc70-49b0-969e-94897c798d54
 :END:
@@ -9089,12 +9089,12 @@ plain text webpages. Of course, the main limitation is that w3m will typically
 only display text based web pages well--not ones with lots of interactive
 javascript code.
 
-** utility
+* utility
 :PROPERTIES:
 :ID:       30be2ae6-3405-4496-8a45-d84caf9bb0c1
 :END:
 
-*** chess
+** chess
 :PROPERTIES:
 :ID:       1197be6f-a2ff-4cf1-8b78-02ebceb43317
 :END:
@@ -9103,7 +9103,7 @@ javascript code.
 (use-package chess)
 #+end_src
 
-*** mu4e
+** mu4e
 :PROPERTIES:
 :ID:       905ba1b5-bafc-4855-b772-fa750c294327
 :END:
@@ -9118,7 +9118,7 @@ how to automate this across multiple OSes.
 
 This is annoying, but minor. =mu4e= itself is a great package.
 
-**** load-path
+*** load-path
 :PROPERTIES:
 :ID:       8b4ab179-11c6-429c-9c8d-9296dfb215dc
 :END:
@@ -9136,7 +9136,7 @@ This is annoying, but minor. =mu4e= itself is a great package.
 	     (return mu4e-path)))))
 #+end_src
 
-**** maildir
+*** maildir
 :PROPERTIES:
 :ID:       49debca7-6ae7-40e4-9bd0-73c3bba40539
 :END:
@@ -9148,7 +9148,7 @@ This is annoying, but minor. =mu4e= itself is a great package.
 (defalias 'mu4e%mail-dir 'xl-mail-dir)
 #+end_src
 
-**** list email accounts
+*** list email accounts
 :PROPERTIES:
 :ID:       0b7dcf44-b245-4ca8-9407-3d3c043e1d96
 :END:
@@ -9161,7 +9161,7 @@ how to automate this.
 (defalias 'mu4e%mail-accounts 'password-store:email-accounts)
 #+end_src
 
-**** add mu4e to the load-path
+*** add mu4e to the load-path
 :PROPERTIES:
 :ID:       9dccb5e4-5d8e-4da6-99ae-9f8ed3bd8a5d
 :END:
@@ -9170,7 +9170,7 @@ how to automate this.
 (use-package mu4e :commands mu4e)
 #+end_src
 
-**** mu4e-vars
+*** mu4e-vars
 :PROPERTIES:
 :ID:       25cf40b9-901b-40f4-800f-3fa577ee22c3
 :END:
@@ -9193,7 +9193,7 @@ how to automate this.
   (mu4e-confirm-quit             . nil))
 #+end_src
 
-***** mu4e
+**** mu4e
 :PROPERTIES:
 :ID: 565eff90-8626-4ec8-a576-4ff3dfb307ae
 :END:
@@ -9203,7 +9203,7 @@ how to automate this.
       (if (executable-find "w3m") "w3m -dump -T text/html" #'mu4e-shr2text))
 #+end_src
 
-**** mu4e-views
+*** mu4e-views
 :PROPERTIES:
 :ID:       5ebeddaa-94ae-4acc-9659-5aae8cb4a2f0
 :END:
@@ -9217,7 +9217,7 @@ how to automate this.
   (mu4e-date-format          . "%c"))
 #+end_src
 
-**** mu4e-compose
+*** mu4e-compose
 :PROPERTIES:
 :ID:       cd07286d-2a94-4953-99bf-8e06b3edcf15
 :END:
@@ -9228,7 +9228,7 @@ how to automate this.
   (mu4e-compose-context-policy . 'ask-if-none))
 #+end_src
 
-**** mu4e-drafts
+*** mu4e-drafts
 :PROPERTIES:
 :ID:       5de3eca7-968b-4228-a1d9-ca872f18f58b
 :END:
@@ -9240,7 +9240,7 @@ how to automate this.
   (mu4e-compose-format-flowed          . t))
 #+end_src
 
-**** mu4e-headers
+*** mu4e-headers
 :PROPERTIES:
 :ID:       8bc93633-f3a0-494d-ae61-c05f6490cd87
 :HEADER-ARGS: :tangle no
@@ -9265,7 +9265,7 @@ These are custom icons used to spice up the =mu4e= display.
   (mu4e-headers-trash-mark     . (cons "T" (all-the-icons-faicon "trash"))))
 #+end_src
 
-**** mu4e-org
+*** mu4e-org
 :PROPERTIES:
 :ID:       eaa1577b-bcb9-4f6e-9927-8c6d8042dda2
 :END:
@@ -9282,7 +9282,7 @@ it is definitely on my list of things to try out.
   (mu4e-org-convert-to-html            . t))
 #+end_src
 
-***** hook
+**** hook
 :PROPERTIES:
 :ID:       fcdbaa17-20c6-4322-baed-27df5a0ad9a2
 :END:
@@ -9295,7 +9295,7 @@ org-mu4e would do so each time you try again.
   (setq-local org-mu4e-convert-to-html nil))
 #+end_src
 
-**** initializing mu4e
+*** initializing mu4e
 :PROPERTIES:
 :ID:       93cffd11-a812-4cda-b7dd-a06f70367afe
 :END:
@@ -9309,7 +9309,7 @@ asking me to run anything or do anything at all.
 The idea is to do preliminary things before the main entry point--the function
 [[helpfn:mu4e][mu4e]]--is called.
 
-***** mu4e database location
+**** mu4e database location
 :PROPERTIES:
 :ID:       fe8f10c1-3035-4a97-9657-98236f50d0a8
 :END:
@@ -9322,7 +9322,7 @@ database is used to determine whether we'll run =mu init= or not.
   "Path where mu database should go.")
 #+end_src
 
-***** init mu4e database
+**** init mu4e database
 :PROPERTIES:
 :ID:       4d107050-db05-4d7e-ae44-4bf356a44fd0
 :HEADER-ARGS: :tangle no
@@ -9339,7 +9339,7 @@ with the command =mu init --maildir=~/Maildir=.
       (fn! (call-process-shell-command (format "mu init --my-address=%s" <account>))))))
 #+end_src
 
-***** ensuring email directories
+**** ensuring email directories
 :PROPERTIES:
 :ID:       704b7049-fac5-4fa7-b710-1bbfe50cea5f
 :END:
@@ -9353,7 +9353,7 @@ Make sure mail directories exist. =mbsync= will fail if they don't.
 	(mapcar #'mu4e%mail-dir (mu4e:mail-accounts))))
 #+end_src
 
-***** contexts
+**** contexts
 :PROPERTIES:
 :ID:       0e580010-d5b2-4708-a7dc-c586908409b5
 :END:
@@ -9362,7 +9362,7 @@ Make sure mail directories exist. =mbsync= will fail if they don't.
 probably the hardest part of setting up =mu4e= for elisp. [[https://jherrlin.github.io/posts/emacs-mu4e/][this article]]. If you
 don't make contexts, =mu4e= will be confused and think that.
 
-****** default enter and exit
+***** default enter and exit
 :PROPERTIES:
 :ID:       f2e2148b-dcab-4503-a1b1-75e48e35018f
 :END:
@@ -9383,7 +9383,7 @@ all I'll do is log the entering/leaving of a context for debugging purposes.
     name))
 #+end_src
 
-****** enter func
+***** enter func
 :PROPERTIES:
 :ID:       432f2ee9-1c41-4593-b27f-dbc837f8bcd2
 :END:
@@ -9393,7 +9393,7 @@ all I'll do is log the entering/leaving of a context for debugging purposes.
   (mu4e-context::generate-switch-func mail-address))
 #+end_src
 
-****** exit func
+***** exit func
 :PROPERTIES:
 :ID:       0bafa172-2ea6-4b4e-aa4e-1fe2b0808b94
 :END:
@@ -9403,7 +9403,7 @@ all I'll do is log the entering/leaving of a context for debugging purposes.
   (mu4e-context::generate-switch-func mail-address t))
 #+end_src
 
-****** default match fn
+***** default match fn
 :PROPERTIES:
 :ID:       41ddf901-0ae9-4b00-bc06-b1b7b49ec8f2
 :END:
@@ -9423,7 +9423,7 @@ special rules. The rule that I set basically uses the.
 		       (list :to :from :cc :bcc)))))))
 #+end_src
 
-****** default vars
+***** default vars
 :PROPERTIES:
 :ID:       d8892b2c-7056-4d92-819b-8cb4d8c2eeb1
 :END:
@@ -9443,7 +9443,7 @@ These are the default.
       (mu4e-sent-folder      . ,(concat folder "/sent")))))
 #+end_src
 
-****** context arguments
+***** context arguments
 :PROPERTIES:
 :ID:       ceb57afe-e899-462c-bc4e-42b284f36605
 :END:
@@ -9459,7 +9459,7 @@ These are the default.
 	 (append args (list key fn))))
 #+end_src
 
-****** make a context
+***** make a context
 :PROPERTIES:
 :ID:       4e45264d-e7cc-43f7-854b-8b22d4d4151e
 :END:
@@ -9472,7 +9472,7 @@ Create a context.
   (apply #'make-mu4e-context (mu4e-context::context-arguments mail-address)))
 #+end_src
 
-****** add a context
+***** add a context
 :PROPERTIES:
 :ID:       c488a02f-743a-492c-9775-5c8216f0b2b0
 :END:
@@ -9483,7 +9483,7 @@ Create a context.
   (push (mu4e-context::make-context mail-address) mu4e-contexts))
 #+end_src
 
-****** init contexts
+***** init contexts
 :PROPERTIES:
 :ID:       e74512a7-1d1f-4241-b245-5863e7730398
 :END:
@@ -9498,12 +9498,12 @@ time. This could be useful if I add an email and don't want to restart Emacs.
   (-each (password-store:email-accounts) #'mu4e-context::add-context))
 #+end_src
 
-*** file browsing
+** file browsing
 :PROPERTIES:
 :ID:       324ede5f-4606-40f2-a424-1cdf0c974853
 :END:
 
-**** all-the-icons-dired
+*** all-the-icons-dired
 :PROPERTIES:
 :ID:       8e2fe483-5da1-47c7-8d80-a8e68b21fa39
 :END:
@@ -9513,12 +9513,12 @@ time. This could be useful if I add an email and don't want to restart Emacs.
   :hook dired-mode-hook)
 #+end_src
 
-**** dired
+*** dired
 :PROPERTIES:
 :ID:       877b66c0-7952-4b37-839a-4a9aa5af164a
 :END:
 
-***** dired
+**** dired
 :PROPERTIES:
 :ID:       8a5f8bb6-dce2-4fac-b9c4-068e39f4cfcc
 :END:
@@ -9538,7 +9538,7 @@ worst case I'll accidentally move a directory to the trash folder.
   (dired-clean-confirm-killing-deleted-buffers . nil))
 #+end_src
 
-***** sort directories first
+**** sort directories first
 :PROPERTIES:
 :ID:       8db5ffba-3f74-4146-96e0-03a46213e77d
 :END:
@@ -9556,7 +9556,7 @@ worst case I'll accidentally move a directory to the trash folder.
   (set-buffer-modified-p nil))
 #+end_src
 
-****** create non-existent directory
+***** create non-existent directory
 :PROPERTIES:
 :ID:       d6151903-ab72-48d7-b9ef-fd13880d3dd2
 :END:
@@ -9573,7 +9573,7 @@ worst case I'll accidentally move a directory to the trash folder.
   (add-to-list 'find-file-not-found-functions 'dired:create-non-existent-directory-h nil #'eq))
 #+end_src
 
-**** ranger
+*** ranger
 :PROPERTIES:
 :ID:       1791aeb9-1146-43c8-85d6-149335eb9d8f
 :END:
@@ -9581,7 +9581,7 @@ worst case I'll accidentally move a directory to the trash folder.
 [[github:ralesi/ranger.el][ranger]] is a file browser built on top of dired that seeks to emulate [[github:ranger/ranger][a VIM
 inspired file manager]] of also called =ranger=.
 
-***** make sure that =;= uses =M-x=
+**** make sure that =;= uses =M-x=
 :PROPERTIES:
 :ID:       c63911ca-6d26-4d7c-be76-246639fb6c7a
 :END:
@@ -9593,7 +9593,7 @@ inspired file manager]] of also called =ranger=.
   ("u" #'dired-unmark))
 #+end_src
 
-***** entry
+**** entry
 :PROPERTIES:
 :ID:       19047e0c-927d-46a6-babe-9c096f4fbcc7
 :END:
@@ -9615,7 +9615,7 @@ inspired file manager]] of also called =ranger=.
   (ranger-dont-show-binary    . t))
 #+end_src
 
-***** refresh contents
+**** refresh contents
 :PROPERTIES:
 :ID:       cef37397-53aa-47e1-a519-ef56a311ae30
 :END:
@@ -9630,7 +9630,7 @@ happend. It results in a very jarring display.
     (ranger-refresh)))
 #+end_src
 
-*** avy
+** avy
 :PROPERTIES:
 :ID:       78064d92-2dde-4067-8a10-208ca6e88852
 :END:
@@ -9642,7 +9642,7 @@ happend. It results in a very jarring display.
   (avy-keys . (number-sequence ?a ?z)))
 #+end_src
 
-*** man
+** man
 :PROPERTIES:
 :ID:       3982b034-90e1-4961-90d9-224e913c0b8c
 :END:
@@ -9652,14 +9652,14 @@ happend. It results in a very jarring display.
   :rule ("left" "man" :newname "\\*man.+"))
 #+end_src
 
-*** passwords and security
+** passwords and security
 :PROPERTIES:
 :ID:       7ca7587e-d94b-408b-8656-c6a09d6ee8b6
 :END:
 
 I build my =mbsyncrc= and my =msmtprc= via tangling.
 
-**** pass
+*** pass
 :PROPERTIES:
 :ID:       6f3268a1-4606-435d-9bf4-05d1c54c28a9
 :END:
@@ -9668,7 +9668,7 @@ I build my =mbsyncrc= and my =msmtprc= via tangling.
 (use-package pass)
 #+end_src
 
-**** password-store
+*** password-store
 :PROPERTIES:
 :ID:       3c57590c-1507-4369-b615-795965d4b182
 :END:
@@ -9677,7 +9677,7 @@ I build my =mbsyncrc= and my =msmtprc= via tangling.
 (use-package password-store)
 #+end_src
 
-**** email accounts
+*** email accounts
 :PROPERTIES:
 :ID:       3a3c6778-dc5d-45cf-87d1-1c6aacbbae46
 :END:
@@ -9694,7 +9694,7 @@ why not use this as a way to get email information?
        (mapcar (fn! (s-chop-suffix ".gpg" <>)))))
 #+end_src
 
-**** epa
+*** epa
 :PROPERTIES:
 :ID:       ad3f6134-4fa6-492e-93a6-b94235ecad3d
 :END:
@@ -9712,7 +9712,7 @@ gpg passphrase via emacs.
   (epa-pinentry-mode . 'loopback))
 #+end_src
 
-*** nameless
+** nameless
 :PROPERTIES:
 :ID:       695aeb73-89d3-47f8-bee8-2721111dd2bf
 :END:
@@ -9727,7 +9727,7 @@ redundant code.
   :set (nameless-private-prefix . t))
 #+end_src
 
-*** fortune-cookie
+** fortune-cookie
 :PROPERTIES:
 :ID:       8105dadd-4d4a-4f57-a5f9-5cae1b14ef3a
 :END:
@@ -9737,7 +9737,7 @@ redundant code.
   :commands fortune-cookie)
 #+end_src
 
-*** figlet
+** figlet
 :PROPERTIES:
 :ID:       b5be9427-a814-4a91-92ab-ad393375ec41
 :END:
@@ -9746,7 +9746,7 @@ redundant code.
 (use-package figlet :commands figlet)
 #+end_src
 
-*** grugru
+** grugru
 :PROPERTIES:
 :ID:       9d96a611-355a-4b62-bb0e-18e9d4af92c9
 :END:
@@ -9755,7 +9755,7 @@ redundant code.
 (use-package grugru)
 #+end_src
 
-*** system-packages
+** system-packages
 :PROPERTIES:
 :ID:       74bd0e5a-f6b0-48eb-a91e-3932eae23516
 :END:
@@ -9765,7 +9765,7 @@ to abstract package installation on different operating systems. Unfortunately,
 it does not include an interactive function that uses [[helpfn:completing-read][completing-read]] to list
 packages
 
-**** init
+*** init
 :PROPERTIES:
 :ID:       08bf0487-2a57-483d-8d22-8253ebda6d9d
 :END:
@@ -9776,7 +9776,7 @@ packages
   :set (system-packages-noconfirm . t))
 #+end_src
 
-**** use yay for arch
+*** use yay for arch
 :PROPERTIES:
 :ID:       2fc48e66-83f3-4e35-8b2c-ef9113cb9b45
 :END:
@@ -9796,7 +9796,7 @@ If we're in arch and we have yay intalled, use that.
     (setq system-packages-package-manager 'yay)))
 #+end_src
 
-*** ellocate
+** ellocate
 :PROPERTIES:
 :ID:       e3590042-52fb-47ee-a5eb-a7860a3cdb17
 :END:
@@ -9811,12 +9811,12 @@ If we're in arch and we have yay intalled, use that.
   (ellocate-gc-mem    . most-positive-fixnum))
 #+end_src
 
-*** pdf-tools
+** pdf-tools
 :PROPERTIES:
 :ID:       63343f9d-6b19-43de-8302-d1344d571949
 :END:
 
-**** init
+*** init
 :PROPERTIES:
 :ID:       e19d0200-5e41-4295-ae54-fa71bfeadb06
 :END:
@@ -9828,7 +9828,7 @@ If we're in arch and we have yay intalled, use that.
   (push '("\\.[pP][dD][fF]\\'" . pdf-view-mode) auto-mode-alist))
 #+end_src
 
-**** epd-pdf-info-program
+*** epd-pdf-info-program
 :PROPERTIES:
 :ID:       25826061-a4a7-4f8a-8d3b-bdd5a80f70d0
 :END:
@@ -9856,7 +9856,7 @@ If we're in arch and we have yay intalled, use that.
         (set-window-configuration wconf)))))
 #+end_src
 
-**** bindings
+*** bindings
 :PROPERTIES:
 :ID:       506c568c-0473-4db6-82b6-cc91174b0ce4
 :END:
@@ -9872,7 +9872,7 @@ If we're in arch and we have yay intalled, use that.
   ("s" #'pdf-view-fit-width-to-window))
 #+end_src
 
-*** restart-emacs
+** restart-emacs
 :PROPERTIES:
 :ID:       7412bc2f-0db1-44e9-8ea7-0dc595a04fca
 :END:
@@ -9882,12 +9882,12 @@ If we're in arch and we have yay intalled, use that.
   :commands restart-emacs)
 #+end_src
 
-*** multimedia
+** multimedia
 :PROPERTIES:
 :ID:       5675cbbc-beb1-4470-a1d2-08f253bb4535
 :END:
 
-**** screenshots
+*** screenshots
 :PROPERTIES:
 :ID:       26d59d00-72e3-4b8c-9845-e5d9627cd4aa
 :END:
@@ -9897,14 +9897,14 @@ screenshots are vital. I use maim to take screenshots because. I will note that
 when I used [[][escr]] to take screenshots, those screenshots would not show
 exwm windows. =escr= used [[][]]'s import.
 
-***** screenshot name
+**** screenshot name
 :PROPERTIES:
 :ID:       7210e8a8-7cbc-40ec-bd70-f8cfc6a32c56
 :END:
 
 The name for the screenshot.
 
-****** xl-screenshot-path
+***** xl-screenshot-path
 :PROPERTIES:
 :ID:       a6a75a8c-8d00-4f26-9df0-7f24af577e87
 :END:
@@ -9915,7 +9915,7 @@ The name for the screenshot.
   (format "%s%s.png" (xl-screenshot-dir) name))
 #+end_src
 
-****** whether to prompt for screenshots
+***** whether to prompt for screenshots
 :PROPERTIES:
 :ID:       1c280e62-2a1b-41f8-8ff9-039528652fcf
 :END:
@@ -9925,7 +9925,7 @@ The name for the screenshot.
   "If non-nil, prompt for screenshot name.")
 #+end_src
 
-****** name passed into prompt
+***** name passed into prompt
 :PROPERTIES:
 :ID:       e8a21618-50f6-45ba-9a38-bff5c6d0a924
 :END:
@@ -9939,7 +9939,7 @@ The name for the screenshot.
 	(xl-screenshot-path it)))))
 #+end_src
 
-****** default screenshot name
+***** default screenshot name
 :PROPERTIES:
 :ID:       58405f4f-e891-494e-afc7-a227415ec12b
 :END:
@@ -9951,7 +9951,7 @@ The name for the screenshot.
     (xl-screenshot-path it)))
 #+end_src
 
-***** interactive screenshot functions
+**** interactive screenshot functions
 :PROPERTIES:
 :ID:       27089aef-5937-4a7e-9af1-794fbeb835f2
 :END:
@@ -9961,7 +9961,7 @@ had the side-effect of displaying the prompt in the screenshot which is not what
 I want. To avoid this, I decided to create the screenshot with the default name
 and then prompt to rename the file afterwards.
 
-****** fullscreen
+***** fullscreen
 :PROPERTIES:
 :ID:       5cb29bb2-459a-4c84-9bf8-df179d2d2e8e
 :END:
@@ -9978,7 +9978,7 @@ Take a s
       (rename-file name it t))))
 #+end_src
 
-****** window
+***** window
 :PROPERTIES:
 :ID:       1a8724bb-24be-43fd-a3f6-3a41f7380fe8
 :END:
@@ -9995,7 +9995,7 @@ Take a s
       (rename-file name it t))))
 #+end_src
 
-**** elfeed
+*** elfeed
 :PROPERTIES:
 :ID:       45a52b98-9eba-45ab-9269-e8f930499e1c
 :END:
@@ -10003,7 +10003,7 @@ Take a s
 =elfeed= is a newsfeed reader to Emacs. It's used over gnus because it is
 generally faster and more "modern".
 
-***** elfeed
+**** elfeed
 :PROPERTIES:
 :ID:       6aa4ece0-0b94-48b6-9a99-4b85cd1f7ccd
 :END:
@@ -10017,7 +10017,7 @@ generally faster and more "modern".
   (elfeed-search-title-max-width . 100))
 #+end_src
 
-***** elfeed-score
+**** elfeed-score
 :PROPERTIES:
 :ID:       20d1a501-4a52-43b8-b124-be1f62265b73
 :END:
@@ -10026,7 +10026,7 @@ generally faster and more "modern".
 (use-package elfeed-score)
 #+end_src
 
-***** elfeed-org
+**** elfeed-org
 :PROPERTIES:
 :ID:       f646640b-6982-478f-bd1b-babd0ee00165
 :END:
@@ -10041,19 +10041,19 @@ generally faster and more "modern".
   )
 #+end_src
 
-***** newsfeeds
+**** newsfeeds
 :PROPERTIES:
 :ID:       6d64a62c-a3f7-449c-833d-0738c1e5f28a
 :END:
 
 These are my newsfeed for =elfeed-org=.
 
-****** [[https://planet.emacslife.com/][planet emacslife]]
+***** [[https://planet.emacslife.com/][planet emacslife]]
 :PROPERTIES:
 :ID:       c042350e-6c21-4c98-82b1-332ef808cba5
 :END:
 
-**** gif-screencast
+*** gif-screencast
 :PROPERTIES:
 :ID:       d8553132-c244-4319-bcc9-51905a296e34
 :END:
@@ -10069,29 +10069,29 @@ These are my newsfeed for =elfeed-org=.
   (gif-screencast-capture-format . "png"))
 #+end_src
 
-**** videos
+*** videos
 :PROPERTIES:
 :ID:       a8c1f6aa-25f6-47aa-a625-2c870f322a8c
 :END:
 
-***** ytel
+**** ytel
 :PROPERTIES:
 :ID:       dea17f59-bebc-426e-ae7a-56f8d8971260
 :END:
 
-****** get video
+***** get video
 :PROPERTIES:
 :ID:       2a0e30c8-7a82-4bea-a79c-6d77eca6893a
 :END:
 
-**** emms
+*** emms
 :PROPERTIES:
 :ID:       6f3eaa69-bbbb-458e-bcad-1c121a3174e9
 :END:
 
 [[https://www.gnu.org/software/emms/][emms]] is a very complete music player.
 
-***** emms
+**** emms
 :PROPERTIES:
 :ID: 5d28b703-a87f-47ca-b320-785e7589fea6
 :END:
@@ -10107,7 +10107,7 @@ These are my newsfeed for =elfeed-org=.
   (emms-player-list                         . '(emms-player-mpv)))
 #+end_src
 
-***** quitting
+**** quitting
 :PROPERTIES:
 :ID: 545e6534-f289-4a89-838a-2a65ac74fe72
 :END:
@@ -10119,7 +10119,7 @@ These are my newsfeed for =elfeed-org=.
   (emms-stop))
 #+end_src
 
-*** eshell
+** eshell
 :PROPERTIES:
 :ID: 5f04a252-2985-46b4-ab0b-eb4567de5dd9
 :END:
@@ -10129,7 +10129,7 @@ portable and customizable as emacs itself. It can run elisp functions as
 commands. There's a good article about it in [[https://masteringemacs.org/article/complete-guide-mastering-eshell][mastering-emacs]]. Other articles I
 have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell post]], [[http://www.howardism.org/Technical/Emacs/eshell-fun.html][Howard Abram's Post]].
 
-**** eshell
+*** eshell
 :PROPERTIES:
 :ID:       b2b473c8-78d7-4f41-9be3-842b6c5acdbb
 :END:
@@ -10152,7 +10152,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   (eshell-error-if-no-glob           . t))
 #+end_src
 
-**** em-hist
+*** em-hist
 :PROPERTIES:
 :ID:       aaea54da-bd51-4a73-9dad-fe0b49d0f617
 :END:
@@ -10167,7 +10167,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   (eshell-save-history-on-exit . t))
 #+end_src
 
-**** em-term
+*** em-term
 :PROPERTIES:
 :ID:       d2afb853-15c3-4d3f-b8fa-a1075f84bbac
 :END:
@@ -10180,7 +10180,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
     (fn! (pushnew <command> eshell-visual-commands))))
 #+end_src
 
-**** em-alias
+*** em-alias
 :PROPERTIES:
 :ID:       694a8c17-8318-4222-b461-abfc1d8a78ea
 :END:
@@ -10190,7 +10190,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   :idle-require t)
 #+end_src
 
-**** eshell-z
+*** eshell-z
 :PROPERTIES:
 :ID: 497798a0-7b62-4779-bf15-f67500528f03
 :END:
@@ -10202,7 +10202,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   (eshell-z-freq-dir-hash-table-file-name . (expand-file-name "z" eshell-directory-name)))
 #+end_src
 
-**** eshell-up
+*** eshell-up
 :PROPERTIES:
 :ID: 478219b9-1c6f-4907-b428-a2dfe0f45e5c
 :END:
@@ -10219,7 +10219,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 #+end_src
 
 
-*** shrink-path
+** shrink-path
 :PROPERTIES:
 :ID: bd21a69a-794c-4ff1-97d0-9e5911a26ad7
 :END:
@@ -10227,7 +10227,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 It's easy to underestimate how much of a difference having an asthetically
 pleasing Emacs configuration can have. Ugliness really can take its toll.
 
-*** text scaling
+** text scaling
 :PROPERTIES:
 :ID:       5d242d0e-eeab-46de-bcee-ecfd79b2bffc
 :END:
@@ -10238,7 +10238,7 @@ document at a glance. However, when I'm doing something like editing a source
 block I want to focus on a very specific thing totally; therefore, I want the
 text to take up most of the screen.
 
-**** zoom-frm
+*** zoom-frm
 :PROPERTIES:
 :ID:       15b8577e-3f98-420a-81a5-c7b91292aca3
 :END:
@@ -10255,7 +10255,7 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
 #+end_src
 
 
-*** file browsing
+** file browsing
 :PROPERTIES:
 :ID:       d3e15439-f690-4ced-b701-0882fb911a5c
 :END:
@@ -10272,7 +10272,7 @@ documentation *much* more fun. :joy-cat:
   (emojify-emojis-dir . (concat XL-CACHE-DIR "emojis/")))
 #+end_src
 
-*** info
+** info
 :PROPERTIES:
 :ID:       d49f83c4-ba8f-477e-beef-8156ed8b974b
 :END:
@@ -10284,14 +10284,14 @@ This headline is for customizing info nodes.
   :rule ("top" "info" :newname "\\*info"))
 #+end_src
 
-*** saveplace
+** saveplace
 :PROPERTIES:
 :ID:       41cb3357-9b4b-4205-987d-ff72f9a35df3
 :END:
 
 This package takes you to the last point you were at when you visited a file.
 
-**** recenter cursor
+*** recenter cursor
 :PROPERTIES:
 :ID:       dda57b64-b645-4eda-be54-9dda4af35404
 :END:
@@ -10302,7 +10302,7 @@ This package takes you to the last point you were at when you visited a file.
   (when buffer-file-name (ignore-errors (recenter))))
 #+end_src
 
-**** saveplace
+*** saveplace
 :PROPERTIES:
 :ID:       63b04114-bcb9-4a2e-ad45-be4db8d4a269
 :END:
@@ -10321,7 +10321,7 @@ again, you are taken to the location you left off. This is very convenient.
   (save-place-limit . nil))
 #+end_src
 
-*** recentf
+** recentf
 :PROPERTIES:
 :ID:       5ab47c35-53bd-460f-ba41-6f3075bd1222
 :END:
