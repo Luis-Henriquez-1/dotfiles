@@ -1,4 +1,4 @@
-** compute the font upon tangling
+* compute the font upon tangling
 :PROPERTIES:
 :ID:       62b28647-262f-4657-a57e-79e8a98c2a11
 :END:
@@ -28,7 +28,7 @@ Emacs from a script. :confused: I'm sure there's some way to do it.
        (finally-return nil))
 #+end_src
 
-** pause garbage collection
+* pause garbage collection
 :PROPERTIES:
 :ID:       33c4ed1f-9382-49ff-9706-6ce5c0fd0d7c
 :END:
@@ -42,7 +42,7 @@ effectively stop garbage collection by setting the [[helpvar:gc-cons-threshold][
 (setq gc-cons-threshold most-positive-fixnum)
 #+end_src
 
-** disable tool bar, menu bar, and scroll bar
+* disable tool bar, menu bar, and scroll bar
 :PROPERTIES:
 :ID:       f439de9a-b2b1-4926-a4ae-3d94ff83d05a
 :END:
