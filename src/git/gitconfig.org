@@ -1,0 +1,13 @@
+#+begin_src conf
+[user]
+	name = Luis Henriquez-Perez
+	email = luis@luishp.xyz
+	signingkey = C3F33DA91721A6B7365FBF668DAA027F8C199794
+[commit]
+	gpgsign = true
+[gpg]
+	program = /home/luis/.guix-profile/bin/gpg
+[github]
+	user = Luis-Henriquez-Perez
+#+end_src
+

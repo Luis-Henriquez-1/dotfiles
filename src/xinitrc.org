@@ -1,0 +1,27 @@
+* first remap caps lock with escape
+:PROPERTIES:
+:ID:       fa0904bb-1597-45bf-a944-8b48955cef0c
+:END:
+
+Coming from a vim background and currently using [[git][evil]], I've come to rely on the
+escape key heavily as a "quit everything" binding. I press it much more often
+than the caps-lock key--actually I think I don't ever use the caps-lock
+key. Even in emacs, there's [[https://github.com/emacs-straight/caps-lock][caps-lock]], so I'm not sure if I need it at all.
+
+#+begin_src sh
+setxkbmap -option caps:swapescape
+#+end_src
+
+* then load emacs
+:PROPERTIES:
+:ID:       af14d611-79a0-4604-8c02-24bc608d32fb
+:END:
+
+Obviously, we load our OS. In the future, I may use a display manager so I can
+easily switch between emacs, stumpwm or any other window manager of my
+choosing. I don't use the default display manager provied with =guix= because.
+
+#+begin_src sh
+exec emacs
+#+end_src
+

@@ -1,0 +1,26 @@
+* starting org on guix
+:PROPERTIES:
+:ID:       9bd14aeb-1b7d-4cdd-8c79-5e92da7606dc
+:END:
+
+I'm am not keen on paying the cost of starting a [[https://wiki.archlinux.org/index.php/Display_Manager#Console][login manager]] at startup. I
+don't see a great benefit to having a graphical login manager and I prefer the
+flexibility of being able to use the command line before initializing a
+graphical display.
+
+Right now, shepard is admittedly rather slow in starting up. It's even slower
+when it has to begin a display manager.
+
+So below I implement the advice given in [[https://lists.gnu.org/archive/html/help-guix/2018-07/msg00080.html][this email]] to create a command that can
+run =xorg= in guix. When I log in I run =sh xinit.sh= to start xorg.
+
+#+begin_src sh :tangle ~/xinit.sh
+#!/bin/sh
+
+DIR=$HOME/.guix-profile
+
+$DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
+	       -configdir $DIR/share/X11/xorg.conf.d \
+	       -modulepath $DIR/lib/xorg/modules
+#+end_src
+
