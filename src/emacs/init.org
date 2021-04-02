@@ -7943,6 +7943,8 @@ working yet.
 :ID:       a8c5199d-1f4d-44a5-b6f1-2f8f264b181d
 :END:
 
+This package lets you annotate files in a separate org file.
+
 #+begin_src emacs-lisp
 (use-package org-annotate-code
   :set (org-annotate-code-org-file (concat XL-ORG-DIR "annotations.org")))
