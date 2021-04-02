@@ -7947,7 +7947,7 @@ This package lets you annotate files in a separate org file.
 
 #+begin_src emacs-lisp
 (use-package org-annotate-code
-  :set (org-annotate-code-org-file (concat XL-ORG-DIR "annotations.org")))
+  :set (org-annotate-code-org-file . (concat XL-ORG-DIR "annotations.org")))
 #+end_src
 
 **** org-archive
