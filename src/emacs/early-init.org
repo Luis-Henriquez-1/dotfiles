@@ -1,3 +1,6 @@
+#+title: early-init.org
+#+author: Luis-Henriquez-Perez
+
 * compute the font upon tangling
 :PROPERTIES:
 :ID:       62b28647-262f-4657-a57e-79e8a98c2a11
