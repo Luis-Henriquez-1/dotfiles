@@ -1648,7 +1648,11 @@ play.
 #+begin_src emacs-lisp
 (use-package loopy
   :demand t
-  :set (loopy-default-flags . '(+dash -split)))
+  :alias
+  (iter . loopy-iter)
+  (iterate . loopy-iter)
+  :set
+  (loopy-default-flags . '(+dash -split)))
 
 (use-package loopy-dash :demand t)
 #+end_src
