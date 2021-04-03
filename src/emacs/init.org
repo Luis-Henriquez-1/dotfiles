@@ -1242,6 +1242,7 @@ instead of =add-hook=.
 (use-package%override :hook :xl-hook)
 
 (defun use-package-normalize/:xl-hook (name _ args)
+  "Make sure that."
   (loopy (list elt args)
 	 (cond ((symbolp elt)
 		(collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
