@@ -1636,7 +1636,7 @@ But if you're only.
 
 **** loopy
 :PROPERTIES:
-:ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
+:ID:       1c30099a-86b4-41f9-8390-e9e3c20b0257
 :END:
 
 =loopy= is an alternative to =cl-loop= that preserves lisp structure. It is akin
@@ -1645,6 +1645,11 @@ cases. But they are not as good in my opinion when you're dealing with a complex
 loop that involves accumulating several variables or atypical control-flow (as
 in, break statements or return statements). This is where =loopy= comes into
 play.
+
+***** loopy
+:PROPERTIES:
+:ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
+:END:
 
 #+begin_src emacs-lisp
 (use-package loopy
@@ -1655,7 +1660,14 @@ play.
   (loopy-defalias 'each 'list)
   (loopy-defalias 'fret 'finally-return)
   (loopy-defalias 'ret 'return))
+#+end_src
 
+***** iter
+:PROPERTIES:
+:ID:       cf3f024a-8bec-4f5a-bd63-38b09dc23ca5
+:END:
+
+#+begin_src emacs-lisp
 (use-package loopy-iter
   :demand t
   :config
@@ -1663,7 +1675,14 @@ play.
   :alias
   (iter . loopy-iter)
   (iterate . loopy-iter))
+#+end_src
 
+***** dash destructuring
+:PROPERTIES:
+:ID:       87615a1d-2790-44c4-ac95-90a36ff9c496
+:END:
+
+#+begin_src emacs-lisp
 (use-package loopy-dash
   :demand t
   :config
