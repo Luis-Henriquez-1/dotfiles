@@ -1,3 +1,6 @@
+#+title: xinitrc
+#+author: Luis-Henriquez-Perez
+
 * first remap caps lock with escape
 :PROPERTIES:
 :ID:       fa0904bb-1597-45bf-a944-8b48955cef0c
