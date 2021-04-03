@@ -1,3 +1,6 @@
+#+title: init.org
+#+author: Luis-Henriquez-Perez
+
 * ensure lexical binding
 :PROPERTIES:
 :ID:       2b8148c3-1418-4896-ba53-1673d2d82659
