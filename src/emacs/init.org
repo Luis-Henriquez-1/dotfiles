@@ -587,7 +587,7 @@ lack of namespaces. Therefore, I support keyword args in the function body.
   "Return list of (docstring KEYWORD-ARGS BODY)."
   (iter (with (docstring (when (stringp (car body)) (pop body))))
 	(while (keywordp (car body)))
-	(append plist (list (pop body) (pop body)))
+	(appending plist (list (pop body) (pop body)))
 	(finally-return (list docstring plist body))))
 #+end_src
 
