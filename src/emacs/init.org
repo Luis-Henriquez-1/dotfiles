@@ -2864,6 +2864,17 @@ This headline contains variables that are defined in c-source code and thefore
 do not pertain to any particular package. For this reason I don't wrap these
 variables in a [[29e1513a-e12a-4818-870e-8d5fab7fe1a0][use-package]] block.
 
+**** don't create lockfiles
+:PROPERTIES:
+:ID:       ae464c90-d220-4db2-a3fd-fec36b9181e4
+:END:
+
+https://stackoverflow.com/questions/8246483/emacs-how-to-disable-files-creation
+
+#+begin_src emacs-lisp
+(set! create-lockfiles nil)
+#+end_src
+
 **** delete duplicates in history
 :PROPERTIES:
 :ID:       1c381491-c4fa-4b5e-99de-ec6bd33df77c
