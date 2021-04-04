@@ -4,7 +4,6 @@
 * ensure lexical binding
 :PROPERTIES:
 :ID:       2b8148c3-1418-4896-ba53-1673d2d82659
-:HEADER-ARGS: :tangle ~/.config/emacs/early-init.el :tangle ~/.config/emacs/init.el
 :END:
 
 Emacs by default uses dynamic binding. Lexical binding is a [[https://nullprogram.com/blog/2016/12/22/][known way to boost
