@@ -1776,7 +1776,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 :END:
 
 #+begin_src emacs-lisp
-(use-package list-utils :demand t)
+(use-package list-utils)
 #+end_src
 
 **** require map
