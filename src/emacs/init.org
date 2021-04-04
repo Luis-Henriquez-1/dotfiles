@@ -2781,20 +2781,20 @@ Tangling is extremely slow using [[helpfn:org-babel-tangle][org-babel-tangle]]. 
 a significant lag and Emacs is blocked while it is tangling.
 
 #+begin_src emacs-lisp
-  (defun xl-tangle-readme-async ()
-    "Tangle the readme file asynchronously."
-    (async-start
-     `(lambda ()
-	(require 'org)
-	(require 'ob-tangle)
-	(require 'rx)
-	(setq org-confirm-babel-evaluate nil)
-	(let ((gc-cons-threshold most-positive-fixnum)
-	      (org-confirm-babel-evaluate nil))
-	  (org-babel-tangle-file (expand-file-name "init.org" "~/.tangld/src/emacs/") "~/.config/emacs/init.el")))
-     (lambda (result)
-       (xl-log (if result "Successfully tangled %s" "Failed to tangle %s")
-	       XL-README-FILE))))
+(defun xl-tangle-readme-async ()
+  "Tangle the readme file asynchronously."
+  (async-start
+   `(lambda ()
+      (require 'org)
+      (require 'ob-tangle)
+      (require 'rx)
+      (setq org-confirm-babel-evaluate nil)
+      (let ((gc-cons-threshold most-positive-fixnum)
+	    (org-confirm-babel-evaluate nil))
+	(org-babel-tangle-file (expand-file-name "init.org" "~/.tangld/src/emacs/") "~/.config/emacs/init.el")))
+   (lambda (result)
+     (xl-log (if result "Successfully tangled %s" "Failed to tangle %s")
+	     XL-README-FILE))))
 #+end_src
 
 ***** do tangling on save
