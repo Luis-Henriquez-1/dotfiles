@@ -1409,7 +1409,7 @@ Sometimes I want to alias certain.
 #+begin_src emacs-lisp
 (use-package%dwim-insert :alias)
 
-(defalias 'use-package-handler/:alias ' use-package-handler/:silence)
+(defalias 'use-package-normalize/:alias 'use-package-normalize/:set)
 
 (defun use-package-handler/:alias (name _ aliases rest state)
   "Generate aliases forms for ALIASES."
