@@ -269,22 +269,22 @@ with the last and allowing me to choose which ones to add.
   "Update the recipe file with new recipes."
   (interactive)
   (with-temp-file XL-RECIPE-FILE
-    (loopy (with (gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX)
-		 (versions-alist (straight%versions-alist))
-		 (packages (cl-sort (hash-table-keys straight--recipe-cache) #'string-lessp))
-		 (recipe-cache straight--recipe-cache)
-		 (print-length nil)
-		 (print-level nil)
-		 (print-quoted t))
-	   (list package packages)
-	   (expr recipe (hash-get package recipe-cache))
-	   (expr local-repo (plist-get recipe :local-repo))
-	   (when (and local-repo (assoc local-repo versions-alist))
-	     (expr revision (alist-get local-repo versions-alist))
-	     (expr package (substring-no-properties package))
-	     (expr recipe (cons (intern package) recipe))
-	     (do (prin1 (list package revision recipe) (current-buffer))
-		 (insert ?\n))))))
+    (iter (with (gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX)
+		(versions-alist (straight%versions-alist))
+		(packages (cl-sort (hash-table-keys straight--recipe-cache) #'string-lessp))
+		(recipe-cache straight--recipe-cache)
+		(print-length nil)
+		(print-level nil)
+		(print-quoted t))
+	  (for package packages)
+	  (expr recipe (hash-get package recipe-cache))
+	  (expr local-repo (plist-get recipe :local-repo))
+	  (when (and local-repo (assoc local-repo versions-alist))
+	    (expr revision (alist-get local-repo versions-alist))
+	    (expr package (substring-no-properties package))
+	    (expr recipe (cons (intern package) recipe))
+	    (prin1 (list package revision recipe) (current-buffer))
+	    (insert ?\n)))))
 #+end_src
 
 ** library
@@ -585,10 +585,10 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 #+begin_src emacs-lisp
 (defun xl-keyword-macro-args (body)
   "Return list of (docstring KEYWORD-ARGS BODY)."
-  (loopy (with (docstring (when (stringp (car body)) (pop body))))
-	 (while (keywordp (car body)))
-	 (append plist (list (pop body) (pop body)))
-	 (finally-return (list docstring plist body))))
+  (iter (with (docstring (when (stringp (car body)) (pop body))))
+	(while (keywordp (car body)))
+	(append plist (list (pop body) (pop body)))
+	(finally-return (list docstring plist body))))
 #+end_src
 
 **** true-list-p
@@ -799,15 +799,15 @@ from pulling (or failing to pull) in autoloaded macros/features.
   "Wrapper around `with-eval-after-load'."
   (declare (indent defun) (debug t))
   (cond ((eq 'or (car-safe features))
-	 (loopy (list feature (cdr features))
-		(collect form `(after! ,feature ,@body))
-		(finally-return (macroexp-progn forms))))
+	 (iter (for feature (cdr features))
+	       (collect form `(after! ,feature ,@body))
+	       (finally-return (macroexp-progn forms))))
         ((eq 'and (car-safe features))
-	 (loopy (with ((first . rest) (cdr features))
-		      (forms `(after! ,first ,@body)))
-		(list feature (reverse rest))
-		(expr forms `(after! ,feature ,@(list forms)))
-		(finally-return forms)))
+	 (iter (with ((first . rest) (cdr features))
+		     (forms `(after! ,first ,@body)))
+	       (for feature (reverse rest))
+	       (expr forms `(after! ,feature ,@(list forms)))
+	       (finally-return forms)))
         ((listp features)
          `(after! (and ,@features) ,@body))
         ((symbolp features)
@@ -896,9 +896,9 @@ Note that I may depreciate this in favor of setf.
 			   (car args)))))
     ((and (pred cl-evenp) (pred > 0))
      `(progn
-	,@(loopy (cons (sym val . _) args #'cddr)
-		 (expr setter `(or (get ',sym 'custom-set) 'set))
-		 (collect `(funcall ,setter ',sym ,val)))))
+	,@(iter (conses (sym val . _) args #'cddr)
+		(expr setter `(or (get ',sym 'custom-set) 'set))
+		(collect `(funcall ,setter ',sym ,val)))))
     (_
      (error "Invalid arguments."))))
 #+end_src
@@ -1133,16 +1133,16 @@ useful to receieve messages, often they can be telling you what you already know
 
 (defun use-package-normalize/:silence (key _ fns)
   "Normalize."
-  (loopy (list fn fns)
-	 (do (cl-assert (symbolp fn) nil "%s hello %s" key fn))
-	 (collect fn)))
+  (iter (for fn fns)
+	(cl-assert (symbolp fn) nil "%s hello %s" key fn)
+	(collect fn)))
 
 (defun use-package-handler/:silence (name _ fns rest state)
   "Generate forms that silence output of FNS.
 FNS is a list of function symbols."
-  `(,@(loopy (list fn fns)
-	     (collect (use-package%autoload fn name))
-	     (collect `(xl-silence-output #',fn)))
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload fn name))
+	    (collect `(xl-silence-output #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1163,9 +1163,9 @@ functions that a package provides.
 
 (defun use-package-handler/:gc-pause (name _ fns rest state)
   "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
-  `(,@(loopy (list fn fns)
-	     (collect (use-package%autoload name fn))
-	     (collect `(xl-pause-gc #',fn)))
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-pause-gc #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1183,9 +1183,9 @@ Sometimes I want to ignore certain functions.
 
 (defun use-package-handler/:ignore (name _ fns rest state)
   "Generate forms that cause FNS to do nothing and return nil."
-  `(,@(loopy (list fn fns)
-	     (collect (use-package%autoload name fn))
-	     (collect `(xl-ignore #',fn)))
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-ignore #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1203,9 +1203,9 @@ There are a number of functions in Emacs that prompt.
 
 (defun use-package-handler/:assume-yes (name _ fns rest state)
   "Ensure that FNS always assume yes for confirmation."
-  `(,@(loopy (list fn fns)
-	     (collect (use-package%autoload name fn))
-	     (collect `(xl-assume-yes #',fn)))
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-assume-yes #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1242,21 +1242,21 @@ instead of =add-hook=.
 
 (defun use-package-normalize/:xl-hook (name _ args)
   "Make sure that."
-  (loopy (list elt args)
-	 (cond ((symbolp elt)
-		(collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
-	       ((-cons-pair-p elt)
-		(expr (hooks . mode) elt)
-		(subloop (list hook (-list hooks))
-			 (collect (cons (xl-emacs-hookify hook) mode))))
-	       (t
-		(do (error "%s requires %s" key elt))))))
+  (iter (for elt args)
+	(cond ((symbolp elt)
+	       (collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
+	      ((-cons-pair-p elt)
+	       (expr (hooks . mode) elt)
+	       (subloop (list hook (-list hooks))
+			(collect (cons (xl-emacs-hookify hook) mode))))
+	      (t
+	       (error "%s requires %s" key elt)))))
 
 (defun use-package-handler/:xl-hook (name _ alist rest state)
   "Use `xl-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
-  `(,@(loopy (list (hook . fn) alist)
-	     (collect `(xl-hook-add ',hook ',fn))
-	     (collect (use-package%autoload name fn)))
+  `(,@(iter (for (hook . fn) alist)
+	    (collect `(xl-hook-add ',hook ',fn))
+	    (collect (use-package%autoload name fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1275,17 +1275,17 @@ of this keyword is to load a package when a certain function is called.
 
 (defun use-package-normalize/:before-call (name key args)
   "Ensure ARGS is a list of symbols or list."
-  (loopy (list elt args)
-	 (cond ((symbolp elt) (collect (cons name elt)))
-	       ((-cons-pair-p elt) (collect elt))
-	       (t (do (error "%s requires either symbols or cons cells." key elt))))
-	 (finally-do (-map #'use-package%normalize-cons loopy-result))))
+  (iter (for elt args)
+	(cond ((symbolp elt) (collect (cons name elt)))
+	      ((-cons-pair-p elt) (collect elt))
+	      (t (do (error "%s requires either symbols or cons cells." key elt))))
+	(finally-do (-map #'use-package%normalize-cons loopy-result))))
 
 (defun use-package-handler/:before-call (name key alist rest state)
   "Generate forms that load PACKAGE before FN is called."
-  `(,@(loopy (list (package . fn) alist)
-	     (collect (use-package%autoload package fn))
-	     (collect `(xl-load-before-call ',package #',fn)))
+  `(,@(iter (for (package . fn) alist)
+	    (collect (use-package%autoload package fn))
+	    (collect `(xl-load-before-call ',package #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1303,9 +1303,9 @@ The.
 
 (defun use-package-handler/:after-call (name _ alist rest state)
   "Generate form that loads package after fn is called."
-  `(,@(loopy (list (package . fn) alist)
-	     (collect (use-package%autoload name fn))
-	     (collect `(xl-load-after-call ',package #',fn)))
+  `(,@(iter (for (package . fn) alist)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-load-after-call ',package #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
