@@ -585,10 +585,10 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 #+begin_src emacs-lisp
 (defun xl-keyword-macro-args (body)
   "Return list of (docstring KEYWORD-ARGS BODY)."
-  (iter (with (docstring (when (stringp (car body)) (pop body))))
-	(while (keywordp (car body)))
-	(appending plist (list (pop body) (pop body)))
-	(finally-return (list docstring plist body))))
+  (loopy (with (docstring (when (stringp (car body)) (pop body))))
+	 (while (keywordp (car body)))
+	 (append plist (list (pop body) (pop body)))
+	 (finally-return (list docstring plist body))))
 #+end_src
 
 **** true-list-p
@@ -799,15 +799,15 @@ from pulling (or failing to pull) in autoloaded macros/features.
   "Wrapper around `with-eval-after-load'."
   (declare (indent defun) (debug t))
   (cond ((eq 'or (car-safe features))
-	 (iter (for feature (cdr features))
-	       (collect form `(after! ,feature ,@body))
-	       (finally-return (macroexp-progn forms))))
+	 (loopy (list feature (cdr features))
+		(collect form `(after! ,feature ,@body))
+		(finally-return (macroexp-progn forms))))
         ((eq 'and (car-safe features))
-	 (iter (with ((first . rest) (cdr features))
-		     (forms `(after! ,first ,@body)))
-	       (for feature (reverse rest))
-	       (expr forms `(after! ,feature ,@(list forms)))
-	       (finally-return forms)))
+	 (loopy (with ((first . rest) (cdr features))
+		      (forms `(after! ,first ,@body)))
+		(list feature (reverse rest))
+		(expr forms `(after! ,feature ,@(list forms)))
+		(finally-return forms)))
         ((listp features)
          `(after! (and ,@features) ,@body))
         ((symbolp features)
@@ -896,9 +896,9 @@ Note that I may depreciate this in favor of setf.
 			   (car args)))))
     ((and (pred cl-evenp) (pred > 0))
      `(progn
-	,@(iter (conses (sym val . _) args #'cddr)
-		(expr setter `(or (get ',sym 'custom-set) 'set))
-		(collect `(funcall ,setter ',sym ,val)))))
+	,@(loopy (cons (sym val . _) args #'cddr)
+		 (expr setter `(or (get ',sym 'custom-set) 'set))
+		 (collect `(funcall ,setter ',sym ,val)))))
     (_
      (error "Invalid arguments."))))
 #+end_src
@@ -1242,21 +1242,21 @@ instead of =add-hook=.
 
 (defun use-package-normalize/:xl-hook (name _ args)
   "Make sure that."
-  (iter (for elt args)
-	(cond ((symbolp elt)
-	       (collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
-	      ((-cons-pair-p elt)
-	       (expr (hooks . mode) elt)
-	       (subloop (list hook (-list hooks))
-			(collect (cons (xl-emacs-hookify hook) mode))))
-	      (t
-	       (error "%s requires %s" key elt)))))
+  (loopy (list elt args)
+	 (cond ((symbolp elt)
+		(collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
+	       ((-cons-pair-p elt)
+		(expr (hooks . mode) elt)
+		(subloop (list hook (-list hooks))
+			 (collect (cons (xl-emacs-hookify hook) mode))))
+	       (t
+		(do (error "%s requires %s" key elt))))))
 
 (defun use-package-handler/:xl-hook (name _ alist rest state)
   "Use `xl-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
-  `(,@(iter (for (hook . fn) alist)
-	    (collect `(xl-hook-add ',hook ',fn))
-	    (collect (use-package%autoload name fn)))
+  `(,@(loopy (list (hook . fn) alist)
+	     (collect `(xl-hook-add ',hook ',fn))
+	     (collect (use-package%autoload name fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1278,7 +1278,7 @@ of this keyword is to load a package when a certain function is called.
   (iter (for elt args)
 	(cond ((symbolp elt) (collect (cons name elt)))
 	      ((-cons-pair-p elt) (collect elt))
-	      (t (do (error "%s requires either symbols or cons cells." key elt))))
+	      (t (error "%s requires either symbols or cons cells." key elt)))
 	(finally-do (-map #'use-package%normalize-cons loopy-result))))
 
 (defun use-package-handler/:before-call (name key alist rest state)
@@ -1651,14 +1651,12 @@ play.
 :END:
 
 #+begin_src emacs-lisp
-  (use-package loopy
-    :demand t
-    :config
-    (callf2 cl-adjoin '-split loopy-default-flags)
-    (loopy-defalias 'for 'list)
-    (loopy-defalias 'each 'list)
-    (loopy-defalias 'fret 'finally-return)
-    (loopy-defalias 'ret 'return))
+(use-package loopy
+  :demand t
+  :config
+  (callf2 cl-adjoin '-split loopy-default-flags)
+  (loopy-defalias 'fret 'finally-return)
+  (loopy-defalias 'ret 'return))
 #+end_src
 
 ***** iter
@@ -1666,11 +1664,22 @@ play.
 :ID:       cf3f024a-8bec-4f5a-bd63-38b09dc23ca5
 :END:
 
+I thought I'd be using this macro exclusively and that I'd never use =loopy= at
+all. However, =loopy= has the distinct advantage that it has more freedom to
+name its clauses without clobbering them with existing Emacs functions. So I'd
+say I use =loopy= when the loop doesn't need.
+
+For the same drawback as I've mentioned, =loopy-iter= can't use the =list=
+clause because it would get confused with it and the built-in Emacs function
+[[helpfn:list][list]]. For that reason we need to use one of lists aliases.
+
 #+begin_src emacs-lisp
 (use-package loopy-iter
   :demand t
   :config
-  (callf2 cl-adjoin 'lax-names loopy-default-flags)
+  (callf2 cl-adjoin '+lax-names loopy-default-flags)
+  (loopy-defalias 'for 'list)
+  (loopy-defalias 'each 'list)
   :alias
   (iter . loopy-iter)
   (iterate . loopy-iter))
@@ -1685,7 +1694,7 @@ play.
 (use-package loopy-dash
   :demand t
   :config
-  (callf2 cl-adjoin 'dash loopy-default-flags))
+  (callf2 cl-adjoin '+dash loopy-default-flags))
 #+end_src
 
 **** noflet
@@ -3540,8 +3549,8 @@ Remember, that the goal of normalization is to end up with a list of plists with
 		(append new (list key (car val))))
 	       (t
 		(expr tails (xl-bind%flatten-plist-values `(,key ,(cdr val) ,@rest)))
-		(loop (list tail tails)
-		      (collect flattened (append new tail)))
+		(subloop (list tail tails)
+			 (collect flattened (append new tail)))
 		(append new (list key (car val)))))
 	 (finally-return (cons new flattened))))
 #+end_src
@@ -3576,16 +3585,16 @@ Remember, that the goal of normalization is to end up with a list of plists with
 #+begin_src emacs-lisp
 (defun xl-bind%merge-duplicate-plist-keys (plist)
   "Merge duplicate keys in PLIST."
-  (loopy (cons (key val . _) plist #'cddr)
-	 (cond ((assoc key alist)
-		(expr var (alist-get key alist))
-		(do (set var (append (symbol-value var) (list val)))))
-	       (t
-		(expr var (gensym (symbol-name key)))
-		(do (set var (list val)))
-		(collect alist (cons key var))))
-	 (finally-return (loopy (list (key . var) alist)
-				(append (list key (xl-dwim-single (symbol-value var))))))))
+  (iter (conses (key val . _) plist #'cddr)
+	(cond ((assoc key alist)
+	       (expr var (alist-get key alist))
+	       (set var (append (symbol-value var) (list val))))
+	      (t
+	       (expr var (gensym (symbol-name key)))
+	       (set var (list val))
+	       (collect alist (cons key var))))
+	(fret (loopy (list (key . var) alist)
+		     (append (list key (xl-dwim-single (symbol-value var))))))))
 #+end_src
 
 ***** normalize the list
