@@ -1,36 +1,6 @@
 #+title: early-init.org
 #+author: Luis-Henriquez-Perez
 
-* compute the font upon tangling
-:PROPERTIES:
-:ID:       62b28647-262f-4657-a57e-79e8a98c2a11
-:END:
-
-There's a chicken and egg problem with fonts. What you'd like to do to have a
-robust emacs config is have a list of backup fonts that you check in order of
-preference until you find the one that is available on your system. Moreover, to
-be efficient, you'd like to do this check before the frame is initialized.
-Problem is the functions emacs provide to check system fonts depend on the
-initialization of the emacs frame.
-
-Note I have not yet tested this. I'm not sure if the frame is created when I run
-Emacs from a script. :confused: I'm sure there's some way to do it.
-
-#+name: font
-#+begin_src emacs-lisp :tangle no
-(defvar xl-backup-fonts (list "jetbrains mono" "hermit" "mononoki" "iosevka" "anonymous-pro")
-  "List of fonts that should be used.")
-
-;; Return the preferred font.
-(loopy (list font xl-backup-fonts)
-       (expr available (x-list-fonts font))
-       (when available
-	 (expr font (font-spec :name (-last-item available)))
-	 (do (font-put font :size 19))
-	 (return (format "%S" (font-xlfd-name font))))
-       (finally-return nil))
-#+end_src
-
 * pause garbage collection
 :PROPERTIES:
 :ID:       33c4ed1f-9382-49ff-9706-6ce5c0fd0d7c
@@ -80,7 +50,7 @@ check the existing fonts at this time either because the [[https://emacs.stackex
 initialized yet]] so functions like [[helpfn:font-family-list][font-family-list]] and [[helpfn:find-font][find-font]] will not return
 reliable values (trust me, I tried).
 
-#+begin_src emacs-lisp :noweb yes
+#+begin_src emacs-lisp :tangle no
 (push (cons 'font <<font()>>) default-frame-alist)
 #+end_src
 
