@@ -19,7 +19,7 @@ tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile ~/.msmtp.log
 #+end_src
 
-* gmail
+* main email
 :PROPERTIES:
 :ID:       e2185489-49af-4d03-b438-6788992f8420
 :END:
@@ -33,7 +33,7 @@ user luis@luishp.xyz
 passwordeval "pass email/luis@luishp.xyz | head -n 1"
 #+end_src
 
-* main email
+* gmail
 :PROPERTIES:
 :ID:       ffed8028-18c4-4b36-a2a5-f8f60ea56b85
 :END:
