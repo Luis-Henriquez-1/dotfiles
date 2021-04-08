@@ -5856,8 +5856,8 @@ you save your file--which for me is all the time because I use [[id:bd455e73-403
   :commands git-auto-commit-mode
   :set
   (gac-automatically-push-p   . nil)
-  (gac-ask-for-summary        . nil)
-  (gac-default-message        . #'gac:commit-message)
+  (gac-ask-for-summary-p      . nil)
+  (gac-default-message        . #'gac%commit-message)
   (gac-commit-additional-flag . "-S")
   (gac-silent-message-p       . t))
 #+end_src
@@ -5877,7 +5877,7 @@ replacement of a name throughout a document). This is something I plan to
 address later.
 
 #+begin_src emacs-lisp
-(defun gac:commit-message (file)
+(defun gac%commit-message (file)
   "Return the commit message for changes to FILE."
   (format "Update %s" (f-base file)))
 #+end_src
@@ -5955,11 +5955,8 @@ address later.
 =git-gutter= indicates which parts of a file has been modified.
 
 #+begin_src emacs-lisp
-(use-package git-gutter+)
-(set! git-gutter+-git-executable (f-full "~/.yadm-project/yadm"))
-
-;; I get an error that this function is not defined.
-(defun git-commit-mode-font-lock-keywords () nil)
+(use-package git-gutter+
+  :alias (git-commit-mode-font-lock-keywords . ignore))
 #+end_src
 
 **** git-commit
@@ -5970,17 +5967,6 @@ address later.
 #+begin_src emacs-lisp
 (use-package git-commit
   :initial-state insert)
-#+end_src
-
-**** yadm and magit
-:PROPERTIES:
-:ID:       45e7cba9-e4a2-4323-83f8-808e26c2a411
-:END:
-
-#+begin_src emacs-lisp
-(setq magit-git-executable (f-full "~/.yadm-project/yadm"))
-;; (shell-command-to-string "~/.yadm-project/yadm --version")
-(advice-add #'magit-git-version :override (lambda (&rest _) "3.0.2"))
 #+end_src
 
 *** backup
