@@ -1,6 +1,11 @@
 #+title: mbsyncrc.org
 #+author: Luis-Henriquez-Perez
 
+* about
+:PROPERTIES:
+:ID:       78dd98c4-75f3-4cf5-bdc8-071726a88f2e
+:END:
+
 * defaults
 :PROPERTIES:
 :ID:       5029d752-162e-4eeb-b078-dfdcfc07c929
