@@ -1,0 +1,52 @@
+#+title: mbsync.org
+#+author: Luis-Henriquez-Perez
+
+* about
+:PROPERTIES:
+:ID:       510a2d07-fc4d-40d3-8d27-fbed2f2013f7
+:END:
+
+[[][]] is what controls.
+
+* gmail account
+:PROPERTIES:
+:ID:       0c1c5eae-b112-4d79-b083-940d182b4ffd
+:END:
+
+** settings
+:PROPERTIES:
+:ID:       631cb9a5-b48b-4ca1-ade9-de15f2bd4131
+:END:
+
+#+begin_src conf
+IMAPAccount gmail
+Host imap.gmail.com
+User luishenriquezperez@gmail.com
+PassCmd "pass email/luishenriquezperez@gmail.com | head -n 1"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+Port 993
+#+end_src
+
+** maildirstore
+:PROPERTIES:
+:ID:       e821c5d4-bb52-42f0-ad15-5c88286300a0
+:END:
+
+#+begin_src emacs-lisp
+MaildirStore gmail-local
+Subfolders Verbatim
+Path ~/.mail/luishenriquezperez@gmail.com/
+Inbox ~/.mail/luishenriquezperez@gmail.com/Inbox
+#+end_src
+
+** channels
+:PROPERTIES:
+:ID:       8a3e0a17-26bd-4e0c-a7c3-4375d4cd946e
+:END:
+
+#+begin_src emacs-lisp
+(iter (each )
+      ())
+#+end_src
+

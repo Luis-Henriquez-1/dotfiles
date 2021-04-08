@@ -1,0 +1,53 @@
+#+title: mbsyncrc.org
+#+author: Luis-Henriquez-Perez
+
+* defaults
+:PROPERTIES:
+:ID:       5029d752-162e-4eeb-b078-dfdcfc07c929
+:END:
+
+#+begin_src conf
+defaults
+auth on
+tls on
+tls_trust_file /etc/ssl/certs/ca-certificates.crt
+logfile ~/.msmtp.log
+#+end_src
+
+* gmail
+:PROPERTIES:
+:ID:       e2185489-49af-4d03-b438-6788992f8420
+:END:
+
+#+begin_src conf
+account luishp
+host mail.luishp.xyz
+from luis@luishp.xyz
+port 25
+user luis@luishp.xyz
+passwordeval "pass email/luis@luishp.xyz | head -n 1"
+#+end_src
+
+* main email
+:PROPERTIES:
+:ID:       ffed8028-18c4-4b36-a2a5-f8f60ea56b85
+:END:
+
+#+begin_src emacs-lisp
+account gmail
+host smtp.gmail.com
+from luishenriquezperez@gmail.com
+port 465
+user luishenriquezperez@gmail.com
+passwordeval "pass email/luishenriquezperez@gmail.com | head -n 1"
+#+end_src
+
+* default account
+:PROPERTIES:
+:ID:       bd69e47b-68ea-45cc-b42d-d6960e7bb437
+:END:
+
+#+begin_src emacs-lisp
+account default : luishp
+#+end_src
+
