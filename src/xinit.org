@@ -14,7 +14,7 @@ when it has to begin a display manager.
 So below I implement the advice given in [[https://lists.gnu.org/archive/html/help-guix/2018-07/msg00080.html][this email]] to create a command that can
 run =xorg= in guix. When I log in I run =sh xinit.sh= to start xorg.
 
-#+begin_src sh :tangle ~/xinit.sh
+#+begin_src sh
 #!/bin/sh
 
 DIR=$HOME/.guix-profile
