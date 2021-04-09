@@ -2559,8 +2559,8 @@ to use =defadvice!= or =anaphoric-defadvice!=.
                             'define-advice!
                           'anaphoric-define-advice!)))
     `(progn
-       ,@(-map (fn! `(,advice-macro ,name (,@before ,<fn> ,@after) ,@body))
-               fns))))
+       ,@(iter (for fn fns)
+	       (collect `(,advice-macro ,name (,@before ,fn ,@after) ,@body))))))
 #+end_src
 
 *** keyfreq
@@ -3414,12 +3414,12 @@ a keymap in the alist is bound. If it is we evaluate its corresponding forms.
 (defun xl-bind%update-deferred-bindings (deferred-bindings)
   "Evaluate bindings whose keymap now exist.
 Return any keymaps whose keymaps still don't exist."
-  (loopy (list (elt &as keymap . forms) deferred-bindings)
-	 (cond ((boundp keymap)
-		(do (xl-log "bind keys from -> %S" keymap)
-		    (funcall `(lambda () (progn ,@forms)))))
-	       (t
-		(collect elt)))))
+  (iter (each (elt &as keymap . forms) deferred-bindings)
+	(cond ((boundp keymap)
+	       (xl-log "bind keys from -> %S" keymap)
+	       (funcall `(lambda () (progn ,@forms))))
+	      (t
+	       (collect elt)))))
 #+end_src
 
 ***** hook for deferred bindings
