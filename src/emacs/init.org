@@ -4747,14 +4747,14 @@ For most functions, sorting their candidates is good. But for some, it doesn't
 make sense. This is advice specifically designed to disable selectrum sorting.
 
 #+begin_src emacs-lisp
-(defun selectrum:disable-sorting (fn)
+(defun selectrum%disable-sorting (fn)
   "Disable sorting for FN."
   (let ((advice (xl-symbol-intern fn '@no-selectrum-sorting)))
-    (defalias advice #'selectrum:disable-selectrum-sorting-advice)
+    (defalias advice #'selectrum%disable-selectrum-sorting-advice)
     (xl-log-function advice)
     (advice-add fn :around advice)))
 
-(defun selectrum:disable-selectrum-sorting-advice (orig-fn &rest args)
+(defun selectrum%disable-selectrum-sorting-advice (orig-fn &rest args)
   (if (bound-and-true-p selectrum-mode)
       (let (selectrum-should-sort-p) (apply orig-fn args))
     (apply orig-fn args)))
@@ -4786,7 +4786,7 @@ displays letters starting at =a= to [[helpvar:selectrum-num-candidates-displayed
 down the alphabet. Fun fact, I actually contributed this feature to selectrum. :confetti-ball:
 
 #+begin_src emacs-lisp
-(defun selectrum:show-letter-index-fn (i)
+(defun selectrum%show-letter-index-fn (i)
   "Return letter corresponding to index."
   (format "%c " (+ 97 (% (1- i) selectrum-num-candidates-displayed))))
 #+end_src
@@ -4802,10 +4802,10 @@ number of indices displayed is 15 and the candidate I want is the 14th one). To
 address this I create this function. It displays letters next to the candidates.
 
 #+begin_src emacs-lisp
-(defun selectrum:select-candidate-by-letter ()
+(defun selectrum%select-candidate-by-letter ()
   "Choose selectrum candidate by letter."
   (interactive)
-  (let ((selectrum-show-indices #'selectrum:show-letter-index-fn))
+  (let ((selectrum-show-indices #'selectrum%show-letter-index-fn))
     (selectrum--update)
     (alet (read-key)
       (unless (= it 27)
@@ -4813,7 +4813,7 @@ address this I create this function. It displays letters next to the candidates.
 
 (bind!
   (:map selectrum-minibuffer-map)
-  (:ie "," #'selectrum:select-candidate-by-letter))
+  (:ie "," #'selectrum%select-candidate-by-letter))
 #+end_src
 
 *** savehist
