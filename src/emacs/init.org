@@ -4703,16 +4703,24 @@ helm wrappers around existing commands.
   (selectrum-should-sort-p            . t)
   (selectrum-count-style              . nil)
   :config
-  (bind!
-    (:map selectrum-minibuffer-map)
-    (:ie "C-o" #'selectrum-submit-exact-input)
-    (:ie "TAB" #'selectrum-next-candidate)
-    (:ie "C-k" #'selectrum-previous-candidate)
-    (:ie "C-j" #'selectrum-next-candidate)
-    (:ie "C-;" #'selectrum-insert-current-candidate)
-    (:ie "C-l" #'selectrum/mark-candidate)
-    (:ie [backtab] #'selectrum-previous-candidate))
   (xl-hook-add 'helm-mode-hook #'selectrum-helm-mode))
+#+end_src
+
+**** bindings
+:PROPERTIES:
+:ID:       97dccbf9-4ffd-4191-87e6-813bc99c3df7
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map selectrum-minibuffer-map)
+  (:ie "C-o" #'selectrum-submit-exact-input)
+  (:ie "TAB" #'selectrum-next-candidate)
+  (:ie "C-k" #'selectrum-previous-candidate)
+  (:ie "C-j" #'selectrum-next-candidate)
+  (:ie "C-;" #'selectrum-insert-current-candidate)
+  (:ie "C-l" #'selectrum/mark-candidate)
+  (:ie [backtab] #'selectrum-previous-candidate))
 #+end_src
 
 **** selectrum-prescient
