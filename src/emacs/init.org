@@ -8145,7 +8145,7 @@ before org-capture is loaded.
   :rule ("bottom" "capture" :newname "\\`CAPTURE-.+")
   :config
   (after! org-agenda
-    (cl-adjoin XL-CAPTURE-FILE org-agenda-files :test #'string=)))
+    (callf2 cl-adjoin XL-CAPTURE-FILE org-agenda-files :test #'string=)))
 #+end_src
 
 **** remove capture headerline
