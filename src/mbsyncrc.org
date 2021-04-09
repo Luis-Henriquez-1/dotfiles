@@ -1,4 +1,4 @@
-#+title: mbsync.org
+#+title: mbsyncrc.org
 #+author: Luis-Henriquez-Perez
 
 * about
@@ -6,7 +6,8 @@
 :ID:       510a2d07-fc4d-40d3-8d27-fbed2f2013f7
 :END:
 
-[[][]] is what controls.
+The =mbsyncrc= is the configuration file that controls =isync=, a program used
+to sync mail from a remote server onto your local machine.
 
 * gmail account
 :PROPERTIES:
@@ -42,11 +43,8 @@ Inbox ~/.mail/luishenriquezperez@gmail.com/Inbox
 
 ** channels
 :PROPERTIES:
-:ID:       8a3e0a17-26bd-4e0c-a7c3-4375d4cd946e
+:ID:       750db49d-7890-420c-86cb-5eebe58da2a6
 :END:
 
-#+begin_src emacs-lisp
-(iter (each )
-      ())
-#+end_src
+The channels can be very repetative.
 
