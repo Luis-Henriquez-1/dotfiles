@@ -5275,8 +5275,8 @@ them displayed.
 #+begin_src emacs-lisp
 (defadvice! inhibit-tab-display (:after tab-bar-mode make-frame)
   "Inhibit the display of tags in tab-bar-mode."
-  (dolist (frame frame-list)
-    (set-frame-parameter frame 'tab-bar-lines 0)))
+  (iter (for frame frame-list)
+	(set-frame-parameter frame 'tab-bar-lines 0)))
 #+end_src
 
 *** desktop
