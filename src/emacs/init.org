@@ -9029,6 +9029,22 @@ Somtimes I might want to adjust this.
 (use-package zone)
 #+end_src
 
+** modus themes
+:PROPERTIES:
+:ID:       b825b4a0-13e4-483e-b793-c0fcd6223897
+:END:
+
+#+begin_src emacs-lisp
+(use-package modus-themes
+  :set
+  (modus-themes-syntax . 'green-strings)
+  (modus-themes-slanted-constructs . t)
+  (modus-themes-bold-constructs . nil)
+  (modus-themes-region . 'no-extend)
+  (modus-themes-org-blocks . t)
+  (modus-themes-no-mixed-fonts . t))
+#+end_src
+
 * web browsing
 :PROPERTIES:
 :ID:       0be0a36f-67dc-4db5-8d0a-321d19bae08a
