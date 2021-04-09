@@ -4770,7 +4770,8 @@ make sense. This is advice specifically designed to disable selectrum sorting.
 
 (defun use-package-handler/:no-sort (name _ fns rest state)
   "Don't sort the functions with selectrum."
-  `(,@(-map (fn! `(selectrum:disable-sorting #',<fn>)) fns)
+  `(,@(loopy (each fn fns)
+	     (collect `(selectrum%disable-sorting #',fn)))
     ,@(use-package-process-keywords name rest state)))
 
 (defalias 'use-package-normalize/:no-sort 'use-package-normalize/:gc-pause)
