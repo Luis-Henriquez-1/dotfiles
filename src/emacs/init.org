@@ -1779,7 +1779,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package list-utils)
 #+end_src
 
-**** require map
+**** map
 :PROPERTIES:
 :ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
 :END:
