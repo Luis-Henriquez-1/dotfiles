@@ -1835,221 +1835,215 @@ what its doing via [[hfn:void-log][xl-log]].
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
-*** hooks
+*** defun macro
 :PROPERTIES:
-:ID:       a9fb6a01-ded5-405c-83ba-c401dbc06400
+:ID:       cd0699fa-57fd-4a8b-99b6-3e98f94f888a
 :END:
 
-One of the most common ways to customize Emacs is via [[info:elisp#Hooks][hooks]]. Hooks are variables
-containing functions (which are sometimes also referred to as hooks). The
-functions in hooks are run after certain events, such as starting and quitting
-emacs. Their purpose is to fascillitate customization of what happens before or
-after particular events.
+This is a macro to address the.
 
-I want hooks to be easily inspectable (if that's a word). For me this means
-naming hooks in such a way that the variable they are hooked to is obvious. This
-also means *always* naming hooks, no matter how small (code-wise) they may be. I
-want to know exactly what's going on when I inspect hook variables.
+**** parser alist
+:PROPERTIES:
+:ID:       fa0773f5-d6be-4c9f-966f-7e8c2e68e40e
+:END:
 
-In this headline, I strive to establish a common naming convention for hooks
-that I define. I want there to be a clear destinction between hooks and regular
-functions.
+#+begin_src emacs-lisp
+(defvar defun%parser-alist nil)
+#+end_src
+
+**** parse-hook
+:PROPERTIES:
+:ID:       f7c0897d-79da-4e73-8ba7-ac5bdedacbfb
+:END:
+
+#+begin_src emacs-lisp
+(callf2 cl-adjoin '(:hook . defun%parse-hook) defun%parser-alist :test #'equal)
+
+(cl-defun defun%parse-hook (init _ hooks &key depth append local)
+  (let-alist init
+    (iter (with (orig-name (intern (format "xl--%s-hook" .name))))
+	  (initially (push `(cl-defun ,orig-name ,.args ,.docstring ,@.body) loopy-result))
+	  (each hook hooks)
+	  (expr hook-fn (xl-symbol-intern hook '& .name))
+	  (collect `(defalias ',hook-fn ',orig-name))
+	  (collect `(add-hook ',hook #',hook-fn ,(or append depth) ,local)))))
+#+end_src
+
+**** parse advice
+:PROPERTIES:
+:ID:       fbff4b81-3a11-42df-a61f-42e6c5771734
+:END:
+
+#+begin_src emacs-lisp
+(iter (for type '(:override :around :before :after))
+      (expr parser 'defun%parse-advice)
+      (collect (cons type parser))
+      (finally-do (callf cl-union defun%parser-alist loopy-result :test #'equal)))
+
+(cl-defun defun%parse-advice (init name advices &key props)
+  (let-alist init
+    (iter (with (orig-name (xl-symbol-intern 'xl-- .name '-advice)))
+	  (initially (push `(cl-defun ,orig-name ,.args ,.docstring ,@.body) loopy-result))
+	  (each advice advices)
+	  (expr fname (xl-symbol-intern .name '@ advice))
+	  (collect `(cl-defun ',fname ',.args ,.docstring ,@.body))
+	  (collect `(advice-add ',fname ,name #',fname)))))
+#+end_src
+
+**** parse generic advice
+:PROPERTIES:
+:ID:       73f153c5-b005-41c1-bc35-3aa47b4339f1
+:END:
+
+#+begin_src emacs-lisp
+(cl-defun defun%parse-advice (init name advices &key props)
+  (let-alist init
+    (let ((gadvice (xl-symbol-intern 'xl-generic-advice- .name))
+	  (apply (xl-symbol-intern 'xl-advice- .name)))
+      `((cl-defun ,gadvice-fn ,.args ,.docstring ,@.body)
+	(defun ,apply-fn (fn) (advice-add fn :around ,gadvice-fn))))))
+#+end_src
+
+**** defun!
+:PROPERTIES:
+:ID:       408d1cdf-5cc6-43e8-813d-15025aa23f13
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defun! (name args docstring &rest body)
+  (declare (indent defun) (doc-string 3))
+  (loopy (loop (while (and (listp (car body)) (keywordp (caar body))))
+	       (collect clauses (pop body)))
+	 (expr init (a-list 'name name 'args args 'docstring docstring 'body body))
+	 (loop (each (command-name . rest) clauses)
+	       (expr command (alist-get command-name defun%parser-alist))
+	       (expr command-args (-take-while (-not #'keywordp) rest))
+	       (expr rest (-drop-while (-not #'keywordp) rest))
+	       (append forms (apply command init command command-args rest)))
+	 (return `(progn ,@forms))))
+#+end_src
+
+**** wrappers around
+:PROPERTIES:
+:ID:       74419a54-dd6e-4c29-81a0-5248ff2a0058
+:END:
+
+***** defhook!
+:PROPERTIES:
+:ID:       57e8e84e-c928-451f-8cfc-1c3b638bc318
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defhook! (name args docstring &rest body)
+  "Wrapper around `defun!'."
+  (declare (indent defun) (doc-string 3))
+  `(defun! ,name (&rest _) ,docstring (:hook ,@args) ,@body))
+#+end_src
+
+***** defadvice!
+:PROPERTIES:
+:ID:       6742346f-f9f5-4898-a1f1-668271f52b8e
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defadvice! (name args docstring &rest body)
+  "Wrapper around `defun!'."
+  (declare (indent defun) (doc-string 3))
+  `(defun! ,name (&rest _) ,docstring (,@args) ,@body))
+#+end_src
+
+***** generic-advice!
+:PROPERTIES:
+:ID:       141da0b0-f721-4576-921b-7d800291267a
+:END:
+
+#+begin_src emacs-lisp
+(defmacro generic-advice! (&rest )
+  (declare (indent defun) (doc-string 3))
+  `(defun! ,name (,@args) () ,@body))
+#+end_src
+
+*** hooks
+:PROPERTIES:
+:ID:       0832d639-564d-4556-a398-ff729a75ac0b
+:END:
+
+I have my own naming convention for hooks. I use it to make it obvious when a
+function is a hook.
 
 **** hook regexp
 :PROPERTIES:
-:ID:       aa93c9c5-aaaa-4732-9065-32e131e96031
+:ID:       5093d6ce-741d-4d11-8ac7-15c02aa45b3b
 :END:
-
-The naming convention with hook functions is =HOOK-VAR@HOOK-ACTION=, where
-=HOOK-VAR= is the hook variable the hook.
 
 #+begin_src emacs-lisp
 (defconst XL-HOOK-REGEXP "\\`\\(.+\\)&\\(.+\\)\\'"
-  "Regexp that matches an XL hook.
-This regexp contains two groups. One group one designates the hook variable
-(what is before the '&') and group two designates the hook function (this is
-what follows the '&').")
+  "Regular expression used to match `xl-' defined hooks.")
 #+end_src
 
-**** whether a symbol is an XL hook
+**** add hook
 :PROPERTIES:
-:ID:       1995a309-e1d3-40e5-b6b1-fbcd81dda0bb
-:END:
-
-Similar to some of the functions designed in [[][]], this function will be
-useful primarily in macros.
-
-#+begin_src emacs-lisp
-(defun xl-hook-fn-p (symbol)
-  "Return non-nil if SYMBOL is a xl-specific hook function symbol."
-  (s-matches-p XL-HOOK-REGEXP (symbol-name symbol)))
-#+end_src
-
-**** access the hook symbol
-:PROPERTIES:
-:ID:       77f45347-3688-438d-8674-39e6d476a2d1
-:END:
-
-A useful consequence of the hook naming convention is I can determine precisely
-which hook symbol a function resides in based on looking at the name
-(=emacs-startup-hook&do-something= would be a hook in =emacs-starup-hook= for
-example). This proves to be useful for [[id:8506fa78-c781-4ca8-bd58-169cce23a504][expire advice]].
-
-#+begin_src emacs-lisp
-(defun xl-hook-hooked-var (xl-hook-fn)
-  "Return the hook variable XL-HOOK-FN is in.
-XL-HOOK-FN is a function named with Void naming conventions."
-  (->> (symbol-name xl-hook-fn)
-       (s-match XL-HOOK-REGEXP)
-       (nth 1)
-       (intern)))
-#+end_src
-
-**** hook action
-:PROPERTIES:
-:ID:       fa705f26-31f0-43c3-80a6-6741e74ab0ea
-:END:
-
-The "action" I speak of is the latter part of the hook. This will most often
-correspond to the name of the variable attached to the hook [[][but not
-always]].
-
-#+begin_src emacs-lisp
-(defun xl-hook-action (xl-hook-fn)
-  "Return the function hook function that corresponds to XL-HOOK-FN."
-  (->> (symbol-name xl-hook-fn)
-       (s-match XL-HOOK-REGEXP)
-       (nth 2)
-       (intern)))
-#+end_src
-
-**** generate an XL hook
-:PROPERTIES:
-:ID:       3e6176f0-75dd-4dd8-a87d-2f47be7f2abf
-:END:
-
-***** produce an XL hook name
-:PROPERTIES:
-:ID:       6b14ea72-b8ef-493d-82e2-962f889736a2
-:END:
-
-This function determines how xl-defined hooks are named. When possible they
-should be in the form of some action so that the hook name will be of the form
-=hook-variable&do-something=. Having the names like this makes it so you can
-actually read through hook functions like reading a todo-list. It will be
-apparent what's being done.
-
-#+begin_src emacs-lisp
-(defun xl-hook-name (hook fn)
-  "Produce a valid xl-hook symbol."
-  (alet (cond ((xl-internal-symbol-p fn)
-	       (->> (symbol-name fn)
-		    (s-chop-suffix "-hook")
-		    (s-chop-prefix "xl--")
-		    (intern)))
-	      (t
-	       fn))
-    (xl-symbol-intern hook '& it)))
-#+end_src
-
-***** produce hook lambda
-:PROPERTIES:
-:ID:       01cdecef-a345-45f0-b38e-5fe0b4939b08
-:END:
-
-When there's a bug with a function (also called a hook) added to a hook
-variable, it interferes with the running of the hook variable. Evaluation stops
-at the error. As a result, hooks following the bugged function aren't
-evaluated. All in all, you get an unpleasant experience with partially evaluated
-code. I've faced this problem numerous times, mostly when I failed to autoload
-the hook for a mode and as a result get a =xl-function= error in the middle of
-the mode's hook.
-
-I would prefer an elegant failure. By this, I mean I'd like the "problem"
-function to report the problem to me without short-circuiting. This is why I
-wrap hook functions in a [[helpfn:condition-case][condition-case]] block.
-
-#+begin_src emacs-lisp
-(defun xl-hook-lambda (fn)
-  "Return a raw hook lambda."
-  `(lambda (&rest args)
-     (condition-case err
-	 (apply #',fn args)
-       (error
-	(xl-log "%s failed." ',fn)))))
-#+end_src
-
-***** produce an XL xl-hook
-:PROPERTIES:
-:ID:       5081274d-61d8-4adf-8646-72b08ca2f3d6
+:ID:       e8d69a71-bab4-4e75-b8f8-33426200a0df
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook (hook fn)
-  "Return a hook symbol based on HOOK and FN."
-  (alet (xl-hook-name hook fn)
-    (fset it (xl-hook-lambda fn))
-    it))
+(cl-defun xl-hook-add (hooks functions &key depth local expire)
+  "Alias FUNCTIONS to follow XL naming convention and add them to HOOKS."
+  (iter (each hook (-list hooks))
+	(iter (each function (-list functions))
+	      (expr name (xl-symbol-intern hook '& fn))
+	      (defalias name function)
+	      (when expire (xl-expire name expire))
+	      (add-hook hook name depth local))))
 #+end_src
 
-**** add an XL hook
+**** remove hook
 :PROPERTIES:
-:ID:       882bc5d2-a0e2-4ea7-b9d2-ab64b3407f82
+:ID:       e8ec61e0-a819-452c-8fb2-bf3023684b53
 :END:
 
-This is a replacement to [[helpfn:add-hook][add-hook]], the main difference being that.
-
 #+begin_src emacs-lisp
-(defun xl-hook-add (hook fn &optional depth local expire-fn)
-  "Add an XL hook function to HOOK.
-Alias FN to abide by XL hook naming conventions. Then add that alias to
-HOOK. DEPTH and LOCAL are the same as in `add-hook'."
-  (alet (xl-hook-name hook fn)
-    (defalias it fn)
-    (add-hook hook it depth local)
-    (xl-log-function it)
-    (xl-report-error it)
-    (xl-expire it expire-fn)))
+(defun xl-remove-hook (hooks)
+  "Remove HOOKS from their correponding hook variable.
+HOOKS is a hook function or a list of hook functions that follow XL naming
+conventions."
+  (iter (each hook (-list hooks))
+	(remove-hook (xl-hook-orig-var hook) hook)))
 #+end_src
 
-**** remove an XL hook
+**** hook function
 :PROPERTIES:
-:ID:       99708d72-a8d4-42ba-b6ae-ba692fbafec8
+:ID:       d5ed128c-32a0-4387-a1e5-b4536ed86c95
 :END:
 
-A consequence of my naming scheme and, in particular, the fact that.
-
 #+begin_src emacs-lisp
-(defun xl-remove-hook (xl-hook-fn)
-  "Remove an XL-HOOK-FN from its hook symbol."
-  (remove-hook (xl-hook-orig-var xl-hook-fn) xl-hook-fn))
+(defun xl-hook-fn-p (hook)
+  "Return non-nil if HOOK is defined with XL naming conventions."
+  (s-match XL-HOOK-REGEXP (symbol-name hook)))
 #+end_src
 
-**** defhook!
+**** original hook variable
 :PROPERTIES:
-:ID:       4daf2baf-ea7f-41f5-9f86-63168089149a
+:ID:       8788ec0c-2ab2-4fb3-b383-55d6ee533e8d
 :END:
 
-=defhook= provides a declarative way declare hook functions using [[helpfn:defun][defun]] syntax.
+#+begin_src emacs-lisp
+(defun xl-hook-orig-var (hook)
+  "Return hook variable for HOOK.
+HOOK is a hook function defined with xl naming conventions."
+  (nth 1 (xl-hook-fn-p hook)))
+#+end_src
+
+**** original hook function
+:PROPERTIES:
+:ID:       640d7e5d-d3a7-43be-94df-0fb9c02201d9
+:END:
 
 #+begin_src emacs-lisp
-(defmacro defhook! (name args &rest body)
-  "Define a hook function and attatch it to HOOK and HOOKS.
-DEPTH and LOCAL are the same as in `add-hook'. BODY is the body of the hook
-function.
-
-\(NAME (HOOK &REST HOOKS &OPTIONAL DEPTH LOCAL) &rest BODY)"
-  (declare (doc-string 3))
-  (-let* ((hooks (-take-while (-not #'keywordp) args))
-          (local (plist-get hooks :local))
-          (depth (or (plist-get hooks :append) (plist-get hooks :depth)))
-          ((docstring _ body) (xl-keyword-macro-args body))
-          (hook-name (xl-symbol-intern 'xl-- name '-hook)))
-    `(progn
-       ,@(mapcar (lambda (hook)
-                   `(aprog1 (defun ,hook-name (&rest _) ,docstring ,@body)
-                      (xl-hook-add ',hook it ,t ,local)))
-                 hooks))))
+(defun xl-hook-orig-fn (hook)
+  "Return the hook function for HOOK.
+HOOK is a hook function that follows XL naming conventions."
+  (nth 2 (xl-hook-fn-p hook)))
 #+end_src
 
 *** advice
@@ -2060,101 +2054,14 @@ function.
 I want to name advices so that they can be distinguished from other functions. I
 also want to be able to deduce the function being advised from the name.
 
-**** regexp for XL advices
+**** advice regexp
 :PROPERTIES:
-:ID:       7a0b9669-e15c-40c1-9cf2-adc7cb27b7ab
+:ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
 :END:
-
-The naming convenion for advices is similar to [[][that of hooks]] but the
-symbol separating the advised function from its advice is an =@=.
 
 #+begin_src emacs-lisp
 (defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
-  "Regexp used to match XL advices.")
-#+end_src
-
-**** whether a symbol is an XL advice
-:PROPERTIES:
-:ID:       0a84d983-39ad-48d1-af9d-b43589d63bcf
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-fn-p (fn)
-  "Return non-nil if FN is an XL advice."
-  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
-#+end_src
-
-**** advised function
-:PROPERTIES:
-:ID:       74aee21a-3549-488b-b6f1-de9549e7e358
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-advised-fn (xl-advice-fn)
-  "Return the function that ADVICE-FN advices."
-  (->> (symbol-name xl-advice-fn)
-       (s-match XL-ADVICE-REGEXP)
-       (nth 1)
-       (intern)))
-#+end_src
-
-**** advice action
-:PROPERTIES:
-:ID:       f893fbe8-592b-409e-8de7-6060e936456f
-:END:
-
-Similar to hooks, the action will usually correspond to the advice but [[][there
-are exceptions]]. To access the original function used for creating the advice,
-[[helpfn:indirect-function][indirect-function]] should be used.
-
-#+begin_src emacs-lisp
-(defun xl-advice-action (xl-advice-fn)
-  "Return the symbol."
-  (->> (symbol-name xl-advice-fn)
-       (s-match XL-ADVICE-REGEXP)
-       (nth 2)
-       (intern)))
-#+end_src
-
-**** advice name
-:PROPERTIES:
-:ID:       03416f82-ced7-42a0-843b-6975903f0b38
-:END:
-
-Most of the time I will.
-
-#+begin_src emacs-lisp
-(defun xl-advice-name (fn advice)
-  "Return XL advice symbol for FN and ADVICE."
-  (alet (cond ((xl-internal-symbol-p advice)
-	       (->> (symbol-name advice)
-		    (s-chop-suffix "-advice")
-		    (s-chop-prefix "xl-")
-		    (intern)))
-	      (t
-	       advice))
-    (xl-symbol-intern fn '@ it)))
-#+end_src
-
-**** add XL advice
-:PROPERTIES:
-:ID:       3ab8947c-15f0-4fb7-bd75-f0baabc20ec1
-:END:
-
-Often, I advise functions with other existing functions (such as =#'ignore=)
-instead of defining my own advices. To maintain consistency with the naming
-convention I created [[helpfn:xl-advice-add][xl-add-advice]]. It will create an advice with an
-appropriate name to target.
-
-#+begin_src emacs-lisp
-(defun xl-advice-add (symbol where fn &optional props expire-fn)
-  "Advise SYMBOLS with ADVICES."
-  (let ((advice (xl-advice-name symbol fn)))
-    (defalias advice fn)
-    (advice-add symbol where advice props)
-    (xl-log-function advice)
-    (when expire-fn
-      (xl-expire advice expire-fn))))
+  "Regular expression that matches.")
 #+end_src
 
 **** remove XL advice
@@ -2166,10 +2073,51 @@ Since we can get the advisee from the advise name, or remove advice only needs
 one argument--the advice to remove.
 
 #+begin_src emacs-lisp
-(defun xl-advice-remove (xl-advice-fn)
-  "Remove XL-ADVICE-FN from the function it is advising."
-  (alet (xl-advice-advised-fn xl-advice-fn)
-    (advice-remove it xl-advice-fn)))
+(defun xl-advice-remove (advices)
+  "Remove ADVICES from the functions they advise.
+ADVICES is an advice or a list of advices."
+  (iter (each advice (-list advices))
+	(advice-remove (xl-advice-orig-fn advice) advice)))
+#+end_src
+
+**** adding an advice
+:PROPERTIES:
+:ID:       14e23074-10ea-41cc-88e5-bac600658b20
+:END:
+
+#+begin_src emacs-lisp
+(cl-defun xl-advice-add (functions where advices &key depth local)
+  "Add ADVICES to FUNCTIONS.
+WHERE, DEPTH and LOCAL are the same as in `advice-add'."
+  (iter (each function (-list functions))
+	(iter (each advice (-list advices))
+	      (expr name (xl-symbol-intern function '@ advice))
+	      (defalias name function)
+	      (advice-add function where advice))))
+#+end_src
+
+**** original fn
+:PROPERTIES:
+:ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-fn (advice)
+  "Return the function ADVICE is advised to.
+ADVICE is an advice function that follows XL naming conventions."
+  (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice))))
+#+end_src
+
+**** original advice
+:PROPERTIES:
+:ID:       49f49994-637a-4e26-b680-3535463ee8bf
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-advice (advice)
+  "Return the function that ADVICE aliases.
+ADVICE is an advice function that follows XL naming conventions."
+  (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice))))
 #+end_src
 
 **** generic advices
@@ -2180,12 +2128,7 @@ one argument--the advice to remove.
 There are some advices that are used so often that they do not lend themselves
 to =defadvice!=, which is better suited for a unique hook defined only once.
 
-***** reporting errors
-:PROPERTIES:
-:ID:       ba191c78-f0e6-4edc-aac8-020eb1b6f1c8
-:END:
-
-****** catch errors
+***** catch errors
 :PROPERTIES:
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
@@ -2198,75 +2141,31 @@ pre-emptively insert FN. A similar situation occurs with [[][generic expiring
 advice]].
 
 #+begin_src emacs-lisp
-(defun xl-report-error-advice (fn)
-  "Advice that catches errors from ORIG-FN."
-  `(lambda (orig-fn &rest args)
-     (condition-case error
-	 (apply orig-fn args)
-       (error (xl-log "Failed evaluating %S because of: %S"
-		      #',fn
-		      (error-message-string error))))))
-
-(defun xl-report-error (fn)
-  "Advise a function to gracefully report an error."
-  (let ((alias (xl-symbol-intern fn '@report-error)))
-    (defalias alias (xl-report-error-advice fn))
-    (xl-log-function alias)
-    (advice-add fn :around alias)))
+(defgadvice! catch-error (orig-fn &rest args)
+  "Catch and log any error."
+  (condition-case error
+      (apply orig-fn args)
+    (error
+     (xl-log "Failed calling %s because of %s" orig-fn (error-message-string error)))))
 #+end_src
 
-***** expiration
+***** expire
 :PROPERTIES:
-:ID:       c8092696-030e-4609-9485-89920eddaaec
+:ID:       437e07f7-e506-4dcf-aa88-d2c962d186ba
 :END:
 
 Sometimes I am confronted with hooks or advices that either should'nt be be
 called more than once. A common example is [[][loading a dependency for a
 package]]. 
 
-****** expire advice lambda
-:PROPERTIES:
-:ID:       c280627b-ca96-46e7-ba2d-9754afa991fc
-:END:
-
-When a function has expired, it is removed from any hooks or advices it is in,
-and, additionally, it is ignored. The expire advice remains on the function.
-
 #+begin_src emacs-lisp
-(defun xl-expire-lambda (fn expire-condition)
-  "Return an around advice that expires on EXPIRE-CONDITION."
-  `(lambda (&rest _)
-     (when (funcall #',expire-condition)
-       (when (xl-advice-fn-p #',fn)
-	 (xl-advice-remove #',fn))
-       (when (xl-hook-fn-p #',fn)
-	 (xl-hook-remove #',fn))
-       (xl-log "%s has expired." #',fn))))
-#+end_src
-
-****** expire advice
-:PROPERTIES:
-:ID:       8506fa78-c781-4ca8-bd58-169cce23a504
-:END:
-
-Often there are functions you want to advise just once. For example, loading a
-feature just before a function that needs it is called. Although it's harmless,
-you don't want to keep reloading the feature everytime the function is called.
-The way I handle this situation is by creating a function that generates an
-=expire-advice=. When an =expire-advice= it will.
-
-Note that this function returns must be evaluated with lexical binding to work.
-
-#+begin_src emacs-lisp
-(defun xl-expire (fn &optional expire-condition)
-  "Cause FN to expire when EXPIRE-CONDITION is true.
-If EXPIRE-CONDITION is nil, do nothing."
-  (when expire-condition
-    (let ((expire-fn (xl-symbol-intern fn '@expire))
-	  (pred (if (eq t expire-condition) #'xl-true expire-condition)))
-      (fset expire-fn (xl-expire-lambda fn pred))
-      (xl-log-function expire-fn)
-      (advice-add fn :after expire-fn))))
+(defgadvice! expire (orig-fn args)
+  (apply orig-fn args)
+  (cond ((xl-advice-fn-p orig-fn)
+	 (xl-advice-remove orig-fn))
+	((xl-hook-fn-p orig-fn)
+	 (xl-hook-remove orig-fn)))
+  (xl-log "%s has been removed from %s" orig-fn))
 #+end_src
 
 ***** assume yes in prompts
@@ -2280,11 +2179,7 @@ second I spend typing =y= or =n= is not worth the benefit ([[helpfn:ert-delete-a
 is an example).
 
 #+begin_src emacs-lisp
-(defun xl-assume-yes (fn &optional props expire-fn)
-  "Ignore yes or no prompt."
-  (xl-advice-add fn :around #'xl-assume-yes-advice props expire-fn))
-
-(defun xl-assume-yes-advice (orig-fn &rest args)
+(defgadvice! assume-yes (orig-fn &rest args)
   "An advice that makes `y-or-n-p' return t without prompt."
   (noflet ((y-or-n-p (prompt) t))
     (apply orig-fn args)))
@@ -2300,16 +2195,9 @@ unecessary or, as an experienced user, I get it already. In these cases I prefer
 to silence the said messages.
 
 #+begin_src emacs-lisp
-(defun xl-silence-output-advice (orig-fn &rest args)
-  "Around advice for silencing output."
-  (shut-up (apply orig-fn args)))
-
-(defun xl-silence-output (fn)
+(defgadvice! silence-output (orig-fn &rest args)
   "Silence output of FN."
-  (let ((alias (xl-symbol-intern fn '@ 'silence)))
-    (defalias alias #'xl-silence-output-advice)
-    (xl-log-function alias)
-    (advice-add fn :around alias)))
+  (shut-up (apply orig-fn args)))
 #+end_src
 
 ***** logging certain functions
@@ -2331,12 +2219,12 @@ want to log it differently.
   "Return the message logged."
   (cond ((xl-hook-fn-p fn)
 	 (format "& %s -> %s"
-		 (xl-hook-hooked-var fn)
+		 (xl-hook-orig-var fn)
 		 (xl-hook-action fn)))
 	((xl-advice-fn-p fn)
 	 (format "@ %s -> %s"
-		 (xl-advice-advised-fn fn)
-		 (xl-advice-action fn)))
+		 (xl-advice-orig-fn fn)
+		 (xl-advice-orig-advice fn)))
 	(t
 	 (format "%s called" fn))))
 #+end_src
@@ -2364,7 +2252,7 @@ log function that is added to FN."
     it))
 #+end_src
 
-***** reduce gc-cons-threshold
+***** pause garbarge collection
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
@@ -2374,14 +2262,7 @@ example is [[helpfn:helm-system-packages][helm-system-packages]], function that 
 packages which can contain several thousand items.
 
 #+begin_src emacs-lisp
-(defun xl-pause-gc (fn)
-  "Pause garbage collection for the duration of FN."
-  (let ((alias (xl-symbol-intern fn '@ 'pauce-gc)))
-    (defalias alias #'xl-pause-gc-advice)
-    (xl-log-function alias)
-    (advice-add fn :around alias)))
-
-(defun xl-pause-gc-advice (orig-fn &rest args)
+(defgadvice! pause-gc (orig-fn &rest args)
   "An around advice that pauses `gc-cons-threshold'."
   (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
     (apply orig-fn args)))
@@ -2392,14 +2273,11 @@ packages which can contain several thousand items.
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
 
-#+begin_src emacs-lisp
-(defun xl-log-instead-of-message (fn &rest props expire-fn)
-  "Use `xl-log' instead of `message'."
-  (xl-advice-add fn :around #'xl-message-xl-log-advice props expire-fn))
+Sometimes I want to use =xl-log= instead of =message=.
 
-(defun xl-log-instead-of-msg-advice (orig-fn &rest args)
-  "An advice that makes calls to message happen with `xl-log'."
-  (cl-letf (((symbol-function 'message) #'xl-log))
+#+begin_src emacs-lisp
+(defgadvice! use-xl-log-instead (orig-fn &rest args)
+  (noflet ((message (&rest message-args) (apply #'xl-log message-args)))
     (apply orig-fn args)))
 #+end_src
 
@@ -2409,9 +2287,8 @@ packages which can contain several thousand items.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-ignore (fn)
-  "Ignore FN."
-  (xl-advice-add fn :override #'ignore))
+(defgadvice! ignore (orig-fn &rest args)
+  (xl-log "Ignoring %s %s." orig-fn args))
 #+end_src
 
 ***** loading on call
@@ -2471,109 +2348,6 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :after fn))
 #+end_src
 
-
-**** defadvice!
-:PROPERTIES:
-:ID:       1e0f3a27-a7d8-4e28-a359-f42ed7a16033
-:END:
-
-This section pertains to [[helpfn:defadvice!][defadvice!]], a replacement for [[helpfn:define-advice][define-advice]] that
-provides a declarative way to define advices. This should be used for one-time
-advices that.
-
-***** define-advice!
-:PROPERTIES:
-:ID:       cc161eaf-a8fb-4e24-853f-a76a49c28dcf
-:END:
-
-The only difference between this and [[helpfn:define-advice][define-advice]] is that =NAME= and =SYMBOL= are
-switched. In my opinion, the unique part of the function name being first is
-more consistent with =defun=.
-
-#+begin_src emacs-lisp
-(defmacro define-advice! (name args &rest body)
-  "A wrapper around `define-advice'.
-The only difference is that this switches the order the arguments have to be
-passed in.
-
-\(fn ACTION (WHERE &optional ADVICE-ARGS TARGET &rest TARGETS) &rest BODY)"
-  (declare (indent 2) (doc-string 3) (debug (sexp sexp body)))
-  (unless (listp args)
-    (signal 'wrong-type-argument (list #'listp args)))
-  (-let (((where lambda-args fn props) args)
-         (advice-name (intern (format "xl-%s-advice" name))))
-    `(aprog1 (defun ,name ,lambda-args ,@body)
-       (xl-advice-add #',fn ,where it ,props))))
-#+end_src
-
-***** anaphoric defadvice!
-:PROPERTIES:
-:ID:       98b2ce63-da31-4f7a-b776-1ee1747b5d57
-:END:
-
-=anaphoric-define-advice!= lets you omit the =lambda-args=. If you do omit the
-arguments and you want to use them, you can do so via [[id:9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df][anaphoric variables]].
-
-Note that [[helpfn:help-function-arglist][help-function-arglist]] returns =t= when it fails to get the function
-arguments.
-
-#+begin_src emacs-lisp
-(defmacro anaphoric-define-advice! (name args &rest body)
-  "A variant of `define-advice!'.
-Unlike `define-advice!', this macro does not take an arglist as an argument.
-Instead, arguments are accessed via anaphoric variables.
-
-\(fn ACTION (WHERE TARGET &rest TARGETS) &rest BODY)"
-  (-let* (((where target . other-args) args)
-          (advice-args (if (eq where :around)
-                           '(<orig-fn> &rest <args>)
-                         '(&rest <args>))))
-    `(define-advice! ,name (,where ,advice-args ,target ,@other-args)
-       (ignore <args>)
-       (cl-progv
-           (->> (alet (help-function-arglist #',target t)
-		  ;; kind of a hack...
-		  (if (eq t it) nil it))
-		(-remove (fn! (s-starts-with-p "@" (symbol-name <>))))
-		(-map (fn! (intern (format "<%s>" (symbol-name <>))))))
-	   <args>
-	 ,@body))))
-#+end_src
-
-***** defadvice!
-:PROPERTIES:
-:ID:       d8773e00-1abe-4b03-82f0-07b47e93ccb4
-:END:
-
-This macro takes care of allowing multiple advices and deciding between whether
-to use =defadvice!= or =anaphoric-defadvice!=.
-
-#+begin_src emacs-lisp
-(defmacro defadvice! (name args &rest body)
-  "Define and advice.
-
-\(fn ACTION (WHERE &optional ARGS-LIST TARGET &rest TARGETS) &rest BODY)"
-  (-let* ((symbols-only (lambda (it) (and (symbolp it) (not (keywordp it)))))
-          ((before fns after) (-partition-by symbols-only args))
-          (advice-macro (if (listp (nth 1 args))
-                            'define-advice!
-                          'anaphoric-define-advice!)))
-    `(progn
-       ,@(iter (for fn fns)
-	       (collect `(,advice-macro ,name (,@before ,fn ,@after) ,@body))))))
-#+end_src
-
-*** keyfreq
-:PROPERTIES:
-:ID:       626b35f7-eef1-4a75-b2dc-8600c1ac47b7
-:END:
-
-=keyfreq= records the frequency of key strokes.
-
-#+begin_src emacs-lisp
-(use-package keyfreq
-  :hook emacs-startup-hook)
-#+end_src
 
 *** idle-require
 :PROPERTIES:
@@ -2724,12 +2498,11 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 (defun xl/kill-emacs-processes ()
   "Kill all emacs processes."
   (interactive)
-  (let ((count 1) (process "emacs"))
-    (kill-process process)
-    (while (ignore-errors (kill-process process))
-      (setq process (format "emacs<%d>" count))
-      (cl-incf count))
-    (message "killed %d processes" count)))
+  (loopy (with (count 1) (process "emacs"))
+	 (while (ignore-errors (kill-process process)))
+	 (expr process (format "emacs<%d>" count))
+	 (do (incf count))
+	 (finally (message "killed %d processes" count))))
 #+end_src
 
 **** important buffers
