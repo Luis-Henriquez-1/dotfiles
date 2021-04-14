@@ -4163,53 +4163,49 @@ prompt asking me if I'm sure.
 :END:
 
 #+begin_src emacs-lisp
-(use-package calc
+(use-package window
   :set
-  (calc-angle-mode . 'rad)
-  (calc-symbolic-mode . t))
+  (split-width-threshold . 160))
 #+end_src
 
-*** clipboard
+** workspaces
 :PROPERTIES:
-:ID:       6aa6d0ac-6cf8-4f82-a724-c56d69cc062b
+:ID:       c979c631-4098-4204-b067-82f58b5b9ebe
+:END:
+
+*** tab-bar-mode
+:PROPERTIES:
+:ID:       0a72fe9a-1948-4022-a300-18a4881da382
+:END:
+
+**** settings
+:PROPERTIES:
+:ID:       bb63f5b2-cc45-454b-a032-be248f801636
 :END:
 
 #+begin_src emacs-lisp
-(use-package clipboard
+(use-package tab-bar-mode
+  :hook (tab-bar-mode-hook . tab-bar-history-mode)
   :set
-  (selection-coding-system . 'utf-8)
-  (select-enable-clipboard . t)
-  (select-enable-primary   . t)
-  (x-select-request-type   . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+  (tab-bar-new-tab-choice . "*scratch*")
+  (tab-bar-history-limit  . 25)
+  (tab-bar-tab-hints      . nil)
+  (tab-bar-show           . nil))
 #+end_src
 
-*** simple
+**** dont actually display the tabs
 :PROPERTIES:
-:ID: 89df102a-a2c9-4ece-9acc-ed90e8064ed8
+:ID:       e4cee146-f6ac-47f1-9e98-f209ae9f9bec
 :END:
 
-#+begin_src emacs-lisp
-(use-package simple
-  :rule ("bottom" "messages" :newname "\\*Messages\\*")
-  :set
-  (delete-trailing-lines . nil)
-  (blink-matching-paren  . t)
-  (idle-update-delay     . 1))
-#+end_src
-
-**** loaddefs
-:PROPERTIES:
-:ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
-:END:
-
-These are *extremely* important lines if you use an external program as I do
-([[https://wiki.archlinux.org/index.php/Msmtp][msmtp]]) to send your email. If you don't set these variables, emacs will
-think you want to use =smtp=.
+I want the tabs to exist as a concept, but (ironically) I don't actually want
+them displayed.
 
 #+begin_src emacs-lisp
-(use-package loaddefs
-  :set
-  (disabled-command-function . nil))
+(defadvice! inhibit-tab-display (:after tab-bar-mode make-frame)
+  "Inhibit the display of tags in tab-bar-mode."
+  (iter (for frame frame-list)
+	(set-frame-parameter frame 'tab-bar-lines 0)))
 #+end_src
 
 *** files
