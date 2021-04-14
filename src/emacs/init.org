@@ -2167,10 +2167,7 @@ package]].
 
 (defgadvice! remove-hook (orig-fn args)
   (apply orig-fn args)
-  (cond ((xl-advice-fn-p orig-fn)
-	 (xl-advice-remove orig-fn))
-	((xl-hook-fn-p orig-fn)
-	 (xl-hook-remove orig-fn)))
+  (when (xl-hook-fn-p orig-fn) (xl-hook-remove orig-fn))
   (xl-log "%s has been removed from %s" orig-fn))
 #+end_src
 
