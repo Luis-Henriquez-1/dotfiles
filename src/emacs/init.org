@@ -3093,8 +3093,8 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 #+begin_src emacs-lisp
 (defhook! lock-certain-buffers (after-init-hook)
   "Prevent certain buffers from being killed."
-  (dolist (buffer (list "*scratch*" "*Messages*"))
-    (with-current-buffer buffer (emacs-lock-mode 'kill))))
+  (iter (each buffer (list "*scratch*" "*Messages*"))
+	(with-current-buffer buffer (emacs-lock-mode 'kill))))
 #+end_src
 
 ** keybindings
