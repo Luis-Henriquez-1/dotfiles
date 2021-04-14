@@ -2159,7 +2159,13 @@ called more than once. A common example is [[][loading a dependency for a
 package]]. 
 
 #+begin_src emacs-lisp
-(defgadvice! expire (orig-fn args)
+(defgadvice! remove-advice (orig-fn args)
+  "Remove ORIG-FN from"
+  (apply orig-fn args)
+  (when (xl-advice-fn-p orig-fn) (xl-advice-remove orig-fn))
+  (xl-log "%s has been removed from %s" orig-fn))
+
+(defgadvice! remove-hook (orig-fn args)
   (apply orig-fn args)
   (cond ((xl-advice-fn-p orig-fn)
 	 (xl-advice-remove orig-fn))
