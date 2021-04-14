@@ -2582,21 +2582,6 @@ a significant lag and Emacs is blocked while it is tangling.
      (message (if result "Successfully tangled %s" "Failed to tangle %s") "init.org"))))
 #+end_src
 
-***** do tangling on save
-:PROPERTIES:
-:ID:       b82cffda-bafd-469d-930a-be9c9603c4f7
-:END:
-
-Right now, this hook happens in every file that's being saved, which is
-wasteful. I'd rather just make this just happen in the README buffer.
-
-#+begin_src emacs-lisp
-(defhook! tangle-readme (after-save-hook)
-  (when (and (string= (buffer-file-name) XL-README-FILE)
-	     (file-newer-than-file-p XL-README-FILE user-init-file))
-    (xl-tangle-readme-async)))
-#+end_src
-
 **** open Emacs instance
 :PROPERTIES:
 :ID:       287537bc-f1a7-4c04-bbb6-c372df540e04
@@ -4167,14 +4152,14 @@ prompt asking me if I'm sure.
   ("b" #'xl/kill-emacs-brutally))
 #+end_src
 
-** built-in packages
+* window management
 :PROPERTIES:
-:ID:       64672bc4-5c7c-4aed-bd69-50c85cc77828
+:ID:       f8f186bd-a701-4bd4-a249-86ec4faff83b
 :END:
 
-*** calc
+** window
 :PROPERTIES:
-:ID:       12d76812-a7c4-4680-ae81-0f61eb4827e7
+:ID:       af27cd7e-2096-4f6d-a749-63e4c38d136c
 :END:
 
 #+begin_src emacs-lisp
