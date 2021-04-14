@@ -1,5 +1,6 @@
 #+title: init.org
 #+author: Luis-Henriquez-Perez
+#+property: header-args :tangle /.config/emacs/init.el
 
 * ensure lexical binding
 :PROPERTIES:
@@ -332,6 +333,17 @@ put together into one symbol. This function is meant to just do what I mean.
   "Return ARGS as a symbol."
   (declare (pure t) (side-effect-free t))
   (intern (apply #'xl-to-string args)))
+#+end_src
+
+***** intern format
+:PROPERTIES:
+:ID:       b371718f-2067-450c-8117-fb22f44be208
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-intern-format (format-string &rest args)
+  "Return format string as a symbol."
+  (intern (apply #'format format-string args)))
 #+end_src
 
 ***** keyword intern
