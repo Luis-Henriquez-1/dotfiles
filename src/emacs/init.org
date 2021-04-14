@@ -2798,11 +2798,9 @@ I'm not sure why, but [[helpfn:emacs-init-time][emacs-init-time]] is not complet
 circumstances. The one I'm referring to now is with general prefix bindings.
 
 #+begin_src emacs-lisp
-(defun xl--log-init-time-hook (&rest _)
+(defhook! log-init-time (emacs-startup-hook)
   "Log the init time."
   (xl-log "emacs-init-time -> %s" (emacs-init-time)))
-
-(xl-hook-add 'emacs-startup-hook #'xl--log-init-time-hook t nil)
 #+end_src
 
 **** startup
@@ -2862,12 +2860,13 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
 
 #+begin_src emacs-lisp
 (use-package server
-  :init
-  (defhook! run-server-maybe (emacs-startup-hook)
-    (require 'server)
-    (unless (server-running-p) (server-start)))
   :set
   (server-auth-dir . (concat XL-CACHE-DIR "server/")))
+
+(defhook! run-server-maybe (emacs-startup-hook)
+  "Run emacs as a server if it's not running already."
+  (require 'server)
+  (unless (server-running-p) (server-start)))
 #+end_src
 
 **** linux
@@ -3049,7 +3048,6 @@ example, if I'm using evil I need to update the cursor color.
 
 (defadvice! run-after-load-theme-hook (:after load-theme)
   "Set up `xl-load-theme-hook' to run after `load-theme' is called."
-  (setq xl-theme <theme>)
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
@@ -3066,7 +3064,7 @@ a new theme.
 (defadvice! disable-old-themes (:around load-theme)
   "Disable old themes before loading new ones."
   (mapc #'disable-theme custom-enabled-themes)
-  (apply <orig-fn> <args>))
+  (apply orig-fn args))
 #+end_src
 
 **** disable terminal initialization
