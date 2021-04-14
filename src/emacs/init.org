@@ -1898,10 +1898,10 @@ This is a macro to address the.
 #+begin_src emacs-lisp
 (cl-defun defun%parse-advice (init name advices &key props)
   (let-alist init
-    (let ((gadvice (xl-symbol-intern 'xl-generic-advice- .name))
-	  (apply (xl-symbol-intern 'xl-advice- .name)))
-      `((cl-defun ,gadvice-fn ,.args ,.docstring ,@.body)
-	(defun ,apply-fn (fn) (advice-add fn :around ,gadvice-fn))))))
+    (let ((generic-advice-fn (xl-symbol-intern 'xl-generic-advice- .name))
+	  (advice-fn (xl-symbol-intern 'xl-advice- .name)))
+      `((cl-defun ,generic-advice-fn ,.args ,.docstring ,@.body)
+	(cl-defun ,advice-fn (fn) (advice-add fn :around ,advice-fn))))))
 #+end_src
 
 **** defun!
@@ -2030,7 +2030,7 @@ conventions."
 #+begin_src emacs-lisp
 (defun xl-hook-orig-var (hook)
   "Return hook variable for HOOK.
-HOOK is a hook function defined with xl naming conventions."
+HOOK is a hook function defined with XL naming conventions."
   (nth 1 (xl-hook-fn-p hook)))
 #+end_src
 
@@ -3812,8 +3812,8 @@ override an evil keymap).
 #+begin_src emacs-lisp
 (defhook! make-intercept-map (evil-mode-hook)
   "Register `xl-override-map' as an intercept map."
-  (--each '(normal motion visual insert emacs)
-    (evil-make-intercept-map xl-override-mode-map it t)))
+  (iter (each state '(normal motion visual insert emacs))
+	(evil-make-intercept-map xl-override-mode-map state t)))
 #+end_src
 
 **** binding the leader keys to the prefix map
