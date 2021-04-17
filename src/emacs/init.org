@@ -1912,7 +1912,7 @@ This is a macro to address the.
 (cl-defun defun%parse-gadvice (init name bool &rest _)
   (let-alist init
     (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
-	  (advice-fn (xl-intern-format "xl--%s-advice" .name)))
+	  (advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
       (when bool
 	`((cl-defun ,generic-advice-fn ,.args ,.docstring ,@.body)
 	  (cl-defun ,advice-fn (fn) (advice-add fn :around ,advice-fn)))))))
