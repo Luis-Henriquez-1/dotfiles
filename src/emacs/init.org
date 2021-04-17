@@ -2223,7 +2223,7 @@ unecessary or, as an experienced user, I get it already. In these cases I prefer
 to silence the said messages.
 
 #+begin_src emacs-lisp
-(defgadvice! silence-output (orig-fn &rest args)
+(defgadvice! shut-up (orig-fn &rest args)
   "Silence output of FN."
   (shut-up (apply orig-fn args)))
 #+end_src
