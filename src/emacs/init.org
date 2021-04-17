@@ -1914,8 +1914,8 @@ This is a macro to address the.
     (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
 	  (advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
       (when bool
-	`((cl-defun ,generic-advice-fn ,.args ,.docstring (advice-add fn :around ,advice-fn))
-	  (cl-defun ,advice-fn (fn) ,@.body))))))
+	`((cl-defun ,generic-advice-fn (fn) (advice-add fn :around ,advice-fn))
+	  (cl-defun ,advice-fn ,.args ,.docstring ,@.body))))))
 #+end_src
 
 **** defun!
