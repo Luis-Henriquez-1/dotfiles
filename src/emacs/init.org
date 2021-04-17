@@ -2344,7 +2344,7 @@ this it adds an =XL= advice that loads the feature to the function.
     (fset it `(lambda (&rest _)
                 (xl-log "Loading %s" ',package)
                 (require ',package)))
-    (xl-advice-add fn where it)))
+    (advice-add fn where it)))
 #+end_src
 
 ****** load before call
