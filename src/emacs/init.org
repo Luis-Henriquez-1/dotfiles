@@ -1430,36 +1430,6 @@ Sometimes I want to alias certain.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** advice
-:PROPERTIES:
-:ID:       c8f56e77-7e95-493e-bf10-0bb8daccbd1e
-:END:
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :advice)
-
-(defun use-package-normalize/:advice (_ _ advices)
-  "Ensure that ADVICES is a list of advice arguments.
-ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
-and EXPIRE-FN are optional."
-  (loopy (list it advices)
-	 (cond ((-cons-pair-p it)
-		(expr fn advice)
-		(collect (list :around fn advice)))
-	       ((listp it)
-		(expr (key . rest) it)
-		(subloop (list (fn . advice) rest)
-			 (collect (list key fn advice))))
-	       (t
-		(do (error ""))))))
-
-(defun use-package-handler/:advice (name _ advices rest state)
-  "Generate forms that add advice."
-  `(,@(loopy (list (where symbol advice props expire-fn) advices)
-	     (collect `(xl-advice-add #',symbol ,where #',advice ,props ,expire-fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
 ****** xl-advice
 :PROPERTIES:
 :ID:       1a0d6ff0-0dcd-4374-b52c-79bf617b3a2b
