@@ -1982,7 +1982,6 @@ function is a hook.
 	(iter (each function (-list functions))
 	      (expr name (xl-symbol-intern hook '& function))
 	      (defalias name function)
-	      (ignore expire)
 	      (add-hook hook name depth local))))
 #+end_src
 
