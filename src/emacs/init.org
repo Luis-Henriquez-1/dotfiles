@@ -4712,7 +4712,7 @@ This package.
   "Don't let `selectrum-prescient' filter or highlight. "
   (let ((selectrum-refine-candidates-function selectrum-refine-candidates-function)
 	(selectrum-highlight-candidates-function selectrum-highlight-candidates-function))
-    (apply <orig-fn> <args>)))
+    (apply orig-fn args)))
 #+end_src
 
 *** consult
