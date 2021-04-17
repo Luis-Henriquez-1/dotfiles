@@ -9939,10 +9939,11 @@ These are my newsfeed for =elfeed-org=.
 :END:
 
 #+begin_src emacs-lisp
-(defhook! quit-emms (kill-emacs-hook)
-  "Shut down EMMS."
-  (when emms-player-playing-p (emms-pause))
-  (emms-stop))
+(after! emms
+  (defhook! quit-emms (kill-emacs-hook)
+    "Shut down EMMS."
+    (when emms-player-playing-p (emms-pause))
+    (emms-stop)))
 #+end_src
 
 ** eshell
