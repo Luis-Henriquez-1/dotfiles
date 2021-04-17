@@ -2137,7 +2137,7 @@ ADVICE is an advice function that follows XL naming conventions."
 :END:
 
 There are some advices that are used so often that they do not lend themselves
-to =defadvice!=, which is better suited for a unique hook defined only once.
+to =defadvice!=, which is better suited for a unique advice defined only once.
 
 ***** catch errors
 :PROPERTIES:
