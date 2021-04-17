@@ -2110,6 +2110,14 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 	      (advice-add function where advice))))
 #+end_src
 
+**** advice-fn-p
+:PROPERTIES:
+:ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 **** original fn
 :PROPERTIES:
 :ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
