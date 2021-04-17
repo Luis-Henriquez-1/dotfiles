@@ -1447,13 +1447,13 @@ ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
   (loopy (each (where . pairs) advices)
 	 (loop (each (fn . advice) pairs)
-	       (collect `(,where ,fn ,advice)))))
+	       (collect (list where fn advice)))))
 
 (defun use-package-handler/:advice (name _ advices rest state)
   "Generate forms that add advice."
   `(,@(loopy (list (where fn advice) advices)
 	     (expr where (if (keywordp where) where (xl-keyword-intern where)))
-	     (collect `(xl-advice-add #',fn ,where #',advice ,props)))
+	     (collect `(xl-advice-add #',fn ,where #',advice)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
