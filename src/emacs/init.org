@@ -2107,7 +2107,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 	(iter (each advice (-list advices))
 	      (expr name (xl-symbol-intern function '@ advice))
 	      (defalias name function)
-	      (advice-add function where advice))))
+	      (advice-add function where advice depth local))))
 #+end_src
 
 **** advice-fn-p
