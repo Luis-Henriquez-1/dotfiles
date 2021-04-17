@@ -1909,10 +1909,10 @@ This is a macro to address the.
 #+begin_src emacs-lisp
 (callf2 cl-adjoin '(:generic-advice . defun%parse-generic-advice) defun%parser-alist :test #'equal)
 
-(cl-defun defun%parse-generic-advice (init name advices &key props)
+(cl-defun defun%parse-gadvice (init name advices &key props)
   (let-alist init
-    (let ((generic-advice-fn (xl-intern-format "xl-generic-advice-%s" .name))
-	  (advice-fn (xl-intern-format "xl-advice-" .name)))
+    (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
+	  (advice-fn (xl-intern-format "xl--%s-advice" .name)))
       `((cl-defun ,generic-advice-fn ,.args ,.docstring ,@.body)
 	(cl-defun ,advice-fn (fn) (advice-add fn :around ,advice-fn))))))
 #+end_src
