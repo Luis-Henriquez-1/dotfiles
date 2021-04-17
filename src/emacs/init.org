@@ -1891,14 +1891,14 @@ This is a macro to address the.
       (collect (cons type parser))
       (finally-do (callf cl-union defun%parser-alist loopy-result :test #'equal)))
 
-(cl-defun defun%parse-advice (init name advices &key props)
+(cl-defun defun%parse-advice (init where fns-to-advice &key props)
   (let-alist init
-    (iter (with (orig-name (xl-symbol-intern 'xl-- .name '-advice)))
+    (iter (with (orig-advice-name (xl-symbol-intern 'xl-- .name '-advice)))
 	  (initially (push `(cl-defun ,orig-name ,.args ,.docstring ,@.body) loopy-result))
-	  (each advice advices)
-	  (expr fname (xl-symbol-intern .name '@ advice))
-	  (collect `(cl-defun ',fname ',.args ,.docstring ,@.body))
-	  (collect `(advice-add ',fname ,name #',fname)))))
+	  (each fn fns-to-advice)
+	  (expr advice-name (xl-symbol-intern fn '@ .name))
+	  (collect `(defalias ',advice-name ',orig-advice-name))
+	  (collect `(advice-add ',fn ,where #',advice-name)))))
 #+end_src
 
 **** parse generic advice
