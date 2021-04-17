@@ -1933,7 +1933,7 @@ This is a macro to address the.
 	       (expr command (alist-get command-name defun%parser-alist))
 	       (expr command-args (-take-while (-not #'keywordp) rest))
 	       (expr rest (-drop-while (-not #'keywordp) rest))
-	       (append forms (apply command init command command-args rest)))
+	       (append forms (apply command init command-name command-args rest)))
 	 (return `(progn ,@forms))))
 #+end_src
 
