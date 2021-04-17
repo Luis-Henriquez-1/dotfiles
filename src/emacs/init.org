@@ -2589,7 +2589,8 @@ a significant lag and Emacs is blocked while it is tangling.
       (setq org-confirm-babel-evaluate nil)
       (let ((gc-cons-threshold most-positive-fixnum)
 	    (org-confirm-babel-evaluate nil))
-	(org-babel-tangle-file (expand-file-name "init.org" "~/.tangld/src/emacs/") "~/.config/emacs/init.el")))
+	(org-babel-tangle-file ,(expand-file-name "init.org" "~/.tangld/src/emacs/")
+			       ,(expand-file-name "init.el" "~/.config/emacs/"))))
    (lambda (result)
      (message (if result "Successfully tangled %s" "Failed to tangle %s") "init.org"))))
 #+end_src
