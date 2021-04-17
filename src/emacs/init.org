@@ -1475,8 +1475,7 @@ A keyword specifically designed for =xl= advices, or advices of the form
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
-  (loopy (list it advices)
-	 (unless (keywordp (car it)))
+  (loopy (list (key . pairs) advices)
 	 (when (-cons-pair-p it)
 	   (expr (fn . advice) it)
 	   (collect (list :around fn (xl-symbol-intern 'xl-- advice '-advice))))))
