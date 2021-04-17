@@ -2100,7 +2100,7 @@ ADVICES is an advice or a list of advices."
 :END:
 
 #+begin_src emacs-lisp
-(cl-defun xl-advice-add (functions where advices &optional depth local)
+(defun xl-advice-add (functions where advices &optional depth local)
   "Add ADVICES to FUNCTIONS.
 WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (iter (each function (-list functions))
