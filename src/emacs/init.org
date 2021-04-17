@@ -2281,7 +2281,7 @@ packages which can contain several thousand items.
 #+begin_src emacs-lisp
 (defgadvice! pause-garbage-collection (orig-fn &rest args)
   "An around advice that pauses `gc-cons-threshold'."
-  (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
+  (let ((gc-cons-threshold most-positive-fixnum))
     (apply orig-fn args)))
 #+end_src
 
