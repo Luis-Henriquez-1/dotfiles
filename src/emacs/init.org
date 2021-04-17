@@ -1909,7 +1909,7 @@ This is a macro to address the.
 #+begin_src emacs-lisp
 (callf2 cl-adjoin '(:gadvice . defun%parse-gadvice) defun%parser-alist :test #'equal)
 
-(cl-defun defun%parse-gadvice (init name bool &rest _)
+(cl-defun defun%parse-gadvice (init _ bool &rest _)
   (let-alist init
     (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
 	  (advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
