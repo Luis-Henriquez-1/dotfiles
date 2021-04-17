@@ -2279,7 +2279,7 @@ example is [[helpfn:helm-system-packages][helm-system-packages]], function that 
 packages which can contain several thousand items.
 
 #+begin_src emacs-lisp
-(defgadvice! pause-gc (orig-fn &rest args)
+(defgadvice! pause-garbage-collection (orig-fn &rest args)
   "An around advice that pauses `gc-cons-threshold'."
   (let ((gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
     (apply orig-fn args)))
