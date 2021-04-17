@@ -2001,7 +2001,7 @@ function is a hook.
 :END:
 
 #+begin_src emacs-lisp
-(cl-defun xl-hook-add (hooks functions &key depth local expire)
+(defun xl-hook-add (hooks functions &optional depth local expire)
   "Alias FUNCTIONS to follow XL naming convention and add them to HOOKS."
   (iter (each hook (-list hooks))
 	(iter (each function (-list functions))
@@ -2100,14 +2100,14 @@ ADVICES is an advice or a list of advices."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-add (functions where advices &optional depth local)
+(defun xl-advice-add (functions where advices &optional props)
   "Add ADVICES to FUNCTIONS.
 WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (iter (each function (-list functions))
 	(iter (each advice (-list advices))
 	      (expr name (xl-symbol-intern function '@ advice))
 	      (defalias name function)
-	      (advice-add function where advice depth local))))
+	      (advice-add function where advice props))))
 #+end_src
 
 **** advice-fn-p
@@ -2184,15 +2184,11 @@ called more than once. A common example is [[][loading a dependency for a
 package]]. 
 
 #+begin_src emacs-lisp
-(defgadvice! remove-advice (orig-fn args)
+(defgadvice! expire (orig-fn args)
   "Remove ORIG-FN from"
   (apply orig-fn args)
   (when (xl-advice-fn-p orig-fn) (xl-advice-remove orig-fn))
-  (xl-log "%s has been removed from %s" orig-fn))
-
-(defgadvice! remove-hook (orig-fn args)
-  (apply orig-fn args)
-  (when (xl-hook-fn-p orig-fn) (xl-hook-remove orig-fn))
+  (when (xl-hook-fn-p orig-fn) (xl-advice-remove orig-fn))
   (xl-log "%s has been removed from %s" orig-fn))
 #+end_src
 
@@ -2348,7 +2344,7 @@ this it adds an =XL= advice that loads the feature to the function.
     (fset it `(lambda (&rest _)
                 (xl-log "Loading %s" ',package)
                 (require ',package)))
-    (xl-advice-add fn where it nil t)))
+    (xl-advice-add fn where it)))
 #+end_src
 
 ****** load before call
