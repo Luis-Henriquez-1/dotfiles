@@ -2942,6 +2942,9 @@ I define three levels on frequency with which emacs should perform garbage
 collection.
 
 #+begin_src emacs-lisp
+(defcustom XL-GC-CONS-THRESHOLD-MULTIPLIER nil
+  "The number multiplied")
+
 (defconst XL-GC-CONS-THRESHOLD-MAX most-positive-fixnum
   "The upper limit for `gc-cons-threshold'.
 When VOID is performing computationally intensive operations,
