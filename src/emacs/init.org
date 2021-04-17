@@ -1,6 +1,5 @@
 #+title: init.org
 #+author: Luis-Henriquez-Perez
-#+property: header-args :tangle /.config/emacs/init.el
 
 * ensure lexical binding
 :PROPERTIES:
@@ -1908,7 +1907,7 @@ This is a macro to address the.
 :END:
 
 #+begin_src emacs-lisp
-(cl-defun defun%parse-advice (init name advices &key props)
+(cl-defun defun%parse-generic-advice (init name advices &key props)
   (let-alist init
     (let ((generic-advice-fn (xl-symbol-intern 'xl-generic-advice- .name))
 	  (advice-fn (xl-symbol-intern 'xl-advice- .name)))
@@ -1970,7 +1969,7 @@ This is a macro to address the.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro generic-advice! (&rest )
+(defmacro defgeneric-advice! (&rest )
   (declare (indent defun) (doc-string 3))
   `(defun! ,name (,@args) () ,@body))
 #+end_src
@@ -2581,18 +2580,20 @@ a significant lag and Emacs is blocked while it is tangling.
 (defun xl/tangle-config-async ()
   "Tangle the readme file asynchronously."
   (interactive)
-  (async-start
-   `(lambda ()
-      (require 'org)
-      (require 'ob-tangle)
-      (require 'rx)
-      (setq org-confirm-babel-evaluate nil)
-      (let ((gc-cons-threshold most-positive-fixnum)
-	    (org-confirm-babel-evaluate nil))
-	(org-babel-tangle-file ,(expand-file-name "init.org" "~/.tangld/src/emacs/")
-			       ,(expand-file-name "init.el" "~/.config/emacs/"))))
-   (lambda (result)
-     (message (if result "Successfully tangled %s" "Failed to tangle %s") "init.org"))))
+  (let ((input (expand-file-name "init.org" "~/.tangld/src/emacs/"))
+	(output (expand-file-name "init.el" "~/.config/emacs/")))
+    (async-start
+     `(lambda ()
+	(require 'org)
+	(require 'ob-tangle)
+	(require 'rx)
+	(setq org-confirm-babel-evaluate nil)
+	(let ((gc-cons-threshold most-positive-fixnum)
+	      (org-confirm-babel-evaluate nil))
+	  (mkdir "~/.config/emacs/" t)
+	  (org-babel-tangle-file ,input ,output)))
+     `(lambda (result)
+	(message (if result "Successfully tangled %s" "Failed to tangle %s") ,output)))))
 #+end_src
 
 **** open Emacs instance
