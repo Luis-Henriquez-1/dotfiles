@@ -6997,9 +6997,9 @@ of the problem. You can check out a more in-depth explanation looking at my
 [[https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of_quoted_lists/][reddit-post]] or looking at an answer I gave to [[https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned][this question]].
 
 #+begin_src emacs-lisp
-(defadvice! properly-calculate-indent (:override calculate-lisp-indent)
-  "Add better indentation for quoted and backquoted lists.
-The change to this function."
+(defun! properly-calculate-indent (parse-start)
+  "Add better indentation for quoted and backquoted lists. "
+  (:override calculate-lisp-indent)
   (defvar calculate-lisp-indent-last-sexp)
   (save-excursion
     (beginning-of-line)
@@ -7010,7 +7010,7 @@ The change to this function."
           (retry t)
           calculate-lisp-indent-last-sexp containing-sexp)
       (cond ((or (markerp <parse-start>) (integerp <parse-start>))
-             (goto-char <parse-start>))
+	     (goto-char <parse-start>))
             ((null <parse-start>) (beginning-of-defun))
             (t (setq state <parse-start>)))
       (unless state
@@ -7032,7 +7032,7 @@ The change to this function."
             ;; Yes, but is there a containing sexp after that?
             (let ((peek (parse-partial-sexp calculate-lisp-indent-last-sexp
                                             indent-point 0)))
-              (if (setq retry (car (cdr peek))) (setq state peek)))))
+	      (if (setq retry (car (cdr peek))) (setq state peek)))))
       (if retry
           nil
         ;; Innermost containing sexp found
@@ -7052,15 +7052,15 @@ The change to this function."
                  ;; This is the first line to start within the containing sexp.
                  ;; It's almost certainly a function call.
                  (if (or
-                      (= (point) calculate-lisp-indent-last-sexp)
+		      (= (point) calculate-lisp-indent-last-sexp)
 
-                      (when-let (after (char-after (1+ containing-sexp)))
+		      (when-let (after (char-after (1+ containing-sexp)))
                         (char-equal after ?:))
 
-                      (when-let (point (char-before containing-sexp))
+		      (when-let (point (char-before containing-sexp))
                         (char-equal point ?'))
 
-                      (let ((quoted-p nil)
+		      (let ((quoted-p nil)
                             (point nil)
                             (positions (nreverse (butlast (elt state 9)))))
                         (while (and positions (not quoted-p))
@@ -7068,7 +7068,7 @@ The change to this function."
                           (setq quoted-p
                                 (or
                                  (and (char-before point)
-                                      (char-equal (char-before point) ?'))
+				      (char-equal (char-before point) ?'))
                                  (save-excursion
                                    (goto-char (1+ point))
                                    (looking-at-p "quote[\t\n\f\s]+(")))))
@@ -7080,8 +7080,8 @@ The change to this function."
                    ;; argument of the function call) and indent under.
                    (progn (forward-sexp 1)
                           (parse-partial-sexp (point)
-                                              calculate-lisp-indent-last-sexp
-                                              0 t)))
+					      calculate-lisp-indent-last-sexp
+					      0 t)))
                  (backward-prefix-chars))
                 (t
                  ;; Indent beneath first sexp on same line as
@@ -7097,15 +7097,15 @@ The change to this function."
       ;; or if the desired indentation has already been computed.
       (let ((normal-indent (current-column)))
         (cond ((elt state 3)
-               ;; Inside a string, don't change indentation.
-               nil)
-              ((and (integerp lisp-indent-offset) containing-sexp)
-               ;; Indent by constant offset
-               (goto-char containing-sexp)
-               (+ (current-column) lisp-indent-offset))
-              ;; in this case calculate-lisp-indent-last-sexp is not nil
-              (calculate-lisp-indent-last-sexp
-               (or
+	       ;; Inside a string, don't change indentation.
+	       nil)
+	      ((and (integerp lisp-indent-offset) containing-sexp)
+	       ;; Indent by constant offset
+	       (goto-char containing-sexp)
+	       (+ (current-column) lisp-indent-offset))
+	      ;; in this case calculate-lisp-indent-last-sexp is not nil
+	      (calculate-lisp-indent-last-sexp
+	       (or
                 ;; try to align the parameters of a known function
                 (and lisp-indent-function
                      (not retry)
@@ -7117,23 +7117,23 @@ The change to this function."
                 ;; the last 2 preceding symbols, in the previous
                 ;; uncommented line.
                 (and (save-excursion
-                       (goto-char indent-point)
-                       (skip-chars-forward " \t")
-                       (looking-at ":"))
+		       (goto-char indent-point)
+		       (skip-chars-forward " \t")
+		       (looking-at ":"))
                      ;; The last sexp may not be at the indentation
                      ;; where it begins, so find that one, instead.
                      (save-excursion
-                       (goto-char calculate-lisp-indent-last-sexp)
-                       ;; Handle prefix characters and whitespace
-                       ;; following an open paren.  (Bug#1012)
-                       (backward-prefix-chars)
-                       (while (not (or (looking-back "^[ \t]*\\|([ \t]+"
+		       (goto-char calculate-lisp-indent-last-sexp)
+		       ;; Handle prefix characters and whitespace
+		       ;; following an open paren.  (Bug#1012)
+		       (backward-prefix-chars)
+		       (while (not (or (looking-back "^[ \t]*\\|([ \t]+"
                                                      (line-beginning-position))
-                                       (and containing-sexp
+				       (and containing-sexp
                                             (>= (1+ containing-sexp) (point)))))
                          (forward-sexp -1)
                          (backward-prefix-chars))
-                       (setq calculate-lisp-indent-last-sexp (point)))
+		       (setq calculate-lisp-indent-last-sexp (point)))
                      (> calculate-lisp-indent-last-sexp
                         (save-excursion
                           (goto-char (1+ containing-sexp))
@@ -7141,21 +7141,21 @@ The change to this function."
                           (point)))
                      (let ((parse-sexp-ignore-comments t)
                            indent)
-                       (goto-char calculate-lisp-indent-last-sexp)
-                       (or (and (looking-at ":")
+		       (goto-char calculate-lisp-indent-last-sexp)
+		       (or (and (looking-at ":")
                                 (setq indent (current-column)))
                            (and (< (line-beginning-position)
                                    (prog2 (backward-sexp) (point)))
                                 (looking-at ":")
                                 (setq indent (current-column))))
-                       indent))
+		       indent))
                 ;; another symbols or constants not preceded by a constant
                 ;; as defined above.
                 normal-indent))
-              ;; in this case calculate-lisp-indent-last-sexp is nil
-              (desired-indent)
-              (t
-               normal-indent))))))
+	      ;; in this case calculate-lisp-indent-last-sexp is nil
+	      (desired-indent)
+	      (t
+	       normal-indent))))))
 #+end_src
 
 **** debugging
