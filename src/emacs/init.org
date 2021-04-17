@@ -1452,7 +1452,7 @@ and EXPIRE-FN are optional."
 	  (`(,fn . ,advice)
 	   (collect (list :around fn advice)))
 	  (_
-	   (error)))))
+	   (error "wrong args")))))
 
 (defun use-package-handler/:advice (name _ advices rest state)
   "Generate forms that add advice."
