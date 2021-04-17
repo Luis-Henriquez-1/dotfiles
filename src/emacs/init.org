@@ -6364,6 +6364,7 @@ state and disables it everywhere in favor of normal state.
     (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 
 (defun! replace-motion-with-normal (orig-fn &rest args) 
+  ""
   (:around evil-set-initial-state)
   (-let (((mode state) args))
     (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
