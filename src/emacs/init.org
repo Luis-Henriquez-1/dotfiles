@@ -1973,7 +1973,7 @@ This is a macro to address the.
 #+begin_src emacs-lisp
 (defmacro defgadvice! (&rest )
   (declare (indent defun) (doc-string 3))
-  `(defun! ,name (,@args) () ,@body))
+  `(defun! ,name (,@args) (:generic-advice ) ,@body))
 #+end_src
 
 *** hooks
