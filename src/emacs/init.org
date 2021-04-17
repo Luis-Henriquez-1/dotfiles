@@ -8153,7 +8153,7 @@ for a certain block of time is a must. =org-agenda= is this overview.
   :rule ("top" "org agenda" :newname "\\*Org Agenda\\*")
   :before-call (org-ql . org-agenda)
   :gc-pause org-agenda-list
-  :xl-advice (org-agenda-get-restriction-and-command . suppress-delete-windows)
+  :advice (org-agenda-get-restriction-and-command . suppress-delete-windows)
   :set
   (org-agenda-include-diary . t)
   (org-agenda-text-search-extra-files . '(agenda-archives))
