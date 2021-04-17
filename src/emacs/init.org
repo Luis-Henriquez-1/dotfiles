@@ -1966,7 +1966,7 @@ This is a macro to address the.
   `(defun! ,name (&rest _) ,docstring (,@args) ,@body))
 #+end_src
 
-***** generic-advice!
+***** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
