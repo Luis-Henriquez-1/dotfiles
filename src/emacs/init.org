@@ -1153,7 +1153,7 @@ useful to receieve messages, often they can be telling you what you already know
 FNS is a list of function symbols."
   `(,@(iter (for fn fns)
 	    (collect (use-package%autoload fn name))
-	    (collect `(xl-silence-output #',fn)))
+	    (collect `(xl-advice-shut-up #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
