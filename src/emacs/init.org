@@ -6357,14 +6357,16 @@ state and disables it everywhere in favor of normal state.
   (setq evil-emacs-state-modes nil)
   (setq evil-motion-state-modes nil))
 
-(defadvice! replace-motion-with-normal (:around evil-make-overriding-map)
+(defun! replace-motion-with-normal (orig-fn &rest args)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
-  (-let (((keymap state copy) <args>))
-    (funcall <orig-fn> keymap (if (eq state 'motion) 'normal state) copy)))
+  (:around evil-make-overriding-map)
+  (-let (((keymap state copy) args))
+    (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 
-(defadvice! replace-motion-with-normal (:around evil-set-initial-state)
-  (-let (((mode state) <args>))
-    (funcall <orig-fn> mode (if (eq state 'motion) 'normal state))))
+(defun! replace-motion-with-normal (orig-fn &rest args) 
+  (:around evil-set-initial-state)
+  (-let (((mode state) args))
+    (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
 
 (xl-advice-add #'evil-motion-state :override #'evil-normal-state)
 #+end_src
