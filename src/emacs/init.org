@@ -3786,7 +3786,7 @@ immediately. This is why I set the advice dept to =-100=.
   :keymap xl-override-mode-map
   :global t)
 
-(xl-hook-add 'emacs-startup-hook #'xl-override-mode :depth -100)
+(xl-hook-add 'emacs-startup-hook #'xl-override-mode -100)
 #+end_src
 
 **** take precedence over Emacs bindings
