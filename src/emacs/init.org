@@ -2372,7 +2372,6 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :after fn))
 #+end_src
 
-
 *** idle-require
 :PROPERTIES:
 :ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
