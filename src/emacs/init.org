@@ -1911,8 +1911,8 @@ This is a macro to address the.
 
 (cl-defun defun%parse-generic-advice (init name advices &key props)
   (let-alist init
-    (let ((generic-advice-fn (xl-symbol-intern 'xl-generic-advice- .name))
-	  (advice-fn (xl-symbol-intern 'xl-advice- .name)))
+    (let ((generic-advice-fn (xl-intern-format "xl-generic-advice-%s" .name))
+	  (advice-fn (xl-intern-format "xl-advice-" .name)))
       `((cl-defun ,generic-advice-fn ,.args ,.docstring ,@.body)
 	(cl-defun ,advice-fn (fn) (advice-add fn :around ,advice-fn))))))
 #+end_src
