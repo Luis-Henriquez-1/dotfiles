@@ -1439,9 +1439,9 @@ A keyword specifically designed for =xl= advices, or advices of the form
 =xl-<name>-advice=. For convenience, it is assumed to use =around= advice.
 
 #+begin_src emacs-lisp
-(use-package%dwim-insert :xl-advice)
+(use-package%dwim-insert :advice)
 
-(defun use-package-normalize/:xl-advice (_ _ advices)
+(defun use-package-normalize/:advice (_ _ advices)
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
@@ -1449,7 +1449,7 @@ and EXPIRE-FN are optional."
 	 (loop (each (fn . advice) pairs)
 	       (collect `(,where ,fn ,advice)))))
 
-(defun use-package-handler/:xl-advice (name _ advices rest state)
+(defun use-package-handler/:advice (name _ advices rest state)
   "Generate forms that add advice."
   `(,@(loopy (list (where fn advice) advices)
 	     (expr where (if (keywordp where) where (xl-keyword-intern where)))
