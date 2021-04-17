@@ -1907,6 +1907,8 @@ This is a macro to address the.
 :END:
 
 #+begin_src emacs-lisp
+(callf2 cl-adjoin '(:generic-advice . defun%parse-generic-advice) defun%parser-alist :test #'equal)
+
 (cl-defun defun%parse-generic-advice (init name advices &key props)
   (let-alist init
     (let ((generic-advice-fn (xl-symbol-intern 'xl-generic-advice- .name))
