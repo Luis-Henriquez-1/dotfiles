@@ -2116,6 +2116,9 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 :END:
 
 #+begin_src emacs-lisp
+(defun xl-advice-fn-p (fn)
+  "Return non-nil when FN is an advice."
+  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
 **** original fn
