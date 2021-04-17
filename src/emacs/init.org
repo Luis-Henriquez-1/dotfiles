@@ -4708,8 +4708,9 @@ This package.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! inhibit-filtering-and-highlighting (:around selectrum-prescient-mode)
+(defun! inhibit-filtering-and-highlighting (orig-fn &rest args)
   "Don't let `selectrum-prescient' filter or highlight. "
+  (:around selectrum-prescient-mode)
   (let ((selectrum-refine-candidates-function selectrum-refine-candidates-function)
 	(selectrum-highlight-candidates-function selectrum-highlight-candidates-function))
     (apply orig-fn args)))
