@@ -8175,9 +8175,10 @@ for a certain block of time is a must. =org-agenda= is this overview.
 forces agenda view to rely on [[helpvar:display-buffer-alist][display-buffer-alist]] for it's display.
 
 #+begin_src emacs-lisp
-(defadvice! use-display-buffer (:override (abuf filter-alist) org-agenda-prepare-window)
+(defun! use-display-buffer (abuf filter-alist)
   "Use `display-buffer' to display the agenda buffer.
 Unlike `org-agenda-prepare-window', this function does not store the window configuration."
+  :override org-agenda-prepare-window
   (display-buffer abuf)
   (setq org-agenda-tag-filter (cdr (assq 'tag filter-alist)))
   (setq org-agenda-category-filter (cdr (assq 'cat filter-alist)))
