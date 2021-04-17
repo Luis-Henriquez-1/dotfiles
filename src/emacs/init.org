@@ -1153,7 +1153,7 @@ useful to receieve messages, often they can be telling you what you already know
 FNS is a list of function symbols."
   `(,@(iter (for fn fns)
 	    (collect (use-package%autoload fn name))
-	    (collect `(xl-advice-shut-up #',fn)))
+	    (collect `(xl-gadvice-shut-up #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1176,7 +1176,7 @@ functions that a package provides.
   "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
   `(,@(iter (for fn fns)
 	    (collect (use-package%autoload name fn))
-	    (collect `(xl-advice-pause-garbage-collection #',fn)))
+	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
