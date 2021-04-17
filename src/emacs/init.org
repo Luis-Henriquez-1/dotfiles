@@ -1861,7 +1861,7 @@ This is a macro to address the.
 :END:
 
 #+begin_src emacs-lisp
-(iter (for type '(:override :around :before :after))
+(iter (for type '(:override :around :before :after :after-while))
       (expr parser 'defun%parse-advice)
       (collect (cons type parser))
       (finally-do (callf cl-union defun%parser-alist loopy-result :test #'equal)))
