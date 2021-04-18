@@ -1477,10 +1477,8 @@ and EXPIRE-FN are optional."
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
-  (loopy (each elt advices)
-	 (cond ((match elt (list (funcall keywordp))))
-	       (())
-	       ())
+  (loopy (each (fn . advice) advices)
+	 (expr generic-advice (xl-intern-format "xl-generic-"))
 	 ;; (pcase elt
 	 ;;   (`(,(and (pred keywordp) key) (,fn . ,advice))
 	 ;;    (collect (list key fn ( advice))))
