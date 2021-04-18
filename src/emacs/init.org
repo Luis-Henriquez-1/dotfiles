@@ -2342,14 +2342,14 @@ function is a hook.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-add (hooks functions &optional depth local)
-  "Alias FUNCTIONS to follow XL naming convention and add them to HOOKS."
-  (iter (each hook (-list hooks))
+(defun xl-hook-add (symbols functions &optional depth local)
+  "Alias FUNCTIONS to follow XL naming convention and add them to SYMBOLS."
+  (iter (each symbol (-list symbols))
 	(iter (each function (-list functions))
-	      (expr name (xl-symbol-intern hook '& function))
-	      (defalias name function)
-	      (xl-gadvice-catch-error name)
-	      (add-hook hook name depth local))))
+	      (expr hook (xl-symbol-intern symbol '& function))
+	      (defalias hook function)
+	      (xl-gadvice-catch-error hook)
+	      (add-hook symbol hook depth local))))
 #+end_src
 
 **** remove hook
