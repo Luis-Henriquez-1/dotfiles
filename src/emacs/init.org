@@ -1501,11 +1501,15 @@ packages.
 
 #+begin_src emacs-lisp
 (defun use-package-normalize/:idle ()
-  )
+  (iter (each elt )
+	(pcase elt
+	  ())))
 
-(defun use-package-handle/:idle ()
-
-  )
+(defun use-package-handle/:idle (name _ seconds rest state)
+  `(,@(loopy (each (seconds . fn) functions)
+	     (collect forms `(run-with-idle-timer 10 t #',fn))
+	     (finally-return `(after! ,package ,@forms)))
+    ,@(use-package-process-keywords name rest states)))
 #+end_src
 
 *** essential libraries
