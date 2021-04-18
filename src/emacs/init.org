@@ -2099,12 +2099,14 @@ package]].
 (defgadvice! expire (orig-fn &rest args)
   "Remove ORIG-FN from"
   (prog1 (apply orig-fn args)
-    (cond ((symbolp orig-fn)
-	   (when (xl-advice-fn-p orig-fn) (xl-advice-remove orig-fn))
-	   (when (xl-hook-fn-p orig-fn) (xl-advice-remove orig-fn))
-	   (xl-log "%s has been removed from %s" orig-fn))
-	  (t
-	   (message "orig-fn is not a symbol: %s" orig-fn)))))
+    (cond ((not (symbolp orig-fn))
+	   (message "orig-fn is not a symbol: %s" orig-fn))
+	  ((xl-advice-fn-p orig-fn)
+	   (xl-advice-remove orig-fn)
+	   (xl-log "removing %s" orig-fn))
+	  ((xl-hook-fn-p orig-fn)
+	   (xl-advice-remove orig-fn)
+	   (xl-log "removing %s")))))
 #+end_src
 
 ***** assume yes in prompts
