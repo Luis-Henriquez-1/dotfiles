@@ -1500,6 +1500,7 @@ packages.
 :END:
 
 #+begin_src emacs-lisp
+(defun)
 #+end_src
 
 *** essential libraries
