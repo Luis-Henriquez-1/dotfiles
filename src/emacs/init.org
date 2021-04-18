@@ -1500,7 +1500,7 @@ packages.
 :END:
 
 #+begin_src emacs-lisp
-(defun)
+(defun use-package-normalize/:idle ())
 #+end_src
 
 *** essential libraries
