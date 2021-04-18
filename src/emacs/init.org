@@ -1464,6 +1464,14 @@ and EXPIRE-FN are optional."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
+****** gadvice
+:PROPERTIES:
+:ID:       0646d4c8-47e7-45cc-a14a-6326a2b76fdd
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 ****** initial state
 :PROPERTIES:
 :ID:       e923e94e-9051-4be8-8dda-6566601ba865
