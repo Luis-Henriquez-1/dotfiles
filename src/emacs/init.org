@@ -1446,15 +1446,14 @@ A keyword specifically designed for =xl= advices, or advices of the form
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
   (iter (each elt advices)
-	(message "%S" elt)
-	;; (pcase elt
-	;;   (`(,(and (pred keywordp) key) (,fn . ,advice))
-	;;    (collect (list key fn advice)))
-	;;   (`(,fn . ,advice)
-	;;    (collect (list :around fn advice)))
-	;;   (_
-	;;    (error "wrong args")))
-	))
+	(progn
+	  (pcase elt
+	    (`(,(and (pred keywordp) key) (,fn . ,advice))
+	     (collect (list key fn advice)))
+	    (`(,fn . ,advice)
+	     (collect (list :around fn advice)))
+	    (_
+	     (error "wrong args"))))))
 
 (defun use-package-handler/:advice (name _ advices rest state)
   "Generate forms that add advice."
