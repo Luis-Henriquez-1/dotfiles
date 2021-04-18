@@ -1508,10 +1508,10 @@ packages.
 	 (collect (cons 10 arg))))
 
 (defun use-package-handler/:idle (package _ args rest state)
-  `(,@(loopy (each (seconds . fn) args)
-	     (collect forms `(run-with-idle-timer 10 t #',fn))
-	     (finally-return `(after! ,package ,@forms)))
-    ,@(use-package-process-keywords package rest states)))
+  `(,(loopy (each (seconds . fn) args)
+	    (collect forms `(run-with-idle-timer 10 t #',fn))
+	    (finally-return `(after! ,package ,@forms)))
+    ,@(use-package-process-keywords package rest state)))
 #+end_src
 
 *** essential libraries
