@@ -1457,12 +1457,10 @@ and EXPIRE-FN are optional."
 
 (defun use-package-handler/:advice (name _ advices rest state)
   "Generate forms that add advice."
-  nil
-  ;; `(,@(loopy (list (where fn advice) advices)
-  ;; 	     (expr where (if (keywordp where) where (xl-keyword-intern where)))
-  ;; 	     (collect `(xl-advice-add #',fn ,where #',advice)))
-  ;;   ,@(use-package-process-keywords name rest state))
-  )
+  `(,@(loopy (list (where fn advice) advices)
+	     (expr where (if (keywordp where) where (xl-keyword-intern where)))
+	     (collect `(xl-advice-add #',fn ,where #',advice)))
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ****** gadvice
