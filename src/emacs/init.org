@@ -8398,7 +8398,7 @@ be exact. Therefore, I define a function I can use instead.
 
 #+begin_src emacs-lisp
 (use-package org-goto
-  :advice (org-goto-location . suppress-delete-windows))
+  :gadvice (org-goto-location . suppress-delete-windows))
 #+end_src
 
 *** ox
