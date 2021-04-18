@@ -1470,6 +1470,7 @@ and EXPIRE-FN are optional."
 :END:
 
 #+begin_src emacs-lisp
+(defalias 'use-package-handler/:gadvice 'use-package-handler/:advice)
 #+end_src
 
 ****** initial state
