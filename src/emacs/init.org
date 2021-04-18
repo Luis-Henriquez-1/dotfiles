@@ -1468,6 +1468,8 @@ and EXPIRE-FN are optional."
 :ID:       0646d4c8-47e7-45cc-a14a-6326a2b76fdd
 :END:
 
+This provides a shortcut for generic advices.
+
 #+begin_src emacs-lisp
 (use-package%dwim-insert :gadvice)
 
