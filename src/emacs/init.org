@@ -1991,11 +1991,11 @@ function is a hook.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-remove-hook (hooks)
+(defun xl-hook-remove (&rest hooks)
   "Remove HOOKS from their correponding hook variable.
 HOOKS is a hook function or a list of hook functions that follow XL naming
 conventions."
-  (iter (each hook (-list hooks))
+  (iter (each hook hooks)
 	(remove-hook (xl-hook-orig-var hook) hook)))
 #+end_src
 
@@ -2019,7 +2019,7 @@ conventions."
 (defun xl-hook-orig-var (hook)
   "Return hook variable for HOOK.
 HOOK is a hook function defined with XL naming conventions."
-  (nth 1 (xl-hook-fn-p hook)))
+  (intern (nth 1 (xl-hook-fn-p hook))))
 #+end_src
 
 **** original hook function
@@ -3049,8 +3049,9 @@ one. For this reason, I make sure to disable any enabled themes before applying
 a new theme.
 
 #+begin_src emacs-lisp
-(defadvice! disable-old-themes (:around load-theme)
+(defun! disable-old-themes (orig-fn &rest args)
   "Disable old themes before loading new ones."
+  (:around load-theme)
   (mapc #'disable-theme custom-enabled-themes)
   (apply orig-fn args))
 #+end_src
@@ -7009,10 +7010,10 @@ of the problem. You can check out a more in-depth explanation looking at my
           (desired-indent nil)
           (retry t)
           calculate-lisp-indent-last-sexp containing-sexp)
-      (cond ((or (markerp <parse-start>) (integerp <parse-start>))
-	     (goto-char <parse-start>))
-            ((null <parse-start>) (beginning-of-defun))
-            (t (setq state <parse-start>)))
+      (cond ((or (markerp parse-start) (integerp parse-start))
+	     (goto-char parse-start))
+            ((null parse-start) (beginning-of-defun))
+            (t (setq state parse-start)))
       (unless state
         ;; Find outermost containing sexp
         (while (< (point) indent-point)
@@ -8733,7 +8734,6 @@ makes emacs feel like a window manager with gaps.
 #+begin_src emacs-lisp
 (defhook! update-window-divider (xl-after-load-theme-hook)
   "Ensure window divider persists after theme change."
-  :config window-divider
   (unless (bound-and-true-p window-divider-mode)
     (window-divider-mode 1)))
 #+end_src
