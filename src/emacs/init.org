@@ -2257,7 +2257,7 @@ this it adds an =XL= advice that loads the feature to the function.
                 (xl-log "Loading %s" ',package)
                 (require ',package)))
     (advice-add fn where it)
-    (xl-gadvice-expire it)))
+    ))
 #+end_src
 
 ****** load before call
