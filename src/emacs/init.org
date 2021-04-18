@@ -2105,7 +2105,7 @@ package]].
 	   (xl-advice-remove orig-fn)
 	   (xl-log "removing %s" orig-fn))
 	  ((xl-hook-fn-p orig-fn)
-	   (xl-advice-remove orig-fn)
+	   (xl-hook-remove orig-fn)
 	   (xl-log "removing %s")))))
 #+end_src
 
