@@ -1445,14 +1445,15 @@ A keyword specifically designed for =xl= advices, or advices of the form
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
-  (loopy (each elt advices)
-	 (do (pcase elt
-	       (`(,(and (pred keywordp) key) (,fn . ,advice))
-		(collect (list key fn advice)))
-	       (`(,fn . ,advice)
-		(collect (list :around fn advice)))
-	       (_
-		(error "wrong args"))))))
+  (iter (each elt advices)
+	(expr elt elt)
+	(pcase elt
+	  (`(,(and (pred keywordp) key) (,fn . ,advice))
+	   (collect (list key fn advice)))
+	  (`(,fn . ,advice)
+	   (collect (list :around fn advice)))
+	  (_
+	   (error "wrong args")))))
 
 (defun use-package-handler/:advice (name _ advices rest state)
   "Generate forms that add advice."
