@@ -1507,11 +1507,11 @@ packages.
   (loopy (each arg args)
 	 (collect (cons 10 arg))))
 
-(defun use-package-handler/:idle (name _ seconds rest state)
-  `(,@(loopy (each (seconds . fn) functions)
+(defun use-package-handler/:idle (package _ args rest state)
+  `(,@(loopy (each (seconds . fn) args)
 	     (collect forms `(run-with-idle-timer 10 t #',fn))
 	     (finally-return `(after! ,package ,@forms)))
-    ,@(use-package-process-keywords name rest states)))
+    ,@(use-package-process-keywords package rest states)))
 #+end_src
 
 *** essential libraries
