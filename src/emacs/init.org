@@ -2282,12 +2282,11 @@ this it adds an =XL= advice that loads the feature to the function.
 #+begin_src emacs-lisp
 (defun xl-load-on-call (package where fn)
   "Load PACKAGE before or after FN is called."
-  (alet (gensym (format "%s@load-%s-%s-call" fn package (xl-keyword-name where)))
+  (alet (xl-intern-format "%s@load-%s-%s-call" fn package (xl-keyword-name where))
     (fset it `(lambda (&rest _)
                 (xl-log "Loading %s" ',package)
                 (require ',package)))
     (advice-add fn where it)
-    (message "calling `xl-gadvice-expire' on %s" it)
     (xl-gadvice-expire it)))
 #+end_src
 
