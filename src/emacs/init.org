@@ -1472,7 +1472,7 @@ and EXPIRE-FN are optional."
 #+begin_src emacs-lisp
 (defalias 'use-package-handler/:gadvice 'use-package-handler/:advice)
 
-(defun use-package-normalize/:advice (_ _ advices)
+(defun use-package-normalize/:gadvice (_ _ advices)
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
