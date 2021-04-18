@@ -8410,7 +8410,7 @@ This package stands for "org-export".
 
 #+begin_src emacs-lisp
 (use-package ox
-  :advice (org-export--dispatch-ui . suppress-delete-windows))
+  :gadvice (org-export--dispatch-ui . suppress-delete-windows))
 #+end_src
 
 *** org-id
