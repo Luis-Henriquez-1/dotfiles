@@ -7751,7 +7751,7 @@ Org has a nasty tendency of deleting windows. This advice needs to be added to
 various functions in org mode.
 
 #+begin_src emacs-lisp
-(defun xl--suppress-delete-windows-advice (orig-fn &rest args)
+(defgadvice! suppress-delete-windows (orig-fn &rest args)
   "Inhibit the deletion of windows."
   (cl-letf (((symbol-function #'delete-window) #'ignore)
 	    ((symbol-function #'delete-other-windows) #'ignore))
