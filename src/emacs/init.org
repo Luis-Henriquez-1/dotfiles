@@ -2131,7 +2131,7 @@ If ORIG-FN is an xl-defined hook, remove it."
 	   (xl-log "Removing %s" orig-fn))
 	  ((xl-hook-fn-p orig-fn)
 	   (xl-hook-remove orig-fn)
-	   (xl-log "Removing %s")))))
+	   (xl-log "Removing %s" orig-fn)))))
 #+end_src
 
 ***** assume yes in prompts
