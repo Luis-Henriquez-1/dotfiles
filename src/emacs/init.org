@@ -5002,11 +5002,7 @@ When the user
 :END:
 
 #+begin_src emacs-lisp
-(use-package yasnippet-snippets
-  :after yasnippet
-  :init
-  (awhen (-first (-partial #'s-contains-p "yasnippet-snippets") load-path)
-    (add-to-list 'yas-snippet-dirs it)))
+(use-package yasnippet-snippets)
 #+end_src
 
 * window management
