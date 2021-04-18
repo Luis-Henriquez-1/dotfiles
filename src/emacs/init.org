@@ -2040,11 +2040,11 @@ ADVICES is an advice or a list of advices."
   "Add ADVICES to FUNCTIONS.
 WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (iter (each symbol (-list symbols))
-	(iter (each function (-list functions))
-	      (expr advice (xl-symbol-intern symbol '@ function))
-	      (defalias advice function)
-	      (advice-add symbol where advice props)
-	      (collect advice))))
+	(subloop (each function (-list functions))
+		 (expr advice (xl-symbol-intern symbol '@ function))
+		 (defalias advice function)
+		 (advice-add symbol where advice props)
+		 (collect advice))))
 #+end_src
 
 **** advice-fn-p
