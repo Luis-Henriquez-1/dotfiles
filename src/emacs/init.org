@@ -2349,7 +2349,8 @@ function is a hook.
 	      (expr hook (xl-symbol-intern symbol '& function))
 	      (defalias hook function)
 	      (xl-gadvice-catch-error hook)
-	      (add-hook symbol hook depth local))))
+	      (add-hook symbol hook depth local)
+	      (collect hook))))
 #+end_src
 
 **** remove hook
