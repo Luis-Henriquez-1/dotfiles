@@ -2377,6 +2377,21 @@ garbage collection during this time.
   (idle-require-idle-delay . 10))
 #+end_src
 
+** loaddefs
+:PROPERTIES:
+:ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
+:END:
+
+These are *extremely* important lines if you use an external program as I do
+([[https://wiki.archlinux.org/index.php/Msmtp][msmtp]]) to send your email. If you don't set these variables, emacs will
+think you want to use =smtp=.
+
+#+begin_src emacs-lisp
+(use-package loaddefs
+  :set
+  (disabled-command-function . nil))
+#+end_src
+
 ** emacs settings
 :PROPERTIES:
 :ID:       b61797fe-a520-448b-8dfa-055b357ebfa7
