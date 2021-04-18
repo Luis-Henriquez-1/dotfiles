@@ -2097,7 +2097,8 @@ package]].
 
 #+begin_src emacs-lisp
 (defgadvice! expire (orig-fn &rest args)
-  "Remove ORIG-FN from"
+  "If ORIGN-FN is an xl-defined advice, remove it.
+If ORIG-FN is an xl-defined hook, remove it."
   (prog1 (apply orig-fn args)
     (cond ((not (symbolp orig-fn))
 	   (message "orig-fn is not a symbol: %s" orig-fn))
