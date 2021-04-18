@@ -10208,6 +10208,7 @@ have to set out to look for a file with =dired=.
 (use-package recentf
   :before-call find-file
   :idle-require easymenu tree-widget timer
+  :idle recentf-save-file
   :hook (kill-emacs-hook . recentf-save-list)
   :advice (:before (recentf-save-list . recentf-cleanup))
   :silence recentf-mode recentf-cleanup recentf-save-list
