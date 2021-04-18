@@ -1430,7 +1430,7 @@ Sometimes I want to alias certain.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** xl-advice
+****** advice
 :PROPERTIES:
 :ID:       1a0d6ff0-0dcd-4374-b52c-79bf617b3a2b
 :END:
