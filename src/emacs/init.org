@@ -2437,7 +2437,7 @@ will change.
   (auto-save-file-name-transforms . `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
   (auto-save-interval                 . 300)
   (auto-save-default                  . nil)
-  (auto-save-timeout                  . 30))
+  (auto-save-timeout                  . 30)
   (confirm-nonexistent-file-or-buffer . nil)
   (backup-by-copying-when-linked      . t)
   (backup-directory-alist             . (list (cons ".*" (concat XL-CACHE-DIR "backup/"))))
