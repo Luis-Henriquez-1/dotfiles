@@ -2377,14 +2377,15 @@ garbage collection during this time.
   (idle-require-idle-delay . 10))
 #+end_src
 
-** loaddefs
+** emacs settings
+:PROPERTIES:
+:ID:       b61797fe-a520-448b-8dfa-055b357ebfa7
+:END:
+
+*** loaddefs
 :PROPERTIES:
 :ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
 :END:
-
-These are *extremely* important lines if you use an external program as I do
-([[https://wiki.archlinux.org/index.php/Msmtp][msmtp]]) to send your email. If you don't set these variables, emacs will
-think you want to use =smtp=.
 
 #+begin_src emacs-lisp
 (use-package loaddefs
@@ -2392,10 +2393,65 @@ think you want to use =smtp=.
   (disabled-command-function . nil))
 #+end_src
 
-** emacs settings
+*** simple
 :PROPERTIES:
-:ID:       b61797fe-a520-448b-8dfa-055b357ebfa7
+:ID:       a1fa5195-9b6a-4842-bc5f-71305e603c55
 :END:
+
+#+begin_src emacs-lisp
+(use-package simple
+  :rule ("bottom" "messages" :newname "\\*Messages\\*")
+  :set
+  (delete-trailing-lines . nil)
+  (blink-matching-paren  . t)
+  (idle-update-delay     . 1))
+#+end_src
+
+*** clipboard
+:PROPERTIES:
+:ID:       6aa6d0ac-6cf8-4f82-a724-c56d69cc062b
+:END:
+
+#+begin_src emacs-lisp
+(use-package clipboard
+  :set
+  (selection-coding-system . 'utf-8)
+  (select-enable-clipboard . t)
+  (select-enable-primary   . t)
+  (x-select-request-type   . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+end_src
+
+*** files
+:PROPERTIES:
+:ID:       83549b5b-33e2-48b2-aeaf-cf4734ec4040
+:END:
+
+Watch out for [[][auto-save-file-name-transforms]] and [[][]]. If you don't
+disable backups nor change these variables, Emacs will end up littering backup
+files wherever you go. These are usually among the first things new Emacsers
+will change.
+
+#+begin_src emacs-lisp
+(use-package files
+  :set
+  (auto-save-file-name-transforms . `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
+  (auto-save-interval                 . 300)
+  (auto-save-default                  . nil)
+  (auto-save-timeout                  . 30))
+  (confirm-nonexistent-file-or-buffer . nil)
+  (backup-by-copying-when-linked      . t)
+  (backup-directory-alist             . (list (cons ".*" (concat XL-CACHE-DIR "backup/"))))
+  (require-final-newline              . nil)
+  (delete-old-versions                . t)
+  (auto-mode-case-fold                . nil)
+  (confirm-kill-emacs                 . #'y-or-n-p)
+  (backup-by-copying                  . t)
+  (make-backup-files                  . nil)
+  (kept-old-versions                  . 2)
+  (kept-new-versions                  . 2)
+  (trash-directory                    . (expand-file-name "Trash" "~"))
+  (version-control                    . nil))
+#+end_src
 
 *** custom commands
 :PROPERTIES:
@@ -4229,52 +4285,10 @@ them displayed.
 :ID:       3ef6cbfa-7b18-470e-9ca7-73da2f1b991a
 :END:
 
-**** auto-save stuff
-:PROPERTIES:
-:ID:       55996779-fdde-469a-8192-033b118db8e5
-:END:
-
-Watch out for [[][auto-save-file-name-transforms]] and [[][]]. If you don't
-disable backups nor change these variables, Emacs will end up littering backup
-files wherever you go. These are usually among the first things new Emacsers
-will change.
-
-#+begin_src emacs-lisp
-(use-package files
-  :set
-  (auto-save-file-name-transforms . `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
-  (auto-save-interval                 . 300)
-  (auto-save-default                  . nil)
-  (auto-save-timeout                  . 30))
-#+end_src
-
 **** confirmations
 :PROPERTIES:
 :ID:       b090f095-e368-47f0-a51f-47547423eaef
 :END:
-
-**** files
-:PROPERTIES:
-:ID:       83549b5b-33e2-48b2-aeaf-cf4734ec4040
-:END:
-
-#+begin_src emacs-lisp
-(use-package files
-  :set
-  (confirm-nonexistent-file-or-buffer . nil)
-  (backup-by-copying-when-linked      . t)
-  (backup-directory-alist             . (list (cons ".*" (concat XL-CACHE-DIR "backup/"))))
-  (require-final-newline              . nil)
-  (delete-old-versions                . t)
-  (auto-mode-case-fold                . nil)
-  (confirm-kill-emacs                 . #'y-or-n-p)
-  (backup-by-copying                  . t)
-  (make-backup-files                  . nil)
-  (kept-old-versions                  . 2)
-  (kept-new-versions                  . 2)
-  (trash-directory                    . (expand-file-name "Trash" "~"))
-  (version-control                    . nil))
-#+end_src
 
 *** ffap
 :PROPERTIES:
