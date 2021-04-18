@@ -1448,7 +1448,7 @@ and EXPIRE-FN are optional."
   (iter (each elt advices)
 	(pcase elt
 	  (`(,(and (pred keywordp) key) (,fn . ,advice))
-	   (collection (list key fn advice)))
+	   (collect (list key fn advice)))
 	  (`(,fn . ,advice)
 	   (collect (list :around fn advice)))
 	  (_
