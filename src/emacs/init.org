@@ -1476,14 +1476,14 @@ This provides a shortcut for generic advices.
 (defun use-package-handler/:gadvice ()
   `(,@(loopy (each (fn . gadvice) generic-advices)
 	     (collect `(,gadvice ,fn)))
-    ,@()))
+    ,@(use-package-process-keywords)))
 
 (defun use-package-normalize/:gadvice (_ _ advices)
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
-  (loopy (init ( (normalized-advice)))
-	 (each (fn . advice) advices)
+  (loopy (with (normalized (use-package-normalize/:advice _ _ advices)))
+	 (each (fn . advice) normalized)
 	 (expr gadvice (xl-intern-format "xl-generic-%s"))
 	 (collect (cons fn gadvice))))
 #+end_src
