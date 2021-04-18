@@ -1473,11 +1473,6 @@ This provides a shortcut for generic advices.
 #+begin_src emacs-lisp
 (use-package%dwim-insert :gadvice)
 
-(defun use-package-handler/:gadvice ()
-  `(,@(loopy (each (fn . gadvice) generic-advices)
-	     (collect `(,gadvice ,fn)))
-    ,@(use-package-process-keywords)))
-
 (defun use-package-normalize/:gadvice (_ _ advices)
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
@@ -1486,6 +1481,11 @@ and EXPIRE-FN are optional."
 	 (each (fn . advice) normalized)
 	 (expr gadvice (xl-intern-format "xl-gadvice-%s" advice))
 	 (collect (cons fn gadvice))))
+
+(defun use-package-handler/:gadvice (name _ gadvices rest state)
+  `(,@(loopy (each (fn . gadvice) gadvices)
+	     (collect `(,gadvice ,fn)))
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 ****** initial state
