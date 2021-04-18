@@ -2128,10 +2128,10 @@ If ORIG-FN is an xl-defined hook, remove it."
 	   (message "orig-fn is not a symbol: %s" orig-fn))
 	  ((xl-advice-fn-p orig-fn)
 	   (xl-advice-remove orig-fn)
-	   (xl-log "removing %s" orig-fn))
+	   (xl-log "Removing %s" orig-fn))
 	  ((xl-hook-fn-p orig-fn)
 	   (xl-hook-remove orig-fn)
-	   (xl-log "removing %s")))))
+	   (xl-log "Removing %s")))))
 #+end_src
 
 ***** assume yes in prompts
