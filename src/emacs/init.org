@@ -1478,16 +1478,14 @@ and EXPIRE-FN are optional."
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
-  (let (collection)
-    (dolist (elt advices)
-      (pcase elt
-	(`(,(and (pred keywordp) key) (,fn . ,advice))
-	 (push (list key fn advice) collection))
-	(`(,fn . ,advice)
-	 (push (list :around fn advice) collection))
-	(_
-	 (error "wrong args"))))
-    (nreverse collection)))
+  (iter (each elt advices)
+	(pcase elt
+	  (`(,(and (pred keywordp) key) (,fn . ,advice))
+	   (collection (list key fn advice)))
+	  (`(,fn . ,advice)
+	   (collection (list :around fn advice)))
+	  (_
+	   (error "wrong args")))))
 #+end_src
 
 ****** initial state
