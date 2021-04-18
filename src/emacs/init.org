@@ -7911,7 +7911,7 @@ diary/journal using =org-mode=.
 						   (:results . "silent")
 						   (:exports . "code")
 						   (:cache   .   "no")
-						   (:initeb  .  "no")
+						   (:noweb  .  "no")
 						   (:hlines  .  "no")
 						   (:tangle  .  "yes"))))
 #+end_src
