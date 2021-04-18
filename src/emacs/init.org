@@ -1507,7 +1507,7 @@ packages.
   (loopy (each arg args)
 	 (collect (cons 10 arg))))
 
-(defun use-package-handle/:idle (name _ seconds rest state)
+(defun use-package-handler/:idle (name _ seconds rest state)
   `(,@(loopy (each (seconds . fn) functions)
 	     (collect forms `(run-with-idle-timer 10 t #',fn))
 	     (finally-return `(after! ,package ,@forms)))
