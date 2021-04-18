@@ -1479,7 +1479,7 @@ and EXPIRE-FN are optional."
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
   (loopy (each elt advices)
-	 (cond ((keywordp ))
+	 (cond ((match elt ))
 	       (())
 	       ())
 	 ;; (pcase elt
