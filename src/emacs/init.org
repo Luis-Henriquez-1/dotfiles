@@ -1494,6 +1494,14 @@ packages.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
+****** idle
+:PROPERTIES:
+:ID:       78814410-c190-4f05-a319-4e6d13a9ea4b
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 *** essential libraries
 :PROPERTIES:
 :ID:       18602d49-dcc3-47c3-8579-62f7a7b7a83a
