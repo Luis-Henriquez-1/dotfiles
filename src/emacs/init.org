@@ -2348,7 +2348,6 @@ function is a hook.
 	(subloop (each function (-list functions))
 		 (expr hook (xl-symbol-intern symbol '& function))
 		 (defalias hook function)
-		 (xl-gadvice-catch-error hook)
 		 (add-hook symbol hook depth local)
 		 (collect hook))))
 #+end_src
