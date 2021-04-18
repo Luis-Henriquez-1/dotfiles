@@ -10221,6 +10221,6 @@ have to set out to look for a file with =dired=.
   (recentf-auto-cleanup      . (* 60 10))
   (recentf-filename-handlers . '(file-truename abbreviate-file-name))
   :config
-  (recentf-mode 1)
+  (recentf-mode 1))
 #+end_src
 
