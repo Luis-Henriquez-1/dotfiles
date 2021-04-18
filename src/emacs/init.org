@@ -1508,7 +1508,7 @@ packages.
 		(expr (mode . state) elt)
 		(collect (cons mode state)))
 	       (t
-		(do (error "Hello"))))))
+		(do (error "Invalid argument: %s" states))))))
 
 (defun use-package-handler/:initial-state (name _ states rest state)
   "Generate forms to set the initial evil state of certain modes."
