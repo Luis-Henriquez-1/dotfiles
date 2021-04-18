@@ -1500,10 +1500,12 @@ packages.
 :END:
 
 #+begin_src emacs-lisp
-(defun use-package-normalize/:idle ()
-  (iter (each elt )
-	(pcase elt
-	  ())))
+(use-package%dwim-insert :idle)
+
+(defun use-package-normalize/:idle (_ _ args)
+  (cl-assert (-all-p #'symbolp args))
+  (loopy (each arg args)
+	 (collect (cons 10 arg))))
 
 (defun use-package-handle/:idle (name _ seconds rest state)
   `(,@(loopy (each (seconds . fn) functions)
