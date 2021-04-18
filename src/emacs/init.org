@@ -1484,7 +1484,7 @@ ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
   (loopy (with (normalized (use-package-normalize/:advice _ _ advices)))
 	 (each (fn . advice) normalized)
-	 (expr gadvice (xl-intern-format "xl-generic-%s"))
+	 (expr gadvice (xl-intern-format "xl-gadvice-%s" advice))
 	 (collect (cons fn gadvice))))
 #+end_src
 
