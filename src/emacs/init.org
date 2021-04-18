@@ -2083,7 +2083,7 @@ advice]].
   (condition-case error
       (apply orig-fn args)
     (error
-     (xl-log "Failed calling %s because of %s" orig-fn (error-message-string error)))))
+     (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
 #+end_src
 
 ***** expire
