@@ -1478,14 +1478,14 @@ and EXPIRE-FN are optional."
   "Ensure that ADVICES is a list of advice arguments.
 ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
-  (loopy-iter (each elt advices)
-	      (pcase elt
-		(`(,(and (pred keywordp) key) (,fn . ,advice))
-		 (collect (list key fn advice)))
-		(`(,fn . ,advice)
-		 (collect (list :around fn advice)))
-		(_
-		 (error "wrong args")))))
+  (loopy (each elt advices)
+	 (pcase elt
+	   (`(,(and (pred keywordp) key) (,fn . ,advice))
+	    (collect (list key fn ( advice))))
+	   (`(,fn . ,advice)
+	    (collect (list :around fn (xl-intern-format advice))))
+	   (_
+	    (error "wrong args")))))
 #+end_src
 
 ****** initial state
