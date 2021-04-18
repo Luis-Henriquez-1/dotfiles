@@ -1500,7 +1500,12 @@ packages.
 :END:
 
 #+begin_src emacs-lisp
-(defun use-package-normalize/:idle ())
+(defun use-package-normalize/:idle ()
+  )
+
+(defun use-package-handle/:idle ()
+
+  )
 #+end_src
 
 *** essential libraries
