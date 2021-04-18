@@ -2099,7 +2099,7 @@ package]].
 (defgadvice! expire (orig-fn &rest args)
   "Remove ORIG-FN from"
   (prog1 (apply orig-fn args)
-    (when (symbol-p orig-fn)
+    (when (symbolp orig-fn)
       (when (xl-advice-fn-p orig-fn) (xl-advice-remove orig-fn))
       (when (xl-hook-fn-p orig-fn) (xl-advice-remove orig-fn))
       (xl-log "%s has been removed from %s" orig-fn))))
