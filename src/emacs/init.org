@@ -2345,12 +2345,12 @@ function is a hook.
 (defun xl-hook-add (symbols functions &optional depth local)
   "Alias FUNCTIONS to follow XL naming convention and add them to SYMBOLS."
   (iter (each symbol (-list symbols))
-	(iter (each function (-list functions))
-	      (expr hook (xl-symbol-intern symbol '& function))
-	      (defalias hook function)
-	      (xl-gadvice-catch-error hook)
-	      (add-hook symbol hook depth local)
-	      (collect hook))))
+	(subloop (each function (-list functions))
+		 (expr hook (xl-symbol-intern symbol '& function))
+		 (defalias hook function)
+		 (xl-gadvice-catch-error hook)
+		 (add-hook symbol hook depth local)
+		 (collect hook))))
 #+end_src
 
 **** remove hook
