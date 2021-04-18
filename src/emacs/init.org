@@ -7792,7 +7792,7 @@ various functions in org mode.
 
 #+begin_src emacs-lisp
 (use-package org
-  :gadvice
+  :advice
   (org-add-log-note . suppress-delete-windows)
   (org-fast-tag-selection . suppress-delete-windows)
   (org-fast-todo-selection . suppress-delete-windows)
