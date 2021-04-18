@@ -1470,6 +1470,8 @@ and EXPIRE-FN are optional."
 :END:
 
 #+begin_src emacs-lisp
+(use-package%dwim-insert :gadvice)
+
 (defalias 'use-package-handler/:gadvice 'use-package-handler/:advice)
 
 (defun use-package-normalize/:gadvice (_ _ advices)
