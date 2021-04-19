@@ -2222,8 +2222,7 @@ Sometimes I want to use =xl-log= instead of =message=.
 :END:
 
 #+begin_src emacs-lisp
-(defgadvice! ignore (orig-fn &rest args)
-  (xl-log "Ignoring %s %s." orig-fn args))
+(defgadvice! ignore (orig-fn &rest args))
 #+end_src
 
 **** loading on call
