@@ -2067,7 +2067,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 (defun xl-advice-orig-symbol (advice)
   "Return the function ADVICE is advised to.
 ADVICE is an advice function that follows XL naming conventions."
-  (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice))))
+  (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
 **** original advice
@@ -2079,7 +2079,7 @@ ADVICE is an advice function that follows XL naming conventions."
 (defun xl-advice-orig-function (advice)
   "Return the function that ADVICE aliases.
 ADVICE is an advice function that follows XL naming conventions."
-  (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice))))
+  (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
 **** gen symbol
