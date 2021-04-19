@@ -2417,7 +2417,6 @@ Log when an advice or hook is being called.
   (:around xl-advice-add xl-hook-add)
   (iter (with (symbols (apply orig-fn args)))
 	(each symbol symbols)
-	(symbolp symbol)
 	(xl-log-function symbol)
 	(when (xl-hook-symbol-p symbol)
 	  (xl-gadvice-catch-error symbol))
