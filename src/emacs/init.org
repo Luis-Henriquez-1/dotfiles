@@ -2933,7 +2933,7 @@ circumstances. The one I'm referring to now is with general prefix bindings.
 #+begin_src emacs-lisp
 (defhook! log-init-time (emacs-startup-hook)
   "Log the init time."
-  (xl-log "emacs-init-time -> %s" (emacs-init-time)))
+  (xl-log "emacs-init-time: %s" (emacs-init-time)))
 #+end_src
 
 **** startup
