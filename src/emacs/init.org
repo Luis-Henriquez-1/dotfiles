@@ -2430,11 +2430,13 @@ Log when an advice or hook is being called.
   (let ((name (xl-advice-gen-symbol fn 'expire)))
     (pcase fn
       ((pred xl-advice-fn-p)
-       (fset name `(lambda () (xl-advice-remove ',name)))
-       (advice-add 'symbol :around 'fn))
+       (fset name `(lambda (&rest _) (xl-advice-remove ',name)))
+       (advice-add fn :after 'fn))
       ((pred xl-hook-fn-p)
-       (fset name )
-       (advice-add 'symbol :around fn)))))
+       (fset name `(lambda (&rest _) (xl-hook-remove ',name)))
+       (advice-add fn :after name))
+      (_
+       nil))))
 #+end_src
 
 *** idle-require
