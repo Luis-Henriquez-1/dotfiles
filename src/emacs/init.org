@@ -2082,6 +2082,16 @@ ADVICE is an advice function that follows XL naming conventions."
   (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice))))
 #+end_src
 
+**** gen symbol
+:PROPERTIES:
+:ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-gen-symbol (symbol name)
+  (xl-symbol-intern symbol '@ name))
+#+end_src
+
 *** generic advices
 :PROPERTIES:
 :ID:       8fb485ec-5387-46da-820e-629dcf004962
