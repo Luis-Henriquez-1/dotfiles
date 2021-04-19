@@ -5007,7 +5007,7 @@ When the user
 (defhook! setup-company-backends (company-mode-hook)
   "Set `company-backends' for the current buffer."
   (alet (company:backends-for-mode major-mode)
-    (xl-log "Set up %S backends: %S" major-mode it)
+    (xl-log "set up %S backends: %S" major-mode it)
     (set (make-local-variable 'company-backends) it)))
 #+end_src
 
