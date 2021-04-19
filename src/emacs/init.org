@@ -3234,6 +3234,16 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 	(with-current-buffer buffer (emacs-lock-mode 'kill))))
 #+end_src
 
+*** hideshow
+:PROPERTIES:
+:ID:       2222cf6a-5274-4a33-ae74-357676fbd61d
+:END:
+
+#+begin_src emacs-lisp
+(use-package hideshow
+  :hook (prog-mode-hook . hs-minor-mode))
+#+end_src
+
 ** keybindings
 :PROPERTIES:
 :ID:       e4605d42-4d57-40d9-8594-15b06f6196a4
