@@ -2406,21 +2406,20 @@ Log when an advice or hook is being called.
 #+begin_src emacs-lisp
 (defun xl-log-function (symbol)
   "Log a function."
-  (pcase symbol
-    ((pred xl-advice-symbol-p)
-     (let ((name (xl-advice-gen-symbol symbol 'log))
-	   (symbol (xl-advice-orig-symbol symbol))
-	   (function (xl-advice-orig-function symbol)))
-       (fset name `(lambda () (xl-log "@ %s -> %s" ,symbol ,function)))
-       (advice-add symbol :around name)))
-    ((pred xl-hook-symbol-p)
-     (let ((name (xl-advice-gen-symbol symbol 'log))
-	   (symbol (xl-hook-orig-symbol symbol))
-	   (function (xl-hook-orig-function symbol)))
-       (fset name `(lambda () (xl-log "& %s -> %s" ,symbol ,function)))
-       (advice-add symbol :around name)))
-    (_
-     (advice-add symbol :around fn))))
+  (let ((name (xl-advice-gen-symbol symbol 'log)))
+    (pcase symbol
+      ((pred xl-advice-symbol-p)
+       (let ((symbol (xl-advice-orig-symbol symbol))
+	     (function (xl-advice-orig-function symbol)))
+	 (fset name `(lambda () (xl-log "@ %s -> %s" ,symbol ,function)))
+	 (advice-add symbol :around name)))
+      ((pred xl-hook-symbol-p)
+       (let ((symbol (xl-hook-orig-symbol symbol))
+	     (function (xl-hook-orig-function symbol)))
+	 (fset name `(lambda () (xl-log "& %s -> %s" ,symbol ,function)))
+	 (advice-add symbol :around name)))
+      (_
+       (advice-add symbol :around fn)))))
 #+end_src
 
 *** idle-require
