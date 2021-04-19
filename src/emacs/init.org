@@ -2166,7 +2166,7 @@ to silence the said messages.
 	  ((xl-hook-symbol-p fn)
 	   (xl-log "& %s -> %s" (xl-hook-orig-symbol fn) (xl-hook-action fn)))
 	  ((xl-advice-symbol-p fn)
-	   (xl-log "@ %s -> %s" (xl-advice-fn fn) (xl-advice-orig-function fn)))
+	   (xl-log "@ %s -> %s" (xl-advice-orig-function fn) (xl-advice-orig-function fn)))
 	  (t
 	   (xl-log "%s called" fn)))))
 #+end_src
