@@ -2391,15 +2391,15 @@ HOOK is a hook function that follows XL naming conventions."
        (let ((symbol (xl-advice-orig-symbol symbol))
 	     (function (xl-advice-orig-function symbol)))
 	 (fset name `(lambda (&rest _) (xl-log "@ %s -> %s" ,symbol ,function)))
-	 (advice-add symbol :around name)))
+	 (advice-add symbol :after name)))
       ((pred xl-hook-symbol-p)
        (let ((symbol (xl-hook-orig-symbol symbol))
 	     (function (xl-hook-orig-function symbol)))
 	 (fset name `(lambda (&rest _) (xl-log "& %s -> %s" ,symbol ,function)))
-	 (advice-add symbol :around name)))
+	 (advice-add symbol :after name)))
       (_
        (fset name `(lambda (&rest _) (xl-log "> %s" ,name)))
-       (advice-add symbol :around name)))))
+       (advice-add symbol :after name)))))
 #+end_src
 
 *** log advices and hooks
