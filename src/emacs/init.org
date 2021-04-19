@@ -2420,6 +2420,20 @@ Log when an advice or hook is being called.
 	(finally-return symbols)))
 #+end_src
 
+*** expiration
+:PROPERTIES:
+:ID:       b531dc79-73d0-43eb-a600-b3075315acf0
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-gadvice-expire (fn)
+  (pcase fn
+    ((pred xl-advice-fn-p)
+     ())
+    ((pred xl-hook-fn-p)
+     ())))
+#+end_src
+
 *** idle-require
 :PROPERTIES:
 :ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
