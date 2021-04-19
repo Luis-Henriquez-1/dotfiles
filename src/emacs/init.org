@@ -2378,26 +2378,6 @@ HOOK is a hook function that follows XL naming conventions."
   (xl-symbol-intern fn '& name))
 #+end_src
 
-*** log advices and hooks
-:PROPERTIES:
-:ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
-:END:
-
-Log when an advice or hook is being called.
-
-#+begin_src emacs-lisp
-(defun! log-advices (orig-fn &rest args)
-  "Log ORIG-FN."
-  (:around xl-advice-add xl-hook-add)
-  (iter (with (symbols (apply orig-fn args)))
-	(each symbol symbols)
-	(symbolp symbol)
-	(xl-log-function symbol)
-	(when (xl-hook-symbol-p symbol)
-	  (xl-gadvice-catch-error symbol))
-	(finally-return symbols)))
-#+end_src
-
 *** generate a logging function
 :PROPERTIES:
 :ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
@@ -2421,6 +2401,26 @@ Log when an advice or hook is being called.
       (_
        (fset name `(lambda () (xl-log "> %s" ,name)))
        (advice-add symbol :around name)))))
+#+end_src
+
+*** log advices and hooks
+:PROPERTIES:
+:ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
+:END:
+
+Log when an advice or hook is being called.
+
+#+begin_src emacs-lisp
+(defun! log-advices (orig-fn &rest args)
+  "Log ORIG-FN."
+  (:around xl-advice-add xl-hook-add)
+  (iter (with (symbols (apply orig-fn args)))
+	(each symbol symbols)
+	(symbolp symbol)
+	(xl-log-function symbol)
+	(when (xl-hook-symbol-p symbol)
+	  (xl-gadvice-catch-error symbol))
+	(finally-return symbols)))
 #+end_src
 
 *** idle-require
