@@ -2121,22 +2121,6 @@ advice]].
      (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
 #+end_src
 
-**** expire
-:PROPERTIES:
-:ID:       437e07f7-e506-4dcf-aa88-d2c962d186ba
-:END:
-
-Sometimes I am confronted with hooks or advices that either should'nt be be
-called more than once. A common example is [[][loading a dependency for a
-package]]. 
-
-#+begin_src emacs-lisp
-(defgadvice! expire (orig-fn &rest args)
-  "If ORIG-FN is an xl-defined advice, remove it.
-If ORIG-FN is an xl-defined hook, remove it."
-  (apply orig-fn args))
-#+end_src
-
 **** assume yes in prompts
 :PROPERTIES:
 :ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
