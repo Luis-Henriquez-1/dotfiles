@@ -2367,6 +2367,16 @@ HOOK is a hook function that follows XL naming conventions."
   (nth 2 (xl-hook-symbol-p hook)))
 #+end_src
 
+**** generate hook name
+:PROPERTIES:
+:ID:       dda7e704-4aa2-48fe-8cde-427d340d23aa
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-hook-gen-name (fn name)
+  )
+#+end_src
+
 *** log advices and hooks
 :PROPERTIES:
 :ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
