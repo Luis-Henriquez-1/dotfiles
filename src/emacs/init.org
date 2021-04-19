@@ -2392,7 +2392,7 @@ Log when an advice or hook is being called.
   (iter (with (symbols (apply orig-fn args)))
 	(each symbol symbols)
 	(symbolp symbol)
-	(xl-log-symbol symbol)
+	(xl-log-function symbol)
 	(when (xl-hook-symbol-p symbol)
 	  (xl-gadvice-catch-error symbol))
 	(finally-return symbols)))
