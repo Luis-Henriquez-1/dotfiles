@@ -3324,7 +3324,7 @@ a keymap in the alist is bound. If it is we evaluate its corresponding forms.
 Return any keymaps whose keymaps still don't exist."
   (iter (each (elt &as keymap . forms) deferred-bindings)
 	(cond ((boundp keymap)
-	       (xl-log "bind keys from -> %S" keymap)
+	       (xl-log "bind %s keys" keymap)
 	       (funcall `(lambda () (progn ,@forms))))
 	      (t
 	       (collect elt)))))
