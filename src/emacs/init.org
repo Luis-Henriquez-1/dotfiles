@@ -5068,7 +5068,9 @@ When the user
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :config
-  (--each yas-snippet-dirs (mkdir it t))
+  (iter (each dir yas-snippet-dirs)
+	(dir (if (symbolp dir) (symbol-value symbol) dir))
+	(mkdir dir t))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
     ;; tell smartparens overlays not to interfere with yasnippet keybinds
