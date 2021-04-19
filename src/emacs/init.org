@@ -2397,13 +2397,13 @@ Log when an advice or hook is being called.
   "Log a function."
   (pcase symbol
     ((pred xl-advice-symbol-p)
-     (let ((name (xl-advice-gen-symbol symbol))
+     (let ((name (xl-advice-gen-symbol symbol 'log))
 	   (fn (xl-advice-orig-symbol symbol))
 	   (advice (xl-advice-orig-function symbol)))
        (fset name `(lambda () (xl-log "@ %s -> %s" ,fn ,advice)))
        (advice-add symbol :around fn)))
     ((pred xl-hook-symbol-p)
-     (let ((name (xl-hook-gen-symbol symbol))
+     (let ((name (xl-hook-gen-symbol symbol 'log))
 	   (fn (xl-hook-orig-symbol symbol))
 	   (hook (xl-hook-orig-function symbol)))
        (fset name `(lambda () (xl-log "@ %s -> %s" ,fn ,hook)))
