@@ -2088,7 +2088,7 @@ ADVICE is an advice function that follows XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-gen-symbol (symbol name)
+(defun xl-advice-gen-name (symbol name)
   (xl-symbol-intern symbol '@ name))
 #+end_src
 
