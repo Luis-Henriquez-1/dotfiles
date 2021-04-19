@@ -2011,7 +2011,7 @@ also want to be able to deduce the function being advised from the name.
 
 #+begin_src emacs-lisp
 (defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
-  "Regular expression that matches.")
+  "A regular expression that defines naming convention for advices.")
 #+end_src
 
 **** remove XL advice
@@ -2027,7 +2027,7 @@ one argument--the advice to remove.
   "Remove ADVICES from the functions they advise.
 ADVICES is an advice or a list of advices."
   (iter (each advice (-list advices))
-	(advice-remove (xl-advice-orig-fn advice) advice)))
+	(advice-remove (xl-advice-orig-symbol advice) advice)))
 #+end_src
 
 **** adding an advice
@@ -2042,7 +2042,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (iter (each symbol (-list symbols))
 	(subloop (each function (-list functions))
 		 (expr advice (xl-symbol-intern symbol '@ function))
-		 (defalias advice function)
+		 (fset advice function)
 		 (advice-add symbol where advice props)
 		 (collect advice))))
 #+end_src
@@ -2053,7 +2053,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-fn-p (fn)
+(defun xl-advice-symbol-p (fn)
   "Return non-nil when FN is an advice."
   (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
@@ -2064,7 +2064,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-orig-fn (advice)
+(defun xl-advice-orig-symbol (advice)
   "Return the function ADVICE is advised to.
 ADVICE is an advice function that follows XL naming conventions."
   (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice))))
@@ -2076,13 +2076,13 @@ ADVICE is an advice function that follows XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-orig-advice (advice)
+(defun xl-advice-orig-function (advice)
   "Return the function that ADVICE aliases.
 ADVICE is an advice function that follows XL naming conventions."
   (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice))))
 #+end_src
 
-**** generic advices
+*** generic advices
 :PROPERTIES:
 :ID:       8fb485ec-5387-46da-820e-629dcf004962
 :END:
@@ -2090,7 +2090,7 @@ ADVICE is an advice function that follows XL naming conventions."
 There are some advices that are used so often that they do not lend themselves
 to =defadvice!=, which is better suited for a unique advice defined only once.
 
-***** catch errors
+**** catch errors
 :PROPERTIES:
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
@@ -2111,7 +2111,7 @@ advice]].
      (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
 #+end_src
 
-***** expire
+**** expire
 :PROPERTIES:
 :ID:       437e07f7-e506-4dcf-aa88-d2c962d186ba
 :END:
@@ -2122,22 +2122,23 @@ package]].
 
 #+begin_src emacs-lisp
 (defgadvice! expire (orig-fn &rest args)
-  "If ORIGN-FN is an xl-defined advice, remove it.
+  "If ORIG-FN is an xl-defined advice, remove it.
 If ORIG-FN is an xl-defined hook, remove it."
   (prog1 (apply orig-fn args)
+    (xl-log "HELLOOOOOOO")
+    (xl-log "orig-fn: %S" orig-fn)
+
     (cond ((not (symbolp orig-fn))
-	   (message "orig-fn is not a symbol: %s" orig-fn))
-	  ((xl-advice-fn-p orig-fn)
-	   (xl-advice-remove orig-fn)
-	   (xl-log "%s expires" orig-fn))
-	  ((xl-hook-fn-p orig-fn)
-	   (xl-hook-remove orig-fn)
-	   (xl-log "%s expires" orig-fn))
+	   (xl-log "A"))
+	  ;; ((xl-advice-symbol-p orig-fn)
+	  ;;  (xl-log "B"))
+	  ;; ((xl-hook-symbol-p orig-fn)
+	  ;;  (xl-log "C"))
 	  (t
-	   (xl-log "%s is not a hook or an advice" orig-fn)))))
+	   (xl-log "D")))))
 #+end_src
 
-***** assume yes in prompts
+**** assume yes in prompts
 :PROPERTIES:
 :ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
 :END:
@@ -2154,7 +2155,7 @@ is an example).
     (apply orig-fn args)))
 #+end_src
 
-***** silence
+**** silence
 :PROPERTIES:
 :ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
 :END:
@@ -2169,59 +2170,25 @@ to silence the said messages.
   (shut-up (apply orig-fn args)))
 #+end_src
 
-***** logging certain functions
-:PROPERTIES:
-:ID:       1ccfaa39-924f-4b1d-82b2-e458511cbb1b
-:END:
-
-I make distinctions between different kinds of functions such as advices, hook
-functions and interactive functions. Depending on which type of function it is I
-want to log it differently.
-
-****** log message
-:PROPERTIES:
-:ID:       f0f4d5fd-2ce2-408c-8a4d-f55e39744132
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-log-message (fn)
-  "Return the message logged."
-  (cond ((xl-hook-fn-p fn)
-	 (format "& %s -> %s"
-		 (xl-hook-orig-var fn)
-		 (xl-hook-action fn)))
-	((xl-advice-fn-p fn)
-	 (format "@ %s -> %s"
-		 (xl-advice-orig-fn fn)
-		 (xl-advice-orig-advice fn)))
-	(t
-	 (format "%s called" fn))))
-#+end_src
-
-****** log advice
+**** log
 :PROPERTIES:
 :ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
 :END:
 
-Maybe it's overkill having an advice just to log a function. But it helps
-maintain maximum purity and extensibility.
-
 #+begin_src emacs-lisp
-(defun xl-log-function (fn &optional after)
-  "Log calls to FN.
-Add a log to *xl-log* after function is called.
-This function should be primarly used for side-effect but does incidentally return the
-log function that is added to FN."
-  (advice-add fn (if after :after :before) (xl-new-log-advice fn)))
-
-(defun xl-new-log-advice (fn)
-  "Return new log advice for FN."
-  (alet (xl-symbol-intern "xl-log-" fn)
-    (fset it `(lambda (&rest _) (xl-log ,(xl-log-message fn))))
-    it))
+(defgadvice! log (fn &rest args)
+  (prog1 (apply fn args)
+    (cond ((not (symbolp fn))
+	   (xl-log "function is not a symbol: %S" fn))
+	  ((xl-hook-symbol-p fn)
+	   (xl-log "& %s -> %s" (xl-hook-orig-symbol fn) (xl-hook-action fn)))
+	  ((xl-advice-symbol-p fn)
+	   (xl-log "@ %s -> %s" (xl-advice-fn fn) (xl-advice-orig-function fn)))
+	  (t
+	   (xl-log "%s called" fn)))))
 #+end_src
 
-***** pause garbarge collection
+**** pause garbarge collection
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
@@ -2237,7 +2204,7 @@ packages which can contain several thousand items.
     (apply orig-fn args)))
 #+end_src
 
-***** log
+**** log
 :PROPERTIES:
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
@@ -2245,12 +2212,12 @@ packages which can contain several thousand items.
 Sometimes I want to use =xl-log= instead of =message=.
 
 #+begin_src emacs-lisp
-(defgadvice! use-xl-log-instead (orig-fn &rest args)
+(defgadvice! use-xl-log (orig-fn &rest args)
   (noflet ((message (&rest message-args) (apply #'xl-log message-args)))
     (apply orig-fn args)))
 #+end_src
 
-***** ignore output
+**** ignore output
 :PROPERTIES:
 :ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
 :END:
@@ -2260,7 +2227,7 @@ Sometimes I want to use =xl-log= instead of =message=.
   (xl-log "Ignoring %s %s." orig-fn args))
 #+end_src
 
-***** loading on call
+**** loading on call
 :PROPERTIES:
 :ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
 :END:
@@ -2273,7 +2240,7 @@ quickly become repetative because it's something that is done so often in
 package configuration. The function =before-call= and =after-call= provide a fast
 and convenient way to do this.
 
-****** load-on-call
+***** load-on-call
 :PROPERTIES:
 :ID:       324e707b-2f44-4168-a846-037f5401dedb
 :END:
@@ -2293,7 +2260,7 @@ this it adds an =XL= advice that loads the feature to the function.
     (xl-gadvice-expire it)))
 #+end_src
 
-****** load before call
+***** load before call
 :PROPERTIES:
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
@@ -2307,7 +2274,7 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :before fn))
 #+end_src
 
-****** load after call
+***** load after call
 :PROPERTIES:
 :ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
 :END:
@@ -2347,7 +2314,7 @@ function is a hook.
   (iter (each symbol (-list symbols))
 	(subloop (each function (-list functions))
 		 (expr hook (xl-symbol-intern symbol '& function))
-		 (defalias hook function)
+		 (fset hook function)
 		 (add-hook symbol hook depth local)
 		 (collect hook))))
 #+end_src
@@ -2359,11 +2326,10 @@ function is a hook.
 
 #+begin_src emacs-lisp
 (defun xl-hook-remove (&rest hooks)
-  "Remove HOOKS from their correponding hook variable.
-HOOKS is a hook function or a list of hook functions that follow XL naming
-conventions."
+  "Remove HOOKS from their correponding symbols.
+HOOKS is a list of hook functions that follow the XL naming convention."
   (iter (each hook hooks)
-	(remove-hook (xl-hook-orig-var hook) hook)))
+	(remove-hook (xl-hook-orig-symbol hook) hook)))
 #+end_src
 
 **** hook function
@@ -2372,9 +2338,9 @@ conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-fn-p (hook)
-  "Return non-nil if HOOK is defined with XL naming conventions."
-  (s-match XL-HOOK-REGEXP (symbol-name hook)))
+(defun xl-hook-symbol-p (symbol)
+  "Return non-nil if SYMBOL is defined with XL naming conventions."
+  (s-match XL-HOOK-REGEXP (symbol-name symbol)))
 #+end_src
 
 **** original hook variable
@@ -2383,10 +2349,10 @@ conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-orig-var (hook)
+(defun xl-hook-orig-symbol (hook)
   "Return hook variable for HOOK.
 HOOK is a hook function defined with XL naming conventions."
-  (intern (nth 1 (xl-hook-fn-p hook))))
+  (intern (nth 1 (xl-hook-symbol-p hook))))
 #+end_src
 
 **** original hook function
@@ -2395,10 +2361,55 @@ HOOK is a hook function defined with XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-orig-fn (hook)
+(defun xl-hook-orig-function (hook)
   "Return the hook function for HOOK.
 HOOK is a hook function that follows XL naming conventions."
-  (nth 2 (xl-hook-fn-p hook)))
+  (nth 2 (xl-hook-symbol-p hook)))
+#+end_src
+
+*** log advices and hooks
+:PROPERTIES:
+:ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
+:END:
+
+Log when an advice or hook is being called.
+
+#+begin_src emacs-lisp
+(defun! log-advices (orig-fn &rest args)
+  "Log ORIG-FN."
+  (:around xl-advice-add xl-hook-add)
+  (iter (with (symbols (apply orig-fn args)))
+	(each symbol symbols)
+	(symbolp symbol)
+	(xl-log-symbol symbol)
+	(when (xl-hook-symbol-p symbol)
+	  (xl-gadvice-catch-error symbol))
+	(finally-return symbols)))
+#+end_src
+
+*** generate a logging function
+:PROPERTIES:
+:ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-log-function (symbol)
+  "Log a function."
+  (pcase symbol
+    ((pred xl-advice-symbol-p)
+     (let ((name (xl-advice-gen-symbol symbol))
+	   (fn (xl-advice-orig-symbol symbol))
+	   (advice (xl-advice-orig-function symbol)))
+       (fset name `(lambda () (xl-log "@ %s -> %s" ,fn ,advice)))
+       (advice-add symbol :around fn)))
+    ((pred xl-hook-symbol-p)
+     (let ((name (xl-hook-gen-symbol symbol))
+	   (fn (xl-hook-orig-symbol symbol))
+	   (hook (xl-hook-orig-function symbol)))
+       (fset name `(lambda () (xl-log "@ %s -> %s" ,fn ,hook)))
+       (advice-add symbol :around fn)))
+    (_
+     (advice-add symbol :around fn))))
 #+end_src
 
 *** idle-require
@@ -4032,6 +4043,7 @@ This headline contains generic leader bindings that are in my case triggered by
    ("i" #'org-clock-in-last)
    ("o" #'org-clock-out)
    ("c" #'org-capture))
+  ("l" #'xl--log-open-log)
   ("e" #'eshell)
   ("E" #'xl/open-emacs-instance)
   ("d" #'deer)
@@ -4218,8 +4230,8 @@ I have kind of a loose definition of "toggle" in this headline.
    ("w" #'engine/search-wikipedia))
   ("s" #'consult-line)
   ("l" #'consult-line)
-  ("h" #'xl/goto-org-heading)
-  ("o" #'xl/goto-org-heading))
+  ("h" #'consult-outline)
+  ("o" #'consult-outline))
 #+end_src
 
 **** version control
@@ -4591,7 +4603,7 @@ make sense. This is advice specifically designed to disable selectrum sorting.
   "Disable sorting for FN."
   (let ((advice (xl-symbol-intern fn '@no-selectrum-sorting)))
     (defalias advice #'selectrum%disable-selectrum-sorting-advice)
-    (xl-log-function advice)
+    (xl-gadvice-log advice)
     (advice-add fn :around advice)))
 
 (defun selectrum%disable-selectrum-sorting-advice (orig-fn &rest args)
