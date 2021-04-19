@@ -2383,21 +2383,20 @@ HOOK is a hook function that follows XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-log-function (symbol)
+(defun xl-log-function (fn)
   "Log a function."
   (let ((name (xl-advice-gen-symbol symbol 'log)))
-    (pcase symbol
+    (pcase fn
       ((pred xl-advice-symbol-p)
-       (let ((symbol (xl-advice-orig-symbol symbol))
-	     (function (xl-advice-orig-function symbol)))
-	 (fset name `(lambda (&rest _)
-		       (xl-log "@ %s -> %s" ,symbol ,function)))
-	 (advice-add symbol :after name)))
+       (let ((symbol (xl-advice-orig-symbol fn))
+	     (function (xl-advice-orig-function fn)))
+	 (fset name `(lambda (&rest _) (xl-log "@ %s -> %s" ,symbol ,function)))
+	 (advice-add fn :after name)))
       ((pred xl-hook-symbol-p)
-       (let ((symbol (xl-hook-orig-symbol symbol))
-	     (function (xl-hook-orig-function symbol)))
+       (let ((symbol (xl-hook-orig-symbol fn))
+	     (function (xl-hook-orig-function fn)))
 	 (fset name `(lambda (&rest _) (xl-log "& %s -> %s" ,symbol ,function)))
-	 (advice-add symbol :after name)))
+	 (advice-add fn :after name)))
       (_
        nil
        ;; (fset name `(lambda (&rest _) (xl-log "> %s" ,name)))
