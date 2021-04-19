@@ -2427,11 +2427,12 @@ Log when an advice or hook is being called.
 
 #+begin_src emacs-lisp
 (defun xl-gadvice-expire (fn)
-  (pcase fn
-    ((pred xl-advice-fn-p)
-     ())
-    ((pred xl-hook-fn-p)
-     ())))
+  (let ((name (xl-advice-gen-symbol fn 'expire)))
+    (pcase fn
+      ((pred xl-advice-fn-p)
+       (advice-add ))
+      ((pred xl-hook-fn-p)
+       ()))))
 #+end_src
 
 *** idle-require
