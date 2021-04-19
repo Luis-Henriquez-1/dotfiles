@@ -5068,8 +5068,8 @@ When the user
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :config
-  (iter (each dir yas-snippet-dirs)
-	(expr dir (if (symbolp dir) (symbol-value dir) dir))
+  (iter (each elt yas-snippet-dirs)
+	(expr dir (if (symbolp elt) (symbol-value elt) elt))
 	(mkdir dir t))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
