@@ -2134,18 +2134,7 @@ package]].
 (defgadvice! expire (orig-fn &rest args)
   "If ORIG-FN is an xl-defined advice, remove it.
 If ORIG-FN is an xl-defined hook, remove it."
-  (prog1 (apply orig-fn args)
-    (xl-log "HELLOOOOOOO")
-    (xl-log "orig-fn: %S" orig-fn)
-
-    (cond ((not (symbolp orig-fn))
-	   (xl-log "A"))
-	  ;; ((xl-advice-symbol-p orig-fn)
-	  ;;  (xl-log "B"))
-	  ;; ((xl-hook-symbol-p orig-fn)
-	  ;;  (xl-log "C"))
-	  (t
-	   (xl-log "D")))))
+  (apply orig-fn args))
 #+end_src
 
 **** assume yes in prompts
