@@ -5069,7 +5069,7 @@ When the user
   (yas-triggers-in-field . t)
   :config
   (iter (each dir yas-snippet-dirs)
-	(expr dir (if (symbolp dir) (symbol-value symbol) dir))
+	(expr dir (if (symbolp dir) (symbol-value dir) dir))
 	(mkdir dir t))
   (delq #'yas-dropdown-prompt yas-prompt-functions)
   (after! smartparens
