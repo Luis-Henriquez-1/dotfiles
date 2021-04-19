@@ -2419,7 +2419,8 @@ Log when an advice or hook is being called.
 	 (fset name `(lambda () (xl-log "& %s -> %s" ,symbol ,function)))
 	 (advice-add symbol :around name)))
       (_
-       (advice-add symbol :around fn)))))
+       (fset name `(lambda () (xl-log "> %s" ,name)))
+       (advice-add symbol :around name)))))
 #+end_src
 
 *** idle-require
