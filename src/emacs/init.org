@@ -2398,10 +2398,7 @@ HOOK is a hook function that follows XL naming conventions."
 	 (fset name `(lambda (&rest _) (xl-log "& %s -> %s" ,symbol ,function)))
 	 (advice-add fn :after name)))
       (_
-       nil
-       ;; (fset name `(lambda (&rest _) (xl-log "> %s" ,name)))
-       ;; (advice-add symbol :after name)
-       ))))
+       nil))))
 #+end_src
 
 *** log advices and hooks
