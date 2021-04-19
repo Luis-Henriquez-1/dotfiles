@@ -2362,7 +2362,7 @@ HOOKS is a list of hook functions that follow the XL naming convention."
 (defun xl-hook-orig-symbol (hook)
   "Return hook variable for HOOK.
 HOOK is a hook function defined with XL naming conventions."
-  (intern (intern (nth 1 (xl-hook-symbol-p hook)))))
+  (intern (nth 1 (xl-hook-symbol-p hook))))
 #+end_src
 
 **** original hook function
