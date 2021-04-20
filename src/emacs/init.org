@@ -699,7 +699,7 @@ arguments. Unlike it, it always returns =t= instead of always returning =nil=.
   t)
 #+end_src
 
-* xl-false
+* xl-false :library:core:
 :PROPERTIES:
 :ID:       0d1349cc-8bd5-4830-9c3b-9b4f9ebe25d0
 :END:
@@ -708,7 +708,7 @@ arguments. Unlike it, it always returns =t= instead of always returning =nil=.
 (defalias 'xl-false 'ignore)
 #+end_src
 
-* eval a form in a string
+* eval a form in a string :library:core:
 :PROPERTIES:
 :ID:       79cfc39a-0924-468b-9fbc-83388323a39b
 :END:
@@ -729,7 +729,7 @@ This function came from [[https://emacs.stackexchange.com/questions/19877/how-to
   (eval (car (read-from-string (format "(progn %s)" string)))))
 #+end_src
 
-* dwim single
+* dwim single :library:core:
 :PROPERTIES:
 :ID:       13c4df8f-86f6-46e8-8507-60c08b96fb14
 :END:
