@@ -6453,7 +6453,7 @@ and provides facilities for writing custom extensions. Also see our page on
 (set-default! evil-want-C-u-scroll t)
 #+end_src
 
-**** make normal state default
+**** make normal state default :evil:
 :PROPERTIES:
 :ID:       4940ad40-35a2-43ca-a005-da708aa44313
 :END:
@@ -6466,7 +6466,7 @@ and provides facilities for writing custom extensions. Also see our page on
   (setq evil-motion-state-modes nil))
 #+end_src
 
-**** replace normal with motion
+**** replace normal with motion :evil:
 :PROPERTIES:
 :ID:       69dc135f-0c4a-49ad-9801-ee45dc3ff20f
 :END:
