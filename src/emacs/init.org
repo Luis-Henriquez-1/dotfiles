@@ -1906,12 +1906,14 @@ This is a macro to address the.
 (defun defun%parse-hook (_ args init rest)
   (let-alist init
     (-let* ((orig-name (xl-intern-format "xl--%s-hook" .name))
-	    ((hooks plist) (-split-with (-not #'keywordp) args))
+	    ((hook-symbols plist) (-split-with (-not #'keywordp) args))
 	    ((&plist :depth :local :append) plist))
       `((cl-defun ,orig-name ,.args ,.docstring ,@.body)
-	,@(loopy (each hook (-list hooks))
-		 (expr hook-fn (xl-symbol-intern hook '& .name))
-		 (collect `(xl-hook-add ',hook #',hookf-n ,(or append depth) ,local)))
+	,@(loopy (each symbol hook-symbols)
+		 (expr hook (xl-symbol-intern symbol '& .name))
+		 (append `((defalias ',hook ',orig-name)
+			   (add-hook ',symbol ',hook ,(or append depth) ,local)
+			   (xl-log-function #',hook))))
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
@@ -1932,10 +1934,11 @@ This is a macro to address the.
 	    ((functions plist) (-split-with (-not #'keywordp) args))
 	    ((&plist :props) plist))
       `((cl-defun ,orig-advice-name ,.args ,.docstring ,@.body)
-	,@(iter (each fn functions)
-		(collect `((defalias ,(xl-advice-gen-symbol ,orig-advice-name) ',name)
-			   (advice-add #',fn ,where #',advice-name)
-			   (xl-log-function #',name))))
+	,@(loopy (each fn functions)
+		 (expr advice (xl-advice-gen-symbol fn .name))
+		 (append `((defalias ',advice ',orig-advice-name)
+			   (advice-add #',fn ,where #',advice)
+			   (xl-log-function #',advice))))
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
@@ -5181,11 +5184,6 @@ When the user
 ** workspaces
 :PROPERTIES:
 :ID:       c979c631-4098-4204-b067-82f58b5b9ebe
-:END:
-
-*** tab-bar-mode
-:PROPERTIES:
-:ID:       0a72fe9a-1948-4022-a300-18a4881da382
 :END:
 
 *** desktop
