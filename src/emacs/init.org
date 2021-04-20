@@ -334,7 +334,7 @@ for that occasion.
   (substring-no-properties (xl-to-string keyword) 1))
 #+end_src
 
-* convert to string :library:core:symbl:
+* convert to string :library:core:symbol:
 :PROPERTIES:
 :ID:       60f22f98-8204-45ae-9943-f19cdfe60459
 :END:
