@@ -925,7 +925,7 @@ OLD is an existing use-package keyword. NEW is the keyword to override OLD with.
 One thing to note is that I don't allow arguments to be optionally in a
 list. This makes things much more complicated and it makes.
 
-* silence
+* silence :usepackage:core:
 :PROPERTIES:
 :ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
 :END:
