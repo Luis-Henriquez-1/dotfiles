@@ -2787,7 +2787,7 @@ This headline contains variables that are defined in c-source code and thefore
 do not pertain to any particular package. For this reason I don't wrap these
 variables in a [[29e1513a-e12a-4818-870e-8d5fab7fe1a0][use-package]] block.
 
-** don't create lockfiles
+* don't create lockfiles
 :PROPERTIES:
 :ID:       ae464c90-d220-4db2-a3fd-fec36b9181e4
 :END:
@@ -2798,7 +2798,7 @@ https://stackoverflow.com/questions/8246483/emacs-how-to-disable-files-creation
 (set! create-lockfiles nil)
 #+end_src
 
-** delete duplicates in history
+* delete duplicates in history
 :PROPERTIES:
 :ID:       1c381491-c4fa-4b5e-99de-ec6bd33df77c
 :END:
@@ -2811,7 +2811,7 @@ code.
 (set! history-delete-duplicates t)
 #+end_src
 
-** don't echo keystrokes
+* don't echo keystrokes
 :PROPERTIES:
 :ID:       b8856ebe-6208-4271-ad5a-d352fabec8bb
 :END:
@@ -2824,7 +2824,7 @@ echoing in the mode line makes the which-key prompt disappear prematurely.
 (set-default! echo-keystrokes 0)
 #+end_src
 
-** set the fill-column
+* set the fill-column
 :PROPERTIES:
 :ID:       84d8e85a-a6a1-49cd-b46e-e5cd3f825438
 :END:
@@ -2837,7 +2837,7 @@ card]]. Now this is not the case so I don't think it's as much of a deal.
 (set-default! fill-column 80)
 #+end_src
 
-** recursive minibuffers
+* recursive minibuffers
 :PROPERTIES:
 :ID:       7eb20f6d-75b4-4eec-8878-e7232c1a153d
 :END:
@@ -2850,7 +2850,7 @@ typing an expression, I get completion from the minibuffer.
 (set-default! enable-recursive-minibuffers t)
 #+end_src
 
-** utf-8 text encoding
+* utf-8 text encoding
 :PROPERTIES:
 :ID:       26344072-c145-40bd-9ade-8c7f2eef54c8
 :END:
@@ -2876,7 +2876,7 @@ typing an expression, I get completion from the minibuffer.
   (set-charset-priority 'unicode))
 #+end_src
 
-** disable bi-directional text
+* disable bi-directional text
 :PROPERTIES:
 :ID:       6c12f14c-75c7-4b30-9bb4-ca6e8d3cae47
 :END:
@@ -2889,7 +2889,7 @@ text is useful for languages that read right to left.
 (set-default! bidi-paragraph-direction 'left-to-right)
 #+end_src
 
-** stop beeping
+* stop beeping
 :PROPERTIES:
 :ID:       2a83cb3a-ca2e-4d9c-a296-340d33855614
 :END:
@@ -2898,7 +2898,7 @@ text is useful for languages that read right to left.
 (set-default! ring-bell-function #'ignore)
 #+end_src
 
-** resize pixelwise
+* resize pixelwise
 :PROPERTIES:
 :ID:       02daff3d-e532-4cfa-a217-81e27627e7a7
 :END:
@@ -2910,7 +2910,7 @@ text is useful for languages that read right to left.
 (set-default! frame-resize-pixelwise t)
 #+end_src
 
-** use yes or no
+* use yes or no
 :PROPERTIES:
 :ID:       82a84315-2018-42e0-bd1a-74af7b722593
 :END:
@@ -2922,14 +2922,6 @@ source code.
 #+begin_src emacs-lisp
 (xl-advice-add #'yes-or-no-p :override #'y-or-n-p)
 #+end_src
-
-* miscellaneous
-:PROPERTIES:
-:ID:       65edb4e7-0fe1-4e37-ae9b-027c9f15162a
-:END:
-
-This headline contains headings for which I have not yet determined a good
-hierarchy.
 
 * log the init time :core:hook:
 :PROPERTIES:
