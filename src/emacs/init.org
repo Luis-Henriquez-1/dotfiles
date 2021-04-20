@@ -2497,7 +2497,7 @@ garbage collection during this time.
   (idle-update-delay     . 1))
 #+end_src
 
-* clipboard
+* clipboard :core:settings:
 :PROPERTIES:
 :ID:       6aa6d0ac-6cf8-4f82-a724-c56d69cc062b
 :END:
