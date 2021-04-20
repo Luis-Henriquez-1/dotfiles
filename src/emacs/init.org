@@ -1065,7 +1065,7 @@ instead of =add-hook=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-* before-call
+* before-call :performance:
 :PROPERTIES:
 :ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
 :END:
