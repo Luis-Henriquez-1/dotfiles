@@ -300,7 +300,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'xl-to-string args)))
 #+end_src
 
-** intern format
+** intern format :library:core:
 :PROPERTIES:
 :ID:       b371718f-2067-450c-8117-fb22f44be208
 :END:
