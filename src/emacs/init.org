@@ -2483,7 +2483,7 @@ garbage collection during this time.
   (disabled-command-function . nil))
 #+end_src
 
-* simple
+* simple :core:settings:
 :PROPERTIES:
 :ID:       a1fa5195-9b6a-4842-bc5f-71305e603c55
 :END:
