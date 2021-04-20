@@ -3234,7 +3234,7 @@ According to Doom Emacs, when running emacs in terminal tty is *tremendously* sl
     (tty-run-terminal-initialization (selected-frame) nil t)))
 #+end_src
 
-* prevent emacs from killing certain buffers
+* prevent emacs from killing certain buffers :core:
 :PROPERTIES:
 :ID:       ae935cf5-7322-499c-96d7-20209d9b6641
 :END:
