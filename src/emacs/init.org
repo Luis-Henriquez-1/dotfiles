@@ -1346,7 +1346,7 @@ make sure packages are only loaded when they need to be. The major purpose of
 this library is to provide me the tools to configure these packages in a way
 that is concise and efficient.
 
-* eval-after-load! :library:core:macro:
+* eval-after-load! :library:core:macro:defer:
 :PROPERTIES:
 :ID:       8d831084-539b-4072-a86a-b55afb09bf02
 :END:
@@ -1371,7 +1371,7 @@ loading it. To remedy this I wrap the block with [[helpfn:condition-case][condit
          (message "Error in `eval-after-load': %S" error)))))
 #+end_src
 
-* after! :core:library:macro:
+* after! :core:library:macro:defer:
 :PROPERTIES:
 :ID:       e209d256-86e0-4e30-a7d5-78a583729b42
 :END:
