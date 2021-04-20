@@ -1881,6 +1881,20 @@ This is a macro to address the.
 (defvar defun%parser-alist nil)
 #+end_src
 
+**** processing clauses
+:PROPERTIES:
+:ID:       eb0b18b8-6f53-4518-b9d3-8921aa5caf5d
+:END:
+
+#+begin_src emacs-lisp
+(cl-defun defun%process-clauses (init clauses)
+  "Process clauses."
+  (-let* ((rest (cdr clauses))
+	  ((key . args) (car clauses))
+	  (parser (alist-get key defun%parser-alist)))
+    (funcall (or parser #'ignore) key args init rest)))
+#+end_src
+
 **** parse-hook
 :PROPERTIES:
 :ID:       f7c0897d-79da-4e73-8ba7-ac5bdedacbfb
@@ -1889,14 +1903,16 @@ This is a macro to address the.
 #+begin_src emacs-lisp
 (callf2 cl-adjoin '(:hook . defun%parse-hook) defun%parser-alist :test #'equal)
 
-(cl-defun defun%parse-hook (init _ hooks &key depth append local)
+(defun defun%parse-hook (_ args init rest)
   (let-alist init
-    (iter (with (orig-name (intern (format "xl--%s-hook" .name))))
-	  (initially (push `(cl-defun ,orig-name ,.args ,.docstring ,@.body) loopy-result))
-	  (each hook hooks)
-	  (expr hook-fn (xl-symbol-intern hook '& .name))
-	  (collect `(defalias ',hook-fn ',orig-name))
-	  (collect `(add-hook ',hook #',hook-fn ,(or append depth) ,local)))))
+    (-let* ((orig-name (xl-intern-format "xl--%s-hook" .name))
+	    ((hooks plist) (-split-with (-not #'keywordp) args))
+	    ((&plist :depth :local :append) plist))
+      `((cl-defun ,orig-name ,.args ,.docstring ,@.body)
+	,@(loopy (each hook (-list hooks))
+		 (expr hook-fn (xl-symbol-intern hook '& .name))
+		 (collect `(xl-hook-add ',hook #',hookf-n ,(or append depth) ,local)))
+	,@(defun%process-clauses init rest)))))
 #+end_src
 
 **** parse advice
@@ -1910,14 +1926,16 @@ This is a macro to address the.
       (collect (cons type parser))
       (finally-do (callf cl-union defun%parser-alist loopy-result :test #'equal)))
 
-(cl-defun defun%parse-advice (init where fns-to-advice &key props)
+(cl-defun defun%parse-advice (where args init rest)
   (let-alist init
-    (iter (with (orig-advice-name (xl-symbol-intern 'xl-- .name '-advice)))
-	  (initially (push `(cl-defun ,orig-advice-name ,.args ,.docstring ,@.body) loopy-result))
-	  (each fn fns-to-advice)
-	  (expr advice-name (xl-symbol-intern fn '@ .name))
-	  (collect `(defalias ',advice-name ',orig-advice-name))
-	  (collect `(advice-add ',fn ,where #',advice-name)))))
+    (-let* ((orig-advice-name (xl-intern-format "xl--%s-advice" .name))
+	    ((functions plist) (-split-with (-not #'keywordp) args))
+	    ((&plist :props) plist))
+      `((cl-defun ,orig-advice-name ,.args ,.docstring ,@.body)
+	,@(iter (each fn functions)
+		(collect `((defalias ,(xl-advice-gen-symbol ,orig-advice-name) ',name)
+			   (advice-add #',fn ,where #',advice-name))))
+	,@(defun%process-clauses init rest)))))
 #+end_src
 
 **** parse generic advice
@@ -1928,32 +1946,47 @@ This is a macro to address the.
 #+begin_src emacs-lisp
 (callf2 cl-adjoin '(:gadvice . defun%parse-gadvice) defun%parser-alist :test #'equal)
 
-(cl-defun defun%parse-gadvice (init _ bool &rest _)
+(cl-defun defun%parse-gadvice (_ bool init rest)
   (let-alist init
     (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
 	  (advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
       (when bool
 	`((cl-defun ,generic-advice-fn (fn) (advice-add fn :around #',advice-fn))
-	  (cl-defun ,advice-fn ,.args ,.docstring ,@.body))))))
+	  (cl-defun ,advice-fn ,.args ,.docstring ,@.body)
+	  ,@(defun%process-clauses init rest))))))
+#+end_src
+
+**** parse =defafter!=
+:PROPERTIES:
+:ID:       76e34252-c93f-4de2-b13c-2e188cd4a476
+:END:
+
+#+begin_src emacs-lisp
+(callf2 cl-adjoin '(:features . defun%parse-features) defun%parser-alist :test #'equal)
+
+(cl-defun defun%parse-features (_ features init rest)
+  (let-alist init
+    (let ((after-fn (gensym (format "xl--after-%s-" .name))))
+      `((after! ,features
+	  (cl-defun ,after-fn ,.args ,.docstring ,@.body)
+	  (funcall #',after-fn))
+	,@(defun%process-clauses init rest)))))
 #+end_src
 
 **** defun!
 :PROPERTIES:
-:ID:       408d1cdf-5cc6-43e8-813d-15025aa23f13
+:ID:       5dd91bfc-26c7-4763-a6b8-1baae771d771
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defun! (name args docstring &rest body)
-  (declare (indent defun) (doc-string 3))
-  (loopy (loop (while (and (listp (car body)) (keywordp (caar body))))
-	       (collect clauses (pop body)))
-	 (expr init (a-list 'name name 'args args 'docstring docstring 'body body))
-	 (loop (each (command-name . rest) clauses)
-	       (expr command (alist-get command-name defun%parser-alist))
-	       (expr command-args (-take-while (-not #'keywordp) rest))
-	       (expr rest (-drop-while (-not #'keywordp) rest))
-	       (append forms (apply command init command-name command-args rest)))
-	 (return `(progn ,@forms))))
+(defmacro defun! (name args &rest body)
+  "Generate."
+  (loopy (with (docstring (when (stringp (car body)) (pop body))))
+	 (expr elt (car body))
+	 (while (and (listp elt) (keywordp (car elt))))
+	 (collect clauses (pop body))
+	 (finally-return (alet (a-list 'name name 'args args 'docstring docstring 'body body)
+			   `(progn ,@(defun%process-clauses it clauses))))))
 #+end_src
 
 **** wrappers around
@@ -1994,6 +2027,17 @@ This is a macro to address the.
 (defmacro defgadvice! (name args docstring &rest body)
   (declare (indent defun) (doc-string 3))
   `(defun! ,name ,args ,docstring (:gadvice t) ,@body))
+#+end_src
+
+***** defafter!
+:PROPERTIES:
+:ID:       b6179567-c840-4dfa-891e-3e27384dfdb9
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defafter! (name args docstring &rest body)
+  (declare (indent defun) (doc-string 3))
+  `(defun! ,name () ,docstring (:features ,@args) ,@body))
 #+end_src
 
 *** advice
@@ -2395,7 +2439,7 @@ Log when an advice or hook is being called.
 #+begin_src emacs-lisp
 (defun! log-advices (orig-fn &rest args)
   "Log ORIG-FN."
-  (:around xl-advice-add xl-hook-add)
+  (:around xl-hook-add xl-advice-add)
   (iter (with (symbols (apply orig-fn args)))
 	(each symbol symbols)
 	(xl-log-function symbol)
@@ -3073,8 +3117,11 @@ I define three levels on frequency with which emacs should perform garbage
 collection.
 
 #+begin_src emacs-lisp
-;; (defcustom XL-GC-CONS-THRESHOLD-MULTIPLIER nil
-;;   "The number multiplied")
+;; (defun xl-gc-cons-threshold ()
+;;   "Return the gc-cons threshold."
+;;   (* XL-GC-CONS-THRESHOLD-MULTIPLIER gc-cons-threshold))
+
+;; (defcustom XL-GC-CONS-THRESHOLD-MULTIPLIER nil "The number multiplied")
 
 (defconst XL-GC-CONS-THRESHOLD-MAX most-positive-fixnum
   "The upper limit for `gc-cons-threshold'.
@@ -4624,7 +4671,7 @@ make sense. This is advice specifically designed to disable selectrum sorting.
   "Disable sorting for FN."
   (let ((advice (xl-symbol-intern fn '@no-selectrum-sorting)))
     (defalias advice #'selectrum%disable-selectrum-sorting-advice)
-    (xl-gadvice-log advice)
+    ;; (xl-gadvice-log advice)
     (advice-add fn :around advice)))
 
 (defun selectrum%disable-selectrum-sorting-advice (orig-fn &rest args)
@@ -5064,7 +5111,7 @@ When the user
 
 *** yasnippet
 :PROPERTIES:
-:ID:       2c359813-e928-4a2b-982e-b722bf44fac7
+:ID:       41958449-b3b1-4c5b-915a-7cef7c5aa41d
 :END:
 
 #+begin_src emacs-lisp
@@ -5078,13 +5125,31 @@ When the user
   (yas-use-menu . nil)
   (yas-triggers-in-field . t)
   :config
+  (delq #'yas-dropdown-prompt yas-prompt-functions))
+#+end_src
+
+*** yasnippet
+:PROPERTIES:
+:ID:       2c359813-e928-4a2b-982e-b722bf44fac7
+:END:
+
+#+begin_src emacs-lisp
+(defafter! dont-interfere-with-yasnippet-bindings (smartparens yasnippet)
+  "Don't interfere with yasnippet bindings."
+  (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay))
+#+end_src
+
+*** another
+:PROPERTIES:
+:ID:       bf48e5dd-32ba-4141-a26c-a5e549e7d878
+:END:
+
+#+begin_src emacs-lisp
+(defafter! ensure-yasnippet-dirs (yasnippet)
+  "Ensure that yasnippet dirs exist."
   (iter (each elt yas-snippet-dirs)
 	(expr dir (if (symbolp elt) (symbol-value elt) elt))
-	(mkdir dir t))
-  (delq #'yas-dropdown-prompt yas-prompt-functions)
-  (after! smartparens
-    ;; tell smartparens overlays not to interfere with yasnippet keybinds
-    (advice-add #'yas-expand :before #'sp-remove-active-pair-overlay)))
+	(mkdir dir t)))
 #+end_src
 
 *** snippet collection
@@ -5121,36 +5186,6 @@ When the user
 :PROPERTIES:
 :ID:       0a72fe9a-1948-4022-a300-18a4881da382
 :END:
-
-**** settings
-:PROPERTIES:
-:ID:       bb63f5b2-cc45-454b-a032-be248f801636
-:END:
-
-#+begin_src emacs-lisp
-(use-package tab-bar-mode
-  :hook (tab-bar-mode-hook . tab-bar-history-mode)
-  :set
-  (tab-bar-new-tab-choice . "*scratch*")
-  (tab-bar-history-limit  . 25)
-  (tab-bar-tab-hints      . nil)
-  (tab-bar-show           . nil))
-#+end_src
-
-**** dont actually display the tabs
-:PROPERTIES:
-:ID:       e4cee146-f6ac-47f1-9e98-f209ae9f9bec
-:END:
-
-I want the tabs to exist as a concept, but (ironically) I don't actually want
-them displayed.
-
-#+begin_src emacs-lisp
-(defadvice! inhibit-tab-display (:after tab-bar-mode make-frame)
-  "Inhibit the display of tags in tab-bar-mode."
-  (iter (for frame frame-list)
-	(set-frame-parameter frame 'tab-bar-lines 0)))
-#+end_src
 
 *** desktop
 :PROPERTIES:
@@ -5599,7 +5634,7 @@ windows).
 
 *** exwm-edit
 :PROPERTIES:
-:ID: 1a167827-b791-4a69-a90e-c2d30bd83abb
+:ID:       39361fa6-0df0-416e-aed6-2f8cb3bf9fb9
 :END:
 
 The dream is to do all text editing in Emacs. This package is a big step towards
@@ -5904,8 +5939,7 @@ Saving files like this reduces the likelihood of user delays.
 =origami= is, as its name suggests, a package that handles folding.
 
 #+begin_src emacs-lisp
-(use-package origami
-  :hook prog-mode-hook)
+(use-package origami)
 #+end_src
 
 ** edit-indirect
@@ -8017,10 +8051,10 @@ before org-capture is loaded.
   :before-call
   (ts     . org-capture)
   (org-ml . org-capture)
-  :rule ("bottom" "capture" :newname "\\`CAPTURE-.+")
-  :config
-  (after! org-agenda
-    (callf2 cl-adjoin XL-CAPTURE-FILE org-agenda-files :test #'string=)))
+  :rule ("bottom" "capture" :newname "\\`CAPTURE-.+"))
+
+(defafter! register-capture-file (org-capture)
+  (callf2 cl-adjoin XL-CAPTURE-FILE org-agenda-files :test #'string=))
 #+end_src
 
 **** remove capture headerline
@@ -8768,7 +8802,8 @@ images which referred to by the symbols =official= and =logo=.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! open-dashboard-instead (:around startup%initial-buffer-choice)
+(defun! open-dashboard-instead (&rest _)
+  (:around startup%initial-buffer-choice)
   (get-buffer-create "*dashboard*"))
 #+end_src
 
