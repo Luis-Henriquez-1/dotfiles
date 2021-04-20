@@ -1159,7 +1159,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-* idle-require :performance:usepackage:core:library:
+* idle-require :performance:usepackage:core:library:defer:
 :PROPERTIES:
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
