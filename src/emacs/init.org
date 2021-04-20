@@ -6466,6 +6466,9 @@ and provides facilities for writing custom extensions. Also see our page on
 :ID:       69dc135f-0c4a-49ad-9801-ee45dc3ff20f
 :END:
 
+#+begin_src emacs-lisp
+#+end_src
+
 **** normal state everywhere
 :PROPERTIES:
 :ID:       e6126bd7-94b8-4ce0-b547-0536b59437ea
