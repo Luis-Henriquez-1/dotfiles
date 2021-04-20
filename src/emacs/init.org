@@ -6489,7 +6489,6 @@ useless state]]. The code in this headline essentially just says =NO= to motion
 state and disables it everywhere in favor of normal state.
 
 #+begin_src emacs-lisp
-
 (defun! replace-motion-with-normal (orig-fn &rest args) 
   ""
   (:around evil-set-initial-state)
