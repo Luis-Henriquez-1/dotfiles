@@ -6546,7 +6546,7 @@ cursor color will update.
     (evil-refresh-cursor)))
 #+end_src
 
-**** insert state in minibuffer
+**** insert state in minibuffer :minibuffer:evil:
 :PROPERTIES:
 :ID: a23137c5-62a0-4e77-9e51-6a7372dac703
 :END:
