@@ -1934,7 +1934,8 @@ This is a macro to address the.
       `((cl-defun ,orig-advice-name ,.args ,.docstring ,@.body)
 	,@(iter (each fn functions)
 		(collect `((defalias ,(xl-advice-gen-symbol ,orig-advice-name) ',name)
-			   (advice-add #',fn ,where #',advice-name))))
+			   (advice-add #',fn ,where #',advice-name)
+			   (xl-log-function #',name))))
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
