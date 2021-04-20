@@ -974,7 +974,7 @@ functions that a package provides.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-* ignore
+* ignore :usepackage:core:library:
 :PROPERTIES:
 :ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
 :END:
@@ -994,7 +994,7 @@ Sometimes I want to ignore certain functions.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-* always yes
+* always yes :usepackage:core:library:
 :PROPERTIES:
 :ID:       f2d89960-ed41-4a72-847f-e150db56330b
 :END:
