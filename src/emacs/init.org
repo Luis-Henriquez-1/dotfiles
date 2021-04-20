@@ -2429,7 +2429,7 @@ Log when an advice or hook is being called.
 	(finally-return symbols)))
 #+end_src
 
-** expiration
+* expiration
 :PROPERTIES:
 :ID:       b531dc79-73d0-43eb-a600-b3075315acf0
 :END:
@@ -2449,7 +2449,7 @@ Log when an advice or hook is being called.
        nil))))
 #+end_src
 
-** idle-require
+* idle-require
 :PROPERTIES:
 :ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
 :END:
