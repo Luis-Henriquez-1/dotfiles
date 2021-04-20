@@ -925,7 +925,7 @@ OLD is an existing use-package keyword. NEW is the keyword to override OLD with.
 One thing to note is that I don't allow arguments to be optionally in a
 list. This makes things much more complicated and it makes.
 
-** silence
+* silence
 :PROPERTIES:
 :ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
 :END:
@@ -951,7 +951,7 @@ FNS is a list of function symbols."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** gc-pause
+* gc-pause
 :PROPERTIES:
 :ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
 :END:
@@ -974,7 +974,7 @@ functions that a package provides.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** ignore
+* ignore
 :PROPERTIES:
 :ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
 :END:
@@ -994,7 +994,7 @@ Sometimes I want to ignore certain functions.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** always yes
+* always yes
 :PROPERTIES:
 :ID:       f2d89960-ed41-4a72-847f-e150db56330b
 :END:
@@ -1014,7 +1014,7 @@ There are a number of functions in Emacs that prompt.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** os
+* os
 :PROPERTIES:
 :ID:       9d78d90a-0309-44c6-be96-82bd6608546a
 :END:
@@ -1033,7 +1033,7 @@ This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70
   `((with-os! ,os ,@(use-package-process-keywords name rest state))))
 #+end_src
 
-** hook
+* hook
 :PROPERTIES:
 :ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
 :END:
@@ -1065,7 +1065,7 @@ instead of =add-hook=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** before-call
+* before-call
 :PROPERTIES:
 :ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
 :END:
@@ -1094,7 +1094,7 @@ of this keyword is to load a package when a certain function is called.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** after-call
+* after-call
 :PROPERTIES:
 :ID:       2c7dd1a8-c0ee-42cd-b76f-8a72c94be848
 :END:
@@ -1114,7 +1114,7 @@ The.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** set
+* set
 :PROPERTIES:
 :ID:       9948a4ae-f80a-4b13-b97a-0895481021a6
 :END:
@@ -1137,7 +1137,7 @@ I should give credit. I got this idea from the leaf macro.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** rule
+* rule
 :PROPERTIES:
 :ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
 :END:
@@ -1159,7 +1159,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** idle-require
+* idle-require
 :PROPERTIES:
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
@@ -1183,7 +1183,7 @@ If an element is t, convert it to PACKAGE."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** config
+* config
 :PROPERTIES:
 :ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
 :END:
@@ -1204,7 +1204,7 @@ same thing, except it uses =after!= instead of =with-eval-after-load=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** alias
+* alias
 :PROPERTIES:
 :ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
 :END:
@@ -1224,7 +1224,7 @@ Sometimes I want to alias certain.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** advice
+* advice
 :PROPERTIES:
 :ID:       1a0d6ff0-0dcd-4374-b52c-79bf617b3a2b
 :END:
@@ -1257,7 +1257,7 @@ and EXPIRE-FN are optional."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** gadvice
+* gadvice
 :PROPERTIES:
 :ID:       0646d4c8-47e7-45cc-a14a-6326a2b76fdd
 :END:
@@ -1282,7 +1282,7 @@ and EXPIRE-FN are optional."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** initial state
+* initial state
 :PROPERTIES:
 :ID:       e923e94e-9051-4be8-8dda-6566601ba865
 :END:
@@ -1312,7 +1312,7 @@ packages.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-** idle
+* idle
 :PROPERTIES:
 :ID:       78814410-c190-4f05-a319-4e6d13a9ea4b
 :END:
