@@ -341,7 +341,7 @@ put together into one symbol. This function is meant to just do what I mean.
 
 #+begin_src emacs-lisp
 (defun xl-intern-format (format-string &rest args)
-  "Return format string as a symbol."
+  "Same as `format` but return result as a symbol."
   (intern (apply #'format format-string args)))
 #+end_src
 
@@ -389,8 +389,7 @@ with details and just want a string.
 (defun xl-to-string (&rest args)
   "Return ARGS as a string."
   (declare (pure t) (side-effect-free t))
-  (with-output-to-string
-    (-each args #'princ)))
+  (with-output-to-string (-each args #'princ)))
 #+end_src
 
 ***** detect emacs symbols
@@ -790,6 +789,31 @@ Otherwise, return OBJ."
 :ID:       cfe0d468-92ee-4a4f-9908-4ea0b1964ac4
 :END:
 
+**** eval-after-load!
+:PROPERTIES:
+:ID:       8d831084-539b-4072-a86a-b55afb09bf02
+:END:
+
+=eval-after-load= is a macro that evaluates a lisp form after a file or feature
+has been loaded. It's syntax is a bit terse because you need to quote the
+feature as well as the form to be evaluated.
+
+Also, if an =eval-after-load= block contains an error and it is triggered by a
+feature, the error will happening. I think it might be that because the form was
+not successfully evaluated =eval-after-load= does not realize it should stop
+loading it. To remedy this I wrap the block with [[helpfn:condition-case][condition-case]].
+
+#+begin_src emacs-lisp
+(defmacro eval-after-load! (feature &rest body)
+  "A wrapper around `eval-after-load!' with error catching."
+  (declare (indent defun))
+  `(eval-after-load ',feature
+     '(condition-case error
+          (progn ,@body)
+        (error
+         (message "Error in `eval-after-load': %S" error)))))
+#+end_src
+
 **** after!
 :PROPERTIES:
 :ID:       e209d256-86e0-4e30-a7d5-78a583729b42
@@ -851,31 +875,6 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
                    (_ nil))
                  (-list os))
     `(progn ,@body)))
-#+end_src
-
-**** eval-after-load!
-:PROPERTIES:
-:ID:       8d831084-539b-4072-a86a-b55afb09bf02
-:END:
-
-=eval-after-load= is a macro that evaluates a lisp form after a file or feature
-has been loaded. It's syntax is a bit terse because you need to quote the
-feature as well as the form to be evaluated.
-
-Also, if an =eval-after-load= block contains an error and it is triggered by a
-feature, the error will happening. I think it might be that because the form was
-not successfully evaluated =eval-after-load= does not realize it should stop
-loading it. To remedy this I wrap the block with [[helpfn:condition-case][condition-case]].
-
-#+begin_src emacs-lisp
-(defmacro eval-after-load! (feature &rest body)
-  "A wrapper around `eval-after-load!' with error catching."
-  (declare (indent defun))
-  `(eval-after-load ',feature
-     '(condition-case error
-          (progn ,@body)
-        (error
-         (message "Error in `eval-after-load': %S" error)))))
 #+end_src
 
 **** set!
@@ -1975,6 +1974,15 @@ This is a macro to address the.
 	  (cl-defun ,after-fn ,.args ,.docstring ,@.body)
 	  (funcall #',after-fn))
 	,@(defun%process-clauses init rest)))))
+#+end_src
+
+**** parse package
+:PROPERTIES:
+:ID:       87fe1063-f274-497b-8afe-d9971427ce71
+:END:
+
+#+begin_src emacs-lisp
+(defun)
 #+end_src
 
 **** defun!
@@ -6389,11 +6397,10 @@ it. It's pretty smart and very convenient.
 :END:
 
 #+begin_src emacs-lisp
-(use-package smartparens :config
-  (defhook! disable-smartparens-navigate-skip-match (after-change-major-mode-hook)
-    "Disable smartparents skip match feature."
-    (setq sp-navigate-skip-match nil)
-    (setq sp-navigate-consider-sgml-tags nil)))
+(defhook! disable-smartparens-navigate-skip-match (after-change-major-mode-hook)
+  "Disable smartparents skip match feature."
+  (setq sp-navigate-skip-match nil)
+  (setq sp-navigate-consider-sgml-tags nil))
 #+end_src
 
 **** autopairing
@@ -9809,16 +9816,16 @@ If we're in arch and we have yay intalled, use that.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! build-pdf-into-program-maybe (:before pdf-view-mode)
+(defun! build-pdf-into-program-maybe ()
   "Build the pdf-info program if it hasn't already been built."
+  (:before pdf-view-mode)
   (unless (file-executable-p pdf-info-epdfinfo-program)
     (let ((wconf (current-window-configuration)))
       (pdf-tools-install)
       (message "Building epdfinfo, this will take a moment...")
-      (-each (buffer-list)
-        (fn! (with-current-buffer <buffer>
-	       (when (eq major-mode 'pdf-view-mode)
-		 (fundamental-mode)))))
+      (with-current-buffer buffer
+	(iter (each buffer buffer-list)
+	      (when (eq major-mode 'pdf-view-mode) (fundamental-mode))))
       (while compilation-in-progress
         ;; Block until `pdf-tools-install' is done
         (redisplay)
