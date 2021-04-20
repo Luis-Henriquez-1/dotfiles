@@ -742,7 +742,7 @@ Otherwise, return OBJ."
   (if (= (safe-length obj) 1) (car obj) obj))
 #+end_src
 
-* install dependencies
+* install dependencies :core:pacman:
 :PROPERTIES:
 :ID:       3748094a-e30c-4f59-96ce-3cf1ddec5d42
 :END:
@@ -754,7 +754,7 @@ Otherwise, return OBJ."
 (require 's)
 #+end_src
 
-* init use-package :usepackage:
+* init use-package :usepackage:core:pacman:
 :PROPERTIES:
 :ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
 :END:
