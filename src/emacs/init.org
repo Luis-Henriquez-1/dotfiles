@@ -477,7 +477,7 @@ just how emacs displays a quote for brevity. In reality something like ~'cat~ is
     (_ nil)))
 #+end_src
 
-* sharp-quoted
+* sharp-quoted :core:library:quote:
 :PROPERTIES:
 :ID:       6ba0980e-4391-47ef-a555-4c1dc3132f3b
 :END:
