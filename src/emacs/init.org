@@ -6472,6 +6472,11 @@ and provides facilities for writing custom extensions. Also see our page on
 :END:
 
 #+begin_src emacs-lisp
+(defun! replace-motion-with-normal (orig-fn &rest args)
+  "Advice for `evil-make-overriding-map' that inhibits motion state."
+  (:around evil-make-overriding-map)
+  (-let (((keymap state copy) args))
+    (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 #+end_src
 
 **** normal state everywhere
@@ -6484,11 +6489,6 @@ useless state]]. The code in this headline essentially just says =NO= to motion
 state and disables it everywhere in favor of normal state.
 
 #+begin_src emacs-lisp
-(defun! replace-motion-with-normal (orig-fn &rest args)
-  "Advice for `evil-make-overriding-map' that inhibits motion state."
-  (:around evil-make-overriding-map)
-  (-let (((keymap state copy) args))
-    (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 
 (defun! replace-motion-with-normal (orig-fn &rest args) 
   ""
