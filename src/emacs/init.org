@@ -685,7 +685,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
 #+end_src
 
-* xl-true
+* xl-true :library:core:
 :PROPERTIES:
 :ID:       25dcd81e-11a1-42b1-87a3-1df8c5a56cf1
 :END:
