@@ -2480,11 +2480,6 @@ garbage collection during this time.
   (idle-require-idle-delay . 10))
 #+end_src
 
-* emacs settings
-:PROPERTIES:
-:ID:       b61797fe-a520-448b-8dfa-055b357ebfa7
-:END:
-
 * loaddefs
 :PROPERTIES:
 :ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
