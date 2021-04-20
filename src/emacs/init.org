@@ -6335,8 +6335,7 @@ Emacs is very minimal by default. Most reading this will likely be used to.
 it. It's pretty smart and very convenient.
 
 #+begin_src emacs-lisp
-(use-package aggressive-indent
-  :hook emacs-lisp-mode-hook)
+(use-package aggressive-indent)
 #+end_src
 
 *** indent
