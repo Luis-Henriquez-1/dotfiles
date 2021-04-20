@@ -458,7 +458,7 @@ a character that's used to abbreviate them as I will explain.
 The purpose of this headline is to provide functions that are useful for macro
 writing. What we deal with when writing macro is syntax itself.
 
-** single-quoted
+* single-quoted
 :PROPERTIES:
 :ID:       533945fc-c700-42ce-8b93-d6bd9e16d9c7
 :END:
@@ -477,7 +477,7 @@ just how emacs displays a quote for brevity. In reality something like ~'cat~ is
     (_ nil)))
 #+end_src
 
-** sharp-quoted
+* sharp-quoted
 :PROPERTIES:
 :ID:       6ba0980e-4391-47ef-a555-4c1dc3132f3b
 :END:
@@ -496,7 +496,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-** backquoted
+* backquoted
 :PROPERTIES:
 :ID:       2c7af958-3aa0-48d6-a852-fd5feae452a9
 :END:
@@ -510,7 +510,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-** quoted
+* quoted
 :PROPERTIES:
 :ID:       d1b6c539-c8ca-4dc4-b76d-e2f9406b1c04
 :END:
@@ -524,7 +524,7 @@ function symbol.
       (xl-backquoted-p symbol)))
 #+end_src
 
-** unquote
+* unquote
 :PROPERTIES:
 :ID:       dbf97264-95e9-478b-aa44-edcbd3f39665
 :END:
