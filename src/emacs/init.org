@@ -274,14 +274,6 @@ with the last and allowing me to choose which ones to add.
 	    (insert ?\n)))))
 #+end_src
 
-* core
-:PROPERTIES:
-:ID:       d82e84fc-0e6d-460d-a5bf-33dd56564795
-:END:
-
-This headline sets up package management and defines the fundamental functions
-and macros I use for the rest of my configuration.
-
 * library
 :PROPERTIES:
 :ID:       70af1291-6b16-4261-ba83-19bb16d0023e
