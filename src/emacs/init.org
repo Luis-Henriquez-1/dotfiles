@@ -282,7 +282,7 @@ with the last and allowing me to choose which ones to add.
 Conversion between symbols, keywords, and strings are prevalent in
 macro-writing.
 
-** symbol intern
+** symbol intern :library:core:
 :PROPERTIES:
 :ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
 :END:
