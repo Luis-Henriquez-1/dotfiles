@@ -2375,7 +2375,7 @@ HOOK is a hook function that follows XL naming conventions."
   (intern (nth 2 (xl-hook-symbol-p hook))))
 #+end_src
 
-* generate hook name
+* generate hook name :library:core:hook:
 :PROPERTIES:
 :ID:       dda7e704-4aa2-48fe-8cde-427d340d23aa
 :END:
