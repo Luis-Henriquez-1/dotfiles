@@ -216,7 +216,7 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 (cl-callf2 append (xl-generate-package-paths) load-path)
 #+end_src
 
-* updating the recipe file
+* updating the recipe file :straight:pacman:
 :PROPERTIES:
 :ID:       cc40b9ac-d061-44f2-84b6-2f5e782e2ed8
 :END:
@@ -227,7 +227,7 @@ straight. In the future I want more fine grained control, perhaps showing me the
 difference between the packages I installed in my current Emacs session compared
 with the last and allowing me to choose which ones to add.
 
-* versions alist
+* versions alist :straight:pacman:
 :PROPERTIES:
 :ID:       3db31fa0-86e3-49e3-a13c-c3966bd7d6f7
 :END:
@@ -246,7 +246,7 @@ with the last and allowing me to choose which ones to add.
     versions-alist))
 #+end_src
 
-* update recipe file
+* update recipe file :straight:pacman:
 :PROPERTIES:
 :ID:       63b9a6eb-bc36-4555-b0d6-0100841277ca
 :END:
@@ -282,7 +282,7 @@ with the last and allowing me to choose which ones to add.
 This headline sets up package management and defines the fundamental functions
 and macros I use for the rest of my configuration.
 
-** library
+* library
 :PROPERTIES:
 :ID:       70af1291-6b16-4261-ba83-19bb16d0023e
 :END:
@@ -296,14 +296,14 @@ make sure packages are only loaded when they need to be. The major purpose of
 this library is to provide me the tools to configure these packages in a way
 that is concise and efficient.
 
-*** custom helpers
+** custom helpers
 :PROPERTIES:
 :ID:       cfa16796-a4fe-4e2a-a021-fb9891950556
 :END:
 
 These are tools that are specifically designed to help me write macros.
 
-**** symbols
+*** symbols
 :PROPERTIES:
 :ID:       fa9a5fb6-381a-441f-8ecc-d3b4a5cab11d
 :END:
@@ -311,7 +311,7 @@ These are tools that are specifically designed to help me write macros.
 Conversion between symbols, keywords, and strings are prevalent in
 macro-writing.
 
-***** symbol intern
+**** symbol intern
 :PROPERTIES:
 :ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
 :END:
@@ -329,7 +329,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'xl-to-string args)))
 #+end_src
 
-***** intern format
+**** intern format
 :PROPERTIES:
 :ID:       b371718f-2067-450c-8117-fb22f44be208
 :END:
@@ -340,7 +340,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'format format-string args)))
 #+end_src
 
-***** keyword intern
+**** keyword intern
 :PROPERTIES:
 :ID:       0618b8d7-e0a4-4e3e-8d89-b7d0ebe43917
 :END:
@@ -355,7 +355,7 @@ commands saves me having to add the colon at the beginning before interning.
   (apply #'xl-symbol-intern ":" args))
 #+end_src
 
-***** keyword name
+**** keyword name
 :PROPERTIES:
 :ID:       e853603a-851d-429f-9201-f2e93734dfaf
 :END:
@@ -371,7 +371,7 @@ for that occasion.
   (substring-no-properties (xl-to-string keyword) 1))
 #+end_src
 
-***** convert to string
+**** convert to string
 :PROPERTIES:
 :ID:       60f22f98-8204-45ae-9943-f19cdfe60459
 :END:
@@ -387,7 +387,7 @@ with details and just want a string.
   (with-output-to-string (-each args #'princ)))
 #+end_src
 
-***** detect emacs symbols
+**** detect emacs symbols
 :PROPERTIES:
 :ID:       207ed522-51f3-45e7-91ba-8afb828d950b
 :END:
@@ -399,7 +399,7 @@ we're dealing with. And, it may also be useful to be able to convert a normal
 symbol (by which I mean one that doesn't follow the conventions) to one of these
 particular kinds.
 
-****** hook symbol
+***** hook symbol
 :PROPERTIES:
 :ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
 :END:
@@ -414,7 +414,7 @@ As I mentioned, the convention for hook symbols is that they are suffixed with
   (s-matches-p ".+-hook\\'" (symbol-name symbol)))
 #+end_src
 
-****** hookify symbol
+***** hookify symbol
 :PROPERTIES:
 :ID:       b308a172-6e99-491c-a382-7ee28e9fc1ae
 :END:
@@ -429,7 +429,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-hook)))
 #+end_src
 
-****** mode symbol
+***** mode symbol
 :PROPERTIES:
 :ID:       ec25e275-c36f-4cee-be04-1fdf8c974857
 :END:
@@ -441,7 +441,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
   (s-matches-p ".+-mode\\'" (symbol-name symbol)))
 #+end_src
 
-****** modeify symbol
+***** modeify symbol
 :PROPERTIES:
 :ID:       61fa29a7-9697-4171-8b6f-f4c0b487c02c
 :END:
@@ -456,7 +456,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-mode)))
 #+end_src
 
-****** map symbol
+***** map symbol
 :PROPERTIES:
 :ID:       b7ab2b84-ebea-46fe-8494-89a2aed2f6e8
 :END:
@@ -468,7 +468,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
        (s-suffix-p "-map" (symbol-name obj))))
 #+end_src
 
-***** internal XL symbol
+**** internal XL symbol
 :PROPERTIES:
 :ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
 :END:
@@ -482,7 +482,7 @@ To avoid.
   (s-matches-p "\\`xl-.+" (symbol-name symbol)))
 #+end_src
 
-**** quoting
+*** quoting
 :PROPERTIES:
 :ID:       95a2271b-a21b-4fed-a6b8-1e76ca821ed4
 :END:
@@ -495,7 +495,7 @@ a character that's used to abbreviate them as I will explain.
 The purpose of this headline is to provide functions that are useful for macro
 writing. What we deal with when writing macro is syntax itself.
 
-***** single-quoted
+**** single-quoted
 :PROPERTIES:
 :ID:       533945fc-c700-42ce-8b93-d6bd9e16d9c7
 :END:
@@ -514,7 +514,7 @@ just how emacs displays a quote for brevity. In reality something like ~'cat~ is
     (_ nil)))
 #+end_src
 
-***** sharp-quoted
+**** sharp-quoted
 :PROPERTIES:
 :ID:       6ba0980e-4391-47ef-a555-4c1dc3132f3b
 :END:
@@ -533,7 +533,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-***** backquoted
+**** backquoted
 :PROPERTIES:
 :ID:       2c7af958-3aa0-48d6-a852-fd5feae452a9
 :END:
@@ -547,7 +547,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-***** quoted
+**** quoted
 :PROPERTIES:
 :ID:       d1b6c539-c8ca-4dc4-b76d-e2f9406b1c04
 :END:
@@ -561,7 +561,7 @@ function symbol.
       (xl-backquoted-p symbol)))
 #+end_src
 
-***** unquote
+**** unquote
 :PROPERTIES:
 :ID:       dbf97264-95e9-478b-aa44-edcbd3f39665
 :END:
@@ -576,7 +576,7 @@ If object is already unquoted, return OBJ."
     (_ obj)))
 #+end_src
 
-**** macro keyword arguments
+*** macro keyword arguments
 :PROPERTIES:
 :ID:       dc7a63e6-041b-4855-b206-6d72ef732de1
 :END:
@@ -596,7 +596,7 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 	 (finally-return (list docstring plist body))))
 #+end_src
 
-**** true-list-p
+*** true-list-p
 :PROPERTIES:
 :ID:       43089182-316b-4191-a3f1-6f2d1b1b971e
 :END:
@@ -612,7 +612,7 @@ something--you can loop over a list but not a cons cell.
   (and (listp obj) (not (-cons-pair-p obj))))
 #+end_src
 
-**** wrapping forms
+*** wrapping forms
 :PROPERTIES:
 :ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
 :END:
@@ -636,7 +636,7 @@ WRAPPERS are a list of forms to wrap around FORM."
     form))
 #+end_src
 
-**** anaphora
+*** anaphora
 :PROPERTIES:
 :ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
 :END:
@@ -651,7 +651,7 @@ placeholder.
 
 https://en.wikipedia.org/wiki/Anaphoric_macro
 
-***** anaphoric symbol regexp
+**** anaphoric symbol regexp
 :PROPERTIES:
 :ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
 :END:
@@ -662,7 +662,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   "Regular expression that matches an anaphoric symbol.")
 #+end_src
 
-***** anaphoric symbol
+**** anaphoric symbol
 :PROPERTIES:
 :ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
 :END:
@@ -674,7 +674,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
        (string-match-p XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
 #+end_src
 
-***** true anaphora name
+**** true anaphora name
 :PROPERTIES:
 :ID:       2833cd75-9c85-4c0e-9523-4489d387150a
 :END:
@@ -687,7 +687,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
     (intern (match-string 1 (symbol-name symbol)))))
 #+end_src
 
-***** take symbol and return anaphoric symbol
+**** take symbol and return anaphoric symbol
 :PROPERTIES:
 :ID:       4b89588e-f3c3-49d3-8851-fdd214cee563
 :END:
@@ -698,7 +698,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (xl-symbol-intern '< symbol '>))
 #+end_src
 
-***** body symbols
+**** body symbols
 :PROPERTIES:
 :ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
 :END:
@@ -711,7 +711,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
        (-uniq)))
 #+end_src
 
-***** all anaphoric symbols in obj
+**** all anaphoric symbols in obj
 :PROPERTIES:
 :ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
 :END:
@@ -722,7 +722,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
 #+end_src
 
-**** xl-true
+*** xl-true
 :PROPERTIES:
 :ID:       25dcd81e-11a1-42b1-87a3-1df8c5a56cf1
 :END:
@@ -736,7 +736,7 @@ arguments. Unlike it, it always returns =t= instead of always returning =nil=.
   t)
 #+end_src
 
-**** xl-false
+*** xl-false
 :PROPERTIES:
 :ID:       0d1349cc-8bd5-4830-9c3b-9b4f9ebe25d0
 :END:
@@ -745,7 +745,7 @@ arguments. Unlike it, it always returns =t= instead of always returning =nil=.
 (defalias 'xl-false 'ignore)
 #+end_src
 
-**** eval a form in a string
+*** eval a form in a string
 :PROPERTIES:
 :ID:       79cfc39a-0924-468b-9fbc-83388323a39b
 :END:
@@ -766,7 +766,7 @@ This function came from [[https://emacs.stackexchange.com/questions/19877/how-to
   (eval (car (read-from-string (format "(progn %s)" string)))))
 #+end_src
 
-**** dwim single
+*** dwim single
 :PROPERTIES:
 :ID:       13c4df8f-86f6-46e8-8507-60c08b96fb14
 :END:
@@ -779,12 +779,12 @@ Otherwise, return OBJ."
   (if (= (safe-length obj) 1) (car obj) obj))
 #+end_src
 
-*** custom macros
+** custom macros
 :PROPERTIES:
 :ID:       cfe0d468-92ee-4a4f-9908-4ea0b1964ac4
 :END:
 
-**** eval-after-load!
+*** eval-after-load!
 :PROPERTIES:
 :ID:       8d831084-539b-4072-a86a-b55afb09bf02
 :END:
@@ -809,7 +809,7 @@ loading it. To remedy this I wrap the block with [[helpfn:condition-case][condit
          (message "Error in `eval-after-load': %S" error)))))
 #+end_src
 
-**** after!
+*** after!
 :PROPERTIES:
 :ID:       e209d256-86e0-4e30-a7d5-78a583729b42
 :END:
@@ -847,7 +847,7 @@ from pulling (or failing to pull) in autoloaded macros/features.
         (t (error "Invalid argument."))))
 #+end_src
 
-**** with-os!
+*** with-os!
 :PROPERTIES:
 :ID:       a3ea434a-3f70-4137-a525-5be4bc63c3a2
 :END:
@@ -872,7 +872,7 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
     `(progn ,@body)))
 #+end_src
 
-**** set!
+*** set!
 
 One "gotcha" in Emacs is the existence of custom variables. Unlike typical
 variables custom variables sometimes rely on certain code being executed when
@@ -908,7 +908,7 @@ Note that I may depreciate this in favor of setf.
      (error "Invalid arguments."))))
 #+end_src
 
-**** set-default!
+*** set-default!
 :PROPERTIES:
 :ID:       bc6b7560-fb71-4fc7-a53b-98f92c657d92
 :END:
@@ -920,7 +920,7 @@ Note that I may depreciate this in favor of setf.
   `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
 #+end_src
 
-**** fn!
+*** fn!
 :PROPERTIES:
 :ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
 :END:
@@ -944,12 +944,12 @@ variable. Also, I don't support the alternate =fn:= syntax.
 	 (-let [,it ,argsym] ,@body)))))
 #+end_src
 
-*** use-package
+** use-package
 :PROPERTIES:
 :ID:       4882e62d-4602-40a6-9fbb-5efb0b5f4bc2
 :END:
 
-**** init use-package
+*** init use-package
 :PROPERTIES:
 :ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
 :END:
@@ -977,7 +977,7 @@ request it (for example, with the =:demand= keyword).
 (defalias 'use-package! 'use-package)
 #+end_src
 
-**** use-package
+*** use-package
 :PROPERTIES:
 :ID:       29e1513a-e12a-4818-870e-8d5fab7fe1a0
 :END:
@@ -986,21 +986,21 @@ request it (for example, with the =:demand= keyword).
 packages and features. It is widely used among the emacs community. In this
 headline I build upon it and adapt it to my needs.
 
-***** helpers
+**** helpers
 :PROPERTIES:
 :ID:       c8a6f579-c4ff-4b0f-942e-f87dab208deb
 :END:
 
 When it comes to helping myself with helper functions I spare no expense.
 
-****** inserting keywords
+***** inserting keywords
 :PROPERTIES:
 :ID:       86f9fa28-6842-4580-994a-24f5d4608ad4
 :END:
 
 =use-package= has a built-in way of inserting keywords.
 
-******* functional =use-package= keyword insertion
+****** functional =use-package= keyword insertion
 :PROPERTIES:
 :ID:       4968a708-05f2-4a3b-8395-850a3c119fd2
 :END:
@@ -1020,7 +1020,7 @@ inserted after PLACE."
 	    list))
 #+end_src
 
-******* dwim insert
+****** dwim insert
 :PROPERTIES:
 :ID:       54fc11db-534a-4b59-836c-3165cf48b61d
 :END:
@@ -1041,7 +1041,7 @@ This is the same as `use-package%insert-keyword' except WHERE and PLACE to
 	  (use-package%insert-keyword where place key use-package-keywords))))
 #+end_src
 
-****** normalize cons
+***** normalize cons
 :PROPERTIES:
 :ID:       d5beb18f-b18c-407b-9840-bda400ef52b4
 :END:
@@ -1056,7 +1056,7 @@ This is the same as `use-package%insert-keyword' except WHERE and PLACE to
 	       (-list (cdr cons-pair))))
 #+end_src
 
-****** create autoloads
+***** create autoloads
 :PROPERTIES:
 :ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
 :END:
@@ -1071,7 +1071,7 @@ forms.
      (autoload #',fn ,(symbol-name package) nil t nil)))
 #+end_src
 
-****** generate normalizer
+***** generate normalizer
 :PROPERTIES:
 :ID:       f287aa5b-51ed-40da-bbc1-9a40586a1f83
 :END:
@@ -1086,7 +1086,7 @@ Might be useful later. :shrug:
   (xl-symbol-intern 'use-package-normalize/ key))
 #+end_src
 
-****** generate a handler
+***** generate a handler
 :PROPERTIES:
 :ID:       495d3d70-f19f-420d-86ef-d75c49a77b66
 :END:
@@ -1097,7 +1097,7 @@ Might be useful later. :shrug:
   (xl-symbol-intern 'use-package-handler/ key))
 #+end_src
 
-****** override keyword
+***** override keyword
 :PROPERTIES:
 :ID:       aff6cbbe-7657-4287-9632-31dab7310c63
 :END:
@@ -1117,7 +1117,7 @@ OLD is an existing use-package keyword. NEW is the keyword to override OLD with.
   (advice-add (use-package%handler old) :override (use-package%handler new)))
 #+end_src
 
-***** custom keywords
+**** custom keywords
 :PROPERTIES:
 :ID:       62cec5ac-a2f9-435b-96a7-4db0d9691f25
 :END:
@@ -1125,7 +1125,7 @@ OLD is an existing use-package keyword. NEW is the keyword to override OLD with.
 One thing to note is that I don't allow arguments to be optionally in a
 list. This makes things much more complicated and it makes.
 
-****** silence
+***** silence
 :PROPERTIES:
 :ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
 :END:
@@ -1151,7 +1151,7 @@ FNS is a list of function symbols."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** gc-pause
+***** gc-pause
 :PROPERTIES:
 :ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
 :END:
@@ -1174,7 +1174,7 @@ functions that a package provides.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** ignore
+***** ignore
 :PROPERTIES:
 :ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
 :END:
@@ -1194,7 +1194,7 @@ Sometimes I want to ignore certain functions.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** always yes
+***** always yes
 :PROPERTIES:
 :ID:       f2d89960-ed41-4a72-847f-e150db56330b
 :END:
@@ -1214,7 +1214,7 @@ There are a number of functions in Emacs that prompt.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** os
+***** os
 :PROPERTIES:
 :ID:       9d78d90a-0309-44c6-be96-82bd6608546a
 :END:
@@ -1233,7 +1233,7 @@ This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70
   `((with-os! ,os ,@(use-package-process-keywords name rest state))))
 #+end_src
 
-****** hook
+***** hook
 :PROPERTIES:
 :ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
 :END:
@@ -1265,7 +1265,7 @@ instead of =add-hook=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** before-call
+***** before-call
 :PROPERTIES:
 :ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
 :END:
@@ -1294,7 +1294,7 @@ of this keyword is to load a package when a certain function is called.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** after-call
+***** after-call
 :PROPERTIES:
 :ID:       2c7dd1a8-c0ee-42cd-b76f-8a72c94be848
 :END:
@@ -1314,7 +1314,7 @@ The.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** set
+***** set
 :PROPERTIES:
 :ID:       9948a4ae-f80a-4b13-b97a-0895481021a6
 :END:
@@ -1337,7 +1337,7 @@ I should give credit. I got this idea from the leaf macro.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** rule
+***** rule
 :PROPERTIES:
 :ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
 :END:
@@ -1359,7 +1359,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** idle-require
+***** idle-require
 :PROPERTIES:
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
@@ -1383,7 +1383,7 @@ If an element is t, convert it to PACKAGE."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** config
+***** config
 :PROPERTIES:
 :ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
 :END:
@@ -1404,7 +1404,7 @@ same thing, except it uses =after!= instead of =with-eval-after-load=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** alias
+***** alias
 :PROPERTIES:
 :ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
 :END:
@@ -1424,7 +1424,7 @@ Sometimes I want to alias certain.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** advice
+***** advice
 :PROPERTIES:
 :ID:       1a0d6ff0-0dcd-4374-b52c-79bf617b3a2b
 :END:
@@ -1457,7 +1457,7 @@ and EXPIRE-FN are optional."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** gadvice
+***** gadvice
 :PROPERTIES:
 :ID:       0646d4c8-47e7-45cc-a14a-6326a2b76fdd
 :END:
@@ -1482,7 +1482,7 @@ and EXPIRE-FN are optional."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** initial state
+***** initial state
 :PROPERTIES:
 :ID:       e923e94e-9051-4be8-8dda-6566601ba865
 :END:
@@ -1512,7 +1512,7 @@ packages.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-****** idle
+***** idle
 :PROPERTIES:
 :ID:       78814410-c190-4f05-a319-4e6d13a9ea4b
 :END:
@@ -1532,7 +1532,7 @@ packages.
     ,@(use-package-process-keywords package rest state)))
 #+end_src
 
-*** essential libraries
+** essential libraries
 :PROPERTIES:
 :ID:       18602d49-dcc3-47c3-8579-62f7a7b7a83a
 :END:
@@ -1545,7 +1545,7 @@ slowly with the introduction of libraries like =seq.el= and =map.el= but still
 leaves much to be desired. This sounds like a complaint, but it actually
 highlights the advantage of the extensibility of Emacs.
 
-**** shut-up
+*** shut-up
 :PROPERTIES:
 :ID:       71681f9f-2760-4cee-95a0-4aeb71191a42
 :END:
@@ -1559,7 +1559,7 @@ messages can be useful, most of the time they are superfluous.
 (use-package shut-up :demand t)
 #+end_src
 
-**** mmt
+*** mmt
 :PROPERTIES:
 :ID:       a4377985-fe0e-4980-b839-08c334bde76c
 :END:
@@ -1572,7 +1572,7 @@ variable leaking.
 (use-package mmt)
 #+end_src
 
-**** dash
+*** dash
 :PROPERTIES:
 :ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
 :END:
@@ -1589,7 +1589,7 @@ so I'll likely end up loading it anyway.
 (use-package dash :demand t)
 #+end_src
 
-**** subr-x
+*** subr-x
 :PROPERTIES:
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
 :END:
@@ -1598,7 +1598,7 @@ so I'll likely end up loading it anyway.
 (use-package subr-x :demand t)
 #+end_src
 
-**** ht
+*** ht
 :PROPERTIES:
 :ID:       56bb0ff4-6ad1-44b7-a9a4-54abf48ed253
 :END:
@@ -1610,7 +1610,7 @@ hash-tables.
 (use-package ht)
 #+end_src
 
-**** dash-functional
+*** dash-functional
 :PROPERTIES:
 :ID:       704fc35f-0ad0-4eb3-9eb5-d8335465dbd8
 :END:
@@ -1623,7 +1623,7 @@ emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 (use-package dash-functional :demand t)
 #+end_src
 
-**** s
+*** s
 :PROPERTIES:
 :ID:       b96acb97-3963-4713-a03b-6294c65903fd
 :END:
@@ -1635,7 +1635,7 @@ that are not built-in to Emacs. Notably, it is functional.
 (use-package s :demand t)
 #+end_src
 
-**** f
+*** f
 :PROPERTIES:
 :ID:       f44da560-dc3f-4635-926e-eec4fd6d159d
 :END:
@@ -1644,7 +1644,7 @@ that are not built-in to Emacs. Notably, it is functional.
 (use-package f :demand t)
 #+end_src
 
-**** anaphora
+*** anaphora
 :PROPERTIES:
 :ID:       1c47bd8a-15f1-4b1c-9574-23547d27d968
 :END:
@@ -1657,7 +1657,7 @@ But if you're only.
 (use-package anaphora :demand t)
 #+end_src
 
-**** loopy
+*** loopy
 :PROPERTIES:
 :ID:       1c30099a-86b4-41f9-8390-e9e3c20b0257
 :END:
@@ -1669,7 +1669,7 @@ loop that involves accumulating several variables or atypical control-flow (as
 in, break statements or return statements). This is where =loopy= comes into
 play.
 
-***** loopy
+**** loopy
 :PROPERTIES:
 :ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
 :END:
@@ -1683,7 +1683,7 @@ play.
   (loopy-defalias 'ret 'return))
 #+end_src
 
-***** iter
+**** iter
 :PROPERTIES:
 :ID:       cf3f024a-8bec-4f5a-bd63-38b09dc23ca5
 :END:
@@ -1709,7 +1709,7 @@ clause because it would get confused with it and the built-in Emacs function
   (iterate . loopy-iter))
 #+end_src
 
-***** dash destructuring
+**** dash destructuring
 :PROPERTIES:
 :ID:       87615a1d-2790-44c4-ac95-90a36ff9c496
 :END:
@@ -1721,7 +1721,7 @@ clause because it would get confused with it and the built-in Emacs function
   (callf2 cl-adjoin '+dash loopy-default-flags))
 #+end_src
 
-**** noflet
+*** noflet
 :PROPERTIES:
 :ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
 :END:
@@ -1733,7 +1733,7 @@ This package provides an alternative to the built-in =cl-flet= called
 (use-package noflet :demand t)
 #+end_src
 
-**** dbc
+*** dbc
 :PROPERTIES:
 :ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
 :END:
@@ -1753,7 +1753,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
     (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
 #+end_src
 
-**** db
+*** db
 :PROPERTIES:
 :ID:       9b79f07b-8397-4f95-b79c-5e136a9b2079
 :END:
@@ -1762,7 +1762,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package db)
 #+end_src
 
-**** log4e
+*** log4e
 :PROPERTIES:
 :ID:       8360e875-61a6-46f8-a401-2a98c9e517fa
 :END:
@@ -1777,13 +1777,13 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
   (defalias 'xl-log 'xl--log-info))
 #+end_src
 
-**** ts
+*** ts
 
 #+begin_src emacs-lisp
 (use-package ts)
 #+end_src
 
-**** a
+*** a
 :PROPERTIES:
 :ID:       32110690-9d0a-4e3d-a1d8-7695b42aeb30
 :END:
@@ -1794,7 +1794,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package a :demand t)
 #+end_src
 
-**** list-utils
+*** list-utils
 :PROPERTIES:
 :ID:       f87d570a-4b06-42ea-acaa-a0bedba0e623
 :END:
@@ -1803,7 +1803,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package list-utils)
 #+end_src
 
-**** map
+*** map
 :PROPERTIES:
 :ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
 :END:
@@ -1812,12 +1812,12 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package map :demand t)
 #+end_src
 
-*** aliases
+** aliases
 :PROPERTIES:
 :ID:       bad5a570-2b94-4ada-88f0-de9f32fa9b7e
 :END:
 
-**** prefixed-core
+*** prefixed-core
 :PROPERTIES:
 :ID:       14b63dc9-1d95-4bd7-8b29-8b2b33bd1e69
 :END:
@@ -1832,7 +1832,7 @@ for functions namespaced =frame=.
 (use-package prefixed-core :demand t)
 #+end_src
 
-**** custom aliases
+*** custom aliases
 :PROPERTIES:
 :ID:       c32ede6e-05ae-4067-8505-ffe328295536
 :END:
@@ -1843,7 +1843,7 @@ for functions namespaced =frame=.
 (defalias 'buffer-previous 'previous-buffer)
 #+end_src
 
-*** debug-p
+** debug-p
 :PROPERTIES:
 :ID:       39197346-c420-4518-b8f8-8ea247d6decb
 :END:
@@ -1859,14 +1859,14 @@ what its doing via [[hfn:void-log][xl-log]].
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
-*** defun macro
+** defun macro
 :PROPERTIES:
 :ID:       cd0699fa-57fd-4a8b-99b6-3e98f94f888a
 :END:
 
 This is a macro to address the.
 
-**** parser alist
+*** parser alist
 :PROPERTIES:
 :ID:       fa0773f5-d6be-4c9f-966f-7e8c2e68e40e
 :END:
@@ -1875,7 +1875,7 @@ This is a macro to address the.
 (defvar defun%parser-alist nil)
 #+end_src
 
-**** processing clauses
+*** processing clauses
 :PROPERTIES:
 :ID:       eb0b18b8-6f53-4518-b9d3-8921aa5caf5d
 :END:
@@ -1889,7 +1889,7 @@ This is a macro to address the.
     (funcall (or parser #'ignore) key args init rest)))
 #+end_src
 
-**** parse-hook
+*** parse-hook
 :PROPERTIES:
 :ID:       f7c0897d-79da-4e73-8ba7-ac5bdedacbfb
 :END:
@@ -1911,7 +1911,7 @@ This is a macro to address the.
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
-**** parse advice
+*** parse advice
 :PROPERTIES:
 :ID:       fbff4b81-3a11-42df-a61f-42e6c5771734
 :END:
@@ -1936,7 +1936,7 @@ This is a macro to address the.
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
-**** parse generic advice
+*** parse generic advice
 :PROPERTIES:
 :ID:       73f153c5-b005-41c1-bc35-3aa47b4339f1
 :END:
@@ -1954,7 +1954,7 @@ This is a macro to address the.
 	  ,@(defun%process-clauses init rest))))))
 #+end_src
 
-**** parse =defafter!=
+*** parse =defafter!=
 :PROPERTIES:
 :ID:       76e34252-c93f-4de2-b13c-2e188cd4a476
 :END:
@@ -1971,7 +1971,7 @@ This is a macro to address the.
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
-**** parse package
+*** parse package
 :PROPERTIES:
 :ID:       87fe1063-f274-497b-8afe-d9971427ce71
 :END:
@@ -1980,7 +1980,7 @@ This is a macro to address the.
 (defun)
 #+end_src
 
-**** defun!
+*** defun!
 :PROPERTIES:
 :ID:       5dd91bfc-26c7-4763-a6b8-1baae771d771
 :END:
@@ -1996,12 +1996,12 @@ This is a macro to address the.
 			   `(progn ,@(defun%process-clauses it clauses))))))
 #+end_src
 
-**** wrappers around
+*** wrappers around
 :PROPERTIES:
 :ID:       74419a54-dd6e-4c29-81a0-5248ff2a0058
 :END:
 
-***** defhook!
+**** defhook!
 :PROPERTIES:
 :ID:       57e8e84e-c928-451f-8cfc-1c3b638bc318
 :END:
@@ -2013,7 +2013,7 @@ This is a macro to address the.
   `(defun! ,name (&rest _) ,docstring (:hook ,@args) ,@body))
 #+end_src
 
-***** defadvice!
+**** defadvice!
 :PROPERTIES:
 :ID:       6742346f-f9f5-4898-a1f1-668271f52b8e
 :END:
@@ -2025,7 +2025,7 @@ This is a macro to address the.
   `(defun! ,name (&rest _) ,docstring (,@args) ,@body))
 #+end_src
 
-***** defgadvice!
+**** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
@@ -2036,7 +2036,7 @@ This is a macro to address the.
   `(defun! ,name ,args ,docstring (:gadvice t) ,@body))
 #+end_src
 
-***** defafter!
+**** defafter!
 :PROPERTIES:
 :ID:       b6179567-c840-4dfa-891e-3e27384dfdb9
 :END:
@@ -2047,7 +2047,7 @@ This is a macro to address the.
   `(defun! ,name () ,docstring (:features ,@args) ,@body))
 #+end_src
 
-*** advice
+** advice
 :PROPERTIES:
 :ID:       19b9021d-f310-485b-9258-4df19423c082
 :END:
@@ -2055,7 +2055,7 @@ This is a macro to address the.
 I want to name advices so that they can be distinguished from other functions. I
 also want to be able to deduce the function being advised from the name.
 
-**** advice regexp
+*** advice regexp
 :PROPERTIES:
 :ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
 :END:
@@ -2065,7 +2065,7 @@ also want to be able to deduce the function being advised from the name.
   "A regular expression that defines naming convention for advices.")
 #+end_src
 
-**** remove XL advice
+*** remove XL advice
 :PROPERTIES:
 :ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
 :END:
@@ -2081,7 +2081,7 @@ ADVICES is an advice or a list of advices."
 	(advice-remove (xl-advice-orig-symbol advice) advice)))
 #+end_src
 
-**** adding an advice
+*** adding an advice
 :PROPERTIES:
 :ID:       14e23074-10ea-41cc-88e5-bac600658b20
 :END:
@@ -2098,7 +2098,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 		 (collect advice))))
 #+end_src
 
-**** advice-fn-p
+*** advice-fn-p
 :PROPERTIES:
 :ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
 :END:
@@ -2109,7 +2109,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
-**** original fn
+*** original fn
 :PROPERTIES:
 :ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
 :END:
@@ -2121,7 +2121,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
-**** original advice
+*** original advice
 :PROPERTIES:
 :ID:       49f49994-637a-4e26-b680-3535463ee8bf
 :END:
@@ -2133,7 +2133,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
-**** gen symbol
+*** gen symbol
 :PROPERTIES:
 :ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
 :END:
@@ -2143,7 +2143,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (xl-symbol-intern symbol '@ name))
 #+end_src
 
-*** generic advices
+** generic advices
 :PROPERTIES:
 :ID:       8fb485ec-5387-46da-820e-629dcf004962
 :END:
@@ -2151,7 +2151,7 @@ ADVICE is an advice function that follows XL naming conventions."
 There are some advices that are used so often that they do not lend themselves
 to =defadvice!=, which is better suited for a unique advice defined only once.
 
-**** catch errors
+*** catch errors
 :PROPERTIES:
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
@@ -2172,7 +2172,7 @@ advice]].
      (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
 #+end_src
 
-**** assume yes in prompts
+*** assume yes in prompts
 :PROPERTIES:
 :ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
 :END:
@@ -2189,7 +2189,7 @@ is an example).
     (apply orig-fn args)))
 #+end_src
 
-**** silence
+*** silence
 :PROPERTIES:
 :ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
 :END:
@@ -2204,7 +2204,7 @@ to silence the said messages.
   (shut-up (apply orig-fn args)))
 #+end_src
 
-**** log
+*** log
 :PROPERTIES:
 :ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
 :END:
@@ -2222,7 +2222,7 @@ to silence the said messages.
 	   (xl-log "%s called" fn)))))
 #+end_src
 
-**** pause garbarge collection
+*** pause garbarge collection
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
@@ -2238,7 +2238,7 @@ packages which can contain several thousand items.
     (apply orig-fn args)))
 #+end_src
 
-**** log
+*** log
 :PROPERTIES:
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
@@ -2251,7 +2251,7 @@ Sometimes I want to use =xl-log= instead of =message=.
     (apply orig-fn args)))
 #+end_src
 
-**** ignore output
+*** ignore output
 :PROPERTIES:
 :ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
 :END:
@@ -2261,7 +2261,7 @@ Sometimes I want to use =xl-log= instead of =message=.
   "Advice to ignore a function.")
 #+end_src
 
-**** loading on call
+*** loading on call
 :PROPERTIES:
 :ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
 :END:
@@ -2274,7 +2274,7 @@ quickly become repetative because it's something that is done so often in
 package configuration. The function =before-call= and =after-call= provide a fast
 and convenient way to do this.
 
-***** load-on-call
+**** load-on-call
 :PROPERTIES:
 :ID:       324e707b-2f44-4168-a846-037f5401dedb
 :END:
@@ -2294,7 +2294,7 @@ this it adds an =XL= advice that loads the feature to the function.
     (xl-gadvice-expire it)))
 #+end_src
 
-***** load before call
+**** load before call
 :PROPERTIES:
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
@@ -2308,7 +2308,7 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :before fn))
 #+end_src
 
-***** load after call
+**** load after call
 :PROPERTIES:
 :ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
 :END:
@@ -2319,7 +2319,7 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :after fn))
 #+end_src
 
-*** hooks
+** hooks
 :PROPERTIES:
 :ID:       0832d639-564d-4556-a398-ff729a75ac0b
 :END:
@@ -2327,7 +2327,7 @@ not to have to specify the advice keyword.
 I have my own naming convention for hooks. I use it to make it obvious when a
 function is a hook.
 
-**** hook regexp
+*** hook regexp
 :PROPERTIES:
 :ID:       5093d6ce-741d-4d11-8ac7-15c02aa45b3b
 :END:
@@ -2337,7 +2337,7 @@ function is a hook.
   "Regular expression used to match `xl-' defined hooks.")
 #+end_src
 
-**** add hook
+*** add hook
 :PROPERTIES:
 :ID:       e8d69a71-bab4-4e75-b8f8-33426200a0df
 :END:
@@ -2353,7 +2353,7 @@ function is a hook.
 		 (collect hook))))
 #+end_src
 
-**** remove hook
+*** remove hook
 :PROPERTIES:
 :ID:       e8ec61e0-a819-452c-8fb2-bf3023684b53
 :END:
@@ -2366,7 +2366,7 @@ HOOKS is a list of hook functions that follow the XL naming convention."
 	(remove-hook (xl-hook-orig-symbol hook) hook)))
 #+end_src
 
-**** hook function
+*** hook function
 :PROPERTIES:
 :ID:       d5ed128c-32a0-4387-a1e5-b4536ed86c95
 :END:
@@ -2377,7 +2377,7 @@ HOOKS is a list of hook functions that follow the XL naming convention."
   (s-match XL-HOOK-REGEXP (symbol-name symbol)))
 #+end_src
 
-**** original hook variable
+*** original hook variable
 :PROPERTIES:
 :ID:       8788ec0c-2ab2-4fb3-b383-55d6ee533e8d
 :END:
@@ -2389,7 +2389,7 @@ HOOK is a hook function defined with XL naming conventions."
   (intern (nth 1 (xl-hook-symbol-p hook))))
 #+end_src
 
-**** original hook function
+*** original hook function
 :PROPERTIES:
 :ID:       640d7e5d-d3a7-43be-94df-0fb9c02201d9
 :END:
@@ -2401,7 +2401,7 @@ HOOK is a hook function that follows XL naming conventions."
   (intern (nth 2 (xl-hook-symbol-p hook))))
 #+end_src
 
-**** generate hook name
+*** generate hook name
 :PROPERTIES:
 :ID:       dda7e704-4aa2-48fe-8cde-427d340d23aa
 :END:
@@ -2412,7 +2412,7 @@ HOOK is a hook function that follows XL naming conventions."
   (xl-symbol-intern fn '& name))
 #+end_src
 
-*** generate a logging function
+** generate a logging function
 :PROPERTIES:
 :ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
 :END:
@@ -2436,7 +2436,7 @@ HOOK is a hook function that follows XL naming conventions."
        nil))))
 #+end_src
 
-*** log advices and hooks
+** log advices and hooks
 :PROPERTIES:
 :ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
 :END:
@@ -2455,7 +2455,7 @@ Log when an advice or hook is being called.
 	(finally-return symbols)))
 #+end_src
 
-*** expiration
+** expiration
 :PROPERTIES:
 :ID:       b531dc79-73d0-43eb-a600-b3075315acf0
 :END:
@@ -2475,7 +2475,7 @@ Log when an advice or hook is being called.
        nil))))
 #+end_src
 
-*** idle-require
+** idle-require
 :PROPERTIES:
 :ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
 :END:
@@ -2506,12 +2506,12 @@ garbage collection during this time.
   (idle-require-idle-delay . 10))
 #+end_src
 
-** emacs settings
+* emacs settings
 :PROPERTIES:
 :ID:       b61797fe-a520-448b-8dfa-055b357ebfa7
 :END:
 
-*** loaddefs
+** loaddefs
 :PROPERTIES:
 :ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
 :END:
@@ -2522,7 +2522,7 @@ garbage collection during this time.
   (disabled-command-function . nil))
 #+end_src
 
-*** simple
+** simple
 :PROPERTIES:
 :ID:       a1fa5195-9b6a-4842-bc5f-71305e603c55
 :END:
@@ -2536,7 +2536,7 @@ garbage collection during this time.
   (idle-update-delay     . 1))
 #+end_src
 
-*** clipboard
+** clipboard
 :PROPERTIES:
 :ID:       6aa6d0ac-6cf8-4f82-a724-c56d69cc062b
 :END:
@@ -2550,7 +2550,7 @@ garbage collection during this time.
   (x-select-request-type   . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
 
-*** files
+** files
 :PROPERTIES:
 :ID:       83549b5b-33e2-48b2-aeaf-cf4734ec4040
 :END:
@@ -2582,7 +2582,7 @@ will change.
   (version-control                    . nil))
 #+end_src
 
-*** custom commands
+** custom commands
 :PROPERTIES:
 :ID:       b03e1f14-3f29-4abd-af47-3692998cf1a1
 :END:
@@ -2591,7 +2591,7 @@ This section is for commands that are really useful for me, but not present in
 Emacs or (as far as I know at least, in other packages). This headline is
 similar in goals to [[https://github.com/bbatsov/crux][crux]] (collection of ridiculously useful extensions for Emacs).
 
-**** font
+*** font
 :PROPERTIES:
 :ID:       d600fe06-7a61-43e1-93ea-4e193c69c9f3
 :END:
@@ -2602,7 +2602,7 @@ emacs. A well choosen font can make things very readable.
 Also, sometimes I have font "mania" where I keep toggling different fonts so see
 what I feel like using at the moment. Therefore, I need an easy way to toggle.
 
-***** font size
+**** font size
 :PROPERTIES:
 :ID:       3efd0698-a8d3-4fc0-b22b-7f0589de4661
 :END:
@@ -2625,7 +2625,7 @@ size to its default value.
       (setf (alist-get 'font default-frame-alist) new-font))))
 #+end_src
 
-***** font max and min size
+**** font max and min size
 :PROPERTIES:
 :ID:       309c572a-6aaa-4986-a79d-4774110e6ead
 :END:
@@ -2645,7 +2645,7 @@ The font size that `xl/set-font-size' should never go above.")
 The font size that `xl/set-font-size' should never go below.")
 #+end_src
 
-***** setting font size
+**** setting font size
 :PROPERTIES:
 :ID:       b138b662-4087-4199-abe5-ecacb22dfb2a
 :END:
@@ -2669,7 +2669,7 @@ Inhibit accidentally setting font size too high or too low."
 	   (message "Font set from %d to %d." old-size new-size)))))
 #+end_src
 
-***** font-face
+**** font-face
 :PROPERTIES:
 :ID:       1bf8b603-ba11-422f-80d2-53dd8483fdbb
 :END:
@@ -2686,7 +2686,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
     (set-frame-font it nil t)))
 #+end_src
 
-**** kill Emacs processes
+*** kill Emacs processes
 :PROPERTIES:
 :ID:       811f6b55-6f54-4854-9098-8754359b4f85
 :END:
@@ -2702,7 +2702,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 	 (finally (message "killed %d processes" count))))
 #+end_src
 
-**** important buffers
+*** important buffers
 :PROPERTIES:
 :ID:       14021345-8f7d-4219-9f79-ea81c23f8f40
 :END:
@@ -2710,7 +2710,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 Some buffers are so important that they merit a convenience function to switch
 specifically to them. One such buffer is the buffer for this README.
 
-***** emacs directory
+**** emacs directory
 :PROPERTIES:
 :ID:       7ea118cb-4eb6-4ffb-9d82-6ae65ff7a961
 :END:
@@ -2722,7 +2722,7 @@ specifically to them. One such buffer is the buffer for this README.
   (dired user-emacs-directory))
 #+end_src
 
-***** elisp init file
+**** elisp init file
 :PROPERTIES:
 :ID:       74ad3337-4a36-4524-87c1-6b46b2dc24dd
 :END:
@@ -2734,7 +2734,7 @@ specifically to them. One such buffer is the buffer for this README.
   (find-file user-init-file))
 #+end_src
 
-***** readme org file
+**** readme org file
 :PROPERTIES:
 :ID:       ceb0caee-f950-4ab5-a6e9-aad436334469
 :END:
@@ -2746,12 +2746,12 @@ specifically to them. One such buffer is the buffer for this README.
   (find-file (f-full "~/README.org")))
 #+end_src
 
-**** tangling
+*** tangling
 :PROPERTIES:
 :ID:       9e5695e0-82ac-4f49-a237-63ca70b1036f
 :END:
 
-***** tangle asynchronously
+**** tangle asynchronously
 :PROPERTIES:
 :ID:       9fcff539-5c1c-4ec8-8aa7-ac8fb82d3392
 :END:
@@ -2779,7 +2779,7 @@ a significant lag and Emacs is blocked while it is tangling.
 	(message (if result "Successfully tangled %s" "Failed to tangle %s") ,output)))))
 #+end_src
 
-**** open Emacs instance
+*** open Emacs instance
 :PROPERTIES:
 :ID:       287537bc-f1a7-4c04-bbb6-c372df540e04
 :END:
@@ -2796,7 +2796,7 @@ a significant lag and Emacs is blocked while it is tangling.
          (start-process "emacs" nil "emacs" "--debug-init"))))
 #+end_src
 
-**** jump to line
+*** jump to line
 :PROPERTIES:
 :ID:       47480f9a-2e82-435a-a098-6a1a9a11c2f0
 :END:
@@ -2817,7 +2817,7 @@ headlines and would rather view the entire path.
   (when (eq major-mode 'org-mode) (org%show-branch)))
 #+end_src
 
-*** variables defined in c source code
+** variables defined in c source code
 :PROPERTIES:
 :ID:       5d7f2962-8d10-40a4-b134-c368e2b1b4d5
 :END:
@@ -2826,7 +2826,7 @@ This headline contains variables that are defined in c-source code and thefore
 do not pertain to any particular package. For this reason I don't wrap these
 variables in a [[29e1513a-e12a-4818-870e-8d5fab7fe1a0][use-package]] block.
 
-**** don't create lockfiles
+*** don't create lockfiles
 :PROPERTIES:
 :ID:       ae464c90-d220-4db2-a3fd-fec36b9181e4
 :END:
@@ -2837,7 +2837,7 @@ https://stackoverflow.com/questions/8246483/emacs-how-to-disable-files-creation
 (set! create-lockfiles nil)
 #+end_src
 
-**** delete duplicates in history
+*** delete duplicates in history
 :PROPERTIES:
 :ID:       1c381491-c4fa-4b5e-99de-ec6bd33df77c
 :END:
@@ -2850,7 +2850,7 @@ code.
 (set! history-delete-duplicates t)
 #+end_src
 
-**** don't echo keystrokes
+*** don't echo keystrokes
 :PROPERTIES:
 :ID:       b8856ebe-6208-4271-ad5a-d352fabec8bb
 :END:
@@ -2863,7 +2863,7 @@ echoing in the mode line makes the which-key prompt disappear prematurely.
 (set-default! echo-keystrokes 0)
 #+end_src
 
-**** set the fill-column
+*** set the fill-column
 :PROPERTIES:
 :ID:       84d8e85a-a6a1-49cd-b46e-e5cd3f825438
 :END:
@@ -2876,7 +2876,7 @@ card]]. Now this is not the case so I don't think it's as much of a deal.
 (set-default! fill-column 80)
 #+end_src
 
-**** recursive minibuffers
+*** recursive minibuffers
 :PROPERTIES:
 :ID:       7eb20f6d-75b4-4eec-8878-e7232c1a153d
 :END:
@@ -2889,7 +2889,7 @@ typing an expression, I get completion from the minibuffer.
 (set-default! enable-recursive-minibuffers t)
 #+end_src
 
-**** utf-8 text encoding
+*** utf-8 text encoding
 :PROPERTIES:
 :ID:       26344072-c145-40bd-9ade-8c7f2eef54c8
 :END:
@@ -2915,7 +2915,7 @@ typing an expression, I get completion from the minibuffer.
   (set-charset-priority 'unicode))
 #+end_src
 
-**** disable bi-directional text
+*** disable bi-directional text
 :PROPERTIES:
 :ID:       6c12f14c-75c7-4b30-9bb4-ca6e8d3cae47
 :END:
@@ -2928,7 +2928,7 @@ text is useful for languages that read right to left.
 (set-default! bidi-paragraph-direction 'left-to-right)
 #+end_src
 
-**** stop beeping
+*** stop beeping
 :PROPERTIES:
 :ID:       2a83cb3a-ca2e-4d9c-a296-340d33855614
 :END:
@@ -2937,7 +2937,7 @@ text is useful for languages that read right to left.
 (set-default! ring-bell-function #'ignore)
 #+end_src
 
-**** resize pixelwise
+*** resize pixelwise
 :PROPERTIES:
 :ID:       02daff3d-e532-4cfa-a217-81e27627e7a7
 :END:
@@ -2949,7 +2949,7 @@ text is useful for languages that read right to left.
 (set-default! frame-resize-pixelwise t)
 #+end_src
 
-**** use yes or no
+*** use yes or no
 :PROPERTIES:
 :ID:       82a84315-2018-42e0-bd1a-74af7b722593
 :END:
@@ -2962,7 +2962,7 @@ source code.
 (xl-advice-add #'yes-or-no-p :override #'y-or-n-p)
 #+end_src
 
-*** miscellaneous
+** miscellaneous
 :PROPERTIES:
 :ID:       65edb4e7-0fe1-4e37-ae9b-027c9f15162a
 :END:
@@ -2970,7 +2970,7 @@ source code.
 This headline contains headings for which I have not yet determined a good
 hierarchy.
 
-**** log the init time
+*** log the init time
 :PROPERTIES:
 :ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
 :END:
@@ -2988,7 +2988,7 @@ circumstances. The one I'm referring to now is with general prefix bindings.
   (xl-log "emacs-init-time: %s" (emacs-init-time)))
 #+end_src
 
-**** startup
+*** startup
 :PROPERTIES:
 :ID:       f9854e53-dd9d-4381-8e9c-8336736d4308
 :END:
@@ -3022,7 +3022,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
       (get-buffer-create it))))
 #+end_src
 
-**** cus-edit
+*** cus-edit
 :PROPERTIES:
 :ID:       a844ddb6-245b-463c-963d-743c931698ae
 :END:
@@ -3038,7 +3038,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (custom-theme-directory . (concat XL-LOCAL-DIR "themes/")))
 #+end_src
 
-**** server
+*** server
 :PROPERTIES:
 :ID:       3a1120f5-2809-42d6-938c-3916483033e0
 :END:
@@ -3054,7 +3054,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (unless (server-running-p) (server-start)))
 #+end_src
 
-**** linux
+*** linux
 :PROPERTIES:
 :ID:       6572e618-e5ef-445b-90d6-14dc2c24f1a4
 :END:
@@ -3065,7 +3065,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (set! x-gtk-use-system-tooltips nil))
 #+end_src
 
-**** scrolling
+*** scrolling
 :PROPERTIES:
 :ID:       c91bcd0f-da83-44a3-9d9e-e1f55dcdb642
 :END:
@@ -3078,7 +3078,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
 (set-default! scroll-preserve-screen-position t)
 #+end_src
 
-**** fast scrolling
+*** fast scrolling
 :PROPERTIES:
 :ID:       964a8b3e-37b4-4d6b-9298-3a1be3cfe6aa
 :END:
@@ -3090,7 +3090,7 @@ spells of inaccurate fontification immediately after scrolling."
 (set! fast-but-imprecise-scrolling t)
 #+end_src
 
-**** disable cursor blinking
+*** disable cursor blinking
 :PROPERTIES:
 :ID:       fe8a259b-12e6-4e58-a324-eab831283a86
 :END:
@@ -3104,7 +3104,7 @@ screen. Usually, however, I have no trouble finding it so I disable it.
   (blink-cursor-mode -1))
 #+end_src
 
-**** garbage collection
+*** garbage collection
 :PROPERTIES:
 :ID:       dda841d2-25f3-4595-ab6a-87cb1bb72dba
 :END:
@@ -3116,7 +3116,7 @@ increasing the value of [[helpvar:gc-cons-threshold][gc-cons-threshold]], the nu
 between garbage collections, is known to make a notable difference in user
 startup time. By default it is only 800 KB.
 
-***** gc cons threshold
+**** gc cons threshold
 :PROPERTIES:
 :ID:       50e19a55-a04b-4ca0-8024-a88b23b5b41f
 :END:
@@ -3144,7 +3144,7 @@ This is the value of `gc-cons-threshold' that should be used in typical usages."
   "The value for `gc-cons-threshold'.")
 #+end_src
 
-***** gcmh
+**** gcmh
 :PROPERTIES:
 :ID:       86653a5a-f273-4ce4-b89b-f288d5d46d44
 :END:
@@ -3166,7 +3166,7 @@ are done before setting the =gc-cons-threshold= back to a normal value.
   (gcmh-low-cons-threshold  . XL-GC-CONS-THRESHOLD-MIN))
 #+end_src
 
-***** minibuffer
+**** minibuffer
 :PROPERTIES:
 :ID:       8c02fc83-5e7e-4115-9768-020abcf82541
 :END:
@@ -3201,12 +3201,12 @@ hook variables use action verbs in their names not nouns. So the =exit= in
   (setq gc-cons-threshold XL-GC-CONS-THRESHOLD))
 #+end_src
 
-**** theme
+*** theme
 :PROPERTIES:
 :ID:       c35c131a-bcc5-49f9-bc24-a5f91cde785d
 :END:
 
-***** don't prompt me when loading theme
+**** don't prompt me when loading theme
 :PROPERTIES:
 :ID:       eaa6531c-1188-41c7-a645-a82d9f482449
 :END:
@@ -3225,7 +3225,7 @@ screen need to be redisplayed.
   (custom-safe-themes . t))
 #+end_src
 
-***** loading theme
+**** loading theme
 :PROPERTIES:
 :ID:       b4773208-5e96-46d2-90d0-1731f6581f1b
 :END:
@@ -3242,7 +3242,7 @@ example, if I'm using evil I need to update the cursor color.
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
-***** disable old themes first
+**** disable old themes first
 :PROPERTIES:
 :ID:       c2110d52-ce27-4f3a-b856-1e31200f597c
 :END:
@@ -3259,7 +3259,7 @@ a new theme.
   (apply orig-fn args))
 #+end_src
 
-**** disable terminal initialization
+*** disable terminal initialization
 :PROPERTIES:
 :ID:       540c1c5a-cd31-45cf-afaf-b8e48a76e68e
 :END:
@@ -3274,7 +3274,7 @@ According to Doom Emacs, when running emacs in terminal tty is *tremendously* sl
     (tty-run-terminal-initialization (selected-frame) nil t)))
 #+end_src
 
-**** prevent emacs from killing certain buffers
+*** prevent emacs from killing certain buffers
 :PROPERTIES:
 :ID:       ae935cf5-7322-499c-96d7-20209d9b6641
 :END:
@@ -3289,7 +3289,7 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 	(with-current-buffer buffer (emacs-lock-mode 'kill))))
 #+end_src
 
-*** hideshow
+** hideshow
 :PROPERTIES:
 :ID:       2222cf6a-5274-4a33-ae74-357676fbd61d
 :END:
@@ -3299,7 +3299,7 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
   :hook (prog-mode-hook . hs-minor-mode))
 #+end_src
 
-** keybindings
+* keybindings
 :PROPERTIES:
 :ID:       e4605d42-4d57-40d9-8594-15b06f6196a4
 :END:
@@ -3311,7 +3311,7 @@ inefficient, having to press =M-x= between any non built-in command. Its
 important to bind them and to do it in an organized way so you can always find
 the bindings you need when you need it.
 
-*** bind!
+** bind!
 :PROPERTIES:
 :ID:       328d3e9f-8885-4c69-94b0-1f9984f33d61
 :END:
@@ -3323,7 +3323,7 @@ to provide a versatile, non-repetative, and extensible syntax that does what I
 mean. Overall I want to abstract the act of keybinding and to not concern myself
 with the automatable (not a word probably) details of binding keys.
 
-**** evil key to states
+*** evil key to states
 :PROPERTIES:
 :ID:       672841ed-1c4b-4351-ac68-e7107cc0bea2
 :END:
@@ -3350,7 +3350,7 @@ If any letter in EVIL-KEYWORD does not correspond to an evil state, return nil."
 	 (collect state)))
 #+end_src
 
-**** deferring keymaps
+*** deferring keymaps
 :PROPERTIES:
 :ID:       76200d2b-839d-4111-863a-08021e18c7e4
 :END:
@@ -3359,7 +3359,7 @@ As it stands =define-key= and friends raise an error if the keymap you specified
 has not been defined. We want the =bind!= macro to do what we mean: if a key's
 keymap is not defined, then bind the key when it is.
 
-***** deferred binding forms
+**** deferred binding forms
 :PROPERTIES:
 :ID:       e03e1a47-41d1-4dd8-9f1a-8151de76da2a
 :END:
@@ -3375,7 +3375,7 @@ KEYMAP is a keymap that has not yet been bound. BINDING-FORMS are the forms to
 be evaluated when KEYMAP is bound.")
 #+end_src
 
-***** updating deferred bindings
+**** updating deferred bindings
 :PROPERTIES:
 :ID:       fa345a49-e002-4efd-ba68-5f533d42aebb
 :END:
@@ -3395,7 +3395,7 @@ Return any keymaps whose keymaps still don't exist."
 	       (collect elt)))))
 #+end_src
 
-***** hook for deferred bindings
+**** hook for deferred bindings
 :PROPERTIES:
 :ID:       a95d82f1-9614-4ec5-a2e5-a2f29f514e2b
 :END:
@@ -3411,7 +3411,7 @@ new keymaps.
   (cl-callf xl-bind%update-deferred-bindings xl-bind%deferred-bindings))
 #+end_src
 
-***** with-deferred-keymap!
+**** with-deferred-keymap!
 :PROPERTIES:
 :ID:       ddb17e5c-74e8-445e-b659-cf94f4831a46
 :END:
@@ -3432,12 +3432,12 @@ If MAP is already loaded, evaluate forms immediately."
      `(cl-callf a-update xl-bind%deferred-bindings ',map #'append ',forms))))
 #+end_src
 
-**** reading clauses
+*** reading clauses
 :PROPERTIES:
 :ID:       9038980a-be61-4ad5-a0b5-cd151b96d0d9
 :END:
 
-***** whether is a binding
+**** whether is a binding
 :PROPERTIES:
 :ID:       743e3fdb-fb0c-44ba-a5e9-7282b20cfdcc
 :END:
@@ -3450,7 +3450,7 @@ If MAP is already loaded, evaluate forms immediately."
     (_ nil)))
 #+end_src
 
-***** read a clause
+**** read a clause
 :PROPERTIES:
 :ID:       255730df-5715-4808-8a7d-6c37bd1333e5
 :END:
@@ -3468,7 +3468,7 @@ If MAP is already loaded, evaluate forms immediately."
 	 (finally-return (-map (-partial #'append common-args) bindings))))
 #+end_src
 
-**** normalization
+*** normalization
 :PROPERTIES:
 :ID:       56abc5a3-bcf7-4943-a941-939e16d46dea
 :END:
@@ -3476,7 +3476,7 @@ If MAP is already loaded, evaluate forms immediately."
 The purpose of normalization is to make the clauses homogenous and into a form
 that is easily.
 
-***** fix the keybinding
+**** fix the keybinding
 :PROPERTIES:
 :ID:       0202c1a2-75a3-45ac-a226-8b6b906d96ac
 :END:
@@ -3490,7 +3490,7 @@ This means that the keybinding should always be last.
 	  (-interleave '(:key :def) (-take-last 2 clause))))
 #+end_src
 
-***** fix the evil state
+**** fix the evil state
 :PROPERTIES:
 :ID:       1a8f4cf8-1013-4e0c-8fd1-21b69c2e6b8b
 :END:
@@ -3505,7 +3505,7 @@ This means that the keybinding should always be last.
     (_ clause)))
 #+end_src
 
-***** flatten plist values
+**** flatten plist values
 :PROPERTIES:
 :ID:       6be10885-4bbe-47e2-bd47-0c14f51b9065
 :END:
@@ -3528,7 +3528,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return (cons new flattened))))
 #+end_src
 
-***** make clause into proper plist
+**** make clause into proper plist
 :PROPERTIES:
 :ID:       e836329e-c2b9-4978-a3d7-9ba32c160f04
 :END:
@@ -3550,7 +3550,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return plist)))
 #+end_src
 
-***** merge multiple plist values
+**** merge multiple plist values
 :PROPERTIES:
 :ID:       d50cb073-54c0-4b96-8df1-2ae195ac4651
 :END:
@@ -3570,7 +3570,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 		     (append (list key (xl-dwim-single (symbol-value var))))))))
 #+end_src
 
-***** normalize the list
+**** normalize the list
 :PROPERTIES:
 :ID:       377bcdf9-3798-4dff-83e5-13f3a59e112e
 :END:
@@ -3586,7 +3586,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return alist)))
 #+end_src
 
-***** ensure-keymap
+**** ensure-keymap
 :PROPERTIES:
 :ID:       1fb99451-7b0e-4bef-b980-7f4e038dd38d
 :END:
@@ -3598,7 +3598,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
     token))
 #+end_src
 
-***** apply-prefix
+**** apply-prefix
 :PROPERTIES:
 :ID:       5c1aa062-8660-453b-ba8e-04610bec043a
 :END:
@@ -3611,7 +3611,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
       token)))
 #+end_src
 
-***** convert lists
+**** convert lists
 :PROPERTIES:
 :ID:       74298919-c3f2-4e7e-8377-bd8a87def771
 :END:
@@ -3625,7 +3625,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 		(append (list key val))))))
 #+end_src
 
-**** converting tokens to forms
+*** converting tokens to forms
 :PROPERTIES:
 :ID:       aade9ecc-ee16-407d-a451-03da731daeb2
 :END:
@@ -3634,7 +3634,7 @@ This section is about actually converting define key clauses that have already
 been parsed and processed into lisp forms that actually correspond to
 bindings. The design of this step follows a =use-package=.
 
-***** convert logic
+**** convert logic
 :PROPERTIES:
 :ID:       9c779428-a8b5-4e2c-b3d3-c369f7f161b0
 :END:
@@ -3653,7 +3653,7 @@ certain circumstances.
     bind))
 #+end_src
 
-***** decide on which converters to use
+**** decide on which converters to use
 :PROPERTIES:
 :ID:       09ad63c3-c438-47d2-9e4e-789bc0a4b488
 :END:
@@ -3673,7 +3673,7 @@ Code that is split into appropriate parts is easier to read and write.
 	 (finally-return fns)))
 #+end_src
 
-***** convert token to forms
+**** convert token to forms
 :PROPERTIES:
 :ID:       10116109-b7a6-4e6e-94b2-6b41d4fc9f1f
 :END:
@@ -3685,7 +3685,7 @@ Code that is split into appropriate parts is easier to read and write.
     (funcall (or converter #'ignore) token rest)))
 #+end_src
 
-***** binding-forms
+**** binding-forms
 :PROPERTIES:
 :ID:       31d4d497-afac-4ccf-a426-afa8f159e242
 :END:
@@ -3700,12 +3700,12 @@ Return a list of forms that binds keys specified by BIND-TOKENS."
 	 (append forms)))
 #+end_src
 
-***** converting to forms
+**** converting to forms
 :PROPERTIES:
 :ID:       7fd1a756-b8aa-41e4-8dae-7a0dfdd1e17b
 :END:
 
-****** which-key
+***** which-key
 :PROPERTIES:
 :ID:       076b2b4d-7c12-4ebd-8f84-1d649487ae72
 :END:
@@ -3723,7 +3723,7 @@ Return a list of forms that binds keys specified by BIND-TOKENS."
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-****** evil which-key
+***** evil which-key
 :PROPERTIES:
 :ID:       290cceaf-30b1-48d0-a688-b7db49728f01
 :END:
@@ -3748,7 +3748,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
 	 (finally-return `((after! which-key ,@forms) ,@rest))))
 #+end_src
 
-****** evil-bind
+***** evil-bind
 :PROPERTIES:
 :ID:       7d69d323-2eeb-4d90-88c8-cfde7f7768d3
 :END:
@@ -3767,7 +3767,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-****** bind
+***** bind
 :PROPERTIES:
 :ID:       be633966-63b6-40ef-a5fe-79444218caf2
 :END:
@@ -3783,7 +3783,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-****** defer binding
+***** defer binding
 :PROPERTIES:
 :ID:       f8892022-1921-44de-b157-7182bbcba31c
 :END:
@@ -3797,7 +3797,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-****** kbd
+***** kbd
 :PROPERTIES:
 :ID:       cdf12c08-799d-4cbc-be73-88ca77efc16f
 :END:
@@ -3816,7 +3816,7 @@ function to generate binding forms. Obviously, this is very customizable.
 	(xl-bind%convert-token-to-forms converters))))
 #+end_src
 
-***** localleader
+**** localleader
 :PROPERTIES:
 :ID:       e83756c1-2472-4b69-8a9e-4a9328af32a7
 :END:
@@ -3839,7 +3839,7 @@ implement this macro as a =:localleader= keyword, so I can use just one macro,
       ,@clause)))
 #+end_src
 
-**** bind!
+*** bind!
 :PROPERTIES:
 :ID:       0ce28150-7971-466f-b9b7-3cf33c496393
 :END:
@@ -3864,7 +3864,7 @@ Finally, our main macro is here.
 	    (xl-bind%binding-forms))))
 #+end_src
 
-*** leaders
+** leaders
 :PROPERTIES:
 :ID:       1e4dac95-9c16-41db-9f99-63a250b447c2
 :END:
@@ -3874,7 +3874,7 @@ keybinding tree. And once you know the leader, you can "discover" the other
 bindings as you need to. You can see the concept of the leader used in Emacs
 distributions such as [[https://github.com/syl20bnr/spacemacs][Spacemacs]] and [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
 
-**** evil leaders
+*** evil leaders
 :PROPERTIES:
 :ID:       47c4c3c5-3859-46a4-a4ef-3d27c552eec0
 :END:
@@ -3899,7 +3899,7 @@ want to shorten a key binding. Although obviously not as easy to remember as
   "A shorter alternative `xl-localleader-key'.")
 #+end_src
 
-**** emacs leaders
+*** emacs leaders
 :PROPERTIES:
 :ID:       f3299c73-837e-46f9-a29e-9932c4570858
 :END:
@@ -3922,7 +3922,7 @@ state--or even vanilla Emacs. The choice behind the bindings is the same as
   "A short non-normal  `xl-localleader-key'.")
 #+end_src
 
-*** prefix commands
+** prefix commands
 :PROPERTIES:
 :ID:       2cf36d16-eafc-46d8-8b19-e1eb02d39c0d
 :END:
@@ -3939,7 +3939,7 @@ conjunction with :states -- an effective doubling of Doom's startup time!
 (define-prefix-command 'xl/leader 'xl-leader-map)
 #+end_src
 
-*** ensuring high keymap precedence
+** ensuring high keymap precedence
 :PROPERTIES:
 :ID:       e06bcfa0-63e9-429e-8ff7-4263cbd4f9b1
 :END:
@@ -3948,7 +3948,7 @@ In Emacs, there's a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/
 keymap takes precedence. The steps I take in this headline are also in [[https://github.com/noctuid/evil-guide#preventing-certain-keys-from-being-overridden][noctuid's
 evil-guide]].
 
-**** minor mode
+*** minor mode
 :PROPERTIES:
 :ID:       9863dc90-fc8c-422c-918f-3d75d52e8a14
 :END:
@@ -3972,7 +3972,7 @@ immediately. This is why I set the advice dept to =-100=.
 (xl-hook-add 'emacs-startup-hook #'xl-override-mode -100)
 #+end_src
 
-**** take precedence over Emacs bindings
+*** take precedence over Emacs bindings
 :PROPERTIES:
 :ID:       9248fb7f-1901-4beb-8b3a-faded48cdddc
 :END:
@@ -3984,7 +3984,7 @@ there. The [[helpvar:emulation-mode-map-alists][emulation-mode-map-alists]] take
 (push '((xl-override-mode . xl-override-mode-map)) emulation-mode-map-alists)
 #+end_src
 
-**** make an overriding map
+*** make an overriding map
 :PROPERTIES:
 :ID:       f52fbd32-58a0-4b60-a382-b29112f5d972
 :END:
@@ -3998,7 +3998,7 @@ that will override all other keymaps, aptly named =XL-OVERRIDE-MAP=.
 (define-key xl-override-mode-map (kbd XL-EMACS-LEADER-KEY) #'xl/leader)
 #+end_src
 
-**** registering override map with evil
+*** registering override map with evil
 :PROPERTIES:
 :ID:       23b55b9c-ea38-485a-b986-ac62d60a6f75
 :END:
@@ -4016,7 +4016,7 @@ override an evil keymap).
 	(evil-make-intercept-map xl-override-mode-map state t)))
 #+end_src
 
-**** binding the leader keys to the prefix map
+*** binding the leader keys to the prefix map
 :PROPERTIES:
 :ID:       d710cbf7-66c5-4934-a2d4-998fdb6f7731
 :END:
@@ -4033,7 +4033,7 @@ that have already been created by emacs (such as =*scratch*= and
  (:mnv XL-EVIL-LEADER-KEY 'xl/leader))
 #+end_src
 
-*** which-key
+** which-key
 :PROPERTIES:
 :ID:       2ad092a3-ff63-49cd-91b9-380c91dbe9f5
 :END:
@@ -4045,7 +4045,7 @@ you'll remember the first few key strokes but struggle with the rest. To address
 this [[github:][which-key]] displays key binding sequences in the minibuffer as your typing
 them. By doing this you can "discover" the commands as you go along.
 
-**** init
+*** init
 :PROPERTIES:
 :ID:       c4aedc23-0be3-46fe-b046-32b5f0738c6b
 :END:
@@ -4064,7 +4064,7 @@ them. By doing this you can "discover" the commands as you go along.
   (which-key-idle-delay           . 0.8))
 #+end_src
 
-**** set line spacing
+*** set line spacing
 :PROPERTIES:
 :ID:       6abb35f4-c648-4bed-b59a-5a0636857fd8
 :END:
@@ -4074,7 +4074,7 @@ them. By doing this you can "discover" the commands as you go along.
   (setq line-spacing 3))
 #+end_src
 
-*** execute extended command
+** execute extended command
 :PROPERTIES:
 :ID:       f17a6b64-f9df-4801-9728-235f6bbb9b4d
 :END:
@@ -4095,7 +4095,7 @@ super fast to press as well and even faster than =SPC SPC=.
   ("M-x" #'execute-extended-command))
 #+end_src
 
-*** space bindings
+** space bindings
 :PROPERTIES:
 :ID:       ed4853ea-c9de-42c8-af93-9e697f2ea014
 :END:
@@ -4103,7 +4103,7 @@ super fast to press as well and even faster than =SPC SPC=.
 This headline contains generic leader bindings that are in my case triggered by
 =SPC=.
 
-**** generic app
+*** generic app
 :PROPERTIES:
 :ID:       68945ce0-82fb-4844-b53b-422c328558af
 :END:
@@ -4126,7 +4126,7 @@ This headline contains generic leader bindings that are in my case triggered by
   ("r" #'ranger))
 #+end_src
 
-**** help
+*** help
 :PROPERTIES:
 :ID:       f28081e3-451c-4005-80cc-bffeafe0051c
 :END:
@@ -4145,7 +4145,7 @@ This headline contains generic leader bindings that are in my case triggered by
   ("w" #'woman))
 #+end_src
 
-**** toggling
+*** toggling
 :PROPERTIES:
 :ID:       b962fa01-d63f-47a9-bf69-b2f82c8b1e61
 :END:
@@ -4164,7 +4164,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("f" #'xl/set-font-size))
 #+end_src
 
-**** buffer
+*** buffer
 :PROPERTIES:
 :ID:       5fd53168-3eee-4ed4-8213-28efba5d0200
 :END:
@@ -4183,7 +4183,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("b" #'consult-buffer))
 #+end_src
 
-**** file
+*** file
 :PROPERTIES:
 :ID:       3857a17c-1a14-4163-a23b-8811a2dad111
 :END:
@@ -4198,7 +4198,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("r" #'xl/switch-to-readme))
 #+end_src
 
-**** code
+*** code
 :PROPERTIES:
 :ID:       d6229bf2-9d8d-4f97-bb95-b07ef409e33f
 :END:
@@ -4211,12 +4211,12 @@ I have kind of a loose definition of "toggle" in this headline.
   ("c" #'lispyville-comment-or-uncomment))
 #+end_src
 
-**** window management
+*** window management
 :PROPERTIES:
 :ID:       a8b3223b-d5ba-4230-9fa8-a9601d60b5ad
 :END:
 
-***** window movement
+**** window movement
 :PROPERTIES:
 :ID:       f0152373-3b3f-4cf1-abaf-d025c93c64d3
 :END:
@@ -4237,7 +4237,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("t" #'transpose-frame))
 #+end_src
 
-***** window resizing
+**** window resizing
 :PROPERTIES:
 :ID:       373e3cf8-68ea-4791-ae71-e0c73b2f218a
 :END:
@@ -4252,7 +4252,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("z" #'zoom-window-zoom))
 #+end_src
 
-**** workspaces
+*** workspaces
 :PROPERTIES:
 :ID:       ba627c58-6008-42a2-abc2-7136f77d44d5
 :END:
@@ -4273,7 +4273,7 @@ I have kind of a loose definition of "toggle" in this headline.
    ("c" #'wg-save-wconfig)))
 #+end_src
 
-**** eval
+*** eval
 :PROPERTIES:
 :ID:       3947b258-fc46-4fc9-8350-3fd25a69d749
 :END:
@@ -4293,7 +4293,7 @@ I have kind of a loose definition of "toggle" in this headline.
  ("p" #'eval-print-last-sexp))
 #+end_src
 
-**** search
+*** search
 
 #+begin_src emacs-lisp
 (bind!
@@ -4310,7 +4310,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("o" #'consult-outline))
 #+end_src
 
-**** version control
+*** version control
 :PROPERTIES:
 :ID:       31234afc-a11d-42a8-88af-e0647d44c1b1
 :END:
@@ -4328,7 +4328,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("s" #'magit-status))
 #+end_src
 
-**** packages
+*** packages
 :PROPERTIES:
 :ID:       0ec9aee0-8f9a-4700-8928-abff758357e1
 :END:
@@ -4344,7 +4344,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("d" #'visit-package-directory))
 #+end_src
 
-**** quit
+*** quit
 :PROPERTIES:
 :ID:       ae435361-79e7-41c8-b490-8ec0f8d23a59
 :END:
