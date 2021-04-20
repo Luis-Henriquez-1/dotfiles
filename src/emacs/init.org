@@ -4005,7 +4005,7 @@ you'll remember the first few key strokes but struggle with the rest. To address
 this [[github:][which-key]] displays key binding sequences in the minibuffer as your typing
 them. By doing this you can "discover" the commands as you go along.
 
-** init
+* init
 :PROPERTIES:
 :ID:       c4aedc23-0be3-46fe-b046-32b5f0738c6b
 :END:
@@ -4024,7 +4024,7 @@ them. By doing this you can "discover" the commands as you go along.
   (which-key-idle-delay           . 0.8))
 #+end_src
 
-** set line spacing
+* set line spacing
 :PROPERTIES:
 :ID:       6abb35f4-c648-4bed-b59a-5a0636857fd8
 :END:
@@ -4054,14 +4054,6 @@ super fast to press as well and even faster than =SPC SPC=.
   ("A-x" #'execute-extended-command)
   ("M-x" #'execute-extended-command))
 #+end_src
-
-* space bindings
-:PROPERTIES:
-:ID:       ed4853ea-c9de-42c8-af93-9e697f2ea014
-:END:
-
-This headline contains generic leader bindings that are in my case triggered by
-=SPC=.
 
 * generic app
 :PROPERTIES:
