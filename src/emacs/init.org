@@ -2441,7 +2441,7 @@ Log when an advice or hook is being called.
        nil))))
 #+end_src
 
-* idle-require :core:defer:
+* idle-require :core:defer:performance:
 :PROPERTIES:
 :ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
 :END:
