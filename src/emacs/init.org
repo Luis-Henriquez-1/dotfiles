@@ -109,7 +109,7 @@ initialization. We don't need =straight= to do this for us because it is handled
 (setq straight-enable-package-integration nil)
 #+end_src
 
-* load bootstrap file
+* load bootstrap file :straight:pacman:
 :PROPERTIES:
 :ID:       544f1bbe-3981-4d1b-8b24-3395b27890b2
 :END:
