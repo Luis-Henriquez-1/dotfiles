@@ -742,6 +742,594 @@ Otherwise, return OBJ."
   (if (= (safe-length obj) 1) (car obj) obj))
 #+end_src
 
+* use-package
+:PROPERTIES:
+:ID:       4882e62d-4602-40a6-9fbb-5efb0b5f4bc2
+:END:
+
+** init use-package
+:PROPERTIES:
+:ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
+:END:
+
+Finally, we get to use =use-package= to configure itself! :smile: By default,
+=use-package= provides its own messages and error handling. This can make the
+macro expansion of a =use-package= form crowded and much more difficult to
+read. Setting [[helpvar:use-package-expand-minimally][use-package-expand-minimally]] tells =use-package=.
+
+By default =use-package= loads a package immediately. Setting
+[[helpvar:use-package-always-defer][use-package-always-defer]] tells =use-package= not to load it unless I explicitly
+request it (for example, with the =:demand= keyword).
+
+#+begin_src emacs-lisp
+(require 'use-package)
+(require 'dash)
+(require 'loopy)
+(require 's)
+
+(use-package use-package
+  :init
+  (setq use-package-expand-minimally t)
+  (setq use-package-always-defer t))
+
+(defalias 'use-package! 'use-package)
+#+end_src
+
+** use-package
+:PROPERTIES:
+:ID:       29e1513a-e12a-4818-870e-8d5fab7fe1a0
+:END:
+
+[[https://github.com/jwiegley/use-package][use-package]] provides a uniform syntax for cross-configuring different
+packages and features. It is widely used among the emacs community. In this
+headline I build upon it and adapt it to my needs.
+
+*** helpers
+:PROPERTIES:
+:ID:       c8a6f579-c4ff-4b0f-942e-f87dab208deb
+:END:
+
+When it comes to helping myself with helper functions I spare no expense.
+
+**** inserting keywords
+:PROPERTIES:
+:ID:       86f9fa28-6842-4580-994a-24f5d4608ad4
+:END:
+
+=use-package= has a built-in way of inserting keywords.
+
+***** functional =use-package= keyword insertion
+:PROPERTIES:
+:ID:       4968a708-05f2-4a3b-8395-850a3c119fd2
+:END:
+
+This is an implementation for inserting something into a list before or after a
+particular thing in the list. It is implemented in generally and without
+side-effects. That way, it's easily testable.
+
+#+begin_src emacs-lisp
+(defun use-package%insert-keyword (where place key list)
+  "Insert KEY at PLACE in PLIST.
+If WHERE is before, KEY is inserted before place. If WHERE is `after' it is
+inserted after PLACE."
+  (--splice (eq place it)
+	    (funcall (if (eq where 'before) #'identity #'reverse)
+		     (list key it))
+	    list))
+#+end_src
+
+***** dwim insert
+:PROPERTIES:
+:ID:       54fc11db-534a-4b59-836c-3165cf48b61d
+:END:
+
+I insert most =use-package= keywords in the same place. I don't want to have to
+specify it all the time. Additionally, I don't want to have to keep repeating
+the idiom =(setq use-package-keywords...use-package-keywords)= all the time
+either.
+
+#+begin_src emacs-lisp
+(defun use-package%dwim-insert (key &optional where place)
+  "Convenience wrapper around `use-package%insert-keyword'.
+This is the same as `use-package%insert-keyword' except WHERE and PLACE to
+`before' and `:hook'."
+  (let ((where (or where 'before))
+	(place (or place :hook)))
+    (setq use-package-keywords
+	  (use-package%insert-keyword where place key use-package-keywords))))
+#+end_src
+
+**** normalize cons
+:PROPERTIES:
+:ID:       d5beb18f-b18c-407b-9840-bda400ef52b4
+:END:
+
+=use-package= uses this funky-looking cons cell syntax to mean.
+
+#+begin_src emacs-lisp
+(defun use-package%normalize-cons (cons-pair)
+  "Normalize."
+  (-table-flat #'cons
+	       (-list (car cons-pair))
+	       (-list (cdr cons-pair))))
+#+end_src
+
+**** create autoloads
+:PROPERTIES:
+:ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
+:END:
+
+Perhaps the most code saved with =use-package= is in it's generation of autoload
+forms.
+
+#+begin_src emacs-lisp
+(defun use-package%autoload (package fn)
+  "Return a form that autoloads FN from PACKAGE."
+  `(unless (fboundp ',fn)
+     (autoload #',fn ,(symbol-name package) nil t nil)))
+#+end_src
+
+**** generate normalizer
+:PROPERTIES:
+:ID:       f287aa5b-51ed-40da-bbc1-9a40586a1f83
+:END:
+
+I only use this function and [[id:495d3d70-f19f-420d-86ef-d75c49a77b66][its counterpart]] once so maybe putting this in
+functions is rather overkill. But I like doing things right. And who knows?
+Might be useful later. :shrug:
+
+#+begin_src emacs-lisp
+(defun use-package%normalize (key)
+  "Return an appropriate normalize symbol for key."
+  (xl-symbol-intern 'use-package-normalize/ key))
+#+end_src
+
+**** generate a handler
+:PROPERTIES:
+:ID:       495d3d70-f19f-420d-86ef-d75c49a77b66
+:END:
+
+#+begin_src emacs-lisp
+(defun use-package%handler (key)
+  "Return an appropriate handler symbol for key."
+  (xl-symbol-intern 'use-package-handler/ key))
+#+end_src
+
+**** override keyword
+:PROPERTIES:
+:ID:       aff6cbbe-7657-4287-9632-31dab7310c63
+:END:
+
+I want to override some existing =use-package= keywords. Use package keywords
+are defined by three things: the existence of the keyword in
+[[helpvar:use-package-keywords][use-package-keywords]], the existence of a [[https://github.com/jwiegley/use-package#third-step-create-a-handler][handler]], and the existence of a
+[[https://github.com/jwiegley/use-package#second-step-create-a-normalizer][normalizer]]. To overwrite an existing keyword all you have to do is
+override the corresponding normalizer and handler. The purpose of this function
+is to provide an easy way to do this.
+
+#+begin_src emacs-lisp
+(defun use-package%override (old new)
+  "Overrides OLD with NEW.
+OLD is an existing use-package keyword. NEW is the keyword to override OLD with."
+  (advice-add (use-package%normalize old) :override (use-package%normalize new))
+  (advice-add (use-package%handler old) :override (use-package%handler new)))
+#+end_src
+
+*** custom keywords
+:PROPERTIES:
+:ID:       62cec5ac-a2f9-435b-96a7-4db0d9691f25
+:END:
+
+One thing to note is that I don't allow arguments to be optionally in a
+list. This makes things much more complicated and it makes.
+
+**** silence
+:PROPERTIES:
+:ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
+:END:
+
+Many packages print some output to the messages buffer. And, while it may be
+useful to receieve messages, often they can be telling you what you already know.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :silence)
+
+(defun use-package-normalize/:silence (key _ fns)
+  "Normalize."
+  (iter (for fn fns)
+	(cl-assert (symbolp fn) nil "%s hello %s" key fn)
+	(collect fn)))
+
+(defun use-package-handler/:silence (name _ fns rest state)
+  "Generate forms that silence output of FNS.
+FNS is a list of function symbols."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload fn name))
+	    (collect `(xl-gadvice-shut-up #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** gc-pause
+:PROPERTIES:
+:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
+:END:
+
+The keyword pauses emacs gargbage collection (e.g increases the
+[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
+it's passed in. It should be used on particularly computationally expensive
+functions that a package provides.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :gc-pause)
+
+(defalias 'use-package-normalize/:gc-pause 'use-package-normalize/:silence)
+
+(defun use-package-handler/:gc-pause (name _ fns rest state)
+  "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** ignore
+:PROPERTIES:
+:ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
+:END:
+
+Sometimes I want to ignore certain functions.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :ignore)
+
+(defalias 'use-package-normalize/:ignore 'use-package-normalize/:silence)
+
+(defun use-package-handler/:ignore (name _ fns rest state)
+  "Generate forms that cause FNS to do nothing and return nil."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-gadvice-ignore #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** always yes
+:PROPERTIES:
+:ID:       f2d89960-ed41-4a72-847f-e150db56330b
+:END:
+
+There are a number of functions in Emacs that prompt.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :assume-yes)
+
+(defalias 'use-package-normalize/:assume-yes 'use-package-normalize/:silence)
+
+(defun use-package-handler/:assume-yes (name _ fns rest state)
+  "Ensure that FNS always assume yes for confirmation."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-gadvice-assume-yes #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** os
+:PROPERTIES:
+:ID:       9d78d90a-0309-44c6-be96-82bd6608546a
+:END:
+
+This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70-4137-a525-5be4bc63c3a2][with-os!]].
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :os)
+
+(defun use-package-normalize/:os (_ _ args)
+  (cl-assert (member (car args) '(mac linux windows)))
+  (car args))
+
+(defun use-package-handler/:os (name _ os rest state)
+  "Wrap body form with `with-os!' macro."
+  `((with-os! ,os ,@(use-package-process-keywords name rest state))))
+#+end_src
+
+**** hook
+:PROPERTIES:
+:ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
+:END:
+
+Here I override the default hook keyword with my own which uses =xl-hook-add=
+instead of =add-hook=.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :xl-hook)
+(use-package%override :hook :xl-hook)
+
+(defun use-package-normalize/:xl-hook (name _ args)
+  "Make sure that."
+  (loopy (list elt args)
+	 (cond ((symbolp elt)
+		(collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
+	       ((-cons-pair-p elt)
+		(expr (hooks . mode) elt)
+		(subloop (list hook (-list hooks))
+			 (collect (cons (xl-emacs-hookify hook) mode))))
+	       (t
+		(do (error "%s requires %s" key elt))))))
+
+(defun use-package-handler/:xl-hook (name _ alist rest state)
+  "Use `xl-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
+  `(,@(loopy (list (hook . fn) alist)
+	     (collect `(xl-hook-add ',hook ',fn))
+	     (collect (use-package%autoload name fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** before-call
+:PROPERTIES:
+:ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
+:END:
+
+Packages don't live in an isolated enviroment. Often one package depends on one
+or more packages. Sometimes, I add customizations to a package using certain
+libraries and then I need to load them when that package is loaded. The purpose
+of this keyword is to load a package when a certain function is called.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :before-call)
+
+(defun use-package-normalize/:before-call (name key args)
+  "Ensure ARGS is a list of symbols or list."
+  (iter (for elt args)
+	(cond ((symbolp elt) (collect (cons name elt)))
+	      ((-cons-pair-p elt) (collect elt))
+	      (t (error "%s requires either symbols or cons cells." key elt)))
+	(finally-do (-map #'use-package%normalize-cons loopy-result))))
+
+(defun use-package-handler/:before-call (name key alist rest state)
+  "Generate forms that load PACKAGE before FN is called."
+  `(,@(iter (for (package . fn) alist)
+	    (collect (use-package%autoload package fn))
+	    (collect `(xl-load-before-call ',package #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** after-call
+:PROPERTIES:
+:ID:       2c7dd1a8-c0ee-42cd-b76f-8a72c94be848
+:END:
+
+The.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :after-call)
+
+(defalias 'use-package-normalize/:after-call #'use-package-normalize/:before-call)
+
+(defun use-package-handler/:after-call (name _ alist rest state)
+  "Generate form that loads package after fn is called."
+  `(,@(iter (for (package . fn) alist)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-load-after-call ',package #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** set
+:PROPERTIES:
+:ID:       9948a4ae-f80a-4b13-b97a-0895481021a6
+:END:
+
+I should give credit. I got this idea from the leaf macro.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :set)
+
+(defun use-package-normalize/:set (_ _ args)
+  "Raise an error if."
+  (cl-assert (-all-p #'listp args) nil "Should all be lists.")
+  args)
+
+(defun use-package-handler/:set (name _ values rest state)
+  "Generate forms that set var to value."
+  `(,@(loopy (list (var . val) values)
+	     (expr setter (if (listp var) 'setf 'set!))
+	     (collect `(,setter ,var ,val)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** rule
+:PROPERTIES:
+:ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
+:END:
+
+This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (display buffer control). What it does is.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :rule)
+
+(defun use-package-normalize/:rule (_ _ args)
+  "Ensure ARGS is a list of lists."
+  (cl-assert (-all-p #'xl-true-list-p args))
+  args)
+
+(defun use-package-handler/:rule (name _ rules rest state)
+  "Generate popup rule for each."
+  `(,@(loopy (list rule rules)
+	     (collect `(dbc-add-rule ,@rule)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** idle-require
+:PROPERTIES:
+:ID:       916f88bd-10e1-4030-a1d9-e42baf095492
+:END:
+
+This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-require]]. It can accept a boolean.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :idle-require)
+
+(defun use-package-normalize/:idle-require (package _ args)
+  "Ensure each elements in ARGS is a symbol.
+If an element is t, convert it to PACKAGE."
+  (loopy (list symbol args)
+	 (unless (symbolp symbol) (do (error "This key doesn't have this.")))
+	 (collect (if (eq t symbol) package symbol))))
+
+(defun use-package-handler/:idle-require (name _ features rest state)
+  "Generate forms that `idle-require' FEATURES."
+  `(,@(loopy (list feature features)
+	     (collect `(idle-require ',feature nil t)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** config
+:PROPERTIES:
+:ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
+:END:
+
+This keyword is meant to overwrite the built-in =:config= keyword. It does the
+same thing, except it uses =after!= instead of =with-eval-after-load=.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :xl-config)
+(use-package%override :config :xl-config)
+
+(defun use-package-normalize/:xl-config (_ _ args)
+  args)
+
+(defun use-package-handler/:xl-config (name _ forms rest state)
+  "Wrap FORMS in an `after!' block."
+  `((after! ,name ,@forms)
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** alias
+:PROPERTIES:
+:ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
+:END:
+
+Sometimes I want to alias certain.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :alias)
+
+(defalias 'use-package-normalize/:alias 'use-package-normalize/:set)
+
+(defun use-package-handler/:alias (name _ aliases rest state)
+  "Generate aliases forms for ALIASES."
+  `(,@(loopy (list (sym . def) aliases)
+	     (collect (use-package%autoload name def))
+	     (collect `(defalias ',sym #',def)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** advice
+:PROPERTIES:
+:ID:       1a0d6ff0-0dcd-4374-b52c-79bf617b3a2b
+:END:
+
+A keyword specifically designed for =xl= advices, or advices of the form
+=xl-<name>-advice=. For convenience, it is assumed to use =around= advice.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :advice)
+
+(defun use-package-normalize/:advice (_ _ advices)
+  "Ensure that ADVICES is a list of advice arguments.
+ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
+and EXPIRE-FN are optional."
+  (iter (each elt advices)
+	(progn
+	  (pcase elt
+	    (`(,(and (pred keywordp) key) (,fn . ,advice))
+	     (collect (list key fn advice)))
+	    (`(,fn . ,advice)
+	     (collect (list :around fn advice)))
+	    (_
+	     (error "wrong args"))))))
+
+(defun use-package-handler/:advice (name _ advices rest state)
+  "Generate forms that add advice."
+  `(,@(loopy (list (where fn advice) advices)
+	     (expr where (if (keywordp where) where (xl-keyword-intern where)))
+	     (collect `(xl-advice-add #',fn ,where #',advice)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** gadvice
+:PROPERTIES:
+:ID:       0646d4c8-47e7-45cc-a14a-6326a2b76fdd
+:END:
+
+This provides a shortcut for generic advices.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :gadvice)
+
+(defun use-package-normalize/:gadvice (_ _ advices)
+  "Ensure that ADVICES is a list of advice arguments.
+ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
+and EXPIRE-FN are optional."
+  (loopy (with (normalized (use-package-normalize/:advice _ _ advices)))
+	 (each (_ fn advice) normalized)
+	 (expr gadvice (xl-intern-format "xl-gadvice-%s" advice))
+	 (collect (cons fn gadvice))))
+
+(defun use-package-handler/:gadvice (name _ gadvices rest state)
+  `(,@(loopy (each (fn . gadvice) gadvices)
+	     (collect `(,gadvice #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** initial state
+:PROPERTIES:
+:ID:       e923e94e-9051-4be8-8dda-6566601ba865
+:END:
+
+I create this work to allow for easier cross configuration of states between
+packages.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :initial-state)
+
+(defun use-package-normalize/:initial-state (name _ states)
+  "Require series of symbols or cons of the form (MODE . STATE)."
+  (loopy (list elt states)
+	 (cond ((symbolp elt)
+		(collect (cons (xl-emacs-modeify name) elt)))
+	       ((consp elt)
+		(expr (mode . state) elt)
+		(collect (cons mode state)))
+	       (t
+		(do (error "Invalid argument: %s" states))))))
+
+(defun use-package-handler/:initial-state (name _ states rest state)
+  "Generate forms to set the initial evil state of certain modes."
+  `(,@(loopy (list (mode . state) states)
+	     (collect forms `(evil-set-initial-state ',mode ',state))
+	     (finally-return `((after! (evil ,name) ,@forms))))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+**** idle
+:PROPERTIES:
+:ID:       78814410-c190-4f05-a319-4e6d13a9ea4b
+:END:
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :idle)
+
+(defun use-package-normalize/:idle (_ _ args)
+  (cl-assert (-all-p #'symbolp args))
+  (loopy (each arg args)
+	 (collect (cons 10 arg))))
+
+(defun use-package-handler/:idle (package _ args rest state)
+  `(,(loopy (each (seconds . fn) args)
+	    (collect forms `(run-with-idle-timer 10 t #',fn))
+	    (finally-return `(after! ,package ,@forms)))
+    ,@(use-package-process-keywords package rest state)))
+#+end_src
+
 * library
 :PROPERTIES:
 :ID:       70af1291-6b16-4261-ba83-19bb16d0023e
@@ -919,594 +1507,6 @@ variable. Also, I don't support the alternate =fn:= syntax.
 	    symbolic-placeholders)
       `(lambda (&rest ,argsym)
 	 (-let [,it ,argsym] ,@body)))))
-#+end_src
-
-** use-package
-:PROPERTIES:
-:ID:       4882e62d-4602-40a6-9fbb-5efb0b5f4bc2
-:END:
-
-*** init use-package
-:PROPERTIES:
-:ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
-:END:
-
-Finally, we get to use =use-package= to configure itself! :smile: By default,
-=use-package= provides its own messages and error handling. This can make the
-macro expansion of a =use-package= form crowded and much more difficult to
-read. Setting [[helpvar:use-package-expand-minimally][use-package-expand-minimally]] tells =use-package=.
-
-By default =use-package= loads a package immediately. Setting
-[[helpvar:use-package-always-defer][use-package-always-defer]] tells =use-package= not to load it unless I explicitly
-request it (for example, with the =:demand= keyword).
-
-#+begin_src emacs-lisp
-(require 'use-package)
-(require 'dash)
-(require 'loopy)
-(require 's)
-
-(use-package use-package
-  :init
-  (setq use-package-expand-minimally t)
-  (setq use-package-always-defer t))
-
-(defalias 'use-package! 'use-package)
-#+end_src
-
-*** use-package
-:PROPERTIES:
-:ID:       29e1513a-e12a-4818-870e-8d5fab7fe1a0
-:END:
-
-[[https://github.com/jwiegley/use-package][use-package]] provides a uniform syntax for cross-configuring different
-packages and features. It is widely used among the emacs community. In this
-headline I build upon it and adapt it to my needs.
-
-**** helpers
-:PROPERTIES:
-:ID:       c8a6f579-c4ff-4b0f-942e-f87dab208deb
-:END:
-
-When it comes to helping myself with helper functions I spare no expense.
-
-***** inserting keywords
-:PROPERTIES:
-:ID:       86f9fa28-6842-4580-994a-24f5d4608ad4
-:END:
-
-=use-package= has a built-in way of inserting keywords.
-
-****** functional =use-package= keyword insertion
-:PROPERTIES:
-:ID:       4968a708-05f2-4a3b-8395-850a3c119fd2
-:END:
-
-This is an implementation for inserting something into a list before or after a
-particular thing in the list. It is implemented in generally and without
-side-effects. That way, it's easily testable.
-
-#+begin_src emacs-lisp
-(defun use-package%insert-keyword (where place key list)
-  "Insert KEY at PLACE in PLIST.
-If WHERE is before, KEY is inserted before place. If WHERE is `after' it is
-inserted after PLACE."
-  (--splice (eq place it)
-	    (funcall (if (eq where 'before) #'identity #'reverse)
-		     (list key it))
-	    list))
-#+end_src
-
-****** dwim insert
-:PROPERTIES:
-:ID:       54fc11db-534a-4b59-836c-3165cf48b61d
-:END:
-
-I insert most =use-package= keywords in the same place. I don't want to have to
-specify it all the time. Additionally, I don't want to have to keep repeating
-the idiom =(setq use-package-keywords...use-package-keywords)= all the time
-either.
-
-#+begin_src emacs-lisp
-(defun use-package%dwim-insert (key &optional where place)
-  "Convenience wrapper around `use-package%insert-keyword'.
-This is the same as `use-package%insert-keyword' except WHERE and PLACE to
-`before' and `:hook'."
-  (let ((where (or where 'before))
-	(place (or place :hook)))
-    (setq use-package-keywords
-	  (use-package%insert-keyword where place key use-package-keywords))))
-#+end_src
-
-***** normalize cons
-:PROPERTIES:
-:ID:       d5beb18f-b18c-407b-9840-bda400ef52b4
-:END:
-
-=use-package= uses this funky-looking cons cell syntax to mean.
-
-#+begin_src emacs-lisp
-(defun use-package%normalize-cons (cons-pair)
-  "Normalize."
-  (-table-flat #'cons
-	       (-list (car cons-pair))
-	       (-list (cdr cons-pair))))
-#+end_src
-
-***** create autoloads
-:PROPERTIES:
-:ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
-:END:
-
-Perhaps the most code saved with =use-package= is in it's generation of autoload
-forms.
-
-#+begin_src emacs-lisp
-(defun use-package%autoload (package fn)
-  "Return a form that autoloads FN from PACKAGE."
-  `(unless (fboundp ',fn)
-     (autoload #',fn ,(symbol-name package) nil t nil)))
-#+end_src
-
-***** generate normalizer
-:PROPERTIES:
-:ID:       f287aa5b-51ed-40da-bbc1-9a40586a1f83
-:END:
-
-I only use this function and [[id:495d3d70-f19f-420d-86ef-d75c49a77b66][its counterpart]] once so maybe putting this in
-functions is rather overkill. But I like doing things right. And who knows?
-Might be useful later. :shrug:
-
-#+begin_src emacs-lisp
-(defun use-package%normalize (key)
-  "Return an appropriate normalize symbol for key."
-  (xl-symbol-intern 'use-package-normalize/ key))
-#+end_src
-
-***** generate a handler
-:PROPERTIES:
-:ID:       495d3d70-f19f-420d-86ef-d75c49a77b66
-:END:
-
-#+begin_src emacs-lisp
-(defun use-package%handler (key)
-  "Return an appropriate handler symbol for key."
-  (xl-symbol-intern 'use-package-handler/ key))
-#+end_src
-
-***** override keyword
-:PROPERTIES:
-:ID:       aff6cbbe-7657-4287-9632-31dab7310c63
-:END:
-
-I want to override some existing =use-package= keywords. Use package keywords
-are defined by three things: the existence of the keyword in
-[[helpvar:use-package-keywords][use-package-keywords]], the existence of a [[https://github.com/jwiegley/use-package#third-step-create-a-handler][handler]], and the existence of a
-[[https://github.com/jwiegley/use-package#second-step-create-a-normalizer][normalizer]]. To overwrite an existing keyword all you have to do is
-override the corresponding normalizer and handler. The purpose of this function
-is to provide an easy way to do this.
-
-#+begin_src emacs-lisp
-(defun use-package%override (old new)
-  "Overrides OLD with NEW.
-OLD is an existing use-package keyword. NEW is the keyword to override OLD with."
-  (advice-add (use-package%normalize old) :override (use-package%normalize new))
-  (advice-add (use-package%handler old) :override (use-package%handler new)))
-#+end_src
-
-**** custom keywords
-:PROPERTIES:
-:ID:       62cec5ac-a2f9-435b-96a7-4db0d9691f25
-:END:
-
-One thing to note is that I don't allow arguments to be optionally in a
-list. This makes things much more complicated and it makes.
-
-***** silence
-:PROPERTIES:
-:ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
-:END:
-
-Many packages print some output to the messages buffer. And, while it may be
-useful to receieve messages, often they can be telling you what you already know.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :silence)
-
-(defun use-package-normalize/:silence (key _ fns)
-  "Normalize."
-  (iter (for fn fns)
-	(cl-assert (symbolp fn) nil "%s hello %s" key fn)
-	(collect fn)))
-
-(defun use-package-handler/:silence (name _ fns rest state)
-  "Generate forms that silence output of FNS.
-FNS is a list of function symbols."
-  `(,@(iter (for fn fns)
-	    (collect (use-package%autoload fn name))
-	    (collect `(xl-gadvice-shut-up #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** gc-pause
-:PROPERTIES:
-:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
-:END:
-
-The keyword pauses emacs gargbage collection (e.g increases the
-[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
-it's passed in. It should be used on particularly computationally expensive
-functions that a package provides.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :gc-pause)
-
-(defalias 'use-package-normalize/:gc-pause 'use-package-normalize/:silence)
-
-(defun use-package-handler/:gc-pause (name _ fns rest state)
-  "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
-  `(,@(iter (for fn fns)
-	    (collect (use-package%autoload name fn))
-	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** ignore
-:PROPERTIES:
-:ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
-:END:
-
-Sometimes I want to ignore certain functions.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :ignore)
-
-(defalias 'use-package-normalize/:ignore 'use-package-normalize/:silence)
-
-(defun use-package-handler/:ignore (name _ fns rest state)
-  "Generate forms that cause FNS to do nothing and return nil."
-  `(,@(iter (for fn fns)
-	    (collect (use-package%autoload name fn))
-	    (collect `(xl-gadvice-ignore #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** always yes
-:PROPERTIES:
-:ID:       f2d89960-ed41-4a72-847f-e150db56330b
-:END:
-
-There are a number of functions in Emacs that prompt.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :assume-yes)
-
-(defalias 'use-package-normalize/:assume-yes 'use-package-normalize/:silence)
-
-(defun use-package-handler/:assume-yes (name _ fns rest state)
-  "Ensure that FNS always assume yes for confirmation."
-  `(,@(iter (for fn fns)
-	    (collect (use-package%autoload name fn))
-	    (collect `(xl-gadvice-assume-yes #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** os
-:PROPERTIES:
-:ID:       9d78d90a-0309-44c6-be96-82bd6608546a
-:END:
-
-This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70-4137-a525-5be4bc63c3a2][with-os!]].
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :os)
-
-(defun use-package-normalize/:os (_ _ args)
-  (cl-assert (member (car args) '(mac linux windows)))
-  (car args))
-
-(defun use-package-handler/:os (name _ os rest state)
-  "Wrap body form with `with-os!' macro."
-  `((with-os! ,os ,@(use-package-process-keywords name rest state))))
-#+end_src
-
-***** hook
-:PROPERTIES:
-:ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
-:END:
-
-Here I override the default hook keyword with my own which uses =xl-hook-add=
-instead of =add-hook=.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :xl-hook)
-(use-package%override :hook :xl-hook)
-
-(defun use-package-normalize/:xl-hook (name _ args)
-  "Make sure that."
-  (loopy (list elt args)
-	 (cond ((symbolp elt)
-		(collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
-	       ((-cons-pair-p elt)
-		(expr (hooks . mode) elt)
-		(subloop (list hook (-list hooks))
-			 (collect (cons (xl-emacs-hookify hook) mode))))
-	       (t
-		(do (error "%s requires %s" key elt))))))
-
-(defun use-package-handler/:xl-hook (name _ alist rest state)
-  "Use `xl-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
-  `(,@(loopy (list (hook . fn) alist)
-	     (collect `(xl-hook-add ',hook ',fn))
-	     (collect (use-package%autoload name fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** before-call
-:PROPERTIES:
-:ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
-:END:
-
-Packages don't live in an isolated enviroment. Often one package depends on one
-or more packages. Sometimes, I add customizations to a package using certain
-libraries and then I need to load them when that package is loaded. The purpose
-of this keyword is to load a package when a certain function is called.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :before-call)
-
-(defun use-package-normalize/:before-call (name key args)
-  "Ensure ARGS is a list of symbols or list."
-  (iter (for elt args)
-	(cond ((symbolp elt) (collect (cons name elt)))
-	      ((-cons-pair-p elt) (collect elt))
-	      (t (error "%s requires either symbols or cons cells." key elt)))
-	(finally-do (-map #'use-package%normalize-cons loopy-result))))
-
-(defun use-package-handler/:before-call (name key alist rest state)
-  "Generate forms that load PACKAGE before FN is called."
-  `(,@(iter (for (package . fn) alist)
-	    (collect (use-package%autoload package fn))
-	    (collect `(xl-load-before-call ',package #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** after-call
-:PROPERTIES:
-:ID:       2c7dd1a8-c0ee-42cd-b76f-8a72c94be848
-:END:
-
-The.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :after-call)
-
-(defalias 'use-package-normalize/:after-call #'use-package-normalize/:before-call)
-
-(defun use-package-handler/:after-call (name _ alist rest state)
-  "Generate form that loads package after fn is called."
-  `(,@(iter (for (package . fn) alist)
-	    (collect (use-package%autoload name fn))
-	    (collect `(xl-load-after-call ',package #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** set
-:PROPERTIES:
-:ID:       9948a4ae-f80a-4b13-b97a-0895481021a6
-:END:
-
-I should give credit. I got this idea from the leaf macro.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :set)
-
-(defun use-package-normalize/:set (_ _ args)
-  "Raise an error if."
-  (cl-assert (-all-p #'listp args) nil "Should all be lists.")
-  args)
-
-(defun use-package-handler/:set (name _ values rest state)
-  "Generate forms that set var to value."
-  `(,@(loopy (list (var . val) values)
-	     (expr setter (if (listp var) 'setf 'set!))
-	     (collect `(,setter ,var ,val)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** rule
-:PROPERTIES:
-:ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
-:END:
-
-This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (display buffer control). What it does is.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :rule)
-
-(defun use-package-normalize/:rule (_ _ args)
-  "Ensure ARGS is a list of lists."
-  (cl-assert (-all-p #'xl-true-list-p args))
-  args)
-
-(defun use-package-handler/:rule (name _ rules rest state)
-  "Generate popup rule for each."
-  `(,@(loopy (list rule rules)
-	     (collect `(dbc-add-rule ,@rule)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** idle-require
-:PROPERTIES:
-:ID:       916f88bd-10e1-4030-a1d9-e42baf095492
-:END:
-
-This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-require]]. It can accept a boolean.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :idle-require)
-
-(defun use-package-normalize/:idle-require (package _ args)
-  "Ensure each elements in ARGS is a symbol.
-If an element is t, convert it to PACKAGE."
-  (loopy (list symbol args)
-	 (unless (symbolp symbol) (do (error "This key doesn't have this.")))
-	 (collect (if (eq t symbol) package symbol))))
-
-(defun use-package-handler/:idle-require (name _ features rest state)
-  "Generate forms that `idle-require' FEATURES."
-  `(,@(loopy (list feature features)
-	     (collect `(idle-require ',feature nil t)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** config
-:PROPERTIES:
-:ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
-:END:
-
-This keyword is meant to overwrite the built-in =:config= keyword. It does the
-same thing, except it uses =after!= instead of =with-eval-after-load=.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :xl-config)
-(use-package%override :config :xl-config)
-
-(defun use-package-normalize/:xl-config (_ _ args)
-  args)
-
-(defun use-package-handler/:xl-config (name _ forms rest state)
-  "Wrap FORMS in an `after!' block."
-  `((after! ,name ,@forms)
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** alias
-:PROPERTIES:
-:ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
-:END:
-
-Sometimes I want to alias certain.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :alias)
-
-(defalias 'use-package-normalize/:alias 'use-package-normalize/:set)
-
-(defun use-package-handler/:alias (name _ aliases rest state)
-  "Generate aliases forms for ALIASES."
-  `(,@(loopy (list (sym . def) aliases)
-	     (collect (use-package%autoload name def))
-	     (collect `(defalias ',sym #',def)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** advice
-:PROPERTIES:
-:ID:       1a0d6ff0-0dcd-4374-b52c-79bf617b3a2b
-:END:
-
-A keyword specifically designed for =xl= advices, or advices of the form
-=xl-<name>-advice=. For convenience, it is assumed to use =around= advice.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :advice)
-
-(defun use-package-normalize/:advice (_ _ advices)
-  "Ensure that ADVICES is a list of advice arguments.
-ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
-and EXPIRE-FN are optional."
-  (iter (each elt advices)
-	(progn
-	  (pcase elt
-	    (`(,(and (pred keywordp) key) (,fn . ,advice))
-	     (collect (list key fn advice)))
-	    (`(,fn . ,advice)
-	     (collect (list :around fn advice)))
-	    (_
-	     (error "wrong args"))))))
-
-(defun use-package-handler/:advice (name _ advices rest state)
-  "Generate forms that add advice."
-  `(,@(loopy (list (where fn advice) advices)
-	     (expr where (if (keywordp where) where (xl-keyword-intern where)))
-	     (collect `(xl-advice-add #',fn ,where #',advice)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** gadvice
-:PROPERTIES:
-:ID:       0646d4c8-47e7-45cc-a14a-6326a2b76fdd
-:END:
-
-This provides a shortcut for generic advices.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :gadvice)
-
-(defun use-package-normalize/:gadvice (_ _ advices)
-  "Ensure that ADVICES is a list of advice arguments.
-ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
-and EXPIRE-FN are optional."
-  (loopy (with (normalized (use-package-normalize/:advice _ _ advices)))
-	 (each (_ fn advice) normalized)
-	 (expr gadvice (xl-intern-format "xl-gadvice-%s" advice))
-	 (collect (cons fn gadvice))))
-
-(defun use-package-handler/:gadvice (name _ gadvices rest state)
-  `(,@(loopy (each (fn . gadvice) gadvices)
-	     (collect `(,gadvice #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** initial state
-:PROPERTIES:
-:ID:       e923e94e-9051-4be8-8dda-6566601ba865
-:END:
-
-I create this work to allow for easier cross configuration of states between
-packages.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :initial-state)
-
-(defun use-package-normalize/:initial-state (name _ states)
-  "Require series of symbols or cons of the form (MODE . STATE)."
-  (loopy (list elt states)
-	 (cond ((symbolp elt)
-		(collect (cons (xl-emacs-modeify name) elt)))
-	       ((consp elt)
-		(expr (mode . state) elt)
-		(collect (cons mode state)))
-	       (t
-		(do (error "Invalid argument: %s" states))))))
-
-(defun use-package-handler/:initial-state (name _ states rest state)
-  "Generate forms to set the initial evil state of certain modes."
-  `(,@(loopy (list (mode . state) states)
-	     (collect forms `(evil-set-initial-state ',mode ',state))
-	     (finally-return `((after! (evil ,name) ,@forms))))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-***** idle
-:PROPERTIES:
-:ID:       78814410-c190-4f05-a319-4e6d13a9ea4b
-:END:
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :idle)
-
-(defun use-package-normalize/:idle (_ _ args)
-  (cl-assert (-all-p #'symbolp args))
-  (loopy (each arg args)
-	 (collect (cons 10 arg))))
-
-(defun use-package-handler/:idle (package _ args rest state)
-  `(,(loopy (each (seconds . fn) args)
-	    (collect forms `(run-with-idle-timer 10 t #',fn))
-	    (finally-return `(after! ,package ,@forms)))
-    ,@(use-package-process-keywords package rest state)))
 #+end_src
 
 ** essential libraries
