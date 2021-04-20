@@ -742,7 +742,7 @@ Otherwise, return OBJ."
   (if (= (safe-length obj) 1) (car obj) obj))
 #+end_src
 
-* init use-package
+* init use-package :usepackage:
 :PROPERTIES:
 :ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
 :END:
