@@ -2472,7 +2472,7 @@ garbage collection during this time.
   (idle-require-idle-delay . 10))
 #+end_src
 
-* loaddefs
+* loaddefs :core:settings:
 :PROPERTIES:
 :ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
 :END:
