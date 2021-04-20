@@ -925,7 +925,7 @@ OLD is an existing use-package keyword. NEW is the keyword to override OLD with.
 One thing to note is that I don't allow arguments to be optionally in a
 list. This makes things much more complicated and it makes.
 
-* silence :usepackage:core:
+* silence :usepackage:core:library:
 :PROPERTIES:
 :ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
 :END:
@@ -951,7 +951,7 @@ FNS is a list of function symbols."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-* gc-pause
+* gc-pause :usepackage:core:library:performance:
 :PROPERTIES:
 :ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
 :END:
