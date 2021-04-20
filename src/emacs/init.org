@@ -1346,7 +1346,7 @@ make sure packages are only loaded when they need to be. The major purpose of
 this library is to provide me the tools to configure these packages in a way
 that is concise and efficient.
 
-** eval-after-load!
+* eval-after-load!
 :PROPERTIES:
 :ID:       8d831084-539b-4072-a86a-b55afb09bf02
 :END:
@@ -1371,7 +1371,7 @@ loading it. To remedy this I wrap the block with [[helpfn:condition-case][condit
          (message "Error in `eval-after-load': %S" error)))))
 #+end_src
 
-** after! :core:library:macro:
+* after! :core:library:macro:
 :PROPERTIES:
 :ID:       e209d256-86e0-4e30-a7d5-78a583729b42
 :END:
@@ -1409,7 +1409,7 @@ from pulling (or failing to pull) in autoloaded macros/features.
         (t (error "Invalid argument."))))
 #+end_src
 
-** with-os! :core:library:macro:
+* with-os! :core:library:macro:
 :PROPERTIES:
 :ID:       a3ea434a-3f70-4137-a525-5be4bc63c3a2
 :END:
@@ -1434,7 +1434,7 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
     `(progn ,@body)))
 #+end_src
 
-** set!
+* set!
 
 One "gotcha" in Emacs is the existence of custom variables. Unlike typical
 variables custom variables sometimes rely on certain code being executed when
@@ -1470,7 +1470,7 @@ Note that I may depreciate this in favor of setf.
      (error "Invalid arguments."))))
 #+end_src
 
-** set-default!
+* set-default!
 :PROPERTIES:
 :ID:       bc6b7560-fb71-4fc7-a53b-98f92c657d92
 :END:
@@ -1482,7 +1482,7 @@ Note that I may depreciate this in favor of setf.
   `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
 #+end_src
 
-** fn!
+* fn!
 :PROPERTIES:
 :ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
 :END:
@@ -1506,7 +1506,7 @@ variable. Also, I don't support the alternate =fn:= syntax.
 	 (-let [,it ,argsym] ,@body)))))
 #+end_src
 
-** essential libraries
+* essential libraries
 :PROPERTIES:
 :ID:       18602d49-dcc3-47c3-8579-62f7a7b7a83a
 :END:
@@ -1519,7 +1519,7 @@ slowly with the introduction of libraries like =seq.el= and =map.el= but still
 leaves much to be desired. This sounds like a complaint, but it actually
 highlights the advantage of the extensibility of Emacs.
 
-** shut-up
+* shut-up
 :PROPERTIES:
 :ID:       71681f9f-2760-4cee-95a0-4aeb71191a42
 :END:
@@ -1533,7 +1533,7 @@ messages can be useful, most of the time they are superfluous.
 (use-package shut-up :demand t)
 #+end_src
 
-** mmt
+* mmt
 :PROPERTIES:
 :ID:       a4377985-fe0e-4980-b839-08c334bde76c
 :END:
@@ -1546,7 +1546,7 @@ variable leaking.
 (use-package mmt)
 #+end_src
 
-** dash
+* dash
 :PROPERTIES:
 :ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
 :END:
@@ -1563,7 +1563,7 @@ so I'll likely end up loading it anyway.
 (use-package dash :demand t)
 #+end_src
 
-** subr-x
+* subr-x
 :PROPERTIES:
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
 :END:
@@ -1572,7 +1572,7 @@ so I'll likely end up loading it anyway.
 (use-package subr-x :demand t)
 #+end_src
 
-** ht
+* ht
 :PROPERTIES:
 :ID:       56bb0ff4-6ad1-44b7-a9a4-54abf48ed253
 :END:
@@ -1584,7 +1584,7 @@ hash-tables.
 (use-package ht)
 #+end_src
 
-** dash-functional
+* dash-functional
 :PROPERTIES:
 :ID:       704fc35f-0ad0-4eb3-9eb5-d8335465dbd8
 :END:
@@ -1597,7 +1597,7 @@ emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 (use-package dash-functional :demand t)
 #+end_src
 
-** s
+* s
 :PROPERTIES:
 :ID:       b96acb97-3963-4713-a03b-6294c65903fd
 :END:
@@ -1609,7 +1609,7 @@ that are not built-in to Emacs. Notably, it is functional.
 (use-package s :demand t)
 #+end_src
 
-** f
+* f
 :PROPERTIES:
 :ID:       f44da560-dc3f-4635-926e-eec4fd6d159d
 :END:
@@ -1618,7 +1618,7 @@ that are not built-in to Emacs. Notably, it is functional.
 (use-package f :demand t)
 #+end_src
 
-** anaphora
+* anaphora
 :PROPERTIES:
 :ID:       1c47bd8a-15f1-4b1c-9574-23547d27d968
 :END:
@@ -1631,7 +1631,7 @@ But if you're only.
 (use-package anaphora :demand t)
 #+end_src
 
-** loopy
+* loopy
 :PROPERTIES:
 :ID:       1c30099a-86b4-41f9-8390-e9e3c20b0257
 :END:
@@ -1643,7 +1643,7 @@ loop that involves accumulating several variables or atypical control-flow (as
 in, break statements or return statements). This is where =loopy= comes into
 play.
 
-*** loopy
+** loopy
 :PROPERTIES:
 :ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
 :END:
@@ -1657,7 +1657,7 @@ play.
   (loopy-defalias 'ret 'return))
 #+end_src
 
-*** iter
+** iter
 :PROPERTIES:
 :ID:       cf3f024a-8bec-4f5a-bd63-38b09dc23ca5
 :END:
@@ -1683,7 +1683,7 @@ clause because it would get confused with it and the built-in Emacs function
   (iterate . loopy-iter))
 #+end_src
 
-*** dash destructuring
+** dash destructuring
 :PROPERTIES:
 :ID:       87615a1d-2790-44c4-ac95-90a36ff9c496
 :END:
@@ -1695,7 +1695,7 @@ clause because it would get confused with it and the built-in Emacs function
   (callf2 cl-adjoin '+dash loopy-default-flags))
 #+end_src
 
-** noflet
+* noflet
 :PROPERTIES:
 :ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
 :END:
@@ -1707,7 +1707,7 @@ This package provides an alternative to the built-in =cl-flet= called
 (use-package noflet :demand t)
 #+end_src
 
-** dbc
+* dbc
 :PROPERTIES:
 :ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
 :END:
@@ -1727,7 +1727,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
     (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
 #+end_src
 
-** db
+* db
 :PROPERTIES:
 :ID:       9b79f07b-8397-4f95-b79c-5e136a9b2079
 :END:
@@ -1736,7 +1736,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package db)
 #+end_src
 
-** log4e
+* log4e
 :PROPERTIES:
 :ID:       8360e875-61a6-46f8-a401-2a98c9e517fa
 :END:
@@ -1751,13 +1751,13 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
   (defalias 'xl-log 'xl--log-info))
 #+end_src
 
-** ts
+* ts
 
 #+begin_src emacs-lisp
 (use-package ts)
 #+end_src
 
-** a
+* a
 :PROPERTIES:
 :ID:       32110690-9d0a-4e3d-a1d8-7695b42aeb30
 :END:
@@ -1768,7 +1768,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package a :demand t)
 #+end_src
 
-** list-utils
+* list-utils
 :PROPERTIES:
 :ID:       f87d570a-4b06-42ea-acaa-a0bedba0e623
 :END:
@@ -1777,7 +1777,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package list-utils)
 #+end_src
 
-** map
+* map
 :PROPERTIES:
 :ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
 :END:
@@ -1786,12 +1786,12 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package map :demand t)
 #+end_src
 
-** aliases
+* aliases
 :PROPERTIES:
 :ID:       bad5a570-2b94-4ada-88f0-de9f32fa9b7e
 :END:
 
-*** prefixed-core
+** prefixed-core
 :PROPERTIES:
 :ID:       14b63dc9-1d95-4bd7-8b29-8b2b33bd1e69
 :END:
@@ -1806,7 +1806,7 @@ for functions namespaced =frame=.
 (use-package prefixed-core :demand t)
 #+end_src
 
-*** custom aliases
+** custom aliases
 :PROPERTIES:
 :ID:       c32ede6e-05ae-4067-8505-ffe328295536
 :END:
@@ -1817,7 +1817,7 @@ for functions namespaced =frame=.
 (defalias 'buffer-previous 'previous-buffer)
 #+end_src
 
-** debug-p
+* debug-p
 :PROPERTIES:
 :ID:       39197346-c420-4518-b8f8-8ea247d6decb
 :END:
@@ -1833,14 +1833,14 @@ what its doing via [[hfn:void-log][xl-log]].
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
-** defun macro
+* defun macro
 :PROPERTIES:
 :ID:       cd0699fa-57fd-4a8b-99b6-3e98f94f888a
 :END:
 
 This is a macro to address the.
 
-*** parser alist
+** parser alist
 :PROPERTIES:
 :ID:       fa0773f5-d6be-4c9f-966f-7e8c2e68e40e
 :END:
@@ -1849,7 +1849,7 @@ This is a macro to address the.
 (defvar defun%parser-alist nil)
 #+end_src
 
-*** processing clauses
+** processing clauses
 :PROPERTIES:
 :ID:       eb0b18b8-6f53-4518-b9d3-8921aa5caf5d
 :END:
@@ -1863,7 +1863,7 @@ This is a macro to address the.
     (funcall (or parser #'ignore) key args init rest)))
 #+end_src
 
-*** parse-hook
+** parse-hook
 :PROPERTIES:
 :ID:       f7c0897d-79da-4e73-8ba7-ac5bdedacbfb
 :END:
@@ -1885,7 +1885,7 @@ This is a macro to address the.
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
-*** parse advice
+** parse advice
 :PROPERTIES:
 :ID:       fbff4b81-3a11-42df-a61f-42e6c5771734
 :END:
@@ -1910,7 +1910,7 @@ This is a macro to address the.
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
-*** parse generic advice
+** parse generic advice
 :PROPERTIES:
 :ID:       73f153c5-b005-41c1-bc35-3aa47b4339f1
 :END:
@@ -1928,7 +1928,7 @@ This is a macro to address the.
 	  ,@(defun%process-clauses init rest))))))
 #+end_src
 
-*** parse =defafter!=
+** parse =defafter!=
 :PROPERTIES:
 :ID:       76e34252-c93f-4de2-b13c-2e188cd4a476
 :END:
@@ -1945,7 +1945,7 @@ This is a macro to address the.
 	,@(defun%process-clauses init rest)))))
 #+end_src
 
-*** parse package
+** parse package
 :PROPERTIES:
 :ID:       87fe1063-f274-497b-8afe-d9971427ce71
 :END:
@@ -1954,7 +1954,7 @@ This is a macro to address the.
 (defun)
 #+end_src
 
-*** defun!
+** defun!
 :PROPERTIES:
 :ID:       5dd91bfc-26c7-4763-a6b8-1baae771d771
 :END:
@@ -1970,12 +1970,12 @@ This is a macro to address the.
 			   `(progn ,@(defun%process-clauses it clauses))))))
 #+end_src
 
-*** wrappers around
+** wrappers around
 :PROPERTIES:
 :ID:       74419a54-dd6e-4c29-81a0-5248ff2a0058
 :END:
 
-**** defhook!
+*** defhook!
 :PROPERTIES:
 :ID:       57e8e84e-c928-451f-8cfc-1c3b638bc318
 :END:
@@ -1987,7 +1987,7 @@ This is a macro to address the.
   `(defun! ,name (&rest _) ,docstring (:hook ,@args) ,@body))
 #+end_src
 
-**** defadvice!
+*** defadvice!
 :PROPERTIES:
 :ID:       6742346f-f9f5-4898-a1f1-668271f52b8e
 :END:
@@ -1999,7 +1999,7 @@ This is a macro to address the.
   `(defun! ,name (&rest _) ,docstring (,@args) ,@body))
 #+end_src
 
-**** defgadvice!
+*** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
@@ -2010,7 +2010,7 @@ This is a macro to address the.
   `(defun! ,name ,args ,docstring (:gadvice t) ,@body))
 #+end_src
 
-**** defafter!
+*** defafter!
 :PROPERTIES:
 :ID:       b6179567-c840-4dfa-891e-3e27384dfdb9
 :END:
@@ -2021,7 +2021,7 @@ This is a macro to address the.
   `(defun! ,name () ,docstring (:features ,@args) ,@body))
 #+end_src
 
-** advice
+* advice
 :PROPERTIES:
 :ID:       19b9021d-f310-485b-9258-4df19423c082
 :END:
@@ -2029,7 +2029,7 @@ This is a macro to address the.
 I want to name advices so that they can be distinguished from other functions. I
 also want to be able to deduce the function being advised from the name.
 
-*** advice regexp
+** advice regexp
 :PROPERTIES:
 :ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
 :END:
@@ -2039,7 +2039,7 @@ also want to be able to deduce the function being advised from the name.
   "A regular expression that defines naming convention for advices.")
 #+end_src
 
-*** remove XL advice
+** remove XL advice
 :PROPERTIES:
 :ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
 :END:
@@ -2055,7 +2055,7 @@ ADVICES is an advice or a list of advices."
 	(advice-remove (xl-advice-orig-symbol advice) advice)))
 #+end_src
 
-*** adding an advice
+** adding an advice
 :PROPERTIES:
 :ID:       14e23074-10ea-41cc-88e5-bac600658b20
 :END:
@@ -2072,7 +2072,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 		 (collect advice))))
 #+end_src
 
-*** advice-fn-p
+** advice-fn-p
 :PROPERTIES:
 :ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
 :END:
@@ -2083,7 +2083,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
-*** original fn
+** original fn
 :PROPERTIES:
 :ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
 :END:
@@ -2095,7 +2095,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
-*** original advice
+** original advice
 :PROPERTIES:
 :ID:       49f49994-637a-4e26-b680-3535463ee8bf
 :END:
@@ -2107,7 +2107,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
-*** gen symbol
+** gen symbol
 :PROPERTIES:
 :ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
 :END:
@@ -2117,7 +2117,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (xl-symbol-intern symbol '@ name))
 #+end_src
 
-** generic advices
+* generic advices
 :PROPERTIES:
 :ID:       8fb485ec-5387-46da-820e-629dcf004962
 :END:
@@ -2125,7 +2125,7 @@ ADVICE is an advice function that follows XL naming conventions."
 There are some advices that are used so often that they do not lend themselves
 to =defadvice!=, which is better suited for a unique advice defined only once.
 
-*** catch errors
+** catch errors
 :PROPERTIES:
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
@@ -2146,7 +2146,7 @@ advice]].
      (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
 #+end_src
 
-*** assume yes in prompts
+** assume yes in prompts
 :PROPERTIES:
 :ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
 :END:
@@ -2163,7 +2163,7 @@ is an example).
     (apply orig-fn args)))
 #+end_src
 
-*** silence
+** silence
 :PROPERTIES:
 :ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
 :END:
@@ -2178,7 +2178,7 @@ to silence the said messages.
   (shut-up (apply orig-fn args)))
 #+end_src
 
-*** log
+** log
 :PROPERTIES:
 :ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
 :END:
@@ -2196,7 +2196,7 @@ to silence the said messages.
 	   (xl-log "%s called" fn)))))
 #+end_src
 
-*** pause garbarge collection
+** pause garbarge collection
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
@@ -2212,7 +2212,7 @@ packages which can contain several thousand items.
     (apply orig-fn args)))
 #+end_src
 
-*** log
+** log
 :PROPERTIES:
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
@@ -2225,7 +2225,7 @@ Sometimes I want to use =xl-log= instead of =message=.
     (apply orig-fn args)))
 #+end_src
 
-*** ignore output
+** ignore output
 :PROPERTIES:
 :ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
 :END:
@@ -2235,7 +2235,7 @@ Sometimes I want to use =xl-log= instead of =message=.
   "Advice to ignore a function.")
 #+end_src
 
-*** loading on call
+** loading on call
 :PROPERTIES:
 :ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
 :END:
@@ -2248,7 +2248,7 @@ quickly become repetative because it's something that is done so often in
 package configuration. The function =before-call= and =after-call= provide a fast
 and convenient way to do this.
 
-**** load-on-call
+*** load-on-call
 :PROPERTIES:
 :ID:       324e707b-2f44-4168-a846-037f5401dedb
 :END:
@@ -2268,7 +2268,7 @@ this it adds an =XL= advice that loads the feature to the function.
     (xl-gadvice-expire it)))
 #+end_src
 
-**** load before call
+*** load before call
 :PROPERTIES:
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
@@ -2282,7 +2282,7 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :before fn))
 #+end_src
 
-**** load after call
+*** load after call
 :PROPERTIES:
 :ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
 :END:
@@ -2293,7 +2293,7 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :after fn))
 #+end_src
 
-** hooks
+* hooks
 :PROPERTIES:
 :ID:       0832d639-564d-4556-a398-ff729a75ac0b
 :END:
@@ -2301,7 +2301,7 @@ not to have to specify the advice keyword.
 I have my own naming convention for hooks. I use it to make it obvious when a
 function is a hook.
 
-*** hook regexp
+** hook regexp
 :PROPERTIES:
 :ID:       5093d6ce-741d-4d11-8ac7-15c02aa45b3b
 :END:
@@ -2311,7 +2311,7 @@ function is a hook.
   "Regular expression used to match `xl-' defined hooks.")
 #+end_src
 
-*** add hook
+** add hook
 :PROPERTIES:
 :ID:       e8d69a71-bab4-4e75-b8f8-33426200a0df
 :END:
@@ -2327,7 +2327,7 @@ function is a hook.
 		 (collect hook))))
 #+end_src
 
-*** remove hook
+** remove hook
 :PROPERTIES:
 :ID:       e8ec61e0-a819-452c-8fb2-bf3023684b53
 :END:
@@ -2340,7 +2340,7 @@ HOOKS is a list of hook functions that follow the XL naming convention."
 	(remove-hook (xl-hook-orig-symbol hook) hook)))
 #+end_src
 
-*** hook function
+** hook function
 :PROPERTIES:
 :ID:       d5ed128c-32a0-4387-a1e5-b4536ed86c95
 :END:
@@ -2351,7 +2351,7 @@ HOOKS is a list of hook functions that follow the XL naming convention."
   (s-match XL-HOOK-REGEXP (symbol-name symbol)))
 #+end_src
 
-*** original hook variable
+** original hook variable
 :PROPERTIES:
 :ID:       8788ec0c-2ab2-4fb3-b383-55d6ee533e8d
 :END:
@@ -2363,7 +2363,7 @@ HOOK is a hook function defined with XL naming conventions."
   (intern (nth 1 (xl-hook-symbol-p hook))))
 #+end_src
 
-*** original hook function
+** original hook function
 :PROPERTIES:
 :ID:       640d7e5d-d3a7-43be-94df-0fb9c02201d9
 :END:
@@ -2375,7 +2375,7 @@ HOOK is a hook function that follows XL naming conventions."
   (intern (nth 2 (xl-hook-symbol-p hook))))
 #+end_src
 
-*** generate hook name
+** generate hook name
 :PROPERTIES:
 :ID:       dda7e704-4aa2-48fe-8cde-427d340d23aa
 :END:
@@ -2386,7 +2386,7 @@ HOOK is a hook function that follows XL naming conventions."
   (xl-symbol-intern fn '& name))
 #+end_src
 
-** generate a logging function
+* generate a logging function
 :PROPERTIES:
 :ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
 :END:
@@ -2410,7 +2410,7 @@ HOOK is a hook function that follows XL naming conventions."
        nil))))
 #+end_src
 
-** log advices and hooks
+* log advices and hooks
 :PROPERTIES:
 :ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
 :END:
