@@ -2351,7 +2351,7 @@ HOOKS is a list of hook functions that follow the XL naming convention."
   (s-match XL-HOOK-REGEXP (symbol-name symbol)))
 #+end_src
 
-* original hook variable
+* original hook variable :library:core:hook:
 :PROPERTIES:
 :ID:       8788ec0c-2ab2-4fb3-b383-55d6ee533e8d
 :END:
