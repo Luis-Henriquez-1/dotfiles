@@ -742,6 +742,18 @@ Otherwise, return OBJ."
   (if (= (safe-length obj) 1) (car obj) obj))
 #+end_src
 
+* install dependencies
+:PROPERTIES:
+:ID:       3748094a-e30c-4f59-96ce-3cf1ddec5d42
+:END:
+
+#+begin_src emacs-lisp
+(require 'use-package)
+(require 'dash)
+(require 'loopy)
+(require 's)
+#+end_src
+
 * init use-package :usepackage:
 :PROPERTIES:
 :ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
@@ -757,11 +769,6 @@ By default =use-package= loads a package immediately. Setting
 request it (for example, with the =:demand= keyword).
 
 #+begin_src emacs-lisp
-(require 'use-package)
-(require 'dash)
-(require 'loopy)
-(require 's)
-
 (use-package use-package
   :init
   (setq use-package-expand-minimally t)
