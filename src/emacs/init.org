@@ -2467,6 +2467,7 @@ Log when an advice or hook is being called.
 
 #+begin_src emacs-lisp
 (defun xl-gadvice-expire (fn)
+  "Cause FN to remove itself from any advice or hook."
   (let ((name (xl-advice-gen-symbol fn 'expire)))
     (pcase fn
       ((pred xl-advice-symbol-p)
