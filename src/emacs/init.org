@@ -2939,7 +2939,7 @@ source code.
 This headline contains headings for which I have not yet determined a good
 hierarchy.
 
-* log the init time
+* log the init time :setting:core:
 :PROPERTIES:
 :ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
 :END:
