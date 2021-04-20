@@ -2898,7 +2898,7 @@ text is useful for languages that read right to left.
 (set-default! ring-bell-function #'ignore)
 #+end_src
 
-* resize pixelwise
+* resize pixelwise :core:setting:
 :PROPERTIES:
 :ID:       02daff3d-e532-4cfa-a217-81e27627e7a7
 :END:
