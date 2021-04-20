@@ -2991,7 +2991,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
       (get-buffer-create it))))
 #+end_src
 
-* cus-edit
+* cus-edit :setting:core:
 :PROPERTIES:
 :ID:       a844ddb6-245b-463c-963d-743c931698ae
 :END:
