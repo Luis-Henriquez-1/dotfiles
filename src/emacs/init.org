@@ -1346,12 +1346,7 @@ make sure packages are only loaded when they need to be. The major purpose of
 this library is to provide me the tools to configure these packages in a way
 that is concise and efficient.
 
-** custom macros
-:PROPERTIES:
-:ID:       cfe0d468-92ee-4a4f-9908-4ea0b1964ac4
-:END:
-
-*** eval-after-load!
+** eval-after-load!
 :PROPERTIES:
 :ID:       8d831084-539b-4072-a86a-b55afb09bf02
 :END:
@@ -1376,7 +1371,7 @@ loading it. To remedy this I wrap the block with [[helpfn:condition-case][condit
          (message "Error in `eval-after-load': %S" error)))))
 #+end_src
 
-*** after!
+** after!
 :PROPERTIES:
 :ID:       e209d256-86e0-4e30-a7d5-78a583729b42
 :END:
@@ -1414,7 +1409,7 @@ from pulling (or failing to pull) in autoloaded macros/features.
         (t (error "Invalid argument."))))
 #+end_src
 
-*** with-os!
+** with-os!
 :PROPERTIES:
 :ID:       a3ea434a-3f70-4137-a525-5be4bc63c3a2
 :END:
@@ -1439,7 +1434,7 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
     `(progn ,@body)))
 #+end_src
 
-*** set!
+** set!
 
 One "gotcha" in Emacs is the existence of custom variables. Unlike typical
 variables custom variables sometimes rely on certain code being executed when
@@ -1475,7 +1470,7 @@ Note that I may depreciate this in favor of setf.
      (error "Invalid arguments."))))
 #+end_src
 
-*** set-default!
+** set-default!
 :PROPERTIES:
 :ID:       bc6b7560-fb71-4fc7-a53b-98f92c657d92
 :END:
@@ -1487,7 +1482,7 @@ Note that I may depreciate this in favor of setf.
   `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
 #+end_src
 
-*** fn!
+** fn!
 :PROPERTIES:
 :ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
 :END:
