@@ -6401,7 +6401,7 @@ great idea! It makes it really easy to see which parentheses go together.
 and provides facilities for writing custom extensions. Also see our page on
 [[emacswiki:Evil][EmacsWiki]]. See a brief [[https://bytebucket.org/lyro/evil/raw/default/doc/evil.pdf][manual]]. See the [[https://github.com/noctuid/evil-guide][evil-guide]] by noctuid.
 
-**** evil
+**** evil :edit:evil:
 :PROPERTIES:
 :ID:       e472e5d3-2760-420b-bbe1-2eb043368f67
 :END:
@@ -6410,7 +6410,7 @@ and provides facilities for writing custom extensions. Also see our page on
 (use-package evil)
 #+end_src
 
-**** evil-core
+**** evil-core :edit:evil:
 :PROPERTIES:
 :ID:       9aa26d2c-d15a-4f36-a024-3ca9ce568385
 :END:
@@ -6420,7 +6420,7 @@ and provides facilities for writing custom extensions. Also see our page on
   :hook (emacs-startup-hook . evil-mode))
 #+end_src
 
-**** evil-vars
+**** evil-vars :edit:evil:
 :PROPERTIES:
 :ID:       af3a9791-76ac-4fd5-96fe-d361cef3b5b3
 :END:
@@ -6444,7 +6444,7 @@ and provides facilities for writing custom extensions. Also see our page on
   (evil-magic                           . t))
 #+end_src
 
-**** custom
+**** custom :edit:evil:
 :PROPERTIES:
 :ID:       f7ece898-25e2-4b2c-94f3-e832a687114c
 :END:
@@ -6453,7 +6453,7 @@ and provides facilities for writing custom extensions. Also see our page on
 (set-default! evil-want-C-u-scroll t)
 #+end_src
 
-**** make normal state default :evil:
+**** make normal state default :evil:edit:
 :PROPERTIES:
 :ID:       4940ad40-35a2-43ca-a005-da708aa44313
 :END:
@@ -6466,7 +6466,7 @@ and provides facilities for writing custom extensions. Also see our page on
   (setq evil-motion-state-modes nil))
 #+end_src
 
-**** replace normal with motion :evil:
+**** replace normal with motion :evil:edit:
 :PROPERTIES:
 :ID:       69dc135f-0c4a-49ad-9801-ee45dc3ff20f
 :END:
@@ -6479,7 +6479,7 @@ and provides facilities for writing custom extensions. Also see our page on
     (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 #+end_src
 
-**** normal state everywhere
+**** normal state everywhere :evil:edit:
 :PROPERTIES:
 :ID:       e6126bd7-94b8-4ce0-b547-0536b59437ea
 :END:
@@ -6572,7 +6572,7 @@ the correct one.
     (setq evil:state-before-minibuffer nil)))
 #+end_src
 
-**** escape
+**** escape :evil:
 :PROPERTIES:
 :ID: ea9378de-e5c5-482c-b53b-743a81e3bc8e
 :END:
