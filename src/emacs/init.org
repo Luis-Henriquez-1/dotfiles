@@ -1014,7 +1014,7 @@ There are a number of functions in Emacs that prompt.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-* os
+* os :usepackage:core:library:os:
 :PROPERTIES:
 :ID:       9d78d90a-0309-44c6-be96-82bd6608546a
 :END:
@@ -1033,7 +1033,7 @@ This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70
   `((with-os! ,os ,@(use-package-process-keywords name rest state))))
 #+end_src
 
-* hook
+* hook :hook:core:library:usepackage:
 :PROPERTIES:
 :ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
 :END:
