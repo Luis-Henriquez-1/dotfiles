@@ -2410,7 +2410,7 @@ HOOK is a hook function that follows XL naming conventions."
        nil))))
 #+end_src
 
-* log advices and hooks
+* log advices and hooks :library:core:
 :PROPERTIES:
 :ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
 :END:
@@ -2429,7 +2429,7 @@ Log when an advice or hook is being called.
 	(finally-return symbols)))
 #+end_src
 
-* expiration
+* expiration :library:core:advice:hook:
 :PROPERTIES:
 :ID:       b531dc79-73d0-43eb-a600-b3075315acf0
 :END:
