@@ -2910,7 +2910,7 @@ text is useful for languages that read right to left.
 (set-default! frame-resize-pixelwise t)
 #+end_src
 
-* use yes or no
+* use yes or no :core:setting:
 :PROPERTIES:
 :ID:       82a84315-2018-42e0-bd1a-74af7b722593
 :END:
