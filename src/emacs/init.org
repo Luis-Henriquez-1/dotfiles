@@ -274,28 +274,7 @@ with the last and allowing me to choose which ones to add.
 	    (insert ?\n)))))
 #+end_src
 
-* library
-:PROPERTIES:
-:ID:       70af1291-6b16-4261-ba83-19bb16d0023e
-:END:
-
-This headline contains all the the helper functions and macros I defined for
-customizing Emacs. The main thing that's done in an Emacs configuration is
-configuring packages, both built-in packages and external packages. And in this
-process, there are often packages that augment and aid in the configuration of
-other packages. Additionally, if you care about startup time it's important to
-make sure packages are only loaded when they need to be. The major purpose of
-this library is to provide me the tools to configure these packages in a way
-that is concise and efficient.
-
-** custom helpers
-:PROPERTIES:
-:ID:       cfa16796-a4fe-4e2a-a021-fb9891950556
-:END:
-
-These are tools that are specifically designed to help me write macros.
-
-*** symbols
+* symbols
 :PROPERTIES:
 :ID:       fa9a5fb6-381a-441f-8ecc-d3b4a5cab11d
 :END:
@@ -303,7 +282,7 @@ These are tools that are specifically designed to help me write macros.
 Conversion between symbols, keywords, and strings are prevalent in
 macro-writing.
 
-**** symbol intern
+** symbol intern
 :PROPERTIES:
 :ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
 :END:
@@ -321,7 +300,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'xl-to-string args)))
 #+end_src
 
-**** intern format
+** intern format
 :PROPERTIES:
 :ID:       b371718f-2067-450c-8117-fb22f44be208
 :END:
@@ -332,7 +311,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'format format-string args)))
 #+end_src
 
-**** keyword intern
+** keyword intern
 :PROPERTIES:
 :ID:       0618b8d7-e0a4-4e3e-8d89-b7d0ebe43917
 :END:
@@ -347,7 +326,7 @@ commands saves me having to add the colon at the beginning before interning.
   (apply #'xl-symbol-intern ":" args))
 #+end_src
 
-**** keyword name
+** keyword name
 :PROPERTIES:
 :ID:       e853603a-851d-429f-9201-f2e93734dfaf
 :END:
@@ -363,7 +342,7 @@ for that occasion.
   (substring-no-properties (xl-to-string keyword) 1))
 #+end_src
 
-**** convert to string
+** convert to string
 :PROPERTIES:
 :ID:       60f22f98-8204-45ae-9943-f19cdfe60459
 :END:
@@ -379,7 +358,7 @@ with details and just want a string.
   (with-output-to-string (-each args #'princ)))
 #+end_src
 
-**** detect emacs symbols
+** detect emacs symbols
 :PROPERTIES:
 :ID:       207ed522-51f3-45e7-91ba-8afb828d950b
 :END:
@@ -391,7 +370,7 @@ we're dealing with. And, it may also be useful to be able to convert a normal
 symbol (by which I mean one that doesn't follow the conventions) to one of these
 particular kinds.
 
-***** hook symbol
+*** hook symbol
 :PROPERTIES:
 :ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
 :END:
@@ -406,7 +385,7 @@ As I mentioned, the convention for hook symbols is that they are suffixed with
   (s-matches-p ".+-hook\\'" (symbol-name symbol)))
 #+end_src
 
-***** hookify symbol
+*** hookify symbol
 :PROPERTIES:
 :ID:       b308a172-6e99-491c-a382-7ee28e9fc1ae
 :END:
@@ -421,7 +400,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-hook)))
 #+end_src
 
-***** mode symbol
+*** mode symbol
 :PROPERTIES:
 :ID:       ec25e275-c36f-4cee-be04-1fdf8c974857
 :END:
@@ -433,7 +412,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
   (s-matches-p ".+-mode\\'" (symbol-name symbol)))
 #+end_src
 
-***** modeify symbol
+*** modeify symbol
 :PROPERTIES:
 :ID:       61fa29a7-9697-4171-8b6f-f4c0b487c02c
 :END:
@@ -448,7 +427,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-mode)))
 #+end_src
 
-***** map symbol
+*** map symbol
 :PROPERTIES:
 :ID:       b7ab2b84-ebea-46fe-8494-89a2aed2f6e8
 :END:
@@ -460,7 +439,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
        (s-suffix-p "-map" (symbol-name obj))))
 #+end_src
 
-**** internal XL symbol
+** internal XL symbol
 :PROPERTIES:
 :ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
 :END:
@@ -474,7 +453,7 @@ To avoid.
   (s-matches-p "\\`xl-.+" (symbol-name symbol)))
 #+end_src
 
-*** quoting
+* quoting
 :PROPERTIES:
 :ID:       95a2271b-a21b-4fed-a6b8-1e76ca821ed4
 :END:
@@ -487,7 +466,7 @@ a character that's used to abbreviate them as I will explain.
 The purpose of this headline is to provide functions that are useful for macro
 writing. What we deal with when writing macro is syntax itself.
 
-**** single-quoted
+** single-quoted
 :PROPERTIES:
 :ID:       533945fc-c700-42ce-8b93-d6bd9e16d9c7
 :END:
@@ -506,7 +485,7 @@ just how emacs displays a quote for brevity. In reality something like ~'cat~ is
     (_ nil)))
 #+end_src
 
-**** sharp-quoted
+** sharp-quoted
 :PROPERTIES:
 :ID:       6ba0980e-4391-47ef-a555-4c1dc3132f3b
 :END:
@@ -525,7 +504,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-**** backquoted
+** backquoted
 :PROPERTIES:
 :ID:       2c7af958-3aa0-48d6-a852-fd5feae452a9
 :END:
@@ -539,7 +518,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-**** quoted
+** quoted
 :PROPERTIES:
 :ID:       d1b6c539-c8ca-4dc4-b76d-e2f9406b1c04
 :END:
@@ -553,7 +532,7 @@ function symbol.
       (xl-backquoted-p symbol)))
 #+end_src
 
-**** unquote
+** unquote
 :PROPERTIES:
 :ID:       dbf97264-95e9-478b-aa44-edcbd3f39665
 :END:
@@ -568,7 +547,7 @@ If object is already unquoted, return OBJ."
     (_ obj)))
 #+end_src
 
-*** macro keyword arguments
+* macro keyword arguments
 :PROPERTIES:
 :ID:       dc7a63e6-041b-4855-b206-6d72ef732de1
 :END:
@@ -588,7 +567,7 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 	 (finally-return (list docstring plist body))))
 #+end_src
 
-*** true-list-p
+* true-list-p
 :PROPERTIES:
 :ID:       43089182-316b-4191-a3f1-6f2d1b1b971e
 :END:
@@ -604,7 +583,7 @@ something--you can loop over a list but not a cons cell.
   (and (listp obj) (not (-cons-pair-p obj))))
 #+end_src
 
-*** wrapping forms
+* wrapping forms
 :PROPERTIES:
 :ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
 :END:
@@ -628,7 +607,7 @@ WRAPPERS are a list of forms to wrap around FORM."
     form))
 #+end_src
 
-*** anaphora
+* anaphora
 :PROPERTIES:
 :ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
 :END:
@@ -643,7 +622,7 @@ placeholder.
 
 https://en.wikipedia.org/wiki/Anaphoric_macro
 
-**** anaphoric symbol regexp
+** anaphoric symbol regexp
 :PROPERTIES:
 :ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
 :END:
@@ -654,7 +633,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   "Regular expression that matches an anaphoric symbol.")
 #+end_src
 
-**** anaphoric symbol
+** anaphoric symbol
 :PROPERTIES:
 :ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
 :END:
@@ -666,7 +645,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
        (string-match-p XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
 #+end_src
 
-**** true anaphora name
+** true anaphora name
 :PROPERTIES:
 :ID:       2833cd75-9c85-4c0e-9523-4489d387150a
 :END:
@@ -679,7 +658,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
     (intern (match-string 1 (symbol-name symbol)))))
 #+end_src
 
-**** take symbol and return anaphoric symbol
+** take symbol and return anaphoric symbol
 :PROPERTIES:
 :ID:       4b89588e-f3c3-49d3-8851-fdd214cee563
 :END:
@@ -690,7 +669,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (xl-symbol-intern '< symbol '>))
 #+end_src
 
-**** body symbols
+** body symbols
 :PROPERTIES:
 :ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
 :END:
@@ -703,7 +682,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
        (-uniq)))
 #+end_src
 
-**** all anaphoric symbols in obj
+** all anaphoric symbols in obj
 :PROPERTIES:
 :ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
 :END:
@@ -714,7 +693,7 @@ https://en.wikipedia.org/wiki/Anaphoric_macro
   (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
 #+end_src
 
-*** xl-true
+* xl-true
 :PROPERTIES:
 :ID:       25dcd81e-11a1-42b1-87a3-1df8c5a56cf1
 :END:
@@ -728,7 +707,7 @@ arguments. Unlike it, it always returns =t= instead of always returning =nil=.
   t)
 #+end_src
 
-*** xl-false
+* xl-false
 :PROPERTIES:
 :ID:       0d1349cc-8bd5-4830-9c3b-9b4f9ebe25d0
 :END:
@@ -737,7 +716,7 @@ arguments. Unlike it, it always returns =t= instead of always returning =nil=.
 (defalias 'xl-false 'ignore)
 #+end_src
 
-*** eval a form in a string
+* eval a form in a string
 :PROPERTIES:
 :ID:       79cfc39a-0924-468b-9fbc-83388323a39b
 :END:
@@ -758,7 +737,7 @@ This function came from [[https://emacs.stackexchange.com/questions/19877/how-to
   (eval (car (read-from-string (format "(progn %s)" string)))))
 #+end_src
 
-*** dwim single
+* dwim single
 :PROPERTIES:
 :ID:       13c4df8f-86f6-46e8-8507-60c08b96fb14
 :END:
@@ -770,6 +749,20 @@ Otherwise, return OBJ."
   (declare (pure t) (side-effect-free t))
   (if (= (safe-length obj) 1) (car obj) obj))
 #+end_src
+
+* library
+:PROPERTIES:
+:ID:       70af1291-6b16-4261-ba83-19bb16d0023e
+:END:
+
+This headline contains all the the helper functions and macros I defined for
+customizing Emacs. The main thing that's done in an Emacs configuration is
+configuring packages, both built-in packages and external packages. And in this
+process, there are often packages that augment and aid in the configuration of
+other packages. Additionally, if you care about startup time it's important to
+make sure packages are only loaded when they need to be. The major purpose of
+this library is to provide me the tools to configure these packages in a way
+that is concise and efficient.
 
 ** custom macros
 :PROPERTIES:
