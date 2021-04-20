@@ -2485,7 +2485,7 @@ garbage collection during this time.
 :ID:       b61797fe-a520-448b-8dfa-055b357ebfa7
 :END:
 
-** loaddefs
+* loaddefs
 :PROPERTIES:
 :ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
 :END:
@@ -2496,7 +2496,7 @@ garbage collection during this time.
   (disabled-command-function . nil))
 #+end_src
 
-** simple
+* simple
 :PROPERTIES:
 :ID:       a1fa5195-9b6a-4842-bc5f-71305e603c55
 :END:
@@ -2510,7 +2510,7 @@ garbage collection during this time.
   (idle-update-delay     . 1))
 #+end_src
 
-** clipboard
+* clipboard
 :PROPERTIES:
 :ID:       6aa6d0ac-6cf8-4f82-a724-c56d69cc062b
 :END:
@@ -2524,7 +2524,7 @@ garbage collection during this time.
   (x-select-request-type   . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
 
-** files
+* files
 :PROPERTIES:
 :ID:       83549b5b-33e2-48b2-aeaf-cf4734ec4040
 :END:
@@ -2556,7 +2556,7 @@ will change.
   (version-control                    . nil))
 #+end_src
 
-** custom commands
+* custom commands
 :PROPERTIES:
 :ID:       b03e1f14-3f29-4abd-af47-3692998cf1a1
 :END:
@@ -2565,7 +2565,7 @@ This section is for commands that are really useful for me, but not present in
 Emacs or (as far as I know at least, in other packages). This headline is
 similar in goals to [[https://github.com/bbatsov/crux][crux]] (collection of ridiculously useful extensions for Emacs).
 
-*** font
+** font
 :PROPERTIES:
 :ID:       d600fe06-7a61-43e1-93ea-4e193c69c9f3
 :END:
@@ -2576,7 +2576,7 @@ emacs. A well choosen font can make things very readable.
 Also, sometimes I have font "mania" where I keep toggling different fonts so see
 what I feel like using at the moment. Therefore, I need an easy way to toggle.
 
-**** font size
+*** font size
 :PROPERTIES:
 :ID:       3efd0698-a8d3-4fc0-b22b-7f0589de4661
 :END:
@@ -2599,7 +2599,7 @@ size to its default value.
       (setf (alist-get 'font default-frame-alist) new-font))))
 #+end_src
 
-**** font max and min size
+*** font max and min size
 :PROPERTIES:
 :ID:       309c572a-6aaa-4986-a79d-4774110e6ead
 :END:
@@ -2619,7 +2619,7 @@ The font size that `xl/set-font-size' should never go above.")
 The font size that `xl/set-font-size' should never go below.")
 #+end_src
 
-**** setting font size
+*** setting font size
 :PROPERTIES:
 :ID:       b138b662-4087-4199-abe5-ecacb22dfb2a
 :END:
@@ -2643,7 +2643,7 @@ Inhibit accidentally setting font size too high or too low."
 	   (message "Font set from %d to %d." old-size new-size)))))
 #+end_src
 
-**** font-face
+*** font-face
 :PROPERTIES:
 :ID:       1bf8b603-ba11-422f-80d2-53dd8483fdbb
 :END:
@@ -2660,7 +2660,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
     (set-frame-font it nil t)))
 #+end_src
 
-*** kill Emacs processes
+** kill Emacs processes
 :PROPERTIES:
 :ID:       811f6b55-6f54-4854-9098-8754359b4f85
 :END:
@@ -2676,7 +2676,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 	 (finally (message "killed %d processes" count))))
 #+end_src
 
-*** important buffers
+** important buffers
 :PROPERTIES:
 :ID:       14021345-8f7d-4219-9f79-ea81c23f8f40
 :END:
@@ -2684,7 +2684,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 Some buffers are so important that they merit a convenience function to switch
 specifically to them. One such buffer is the buffer for this README.
 
-**** emacs directory
+*** emacs directory
 :PROPERTIES:
 :ID:       7ea118cb-4eb6-4ffb-9d82-6ae65ff7a961
 :END:
@@ -2696,7 +2696,7 @@ specifically to them. One such buffer is the buffer for this README.
   (dired user-emacs-directory))
 #+end_src
 
-**** elisp init file
+*** elisp init file
 :PROPERTIES:
 :ID:       74ad3337-4a36-4524-87c1-6b46b2dc24dd
 :END:
@@ -2708,7 +2708,7 @@ specifically to them. One such buffer is the buffer for this README.
   (find-file user-init-file))
 #+end_src
 
-**** readme org file
+*** readme org file
 :PROPERTIES:
 :ID:       ceb0caee-f950-4ab5-a6e9-aad436334469
 :END:
@@ -2720,12 +2720,12 @@ specifically to them. One such buffer is the buffer for this README.
   (find-file (f-full "~/README.org")))
 #+end_src
 
-*** tangling
+** tangling
 :PROPERTIES:
 :ID:       9e5695e0-82ac-4f49-a237-63ca70b1036f
 :END:
 
-**** tangle asynchronously
+*** tangle asynchronously
 :PROPERTIES:
 :ID:       9fcff539-5c1c-4ec8-8aa7-ac8fb82d3392
 :END:
@@ -2753,7 +2753,7 @@ a significant lag and Emacs is blocked while it is tangling.
 	(message (if result "Successfully tangled %s" "Failed to tangle %s") ,output)))))
 #+end_src
 
-*** open Emacs instance
+** open Emacs instance
 :PROPERTIES:
 :ID:       287537bc-f1a7-4c04-bbb6-c372df540e04
 :END:
@@ -2770,7 +2770,7 @@ a significant lag and Emacs is blocked while it is tangling.
          (start-process "emacs" nil "emacs" "--debug-init"))))
 #+end_src
 
-*** jump to line
+** jump to line
 :PROPERTIES:
 :ID:       47480f9a-2e82-435a-a098-6a1a9a11c2f0
 :END:
@@ -2791,7 +2791,7 @@ headlines and would rather view the entire path.
   (when (eq major-mode 'org-mode) (org%show-branch)))
 #+end_src
 
-** variables defined in c source code
+* variables defined in c source code
 :PROPERTIES:
 :ID:       5d7f2962-8d10-40a4-b134-c368e2b1b4d5
 :END:
@@ -2800,7 +2800,7 @@ This headline contains variables that are defined in c-source code and thefore
 do not pertain to any particular package. For this reason I don't wrap these
 variables in a [[29e1513a-e12a-4818-870e-8d5fab7fe1a0][use-package]] block.
 
-*** don't create lockfiles
+** don't create lockfiles
 :PROPERTIES:
 :ID:       ae464c90-d220-4db2-a3fd-fec36b9181e4
 :END:
@@ -2811,7 +2811,7 @@ https://stackoverflow.com/questions/8246483/emacs-how-to-disable-files-creation
 (set! create-lockfiles nil)
 #+end_src
 
-*** delete duplicates in history
+** delete duplicates in history
 :PROPERTIES:
 :ID:       1c381491-c4fa-4b5e-99de-ec6bd33df77c
 :END:
@@ -2824,7 +2824,7 @@ code.
 (set! history-delete-duplicates t)
 #+end_src
 
-*** don't echo keystrokes
+** don't echo keystrokes
 :PROPERTIES:
 :ID:       b8856ebe-6208-4271-ad5a-d352fabec8bb
 :END:
@@ -2837,7 +2837,7 @@ echoing in the mode line makes the which-key prompt disappear prematurely.
 (set-default! echo-keystrokes 0)
 #+end_src
 
-*** set the fill-column
+** set the fill-column
 :PROPERTIES:
 :ID:       84d8e85a-a6a1-49cd-b46e-e5cd3f825438
 :END:
@@ -2850,7 +2850,7 @@ card]]. Now this is not the case so I don't think it's as much of a deal.
 (set-default! fill-column 80)
 #+end_src
 
-*** recursive minibuffers
+** recursive minibuffers
 :PROPERTIES:
 :ID:       7eb20f6d-75b4-4eec-8878-e7232c1a153d
 :END:
@@ -2863,7 +2863,7 @@ typing an expression, I get completion from the minibuffer.
 (set-default! enable-recursive-minibuffers t)
 #+end_src
 
-*** utf-8 text encoding
+** utf-8 text encoding
 :PROPERTIES:
 :ID:       26344072-c145-40bd-9ade-8c7f2eef54c8
 :END:
@@ -2889,7 +2889,7 @@ typing an expression, I get completion from the minibuffer.
   (set-charset-priority 'unicode))
 #+end_src
 
-*** disable bi-directional text
+** disable bi-directional text
 :PROPERTIES:
 :ID:       6c12f14c-75c7-4b30-9bb4-ca6e8d3cae47
 :END:
@@ -2902,7 +2902,7 @@ text is useful for languages that read right to left.
 (set-default! bidi-paragraph-direction 'left-to-right)
 #+end_src
 
-*** stop beeping
+** stop beeping
 :PROPERTIES:
 :ID:       2a83cb3a-ca2e-4d9c-a296-340d33855614
 :END:
@@ -2911,7 +2911,7 @@ text is useful for languages that read right to left.
 (set-default! ring-bell-function #'ignore)
 #+end_src
 
-*** resize pixelwise
+** resize pixelwise
 :PROPERTIES:
 :ID:       02daff3d-e532-4cfa-a217-81e27627e7a7
 :END:
@@ -2923,7 +2923,7 @@ text is useful for languages that read right to left.
 (set-default! frame-resize-pixelwise t)
 #+end_src
 
-*** use yes or no
+** use yes or no
 :PROPERTIES:
 :ID:       82a84315-2018-42e0-bd1a-74af7b722593
 :END:
@@ -2936,7 +2936,7 @@ source code.
 (xl-advice-add #'yes-or-no-p :override #'y-or-n-p)
 #+end_src
 
-** miscellaneous
+* miscellaneous
 :PROPERTIES:
 :ID:       65edb4e7-0fe1-4e37-ae9b-027c9f15162a
 :END:
@@ -2944,7 +2944,7 @@ source code.
 This headline contains headings for which I have not yet determined a good
 hierarchy.
 
-*** log the init time
+** log the init time
 :PROPERTIES:
 :ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
 :END:
@@ -2962,7 +2962,7 @@ circumstances. The one I'm referring to now is with general prefix bindings.
   (xl-log "emacs-init-time: %s" (emacs-init-time)))
 #+end_src
 
-*** startup
+** startup
 :PROPERTIES:
 :ID:       f9854e53-dd9d-4381-8e9c-8336736d4308
 :END:
@@ -2996,7 +2996,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
       (get-buffer-create it))))
 #+end_src
 
-*** cus-edit
+** cus-edit
 :PROPERTIES:
 :ID:       a844ddb6-245b-463c-963d-743c931698ae
 :END:
@@ -3012,7 +3012,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (custom-theme-directory . (concat XL-LOCAL-DIR "themes/")))
 #+end_src
 
-*** server
+** server
 :PROPERTIES:
 :ID:       3a1120f5-2809-42d6-938c-3916483033e0
 :END:
@@ -3028,7 +3028,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (unless (server-running-p) (server-start)))
 #+end_src
 
-*** linux
+** linux
 :PROPERTIES:
 :ID:       6572e618-e5ef-445b-90d6-14dc2c24f1a4
 :END:
@@ -3039,7 +3039,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (set! x-gtk-use-system-tooltips nil))
 #+end_src
 
-*** scrolling
+** scrolling
 :PROPERTIES:
 :ID:       c91bcd0f-da83-44a3-9d9e-e1f55dcdb642
 :END:
@@ -3052,7 +3052,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
 (set-default! scroll-preserve-screen-position t)
 #+end_src
 
-*** fast scrolling
+** fast scrolling
 :PROPERTIES:
 :ID:       964a8b3e-37b4-4d6b-9298-3a1be3cfe6aa
 :END:
@@ -3064,7 +3064,7 @@ spells of inaccurate fontification immediately after scrolling."
 (set! fast-but-imprecise-scrolling t)
 #+end_src
 
-*** disable cursor blinking
+** disable cursor blinking
 :PROPERTIES:
 :ID:       fe8a259b-12e6-4e58-a324-eab831283a86
 :END:
@@ -3078,7 +3078,7 @@ screen. Usually, however, I have no trouble finding it so I disable it.
   (blink-cursor-mode -1))
 #+end_src
 
-*** garbage collection
+** garbage collection
 :PROPERTIES:
 :ID:       dda841d2-25f3-4595-ab6a-87cb1bb72dba
 :END:
@@ -3090,7 +3090,7 @@ increasing the value of [[helpvar:gc-cons-threshold][gc-cons-threshold]], the nu
 between garbage collections, is known to make a notable difference in user
 startup time. By default it is only 800 KB.
 
-**** gc cons threshold
+*** gc cons threshold
 :PROPERTIES:
 :ID:       50e19a55-a04b-4ca0-8024-a88b23b5b41f
 :END:
@@ -3118,7 +3118,7 @@ This is the value of `gc-cons-threshold' that should be used in typical usages."
   "The value for `gc-cons-threshold'.")
 #+end_src
 
-**** gcmh
+*** gcmh
 :PROPERTIES:
 :ID:       86653a5a-f273-4ce4-b89b-f288d5d46d44
 :END:
@@ -3140,7 +3140,7 @@ are done before setting the =gc-cons-threshold= back to a normal value.
   (gcmh-low-cons-threshold  . XL-GC-CONS-THRESHOLD-MIN))
 #+end_src
 
-**** minibuffer
+*** minibuffer
 :PROPERTIES:
 :ID:       8c02fc83-5e7e-4115-9768-020abcf82541
 :END:
@@ -3175,12 +3175,12 @@ hook variables use action verbs in their names not nouns. So the =exit= in
   (setq gc-cons-threshold XL-GC-CONS-THRESHOLD))
 #+end_src
 
-*** theme
+** theme
 :PROPERTIES:
 :ID:       c35c131a-bcc5-49f9-bc24-a5f91cde785d
 :END:
 
-**** don't prompt me when loading theme
+*** don't prompt me when loading theme
 :PROPERTIES:
 :ID:       eaa6531c-1188-41c7-a645-a82d9f482449
 :END:
@@ -3199,7 +3199,7 @@ screen need to be redisplayed.
   (custom-safe-themes . t))
 #+end_src
 
-**** loading theme
+*** loading theme
 :PROPERTIES:
 :ID:       b4773208-5e96-46d2-90d0-1731f6581f1b
 :END:
@@ -3216,7 +3216,7 @@ example, if I'm using evil I need to update the cursor color.
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
-**** disable old themes first
+*** disable old themes first
 :PROPERTIES:
 :ID:       c2110d52-ce27-4f3a-b856-1e31200f597c
 :END:
@@ -3233,7 +3233,7 @@ a new theme.
   (apply orig-fn args))
 #+end_src
 
-*** disable terminal initialization
+** disable terminal initialization
 :PROPERTIES:
 :ID:       540c1c5a-cd31-45cf-afaf-b8e48a76e68e
 :END:
@@ -3248,7 +3248,7 @@ According to Doom Emacs, when running emacs in terminal tty is *tremendously* sl
     (tty-run-terminal-initialization (selected-frame) nil t)))
 #+end_src
 
-*** prevent emacs from killing certain buffers
+** prevent emacs from killing certain buffers
 :PROPERTIES:
 :ID:       ae935cf5-7322-499c-96d7-20209d9b6641
 :END:
@@ -3263,7 +3263,7 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 	(with-current-buffer buffer (emacs-lock-mode 'kill))))
 #+end_src
 
-** hideshow
+* hideshow
 :PROPERTIES:
 :ID:       2222cf6a-5274-4a33-ae74-357676fbd61d
 :END:
