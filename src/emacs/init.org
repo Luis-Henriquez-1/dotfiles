@@ -227,7 +227,7 @@ straight. In the future I want more fine grained control, perhaps showing me the
 difference between the packages I installed in my current Emacs session compared
 with the last and allowing me to choose which ones to add.
 
-** versions alist
+* versions alist
 :PROPERTIES:
 :ID:       3db31fa0-86e3-49e3-a13c-c3966bd7d6f7
 :END:
@@ -246,7 +246,7 @@ with the last and allowing me to choose which ones to add.
     versions-alist))
 #+end_src
 
-** update recipe file
+* update recipe file
 :PROPERTIES:
 :ID:       63b9a6eb-bc36-4555-b0d6-0100841277ca
 :END:
