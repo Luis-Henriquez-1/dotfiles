@@ -44,7 +44,7 @@ important; and I end up referencing them alot.
   "Directory where packages are stored.")
 #+end_src
 
-* package management
+* package management :pacman:
 :PROPERTIES:
 :ID:       00eaa1a5-b5fe-437d-9888-1846ea9a232b
 :END:
@@ -64,12 +64,12 @@ that you have the history of every installed emacs package locally. Another
 consequence is that you can completely reproduce the state of your emacs on
 another machine by installing the same packages with the same versions.
 
-** settings
+* settings
 :PROPERTIES:
 :ID:       86037015-ca61-48f9-96bf-df8fc625a35d
 :END:
 
-*** variables
+** variables
 :PROPERTIES:
 :ID:       9dff9894-667c-4e74-9624-8aee533f8f70
 :END:
@@ -86,7 +86,7 @@ conserves some disk space.
 (setq straight-vc-git-default-clone-depth 1)
 #+end_src
 
-*** handle autoloads for me
+** handle autoloads for me
 :PROPERTIES:
 :ID:       d3b052e4-fc7e-4b64-bd53-a6aa4b8abd16
 :END:
@@ -101,7 +101,7 @@ optionally handles this for us.
 (setq straight-cache-autoloads t)
 #+end_src
 
-*** package integration
+** package integration
 :PROPERTIES:
 :ID:       db1f9042-5b6c-41a9-a69c-d05d0493fdb0
 :END:
@@ -114,7 +114,7 @@ initialization. We don't need =straight= to do this for us because it is handled
 (setq straight-enable-package-integration nil)
 #+end_src
 
-** load bootstrap file
+* load bootstrap file
 :PROPERTIES:
 :ID:       544f1bbe-3981-4d1b-8b24-3395b27890b2
 :END:
@@ -128,7 +128,7 @@ initialization. We don't need =straight= to do this for us because it is handled
     (load bootstrap-file nil 'nomessage)))
 #+end_src
 
-** whether installed
+* whether installed
 :PROPERTIES:
 :ID:       9216f0b9-93d5-43fe-aa96-3796674ab520
 :END:
@@ -141,7 +141,7 @@ initialization. We don't need =straight= to do this for us because it is handled
 	 (file-exists-p (concat XL-PACKAGES-DIR "straight/repos/straight.el/bootstrap.el")))))
 #+end_src
 
-** install
+* install
 :PROPERTIES:
 :ID:       ab38beca-2f26-4718-ab73-e4e4409f1563
 :END:
