@@ -274,7 +274,7 @@ with the last and allowing me to choose which ones to add.
 	    (insert ?\n)))))
 #+end_src
 
-* symbol intern :library:core:
+* symbol intern :library:core:symbol:
 :PROPERTIES:
 :ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
 :END:
@@ -292,7 +292,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'xl-to-string args)))
 #+end_src
 
-* intern format :library:core:
+* intern format :library:core:symbol:
 :PROPERTIES:
 :ID:       b371718f-2067-450c-8117-fb22f44be208
 :END:
@@ -303,7 +303,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'format format-string args)))
 #+end_src
 
-* keyword intern :library:core:
+* keyword intern :library:core:symbol:
 :PROPERTIES:
 :ID:       0618b8d7-e0a4-4e3e-8d89-b7d0ebe43917
 :END:
@@ -318,7 +318,7 @@ commands saves me having to add the colon at the beginning before interning.
   (apply #'xl-symbol-intern ":" args))
 #+end_src
 
-* keyword name :library:core:
+* keyword name :library:core:symbol:
 :PROPERTIES:
 :ID:       e853603a-851d-429f-9201-f2e93734dfaf
 :END:
@@ -334,7 +334,7 @@ for that occasion.
   (substring-no-properties (xl-to-string keyword) 1))
 #+end_src
 
-* convert to string :library:core:
+* convert to string :library:core:symbl:
 :PROPERTIES:
 :ID:       60f22f98-8204-45ae-9943-f19cdfe60459
 :END:
@@ -350,7 +350,7 @@ with details and just want a string.
   (with-output-to-string (-each args #'princ)))
 #+end_src
 
-* detect emacs symbols :library:core:
+* detect emacs symbols :library:core:symbol:
 :PROPERTIES:
 :ID:       207ed522-51f3-45e7-91ba-8afb828d950b
 :END:
@@ -431,7 +431,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
        (s-suffix-p "-map" (symbol-name obj))))
 #+end_src
 
-* internal XL symbol :library:core:
+* internal XL symbol :library:core:symbol:
 :PROPERTIES:
 :ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
 :END:
