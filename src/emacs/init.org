@@ -1,7 +1,7 @@
 #+title: init.org
 #+author: Luis-Henriquez-Perez
 
-* ensure lexical binding
+* ensure lexical binding :core:performance:
 :PROPERTIES:
 :ID:       2b8148c3-1418-4896-ba53-1673d2d82659
 :END:
@@ -44,15 +44,7 @@ important; and I end up referencing them alot.
   "Directory where packages are stored.")
 #+end_src
 
-* core
-:PROPERTIES:
-:ID:       d82e84fc-0e6d-460d-a5bf-33dd56564795
-:END:
-
-This headline sets up package management and defines the fundamental functions
-and macros I use for the rest of my configuration.
-
-** package management
+* package management
 :PROPERTIES:
 :ID:       00eaa1a5-b5fe-437d-9888-1846ea9a232b
 :END:
@@ -61,7 +53,7 @@ The goal I have with package management is to deal with it all in this headline.
 All package installation should happen here so that later we can use focus on
 configuring packages, pretending like all the packages I'm are built-in to Emacs.
 
-**** straight
+* straight
 :PROPERTIES:
 :ID:       2e251cc7-04de-43f8-a31f-1574a54ad576
 :END:
@@ -72,12 +64,12 @@ that you have the history of every installed emacs package locally. Another
 consequence is that you can completely reproduce the state of your emacs on
 another machine by installing the same packages with the same versions.
 
-***** settings
+** settings
 :PROPERTIES:
 :ID:       86037015-ca61-48f9-96bf-df8fc625a35d
 :END:
 
-****** variables
+*** variables
 :PROPERTIES:
 :ID:       9dff9894-667c-4e74-9624-8aee533f8f70
 :END:
@@ -94,7 +86,7 @@ conserves some disk space.
 (setq straight-vc-git-default-clone-depth 1)
 #+end_src
 
-****** handle autoloads for me
+*** handle autoloads for me
 :PROPERTIES:
 :ID:       d3b052e4-fc7e-4b64-bd53-a6aa4b8abd16
 :END:
@@ -109,7 +101,7 @@ optionally handles this for us.
 (setq straight-cache-autoloads t)
 #+end_src
 
-****** package integration
+*** package integration
 :PROPERTIES:
 :ID:       db1f9042-5b6c-41a9-a69c-d05d0493fdb0
 :END:
@@ -122,7 +114,7 @@ initialization. We don't need =straight= to do this for us because it is handled
 (setq straight-enable-package-integration nil)
 #+end_src
 
-***** load bootstrap file
+** load bootstrap file
 :PROPERTIES:
 :ID:       544f1bbe-3981-4d1b-8b24-3395b27890b2
 :END:
@@ -136,7 +128,7 @@ initialization. We don't need =straight= to do this for us because it is handled
     (load bootstrap-file nil 'nomessage)))
 #+end_src
 
-***** whether installed
+** whether installed
 :PROPERTIES:
 :ID:       9216f0b9-93d5-43fe-aa96-3796674ab520
 :END:
@@ -149,7 +141,7 @@ initialization. We don't need =straight= to do this for us because it is handled
 	 (file-exists-p (concat XL-PACKAGES-DIR "straight/repos/straight.el/bootstrap.el")))))
 #+end_src
 
-***** install
+** install
 :PROPERTIES:
 :ID:       ab38beca-2f26-4718-ab73-e4e4409f1563
 :END:
@@ -168,7 +160,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
     (shell-command (format "git -C %s checkout %s" repo-dir commit))))
 #+end_src
 
-**** read recipes
+* read recipes
 :PROPERTIES:
 :ID:       f7a3baa6-d876-40d3-84f5-74b1d9b4f432
 :END:
@@ -190,7 +182,7 @@ Upon startup I read this file and register all the recipes in it with =straight=
       (nreverse forms))))
 #+end_src
 
-**** generate load-path
+* generate load-path
 :PROPERTIES:
 :ID:       498862a1-8491-4ec1-95ad-f0bafd818ddc
 :END:
@@ -215,7 +207,7 @@ Calls `straight-use-package' on each recipe as a side-effect."
     (cl-set-difference load-path old-load-path :test #'string=)))
 #+end_src
 
-**** set the load-path
+* set the load-path
 :PROPERTIES:
 :ID:       ea592f75-e8dd-4ee7-a44e-c2da9d76191b
 :END:
@@ -229,7 +221,7 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 (cl-callf2 append (xl-generate-package-paths) load-path)
 #+end_src
 
-**** updating the recipe file
+* updating the recipe file
 :PROPERTIES:
 :ID:       cc40b9ac-d061-44f2-84b6-2f5e782e2ed8
 :END:
@@ -240,7 +232,7 @@ straight. In the future I want more fine grained control, perhaps showing me the
 difference between the packages I installed in my current Emacs session compared
 with the last and allowing me to choose which ones to add.
 
-***** versions alist
+** versions alist
 :PROPERTIES:
 :ID:       3db31fa0-86e3-49e3-a13c-c3966bd7d6f7
 :END:
@@ -259,7 +251,7 @@ with the last and allowing me to choose which ones to add.
     versions-alist))
 #+end_src
 
-***** update recipe file
+** update recipe file
 :PROPERTIES:
 :ID:       63b9a6eb-bc36-4555-b0d6-0100841277ca
 :END:
@@ -286,6 +278,14 @@ with the last and allowing me to choose which ones to add.
 	    (prin1 (list package revision recipe) (current-buffer))
 	    (insert ?\n)))))
 #+end_src
+
+* core
+:PROPERTIES:
+:ID:       d82e84fc-0e6d-460d-a5bf-33dd56564795
+:END:
+
+This headline sets up package management and defines the fundamental functions
+and macros I use for the rest of my configuration.
 
 ** library
 :PROPERTIES:
