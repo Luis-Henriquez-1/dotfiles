@@ -81,7 +81,7 @@ conserves some disk space.
 (setq straight-vc-git-default-clone-depth 1)
 #+end_src
 
-* handle autoloads for me
+* handle autoloads for me :straight:pacman:autoload:
 :PROPERTIES:
 :ID:       d3b052e4-fc7e-4b64-bd53-a6aa4b8abd16
 :END:
