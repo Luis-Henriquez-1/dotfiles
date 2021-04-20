@@ -2824,7 +2824,7 @@ echoing in the mode line makes the which-key prompt disappear prematurely.
 (set-default! echo-keystrokes 0)
 #+end_src
 
-* set the fill-column
+* set the fill-column :core:setting:edit:
 :PROPERTIES:
 :ID:       84d8e85a-a6a1-49cd-b46e-e5cd3f825438
 :END:
@@ -5587,7 +5587,7 @@ windows).
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
 
-* exwm-edit
+* exwm-edit :edit:exwm:
 :PROPERTIES:
 :ID:       39361fa6-0df0-416e-aed6-2f8cb3bf9fb9
 :END:
@@ -5668,7 +5668,7 @@ certain applications where I'd use it need to be loaded.
 :ID:       40fb1b29-b772-456f-aac6-cf4a3b5cde3f
 :END:
 
-** undo-tree
+** undo-tree :edit:
 :PROPERTIES:
 :ID:       e54f42d0-f146-4816-8226-8798d0746533
 :END:
@@ -5689,7 +5689,7 @@ certain applications where I'd use it need to be loaded.
   :rule ("bottom" "org-description" :newname "\\*Occur\\*"))
 #+end_src
 
-** separedit
+** separedit :edit:
 :PROPERTIES:
 :ID:       07021099-6cea-4016-929b-d9310ea305f8
 :END:
@@ -6752,7 +6752,7 @@ Why not just go to the end of the ="= like any other around operator?
 :ID:       4374e82c-bac1-4c9e-9ab9-70799140f5a7
 :END:
 
-** key-chord
+** key-chord :keybind:
 :PROPERTIES:
 :ID:       20d6d9c1-50a1-4699-a67c-e6f04d3b5576
 :END:
