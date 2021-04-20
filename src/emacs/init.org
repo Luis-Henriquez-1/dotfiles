@@ -6459,6 +6459,11 @@ and provides facilities for writing custom extensions. Also see our page on
 :END:
 
 #+begin_src emacs-lisp
+(defhook! make-normal-state-default (evil-mode-hook)
+  "Make normal state the default state."
+  (set! (append evil-emacs-state-modes evil-motion-state-modes <evil-normal-state-modes>))
+  (setq evil-emacs-state-modes nil)
+  (setq evil-motion-state-modes nil))
 #+end_src
 
 **** replace normal with motion
@@ -6479,12 +6484,6 @@ useless state]]. The code in this headline essentially just says =NO= to motion
 state and disables it everywhere in favor of normal state.
 
 #+begin_src emacs-lisp
-(defhook! make-normal-state-default (evil-mode-hook)
-  "Make normal state the default state."
-  (set! (append evil-emacs-state-modes evil-motion-state-modes <evil-normal-state-modes>))
-  (setq evil-emacs-state-modes nil)
-  (setq evil-motion-state-modes nil))
-
 (defun! replace-motion-with-normal (orig-fn &rest args)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
   (:around evil-make-overriding-map)
