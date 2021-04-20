@@ -3041,7 +3041,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (set! x-gtk-use-system-tooltips nil))
 #+end_src
 
-* scrolling
+* scrolling :setting:
 :PROPERTIES:
 :ID:       c91bcd0f-da83-44a3-9d9e-e1f55dcdb642
 :END:
