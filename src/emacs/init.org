@@ -2386,7 +2386,7 @@ HOOK is a hook function that follows XL naming conventions."
   (xl-symbol-intern fn '& name))
 #+end_src
 
-* generate a logging function
+* generate a logging function :library:core:log:
 :PROPERTIES:
 :ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
 :END:
