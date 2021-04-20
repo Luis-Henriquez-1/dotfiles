@@ -2163,7 +2163,7 @@ is an example).
     (apply orig-fn args)))
 #+end_src
 
-* silence
+* silence :advice:
 :PROPERTIES:
 :ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
 :END:
@@ -2178,7 +2178,7 @@ to silence the said messages.
   (shut-up (apply orig-fn args)))
 #+end_src
 
-* log
+* log :advice:log:
 :PROPERTIES:
 :ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
 :END:
@@ -2196,7 +2196,7 @@ to silence the said messages.
 	   (xl-log "%s called" fn)))))
 #+end_src
 
-* pause garbarge collection
+* pause garbarge collection :advice:performance:
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
@@ -2212,7 +2212,7 @@ packages which can contain several thousand items.
     (apply orig-fn args)))
 #+end_src
 
-* log
+* log :advice:log:core:library:
 :PROPERTIES:
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
@@ -2225,7 +2225,7 @@ Sometimes I want to use =xl-log= instead of =message=.
     (apply orig-fn args)))
 #+end_src
 
-* ignore output
+* ignore output :advice:core:library:
 :PROPERTIES:
 :ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
 :END:
@@ -2235,7 +2235,7 @@ Sometimes I want to use =xl-log= instead of =message=.
   "Advice to ignore a function.")
 #+end_src
 
-* loading on call
+* loading on call :performance:advice:
 :PROPERTIES:
 :ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
 :END:
