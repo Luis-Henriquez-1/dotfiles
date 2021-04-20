@@ -1519,7 +1519,7 @@ slowly with the introduction of libraries like =seq.el= and =map.el= but still
 leaves much to be desired. This sounds like a complaint, but it actually
 highlights the advantage of the extensibility of Emacs.
 
-*** shut-up
+** shut-up
 :PROPERTIES:
 :ID:       71681f9f-2760-4cee-95a0-4aeb71191a42
 :END:
@@ -1533,7 +1533,7 @@ messages can be useful, most of the time they are superfluous.
 (use-package shut-up :demand t)
 #+end_src
 
-*** mmt
+** mmt
 :PROPERTIES:
 :ID:       a4377985-fe0e-4980-b839-08c334bde76c
 :END:
@@ -1546,7 +1546,7 @@ variable leaking.
 (use-package mmt)
 #+end_src
 
-*** dash
+** dash
 :PROPERTIES:
 :ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
 :END:
@@ -1563,7 +1563,7 @@ so I'll likely end up loading it anyway.
 (use-package dash :demand t)
 #+end_src
 
-*** subr-x
+** subr-x
 :PROPERTIES:
 :ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
 :END:
@@ -1572,7 +1572,7 @@ so I'll likely end up loading it anyway.
 (use-package subr-x :demand t)
 #+end_src
 
-*** ht
+** ht
 :PROPERTIES:
 :ID:       56bb0ff4-6ad1-44b7-a9a4-54abf48ed253
 :END:
@@ -1584,7 +1584,7 @@ hash-tables.
 (use-package ht)
 #+end_src
 
-*** dash-functional
+** dash-functional
 :PROPERTIES:
 :ID:       704fc35f-0ad0-4eb3-9eb5-d8335465dbd8
 :END:
@@ -1597,7 +1597,7 @@ emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
 (use-package dash-functional :demand t)
 #+end_src
 
-*** s
+** s
 :PROPERTIES:
 :ID:       b96acb97-3963-4713-a03b-6294c65903fd
 :END:
@@ -1609,7 +1609,7 @@ that are not built-in to Emacs. Notably, it is functional.
 (use-package s :demand t)
 #+end_src
 
-*** f
+** f
 :PROPERTIES:
 :ID:       f44da560-dc3f-4635-926e-eec4fd6d159d
 :END:
@@ -1618,7 +1618,7 @@ that are not built-in to Emacs. Notably, it is functional.
 (use-package f :demand t)
 #+end_src
 
-*** anaphora
+** anaphora
 :PROPERTIES:
 :ID:       1c47bd8a-15f1-4b1c-9574-23547d27d968
 :END:
@@ -1631,7 +1631,7 @@ But if you're only.
 (use-package anaphora :demand t)
 #+end_src
 
-*** loopy
+** loopy
 :PROPERTIES:
 :ID:       1c30099a-86b4-41f9-8390-e9e3c20b0257
 :END:
@@ -1643,7 +1643,7 @@ loop that involves accumulating several variables or atypical control-flow (as
 in, break statements or return statements). This is where =loopy= comes into
 play.
 
-**** loopy
+*** loopy
 :PROPERTIES:
 :ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
 :END:
@@ -1657,7 +1657,7 @@ play.
   (loopy-defalias 'ret 'return))
 #+end_src
 
-**** iter
+*** iter
 :PROPERTIES:
 :ID:       cf3f024a-8bec-4f5a-bd63-38b09dc23ca5
 :END:
@@ -1683,7 +1683,7 @@ clause because it would get confused with it and the built-in Emacs function
   (iterate . loopy-iter))
 #+end_src
 
-**** dash destructuring
+*** dash destructuring
 :PROPERTIES:
 :ID:       87615a1d-2790-44c4-ac95-90a36ff9c496
 :END:
@@ -1695,7 +1695,7 @@ clause because it would get confused with it and the built-in Emacs function
   (callf2 cl-adjoin '+dash loopy-default-flags))
 #+end_src
 
-*** noflet
+** noflet
 :PROPERTIES:
 :ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
 :END:
@@ -1707,7 +1707,7 @@ This package provides an alternative to the built-in =cl-flet= called
 (use-package noflet :demand t)
 #+end_src
 
-*** dbc
+** dbc
 :PROPERTIES:
 :ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
 :END:
@@ -1727,7 +1727,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
     (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
 #+end_src
 
-*** db
+** db
 :PROPERTIES:
 :ID:       9b79f07b-8397-4f95-b79c-5e136a9b2079
 :END:
@@ -1736,7 +1736,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package db)
 #+end_src
 
-*** log4e
+** log4e
 :PROPERTIES:
 :ID:       8360e875-61a6-46f8-a401-2a98c9e517fa
 :END:
@@ -1751,13 +1751,13 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
   (defalias 'xl-log 'xl--log-info))
 #+end_src
 
-*** ts
+** ts
 
 #+begin_src emacs-lisp
 (use-package ts)
 #+end_src
 
-*** a
+** a
 :PROPERTIES:
 :ID:       32110690-9d0a-4e3d-a1d8-7695b42aeb30
 :END:
@@ -1768,7 +1768,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package a :demand t)
 #+end_src
 
-*** list-utils
+** list-utils
 :PROPERTIES:
 :ID:       f87d570a-4b06-42ea-acaa-a0bedba0e623
 :END:
@@ -1777,7 +1777,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package list-utils)
 #+end_src
 
-*** map
+** map
 :PROPERTIES:
 :ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
 :END:
