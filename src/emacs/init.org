@@ -53,7 +53,7 @@ The goal I have with package management is to deal with it all in this headline.
 All package installation should happen here so that later we can use focus on
 configuring packages, pretending like all the packages I'm are built-in to Emacs.
 
-* straight
+* straight :straight:core:
 :PROPERTIES:
 :ID:       2e251cc7-04de-43f8-a31f-1574a54ad576
 :END:
