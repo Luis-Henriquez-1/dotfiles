@@ -2837,7 +2837,7 @@ card]]. Now this is not the case so I don't think it's as much of a deal.
 (set-default! fill-column 80)
 #+end_src
 
-* recursive minibuffers
+* recursive minibuffers :core:setting:
 :PROPERTIES:
 :ID:       7eb20f6d-75b4-4eec-8878-e7232c1a153d
 :END:
@@ -2876,7 +2876,7 @@ typing an expression, I get completion from the minibuffer.
   (set-charset-priority 'unicode))
 #+end_src
 
-* disable bi-directional text
+* disable bi-directional text :core:setting:
 :PROPERTIES:
 :ID:       6c12f14c-75c7-4b30-9bb4-ca6e8d3cae47
 :END:
@@ -2889,7 +2889,7 @@ text is useful for languages that read right to left.
 (set-default! bidi-paragraph-direction 'left-to-right)
 #+end_src
 
-* stop beeping
+* stop beeping :core:setting:
 :PROPERTIES:
 :ID:       2a83cb3a-ca2e-4d9c-a296-340d33855614
 :END:
