@@ -2301,7 +2301,7 @@ not to have to specify the advice keyword.
 I have my own naming convention for hooks. I use it to make it obvious when a
 function is a hook.
 
-* hook regexp
+* hook regexp :library:core:
 :PROPERTIES:
 :ID:       5093d6ce-741d-4d11-8ac7-15c02aa45b3b
 :END:
