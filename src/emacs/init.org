@@ -496,7 +496,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-* backquoted
+* backquoted :core:library:quote:
 :PROPERTIES:
 :ID:       2c7af958-3aa0-48d6-a852-fd5feae452a9
 :END:
@@ -510,7 +510,7 @@ function symbol.
     (_ nil)))
 #+end_src
 
-* quoted
+* quoted :core:library:quote:
 :PROPERTIES:
 :ID:       d1b6c539-c8ca-4dc4-b76d-e2f9406b1c04
 :END:
@@ -3235,7 +3235,7 @@ a new theme.
   (apply orig-fn args))
 #+end_src
 
-* disable terminal initialization
+* disable terminal initialization :setting:core:
 :PROPERTIES:
 :ID:       540c1c5a-cd31-45cf-afaf-b8e48a76e68e
 :END:
