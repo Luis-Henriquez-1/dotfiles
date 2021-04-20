@@ -5382,7 +5382,7 @@ are benefits and drawbacks to making emacs your window manager. One benefit is
 that you get a super consistent window management experience. One drawback is
 that if Emacs hangs or crashes you need to restart your computer.
 
-** init
+* init
 :PROPERTIES:
 :ID:       7b83cab0-d599-46c4-b20c-19ff33345ae3
 :END:
@@ -5393,7 +5393,7 @@ that if Emacs hangs or crashes you need to restart your computer.
   :before-call browse-url)
 #+end_src
 
-** trigger exwm on =browse-url=
+* trigger exwm on =browse-url=
 :PROPERTIES:
 :ID:       581b8529-00a0-4935-9363-60dba9dbe5f4
 :END:
@@ -5417,7 +5417,7 @@ If it's not possible, abort initialization gracefully."
       (xl-log "Another window manager is present (or something went wrong)."))))
 #+end_src
 
-** exwm-evil-firefox
+* exwm-evil-firefox
 :PROPERTIES:
 :ID:       e5463b7a-9727-43b1-aa20-831a3617308f
 :END:
@@ -5433,7 +5433,7 @@ an. One caveat is that mouse clicks only work in insert mode.
   :before-call browse-url-firefox)
 #+end_src
 
-** exwm-float
+* exwm-float
 :PROPERTIES:
 :ID:       aa59c567-56b6-4ef7-b63c-cb8172e38965
 :END:
@@ -5451,7 +5451,7 @@ need to figure out the proper way to lazy load it.
   (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode))
 #+end_src
 
-** org capture from an exwm buffer
+* org capture from an exwm buffer
 :PROPERTIES:
 :ID:       5428bdc1-c075-4387-b3ab-080d372c478f
 :END:
@@ -5463,7 +5463,7 @@ via a hacky and difficult to set up [[https://orgmode.org/worg/org-contrib/org-p
 
 https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcapture_and_exwm/
 
-*** exwm title
+** exwm title
 :PROPERTIES:
 :ID:       ce78d409-e635-4d94-b20e-38c2034ab5e8
 :END:
@@ -5475,7 +5475,7 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
     (list webpage program)))
 #+end_src
 
-*** download webpage
+** download webpage
 :PROPERTIES:
 :ID:       3798402c-cd8b-43e2-aec5-f54736aafdd4
 :END:
@@ -5486,7 +5486,7 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
   (call-process "weasyprint" nil nil nil url))
 #+end_src
 
-*** replacement for fake id
+** replacement for fake id
 :PROPERTIES:
 :ID:       4f0436c4-bc37-49b0-a8a3-894e212d4d13
 :END:
@@ -5519,7 +5519,7 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
     (xcb:flush exwm--connection)))
 #+end_src
 
-*** url from firefox
+** url from firefox
 :PROPERTIES:
 :ID:       f407cc8c-0bb9-47fe-adeb-4e9d27b5c5b7
 :END:
@@ -5544,7 +5544,7 @@ current url and to add it to the kill ring.
     (current-kill 0)))
 #+end_src
 
-*** url from qutebrowser
+** url from qutebrowser
 :PROPERTIES:
 :ID:       822cbb61-60b4-445e-9756-4bf797500375
 :END:
@@ -5565,7 +5565,7 @@ current url and to add it to the kill ring.
       (xl-log "Copied %S to the kill ring." it))))
 #+end_src
 
-** appropriate name for exwm buffers
+* appropriate name for exwm buffers
 :PROPERTIES:
 :ID: b9712cdc-2cf9-482f-8f62-b2e4f56b9c97
 :END:
@@ -5579,7 +5579,7 @@ a more descriptive name.
   (exwm-workspace-rename-buffer exwm-title))
 #+end_src
 
-** char mode
+* char mode
 :PROPERTIES:
 :ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
 :END:
@@ -5589,7 +5589,7 @@ start with =char-mode= because they both have keys that are important for their
 use (like =M-x=) which conflict with Emacs (the instance that's managing the
 windows).
 
-*** list of applications
+** list of applications
 :PROPERTIES:
 :ID:       d1bf0601-a995-48f7-ab80-86755ba9269a
 :END:
@@ -5599,7 +5599,7 @@ windows).
   "List of applications to exwm should start in char-mode.")
 #+end_src
 
-*** to start in char mode
+** to start in char mode
 :PROPERTIES:
 :ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
 :END:
@@ -5611,7 +5611,7 @@ windows).
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
 
-** exwm-edit
+* exwm-edit
 :PROPERTIES:
 :ID:       39361fa6-0df0-416e-aed6-2f8cb3bf9fb9
 :END:
@@ -5637,7 +5637,7 @@ certain applications where I'd use it need to be loaded.
 	     `((,(kbd "C-'") . exwm-edit)))))
 #+end_src
 
-** keybindings
+* keybindings
 :PROPERTIES:
 :ID:       8f8e7106-be2e-4c4f-8e4b-d236f805725b
 :END:
