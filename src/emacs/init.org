@@ -2293,14 +2293,6 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :after fn))
 #+end_src
 
-* hooks
-:PROPERTIES:
-:ID:       0832d639-564d-4556-a398-ff729a75ac0b
-:END:
-
-I have my own naming convention for hooks. I use it to make it obvious when a
-function is a hook.
-
 * hook regexp :library:core:hook:
 :PROPERTIES:
 :ID:       5093d6ce-741d-4d11-8ac7-15c02aa45b3b
@@ -5382,7 +5374,7 @@ are benefits and drawbacks to making emacs your window manager. One benefit is
 that you get a super consistent window management experience. One drawback is
 that if Emacs hangs or crashes you need to restart your computer.
 
-* init
+* init :exwm:window:
 :PROPERTIES:
 :ID:       7b83cab0-d599-46c4-b20c-19ff33345ae3
 :END:
@@ -5393,7 +5385,7 @@ that if Emacs hangs or crashes you need to restart your computer.
   :before-call browse-url)
 #+end_src
 
-* trigger exwm on =browse-url=
+* trigger exwm on =browse-url= :advice:
 :PROPERTIES:
 :ID:       581b8529-00a0-4935-9363-60dba9dbe5f4
 :END:
