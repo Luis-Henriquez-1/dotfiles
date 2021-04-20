@@ -14,15 +14,7 @@ top of your elisp file.
 ;; -*- lexical-binding: t -*-
 #+end_src
 
-* core
-:PROPERTIES:
-:ID:       d82e84fc-0e6d-460d-a5bf-33dd56564795
-:END:
-
-This headline sets up package management and defines the fundamental functions
-and macros I use for the rest of my configuration.
-
-** config files and directores
+* config files and directores :core:
 :PROPERTIES:
 :ID:       be8993d3-c8f7-451b-8cb4-04a9138e5c4e
 :END:
@@ -51,6 +43,14 @@ important; and I end up referencing them alot.
 (defconst XL-PACKAGES-DIR (concat XL-LOCAL-DIR "packages/")
   "Directory where packages are stored.")
 #+end_src
+
+* core
+:PROPERTIES:
+:ID:       d82e84fc-0e6d-460d-a5bf-33dd56564795
+:END:
+
+This headline sets up package management and defines the fundamental functions
+and macros I use for the rest of my configuration.
 
 ** package management
 :PROPERTIES:
