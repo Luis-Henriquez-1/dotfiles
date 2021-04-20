@@ -3030,7 +3030,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (unless (server-running-p) (server-start)))
 #+end_src
 
-* linux
+* linux :os:core:setting:
 :PROPERTIES:
 :ID:       6572e618-e5ef-445b-90d6-14dc2c24f1a4
 :END:
