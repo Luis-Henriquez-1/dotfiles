@@ -524,7 +524,7 @@ function symbol.
       (xl-backquoted-p symbol)))
 #+end_src
 
-* unquote
+* unquote :core:library:quote:
 :PROPERTIES:
 :ID:       dbf97264-95e9-478b-aa44-edcbd3f39665
 :END:
