@@ -274,15 +274,7 @@ with the last and allowing me to choose which ones to add.
 	    (insert ?\n)))))
 #+end_src
 
-* symbols
-:PROPERTIES:
-:ID:       fa9a5fb6-381a-441f-8ecc-d3b4a5cab11d
-:END:
-
-Conversion between symbols, keywords, and strings are prevalent in
-macro-writing.
-
-** symbol intern :library:core:
+* symbol intern :library:core:
 :PROPERTIES:
 :ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
 :END:
@@ -300,7 +292,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'xl-to-string args)))
 #+end_src
 
-** intern format :library:core:
+* intern format :library:core:
 :PROPERTIES:
 :ID:       b371718f-2067-450c-8117-fb22f44be208
 :END:
@@ -311,7 +303,7 @@ put together into one symbol. This function is meant to just do what I mean.
   (intern (apply #'format format-string args)))
 #+end_src
 
-** keyword intern
+* keyword intern :library:core:
 :PROPERTIES:
 :ID:       0618b8d7-e0a4-4e3e-8d89-b7d0ebe43917
 :END:
@@ -326,7 +318,7 @@ commands saves me having to add the colon at the beginning before interning.
   (apply #'xl-symbol-intern ":" args))
 #+end_src
 
-** keyword name
+* keyword name :library:core:
 :PROPERTIES:
 :ID:       e853603a-851d-429f-9201-f2e93734dfaf
 :END:
@@ -342,7 +334,7 @@ for that occasion.
   (substring-no-properties (xl-to-string keyword) 1))
 #+end_src
 
-** convert to string
+* convert to string :library:core:
 :PROPERTIES:
 :ID:       60f22f98-8204-45ae-9943-f19cdfe60459
 :END:
@@ -358,7 +350,7 @@ with details and just want a string.
   (with-output-to-string (-each args #'princ)))
 #+end_src
 
-** detect emacs symbols
+* detect emacs symbols :library:core:
 :PROPERTIES:
 :ID:       207ed522-51f3-45e7-91ba-8afb828d950b
 :END:
@@ -370,7 +362,7 @@ we're dealing with. And, it may also be useful to be able to convert a normal
 symbol (by which I mean one that doesn't follow the conventions) to one of these
 particular kinds.
 
-*** hook symbol
+** hook symbol
 :PROPERTIES:
 :ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
 :END:
@@ -385,7 +377,7 @@ As I mentioned, the convention for hook symbols is that they are suffixed with
   (s-matches-p ".+-hook\\'" (symbol-name symbol)))
 #+end_src
 
-*** hookify symbol
+** hookify symbol
 :PROPERTIES:
 :ID:       b308a172-6e99-491c-a382-7ee28e9fc1ae
 :END:
@@ -400,7 +392,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-hook)))
 #+end_src
 
-*** mode symbol
+** mode symbol
 :PROPERTIES:
 :ID:       ec25e275-c36f-4cee-be04-1fdf8c974857
 :END:
@@ -412,7 +404,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
   (s-matches-p ".+-mode\\'" (symbol-name symbol)))
 #+end_src
 
-*** modeify symbol
+** modeify symbol
 :PROPERTIES:
 :ID:       61fa29a7-9697-4171-8b6f-f4c0b487c02c
 :END:
@@ -427,7 +419,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
     (xl-symbol-intern symbol '-mode)))
 #+end_src
 
-*** map symbol
+** map symbol
 :PROPERTIES:
 :ID:       b7ab2b84-ebea-46fe-8494-89a2aed2f6e8
 :END:
@@ -439,7 +431,7 @@ If SYMBOL is already a hook symbol, return it unchanged."
        (s-suffix-p "-map" (symbol-name obj))))
 #+end_src
 
-** internal XL symbol
+* internal XL symbol :library:core:
 :PROPERTIES:
 :ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
 :END:
