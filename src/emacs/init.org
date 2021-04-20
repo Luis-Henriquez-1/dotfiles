@@ -2301,7 +2301,7 @@ not to have to specify the advice keyword.
 I have my own naming convention for hooks. I use it to make it obvious when a
 function is a hook.
 
-* hook regexp :library:core:
+* hook regexp :library:core:hook:
 :PROPERTIES:
 :ID:       5093d6ce-741d-4d11-8ac7-15c02aa45b3b
 :END:
@@ -2327,7 +2327,7 @@ function is a hook.
 		 (collect hook))))
 #+end_src
 
-* remove hook
+* remove hook :library:core:hook:
 :PROPERTIES:
 :ID:       e8ec61e0-a819-452c-8fb2-bf3023684b53
 :END:
@@ -2340,7 +2340,7 @@ HOOKS is a list of hook functions that follow the XL naming convention."
 	(remove-hook (xl-hook-orig-symbol hook) hook)))
 #+end_src
 
-* hook function
+* hook function :library:core:hook:
 :PROPERTIES:
 :ID:       d5ed128c-32a0-4387-a1e5-b4536ed86c95
 :END:
