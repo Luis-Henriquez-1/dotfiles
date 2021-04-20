@@ -2957,7 +2957,7 @@ circumstances. The one I'm referring to now is with general prefix bindings.
   (xl-log "emacs-init-time: %s" (emacs-init-time)))
 #+end_src
 
-* startup :setting:core:
+* startup :setting:core:startup:
 :PROPERTIES:
 :ID:       f9854e53-dd9d-4381-8e9c-8336736d4308
 :END:
@@ -2985,7 +2985,7 @@ being created.
   (initial-major-mode          . 'fundamental-mode))
 #+end_src
 
-* startup
+* startup :setting:startup:
 :PROPERTIES:
 :ID:       fff8691b-a0c8-4e99-aa9a-bf1288cd810a
 :END:
