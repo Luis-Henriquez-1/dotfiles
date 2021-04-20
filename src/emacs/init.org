@@ -2939,7 +2939,7 @@ source code.
 This headline contains headings for which I have not yet determined a good
 hierarchy.
 
-* log the init time :setting:core:
+* log the init time :core:hook:
 :PROPERTIES:
 :ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
 :END:
@@ -2957,7 +2957,7 @@ circumstances. The one I'm referring to now is with general prefix bindings.
   (xl-log "emacs-init-time: %s" (emacs-init-time)))
 #+end_src
 
-* startup
+* startup :setting:core:
 :PROPERTIES:
 :ID:       f9854e53-dd9d-4381-8e9c-8336736d4308
 :END:
