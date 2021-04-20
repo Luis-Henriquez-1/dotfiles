@@ -3092,7 +3092,7 @@ increasing the value of [[helpvar:gc-cons-threshold][gc-cons-threshold]], the nu
 between garbage collections, is known to make a notable difference in user
 startup time. By default it is only 800 KB.
 
-* gc cons threshold
+* gc cons threshold :performance:core:
 :PROPERTIES:
 :ID:       50e19a55-a04b-4ca0-8024-a88b23b5b41f
 :END:
@@ -3120,7 +3120,7 @@ This is the value of `gc-cons-threshold' that should be used in typical usages."
   "The value for `gc-cons-threshold'.")
 #+end_src
 
-* gcmh
+* gcmh :performance:core:
 :PROPERTIES:
 :ID:       86653a5a-f273-4ce4-b89b-f288d5d46d44
 :END:
@@ -3142,7 +3142,7 @@ are done before setting the =gc-cons-threshold= back to a normal value.
   (gcmh-low-cons-threshold  . XL-GC-CONS-THRESHOLD-MIN))
 #+end_src
 
-* minibuffer
+* minibuffer :performance:core:
 :PROPERTIES:
 :ID:       8c02fc83-5e7e-4115-9768-020abcf82541
 :END:
