@@ -3271,7 +3271,7 @@ inefficient, having to press =M-x= between any non built-in command. Its
 important to bind them and to do it in an organized way so you can always find
 the bindings you need when you need it.
 
-** bind!
+* bind!
 :PROPERTIES:
 :ID:       328d3e9f-8885-4c69-94b0-1f9984f33d61
 :END:
@@ -3283,7 +3283,7 @@ to provide a versatile, non-repetative, and extensible syntax that does what I
 mean. Overall I want to abstract the act of keybinding and to not concern myself
 with the automatable (not a word probably) details of binding keys.
 
-*** evil key to states
+** evil key to states
 :PROPERTIES:
 :ID:       672841ed-1c4b-4351-ac68-e7107cc0bea2
 :END:
@@ -3310,7 +3310,7 @@ If any letter in EVIL-KEYWORD does not correspond to an evil state, return nil."
 	 (collect state)))
 #+end_src
 
-*** deferring keymaps
+** deferring keymaps
 :PROPERTIES:
 :ID:       76200d2b-839d-4111-863a-08021e18c7e4
 :END:
@@ -3319,7 +3319,7 @@ As it stands =define-key= and friends raise an error if the keymap you specified
 has not been defined. We want the =bind!= macro to do what we mean: if a key's
 keymap is not defined, then bind the key when it is.
 
-**** deferred binding forms
+*** deferred binding forms
 :PROPERTIES:
 :ID:       e03e1a47-41d1-4dd8-9f1a-8151de76da2a
 :END:
@@ -3335,7 +3335,7 @@ KEYMAP is a keymap that has not yet been bound. BINDING-FORMS are the forms to
 be evaluated when KEYMAP is bound.")
 #+end_src
 
-**** updating deferred bindings
+*** updating deferred bindings
 :PROPERTIES:
 :ID:       fa345a49-e002-4efd-ba68-5f533d42aebb
 :END:
@@ -3355,7 +3355,7 @@ Return any keymaps whose keymaps still don't exist."
 	       (collect elt)))))
 #+end_src
 
-**** hook for deferred bindings
+*** hook for deferred bindings
 :PROPERTIES:
 :ID:       a95d82f1-9614-4ec5-a2e5-a2f29f514e2b
 :END:
@@ -3371,7 +3371,7 @@ new keymaps.
   (cl-callf xl-bind%update-deferred-bindings xl-bind%deferred-bindings))
 #+end_src
 
-**** with-deferred-keymap!
+*** with-deferred-keymap!
 :PROPERTIES:
 :ID:       ddb17e5c-74e8-445e-b659-cf94f4831a46
 :END:
@@ -3392,12 +3392,12 @@ If MAP is already loaded, evaluate forms immediately."
      `(cl-callf a-update xl-bind%deferred-bindings ',map #'append ',forms))))
 #+end_src
 
-*** reading clauses
+** reading clauses
 :PROPERTIES:
 :ID:       9038980a-be61-4ad5-a0b5-cd151b96d0d9
 :END:
 
-**** whether is a binding
+*** whether is a binding
 :PROPERTIES:
 :ID:       743e3fdb-fb0c-44ba-a5e9-7282b20cfdcc
 :END:
@@ -3410,7 +3410,7 @@ If MAP is already loaded, evaluate forms immediately."
     (_ nil)))
 #+end_src
 
-**** read a clause
+*** read a clause
 :PROPERTIES:
 :ID:       255730df-5715-4808-8a7d-6c37bd1333e5
 :END:
@@ -3428,7 +3428,7 @@ If MAP is already loaded, evaluate forms immediately."
 	 (finally-return (-map (-partial #'append common-args) bindings))))
 #+end_src
 
-*** normalization
+** normalization
 :PROPERTIES:
 :ID:       56abc5a3-bcf7-4943-a941-939e16d46dea
 :END:
@@ -3436,7 +3436,7 @@ If MAP is already loaded, evaluate forms immediately."
 The purpose of normalization is to make the clauses homogenous and into a form
 that is easily.
 
-**** fix the keybinding
+*** fix the keybinding
 :PROPERTIES:
 :ID:       0202c1a2-75a3-45ac-a226-8b6b906d96ac
 :END:
@@ -3450,7 +3450,7 @@ This means that the keybinding should always be last.
 	  (-interleave '(:key :def) (-take-last 2 clause))))
 #+end_src
 
-**** fix the evil state
+*** fix the evil state
 :PROPERTIES:
 :ID:       1a8f4cf8-1013-4e0c-8fd1-21b69c2e6b8b
 :END:
@@ -3465,7 +3465,7 @@ This means that the keybinding should always be last.
     (_ clause)))
 #+end_src
 
-**** flatten plist values
+*** flatten plist values
 :PROPERTIES:
 :ID:       6be10885-4bbe-47e2-bd47-0c14f51b9065
 :END:
@@ -3488,7 +3488,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return (cons new flattened))))
 #+end_src
 
-**** make clause into proper plist
+*** make clause into proper plist
 :PROPERTIES:
 :ID:       e836329e-c2b9-4978-a3d7-9ba32c160f04
 :END:
@@ -3510,7 +3510,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return plist)))
 #+end_src
 
-**** merge multiple plist values
+*** merge multiple plist values
 :PROPERTIES:
 :ID:       d50cb073-54c0-4b96-8df1-2ae195ac4651
 :END:
@@ -3530,7 +3530,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 		     (append (list key (xl-dwim-single (symbol-value var))))))))
 #+end_src
 
-**** normalize the list
+*** normalize the list
 :PROPERTIES:
 :ID:       377bcdf9-3798-4dff-83e5-13f3a59e112e
 :END:
@@ -3546,7 +3546,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	 (finally-return alist)))
 #+end_src
 
-**** ensure-keymap
+*** ensure-keymap
 :PROPERTIES:
 :ID:       1fb99451-7b0e-4bef-b980-7f4e038dd38d
 :END:
@@ -3558,7 +3558,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
     token))
 #+end_src
 
-**** apply-prefix
+*** apply-prefix
 :PROPERTIES:
 :ID:       5c1aa062-8660-453b-ba8e-04610bec043a
 :END:
@@ -3571,7 +3571,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
       token)))
 #+end_src
 
-**** convert lists
+*** convert lists
 :PROPERTIES:
 :ID:       74298919-c3f2-4e7e-8377-bd8a87def771
 :END:
@@ -3585,7 +3585,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 		(append (list key val))))))
 #+end_src
 
-*** converting tokens to forms
+** converting tokens to forms
 :PROPERTIES:
 :ID:       aade9ecc-ee16-407d-a451-03da731daeb2
 :END:
@@ -3594,7 +3594,7 @@ This section is about actually converting define key clauses that have already
 been parsed and processed into lisp forms that actually correspond to
 bindings. The design of this step follows a =use-package=.
 
-**** convert logic
+*** convert logic
 :PROPERTIES:
 :ID:       9c779428-a8b5-4e2c-b3d3-c369f7f161b0
 :END:
@@ -3613,7 +3613,7 @@ certain circumstances.
     bind))
 #+end_src
 
-**** decide on which converters to use
+*** decide on which converters to use
 :PROPERTIES:
 :ID:       09ad63c3-c438-47d2-9e4e-789bc0a4b488
 :END:
@@ -3633,7 +3633,7 @@ Code that is split into appropriate parts is easier to read and write.
 	 (finally-return fns)))
 #+end_src
 
-**** convert token to forms
+*** convert token to forms
 :PROPERTIES:
 :ID:       10116109-b7a6-4e6e-94b2-6b41d4fc9f1f
 :END:
@@ -3645,7 +3645,7 @@ Code that is split into appropriate parts is easier to read and write.
     (funcall (or converter #'ignore) token rest)))
 #+end_src
 
-**** binding-forms
+*** binding-forms
 :PROPERTIES:
 :ID:       31d4d497-afac-4ccf-a426-afa8f159e242
 :END:
@@ -3660,12 +3660,12 @@ Return a list of forms that binds keys specified by BIND-TOKENS."
 	 (append forms)))
 #+end_src
 
-**** converting to forms
+*** converting to forms
 :PROPERTIES:
 :ID:       7fd1a756-b8aa-41e4-8dae-7a0dfdd1e17b
 :END:
 
-***** which-key
+**** which-key
 :PROPERTIES:
 :ID:       076b2b4d-7c12-4ebd-8f84-1d649487ae72
 :END:
@@ -3683,7 +3683,7 @@ Return a list of forms that binds keys specified by BIND-TOKENS."
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-***** evil which-key
+**** evil which-key
 :PROPERTIES:
 :ID:       290cceaf-30b1-48d0-a688-b7db49728f01
 :END:
@@ -3708,7 +3708,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
 	 (finally-return `((after! which-key ,@forms) ,@rest))))
 #+end_src
 
-***** evil-bind
+**** evil-bind
 :PROPERTIES:
 :ID:       7d69d323-2eeb-4d90-88c8-cfde7f7768d3
 :END:
@@ -3727,7 +3727,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-***** bind
+**** bind
 :PROPERTIES:
 :ID:       be633966-63b6-40ef-a5fe-79444218caf2
 :END:
@@ -3743,7 +3743,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-***** defer binding
+**** defer binding
 :PROPERTIES:
 :ID:       f8892022-1921-44de-b157-7182bbcba31c
 :END:
@@ -3757,7 +3757,7 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
       ,@(xl-bind%convert-token-to-forms token converters))))
 #+end_src
 
-***** kbd
+**** kbd
 :PROPERTIES:
 :ID:       cdf12c08-799d-4cbc-be73-88ca77efc16f
 :END:
@@ -3776,7 +3776,7 @@ function to generate binding forms. Obviously, this is very customizable.
 	(xl-bind%convert-token-to-forms converters))))
 #+end_src
 
-**** localleader
+*** localleader
 :PROPERTIES:
 :ID:       e83756c1-2472-4b69-8a9e-4a9328af32a7
 :END:
@@ -3799,7 +3799,7 @@ implement this macro as a =:localleader= keyword, so I can use just one macro,
       ,@clause)))
 #+end_src
 
-*** bind!
+** bind!
 :PROPERTIES:
 :ID:       0ce28150-7971-466f-b9b7-3cf33c496393
 :END:
@@ -3824,7 +3824,7 @@ Finally, our main macro is here.
 	    (xl-bind%binding-forms))))
 #+end_src
 
-** leaders
+* leaders
 :PROPERTIES:
 :ID:       1e4dac95-9c16-41db-9f99-63a250b447c2
 :END:
@@ -3834,7 +3834,7 @@ keybinding tree. And once you know the leader, you can "discover" the other
 bindings as you need to. You can see the concept of the leader used in Emacs
 distributions such as [[https://github.com/syl20bnr/spacemacs][Spacemacs]] and [[https://github.com/hlissner/doom-emacs][Doom Emacs]].
 
-*** evil leaders
+** evil leaders
 :PROPERTIES:
 :ID:       47c4c3c5-3859-46a4-a4ef-3d27c552eec0
 :END:
@@ -3859,7 +3859,7 @@ want to shorten a key binding. Although obviously not as easy to remember as
   "A shorter alternative `xl-localleader-key'.")
 #+end_src
 
-*** emacs leaders
+** emacs leaders
 :PROPERTIES:
 :ID:       f3299c73-837e-46f9-a29e-9932c4570858
 :END:
@@ -3882,7 +3882,7 @@ state--or even vanilla Emacs. The choice behind the bindings is the same as
   "A short non-normal  `xl-localleader-key'.")
 #+end_src
 
-** prefix commands
+* prefix commands
 :PROPERTIES:
 :ID:       2cf36d16-eafc-46d8-8b19-e1eb02d39c0d
 :END:
@@ -3899,7 +3899,7 @@ conjunction with :states -- an effective doubling of Doom's startup time!
 (define-prefix-command 'xl/leader 'xl-leader-map)
 #+end_src
 
-** ensuring high keymap precedence
+* ensuring high keymap precedence
 :PROPERTIES:
 :ID:       e06bcfa0-63e9-429e-8ff7-4263cbd4f9b1
 :END:
@@ -3908,7 +3908,7 @@ In Emacs, there's a [[https://www.gnu.org/software/emacs/manual/html_node/elisp/
 keymap takes precedence. The steps I take in this headline are also in [[https://github.com/noctuid/evil-guide#preventing-certain-keys-from-being-overridden][noctuid's
 evil-guide]].
 
-*** minor mode
+** minor mode
 :PROPERTIES:
 :ID:       9863dc90-fc8c-422c-918f-3d75d52e8a14
 :END:
@@ -3932,7 +3932,7 @@ immediately. This is why I set the advice dept to =-100=.
 (xl-hook-add 'emacs-startup-hook #'xl-override-mode -100)
 #+end_src
 
-*** take precedence over Emacs bindings
+** take precedence over Emacs bindings
 :PROPERTIES:
 :ID:       9248fb7f-1901-4beb-8b3a-faded48cdddc
 :END:
@@ -3944,7 +3944,7 @@ there. The [[helpvar:emulation-mode-map-alists][emulation-mode-map-alists]] take
 (push '((xl-override-mode . xl-override-mode-map)) emulation-mode-map-alists)
 #+end_src
 
-*** make an overriding map
+** make an overriding map
 :PROPERTIES:
 :ID:       f52fbd32-58a0-4b60-a382-b29112f5d972
 :END:
@@ -3958,7 +3958,7 @@ that will override all other keymaps, aptly named =XL-OVERRIDE-MAP=.
 (define-key xl-override-mode-map (kbd XL-EMACS-LEADER-KEY) #'xl/leader)
 #+end_src
 
-*** registering override map with evil
+** registering override map with evil
 :PROPERTIES:
 :ID:       23b55b9c-ea38-485a-b986-ac62d60a6f75
 :END:
@@ -3976,7 +3976,7 @@ override an evil keymap).
 	(evil-make-intercept-map xl-override-mode-map state t)))
 #+end_src
 
-*** binding the leader keys to the prefix map
+** binding the leader keys to the prefix map
 :PROPERTIES:
 :ID:       d710cbf7-66c5-4934-a2d4-998fdb6f7731
 :END:
@@ -3993,7 +3993,7 @@ that have already been created by emacs (such as =*scratch*= and
  (:mnv XL-EVIL-LEADER-KEY 'xl/leader))
 #+end_src
 
-** which-key
+* which-key
 :PROPERTIES:
 :ID:       2ad092a3-ff63-49cd-91b9-380c91dbe9f5
 :END:
@@ -4005,7 +4005,7 @@ you'll remember the first few key strokes but struggle with the rest. To address
 this [[github:][which-key]] displays key binding sequences in the minibuffer as your typing
 them. By doing this you can "discover" the commands as you go along.
 
-*** init
+** init
 :PROPERTIES:
 :ID:       c4aedc23-0be3-46fe-b046-32b5f0738c6b
 :END:
@@ -4024,7 +4024,7 @@ them. By doing this you can "discover" the commands as you go along.
   (which-key-idle-delay           . 0.8))
 #+end_src
 
-*** set line spacing
+** set line spacing
 :PROPERTIES:
 :ID:       6abb35f4-c648-4bed-b59a-5a0636857fd8
 :END:
@@ -4034,7 +4034,7 @@ them. By doing this you can "discover" the commands as you go along.
   (setq line-spacing 3))
 #+end_src
 
-** execute extended command
+* execute extended command
 :PROPERTIES:
 :ID:       f17a6b64-f9df-4801-9728-235f6bbb9b4d
 :END:
@@ -4055,7 +4055,7 @@ super fast to press as well and even faster than =SPC SPC=.
   ("M-x" #'execute-extended-command))
 #+end_src
 
-** space bindings
+* space bindings
 :PROPERTIES:
 :ID:       ed4853ea-c9de-42c8-af93-9e697f2ea014
 :END:
@@ -4063,7 +4063,7 @@ super fast to press as well and even faster than =SPC SPC=.
 This headline contains generic leader bindings that are in my case triggered by
 =SPC=.
 
-*** generic app
+* generic app
 :PROPERTIES:
 :ID:       68945ce0-82fb-4844-b53b-422c328558af
 :END:
@@ -4086,7 +4086,7 @@ This headline contains generic leader bindings that are in my case triggered by
   ("r" #'ranger))
 #+end_src
 
-*** help
+* help
 :PROPERTIES:
 :ID:       f28081e3-451c-4005-80cc-bffeafe0051c
 :END:
@@ -4105,7 +4105,7 @@ This headline contains generic leader bindings that are in my case triggered by
   ("w" #'woman))
 #+end_src
 
-*** toggling
+* toggling
 :PROPERTIES:
 :ID:       b962fa01-d63f-47a9-bf69-b2f82c8b1e61
 :END:
@@ -4124,7 +4124,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("f" #'xl/set-font-size))
 #+end_src
 
-*** buffer
+* buffer
 :PROPERTIES:
 :ID:       5fd53168-3eee-4ed4-8213-28efba5d0200
 :END:
@@ -4143,7 +4143,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("b" #'consult-buffer))
 #+end_src
 
-*** file
+* file
 :PROPERTIES:
 :ID:       3857a17c-1a14-4163-a23b-8811a2dad111
 :END:
@@ -4158,7 +4158,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("r" #'xl/switch-to-readme))
 #+end_src
 
-*** code
+* code
 :PROPERTIES:
 :ID:       d6229bf2-9d8d-4f97-bb95-b07ef409e33f
 :END:
@@ -4171,12 +4171,12 @@ I have kind of a loose definition of "toggle" in this headline.
   ("c" #'lispyville-comment-or-uncomment))
 #+end_src
 
-*** window management
+* window management
 :PROPERTIES:
 :ID:       a8b3223b-d5ba-4230-9fa8-a9601d60b5ad
 :END:
 
-**** window movement
+** window movement
 :PROPERTIES:
 :ID:       f0152373-3b3f-4cf1-abaf-d025c93c64d3
 :END:
@@ -4197,7 +4197,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("t" #'transpose-frame))
 #+end_src
 
-**** window resizing
+** window resizing
 :PROPERTIES:
 :ID:       373e3cf8-68ea-4791-ae71-e0c73b2f218a
 :END:
@@ -4212,7 +4212,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("z" #'zoom-window-zoom))
 #+end_src
 
-*** workspaces
+* workspaces
 :PROPERTIES:
 :ID:       ba627c58-6008-42a2-abc2-7136f77d44d5
 :END:
@@ -4233,7 +4233,7 @@ I have kind of a loose definition of "toggle" in this headline.
    ("c" #'wg-save-wconfig)))
 #+end_src
 
-*** eval
+* eval
 :PROPERTIES:
 :ID:       3947b258-fc46-4fc9-8350-3fd25a69d749
 :END:
@@ -4253,7 +4253,7 @@ I have kind of a loose definition of "toggle" in this headline.
  ("p" #'eval-print-last-sexp))
 #+end_src
 
-*** search
+* search
 
 #+begin_src emacs-lisp
 (bind!
@@ -4270,7 +4270,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("o" #'consult-outline))
 #+end_src
 
-*** version control
+* version control
 :PROPERTIES:
 :ID:       31234afc-a11d-42a8-88af-e0647d44c1b1
 :END:
@@ -4288,7 +4288,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("s" #'magit-status))
 #+end_src
 
-*** packages
+* packages
 :PROPERTIES:
 :ID:       0ec9aee0-8f9a-4700-8928-abff758357e1
 :END:
@@ -4304,7 +4304,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("d" #'visit-package-directory))
 #+end_src
 
-*** quit
+* quit
 :PROPERTIES:
 :ID:       ae435361-79e7-41c8-b490-8ec0f8d23a59
 :END:
