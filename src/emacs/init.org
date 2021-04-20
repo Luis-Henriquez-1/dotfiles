@@ -2982,13 +2982,20 @@ being created.
   (inhibit-spash-screen        . t)
   (initial-scratch-message     . nil)
   (initial-buffer-choice       . #'startup%initial-buffer-choice)
-  (initial-major-mode          . 'fundamental-mode)
-  :init
-  (defun startup%initial-buffer-choice ()
-    "Return the initial buffer to be displayed.
+  (initial-major-mode          . 'fundamental-mode))
+#+end_src
+
+* startup
+:PROPERTIES:
+:ID:       fff8691b-a0c8-4e99-aa9a-bf1288cd810a
+:END:
+
+#+begin_src emacs-lisp
+(defun startup%initial-buffer-choice ()
+  "Return the initial buffer to be displayed.
 This function is meant to be used as the value of `initial-buffer-choice'."
-    (alet (if xl-debug-p "*xl-log*" "*scratch*")
-      (get-buffer-create it))))
+  (alet (if xl-debug-p "*xl-log*" "*scratch*")
+    (get-buffer-create it)))
 #+end_src
 
 * cus-edit :setting:core:
