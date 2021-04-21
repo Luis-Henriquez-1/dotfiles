@@ -3166,7 +3166,7 @@ hook variables use action verbs in their names not nouns. So the =exit= in
 :ID:       c35c131a-bcc5-49f9-bc24-a5f91cde785d
 :END:
 
-** don't prompt me when loading theme
+* don't prompt me when loading theme
 :PROPERTIES:
 :ID:       eaa6531c-1188-41c7-a645-a82d9f482449
 :END:
@@ -3185,7 +3185,7 @@ screen need to be redisplayed.
   (custom-safe-themes . t))
 #+end_src
 
-** loading theme
+* loading theme
 :PROPERTIES:
 :ID:       b4773208-5e96-46d2-90d0-1731f6581f1b
 :END:
@@ -3202,7 +3202,7 @@ example, if I'm using evil I need to update the cursor color.
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
-** disable old themes first
+* disable old themes first
 :PROPERTIES:
 :ID:       c2110d52-ce27-4f3a-b856-1e31200f597c
 :END:
