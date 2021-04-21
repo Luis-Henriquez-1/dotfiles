@@ -5565,7 +5565,7 @@ start with =char-mode= because they both have keys that are important for their
 use (like =M-x=) which conflict with Emacs (the instance that's managing the
 windows).
 
-** list of applications
+* list of applications
 :PROPERTIES:
 :ID:       d1bf0601-a995-48f7-ab80-86755ba9269a
 :END:
@@ -5575,7 +5575,7 @@ windows).
   "List of applications to exwm should start in char-mode.")
 #+end_src
 
-** to start in char mode
+* to start in char mode
 :PROPERTIES:
 :ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
 :END:
@@ -7421,7 +7421,7 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
   (zoom-frame/buffer          . 'buffer))
 #+end_src
 
-** hide-mode-line
+** hide-mode-line :modeline:
 :PROPERTIES:
 :ID:       e8f53422-9d24-4119-9b0f-9b6d1e10c1b0
 :END:
