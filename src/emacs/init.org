@@ -4168,7 +4168,7 @@ I have kind of a loose definition of "toggle" in this headline.
 :ID:       a8b3223b-d5ba-4230-9fa8-a9601d60b5ad
 :END:
 
-** window movement
+* window movement
 :PROPERTIES:
 :ID:       f0152373-3b3f-4cf1-abaf-d025c93c64d3
 :END:
@@ -4189,7 +4189,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("t" #'transpose-frame))
 #+end_src
 
-** window resizing
+* window resizing
 :PROPERTIES:
 :ID:       373e3cf8-68ea-4791-ae71-e0c73b2f218a
 :END:
