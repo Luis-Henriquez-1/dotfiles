@@ -5393,7 +5393,7 @@ If it's not possible, abort initialization gracefully."
       (xl-log "Another window manager is present (or something went wrong)."))))
 #+end_src
 
-* exwm-evil-firefox
+* exwm-evil-firefox :exwm:
 :PROPERTIES:
 :ID:       e5463b7a-9727-43b1-aa20-831a3617308f
 :END:
@@ -5409,7 +5409,7 @@ an. One caveat is that mouse clicks only work in insert mode.
   :before-call browse-url-firefox)
 #+end_src
 
-* exwm-float
+* exwm-float :exwm:
 :PROPERTIES:
 :ID:       aa59c567-56b6-4ef7-b63c-cb8172e38965
 :END:
@@ -5427,7 +5427,7 @@ need to figure out the proper way to lazy load it.
   (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode))
 #+end_src
 
-* org capture from an exwm buffer
+* org capture from an exwm buffer :exwm:
 :PROPERTIES:
 :ID:       5428bdc1-c075-4387-b3ab-080d372c478f
 :END:
