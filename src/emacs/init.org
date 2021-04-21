@@ -4257,7 +4257,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("o" #'consult-outline))
 #+end_src
 
-* version control
+* version control :keybind:
 :PROPERTIES:
 :ID:       31234afc-a11d-42a8-88af-e0647d44c1b1
 :END:
