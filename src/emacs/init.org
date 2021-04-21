@@ -4220,7 +4220,7 @@ I have kind of a loose definition of "toggle" in this headline.
    ("c" #'wg-save-wconfig)))
 #+end_src
 
-* eval
+* eval :keybind:
 :PROPERTIES:
 :ID:       3947b258-fc46-4fc9-8350-3fd25a69d749
 :END:
@@ -4240,7 +4240,7 @@ I have kind of a loose definition of "toggle" in this headline.
  ("p" #'eval-print-last-sexp))
 #+end_src
 
-* search
+* search :keybind:
 
 #+begin_src emacs-lisp
 (bind!
