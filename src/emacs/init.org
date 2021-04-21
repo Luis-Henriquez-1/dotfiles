@@ -4073,7 +4073,7 @@ super fast to press as well and even faster than =SPC SPC=.
   ("r" #'ranger))
 #+end_src
 
-* help
+* help :keybind:help:
 :PROPERTIES:
 :ID:       f28081e3-451c-4005-80cc-bffeafe0051c
 :END:
@@ -4092,7 +4092,7 @@ super fast to press as well and even faster than =SPC SPC=.
   ("w" #'woman))
 #+end_src
 
-* toggling
+* toggling :keybind:
 :PROPERTIES:
 :ID:       b962fa01-d63f-47a9-bf69-b2f82c8b1e61
 :END:
@@ -4275,7 +4275,7 @@ I have kind of a loose definition of "toggle" in this headline.
   ("s" #'magit-status))
 #+end_src
 
-* packages
+* packages :pacman:keybind:
 :PROPERTIES:
 :ID:       0ec9aee0-8f9a-4700-8928-abff758357e1
 :END:
@@ -4286,12 +4286,12 @@ I have kind of a loose definition of "toggle" in this headline.
   (:map xl-leader-map)
   ("i" #'straight-use-package)
   ("u" #'straight-pull-package)
-  ("r" #'xl-binding:recompile-package)
+  ("r" #'straight-rebuild-package)
   ("h" #'straight-visit-package-website)
   ("d" #'visit-package-directory))
 #+end_src
 
-* quit
+* quit :keybind:
 :PROPERTIES:
 :ID:       ae435361-79e7-41c8-b490-8ec0f8d23a59
 :END:
