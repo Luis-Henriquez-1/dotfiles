@@ -2798,7 +2798,7 @@ https://stackoverflow.com/questions/8246483/emacs-how-to-disable-files-creation
 (set! create-lockfiles nil)
 #+end_src
 
-* delete duplicates in history
+* delete duplicates in history :core:setting:
 :PROPERTIES:
 :ID:       1c381491-c4fa-4b5e-99de-ec6bd33df77c
 :END:
