@@ -3161,7 +3161,7 @@ hook variables use action verbs in their names not nouns. So the =exit= in
   (setq gc-cons-threshold XL-GC-CONS-THRESHOLD))
 #+end_src
 
-* don't prompt me when loading theme :theme:asthetic:
+* don't prompt me when loading theme :theme:asthetic:setting:
 :PROPERTIES:
 :ID:       eaa6531c-1188-41c7-a645-a82d9f482449
 :END:
