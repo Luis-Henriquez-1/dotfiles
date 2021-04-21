@@ -2998,7 +2998,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
   (custom-theme-directory . (concat XL-LOCAL-DIR "themes/")))
 #+end_src
 
-* server
+* server :core:
 :PROPERTIES:
 :ID:       3a1120f5-2809-42d6-938c-3916483033e0
 :END:
