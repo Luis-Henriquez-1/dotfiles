@@ -1,7 +1,6 @@
 #+title: completion
 #+author: Luis Henriquez-Perez
 #+tags: emacs config completion
-#+property: header-args :tangle ~/.config/emacs/lisp/
 
 * embark
 :PROPERTIES:

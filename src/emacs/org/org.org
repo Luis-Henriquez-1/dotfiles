@@ -20,7 +20,7 @@ This keyword means I need to add documentation to a headline.
 :END:
 
 #+begin_src emacs-lisp
-(defafter! add-bug-keyword ()
+(defafter! add-bug-keyword (org)
   (cl-callf2 cl-adjoin '(sequence "BUG" "|") org-todo-keywords))
 #+end_src
 
@@ -700,10 +700,14 @@ template element as you're writing it.
   (callf2 cl-adjoin XL-CAPTURE-FILE org-agenda-files :test #'string=))
 #+end_src
 
-** replacement for =org-capture=
+** completing-read org-capture :bind:
 :PROPERTIES:
-:ID:       4dd55ff4-7e6e-41f5-82f8-0db597959a17
+:ID:       ad2cc056-edda-490a-8cf9-10b370a21dc0
 :END:
+
+Org provides it's own default interface for capturing. To be consistent with how
+we complete everything else--via [[helpfn:][completing-read]], I create a function which
+let's me choose the template via completing-read.
 
 #+begin_src emacs-lisp
 (defun org-capture/choose-template ()
@@ -717,15 +721,6 @@ template element as you're writing it.
 
 (bind! ([remap org-capture] #'org-capture/choose-template))
 #+end_src
-
-** completing-read org-capture
-:PROPERTIES:
-:ID:       ad2cc056-edda-490a-8cf9-10b370a21dc0
-:END:
-
-Org provides it's own default interface for capturing. To be consistent with how
-we complete everything else--via [[helpfn:][completing-read]], I create a function which
-let's me choose the template via completing-read.
 
 ** capture templates
 :PROPERTIES:
@@ -1039,7 +1034,7 @@ be exact. Therefore, I define a function I can use instead.
 :ID:       9999ac00-f663-43ff-a708-3d7c90d3dc21
 :END:
 
-** org-refile
+** DOC org-refile
 :PROPERTIES:
 :ID:       6dfc0415-2945-4259-a782-b569fcb397ea
 :END:
