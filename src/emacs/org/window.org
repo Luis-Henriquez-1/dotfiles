@@ -1,0 +1,637 @@
+#+title: window.org
+#+author: Luis Henriquez-Perez
+
+* zoom-window
+:PROPERTIES:
+:ID:       d506fde5-d1bc-4807-a1d0-a8ed5c33def2
+:END:
+
+This package provides a command that temporarily makes a window occupy full
+screen. And then reverts the window configuration to what it was again
+afterwards.
+
+#+begin_src emacs-lisp
+(use-package zoom-window
+  :commands zoom-window)
+#+end_src
+
+* window
+:PROPERTIES:
+:ID:       af27cd7e-2096-4f6d-a749-63e4c38d136c
+:END:
+
+#+begin_src emacs-lisp
+(use-package window
+  :set
+  (split-width-threshold . 160))
+#+end_src
+
+* commands
+:PROPERTIES:
+:ID:       5fd85e31-872c-4030-b9a8-c86d7bc2f440
+:END:
+
+** window movement
+:PROPERTIES:
+:ID:       f0152373-3b3f-4cf1-abaf-d025c93c64d3
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:prefix "w" :wk "window")
+  (:map xl-leader-map)
+  ("h" #'windmove-left)
+  ("j" #'windmove-down)
+  ("k" #'windmove-up)
+  ("l" #'windmove-right)
+  ("o" #'ace-window)
+  ("d" #'delete-window)
+  ("D" #'delete-other-windows)
+  ("v" #'split-window-horizontally)
+  ("s" #'split-window-vertically)
+  ("t" #'transpose-frame))
+#+end_src
+
+** split-below-and-focus
+:PROPERTIES:
+:ID: d6a4a81f-007d-4b7e-97a3-e0bba3ff97a4
+:END:
+
+#+begin_src emacs-lisp
+(defun xl/window-split-below-and-focus ()
+  "Split window below and select the window created with the split."
+  (interactive)
+  (select-window (split-window-below)))
+#+end_src
+
+** split-right-and-focus
+:PROPERTIES:
+:ID: 6cb60d94-723b-48e5-850a-3483e78f6647
+:END:
+
+#+begin_src emacs-lisp
+(defun xl/window-split-right-and-focus ()
+  "Split window right and select the window created with the split."
+  (interactive)
+  (select-window (split-window-right)))
+#+end_src
+
+** window resizing :keybind:window:
+:PROPERTIES:
+:ID:       373e3cf8-68ea-4791-ae71-e0c73b2f218a
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:prefix "w")
+  (:map xl-leader-map)
+  ("M" #'maximize-window)
+  ("m" #'minimize-window)
+  ("b" #'window-balance)
+  ("z" #'zoom-window-zoom))
+#+end_src
+
+* workspaces :workspace:
+:PROPERTIES:
+:ID:       f6e649d6-70f3-4103-9f12-dd9c91dd5ebe
+:END:
+
+** desktop
+:PROPERTIES:
+:ID:       902a11fc-b9aa-4875-ba92-8d2561a12a50
+:END:
+
+=desktop= is a built-in emacs package for saving window configuration setup.
+
+*** some settings
+:PROPERTIES:
+:ID:       e4c30275-db62-4e6d-890c-6199b0594fd8
+:END:
+
+#+begin_src emacs-lisp
+(use-package desktop
+  :set
+  (desktop-save                 . t)
+  (desktop-dirname              . XL-CACHE-DIR)
+  (desktop-auto-save-timeout    . auto-save-timeout)
+  (desktop-base-file-name       . "emacs.desktop")
+  (desktop-base-lock-name       . "emacs.desktop.lock")
+  (desktop-path                 . (list XL-CACHE-DIR))
+  (desktop-missing-file-warning . nil))
+#+end_src
+
+*** allowing desktops to go in one directory
+:PROPERTIES:
+:ID:       22b0be3a-ef36-47d4-8684-602f3a8c8462
+:END:
+
+These functions are all based on the =desktop+= functions. The main thing it
+does is provide a directory where desktop files can be placed. This should
+really have been done by =desktop.el= but oh well.
+
+**** base directory
+:PROPERTIES:
+:ID:       e1ce2616-2280-435d-85c4-8d71c30c6a75
+:END:
+
+#+begin_src emacs-lisp
+(defvar desktop:base-dir (concat XL-CACHE-DIR "desktops/")
+  "Directory where desktops should go.")
+#+end_src
+
+**** generate the base directory
+:PROPERTIES:
+:ID:       fa173f38-2888-465a-8de4-282233322363
+:END:
+
+#+begin_src emacs-lisp
+(defun desktop:dirname (name)
+  "Return the path where desktop named NAME should go."
+  (require 'f)
+  (f-join desktop:base-dir name))
+#+end_src
+
+**** ensure the base directory
+:PROPERTIES:
+:ID:       3662ceaa-aed9-4dbc-bea9-7e1878237c87
+:END:
+
+#+begin_src emacs-lisp
+(defhook! ensure-desktop-directory (desktop-mode-hook)
+  "Make `desktop:base-dir' if it does not exist."
+  (mkdir desktop:base-dir t))
+#+end_src
+
+**** desktop names
+:PROPERTIES:
+:ID:       5286a22f-dc93-4e32-8a35-3bfbdfda8668
+:END:
+
+#+begin_src emacs-lisp
+(defun desktop:list ()
+  "Return a list of the names of all desktops."
+  (-difference (directory-files desktop:base-dir)
+	       (list ".." ".")))
+#+end_src
+
+**** create a desktop
+:PROPERTIES:
+:ID:       331367bb-a1eb-414f-89ef-386ba6fc1e60
+:END:
+
+#+begin_src emacs-lisp
+(defun desktop:create-desktop (name)
+  "Create a new desktop named NAME."
+  (let ((desktop-dirname (desktop:dirname name)))
+    (desktop-kill)
+    (make-directory desktop-dirname 'parents)
+    (desktop-save desktop-dirname)))
+#+end_src
+
+**** load an existing desktop
+:PROPERTIES:
+:ID:       691dd9bf-b207-4885-9f7c-b8791d972dc1
+:END:
+
+#+begin_src emacs-lisp
+(defun desktop:load-desktop (name)
+  (desktop-change-dir (desktop:dirname name)))
+#+end_src
+
+*** create desktop in new tab
+:PROPERTIES:
+:ID:       4bbb0f3a-bc51-4552-b91f-8404ab19cdd8
+:END:
+
+This is an integration with desktop and tab mode.
+
+#+begin_src emacs-lisp
+(defun desktop/create-desktop-in-new-tab (name)
+  "Create desktop named NAME in new tab.
+The tab's new name is the same as the desktop name."
+  (interactive
+   (list (completing-read "Create desktop:" (desktop:list))))
+  (tab-bar-new-tab)
+  (tab-bar-rename-tab name)
+  (desktop:create-desktop name))
+#+end_src
+
+*** load desktop in a new tab
+:PROPERTIES:
+:ID:       391c0817-bb2f-4334-b320-f039ab23cfb7
+:END:
+
+#+begin_src emacs-lisp
+(defun desktop/load-desktop-in-new-tab (name)
+  "Create desktop named NAME in new tab.
+The tab's new name is the same as the desktop name."
+  (interactive
+   (list (completing-read "Load desktop: " (desktop:list))))
+  (tab-bar-new-tab)
+  (tab-bar-rename-tab name)
+  (desktop:load-desktop name))
+#+end_src
+
+*** desktop restore functions
+:PROPERTIES:
+:ID:       0f82a1dc-d28e-4875-a622-e6116c0d3843
+:END:
+
+**** helpful-buffers
+:PROPERTIES:
+:ID:       f7d3a8ce-7115-47d6-b0ac-2d078741a49a
+:END:
+
+#+begin_src emacs-lisp
+(defun desktop:restore-helpful-buffer ()
+  "Restore helpful buffer.")
+#+end_src
+
+** workgroups2
+:PROPERTIES:
+:ID:       b5452102-a8fb-409f-8c36-35d404b5a5a6
+:END:
+
+There is a need to save buffers and window configurations in their own groups.
+Often we'll have a group of buffers we've setup to work on a project or task and
+suddenly, in the middle of that task we'll want to work on another task. It's
+inconvenient to get rid of the window configuration we've set up just to have to
+come back to it and set it up again. This is what workspaces, also called
+workgroups, are for. You can save the window configuration you're using and
+switch to a new one.
+
+Workgroup provides a. One notable advantage of workgroups is that it does not
+use emacs's built-in serialization of window configs. Usually, it is better to
+use something that's built-in. However, emacs's serialization has the drawback
+that it's not a lisp object; implying that it is not.
+
+*** workspaces :workgroup:keybind:
+:PROPERTIES:
+:ID:       ba627c58-6008-42a2-abc2-7136f77d44d5
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map xl-leader-map)
+  (:prefix "r" :wk "workspace")
+  ("c" #'wg-create-workgroup)
+  ("b" #'wg-switch-to-workgroup)
+  ("a" #'wg-associate-visible-buffers-with-workgroup)
+  ("b" #'wg-dissociate-buffer-from-workgroup)
+  ((:prefix "o" :wk "reload")
+   ("w" #'wg-open-workgroup)
+   ("s" #'wg-open-session))
+  ((:prefix "s" :wk "save")
+   ("s" #'wg-save-session)
+   ("c" #'wg-save-wconfig)))
+#+end_src
+
+*** workgroups2
+:PROPERTIES:
+:ID:       890c8e5b-524d-44b6-b90e-c830436b9da8
+:END:
+
+#+begin_src emacs-lisp
+(use-package workgroups2
+  :commands wg-switch-workgroup
+  :ignore wg-change-modeline
+  :silence wg-create-workgroup wg-switch-workgroup
+  :set
+  (wg-emacs-exit-save-behavior           . 'save)
+  (wg-workgroups-mode-exit-save-behavior . 'save)
+  (wg-flag-modified                      . nil)
+  (wg-mode-line-display-on               . nil)
+  (wg-load-last-workgroup                . nil)
+  (wg-open-this-wg                       . nil)
+  (wg-control-frames                     . nil)
+  (wg-session-load-on-start              . nil)
+  (wg-flag-modified                      . nil)
+  (wg-session-file                       . (concat XL-CACHE-DIR "wg-session")))
+#+end_src
+
+** tab-bar-mode
+:PROPERTIES:
+:ID:       0a72fe9a-1948-4022-a300-18a4881da382
+:END:
+
+*** settings
+:PROPERTIES:
+:ID:       bb63f5b2-cc45-454b-a032-be248f801636
+:END:
+
+#+begin_src emacs-lisp
+(use-package tab-bar-mode
+  :hook (tab-bar-mode-hook . tab-bar-history-mode)
+  :set
+  (tab-bar-new-tab-choice . "*scratch*")
+  (tab-bar-history-limit  . 25)
+  (tab-bar-tab-hints      . nil)
+  (tab-bar-show           . nil))
+#+end_src
+
+*** dont actually display the tabs
+:PROPERTIES:
+:ID:       e4cee146-f6ac-47f1-9e98-f209ae9f9bec
+:END:
+
+I want the tabs to exist as a concept, but (ironically) I don't actually want
+them displayed.
+
+#+begin_src emacs-lisp
+(defadvice! inhibit-tab-display (:after tab-bar-mode make-frame)
+  "Inhibit the display of tags in tab-bar-mode."
+  (iter (for frame (frame-list))
+	(set-frame-parameter frame 'tab-bar-lines 0)))
+#+end_src
+
+* exwm :exwm:
+:PROPERTIES:
+:ID:       ff30cdb0-5c9a-454d-9a6c-dbc8e3fa7cfe
+:END:
+
+[[https://github.com/ch11ng/exwm][EXWM]] (Emacs X-Window Manager) is a full-featured window manager in Emacs.  There
+are benefits and drawbacks to making emacs your window manager. One benefit is
+that you get a super consistent window management experience. One drawback is
+that if Emacs hangs or crashes you need to restart your computer.
+
+** exwm :exwm:window:
+:PROPERTIES:
+:ID:       7b83cab0-d599-46c4-b20c-19ff33345ae3
+:END:
+
+#+begin_src emacs-lisp
+(use-package exwm
+  :os linux
+  :before-call browse-url)
+#+end_src
+
+** trigger exwm on =browse-url= :advice:
+:PROPERTIES:
+:ID:       581b8529-00a0-4935-9363-60dba9dbe5f4
+:END:
+
+=exwm= provides an option [[helpvar:exwm-replace][exwm-replace]] to deal with the case of an existing
+window manager when exwm is initializing itself. There are three
+ways. You could replace it with exwm without asking, ask whether to
+replace it, or abort the initialization of exwm.
+
+#+begin_src emacs-lisp
+(defadvice! init-exwm-maybe (:before browse-url)
+  "Try to initialize exwm.
+If it's not possible, abort initialization gracefully."
+  (require 'exwm)
+  ;; Try to enable exwm.
+  (let ((exwm-replace nil))
+    (if (ignore-errors (exwm-init))
+	;; Enable the clipboard.
+	(progn (require 'exwm-systemtray)
+	       (exwm-systemtray-enable))
+      (xl-log "Another window manager is present (or something went wrong)."))))
+#+end_src
+
+** exwm-evil-firefox :exwm:
+:PROPERTIES:
+:ID:       e5463b7a-9727-43b1-aa20-831a3617308f
+:END:
+
+This package lets you use exwm to control firefox and give it evil bindings. You
+can tell exwm to send "fake" keys to firefox corresponding to the key you've
+pressed. The only thing I find missing here is a way to quickly select links in
+an. One caveat is that mouse clicks only work in insert mode.
+
+#+begin_src emacs-lisp
+(use-package exwm-firefox-evil
+  :hook (exwm-manage-finished-hook . exwm-firefox-evil-activate-if-firefox)
+  :before-call browse-url-firefox)
+#+end_src
+
+** exwm-float :exwm:
+:PROPERTIES:
+:ID:       aa59c567-56b6-4ef7-b63c-cb8172e38965
+:END:
+
+This package provides a minor mode for configuring floating windows. I still
+need to figure out the proper way to lazy load it.
+
+#+begin_src emacs-lisp
+(use-package exwm-float
+  :set
+  (exwm-float-modify-amount . '(:move-slow 20 :move-fast 100 :resize 50))
+  (exwm-float-border        . '(:stationary ("navy" . 1) :moving ("maroon" . 2)))
+  :config
+  (exwm-float-setup)
+  (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode))
+#+end_src
+
+** TODO org capture from an exwm buffer :exwm:org:capture:
+:PROPERTIES:
+:ID:       5428bdc1-c075-4387-b3ab-080d372c478f
+:END:
+
+A common dream among many Org users is to integrate [[info:org#Capture][org-capture]] into their browser.
+Indeed, the browser by nature would be a place you'd want to capture from a lot.
+However, since graphical browsers are not in emacs the main way to do this was
+via a hacky and difficult to set up [[https://orgmode.org/worg/org-contrib/org-protocol.html][org-protocol]].
+
+https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcapture_and_exwm/
+
+*** exwm title
+:PROPERTIES:
+:ID:       ce78d409-e635-4d94-b20e-38c2034ab5e8
+:END:
+
+#+begin_src emacs-lisp
+(defun exwm::title-info (title)
+  "Return the webpage and the program."
+  (-let [(_ webpage program) (s-match "\\([^z-a]+\\) - \\([^z-a]+\\)\\'" title)]
+    (list webpage program)))
+#+end_src
+
+*** download webpage
+:PROPERTIES:
+:ID:       3798402c-cd8b-43e2-aec5-f54736aafdd4
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-download-webpage (url)
+  "Download webpage at url to webpage folder."
+  (call-process "weasyprint" nil nil nil url))
+#+end_src
+
+*** replacement for fake id
+:PROPERTIES:
+:ID:       4f0436c4-bc37-49b0-a8a3-894e212d4d13
+:END:
+
+#+begin_src emacs-lisp
+(defun exwm-input::fake-key-to-id (event id)
+  "Fake a key event equivalent to Emacs event EVENT and send it
+ to program with x window ID."
+  (let* ((keysym (xcb:keysyms:event->keysym exwm--connection event))
+         keycode)
+    (when (= 0 (car keysym))
+      (user-error "[EXWM] Invalid key: %s" (single-key-description event)))
+    (setq keycode (xcb:keysyms:keysym->keycode exwm--connection
+					       (car keysym)))
+    (when (/= 0 keycode)
+      (dolist (class '(xcb:KeyPress xcb:KeyRelease))
+        (xcb:+request exwm--connection
+	    (make-instance
+	     'xcb:SendEvent
+	     :propagate 0 :destination id
+	     :event-mask xcb:EventMask:NoEvent
+	     :event
+	     (xcb:marshal
+	      (make-instance
+	       class
+	       :detail keycode :time xcb:Time:CurrentTime
+	       :root exwm--root :event id :child 0 :root-x 0 :root-y 0
+	       :event-x 0 :event-y 0 :state (cdr keysym) :same-screen 0)
+	      exwm--connection)))))
+    (xcb:flush exwm--connection)))
+#+end_src
+
+*** url from firefox
+:PROPERTIES:
+:ID:       f407cc8c-0bb9-47fe-adeb-4e9d27b5c5b7
+:END:
+
+Emacs simulates a keypress to firefox--specifically the keypresses to select the
+current url and to add it to the kill ring.
+
+#+begin_src emacs-lisp
+(defun exwm::firefox-url ()
+  "Save the current firefox url to kill ring."
+  ;; We get the xwindow id of the buffer named Firefox
+  (let ((fid (exwm--buffer->id (current-buffer))))
+    ;; Send c-l to select url
+    (exwm-input::fake-key-to-id 'C-l fid)
+    ;; We sleep to avoid race conditions.
+    (sleep-for 0 300)
+    ;; Copy url to kill ring (note: this is not affected by simulation keys)
+    (exwm-input::fake-key-to-id 'C-c fid)
+    (sleep-for 0 300)
+    ;; try to set the state back
+    (exwm-input::fake-key-to-id 'escape fid)
+    (current-kill 0)))
+#+end_src
+
+*** url from qutebrowser
+:PROPERTIES:
+:ID:       822cbb61-60b4-445e-9756-4bf797500375
+:END:
+
+#+begin_src emacs-lisp
+(defun exwm::qutebrowser-url ()
+  (interactive)
+  (let ((fid (exwm--buffer->id (current-buffer))))
+    (sleep-for 0 300)
+    ;; if in insert state exit it.
+    (exwm-input::fake-key-to-id 'escape fid)
+    (sleep-for 0 300)
+    (exwm-input::fake-key-to-id 'y fid)
+    (sleep-for 0 300)
+    (exwm-input::fake-key-to-id 'y fid)
+    (sleep-for 0 300)
+    (aprog1 (current-kill 0)
+      (xl-log "Copied %S to the kill ring." it))))
+#+end_src
+
+** appropriate name for exwm buffers
+:PROPERTIES:
+:ID: b9712cdc-2cf9-482f-8f62-b2e4f56b9c97
+:END:
+
+By default each exwm buffer is named =*EXWM*=. We want them to have
+a more descriptive name.
+
+#+begin_src emacs-lisp
+(defhook! rename-buffer-to-title (exwm-update-title-hook)
+  "Rename buffer to title."
+  (exwm-workspace-rename-buffer exwm-title))
+#+end_src
+
+** char mode
+:PROPERTIES:
+:ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
+:END:
+
+=EXWM= has two modes, =line-mode= and =char-mode=. It's best for Emacs and Next to
+start with =char-mode= because they both have keys that are important for their
+use (like =M-x=) which conflict with Emacs (the instance that's managing the
+windows).
+
+** list of applications
+:PROPERTIES:
+:ID:       d1bf0601-a995-48f7-ab80-86755ba9269a
+:END:
+
+#+begin_src emacs-lisp
+(defvar exwm:char-mode-apps (list "emacs" "next" "nyxt" "qutebrowser")
+  "List of applications to exwm should start in char-mode.")
+#+end_src
+
+** to start in char mode
+:PROPERTIES:
+:ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
+:END:
+
+#+begin_src emacs-lisp
+(defhook! start-in-char-mode (exwm-manage-finish-hook)
+  "Start a program in char-mode if it's in `exwm:char-mode-apps'."
+  (when (--any-p (string-prefix-p it exwm-instance-name) exwm:char-mode-apps)
+    (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
+#+end_src
+
+** exwm-edit :edit:exwm:
+:PROPERTIES:
+:ID:       39361fa6-0df0-416e-aed6-2f8cb3bf9fb9
+:END:
+
+The dream is to do all text editing in Emacs. This package is a big step towards
+achieving that dream. =exwm-edit= allows the user to edit text fields in
+external packages with an emacs buffer. It acts a lot like =org-edit-src-code=:
+it copies any text in the text field to a buffer, you edit the buffer, then
+press a binding to insert the buffer text into the text field. It goes without
+saying that when the text is in an emacs buffer, you can use the full-force of
+Emacs's text editing capabilities on it.
+
+Concerning the loading of exwm-edit. Ideally, I should load it after
+certain applications where I'd use it need to be loaded.
+
+#+begin_src emacs-lisp
+(use-package exwm-edit
+  :commands exwm-edit
+  :init
+  (after! exwm
+    (funcall (get 'exwm-input-global-keys 'custom-set)
+	     'exwm-input-global-keys
+	     `((,(kbd "C-'") . exwm-edit)))))
+#+end_src
+
+** TODO keybindings
+:PROPERTIES:
+:ID:       8f8e7106-be2e-4c4f-8e4b-d236f805725b
+:END:
+
+#+begin_src emacs-lisp
+(after! exwm
+  (funcall (get 'exwm-input-global-keys 'custom-set)
+           'exwm-input-global-keys
+           `((,(kbd "s-R") . exwm-reset)
+             (,(kbd "s-x") . exwm-input-toggle-keyboard)
+             (,(kbd "s-h") . windmove-left)
+             (,(kbd "s-j") . windmove-down)
+             (,(kbd "s-k") . windmove-up)
+             (,(kbd "s-l") . windmove-right)
+             (,(kbd "s-t") . transpose-frame)
+             (,(kbd "s-D") . kill-this-buffer)
+             (,(kbd "s-b") . switch-to-buffer)
+             (,(kbd "s-f") . find-file)
+             (,(kbd "s-O") . exwm-layout-toggle-fullscreen)
+             (,(kbd "s-p") . previous-buffer)
+             (,(kbd "s-n") . next-buffer)
+             (,(kbd "s-q") . xl/open-qutebrowser)
+             (,(kbd "s-e") . xl/open-emacs-instance))))
+#+end_src
+

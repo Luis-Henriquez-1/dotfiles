@@ -1,0 +1,2229 @@
+#+title: library.org
+#+author: Luis-Henriquez-Perez
+#+tags: emacs config core library
+
+This headline contains all the the helper functions and macros I defined for
+customizing Emacs. The main thing that's done in an Emacs configuration is
+configuring packages, both built-in packages and external packages. And in this
+process, there are often packages that augment and aid in the configuration of
+other packages. Additionally, if you care about startup time it's important to
+make sure packages are only loaded when they need to be. The major purpose of
+this library is to provide me the tools to configure these packages in a way
+that is concise and efficient.
+
+* helpers :helper:
+:PROPERTIES:
+:ID:       638626ab-8451-4ae8-9838-6153915fd7f3
+:END:
+
+** symbols :symbol:
+:PROPERTIES:
+:ID:       5539293f-bd15-49ce-915a-37b3aea6ffb3
+:END:
+
+*** convert to string
+:PROPERTIES:
+:ID:       60f22f98-8204-45ae-9943-f19cdfe60459
+:END:
+
+This function is for converting something to a string, no questions
+asked. Similar to [[id:06bfc6f7-4c51-44e7-b32e-1434a602b55b][xl-symbol-intern]], I use it when I don't want to be bothered
+with details and just want a string.
+
+#+begin_src emacs-lisp
+(defun xl-to-string (&rest args)
+  "Return ARGS as a string."
+  (declare (pure t) (side-effect-free t))
+  (with-output-to-string (-each args #'princ)))
+#+end_src
+
+*** keyword name
+:PROPERTIES:
+:ID:       e853603a-851d-429f-9201-f2e93734dfaf
+:END:
+
+Calling [[helpfn:symbol-name][symbol-name]] on a keyword returns the keyword as a string. However,
+sometimes we don't want the prepended colon on they keyword. This function is
+for that occasion.
+
+#+begin_src emacs-lisp
+(defun xl-keyword-name (keyword)
+  "Return the name of the KEYWORD without the prepended `:'."
+  (declare (pure t) (side-effect-free t))
+  (substring-no-properties (xl-to-string keyword) 1))
+#+end_src
+
+*** xl-symbol-intern
+:PROPERTIES:
+:ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
+:END:
+
+This is a convenience function for quickly banging out a custom symbol. It's
+advantage over just plain [[helpfn:intern][intern]] is that it will coerce its arguments to a
+symbol. This is useful when writing macros where it is a common occurance to
+have a mix of different objects (usually strings and symbols) that you want to
+put together into one symbol. This function is meant to just do what I mean.
+
+#+begin_src emacs-lisp
+(defun xl-symbol-intern (&rest args)
+  "Return ARGS as a symbol."
+  (declare (pure t) (side-effect-free t))
+  (intern (apply #'xl-to-string args)))
+#+end_src
+
+*** keyword intern
+:PROPERTIES:
+:ID:       0618b8d7-e0a4-4e3e-8d89-b7d0ebe43917
+:END:
+
+Sometimes I want to create a keyword by interning a string or a symbol. This
+commands saves me having to add the colon at the beginning before interning.
+
+#+begin_src emacs-lisp
+(defun xl-keyword-intern (&rest args)
+  "Return ARGS as a keyword."
+  (declare (pure t) (side-effect-free t))
+  (apply #'xl-symbol-intern ":" args))
+#+end_src
+
+*** intern format
+:PROPERTIES:
+:ID:       b371718f-2067-450c-8117-fb22f44be208
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-intern-format (format-string &rest args)
+  "Same as `format` but return result as a symbol."
+  (declare (pure t) (side-effect-free t))
+  (intern (apply #'format format-string args)))
+#+end_src
+
+*** xl-emacs-hook-symbol-p
+:PROPERTIES:
+:ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
+:END:
+
+As I mentioned, the convention for hook symbols is that they are suffixed with
+=-hook=. This function checks for such variables.
+
+#+begin_src emacs-lisp
+(defun xl-emacs-hook-symbol-p (symbol)
+  "Return true if symbol is a hook symbol."
+  (declare (pure t) (side-effect-free t))
+  (s-matches-p ".+-hook\\'" (symbol-name symbol)))
+#+end_src
+
+*** xl-emacs-hookify
+:PROPERTIES:
+:ID:       b308a172-6e99-491c-a382-7ee28e9fc1ae
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-emacs-hookify (symbol)
+  "Return SYMBOL converted to hook.
+If SYMBOL is already a hook symbol, return it unchanged."
+  (declare (pure t) (side-effect-free t))
+  (xl-symbol-intern symbol (if (xl-emacs-hook-symbol-p symbol) "" '-hook)))
+#+end_src
+
+*** xl-emacs-mode-symbol-p
+:PROPERTIES:
+:ID:       ec25e275-c36f-4cee-be04-1fdf8c974857
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-emacs-mode-symbol-p (symbol)
+  "Return non-nil if symbol is a mode symbol."
+  (declare (pure t) (side-effect-free t))
+  (s-matches-p ".+-mode\\'" (symbol-name symbol)))
+#+end_src
+
+*** xl-emacs-modeify
+:PROPERTIES:
+:ID:       61fa29a7-9697-4171-8b6f-f4c0b487c02c
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-emacs-modeify (symbol)
+  "Return SYMBOL converted to hook.
+If SYMBOL is already a hook symbol, return it unchanged."
+  (declare (pure t) (side-effect-free t))
+  (if (xl-emacs-mode-symbol-p symbol)
+      symbol
+    (xl-symbol-intern symbol '-mode)))
+#+end_src
+
+*** xl-emacs-map-symbol-p
+:PROPERTIES:
+:ID:       b7ab2b84-ebea-46fe-8494-89a2aed2f6e8
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-emacs-map-symbol-p (obj)
+  "Return non-nil if OBJ is an emacs map symbol."
+  (and (symbolp obj)
+       (s-suffix-p "-map" (symbol-name obj))))
+#+end_src
+
+*** xl-internal-symbol-p
+:PROPERTIES:
+:ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
+:END:
+
+To avoid.
+
+#+begin_src emacs-lisp
+(defun xl-internal-symbol-p (symbol)
+  "Return non-nil if symbol is an internal XL symbol."
+  (declare (pure t) (side-effect-free t))
+  (s-matches-p "\\`xl-.+" (symbol-name symbol)))
+#+end_src
+
+*** TODO xl-interactive-function-p
+:PROPERTIES:
+:ID:       4994e720-e156-408b-b94c-19acbb684fe7
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-interactive-function-symbol-p (symbol)
+  "Return non-nil if SYMBOL is a non-interactive function symbol."
+  (s-match (rx (group (1+ (not white))) "/" (group (1+ (not white))))
+	   (symbol-name symbol)))
+#+end_src
+
+*** TODO xl-extension-function-p
+:PROPERTIES:
+:ID:       4f86a625-12e1-4142-85b4-607602a8c8c2
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-extension-function-symbol-p (symbol)
+  "Return non-nil if symbol is an extension function symbol."
+  (s-match (rx (group (1+ (not white))) (1+ "%") (group (1+ (not white))))
+	   (symbol-name symbol)))
+#+end_src
+
+** quoting :quote:
+:PROPERTIES:
+:ID:       95a2271b-a21b-4fed-a6b8-1e76ca821ed4
+:END:
+
+This headline deals with utility functions for dealing it quotes. A quote is a
+special form in lisp that is ued to indicate that a symbol or an expression
+should not be evaluted. The quotes are so prevalent in lisp that they each have
+a character that's used to abbreviate them as I will explain.
+
+The purpose of this headline is to provide functions that are useful for macro
+writing. What we deal with when writing macro is syntax itself.
+
+*** single-quoted
+:PROPERTIES:
+:ID:       533945fc-c700-42ce-8b93-d6bd9e16d9c7
+:END:
+
+A single quote prevents the evaluation of a symbol so that lisp reads the symbol
+as syntax instead of evaluating it for its value. I should not that the ='= is
+just how emacs displays a quote for brevity. In reality something like ~'cat~ is
+~(quote cat)~.
+
+#+begin_src emacs-lisp
+(defun xl-single-quoted-p (obj)
+  "Return non-nil if OBJ is sharp-quoted."
+  (declare (pure t) (side-effect-free t))
+  (pcase obj
+    (`(quote ,obj) t)
+    (_ nil)))
+#+end_src
+
+*** sharp-quoted
+:PROPERTIES:
+:ID:       6ba0980e-4391-47ef-a555-4c1dc3132f3b
+:END:
+
+A sharp quote is visually represented as =#'=. The real lisp representation of
+this is =(function)=. So a ~#'foo~ would be ~(function foo)~. =function= is the
+same as =quote= except the former tells the compiler you're referring to the
+function symbol.
+
+#+begin_src emacs-lisp
+(defun xl-sharp-quoted-p (obj)
+  "Return non-nil if OBJ is sharp-quoted."
+  (declare (pure t) (side-effect-free t))
+  (pcase obj
+    (`(function ,obj) t)
+    (_ nil)))
+#+end_src
+
+*** backquoted
+:PROPERTIES:
+:ID:       2c7af958-3aa0-48d6-a852-fd5feae452a9
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-backquoted-p (obj)
+  "Return non-nil if OBJ is backquoted."
+  (declare (pure t) (side-effect-free t))
+  (pcase obj
+    (`(backquote ,obj) t)
+    (_ nil)))
+#+end_src
+
+*** quoted
+:PROPERTIES:
+:ID:       d1b6c539-c8ca-4dc4-b76d-e2f9406b1c04
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-quoted-p (symbol)
+  "Return non-nil if symbol is quoted."
+  (declare (pure t) (side-effect-free t))
+  (or (xl-single-quoted-p symbol)
+      (xl-sharp-quoted-p symbol)
+      (xl-backquoted-p symbol)))
+#+end_src
+
+*** unquote
+:PROPERTIES:
+:ID:       dbf97264-95e9-478b-aa44-edcbd3f39665
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-unquote (obj)
+  "Return OBJ unquoted.
+If object is already unquoted, return OBJ."
+  (declare (pure t) (side-effect-free t))
+  (pcase obj
+    (`(,(or backquote quote function) ,obj) obj)
+    (_ obj)))
+#+end_src
+
+** macro keyword arguments obselete:
+:PROPERTIES:
+:ID:       dc7a63e6-041b-4855-b206-6d72ef732de1
+:END:
+
+Following past examples (such as that of), I initially opted for allowing
+keyword arguments in the "function args" part of defun-like macros. This is fine
+when there's only one keyword argument, but any more and it starts to get
+crowded. It doesn't help that emacs functions tend towards longer names due to a
+lack of namespaces. Therefore, I support keyword args in the function body.
+
+#+begin_src emacs-lisp
+(defun xl-keyword-macro-args (body)
+  "Return list of (docstring KEYWORD-ARGS BODY)."
+  (loopy (with (docstring (when (stringp (car body)) (pop body))))
+	 (while (keywordp (car body)))
+	 (append plist (list (pop body) (pop body)))
+	 (finally-return (list docstring plist body))))
+#+end_src
+
+** true-list-p
+:PROPERTIES:
+:ID:       43089182-316b-4191-a3f1-6f2d1b1b971e
+:END:
+
+Sometimes I want to know whether something is a list and not a cons
+cell. Usually, this happens when I want to know whether I can loop over
+something--you can loop over a list but not a cons cell.
+
+#+begin_src emacs-lisp
+(defun xl-true-list-p (obj)
+  "Return non-nil if OBJ is a list and not a cons cell."
+  (declare (pure t) (side-effect-free t))
+  (and (listp obj) (not (-cons-pair-p obj))))
+#+end_src
+
+** TODO detect emacs symbols 
+:PROPERTIES:
+:ID:       207ed522-51f3-45e7-91ba-8afb828d950b
+:END:
+
+These headline contains functions to detect particular Emacs symbols. Certain
+Emacs symbols follow a convention. For example, most hooks end with the suffics
+=-hook=. It may be useful--particularly in macros--to know what kind of symbol
+we're dealing with. And, it may also be useful to be able to convert a normal
+symbol (by which I mean one that doesn't follow the conventions) to one of these
+particular kinds.
+
+** xl-true
+:PROPERTIES:
+:ID:       25dcd81e-11a1-42b1-87a3-1df8c5a56cf1
+:END:
+
+This is the opposite of [[helpfn:ignore][ignore]]. Like =ignore= it takes any number of
+arguments. Unlike it, it always returns =t= instead of always returning =nil=.
+
+#+begin_src emacs-lisp
+(defun xl-true (&rest _)
+  "Return t."
+  t)
+#+end_src
+
+** xl-false
+:PROPERTIES:
+:ID:       0d1349cc-8bd5-4830-9c3b-9b4f9ebe25d0
+:END:
+
+#+begin_src emacs-lisp
+(defalias 'xl-false 'ignore)
+#+end_src
+
+** eval a form in a string
+:PROPERTIES:
+:ID:       79cfc39a-0924-468b-9fbc-83388323a39b
+:END:
+
+Sometimes it is useful to evaluate a lisp form that's in a string. One example,
+is when [[https://orgmode.org/manual/Evaluating-Code-Blocks.html#Evaluating-Code-Blocks][evaluating code in source blocks]]. In general, this comes up
+whenever you have to evaluate code you've gotten from a buffer.
+
+You may be wondering why I first wrapped the form in the string with a [[helpfn:progn][progn]]
+form. The reason is that [[helpfn:read-from-string][read-from-string]] only takes reads one from from a
+string at a time.
+
+This function came from [[https://emacs.stackexchange.com/questions/19877/how-to-evaluate-elisp-code-contained-in-a-string][this stackexchange question]].
+
+#+begin_src emacs-lisp
+(defun xl-eval-from-string (string)
+  "Eval from from string."
+  (eval (car (read-from-string (format "(progn %s)" string)))))
+#+end_src
+
+** wrapping forms
+:PROPERTIES:
+:ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
+:END:
+
+When writing macros in lisp it is not uncommon to need to write a macro that can
+nest a form within some number of other forms (for an example, see [[id][after!]]). This
+macro makes this problem much easier.
+
+The original idea for this macro came from [[https://gitlab.common-lisp.net/iterate/iterate/-/blob/master/iterate.lisp][iter's source code]].
+
+#+begin_src emacs-lisp
+(defun xl-wrap-form (wrappers form)
+  "Wrap FORM with each wrapper in WRAPPERS.
+WRAPPERS are a list of forms to wrap around FORM."
+  (declare (pure t) (side-effect-free t))
+  (setq wrappers (reverse wrappers))
+  (if (consp wrappers)
+      (xl-wrap-form (cdr wrappers)
+                    (append (car wrappers)
+                            (list form)))
+    form))
+#+end_src
+
+** dwim single
+:PROPERTIES:
+:ID:       13c4df8f-86f6-46e8-8507-60c08b96fb14
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-dwim-single (obj)
+  "If OBJ is a list of one element return CAR of OBJ.
+Otherwise, return OBJ."
+  (declare (pure t) (side-effect-free t))
+  (if (= (safe-length obj) 1) (car obj) obj))
+#+end_src
+
+* aliases :alias:
+:PROPERTIES:
+:ID:       bad5a570-2b94-4ada-88f0-de9f32fa9b7e
+:END:
+
+** prefixed-core
+:PROPERTIES:
+:ID:       14b63dc9-1d95-4bd7-8b29-8b2b33bd1e69
+:END:
+
+This package defines numerous aliases to existing commands in an attempt to make
+commands more discoverable and naming schemes more consistent. For example, it
+aliases the function [[helpfn:set-frame-font][set-frame-font]] to [[helpfn:frame-set-font][frame-set-font]] because if you were
+looking for function that involved the frame, the first thing you'd look for is
+for functions namespaced =frame=.
+
+#+begin_src emacs-lisp
+(use-package prefixed-core :demand t)
+#+end_src
+
+** custom aliases
+:PROPERTIES:
+:ID:       c32ede6e-05ae-4067-8505-ffe328295536
+:END:
+
+#+begin_src emacs-lisp
+(defalias 'atomp 'atom)
+(defalias 'buffer-next 'next-buffer)
+(defalias 'buffer-previous 'previous-buffer)
+#+end_src
+
+* use-package :usepackage:
+:PROPERTIES:
+:ID:       e85cfde1-285a-4782-817d-8c9e9fadb48c
+:END:
+
+[[https://github.com/jwiegley/use-package][use-package]] provides a uniform syntax for cross-configuring different
+packages and features. It is widely used among the emacs community. In this
+headline I build upon it and adapt it to my needs.
+
+** init use-package
+:PROPERTIES:
+:ID:       8879bd2b-5c7b-43d2-b922-7bb7cd6fea48
+:END:
+
+Finally, we get to use =use-package= to configure itself! :smile: By default,
+=use-package= provides its own messages and error handling. This can make the
+macro expansion of a =use-package= form crowded and much more difficult to
+read. Setting [[helpvar:use-package-expand-minimally][use-package-expand-minimally]] tells =use-package=.
+
+By default =use-package= loads a package immediately. Setting
+[[helpvar:use-package-always-defer][use-package-always-defer]] tells =use-package= not to load it unless I explicitly
+request it (for example, with the =:demand= keyword).
+
+#+begin_src emacs-lisp
+(use-package use-package
+  :init
+  (setq use-package-expand-minimally t)
+  (cl-callf2 cl-remove-if (lambda (it) (eq (car it) :config)) use-package-defaults)
+  (setq use-package-always-defer t))
+
+(defalias 'use-package! 'use-package)
+#+end_src
+
+** use-package helpers :helper:
+:PROPERTIES:
+:ID:       d02722ba-9546-42f9-b143-385f05618320
+:END:
+
+*** inserting keywords
+:PROPERTIES:
+:ID:       86f9fa28-6842-4580-994a-24f5d4608ad4
+:END:
+
+=use-package= has a built-in way of inserting keywords.
+
+**** functional =use-package= keyword insertion
+:PROPERTIES:
+:ID:       4968a708-05f2-4a3b-8395-850a3c119fd2
+:END:
+
+This is an implementation for inserting something into a list before or after a
+particular thing in the list. It is implemented in generally and without
+side-effects. That way, it's easily testable.
+
+#+begin_src emacs-lisp
+(defun use-package%insert-keyword (where place key list)
+  "Insert KEY at PLACE in PLIST.
+If WHERE is before, KEY is inserted before place. If WHERE is `after' it is
+inserted after PLACE."
+  (--splice (eq place it)
+	    (funcall (if (eq where 'before) #'identity #'reverse)
+		     (list key it))
+	    list))
+#+end_src
+
+**** dwim insert
+:PROPERTIES:
+:ID:       54fc11db-534a-4b59-836c-3165cf48b61d
+:END:
+
+I insert most =use-package= keywords in the same place. I don't want to have to
+specify it all the time. Additionally, I don't want to have to keep repeating
+the idiom =(setq use-package-keywords...use-package-keywords)= all the time
+either.
+
+#+begin_src emacs-lisp
+(defun use-package%dwim-insert (key &optional where place)
+  "Convenience wrapper around `use-package%insert-keyword'.
+This is the same as `use-package%insert-keyword' except WHERE and PLACE to
+`before' and `:hook'."
+  (let ((where (or where 'before))
+	(place (or place :hook)))
+    (setq use-package-keywords
+	  (use-package%insert-keyword where place key use-package-keywords))))
+#+end_src
+
+*** normalize cons
+:PROPERTIES:
+:ID:       d5beb18f-b18c-407b-9840-bda400ef52b4
+:END:
+
+=use-package= uses this funky-looking cons cell syntax to mean.
+
+#+begin_src emacs-lisp
+(defun use-package%normalize-cons (cons-pair)
+  "Normalize."
+  (-table-flat #'cons
+	       (-list (car cons-pair))
+	       (-list (cdr cons-pair))))
+#+end_src
+
+*** generate normalizer :usepackage:core:emacs:config:helper:
+:PROPERTIES:
+:ID:       f287aa5b-51ed-40da-bbc1-9a40586a1f83
+:END:
+
+I only use this function and [[id:495d3d70-f19f-420d-86ef-d75c49a77b66][its counterpart]] once so maybe putting this in
+functions is rather overkill. But I like doing things right. And who knows?
+Might be useful later. :shrug:
+
+#+begin_src emacs-lisp
+(defun use-package%normalize (key)
+  "Return an appropriate normalize symbol for key."
+  (xl-symbol-intern 'use-package-normalize/ key))
+#+end_src
+
+*** generate a handler :usepackage:core:emacs:config:helper:
+:PROPERTIES:
+:ID:       495d3d70-f19f-420d-86ef-d75c49a77b66
+:END:
+
+#+begin_src emacs-lisp
+(defun use-package%handler (key)
+  "Return an appropriate handler symbol for key."
+  (xl-symbol-intern 'use-package-handler/ key))
+#+end_src
+
+*** override keyword :usepackage:core:emacs:config:helper:
+:PROPERTIES:
+:ID:       aff6cbbe-7657-4287-9632-31dab7310c63
+:END:
+
+I want to override some existing =use-package= keywords. Use package keywords
+are defined by three things: the existence of the keyword in
+[[helpvar:use-package-keywords][use-package-keywords]], the existence of a [[https://github.com/jwiegley/use-package#third-step-create-a-handler][handler]], and the existence of a
+[[https://github.com/jwiegley/use-package#second-step-create-a-normalizer][normalizer]]. To overwrite an existing keyword all you have to do is
+override the corresponding normalizer and handler. The purpose of this function
+is to provide an easy way to do this.
+
+#+begin_src emacs-lisp
+(defun use-package%override (old new)
+  "Overrides OLD with NEW.
+OLD is an existing use-package keyword. NEW is the keyword to override OLD with."
+  (advice-add (use-package%normalize old) :override (use-package%normalize new))
+  (advice-add (use-package%handler old) :override (use-package%handler new)))
+#+end_src
+
+*** create autoloads
+:PROPERTIES:
+:ID:       ee0dc9c0-1bb3-4309-a61d-5b1c7f4c6ddf
+:END:
+
+Perhaps the most code saved with =use-package= is in it's generation of autoload
+forms.
+
+#+begin_src emacs-lisp
+(defun use-package%autoload (package fn)
+  "Return a form that autoloads FN from PACKAGE."
+  `(unless (fboundp ',fn)
+     (autoload #',fn ,(symbol-name package) nil t nil)))
+#+end_src
+
+** use-package keywords :helper:
+:PROPERTIES:
+:ID:       0b0c51a6-1b10-4bfd-bb0b-35cecd44217f
+:END:
+
+*** DOC silence
+:PROPERTIES:
+:ID:       c69b021f-c1eb-4f51-8de3-234c4660a0ba
+:END:
+
+Many packages print some output to the messages buffer. And, while it may be
+useful to receieve messages, often they can be telling you what you already know.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :silence)
+
+(defun use-package-normalize/:silence (key _ fns)
+  "Normalize."
+  (iter (for fn fns)
+	(cl-assert (symbolp fn) nil "%s hello %s" key fn)
+	(collect fn)))
+
+(defun use-package-handler/:silence (name _ fns rest state)
+  "Generate forms that silence output of FNS.
+FNS is a list of function symbols."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload fn name))
+	    (collect `(xl-gadvice-shut-up #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** DOC gc-pause :performance:
+:PROPERTIES:
+:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
+:END:
+
+The keyword pauses emacs gargbage collection (e.g increases the
+[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
+it's passed in. It should be used on particularly computationally expensive
+functions that a package provides.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :gc-pause)
+
+(defalias 'use-package-normalize/:gc-pause 'use-package-normalize/:silence)
+
+(defun use-package-handler/:gc-pause (name _ fns rest state)
+  "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** DOC ignore
+:PROPERTIES:
+:ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
+:END:
+
+Sometimes I want to ignore certain functions.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :ignore)
+
+(defalias 'use-package-normalize/:ignore 'use-package-normalize/:silence)
+
+(defun use-package-handler/:ignore (name _ fns rest state)
+  "Generate forms that cause FNS to do nothing and return nil."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-gadvice-ignore #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** DOC always yes
+:PROPERTIES:
+:ID:       f2d89960-ed41-4a72-847f-e150db56330b
+:END:
+
+There are a number of functions in Emacs that prompt.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :assume-yes)
+
+(defalias 'use-package-normalize/:assume-yes 'use-package-normalize/:silence)
+
+(defun use-package-handler/:assume-yes (name _ fns rest state)
+  "Ensure that FNS always assume yes for confirmation."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-gadvice-assume-yes #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** os
+:PROPERTIES:
+:ID:       9d78d90a-0309-44c6-be96-82bd6608546a
+:END:
+
+This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70-4137-a525-5be4bc63c3a2][with-os!]].
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :os)
+
+(defun use-package-normalize/:os (_ _ args)
+  (cl-assert (member (car args) '(mac linux windows)))
+  (car args))
+
+(defun use-package-handler/:os (name _ os rest state)
+  "Wrap body form with `with-os!' macro."
+  `((with-os! ,os ,@(use-package-process-keywords name rest state))))
+#+end_src
+
+*** hook
+:PROPERTIES:
+:ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
+:END:
+
+Here I override the default hook keyword with my own which uses =xl-hook-add=
+instead of =add-hook=.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :xl-hook)
+(use-package%override :hook :xl-hook)
+
+(defun use-package-normalize/:xl-hook (name _ args)
+  "Make sure that."
+  (loopy (list elt args)
+	 (cond ((symbolp elt)
+		(collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
+	       ((-cons-pair-p elt)
+		(expr (hooks . mode) elt)
+		(subloop (list hook (-list hooks))
+			 (collect (cons (xl-emacs-hookify hook) mode))))
+	       (t
+		(do (error "%s requires %s" key elt))))))
+
+(defun use-package-handler/:xl-hook (name _ alist rest state)
+  "Use `xl-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
+  `(,@(loopy (list (hook . fn) alist)
+	     (collect `(xl-hook-add ',hook ',fn))
+	     (collect (use-package%autoload name fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** before-call :defer:performance:
+:PROPERTIES:
+:ID:       55e66d22-b75d-4e77-9f99-dca1afbe1094
+:END:
+
+Packages don't live in an isolated enviroment. Often one package depends on one
+or more packages. Sometimes, I add customizations to a package using certain
+libraries and then I need to load them when that package is loaded. The purpose
+of this keyword is to load a package when a certain function is called.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :before-call)
+
+(defun use-package-normalize/:before-call (name key args)
+  "Ensure ARGS is a list of symbols or list."
+  (iter (for elt args)
+	(cond ((symbolp elt) (collect (cons name elt)))
+	      ((-cons-pair-p elt) (collect elt))
+	      (t (error "%s requires either symbols or cons cells." key elt)))
+	(finally-do (-map #'use-package%normalize-cons loopy-result))))
+
+(defun use-package-handler/:before-call (name key alist rest state)
+  "Generate forms that load PACKAGE before FN is called."
+  `(,@(iter (for (package . fn) alist)
+	    (collect (use-package%autoload package fn))
+	    (collect `(xl-load-before-call ',package #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** after-call :defer:performance:
+:PROPERTIES:
+:ID:       2c7dd1a8-c0ee-42cd-b76f-8a72c94be848
+:END:
+
+The.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :after-call)
+
+(defalias 'use-package-normalize/:after-call #'use-package-normalize/:before-call)
+
+(defun use-package-handler/:after-call (name _ alist rest state)
+  "Generate form that loads package after fn is called."
+  `(,@(iter (for (package . fn) alist)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-load-after-call ',package #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** set
+:PROPERTIES:
+:ID:       9948a4ae-f80a-4b13-b97a-0895481021a6
+:END:
+
+I should give credit. I got this idea from the leaf macro.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :set)
+
+(defun use-package-normalize/:set (_ _ args)
+  "Raise an error if."
+  (cl-assert (-all-p #'listp args) nil "Should all be lists.")
+  args)
+
+(defun use-package-handler/:set (name _ values rest state)
+  "Generate forms that set var to value."
+  `(,@(loopy (list (var . val) values)
+	     (expr setter (if (listp var) 'setf 'set!))
+	     (collect `(,setter ,var ,val)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** rule :usepackage:library:core:popup:
+:PROPERTIES:
+:ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
+:END:
+
+This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (display buffer control). What it does is.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :rule)
+
+(defun use-package-normalize/:rule (_ _ args)
+  "Ensure ARGS is a list of lists."
+  (cl-assert (-all-p #'xl-true-list-p args))
+  args)
+
+(defun use-package-handler/:rule (name _ rules rest state)
+  "Generate popup rule for each."
+  `(,@(loopy (list rule rules)
+	     (collect `(dbc-add-rule ,@rule)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** idle-require :defer:performance:
+:PROPERTIES:
+:ID:       916f88bd-10e1-4030-a1d9-e42baf095492
+:END:
+
+This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-require]]. It can accept a boolean.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :idle-require)
+
+(defun use-package-normalize/:idle-require (package _ args)
+  "Ensure each elements in ARGS is a symbol.
+If an element is t, convert it to PACKAGE."
+  (loopy (list symbol args)
+	 (unless (symbolp symbol) (do (error "This key doesn't have this.")))
+	 (collect (if (eq t symbol) package symbol))))
+
+(defun use-package-handler/:idle-require (name _ features rest state)
+  "Generate forms that `idle-require' FEATURES."
+  `(,@(loopy (list feature features)
+	     (collect `(idle-require ',feature nil t)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** config :defer:performance:
+:PROPERTIES:
+:ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
+:END:
+
+This keyword is meant to overwrite the built-in =:config= keyword. It does the
+same thing, except it uses =after!= instead of =with-eval-after-load=.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :xl-config)
+(use-package%override :config :xl-config)
+
+(defun use-package-normalize/:xl-config (_ _ args)
+  args)
+
+(defun use-package-handler/:xl-config (name _ forms rest state)
+  "Wrap FORMS in an `after!' block."
+  `((after! ,name ,@forms)
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** alias
+:PROPERTIES:
+:ID:       9fe0d171-55b4-4022-82ec-abfb5e776cae
+:END:
+
+Sometimes I want to alias certain.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :alias)
+
+(defalias 'use-package-normalize/:alias 'use-package-normalize/:set)
+
+(defun use-package-handler/:alias (name _ aliases rest state)
+  "Generate aliases forms for ALIASES."
+  `(,@(loopy (list (sym . def) aliases)
+	     (collect (use-package%autoload name def))
+	     (collect `(defalias ',sym #',def)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** advice :advice:
+:PROPERTIES:
+:ID:       1a0d6ff0-0dcd-4374-b52c-79bf617b3a2b
+:END:
+
+A keyword specifically designed for =xl= advices, or advices of the form
+=xl-<name>-advice=. For convenience, it is assumed to use =around= advice.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :advice)
+
+(defun use-package-normalize/:advice (_ _ advices)
+  "Ensure that ADVICES is a list of advice arguments.
+ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
+and EXPIRE-FN are optional."
+  (iter (each elt advices)
+	(progn
+	  (pcase elt
+	    (`(,(and (pred keywordp) key) (,fn . ,advice))
+	     (collect (list key fn advice)))
+	    (`(,fn . ,advice)
+	     (collect (list :around fn advice)))
+	    (_
+	     (error "wrong args"))))))
+
+(defun use-package-handler/:advice (name _ advices rest state)
+  "Generate forms that add advice."
+  `(,@(loopy (list (where fn advice) advices)
+	     (expr where (if (keywordp where) where (xl-keyword-intern where)))
+	     (collect `(xl-advice-add #',fn ,where #',advice)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** gadvice :gadvice:
+:PROPERTIES:
+:ID:       0646d4c8-47e7-45cc-a14a-6326a2b76fdd
+:END:
+
+This provides a shortcut for generic advices.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :gadvice)
+
+(defun use-package-normalize/:gadvice (_ _ advices)
+  "Ensure that ADVICES is a list of advice arguments.
+ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
+and EXPIRE-FN are optional."
+  (loopy (with (normalized (use-package-normalize/:advice _ _ advices)))
+	 (each (_ fn advice) normalized)
+	 (expr gadvice (xl-intern-format "xl-gadvice-%s" advice))
+	 (collect (cons fn gadvice))))
+
+(defun use-package-handler/:gadvice (name _ gadvices rest state)
+  `(,@(loopy (each (fn . gadvice) gadvices)
+	     (collect `(,gadvice #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** initial state :evil:
+:PROPERTIES:
+:ID:       e923e94e-9051-4be8-8dda-6566601ba865
+:END:
+
+I create this work to allow for easier cross configuration of states between
+packages.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :initial-state)
+
+(defun use-package-normalize/:initial-state (name _ states)
+  "Require series of symbols or cons of the form (MODE . STATE)."
+  (loopy (list elt states)
+	 (cond ((symbolp elt)
+		(collect (cons (xl-emacs-modeify name) elt)))
+	       ((consp elt)
+		(expr (mode . state) elt)
+		(collect (cons mode state)))
+	       (t
+		(do (error "Invalid argument: %s" states))))))
+
+(defun use-package-handler/:initial-state (name _ states rest state)
+  "Generate forms to set the initial evil state of certain modes."
+  `(,@(loopy (list (mode . state) states)
+	     (collect forms `(evil-set-initial-state ',mode ',state))
+	     (finally-return `((after! (evil ,name) ,@forms))))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
+
+*** advice for disable :advice:selectrum:
+:PROPERTIES:
+:ID:       1e39a4d2-8d4a-4413-a86e-3f92547cff14
+:END:
+
+For most functions, sorting their candidates is good. But for some, it doesn't
+make sense. This is advice specifically designed to disable selectrum sorting.
+
+#+begin_src emacs-lisp
+(defun selectrum%disable-sorting (fn)
+  "Disable sorting for FN."
+  (let ((advice (xl-symbol-intern fn '@no-selectrum-sorting)))
+    (defalias advice #'selectrum%disable-selectrum-sorting-advice)
+    ;; (xl-gadvice-log advice)
+    (advice-add fn :around advice)))
+
+(defun selectrum%disable-selectrum-sorting-advice (orig-fn &rest args)
+  (if (bound-and-true-p selectrum-mode)
+      (let (selectrum-should-sort-p) (apply orig-fn args))
+    (apply orig-fn args)))
+#+end_src
+
+*** use-package keyword for disabling sorting :selectrum:completion:
+:PROPERTIES:
+:ID:       a647122b-f39f-4140-8c5f-a3e14bfe37f3
+:END:
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :no-sort)
+
+(defun use-package-handler/:no-sort (name _ fns rest state)
+  "Don't sort the functions with selectrum."
+  `(,@(loopy (each fn fns)
+	     (collect `(selectrum%disable-sorting #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+
+(defalias 'use-package-normalize/:no-sort 'use-package-normalize/:gc-pause)
+#+end_src
+
+*** idle :defer:performance:
+:PROPERTIES:
+:ID:       78814410-c190-4f05-a319-4e6d13a9ea4b
+:END:
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :idle)
+
+(defun use-package-normalize/:idle (_ _ args)
+  (cl-assert (-all-p #'symbolp args))
+  (loopy (each arg args)
+	 (collect (cons 10 arg))))
+
+(defun use-package-handler/:idle (package _ args rest state)
+  `(,(loopy (each (seconds . fn) args)
+	    (collect forms `(run-with-idle-timer 10 t #',fn))
+	    (finally-return `(after! ,package ,@forms)))
+    ,@(use-package-process-keywords package rest state)))
+#+end_src
+
+* features :feature:
+:PROPERTIES:
+:ID:       67e54261-0b00-4daa-bbe9-a0f2fbbc1d9b
+:END:
+
+These are packages that I use to make writing lisp code more convenient. Emacs
+Lisp is a full-featured, turing-complete language. However, for some data
+structures like hash-tables and alists it is missing consistently named
+functions for performing operations on these data structures. This is improving
+slowly with the introduction of libraries like =seq.el= and =map.el= but still
+leaves much to be desired. This sounds like a complaint, but it actually
+highlights the advantage of the extensibility of Emacs.
+
+** shut-up
+:PROPERTIES:
+:ID:       71681f9f-2760-4cee-95a0-4aeb71191a42
+:END:
+
+This package provides a macro named =shut-up= that as its name suggests,
+silences output of any forms within it :speak-no-evil:. Emacs itself and many
+emacs packages spew messages. While I can see how in certain circumstances there
+messages can be useful, most of the time they are superfluous.
+
+#+begin_src emacs-lisp
+(use-package shut-up :demand t)
+#+end_src
+
+** mmt 
+:PROPERTIES:
+:ID:       a4377985-fe0e-4980-b839-08c334bde76c
+:END:
+
+=mmt= is a library of tools for writing macros. Specifically, it provides the
+quintessential =once-only= and =with-gensyms= macros which are used to prevent
+variable leaking.
+
+#+begin_src emacs-lisp
+(use-package mmt)
+#+end_src
+
+** dash 
+:PROPERTIES:
+:ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
+:END:
+
+Dash is rich list manipulation library. Many of the functions it have already
+been found in some form or another in emacs in features such as =cl-lib= and
+=seq= and =subr=, but dash has some very convenient functions and macros over
+emacs (such as =-let)=. Moreover, a lot of work has been put into making it's
+functions efficient; some are even more efficient than built-in cl
+functions. Additionally, it's already used as a dependency of very many packages
+so I'll likely end up loading it anyway.
+
+#+begin_src emacs-lisp
+(use-package dash :demand t)
+#+end_src
+
+** subr-x 
+:PROPERTIES:
+:ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
+:END:
+
+#+begin_src emacs-lisp
+(use-package subr-x :demand t)
+#+end_src
+
+** ht 
+:PROPERTIES:
+:ID:       56bb0ff4-6ad1-44b7-a9a4-54abf48ed253
+:END:
+
+=ht= is a package that tries to provide a consistently named API for dealing with
+hash-tables.
+
+#+begin_src emacs-lisp
+(use-package ht)
+#+end_src
+
+** dash-functional 
+:PROPERTIES:
+:ID:       704fc35f-0ad0-4eb3-9eb5-d8335465dbd8
+:END:
+
+=dash-functional= provides "function combinators". These are functions that take
+one or more functions as arguments and return a function. One example of this is
+emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
+
+#+begin_src emacs-lisp
+(use-package dash-functional :demand t)
+#+end_src
+
+** s 
+:PROPERTIES:
+:ID:       b96acb97-3963-4713-a03b-6294c65903fd
+:END:
+
+=s= is an api for strings inspired by [[id:704fc35f-0ad0-4eb3-9eb5-d8335465dbd8][dash]]. It has many useful string functions
+that are not built-in to Emacs. Notably, it is functional.
+
+#+begin_src emacs-lisp
+(use-package s :demand t)
+#+end_src
+
+** f 
+:PROPERTIES:
+:ID:       f44da560-dc3f-4635-926e-eec4fd6d159d
+:END:
+
+#+begin_src emacs-lisp
+(use-package f :demand t)
+#+end_src
+
+** anaphora 
+:PROPERTIES:
+:ID:       1c47bd8a-15f1-4b1c-9574-23547d27d968
+:END:
+
+It's common to want to refer to the thing you're operating on in lisp and in
+many other languages. In lisp this often requires assigning the variable a name.
+But if you're only.
+
+#+begin_src emacs-lisp
+(use-package anaphora :demand t)
+#+end_src
+
+** a 
+:PROPERTIES:
+:ID:       32110690-9d0a-4e3d-a1d8-7695b42aeb30
+:END:
+
+=a= is an association list library.
+
+#+begin_src emacs-lisp
+(use-package a :demand t)
+#+end_src
+
+** loopy 
+:PROPERTIES:
+:ID:       1c30099a-86b4-41f9-8390-e9e3c20b0257
+:END:
+
+=loopy= is an alternative to =cl-loop= that preserves lisp structure. It is akin
+to [[https://common-lisp.net/project/iterate/][Common Lisp's iter]]. dash's functions and macros are good for most
+cases. But they are not as good in my opinion when you're dealing with a complex
+loop that involves accumulating several variables or atypical control-flow (as
+in, break statements or return statements). This is where =loopy= comes into
+play.
+
+*** loopy
+:PROPERTIES:
+:ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
+:END:
+
+#+begin_src emacs-lisp
+(use-package loopy
+  :demand t
+  :init
+  (callf2 cl-adjoin '-split loopy-default-flags)
+  (loopy-defalias 'fret 'finally-return)
+  (loopy-defalias 'ret 'return))
+#+end_src
+
+*** iter
+:PROPERTIES:
+:ID:       cf3f024a-8bec-4f5a-bd63-38b09dc23ca5
+:END:
+
+I thought I'd be using this macro exclusively and that I'd never use =loopy= at
+all. However, =loopy= has the distinct advantage that it has more freedom to
+name its clauses without clobbering them with existing Emacs functions. So I'd
+say I use =loopy= when the loop doesn't need.
+
+For the same drawback as I've mentioned, =loopy-iter= can't use the =list=
+clause because it would get confused with it and the built-in Emacs function
+[[helpfn:list][list]]. For that reason we need to use one of lists aliases.
+
+#+begin_src emacs-lisp
+(use-package loopy-iter
+  :demand t
+  :init
+  (callf2 cl-adjoin '+lax-names loopy-default-flags)
+  (loopy-defalias 'for 'list)
+  (loopy-defalias 'each 'list)
+  :alias
+  (iter . loopy-iter)
+  (iterate . loopy-iter))
+#+end_src
+
+*** dash destructuring
+:PROPERTIES:
+:ID:       87615a1d-2790-44c4-ac95-90a36ff9c496
+:END:
+
+#+begin_src emacs-lisp
+(use-package loopy-dash
+  :demand t
+  :init
+  (callf2 cl-adjoin '+dash loopy-default-flags))
+#+end_src
+
+** noflet
+:PROPERTIES:
+:ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
+:END:
+
+This package provides an alternative to the built-in =cl-flet= called
+=noflet=. The [[][]] is that.
+
+#+begin_src emacs-lisp
+(use-package noflet :demand t)
+#+end_src
+
+** dbc
+:PROPERTIES:
+:ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
+:END:
+
+=dbc= stands for "display-buffer-control". This package provides an interface
+for working with [[helpfn:display-buffer-alist][display-buffer-alist]]. In a nutshell, =display-buffer-alist= is
+a Emacs's built in way of allowing the user to customize how windows are opened.
+
+#+begin_src emacs-lisp
+(use-package dbc
+  :demand t
+  :init
+  (--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
+	    (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
+	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
+	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
+    (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
+#+end_src
+
+** TODO log4e
+:PROPERTIES:
+:ID:       8360e875-61a6-46f8-a401-2a98c9e517fa
+:END:
+
+#+begin_src emacs-lisp
+(use-package log4e
+  :demand t
+  :alias (xl/popup-log-buffer . xl--log-open-log)
+  :init
+  (defalias 'xl-log 'xl--log-info))
+
+(log4e:deflogger "xl" "%t [%l] %m" "%H:%M:%S")
+(xl--log-enable-logging)
+#+end_src
+
+** ts
+
+#+begin_src emacs-lisp
+(use-package ts)
+#+end_src
+
+** list-utils
+:PROPERTIES:
+:ID:       f87d570a-4b06-42ea-acaa-a0bedba0e623
+:END:
+
+#+begin_src emacs-lisp
+(use-package list-utils)
+#+end_src
+
+** map
+:PROPERTIES:
+:ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
+:END:
+
+#+begin_src emacs-lisp
+(use-package map :demand t)
+#+end_src
+
+* custom macros :anaphora:
+:PROPERTIES:
+:ID:       40a33da1-6d4b-4395-adfb-a4cdba7ec28c
+:END:
+
+** eval-after-load! :defer:
+:PROPERTIES:
+:ID:       8d831084-539b-4072-a86a-b55afb09bf02
+:END:
+
+=eval-after-load= is a macro that evaluates a lisp form after a file or feature
+has been loaded. It's syntax is a bit terse because you need to quote the
+feature as well as the form to be evaluated.
+
+Also, if an =eval-after-load= block contains an error and it is triggered by a
+feature, the error will happening. I think it might be that because the form was
+not successfully evaluated =eval-after-load= does not realize it should stop
+loading it. To remedy this I wrap the block with [[helpfn:condition-case][condition-case]].
+
+#+begin_src emacs-lisp
+(defmacro eval-after-load! (feature &rest body)
+  "A wrapper around `eval-after-load!' with error catching."
+  (declare (indent defun))
+  `(eval-after-load ',feature
+     '(condition-case error
+          (progn ,@body)
+        (error
+         (message "Error in `eval-after-load': %S" error)))))
+#+end_src
+
+** after! :defer:
+:PROPERTIES:
+:ID:       e209d256-86e0-4e30-a7d5-78a583729b42
+:END:
+
+=after!= is yet another wrapper around that can accept multiple features or
+even a specification of features using =and= or =or=.
+
+The reason that we check for the feature is to prevent [[hvar:eval-after-load][eval-after-load]] from
+polluting the [[hvar:after-load-list][after-load-list]]. =eval-after-load= adds an entry to
+=after-load-list= whether or not it has been loaded.
+
+We intentionally avoid with-eval-after-load to prevent eager macro expansion
+from pulling (or failing to pull) in autoloaded macros/features.
+
+#+begin_src emacs-lisp
+(defmacro after! (features &rest body)
+  "Wrapper around `with-eval-after-load'."
+  (declare (indent defun) (debug t))
+  (cond ((eq 'or (car-safe features))
+	 (loopy (list feature (cdr features))
+		(collect form `(after! ,feature ,@body))
+		(finally-return `(progn ,@forms))))
+        ((eq 'and (car-safe features))
+	 (loopy (with ((first . rest) (cdr features))
+		      (forms `(after! ,first ,@body)))
+		(list feature (reverse rest))
+		(expr forms `(after! ,feature ,@(list forms)))
+		(finally-return forms)))
+        ((listp features)
+         `(after! (and ,@features) ,@body))
+        ((symbolp features)
+         `(if (featurep ',features)
+              (progn ,@body)
+            (eval-after-load! ,features ,@body)))
+        (t (error "Invalid argument."))))
+#+end_src
+
+** DOC with-temp-advice! :new:unused:webcode:
+:PROPERTIES:
+:ID:       5fb1f2e9-53d2-4830-b6b2-abef3477002d
+:END:
+:LINKS:
+https://emacs.stackexchange.com/questions/54500/how-to-add-a-locally-override-the-message-function
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-temp-advice! (advices &rest body)
+  "Evaluate BODY with ADVICES enabled."
+  (loopy (each (symbol where advice) advices)
+	 (collect before `(advice-add #',symbol ,where #',advice))
+	 (collect after `(advice-remove #',symbol #',advice))
+	 (finally-return `(unwind-protect (progn ,@before ,@body) ,@after))))
+#+end_src
+
+** with-os!
+:PROPERTIES:
+:ID:       a3ea434a-3f70-4137-a525-5be4bc63c3a2
+:END:
+
+Emacs is for the most part operating system agnostic. Packages written in elisp
+should work across operating systems. Nevertheless, there are a handful of
+settings that should favors particular operating systems over others.
+
+#+begin_src emacs-lisp
+(defmacro with-os! (os &rest body)
+  "If OS is current system's operating system, execute body.
+OS can be either `mac', `linux' or `windows' (unquoted)."
+  (declare (indent defun))
+  (when (funcall (cond ((eq :not (car-safe os)) (-not #'member))
+                       (t #'member))
+                 (pcase system-type
+                   (`darwin 'mac)
+                   (`gnu/linux 'linux)
+                   (`(cygwin windows-nt ms-dos) 'windows)
+                   (_ nil))
+                 (-list os))
+    `(progn ,@body)))
+#+end_src
+
+** set!
+
+One "gotcha" in Emacs is the existence of custom variables. Unlike typical
+variables custom variables sometimes rely on certain code being executed when
+they're initialized or when their values are changed. If you just set the
+variable normally with [[helpfn:setq][setq]] you'd change it's value but you wouldn't be running
+it's corresponding code so the change you think would happen, might not happen
+at all.
+
+Rather than keeping track of which variables have custom setters and which do
+not, I opt to just use this macro.
+
+For this reason I use =set!= as a replacement for =setq=.
+
+[[https://opensource.com/article/20/3/variables-emacs][This article]] provides a brilliant synopsis of emacs variables.
+
+Note that I may depreciate this in favor of setf.
+
+#+begin_src emacs-lisp
+(defmacro set! (&rest args)
+  "Set"
+  (pcase (length args)
+    ((pred (= 1))
+     (alet (car (xl-anaphoric-symbols args))
+       `(set! ,(xl-anaphoric-true-symbol it)
+	      ,(--tree-map (if (xl-anaphoric-symbol-p it) (xl-anaphoric-true-symbol it) it)
+			   (car args)))))
+    ((and (pred cl-evenp) (pred > 0))
+     `(progn
+	,@(loopy (cons (sym val . _) args #'cddr)
+		 (expr setter `(or (get ',sym 'custom-set) 'set))
+		 (collect `(funcall ,setter ',sym ,val)))))
+    (_
+     (error "Invalid arguments."))))
+#+end_src
+
+** set-default!
+:PROPERTIES:
+:ID:       bc6b7560-fb71-4fc7-a53b-98f92c657d92
+:END:
+
+=set-default= is used for.
+
+#+begin_src emacs-lisp
+(defmacro set-default! (sym val)
+  `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
+#+end_src
+
+** fn!
+:PROPERTIES:
+:ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
+:END:
+
+This is a macro for writing anaphoric lambdas. It is based on [[https://github.com/troyp/fn.el][fn]], the main
+difference being that in a few special cases you can specify a named anaphoric
+variable. Also, I don't support the alternate =fn:= syntax.
+
+#+begin_src emacs-lisp
+(defmacro fn! (&rest body)
+  "Expand into an anaphoric macro with body BODY."
+  (let* ((argsym (make-symbol "ARGS"))
+	 (symbolic-placeholders (-uniq (xl-anaphoric-symbols body)))
+	 (number-fn (lambda (it) (s-matches-p "<[[:digit:]]>" (symbol-name it))))
+	 (numbers-p (-all-p number-fn symbolic-placeholders)))
+    (alet (if numbers-p
+	      (-sort (lambda (it other) (string-lessp (symbol-name it) (symbol-name other)))
+		     symbolic-placeholders)
+	    symbolic-placeholders)
+      `(lambda (&rest ,argsym)
+	 (-let [,it ,argsym] ,@body)))))
+#+end_src
+
+** defun! :extension:
+:PROPERTIES:
+:ID:       2e345fe9-4c03-4c81-bedf-6f40ea0b755c
+:END:
+
+=defun!= is meant to be a wrapper of and replacement for =defun=. I want a
+general macro that I can use for defining =defun= like.
+
+*** parser alist
+:PROPERTIES:
+:ID:       fa0773f5-d6be-4c9f-966f-7e8c2e68e40e
+:END:
+
+#+begin_src emacs-lisp
+(defvar defun%parser-alist nil)
+#+end_src
+
+*** processing clauses
+:PROPERTIES:
+:ID:       eb0b18b8-6f53-4518-b9d3-8921aa5caf5d
+:END:
+
+#+begin_src emacs-lisp
+(cl-defun defun%process-clauses (init clauses)
+  "Process clauses."
+  (-let* ((rest (cdr clauses))
+	  ((key . args) (car clauses))
+	  (parser (alist-get key defun%parser-alist)))
+    (funcall (or parser #'ignore) key args init rest)))
+#+end_src
+
+*** parsers
+:PROPERTIES:
+:ID:       3c3233ab-1cf2-47d5-bbad-d7e71bbc13aa
+:END:
+
+**** parse-hook
+:PROPERTIES:
+:ID:       f7c0897d-79da-4e73-8ba7-ac5bdedacbfb
+:END:
+
+#+begin_src emacs-lisp
+(callf2 cl-adjoin '(:hook . defun%parse-hook) defun%parser-alist :test #'equal)
+
+(defun defun%parse-hook (_ args init rest)
+  (let-alist init
+    (-let* ((orig-name (xl-intern-format "xl--%s-hook" .name))
+	    ((hook-symbols plist) (-split-with (-not #'keywordp) args))
+	    ((&plist :depth :local :append) plist))
+      `((cl-defun ,orig-name ,.args ,.docstring ,@.body)
+	,@(loopy (each symbol hook-symbols)
+		 (expr hook (xl-symbol-intern symbol '& .name))
+		 (append `((defalias ',hook ',orig-name)
+			   (add-hook ',symbol ',hook ,(or append depth) ,local)
+			   (xl-log-function #',hook))))
+	,@(defun%process-clauses init rest)))))
+#+end_src
+
+**** parse advice
+:PROPERTIES:
+:ID:       fbff4b81-3a11-42df-a61f-42e6c5771734
+:END:
+
+#+begin_src emacs-lisp
+(iter (for type '(:override :around :before :after :after-while))
+      (expr parser 'defun%parse-advice)
+      (collect (cons type parser))
+      (finally-do (callf cl-union defun%parser-alist loopy-result :test #'equal)))
+
+(cl-defun defun%parse-advice (where args init rest)
+  (let-alist init
+    (-let* ((orig-advice-name (xl-intern-format "xl--%s-advice" .name))
+	    ((functions plist) (-split-with (-not #'keywordp) args))
+	    ((&plist :props) plist))
+      `((cl-defun ,orig-advice-name ,.args ,.docstring ,@.body)
+	,@(loopy (each fn functions)
+		 (expr advice (xl-advice-gen-symbol fn .name))
+		 (append `((defalias ',advice ',orig-advice-name)
+			   (advice-add #',fn ,where #',advice)
+			   (xl-log-function #',advice))))
+	,@(defun%process-clauses init rest)))))
+#+end_src
+
+**** parse generic advice
+:PROPERTIES:
+:ID:       73f153c5-b005-41c1-bc35-3aa47b4339f1
+:END:
+
+#+begin_src emacs-lisp
+(callf2 cl-adjoin '(:gadvice . defun%parse-gadvice) defun%parser-alist :test #'equal)
+
+(cl-defun defun%parse-gadvice (_ bool init rest)
+  (let-alist init
+    (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
+	  (advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
+      (when bool
+	`((cl-defun ,generic-advice-fn (fn) (advice-add fn :around #',advice-fn))
+	  (cl-defun ,advice-fn ,.args ,.docstring ,@.body)
+	  ,@(defun%process-clauses init rest))))))
+#+end_src
+
+**** parse =defafter!= :defer:
+:PROPERTIES:
+:ID:       76e34252-c93f-4de2-b13c-2e188cd4a476
+:END:
+
+#+begin_src emacs-lisp
+(callf2 cl-adjoin '(:features . defun%parse-features) defun%parser-alist :test #'equal)
+
+(defun defun%parse-features (_ features init rest)
+  (let-alist init
+    (let ((after-fn (gensym (format "xl--after-%s-" .name))))
+      `((after! ,features
+	  (cl-defun ,after-fn ,.args ,.docstring ,@.body)
+	  (funcall #',after-fn))
+	,@(defun%process-clauses init rest)))))
+#+end_src
+
+**** recognize xl idioms
+:PROPERTIES:
+:ID:       a84c343e-6ae7-499b-bfa6-c464cb1b6306
+:END:
+
+The purpose of this heading is to make.
+
+#+begin_src emacs-lisp
+#+end_src
+
+*** defun!
+:PROPERTIES:
+:ID:       5dd91bfc-26c7-4763-a6b8-1baae771d771
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defun! (name args &rest body)
+  "Generate."
+  (loopy (with (docstring (when (stringp (car body)) (pop body))))
+	 (expr elt (car body))
+	 (while (and (listp elt) (keywordp (car elt))))
+	 (collect clauses (pop body))
+	 (finally-return (alet (a-list 'name name 'args args 'docstring docstring 'body body)
+			   `(progn ,@(defun%process-clauses it clauses))))))
+#+end_src
+
+*** extensions
+:PROPERTIES:
+:ID:       1d8a1e3b-6f65-432a-9340-e1afe797c0ca
+:END:
+
+**** defhook!
+:PROPERTIES:
+:ID:       57e8e84e-c928-451f-8cfc-1c3b638bc318
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defhook! (name args docstring &rest body)
+  "Wrapper around `defun!'."
+  (declare (indent defun) (doc-string 3))
+  `(defun! ,name (&rest _) ,docstring (:hook ,@args) ,@body))
+#+end_src
+
+**** defadvice!
+:PROPERTIES:
+:ID:       6742346f-f9f5-4898-a1f1-668271f52b8e
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defadvice! (name args docstring &rest body)
+  "Wrapper around `defun!'."
+  (declare (indent defun) (doc-string 3))
+  `(defun! ,name (&rest _) ,docstring (,@args) ,@body))
+#+end_src
+
+**** defgadvice!
+:PROPERTIES:
+:ID:       141da0b0-f721-4576-921b-7d800291267a
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defgadvice! (name args docstring &rest body)
+  (declare (indent defun) (doc-string 3))
+  `(defun! ,name ,args ,docstring (:gadvice t) ,@body))
+#+end_src
+
+**** defafter! :defer:
+:PROPERTIES:
+:ID:       b6179567-c840-4dfa-891e-3e27384dfdb9
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defafter! (name args &rest body)
+  (declare (indent defun) (doc-string 3))
+  (let ((docstring (when (stringp (car body)) (pop body))))
+    `(defun! ,name () ,@(when docstring (list docstring))
+       (:features ,@args)
+       ,@body)))
+#+end_src
+
+* anaphora :anaphora:
+:PROPERTIES:
+:ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
+:END:
+
+Anaphora refers to the ability to refer to. I have decided it is best to use
+=<>= to denote the symbol referred to by anaphoric macros because it is easy to
+type (assuming parentheses completion), because such a symbol uncommon in lisp.
+A key advantage to this is that there is a consistent "syntax" for anaphoric
+variables as opposed to using =it=. A consequence of this is that you have more
+flexibility to name variables. Additionally, I like that it looks like a slot or
+placeholder.
+
+https://en.wikipedia.org/wiki/Anaphoric_macro
+
+** anaphoric symbol regexp :anaphora:core:library:emacs:config:
+:PROPERTIES:
+:ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
+:END:
+
+#+begin_src emacs-lisp
+(defconst XL-ANAPHORIC-SYMBOL-REGEXP
+  (eval-when-compile (rx "<" (group (zero-or-more (not (any white ">" "<")))) ">"))
+  "Regular expression that matches an anaphoric symbol.")
+#+end_src
+
+** anaphoric symbol :anaphora:core:library:
+:PROPERTIES:
+:ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-symbol-p (obj)
+  "Return non-nil if OBJ is an anaphoric symbol."
+  (and (symbolp obj)
+       (string-match-p XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
+#+end_src
+
+** true anaphora name :anaphora:
+:PROPERTIES:
+:ID:       2833cd75-9c85-4c0e-9523-4489d387150a
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-true-symbol (symbol)
+  "Return the symbol that corresponds to the anaphoric symbol."
+  (save-match-data
+    (string-match XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name symbol))
+    (intern (match-string 1 (symbol-name symbol)))))
+#+end_src
+
+** take symbol and return anaphoric symbol :anaphora:
+:PROPERTIES:
+:ID:       4b89588e-f3c3-49d3-8851-fdd214cee563
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-symbol (symbol)
+  "Return anaphoric form of symbol."
+  (xl-symbol-intern '< symbol '>))
+#+end_src
+
+** body symbols :anaphora:
+:PROPERTIES:
+:ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-symbols (body)
+  "Return all the anaphoric symbols in body."
+  (->> (-flatten body)
+       (-filter #'xl-anaphoric-symbol-p)
+       (-uniq)))
+#+end_src
+
+** all anaphoric symbols in obj :anaphora:
+:PROPERTIES:
+:ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-symbols-in-obj (obj)
+  "Return a list of anaphoric symbols in OBJ."
+  (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
+#+end_src
+
+* generate a logging function
+:PROPERTIES:
+:ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-log-function (fn)
+  "Log a function."
+  (let ((name (xl-advice-gen-symbol fn 'log)))
+    (pcase fn
+      ((pred xl-advice-symbol-p)
+       (let ((symbol (xl-advice-orig-symbol fn))
+	     (function (xl-advice-orig-function fn)))
+	 (fset name `(lambda (&rest _) (xl-log "@ %s -> %s" ',symbol ',function)))
+	 (advice-add fn :after name)))
+      ((pred xl-hook-symbol-p)
+       (let ((symbol (xl-hook-orig-symbol fn))
+	     (function (xl-hook-orig-function fn)))
+	 (fset name `(lambda (&rest _) (xl-log "& %s -> %s" ',symbol ',function)))
+	 (advice-add fn :after name)))
+      (_
+       nil))))
+#+end_src
+
+* advice :advice:
+:PROPERTIES:
+:ID:       e498fc7d-03f1-4a69-9869-28c1b499fe1f
+:END:
+
+** advice regexp
+:PROPERTIES:
+:ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
+:END:
+
+#+begin_src emacs-lisp
+(defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
+  "A regular expression that defines naming convention for advices.")
+#+end_src
+
+** remove XL advice
+:PROPERTIES:
+:ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
+:END:
+
+Since we can get the advisee from the advise name, or remove advice only needs
+one argument--the advice to remove.
+
+#+begin_src emacs-lisp
+(defun xl-advice-remove (advices)
+  "Remove ADVICES from the functions they advise.
+ADVICES is an advice or a list of advices."
+  (iter (each advice (-list advices))
+	(advice-remove (xl-advice-orig-symbol advice) advice)))
+#+end_src
+
+** adding an advice
+:PROPERTIES:
+:ID:       14e23074-10ea-41cc-88e5-bac600658b20
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-add (symbols where functions &optional props)
+  "Add ADVICES to FUNCTIONS.
+WHERE, DEPTH and LOCAL are the same as in `advice-add'."
+  (iter (each symbol (-list symbols))
+	(subloop (each function (-list functions))
+		 (expr advice (xl-symbol-intern symbol '@ function))
+		 (fset advice function)
+		 (advice-add symbol where advice props)
+		 (collect advice))))
+#+end_src
+
+** advice-fn-p
+:PROPERTIES:
+:ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-symbol-p (fn)
+  "Return non-nil when FN is an advice."
+  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
+#+end_src
+
+** original fn
+:PROPERTIES:
+:ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-symbol (advice)
+  "Return the function ADVICE is advised to.
+ADVICE is an advice function that follows XL naming conventions."
+  (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
+#+end_src
+
+** original advice
+:PROPERTIES:
+:ID:       49f49994-637a-4e26-b680-3535463ee8bf
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-function (advice)
+  "Return the function that ADVICE aliases.
+ADVICE is an advice function that follows XL naming conventions."
+  (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
+#+end_src
+
+** gen symbol
+:PROPERTIES:
+:ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-gen-symbol (symbol name)
+  (xl-symbol-intern symbol '@ name))
+#+end_src
+
+** generic advices
+:PROPERTIES:
+:ID:       ba195f61-9b1c-4b51-835c-d1351f4d6301
+:END:
+
+*** pause garbarge collection :advice:performance:
+:PROPERTIES:
+:ID:       41e763bd-215f-4176-95c1-f41261864671
+:END:
+
+Sometimes you come across a function that is computationally expensive. An
+example is [[helpfn:helm-system-packages][helm-system-packages]], function that has to make a list of all system
+packages which can contain several thousand items.
+
+#+begin_src emacs-lisp
+(defgadvice! pause-garbage-collection (orig-fn &rest args)
+  "An around advice that pauses `gc-cons-threshold'."
+  (let ((gc-cons-threshold most-positive-fixnum))
+    (apply orig-fn args)))
+#+end_src
+
+*** catch errors
+:PROPERTIES:
+:ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
+:END:
+
+One important note here. I first wrote [[helpfn:xl-report-error-advice][xl-report-error-advice]] as an around
+advice that should be added to functions. The problem here is that sometimes I
+advise compiled functions; and when I do, the variable =orig-fn= is bound to a
+compiled function instead of a symbol. This is why this function has to
+pre-emptively insert FN. A similar situation occurs with [[][generic expiring
+advice]].
+
+#+begin_src emacs-lisp
+(defgadvice! catch-error (orig-fn &rest args)
+  "Catch and log any error."
+  (condition-case error
+      (apply orig-fn args)
+    (error
+     (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
+#+end_src
+
+*** log
+:PROPERTIES:
+:ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
+:END:
+
+#+begin_src emacs-lisp
+(defgadvice! log (fn &rest args)
+  (prog1 (apply fn args)
+    (cond ((not (symbolp fn))
+	   (xl-log "function is not a symbol: %S" fn))
+	  ((xl-hook-symbol-p fn)
+	   (xl-log "& %s -> %s" (xl-hook-orig-symbol fn) (xl-hook-action fn)))
+	  ((xl-advice-symbol-p fn)
+	   (xl-log "@ %s -> %s" (xl-advice-orig-function fn) (xl-advice-orig-function fn)))
+	  (t
+	   (xl-log "%s called" fn)))))
+#+end_src
+
+*** silence :gadvice:advice:library:core:
+:PROPERTIES:
+:ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
+:END:
+
+Many packages output to the messages buffer. Often, I either find these messages
+unecessary or, as an experienced user, I get it already. In these cases I prefer
+to silence the said messages.
+
+#+begin_src emacs-lisp
+(defgadvice! shut-up (orig-fn &rest args)
+  "Silence output of FN."
+  (shut-up (apply orig-fn args)))
+#+end_src
+
+*** assume yes in prompts :setting:
+:PROPERTIES:
+:ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
+:END:
+
+Once in a while I come across a function that a [[helpfn:y-or-n-p][y-or-n-p]] prompt for things I
+don't want to be prompted for. Or, in other words, for me the cost of the extra
+second I spend typing =y= or =n= is not worth the benefit ([[helpfn:ert-delete-all-tests][ert-delete-all-tests]]
+is an example).
+
+#+begin_src emacs-lisp
+(defgadvice! assume-yes (orig-fn &rest args)
+  "An advice that makes `y-or-n-p' return t without prompt."
+  (noflet ((y-or-n-p (prompt) t))
+    (apply orig-fn args)))
+#+end_src
+
+*** log
+:PROPERTIES:
+:ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
+:END:
+
+Sometimes I want to use =xl-log= instead of =message=.
+
+#+begin_src emacs-lisp
+(defgadvice! use-xl-log (orig-fn &rest args)
+  (noflet ((message (&rest message-args) (apply #'xl-log message-args)))
+    (apply orig-fn args)))
+#+end_src
+
+*** log advices and hooks
+:PROPERTIES:
+:ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
+:END:
+
+Log when an advice or hook is being called.
+
+#+begin_src emacs-lisp
+(defun! log-advices (orig-fn &rest args)
+  "Log ORIG-FN."
+  (:around xl-hook-add xl-advice-add)
+  (iter (with (symbols (apply orig-fn args)))
+	(each symbol symbols)
+	(xl-log-function symbol)
+	(when (xl-hook-symbol-p symbol)
+	  (xl-gadvice-catch-error symbol))
+	(finally-return symbols)))
+#+end_src
+
+*** loading on call
+:PROPERTIES:
+:ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
+:END:
+
+Instead of loading all features on startup, we want to load features only when
+we need them--just in time. And by "just in time" I mean at the last possible
+moment or in practice just before a function that uses this feature is called.
+While I could use =defadvice!= for defining these advices, doing this would
+quickly become repetative because it's something that is done so often in
+package configuration. The function =before-call= and =after-call= provide a fast
+and convenient way to do this.
+
+**** load-on-call
+:PROPERTIES:
+:ID:       324e707b-2f44-4168-a846-037f5401dedb
+:END:
+
+This is the internal function which I use to build the others. It loads a
+package before or after (you specify) a particular function is called. To do
+this it adds an =XL= advice that loads the feature to the function.
+
+#+begin_src emacs-lisp
+(defun xl-load-on-call (package where fn)
+  "Load PACKAGE before or after FN is called."
+  (alet (xl-intern-format "%s@load-%s-%s-call" fn package (xl-keyword-name where))
+    (fset it `(lambda (&rest _)
+                (xl-log "load %s" ',package)
+                (require ',package)))
+    (advice-add fn where it)
+    (xl-gadvice-expire it)))
+#+end_src
+
+**** load before call
+:PROPERTIES:
+:ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
+:END:
+
+For convenience, I provide [[helpfn:xl-load-before-call][xl-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
+not to have to specify the advice keyword.
+
+#+begin_src emacs-lisp
+(defun xl-load-before-call (package fn)
+  "Load PACKAGE before FN is called."
+  (xl-load-on-call package :before fn))
+#+end_src
+
+**** load after call
+:PROPERTIES:
+:ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-load-after-call (package fn)
+  "Load PACKAGE after FN is called."
+  (xl-load-on-call package :after fn))
+#+end_src
+
+*** ignore output
+:PROPERTIES:
+:ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
+:END:
+
+#+begin_src emacs-lisp
+(defgadvice! ignore (&rest _)
+  "Advice to ignore a function.")
+#+end_src
+
+*** expiration
+:PROPERTIES:
+:ID:       b531dc79-73d0-43eb-a600-b3075315acf0
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-gadvice-expire (fn)
+  "Cause FN to remove itself from any advice or hook."
+  (let ((name (xl-advice-gen-symbol fn 'expire)))
+    (pcase fn
+      ((pred xl-advice-symbol-p)
+       (fset name `(lambda (&rest _) (xl-advice-remove ',fn)))
+       (advice-add fn :after name))
+      ((pred xl-hook-symbol-p)
+       (fset name `(lambda (&rest _) (xl-hook-remove ',fn)))
+       (advice-add fn :after name))
+      (_
+       nil))))
+#+end_src
+
+* hook :hook:
+:PROPERTIES:
+:ID:       8715c910-76df-41b7-873d-9b1a6a22350f
+:END:
+
+** hook regexp
+:PROPERTIES:
+:ID:       5093d6ce-741d-4d11-8ac7-15c02aa45b3b
+:END:
+
+#+begin_src emacs-lisp
+(defconst XL-HOOK-REGEXP "\\`\\(.+\\)&\\(.+\\)\\'"
+  "Regular expression used to match `xl-' defined hooks.")
+#+end_src
+
+** add hook
+:PROPERTIES:
+:ID:       e8d69a71-bab4-4e75-b8f8-33426200a0df
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-hook-add (symbols functions &optional depth local)
+  "Alias FUNCTIONS to follow XL naming convention and add them to SYMBOLS."
+  (iter (each symbol (-list symbols))
+	(subloop (each function (-list functions))
+		 (expr hook (xl-symbol-intern symbol '& function))
+		 (fset hook function)
+		 (add-hook symbol hook depth local)
+		 (collect hook))))
+#+end_src
+
+** remove hook
+:PROPERTIES:
+:ID:       e8ec61e0-a819-452c-8fb2-bf3023684b53
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-hook-remove (&rest hooks)
+  "Remove HOOKS from their correponding symbols.
+HOOKS is a list of hook functions that follow the XL naming convention."
+  (iter (each hook hooks)
+	(remove-hook (xl-hook-orig-symbol hook) hook)))
+#+end_src
+
+** hook function
+:PROPERTIES:
+:ID:       d5ed128c-32a0-4387-a1e5-b4536ed86c95
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-hook-symbol-p (symbol)
+  "Return non-nil if SYMBOL is defined with XL naming conventions."
+  (s-match XL-HOOK-REGEXP (symbol-name symbol)))
+#+end_src
+
+** original hook variable
+:PROPERTIES:
+:ID:       8788ec0c-2ab2-4fb3-b383-55d6ee533e8d
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-hook-orig-symbol (hook)
+  "Return hook variable for HOOK.
+HOOK is a hook function defined with XL naming conventions."
+  (intern (nth 1 (xl-hook-symbol-p hook))))
+#+end_src
+
+** original hook function
+:PROPERTIES:
+:ID:       640d7e5d-d3a7-43be-94df-0fb9c02201d9
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-hook-orig-function (hook)
+  "Return the hook function for HOOK.
+HOOK is a hook function that follows XL naming conventions."
+  (intern (nth 2 (xl-hook-symbol-p hook))))
+#+end_src
+
+** generate hook name
+:PROPERTIES:
+:ID:       dda7e704-4aa2-48fe-8cde-427d340d23aa
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-hook-gen-name (fn name)
+  "Generate a hook name."
+  (xl-symbol-intern fn '& name))
+#+end_src
+

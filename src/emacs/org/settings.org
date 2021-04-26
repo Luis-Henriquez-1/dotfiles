@@ -1,0 +1,471 @@
+#+title: settings.org
+#+author: Luis Henriquez-Perez
+#+tags: emacs config setting
+
+* maybe run server at startup :startup:
+:PROPERTIES:
+:ID:       a35d4b90-ac83-462d-83d7-5c86e79dfdc3
+:END:
+
+#+begin_src emacs-lisp
+(defhook! run-server-maybe (emacs-startup-hook)
+  "Run emacs as a server if it's not running already."
+  (require 'server)
+  (unless (server-running-p) (server-start)))
+#+end_src
+
+* recenter cursor :cursor:
+:PROPERTIES:
+:ID:       dda57b64-b645-4eda-be54-9dda4af35404
+:END:
+
+#+begin_src emacs-lisp
+(defadvice! recenter-on-load (:after-while save-place-find-file-hook)
+  "Recenter on cursor when loading a saved place."
+  (when buffer-file-name (ignore-errors (recenter))))
+#+end_src
+
+* minibuffer :minibuffer:performance:
+:PROPERTIES:
+:ID:       8c02fc83-5e7e-4115-9768-020abcf82541
+:END:
+
+[[helpvar:minibuffer-setup-hook][minibuffer-setup-hook]] and [[helpvar:minibuffer-exit-hook][minibuffer-exit-hook]] are the hooks run just before
+entering and exiting the minibuffer (respectively). In the minibuffer I'll be
+primarily doing searches for variables and functions. There are alot of
+variables and functions so this can certainly get computationally expensive. To
+keep things snappy I increase boost the [[helpvar:gc-cons-threshold][gc-cons-threshold]] just before I enter
+the minibuffer, and restore it to it's original value a few seconds after it's closed.
+
+It would take me forever to guess the name =minibuffer-setup-hook= from the
+variable [[helpvar:minibuffer-exit-hook][minibuffer-exit-hook]]. If I knew the name =minibuffer-exit-hook= but did not
+know what the hook to enter the minibuffer was, I'd probably
+=minibuffer-enter-hook= because [[https://www.wordhippo.com/what-is/the-opposite-of/exit.html]["enter" is one of the main antonyms of "exit"]].
+It'd take me forever to guess =startup=. Note that the only tricky thing about
+this example.
+
+At first I thought of =entry= but after more thought I realized
+hook variables use action verbs in their names not nouns. So the =exit= in
+=minibuffer-exit-hook= is actually the verb =exit= not the noun.
+
+#+begin_src emacs-lisp
+(defvaralias 'minibuffer-enter-hook 'minibuffer-setup-hook)
+
+(defhook! boost-garbage-collection (minibuffer-enter-hook)
+  "Boost garbage collection settings to `XL-GC-CONS-THRESHOLD-MAX'."
+  (setq gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
+
+(defhook! defer-garbage-collection (minibuffer-exit-hook :append t)
+  "Reset garbage collection settings to `xl-gc-cons-threshold' after delay."
+  (setq gc-cons-threshold XL-GC-CONS-THRESHOLD))
+#+end_src
+
+* disable terminal initialization :setting:core:
+:PROPERTIES:
+:ID:       540c1c5a-cd31-45cf-afaf-b8e48a76e68e
+:END:
+
+According to Doom Emacs, when running emacs in terminal tty is *tremendously* slow.
+
+#+begin_src emacs-lisp
+(unless (display-graphic-p)
+  (xl-advice-add #'tty-run-terminal-initialization :override #'ignore)
+  (defhook! init-tty (window-setup-hook)
+    (advice-remove #'tty-run-terminal-initialization #'ignore)
+    (tty-run-terminal-initialization (selected-frame) nil t)))
+#+end_src
+
+* server :cache:
+:PROPERTIES:
+:ID:       3a1120f5-2809-42d6-938c-3916483033e0
+:END:
+
+#+begin_src emacs-lisp
+(use-package server
+  :set
+  (server-auth-dir . (concat XL-CACHE-DIR "server/")))
+#+end_src
+
+* prevent emacs from killing certain buffers
+:PROPERTIES:
+:ID:       ae935cf5-7322-499c-96d7-20209d9b6641
+:END:
+
+I never want the =*scratch*= and =*Messages*= buffer to be killed. I owe this idea
+to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
+
+#+begin_src emacs-lisp
+(defhook! lock-certain-buffers (after-init-hook)
+  "Prevent certain buffers from being killed."
+  (iter (each buffer (list "*scratch*" "*Messages*"))
+	(with-current-buffer buffer (emacs-lock-mode 'kill))))
+#+end_src
+
+* startup :startup:
+:PROPERTIES:
+:ID:       fff8691b-a0c8-4e99-aa9a-bf1288cd810a
+:END:
+
+#+begin_src emacs-lisp
+(defun startup%initial-buffer-choice ()
+  "Return the initial buffer to be displayed.
+This function is meant to be used as the value of `initial-buffer-choice'."
+  (alet (if xl-debug-p "*xl-log*" "*scratch*")
+    (get-buffer-create it)))
+#+end_src
+
+* log the init time :log:
+:PROPERTIES:
+:ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
+:END:
+
+I find it convenient to be able to view the init time in the =*xl-log*=
+buffer. Speed is important to me and I want to know how fast my Emacs is at
+initializing. :race-car:
+
+I'm not sure why, but [[helpfn:emacs-init-time][emacs-init-time]] is not completely accurate in some
+circumstances. The one I'm referring to now is with general prefix bindings.
+
+#+begin_src emacs-lisp
+(defhook! log-init-time (emacs-startup-hook)
+  "Log the init time."
+  (xl-log "emacs-init-time: %s" (emacs-init-time)))
+#+end_src
+
+* utf-8 text encoding
+:PROPERTIES:
+:ID:       26344072-c145-40bd-9ade-8c7f2eef54c8
+:END:
+
+#+begin_src emacs-lisp
+(setq-default locale-coding-system 'utf-8)
+(setq-default buffer-file-coding-system 'utf-8)
+
+(set-language-environment 'utf-8)
+(setq-default locale-coding-system 'utf-8)
+(prefer-coding-system 'utf-8)
+(setq-default default-file-name-coding-system 'utf-8)
+(set-default-coding-systems 'utf-8)
+(set-terminal-coding-system 'utf-8)
+(set-keyboard-coding-system 'utf-8)
+
+(setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING))
+
+;; (with-os! (:not windows)
+;;   (setq selection-coding-system 'utf-8))
+
+(when (fboundp 'set-charset-priority)
+  (set-charset-priority 'unicode))
+#+end_src
+
+* use yes or no
+:PROPERTIES:
+:ID:       82a84315-2018-42e0-bd1a-74af7b722593
+:END:
+
+Essentially, I am telling all Emacs functions that prompt the user for a =yes=
+or =no= to instead allow me to type =y= or =p=. [[helpfn:yes-or-no-p][yes-or-no-p]] is defined in c
+source code.
+
+#+begin_src emacs-lisp
+(xl-advice-add #'yes-or-no-p :override #'y-or-n-p)
+#+end_src
+
+* recursive minibuffers :minibuffer:
+:PROPERTIES:
+:ID:       7eb20f6d-75b4-4eec-8878-e7232c1a153d
+:END:
+
+This means that you can use the minibuffer while in the minibuffer. One
+situation where I use this feature is in the command [[helpfn:eval-expression][eval-expression]]. As I'm
+typing an expression, I get completion from the minibuffer.
+
+#+begin_src emacs-lisp
+(set-default! enable-recursive-minibuffers t)
+#+end_src
+
+* clipboard
+:PROPERTIES:
+:ID:       6aa6d0ac-6cf8-4f82-a724-c56d69cc062b
+:END:
+
+#+begin_src emacs-lisp
+(use-package clipboard
+  :set
+  (selection-coding-system . 'utf-8)
+  (select-enable-clipboard . t)
+  (select-enable-primary   . t)
+  (x-select-request-type   . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+#+end_src
+
+* simple :popup:
+:PROPERTIES:
+:ID:       a1fa5195-9b6a-4842-bc5f-71305e603c55
+:END:
+
+#+begin_src emacs-lisp
+(use-package simple
+  :rule ("bottom" "messages" :newname "\\*Messages\\*")
+  :set
+  (delete-trailing-lines . nil)
+  (blink-matching-paren  . t)
+  (idle-update-delay     . 1))
+#+end_src
+
+* disable old themes first :theme:
+:PROPERTIES:
+:ID:       c2110d52-ce27-4f3a-b856-1e31200f597c
+:END:
+
+Sometimes we end up with remants of the faces of old themes when we load a new
+one. For this reason, I make sure to disable any enabled themes before applying
+a new theme.
+
+#+begin_src emacs-lisp
+(defun! disable-old-themes (orig-fn &rest args)
+  "Disable old themes before loading new ones."
+  (:around load-theme)
+  (mapc #'disable-theme custom-enabled-themes)
+  (apply orig-fn args))
+#+end_src
+
+* don't echo keystrokes
+:PROPERTIES:
+:ID:       b8856ebe-6208-4271-ad5a-d352fabec8bb
+:END:
+
+After you type a key, emacs echoes it into the echo area. I find this
+unnecessary. Additionally, this will interfere with [[https://github.com/justbur/emacs-which-key][which-key]]. The keystroke
+echoing in the mode line makes the which-key prompt disappear prematurely.
+
+#+begin_src emacs-lisp
+(setq-default echo-keystrokes 0)
+#+end_src
+
+* linux :os:
+:PROPERTIES:
+:ID:       6572e618-e5ef-445b-90d6-14dc2c24f1a4
+:END:
+
+#+begin_src emacs-lisp
+(with-os! linux
+  (setq-default x-underline-at-descent-line t)
+  (setq-default x-gtk-use-system-tooltips nil))
+#+end_src
+
+* scroll faster :scroll:
+:PROPERTIES:
+:ID:       964a8b3e-37b4-4d6b-9298-3a1be3cfe6aa
+:END:
+
+"More performant rapid scrolling over unfontified regions. May cause brief
+spells of inaccurate fontification immediately after scrolling."
+
+#+begin_src emacs-lisp
+(set! fast-but-imprecise-scrolling t)
+#+end_src
+
+* how to scroll :scroll:
+:PROPERTIES:
+:ID:       c91bcd0f-da83-44a3-9d9e-e1f55dcdb642
+:END:
+
+#+begin_src emacs-lisp
+(setq-default hscroll-margin 2)
+(setq-default hscroll-step 1)
+(setq-default scroll-conservatively 1001)
+(setq-default scroll-margin 0)
+(setq-default scroll-preserve-screen-position t)
+#+end_src
+
+* disable cursor blinking :cursor:
+:PROPERTIES:
+:ID:       fe8a259b-12e6-4e58-a324-eab831283a86
+:END:
+
+By default the cursor blinks. The point is so that it is easier to find on the
+screen. Usually, however, I have no trouble finding it so I disable it.
+
+#+begin_src emacs-lisp
+(use-package frame
+  :config
+  (blink-cursor-mode -1))
+#+end_src
+
+* cus-edit
+:PROPERTIES:
+:ID:       a844ddb6-245b-463c-963d-743c931698ae
+:END:
+
+Emacs automatically creates a [[helpvar:custom-file][custom-file]] for customizations done via the [[info:emacs#Easy
+ Customization][customization interface]]. I am one of those who prefers to set them myself in my
+config file as opposed to having this file. Therefore, I set it to [[;][null-device]].
+
+#+begin_src emacs-lisp
+(use-package cus-edit
+  :set
+  (custom-file            . null-device)
+  (custom-theme-directory . (concat XL-LOCAL-DIR "themes/")))
+#+end_src
+
+* startup :startup:
+:PROPERTIES:
+:ID:       f9854e53-dd9d-4381-8e9c-8336736d4308
+:END:
+
+As it's name suggests, the built-in startup feature in Emacs.
+
+If you just set [[helpvar:inhibit-startup-echo-area-message][inhibit-startup-echo-area-message]] to =t= the word =nil= is
+messaged.  So it's best just to override the function entirely.
+
+As per [[https://emacs.stackexchange.com/questions/18677/prevent-auto-save-list-directory-to-be-created][this stackoverflow question]], this prevents the =auto-save-directory= from
+being created.
+
+#+begin_src emacs-lisp
+(use-package startup
+  :ignore display-startup-echo-area-message startup-echo-area-message
+  :set
+  (auto-save-list-file-prefix  . nil)
+  (inhibit-startup-buffer-menu . t)
+  (inhibit-startup-message     . t)
+  (inhibit-startup-screen      . t)
+  (inhibit-default-init        . t)
+  (inhibit-spash-screen        . t)
+  (initial-scratch-message     . nil)
+  (initial-buffer-choice       . #'startup%initial-buffer-choice)
+  (initial-major-mode          . 'fundamental-mode))
+#+end_src
+
+* set the fill-column
+:PROPERTIES:
+:ID:       84d8e85a-a6a1-49cd-b46e-e5cd3f825438
+:END:
+
+Fill column refers to the column where line-wrapping will occur. The standard
+value for this is =80= but historically that was because of the [[https://en.wikipedia.org/wiki/Punched_card][IBM punch
+card]]. Now this is not the case so I don't think it's as much of a deal.
+
+#+begin_src emacs-lisp
+(setq-default fill-column 80)
+#+end_src
+
+* delete duplicates in history
+:PROPERTIES:
+:ID:       1c381491-c4fa-4b5e-99de-ec6bd33df77c
+:END:
+
+This variable tells savehist not to record duplicate entries in history. Note
+this is not apart of savehist technically; it is a variable defined in C source
+code.
+
+#+begin_src emacs-lisp
+(setq-default history-delete-duplicates t)
+#+end_src
+
+* don't create lockfiles
+:PROPERTIES:
+:ID:       ae464c90-d220-4db2-a3fd-fec36b9181e4
+:END:
+
+https://stackoverflow.com/questions/8246483/emacs-how-to-disable-files-creation
+
+#+begin_src emacs-lisp
+(set! create-lockfiles nil)
+#+end_src
+
+* disable bi-directional text
+:PROPERTIES:
+:ID:       6c12f14c-75c7-4b30-9bb4-ca6e8d3cae47
+:END:
+
+Disabling bidirectional text provides a small performance boost. Bidirectional
+text is useful for languages that read right to left.
+
+#+begin_src emacs-lisp
+(set-default! bidi-display-reordering 'left-to-right)
+(set-default! bidi-paragraph-direction 'left-to-right)
+#+end_src
+
+* stop beeping :sound:
+:PROPERTIES:
+:ID:       2a83cb3a-ca2e-4d9c-a296-340d33855614
+:END:
+
+#+begin_src emacs-lisp
+(set-default! ring-bell-function #'ignore)
+#+end_src
+
+* resize pixelwise
+:PROPERTIES:
+:ID:       02daff3d-e532-4cfa-a217-81e27627e7a7
+:END:
+
+;; https://github.com/baskerville/bspwm/issues/551#issuecomment-574975395
+
+#+begin_src emacs-lisp
+(set-default! window-resize-pixelwise t)
+(set-default! frame-resize-pixelwise t)
+#+end_src
+
+* files :setting:core:
+:PROPERTIES:
+:ID:       83549b5b-33e2-48b2-aeaf-cf4734ec4040
+:END:
+
+Watch out for [[][auto-save-file-name-transforms]] and [[][]]. If you don't
+disable backups nor change these variables, Emacs will end up littering backup
+files wherever you go. These are usually among the first things new Emacsers
+will change.
+
+#+begin_src emacs-lisp
+(use-package files
+  :set
+  (auto-save-file-name-transforms . `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
+  (auto-save-interval                 . 300)
+  (auto-save-default                  . nil)
+  (auto-save-timeout                  . 30)
+  (confirm-nonexistent-file-or-buffer . nil)
+  (backup-by-copying-when-linked      . t)
+  (backup-directory-alist             . (list (cons ".*" (concat XL-CACHE-DIR "backup/"))))
+  (require-final-newline              . nil)
+  (delete-old-versions                . t)
+  (auto-mode-case-fold                . nil)
+  (confirm-kill-emacs                 . #'y-or-n-p)
+  (backup-by-copying                  . t)
+  (make-backup-files                  . nil)
+  (kept-old-versions                  . 2)
+  (kept-new-versions                  . 2)
+  (trash-directory                    . (expand-file-name "Trash" "~"))
+  (version-control                    . nil))
+#+end_src
+
+* loaddefs :core:setting:
+:PROPERTIES:
+:ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
+:END:
+
+#+begin_src emacs-lisp
+(use-package loaddefs
+  :set
+  (disabled-command-function . nil))
+#+end_src
+
+* don't prompt me when loading theme :theme:
+:PROPERTIES:
+:ID:       eaa6531c-1188-41c7-a645-a82d9f482449
+:END:
+
+If you don't enable =custom-save-themes=, emacs asks you whether you're sure you
+want to load a theme for security reasons. I prefer the convenience of not being
+prompted.
+
+Loading a theme qualifies as an intensive operation as all the faces on the
+screen need to be redisplayed.
+
+#+begin_src emacs-lisp
+(use-package custom
+  :gc-pause load-theme
+  :set
+  (custom-safe-themes . t))
+#+end_src
+

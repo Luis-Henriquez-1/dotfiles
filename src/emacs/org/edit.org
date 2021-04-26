@@ -1,0 +1,1445 @@
+#+title: edit.org
+#+author: Luis Henriquez-Perez
+#+tags: emacs config edit
+
+* paragraph :write:
+:PROPERTIES:
+:ID:       aeb973cb-41ad-4891-94b2-d0ea5c1baa33
+:END:
+
+#+begin_src emacs-lisp
+(use-package paragraph
+  :set
+  (sentence-end-double-space . nil))
+#+end_src
+
+* edit-indirect
+:PROPERTIES:
+:ID:       d08adcae-ab17-41f1-94c9-1d9a8cb385d7
+:END:
+
+#+begin_src emacs-lisp
+(use-package edit-indirect :commands edit-indirect)
+#+end_src
+
+* edit-indirect :interface:extension:
+:PROPERTIES:
+:ID:       786b11a6-561b-4793-9c6c-f7630aba3774
+:END:
+
+=edit-indirect= is a package that provides a means to edit text in an indirect
+buffer. It's the same concept as org-src buffers but is not tied to org-mode.
+
+** editing org descriptions
+:PROPERTIES:
+:ID:       bdabe0b9-4116-423b-9fc0-049651bed58a
+:END:
+
+This headline contains customizations and extensions to =edit-indirect= so that I
+can use it to edit org descriptions in the same way that we edit source blocks.
+
+There are two cases when editing a description. There's the case of an existing
+description and there's the case of a new one.
+
+*** init
+
+#+begin_src emacs-lisp
+(use-package org-edit-paragraph
+  :rule ("bottom" "org description" :newname "\\*Org Desc - .+")
+  :xl-config
+  (after! (evil evil-surround)
+    (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-surround-mode)))
+#+end_src
+
+*** description bounds
+:PROPERTIES:
+:ID:       74367212-cbd0-4871-94d5-24980e997bd7
+:END:
+
+#+begin_src emacs-lisp
+(defun org-edit-paragraph:bounds ()
+  "Return the bounds of description at headline.
+If there is no existing description return nil."
+  (interactive)
+  (let* ((parse-tree (org-ml-parse-subtree-at (point)))
+	 (elements '(headline section property-drawer src-block paragraph))
+	 (nodes (->> (org-element-map parse-tree elements #'identity)
+		     (-split-when (fn! (eq (org-element-type <elt>) 'headline)))
+		     (car))))
+    (aif (car (-split-when (fn! (not (eq (org-element-type <elt>) 'paragraph))) nodes))
+	(cons (org-element-property :begin (-first-item it))
+	      (org-element-property :end (-last-item it)))
+      (-let* ((section (-first (fn! (eq (org-element-type <elt>) 'section)) nodes))
+	      ((property-drawer others) (org-element-contents section)))
+	(alet (org-element-property :end (if others property-drawer section))
+	  (cons it it))))))
+#+end_src
+
+*** default post blanks
+:PROPERTIES:
+:ID:       117478bf-3759-4a00-b738-9b1aad99ed54
+:END:
+
+It is my preference to have one blank line after a description--or any org item
+for that matter. I just find it much more readable and less cluttered.
+
+#+begin_src emacs-lisp
+(defvar org-edit-paragraph:default-post-blanks 1
+  "Number of blank lines that should follow a description.")
+#+end_src
+
+*** hooks
+:PROPERTIES:
+:ID:       6ab3a2cc-17aa-4166-aa3f-8627afe40c1a
+:END:
+
+=edit-indirect= has hooks for whenever you want to do a quick thing.
+
+**** goto last non-white
+:PROPERTIES:
+:ID:       f9afdc3d-ceea-4e9e-a986-9f6bb7e860f6
+:END:
+
+Most of the time I will want to add to the end of a description. Therefore, I
+want the cursor to start at the last non-whitespace character of the
+description.
+
+#+begin_src emacs-lisp
+(defun org-edit-paragraph:goto-last-non-white ()
+  (goto-char (point-max))
+  (skip-chars-backward "\n\s"))
+#+end_src
+
+**** add newlines in the beginning
+:PROPERTIES:
+:ID:       46917f50-8e0b-4c29-8f9b-1aab7e0e9550
+:END:
+
+In the case where there was no existing description, we need to add newlines to
+the description buffer so that if we end up committing a change the description
+will be placed properly in relation to what's below it. This hook is designed to
+make sure this happens.
+
+#+begin_src emacs-lisp
+(defun org-edit-paragraph:add-newlines ()
+  "Add newlines."
+  (save-excursion
+    (--dotimes (1+ org-edit-paragraph:default-post-blanks)
+      (insert "\n"))))
+#+end_src
+
+**** maybe remove newline
+:PROPERTIES:
+:ID:       cfa12a0f-fd23-4684-bb10-b86b2e4e5c58
+:END:
+
+When you open a description buffer and close it again, you'd expect the source
+buffer to stay the same--and you should expect this. Since we add newlines to
+the description buffer when there's no existing description, we could
+inadvertently edit the source buffer in this case. So this hook is to remove any
+newlines added in the case that nothing was changed.
+
+#+begin_src emacs-lisp
+(defun org-edit-paragraph:maybe-remove-newline ()
+  "Remove newline if that's all there is."
+  (when (and (-every-p (-partial #'= 10) (buffer-string))
+	     (= (1+ org-edit-paragraph:default-post-blanks) (length (buffer-string))))
+    (erase-buffer)))
+#+end_src
+
+*** define a minor mode for editing descriptions
+:PROPERTIES:
+:ID:       8775acdc-0389-40af-a5f4-e74c78144944
+:END:
+
+The way I've set things up editing descriptions is it's own "thing". I'm going
+to be adding hooks and maybe even binding keys with editing descriptions in mind.
+Therefore, I think it's worthy to give it it's own mode.
+
+#+begin_src emacs-lisp
+(define-minor-mode org-edit-paragraph:mode
+  "Mode for editing org descriptions.")
+#+end_src
+
+*** requirements for editing descriptions
+:PROPERTIES:
+:ID:       9a789e79-84b8-4415-b152-e11fca786587
+:END:
+
+The edit description function requires =org-ml= and =edit-indirect=. I don't
+know if this is the best way to declare these dependencies. It certaintly is
+efficient.
+
+#+begin_src emacs-lisp
+(xl-load-before-call 'org-ml #'org/dwim-edit-description)
+(xl-load-before-call 'edit-indirect #'org/dwim-edit-description)
+#+end_src
+
+*** edit description
+:PROPERTIES:
+:ID:       3a7da5c8-f445-4592-b0c0-7fbff3be912e
+:END:
+
+It is uncough to edit the text of the buffer when we're not commit it--even
+worse to have to edit it again afterwards if we don't end up committing
+anything. No, instead we should work with the edit indirect buffer.
+
+We need to make sure that we respect [[helpvar:edit-indirect-after-creation-hook][edit-indirect-after-creation-hook]] by doing
+our description management stuff before anything is done in that hook. It may be
+worth it to consider creating a hook specifically for org descriptions.
+
+#+begin_src emacs-lisp
+(defun org/dwim-edit-description ()
+  (interactive)
+  (-let* (((beg . end) (org-edit-paragraph:bounds))
+	  (was-empty-p (= beg end)))
+    (unless beg (user-error "No description at headline."))
+    (let ((edit-indirect-after-creation-hook edit-indirect-after-creation-hook)
+	  (headline (org-get-heading t t t t)))
+      (when was-empty-p
+	(add-hook 'edit-indirect-after-creation-hook #'org-edit-paragraph:add-newlines 0))
+      (add-hook 'edit-indirect-after-creation-hook #'org-edit-paragraph:goto-last-non-white 0)
+      (with-current-buffer (edit-indirect-region beg end)
+	(rename-buffer (format "*Org Desc - %s*" headline) t)
+	(org-edit-paragraph:mode 1)
+	(add-hook 'edit-indirect-before-commit-hook
+		  #'org-edit-paragraph:maybe-remove-newline nil t)
+	(select-window (display-buffer (buffer-name)))))))
+#+end_src
+
+*** evil support
+:PROPERTIES:
+:ID:       f270092b-19ca-40ba-87aa-77b3d314c9a6
+:END:
+
+When I open a buffer for editing a description it is very likely that I'll end
+up appending more commentary to the existing description. I think it will save
+me more time making that common case easier than the cost for the few situations
+where I don't do this.
+
+#+begin_src emacs-lisp
+(after! evil
+  (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-insert-state))
+#+end_src
+
+*** custom hooks
+:PROPERTIES:
+:ID:       240acf8a-621e-4e44-9c11-250b70a0e3dc
+:END:
+
+#+begin_src emacs-lisp
+(dolist (mode (list #'auto-capitalize-mode
+		    #'aggressive-fill-paragraph-mode
+		    #'org-link-minor-mode))
+  (xl-hook-add 'org-edit-paragraph:mode-hook mode))
+#+end_src
+
+** bindings inside edit-indirect
+:PROPERTIES:
+:ID: 42992d1e-5d65-4570-ba96-02b3be31b97b
+:END:
+
+I want quick, convenient bindings I can use to abort or commit (which is
+=edit-indirect= lingo for writing the contents of the buffer back into its source
+file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
+
+#+begin_src emacs-lisp
+(bind-localleader!
+ (:map edit-indirect-mode-map)
+ ("," #'edit-indirect-commit)
+ ("c" #'edit-indirect-commit)
+ ("a" #'edit-indirect-abort))
+#+end_src
+
+* separedit :interface:
+:PROPERTIES:
+:ID:       07021099-6cea-4016-929b-d9310ea305f8
+:END:
+
+#+begin_src emacs-lisp
+(use-package separedit :commands separedit)
+#+end_src
+
+* writing :write:
+:PROPERTIES:
+:ID:       ec6f755f-5bce-4bff-a603-d4725e097cc5
+:END:
+
+** auto-capitalize :write:
+:PROPERTIES:
+:ID:       4ddfacc1-a25e-466e-ab6b-2a5ec306f3be
+:END:
+
+[[https://github.com/emacsmirror/auto-capitalize][auto-capitalize]] automatically capitalizes the first word of a sentence for me.
+It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capitalize-words]].
+
+#+begin_src emacs-lisp
+(use-package auto-capitalize
+  :hook text-mode-hook
+  :set
+  (auto-capitalize-words . '("I" "English" "Emacs")))
+#+end_src
+
+** plural :write:
+:PROPERTIES:
+:ID:       bf2ed9b7-144c-4d4b-92ae-74c93dfc6db5
+:END:
+
+This package determines whether a noun is plural and provides a function to
+convert a singular noun to a plural one. For example ~(plural-pluralize
+"goose")~ returns ~"geese"~.
+
+My intended use for this package is to help automate prompts, docstrings or the
+like that concern N number of things, where N could be 1 or more things.
+
+#+begin_src emacs-lisp
+(use-package plural
+  :commands plural-make-plural
+  :xl-config
+  (push '("\\`is\\'" . "are") plural-knowledge)
+  (push '("\\`thas\\'" . "those") plural-knowledge)
+  (push '("\\`this\\'" . "these") plural-knowledge))
+#+end_src
+
+** spell-number :write:spell:
+:PROPERTIES:
+:ID:       8bf270a6-6003-4430-bb03-0b665d5a162f
+:END:
+
+#+begin_src emacs-lisp
+(use-package spell-number
+  :set
+  (spelln-language          . 'english-us)
+  (spelln-country           . 'united-states)
+  (spelln-period-character  . ?,)
+  (spelln-decimal-character . ?.))
+#+end_src
+
+* backups and saving :backup:
+:PROPERTIES:
+:ID:       edcf4a17-5554-4985-8210-322a5fa3dc99
+:END:
+
+** set undo-tree :evil:
+:PROPERTIES:
+:ID:       e54f42d0-f146-4816-8226-8798d0746533
+:END:
+
+#+begin_src emacs-lisp
+(defafter! set-evil-undo-system (evil)
+  (setq evil-undo-system 'undo-tree))
+#+end_src
+
+** super-save :edit:
+:PROPERTIES:
+:ID:       684e788c-6db9-4e6e-826b-d4871c0a3f90
+:END:
+
+The default auto-saving feature in emacs saves after a certain number of
+characters are typed (see [[helpvar:auto-save-interval][auto-save-interval]]). The problem is that if you're in
+the middle of typing and you've just hit the number of characters that trigger a
+save, you could experience a lag, particularly if you are dealing with a large
+file being saved. Instead of doing this, [[https://github.com/bbatsov/super-save][super-save]] saves buffers during idle
+time and after certain commands like [[helpfn:switch-to-buffer][switch-to-buffer]] (see [[helpvar:super-save-triggers][super-save-triggers]]).
+Note that this is the same strategy employed by [[id:c550f82a-9608-47e6-972b-eca460015e3c][idle-require]] to load packages.
+Saving files like this reduces the likelihood of user delays.
+
+#+begin_src emacs-lisp
+(use-package super-save
+  :before-call find-file
+  :set
+  (super-save-auto-save-when-idle . t)
+  (super-save-idle-duration       . 5))
+#+end_src
+
+*** vc-hook
+:PROPERTIES:
+:ID:       a8dcb1f6-05a0-46cb-95b5-1d0cd0ad4467
+:END:
+
+#+begin_src emacs-lisp
+(use-package vc-hooks
+  :set
+  (vc-follow-symlinks . t)
+  (vc-follow-link     . t))
+#+end_src
+
+** version control :vc:
+:PROPERTIES:
+:ID:       3020da29-778d-4e34-8f9d-286b398df995
+:END:
+
+*** quit :git:
+:PROPERTIES:
+:ID:       8014eb34-416a-4c79-b21a-7960f77da75e
+:END:
+
+#+begin_src emacs-lisp
+(defun magit/quit ()
+  "Clean up magit buffers after quitting `magit-status'."
+  (interactive)
+  (let ((buffers (magit-mode-get-buffers)))
+    (magit-restore-window-configuration)
+    (mapc #'kill-buffer buffers)))
+#+end_src
+
+*** git-auto-commit-mode :git:
+:PROPERTIES:
+:ID:       00a518e9-56ae-4c0b-b2cd-518fb4c5d201
+:END:
+
+To avoid losing information. You should commit often in git--like every 10
+seconds or so. Obviously doing this manually on the command line (or even on
+[[id:d6088ed3-417a-44e8-822b-ce4743f497d0][magit]]) every time is a pain. This package commits your changes every time
+you save your file--which for me is all the time because I use [[id:bd455e73-4035-49b9-bbdf-3d59d4906c97][super-save]].
+
+**** git-auto-commit-mode
+:PROPERTIES:
+:ID:       8a46cee4-624c-4440-8b99-c6b34d356a6b
+:END:
+
+#+begin_src emacs-lisp
+(use-package git-auto-commit-mode
+  :commands git-auto-commit-mode
+  :set
+  (gac-automatically-push-p   . nil)
+  (gac-ask-for-summary-p      . nil)
+  (gac-default-message        . #'gac%commit-message)
+  (gac-commit-additional-flag . "-S")
+  (gac-silent-message-p       . t))
+#+end_src
+
+**** commit message
+:PROPERTIES:
+:ID:       3f0297a0-5929-4217-a109-545a2a010473
+:END:
+
+Committing often as I recommend will inevitably result with commits that are
+many bits and pieces of a change. The idea is to then squash together all
+related commits for the "polished" result. With this function I create "smart"
+commit messages that take advantage of the org headline structure. This makes it
+easy to go back and group commits which are related. Note that this function
+fails when you have a change that spans across multiple headlines (such as the
+replacement of a name throughout a document). This is something I plan to
+address later.
+
+#+begin_src emacs-lisp
+(defun gac%commit-message (file)
+  "Return the commit message for changes to FILE."
+  (format "Update %s" (f-base file)))
+#+end_src
+
+*** magit :git:
+:PROPERTIES:
+:ID:       820ce76e-53e4-4be8-9cad-3bf35efeefd7
+:END:
+
+#+begin_src emacs-lisp
+(use-package magit
+  :idle-require f s with-editor git-commit package eieio lv transient
+  :gc-pause magit-status magit-commit
+  :rule ("bottom" "magit" :newname "magit: ")
+  :hook (magit-popup-mode-hook . hide-mode-line-hook)
+  :set
+  (magit-completing-read-function . #'completing-read)
+  (magit-diff-refine-hunk . t)
+  (magit-auto-revert-mode . t))
+#+end_src
+
+*** git-commit :git:
+:PROPERTIES:
+:ID:       2edbbef6-dec3-4af7-a445-8a2c7b1c0397
+:END:
+
+#+begin_src emacs-lisp
+(use-package git-commit
+  :initial-state insert)
+#+end_src
+
+*** git-gutter+ :git:
+:PROPERTIES:
+:ID:       77fb81e3-29c0-4eb3-a1ff-e1bdbfa41bf2
+:END:
+
+=git-gutter= indicates which parts of a file has been modified.
+
+#+begin_src emacs-lisp
+(use-package git-gutter+
+  :alias (git-commit-mode-font-lock-keywords . ignore))
+#+end_src
+
+*** evil-magit :evil:bind:git:
+:PROPERTIES:
+:ID:       a86e7a69-4e0a-41fd-aca7-66e514332e7f
+:END:
+
+#+begin_src emacs-lisp
+(use-package evil-magit
+  :silence evil-magit-init
+  :before-call magit-status
+  :xl-config
+  (evil-magit-init)
+  :set
+  (evil-magit-state . 'normal))
+#+end_src
+
+* debug :debug:
+:PROPERTIES:
+:ID:       bd3e1752-c3d7-41cd-90e9-7b5a69716aa7
+:END:
+
+** ert
+:PROPERTIES:
+:ID:       5fbf293e-84ae-4f47-bdcd-850ff552465a
+:END:
+
+#+begin_src emacs-lisp
+(use-package ert
+  :rule ("bottom" "ert" :newname "\\*ert\\*")
+  :assume-yes ert-delete-all-tests)
+#+end_src
+
+** ert-expectations
+:PROPERTIES:
+:ID:       3062b8a4-4261-49fc-9bdb-895ba75bbd19
+:END:
+
+#+begin_src emacs-lisp
+(use-package ert-expectations)
+
+(autoload 'expect "ert-expectations" nil nil 'macro)
+(autoload 'expectations "ert-expectations" nil nil 'macro)
+#+end_src
+
+** el-mock
+:PROPERTIES:
+:ID:       46df66b0-5820-4550-aa99-c913d3022fe1
+:END:
+
+#+begin_src emacs-lisp
+(use-package el-mock)
+#+end_src
+
+** assess
+:PROPERTIES:
+:ID:       cea20fcd-0c75-42dc-be7f-e9eda7b932b1
+:END:
+
+=assess= is similar to =ert-expectations=. It is a wrapper around the built in
+[[][ert-deftest] that provides a cleaner syntax for writing tests.
+
+#+begin_src emacs-lisp
+(use-package assess)
+#+end_src
+
+** bug-hunter
+:PROPERTIES:
+:ID:       30196ef6-7b34-4a6c-b084-8e613010abd4
+:END:
+
+=bug-hunter= is a package that automates [[https://en.wikipedia.org/wiki/Bisection_(software_engineering)][code-bisection]], the process of trying
+parts of your code at a time until you find out where the bug is. You can find
+the culprit of a problem by [[][code bisection].
+
+#+begin_src emacs-lisp
+(use-package bug-hunter)
+#+end_src
+
+** ppp
+:PROPERTIES:
+:ID:       82dbb88a-4bce-4ca3-90fe-38cfbea7abc6
+:END:
+
+This is a pretty printer.
+
+Sometimes you want to see what an object looks like represented as text so you
+know what you're dealing with. For example, I've wanted to see what a straight
+recipe looks like. The problem is by default [[][]] prints something on one
+line. And to avoid long lines, emacs truncates the output so you can't even see
+the whole thing.
+
+#+begin_src emacs-lisp
+(use-package ppp)
+#+end_src
+
+* expand-region :region:
+:PROPERTIES:
+:ID:       b76eb685-37eb-4c58-8712-6b23f2e33d3f
+:END:
+
+** expand region bindings :keybind:edit:emacs:config:
+:PROPERTIES:
+:ID: 417c9c53-a776-4779-9afc-1eaa35a145c6
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:v "V" #'er/contract-region)
+  (:v "v" #'er/expand-region))
+#+end_src
+
+** quit expand region :advice:edit:emacs:config:
+:PROPERTIES:
+:ID:       639824e1-0dcf-46bc-98b4-c70b9c7cb2a6
+:END:
+
+#+begin_src emacs-lisp
+(defadvice! quit-expand-region (:before evil-escape)
+  "Properly abort an expand-region region."
+  (when (memq last-command '(er/expand-region er/contract-region))
+    (er/contract-region 0)))
+#+end_src
+
+** expand region :edit:emacs:config:
+:PROPERTIES:
+:ID:       41a1cebc-8da8-4e5c-8258-2ce440f1af50
+:END:
+
+#+begin_src emacs-lisp
+(use-package expand-region
+  :commands er/expand-region er/contract-region er/mark-symbol)
+#+end_src
+
+** expand-region :edit:emacs:config:desc:
+:PROPERTIES:
+:ID:       7e873fba-33ea-4720-ad79-bd8d557cc4b3
+:END:
+
+[[https://github.com/magnars/expand-region.el][expand-region]] allows me to toggle a key ("v" in my case) to select progressively
+larger text objects. It's saves me keystrokes.
+
+* DOC smartparens :parens:
+:PROPERTIES:
+:ID:       1c370582-6d30-44fb-a421-47885b99d110
+:END:
+
+** DOC disable =smartparens-navigate-skip-match=
+:PROPERTIES:
+:ID:       512a1623-d5ec-4af4-8fc3-471f4fe3dcde
+:END:
+
+#+begin_src emacs-lisp
+(defhook! disable-smartparens-navigate-skip-match (after-change-major-mode-hook)
+  "Disable smartparents skip match feature."
+  (setq sp-navigate-skip-match nil)
+  (setq sp-navigate-consider-sgml-tags nil))
+#+end_src
+
+** DOC config
+:PROPERTIES:
+:ID:       46cc632f-b577-456e-b47d-0c166a5d5663
+:END:
+
+#+begin_src emacs-lisp
+(defhook! init-smartparens-config (smartparens-mode-hook)
+  (require 'smartparens-config)
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
+#+end_src
+
+** DOC smartparens
+:PROPERTIES:
+:ID:       e26f4c55-9585-4544-bed6-9733d50823e7
+:END:
+
+#+begin_src emacs-lisp
+(use-package smartparens
+  :before-call evil-expression evil-ex
+  :hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode)
+  :set
+  (sp-cancel-autoskip-on-backward-movement . nil)
+  (sp-highlight-wrap-tag-overlay           . nil)
+  (sp-highlight-pair-overlay               . nil)
+  (sp-highlight-wrap-overlay               . nil)
+  (sp-show-pair-from-inside                . t)
+  (sp-show-pair-delay                      . 0.1)
+  (sp-max-pair-length                      . 4)
+  (sp-max-prefix-length                    . 50)
+  (sp-escape-quotes-after-insert           . nil))
+#+end_src
+
+** DOC autopairing :parens:edit:
+:PROPERTIES:
+:ID:       5173d780-c2ce-4e78-b1cc-0f4ffa2fde7d
+:END:
+
+#+begin_src emacs-lisp
+(defhook! enable-smartparens-maybe (minibuffer-setup-hook)
+  "Enable `smartparens-mode' in the minibuffer."
+  (when (memq this-command '(eval-expression evil-ex))
+    (smartparens-mode 1)))
+#+end_src
+
+** DOC change one-off issue :evil:parens:
+:PROPERTIES:
+:ID:       284dabf8-d1a1-4d92-866c-7ebbb6885174
+:END:
+
+#+begin_src emacs-lisp
+(defafter! fix-on-off-issue (evil smartparens)
+  (setq sp-show-pair-from-inside t)
+  (setq sp-cancel-autoskip-on-backward-movement nil)
+  (setq sp-pair-overlay-keymap (make-sparse-keymap)))
+#+end_src
+
+** DOC skipping org markup :parens:org:lisp:
+:PROPERTIES:
+:ID:       0c9747a6-c98a-478d-967a-d8efcf900f65
+:END:
+
+#+begin_src emacs-lisp
+(defun sp%org-skip-markup (ms mb me)
+  (save-excursion
+    (and (progn
+           (goto-char mb)
+           (save-match-data (looking-back "\\sw\\|\\s_\\|\\s.")))
+         (progn
+           (goto-char me)
+           (save-match-data (looking-at "\\sw\\|\\s_\\|\\s."))))))
+#+end_src
+
+** DOC skip markup :parens:org:lisp:
+:PROPERTIES:
+:ID:       48681dfd-5d1d-4a90-bf33-e6915c87588b
+:END:
+
+#+begin_src emacs-lisp
+(defun sp%skip-markup (ms mb me)
+  (cond ((equal ms "'")
+	 (or (sp--org-skip-markup ms mb me)
+	     (not (sp-point-in-string-or-comment))))
+	(t (not (sp-point-in-string-or-comment)))))
+#+end_src
+
+** DOC disable lisp pairs in emacs-lisp-mode :parens:lisp:quote:elisp:webcode:
+:PROPERTIES:
+:ID:       ead6257f-42fd-4265-8006-094f23215a13
+:END:
+:LINKS:
+https://github.com/Fuco1/smartparens/issues/286
+:END:
+
+In lisp, ='= and =`= are used for quoting. We don't want smartparens
+auto-pairing them.
+
+#+begin_src emacs-lisp
+(defafter! disable-lisp-pairs (smartparens)
+  "Disable auto-pairing for text used in quoting."
+  (sp-local-pair sp-lisp-modes "'" nil :actions nil)
+  (sp-local-pair sp-lisp-modes "`" "'" :when '(sp-in-string-p sp-in-comment-p))
+  (sp-local-pair sp-lisp-modes "`" nil :skip-match #'sp%skip-markup))
+#+end_src
+
+** DOC disable lisp pairs in minibuffer :minibuffer:parens:
+:PROPERTIES:
+:ID:       0cba1d65-d5f2-462b-aa91-c6b5fa8818d7
+:END:
+
+"You're likely writing lisp in the minibuffer, therefore, disable these quote
+pairs, which lisps doesn't use for strings." - Doom Emacs
+
+#+begin_src emacs-lisp
+(defafter! disable-lisp-pairs (smartparens)
+  "Disable auto-pairing for text used in minibuffer."
+  (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil)
+  (sp-local-pair 'minibuffer-inactive-mode "`" nil :actions nil))
+#+end_src
+
+** DOC disable overlays :evil:smartparens:parens:edit:
+:PROPERTIES:
+:ID:       c0088dca-9e3b-412f-ade9-d67199b0c8ca
+:END:
+
+#+begin_src emacs-lisp
+(defafter! disable-smartparens-overlays (smartparens)
+  (setq sp-highlight-pair-overlay nil)
+  (setq sp-highlight-wrap-overlay nil)
+  (setq sp-highlight-wrap-tag-overlay nil))
+#+end_src
+
+* indentation :indent:
+:PROPERTIES:
+:ID:       02ddb747-2a7c-4616-b6ff-a67018d79059
+:END:
+
+** aggressive-fill-paragraph
+:PROPERTIES:
+:ID: 4f57fd49-b466-4eea-b91a-2cc8f0b07297
+:END:
+
+Emacs is very minimal by default. Most reading this will likely be used to.
+
+#+begin_src emacs-lisp
+(use-package aggressive-fill-paragraph)
+#+end_src
+
+** aggressive-indent
+:PROPERTIES:
+:ID: f1b9a36e-26e4-4305-99ae-cbcf6a90013d
+:END:
+
+[[https://github.com/Malabarba/aggressive-indent-mode][aggressive-indent]] indents portions of the text your working on as your typing
+it. It's pretty smart and very convenient.
+
+#+begin_src emacs-lisp
+(use-package aggressive-indent)
+#+end_src
+
+* lisp
+:PROPERTIES:
+:ID:       d214f09b-4f68-411f-8a01-d9df69217e2b
+:END:
+
+** lispyville :parens:
+:PROPERTIES:
+:ID:       120baacb-4835-4e96-a7cb-e8bb7496d7be
+:END:
+
+[[https://github.com/noctuid/lispyville][lispyville]] helps vim commands work better with lisp by providing
+commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve parentheses.
+
+*** lispyville
+:PROPERTIES:
+:ID:       fad4cb7c-ff1e-485d-99d1-f55384c26402
+:END:
+
+#+begin_src emacs-lisp
+(use-package lispyville :hook emacs-lisp-mode-hook)
+#+end_src
+
+*** remappings :bind:
+:PROPERTIES:
+:ID:       f14083fc-13d1-41c6-9fca-eb686a1d50a3
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  ([remap evil-yank]                 #'lispyville-yank)
+  ([remap evil-delete]               #'lispyville-delete)
+  ([remap evil-change]               #'lispyville-change)
+  ([remap evil-yank-line]            #'lispyville-yank-line)
+  ([remap evil-delete-line]          #'lispyville-delete-line)
+  ([remap evil-change-line]          #'lispyville-change-line)
+  ([remap evil-delete-char]          #'lispyville-delete-char-or-splice)
+  ([remap evil-delete-backward-char] #'lispyville-delete-char-or-splice-backwards)
+  ([remap evil-substitute]           #'lispyville-substitute)
+  ([remap evil-change-whole-line]    #'lispyville-change-whole-line)
+  ([remap evil-join]                 #'lispyville-join))
+#+end_src
+
+*** inner text objects :bind:
+:PROPERTIES:
+:ID:       f9f82ebe-5749-452f-ba49-269e60526b04
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+ (:map evil-inner-text-objects-map)
+ ("a" #'lispyville-inner-atom)
+ ("l" #'lispyville-inner-list)
+ ("x" #'lispyville-inner-sexp)
+ ("c" #'lispyville-inner-comment)
+ ("s" #'lispyville-inner-string))
+#+end_src
+
+*** outer text objects :bind:
+:PROPERTIES:
+:ID:       9dda9a1b-c76f-4537-9554-45ad3c77977a
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map evil-outer-text-objects-map)
+  ("a" #'lispyville-a-atom)
+  ("l" #'lispyville-a-list)
+  ("x" #'lispyville-a-sexp)
+  ("c" #'lispyville-a-comment)
+  ("s" #'lispyville-a-string))
+#+end_src
+
+*** slurp/barf :bind:
+:PROPERTIES:
+:ID:       7b7b0288-745d-49cd-98e0-5d6a1ba6ce82
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  (:n ">" #'lispyville-slurp)
+  (:n "<" #'lispyville-barf))
+#+end_src
+
+*** escape :bind:
+:PROPERTIES:
+:ID:       53a208ee-4389-4edd-ad46-02cd811f8d81
+:END:
+
+=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =xl-escape-hook=
+to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]] as advice to
+=lispyville-normal-state=.
+
+Sometimes =evil-normal-state= enters visual state.
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  (:ei [escape] #'lispyville-normal-state))
+#+end_src
+
+*** additional :bind:
+:PROPERTIES:
+:ID:       ffe6833e-1ba2-402d-9b1a-5232168bd468
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  (:ei "SPC" #'lispy-space)
+  (:ei ";"   #'lispy-comment)
+  (:nv "M-j" #'lispyville-drag-forward)
+  (:nv "M-k" #'lispyville-drag-backward)
+  (:nv "M-R" #'lispyville-raise-list)
+  (:nv "M-v" #'lispy-convolute-sexp))
+#+end_src
+
+* rainbow-delimiters :parens:asthetic:
+:PROPERTIES:
+:ID:       5b58bb1c-5d3c-4f04-b4fb-c55f1588839e
+:END:
+
+[[https://github.com/Fanael/rainbow-delimiters][rainbow-delimiters]] colors parentheses different colors based on level. This is a
+great idea! It makes it really easy to see which parentheses go together.
+
+#+begin_src emacs-lisp
+(use-package rainbow-delimiters
+  :hook prog-mode-hook reb-mode-hook
+  :set
+  (rainbow-delimiters-max-face-count . 9))
+#+end_src
+
+* paren :parens:emacs:asthetic:
+:PROPERTIES:
+:ID:       c4d415da-a408-4e59-ac6a-c5ab17e2e32d
+:END:
+
+#+begin_src emacs-lisp
+(use-package paren
+  :hook (prog-mode . show-paren-mode)
+  :set
+  (show-paren-delay . 0))
+#+end_src
+
+* lispyville :parens:lisp:navigation:
+:PROPERTIES:
+:ID:       1045f310-70d7-4a69-b5f2-414947971b0f
+:END:
+
+** lispyville
+:PROPERTIES:
+:ID:       fad4cb7c-ff1e-485d-99d1-f55384c26402
+:END:
+
+#+begin_src emacs-lisp
+(use-package lispyville :hook emacs-lisp-mode-hook)
+#+end_src
+
+** remappings :bind:
+:PROPERTIES:
+:ID:       411cb6e1-311a-458a-a241-d9b9aef45d25
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  ([remap evil-yank]                 #'lispyville-yank)
+  ([remap evil-delete]               #'lispyville-delete)
+  ([remap evil-change]               #'lispyville-change)
+  ([remap evil-yank-line]            #'lispyville-yank-line)
+  ([remap evil-delete-line]          #'lispyville-delete-line)
+  ([remap evil-change-line]          #'lispyville-change-line)
+  ([remap evil-delete-char]          #'lispyville-delete-char-or-splice)
+  ([remap evil-delete-backward-char] #'lispyville-delete-char-or-splice-backwards)
+  ([remap evil-substitute]           #'lispyville-substitute)
+  ([remap evil-change-whole-line]    #'lispyville-change-whole-line)
+  ([remap evil-join]                 #'lispyville-join))
+#+end_src
+
+** inner text objects :bind:
+:PROPERTIES:
+:ID:       f9f82ebe-5749-452f-ba49-269e60526b04
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map evil-inner-text-objects-map)
+  ("a" #'lispyville-inner-atom)
+  ("l" #'lispyville-inner-list)
+  ("x" #'lispyville-inner-sexp)
+  ("c" #'lispyville-inner-comment)
+  ("s" #'lispyville-inner-string))
+#+end_src
+
+** outer text objects :bind:
+:PROPERTIES:
+:ID:       9dda9a1b-c76f-4537-9554-45ad3c77977a
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map evil-outer-text-objects-map)
+  ("a" #'lispyville-a-atom)
+  ("l" #'lispyville-a-list)
+  ("x" #'lispyville-a-sexp)
+  ("c" #'lispyville-a-comment)
+  ("s" #'lispyville-a-string))
+#+end_src
+
+** slurp/barf :bind:
+:PROPERTIES:
+:ID:       2b70a90f-6d5a-437e-99e9-e72224d64079
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  (:n ">" #'lispyville-slurp)
+  (:n "<" #'lispyville-barf))
+#+end_src
+
+** escape :bind:
+:PROPERTIES:
+:ID:       6469110b-e5bf-4276-a9de-a5c1e1eb2385
+:END:
+
+=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =xl-escape-hook=
+to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]] as advice to
+=lispyville-normal-state=.
+
+Sometimes =evil-normal-state= enters visual state.
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  ([escape] #'lispyville-normal-state))
+#+end_src
+
+** additional :bind:
+:PROPERTIES:
+:ID:       af8b96f7-183a-4f87-a985-7f7328e6feb7
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map lispyville-mode-map)
+  (:ei "SPC" #'lispy-space)
+  (:ei ";"   #'lispy-comment)
+  (:nv "M-j" #'lispyville-drag-forward)
+  (:nv "M-k" #'lispyville-drag-backward)
+  (:nv "M-R" #'lispyville-raise-list)
+  (:nv "M-v" #'lispy-convolute-sexp))
+#+end_src
+
+* modal editing :modal:
+:PROPERTIES:
+:ID:       51826df5-8e16-4f4b-9814-cdcc6d5b7e7a
+:END:
+
+** TODO multistate :disabled:
+:PROPERTIES:
+:ID:       3af402ee-9fe4-4d2e-b859-22e3b6e8a324
+:END:
+
+#+begin_src emacs-lisp
+(use-package multistate)
+#+end_src
+
+** TODO meow :meow:disabled:
+:PROPERTIES:
+:ID:       47c5cad9-2ba3-40ee-a872-0d90ba438601
+:END:
+
+*** bindings :bind:
+:PROPERTIES:
+:ID:       c90a8647-0199-4cbe-bfb4-6487de53f380
+:END:
+
+#+begin_src emacs-lisp
+;; (bind! ())
+#+end_src
+
+** evil :evil:
+:PROPERTIES:
+:ID:       5baaae49-7785-4b3e-99b9-7ad50e90ec43
+:END:
+
+*** evil :modal:evil:edit:
+:PROPERTIES:
+:ID:       9639633f-ec3d-4499-9615-db0dcc9650c9
+:END:
+
+[[https://github.com/emacs-evil/evil][evil]] is an extensible vi layer for Emacs. It emulates the main features of Vim,
+and provides facilities for writing custom extensions. Also see our page on
+[[emacswiki:Evil][EmacsWiki]]. See a brief [[https://bytebucket.org/lyro/evil/raw/default/doc/evil.pdf][manual]]. See the [[https://github.com/noctuid/evil-guide][evil-guide]] by noctuid.
+
+**** evil :edit:evil:
+:PROPERTIES:
+:ID:       e472e5d3-2760-420b-bbe1-2eb043368f67
+:END:
+
+#+begin_src emacs-lisp
+(use-package evil)
+#+end_src
+
+**** evil-core :edit:evil:
+:PROPERTIES:
+:ID:       9aa26d2c-d15a-4f36-a024-3ca9ce568385
+:END:
+
+#+begin_src emacs-lisp
+(use-package evil-core
+  :hook (emacs-startup-hook . evil-mode))
+#+end_src
+
+**** evil-vars :edit:evil:
+:PROPERTIES:
+:ID:       af3a9791-76ac-4fd5-96fe-d361cef3b5b3
+:END:
+
+#+begin_src emacs-lisp
+(use-package evil-vars
+  :set
+  (evil-want-visual-char-semi-exclusive . t)
+  (evil-ex-search-vim-style-regexp      . t)
+  (evil-respect-visual-line-mode        . t)
+  (evil-insert-skip-empty-lines         . t)
+  (evil-want-C-w-in-emacs-state         . nil)
+  (evil-ex-substitute-global            . t)
+  (evil-ex-visual-char-range            . t)
+  (evil-move-beyond-eol                 . nil)
+  (evil-move-cursor-back                . nil)
+  (evil-indent-convert-tabs             . t)
+  (evil-symbol-word-search              . t)
+  (evil-mode-line-format                . nil)
+  (evil-echo-state                      . nil)
+  (evil-magic                           . t))
+#+end_src
+
+**** custom :edit:evil:
+:PROPERTIES:
+:ID:       f7ece898-25e2-4b2c-94f3-e832a687114c
+:END:
+
+#+begin_src emacs-lisp
+(set-default! evil-want-C-u-scroll t)
+#+end_src
+
+**** make normal state default :evil:edit:
+:PROPERTIES:
+:ID:       4940ad40-35a2-43ca-a005-da708aa44313
+:END:
+
+#+begin_src emacs-lisp
+(defhook! make-normal-state-default (evil-mode-hook)
+  "Make normal state the default state."
+  (set! (append evil-emacs-state-modes evil-motion-state-modes <evil-normal-state-modes>))
+  (setq evil-emacs-state-modes nil)
+  (setq evil-motion-state-modes nil))
+#+end_src
+
+**** replace normal with motion :evil:edit:
+:PROPERTIES:
+:ID:       69dc135f-0c4a-49ad-9801-ee45dc3ff20f
+:END:
+
+#+begin_src emacs-lisp
+(defun! replace-motion-with-normal (orig-fn &rest args)
+  "Advice for `evil-make-overriding-map' that inhibits motion state."
+  (:around evil-make-overriding-map)
+  (-let (((keymap state copy) args))
+    (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
+#+end_src
+
+**** normal state everywhere :evil:edit:
+:PROPERTIES:
+:ID:       e6126bd7-94b8-4ce0-b547-0536b59437ea
+:END:
+
+In his excellent [[https://github.com/noctuid/evil-guide][evil-guide]], =noctuid= pointed out that [[https://github.com/noctuid/evil-guide#global-keybindings-and-evil-states][motion state is a
+useless state]]. The code in this headline essentially just says =NO= to motion
+state and disables it everywhere in favor of normal state.
+
+#+begin_src emacs-lisp
+(defun! replace-motion-with-normal (orig-fn &rest args) 
+  ""
+  (:around evil-set-initial-state)
+  (-let (((mode state) args))
+    (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
+
+(xl-advice-add #'evil-motion-state :override #'evil-normal-state)
+#+end_src
+
+**** cursors
+:PROPERTIES:
+:ID: a5f558fb-221c-4b33-a7cd-29308ef74b0d
+:END:
+
+It's nice to have cursors change colors (and sometimes shape) depending on the
+current evil state. It makes it easy to tell which state you're in. I define
+some colors here. Evil has a cursor variable for each state. The cursor variable
+for insert state, for example, is [[helpvar:evil-insert-state-cursor][evil-insert-state-cursor]]. Its value is of the
+form: ~((CURSOR-SHAPE . CURSOR-WIDTH) COLOR)~.
+
+***** colors and shapes :evil:cursor:asthetic:
+:PROPERTIES:
+:ID: 3f3cd5c9-1f6d-4c3b-b73f-82c9ee00395e
+:END:
+
+Changing the cursor shape and color depending on the state is a convenient and
+asthetically pleasing way of determining which state you're in. Some add some
+modeline indicator for this but I find that the cursor suffices.
+
+#+begin_src emacs-lisp
+(defhook! setup-cursor (evil-mode-hook)
+  "Initialize the default cursor shape and size."
+  (setq evil-insert-state-cursor   '((bar . 3)   "chartreuse3"))
+  (setq evil-emacs-state-cursor    '((bar . 3)   "SkyBlue2"))
+  (setq evil-normal-state-cursor   '( box        "DarkGoldenrod2"))
+  (setq evil-visual-state-cursor   '((hollow)    "dark gray"))
+  (setq evil-operator-state-cursor '((hbar . 10) "hot pink"))
+  (setq evil-replace-state-cursor  '( box        "chocolate"))
+  (setq evil-motion-state-cursor   '( box        "plum3")))
+#+end_src
+
+***** updating cursors :evil:cursor:asthetic:
+:PROPERTIES:
+:ID: ea4da6d4-4a2c-42cf-b397-cea1555781ce
+:END:
+
+After a theme is loaded, the cursor color won't automatically update. Therefore,
+I add a hook in [[helpvar:xl-after-load-theme-hook][xl-after-load-theme-hook]]. Now after a new theme is loaded, the
+cursor color will update.
+
+#+begin_src emacs-lisp
+(defhook! refresh-evil-cursor (xl-after-load-theme-hook)
+  "Enable cursor refreshing after theme change."
+  (when (bound-and-true-p evil-mode)
+    (evil-refresh-cursor)))
+#+end_src
+
+**** insert state in minibuffer :minibuffer:evil:
+:PROPERTIES:
+:ID: a23137c5-62a0-4e77-9e51-6a7372dac703
+:END:
+
+Before I just used ~(evil-change-state evil-previous-state)~ to revert the
+state back to what it last was. But this fails with ~evil-force-normal-state~
+which is what I'm currently using to exit the minibuffer because then the
+last state is normal state if the minibuffer is aborted. Using a
+=evil:state-before-minibuffer= ensures that the state will be reverted to
+the correct one.
+
+#+begin_src emacs-lisp
+(defhook! preserve-prior-evil-state (minibuffer-enter-hook)
+  "Save state before entering the minibuffer and enter insert state."
+  (when (bound-and-true-p evil-mode)
+    (setq evil:state-before-minibuffer evil-state)
+    (evil-insert-state)))
+
+(defhook! restore-prior-evil-state (minibuffer-exit-hook)
+  "Restore state after minibuffer."
+  (when (bound-and-true-p evil-mode)
+    (evil-change-state evil:state-before-minibuffer)
+    (setq evil:state-before-minibuffer nil)))
+#+end_src
+
+**** escape :evil:
+:PROPERTIES:
+:ID: ea9378de-e5c5-482c-b53b-743a81e3bc8e
+:END:
+
+We want escape to be a "quit everything" keybinding.
+
+#+begin_src emacs-lisp
+(bind! (:ei [escape] #'evil-force-normal-state))
+
+(defadvice! exit-everything (:after evil-force-normal-state lispyville-normal-state)
+  "Exits out of whatever is happening after escape."
+  (cond ((minibuffer-window-active-p (minibuffer-window))
+         (abort-recursive-edit))
+        ((run-hook-with-args-until-success 'xl-escape-hook))
+        ((or defining-kbd-macro executing-kbd-macro) nil)
+        (t (keyboard-quit))))
+#+end_src
+
+**** text objects :evil:textobj:
+:PROPERTIES:
+:ID:       0edef735-cec9-4015-bfd5-cf36e816cbc3
+:END:
+
+To edit text efficiently Vim has the concept of [[https://blog.carbonfive.com/2011/10/17/vim-text-objects-the-definitive-guide/][text objects]]. Text objects are
+structures that are seen in text. For example, a set of words followed by a
+period is a sentence. A words between two closing parentheses is a sexp.
+
+***** general delimiter text object
+:PROPERTIES:
+:ID:       0066093b-7991-4193-8ce2-ef9f17af211a
+:END:
+
+I discovered this the =form= text object from using [[https://github.com/luxbock/evil-cleverparens][evil-cleverparens]] in the past.
+The package =evil-cleverparens= was too slow for my taste; noctuid's [[https://github.com/sp3ctum/evil-lispy][evil-lispy]] is
+much faster and gave me the functionality that I needed most from
+=evil-cleverparens=: deleting and copying text with parentheses intelligently.
+However, many of the ideas of =evil-cleverparens= were excellent. One particular
+idea was to have a general =form= text object. Instead of specifying the
+particular surrounding bounds when doing an evil operator command you just use a
+single key for them. It's kind of like a =Do-What-I-Mean= surround operator. This
+is suprisingly useful because it takes significant time to specify whether you
+want =[]= or ={=}= or =()= or =""=. The main drawback you cannot distinguish between
+surround characters at multiple levels--it just takes the closest one. In
+practice, this is rarely an issue.
+
+***** inner :textobj:
+:PROPERTIES:
+:ID:       dc06e55b-ce4d-4921-b478-ae7b7927df82
+:END:
+
+#+begin_src emacs-lisp
+(after! evil
+  (evil-define-text-object evil:textobj-inner-form (count &rest _)
+    "Inner sexp object."
+    (-if-let ((beg . end)
+	      (->> (list (lispy--bounds-list) (lispy--bounds-string))
+		   (-non-nil)
+		   (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
+		   (car)))
+	(evil-range (1+ beg) (1- end) 'inclusive :expanded t)
+      (error "No surrounding form found."))))
+#+end_src
+
+***** outer :textobj:
+:PROPERTIES:
+:ID:       6068a56f-d162-4da2-801f-6f72357fdd62
+:END:
+
+#+begin_src emacs-lisp
+(after! evil
+  (evil-define-text-object evil:textobj-outer-form (count &rest _)
+    "Smartparens inner sexp object."
+    (-if-let ((beg . end)
+              (->> (list (lispy--bounds-list) (lispy--bounds-string))
+                   (-non-nil)
+                   (--sort (< (- (cdr it) (car it)) (- (cdr other) (car other))))
+                   (car)))
+        (evil-range beg end 'inclusive :expanded t)
+      (error "No surrounding form found."))))
+#+end_src
+
+***** bindings :textobj:
+:PROPERTIES:
+:ID:       4bf10f8e-2ae6-44b1-9087-5d1e2af028f1
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map evil-inner-text-objects-map "f" #'evil:textobj-inner-form)
+  (:map evil-outer-text-objects-map "f" #'evil:textobj-outer-form))
+#+end_src
+
+***** fix vim/evil around =""= :textobj:
+:PROPERTIES:
+:ID:       b91726b4-7e7e-442a-9858-df5d51c751c8
+:END:
+
+=Vim= and =Evil= both have the interesting (inconsistent?) behavior that doing an
+outer text object operator on a comment grabs some whitespace on the left side.
+Try doing =va"= to ~(progn "hello world")~ and you'll see that =\s"hello world"= is
+selected instead of just "hello world".
+
+Why not just go to the end of the ="= like any other around operator?
+
+#+begin_src emacs-lisp
+(after! evil
+  (evil-define-text-object evil:textobj-a-string (count &rest _)
+    "An outer comment text object as defined by `lispy--bounds-string'."
+    (-if-let ((beg . end) (lispy--bounds-string))
+        (evil-range beg end 'exclusive :expanded t)
+      (error "Not inside a comment.")))
+
+  (bind!
+    (:map evil-outer-text-objects-map)
+    ("\"" #'evil:textobj-a-string)))
+#+end_src
+
+*** evil-visualstar :evil:edit:
+:PROPERTIES:
+:ID:       ae15f6a4-59a5-49ca-9add-1b90d393b09c
+:END:
+
+[[https://github.com/bling/evil-visualstar][evil-visualstar]]
+
+#+begin_src emacs-lisp
+(use-package evil-visualstar)
+
+(bind! (:map evil-visual-state-map)
+  ("#" #'evil-visualstar/begin-search-backward)
+  ("*" #'evil-visualstar/begin-search-forward))
+#+end_src
+
+*** evil-lion :evil:bind:
+:PROPERTIES:
+:ID:       95d248be-601e-4dbd-b318-febcd0e49d71
+:END:
+
+=evil-lion= provides a very useful way of aligning text.
+
+#+begin_src emacs-lisp
+(use-package evil-lion
+  :commands evil-lion-right evil-lion-left)
+
+(bind!
+  (:prefix "g")
+  (:nv "l" #'evil-lion-left)
+  (:nv "L" #'evil-lion-right))
+#+end_src
+
+*** evil-surround :evil:edit:
+:PROPERTIES:
+:ID:       9ab88644-3c33-463c-8f24-3b048209e082
+:END:
+
+#+begin_src emacs-lisp
+(use-package evil-surround
+  :hook prog-mode-hook text-mode-hook)
+#+end_src
+
+*** evil-easymotion :evil:navigation:
+:PROPERTIES:
+:ID:       b18190a1-e0b3-4311-ad20-76d79f56c3a6
+:END:
+
+#+begin_src emacs-lisp
+(use-package evil-easymotion)
+;; (setq avy-style 'at)
+;; (evilem-make-motion evil-easymotion:word-begin #'evil-forward-word-begin)
+;; (evilem-make-motion-plain evil-easymotion:find-char #'evil-find-char)
+;; (general-def 'normal "w" #'evil-easymotion:word-begin)
+;; (general-def 'normal "f" #'evil-easymotion:find-char)
+#+end_src
+
+*** evil-goggles :evil:
+:PROPERTIES:
+:ID:       30d19955-dabf-472f-a485-22114e1eaaa4
+:END:
+
+#+begin_src emacs-lisp
+(use-package evil-goggles)
+#+end_src
+
+*** evil-god-state :evil:
+:PROPERTIES:
+:ID:       4374e82c-bac1-4c9e-9ab9-70799140f5a7
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
