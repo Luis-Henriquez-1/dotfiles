@@ -1,0 +1,6 @@
+* TODO extensive tag system
+:PROPERTIES:
+:ID:       40943fcd-167e-47a6-863d-d54d028a6c91
+:END:
+This Emacs config uses org mode.
+

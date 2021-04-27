@@ -1,0 +1,3 @@
+#+title: stumpwmrc.org
+#+author: Luis-Henriquez-Perez
+#+property: header-args :tangle ~/.config/stumwm/stumwmrc.lisp
