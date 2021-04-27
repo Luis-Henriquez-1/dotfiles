@@ -1,5 +1,6 @@
 #+title: mbsyncrc.org
 #+author: Luis-Henriquez-Perez
+#+property: header-args :tangle ~/.mbsyncrc
 
 * about
 :PROPERTIES:
