@@ -1,5 +1,6 @@
-#+title: mbsyncrc.org
-#+author: Luis-Henriquez-Perez
+#+TITLE: mbsyncrc.org
+#+AUTHOR: Luis-Henriquez-Perez
+#+PROPERTY: header-args :tangle ~/.mbsyncrc
 
 * about
 :PROPERTIES:
@@ -14,7 +15,7 @@ to sync mail from a remote server onto your local machine.
 :ID:       0c1c5eae-b112-4d79-b083-940d182b4ffd
 :END:
 
-** settings
+** DOC settings
 :PROPERTIES:
 :ID:       631cb9a5-b48b-4ca1-ade9-de15f2bd4131
 :END:
@@ -29,22 +30,104 @@ CertificateFile /etc/ssl/certs/ca-certificates.crt
 Port 993
 #+end_src
 
-** maildirstore
+** DOC remotestore
+:PROPERTIES:
+:ID:       38f6ee51-f495-49a4-8787-b0e4ea177497
+:END:
+
+#+begin_src conf
+IMAPStore gmail-remote
+Account gmail
+#+end_src
+
+** DOC localstore
 :PROPERTIES:
 :ID:       e821c5d4-bb52-42f0-ad15-5c88286300a0
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src conf
 MaildirStore gmail-local
 Subfolders Verbatim
 Path ~/.mail/luishenriquezperez@gmail.com/
 Inbox ~/.mail/luishenriquezperez@gmail.com/Inbox
 #+end_src
 
-** channels
+** DOC patterns
 :PROPERTIES:
-:ID:       750db49d-7890-420c-86cb-5eebe58da2a6
+:ID:       2f4812a8-569b-4957-8e17-ca224b2c290d
 :END:
 
-The channels can be very repetative.
+#+begin_src conf
+Channel gmail
+Master :gmail-remote:
+Slave :gmail-local:
+# Exclude everything under the internal [Gmail] folder, except the interesting folders
+# Patterns "INBOX" "Sent Items" "Deleted Items"
+Patterns *
+# Or include everything
+#Patterns *
+# Automatically create missing mailboxes, both locally and on the server
+Create Slave
+Sync All
+Expunge Both
+# Save the synchronization state files in the relevant directory
+SyncState *
+#+end_src
+
+* luishp account
+:PROPERTIES:
+:ID:       9435b5d3-b14a-48b7-bafa-dfeb7d09e8b1
+:END:
+
+** DOC settings
+:PROPERTIES:
+:ID:       9e0f3cd8-9e00-420f-9489-a847fb56d822
+:END:
+
+#+begin_src emacs-lisp
+IMAPAccount luishp
+Host gator4057.hostgator.com
+User luis@luishp.xyz
+PassCmd "pass email/luis@luishp.xyz | head -n 1"
+SSLType IMAPS
+CertificateFile /etc/ssl/certs/ca-certificates.crt
+Port 993
+#+end_src
+
+** DOC remote store
+:PROPERTIES:
+:ID:       9b2e8ac6-c4ea-4674-a04e-27944f7e8ac0
+:END:
+
+#+begin_src emacs-lisp
+IMAPStore luishp-remote
+Account luishp
+#+end_src
+
+** DOC localstore
+:PROPERTIES:
+:ID:       52bea900-99f4-48fd-ab92-84803068a9d9
+:END:
+
+#+begin_src emacs-lisp
+MaildirStore luishp-local
+Subfolders Verbatim
+Path ~/.mail/luis@luishp.xyz/
+Inbox ~/.mail/luis@luishp.xyz/Inbox
+#+end_src
+
+** DOC patterns
+:PROPERTIES:
+:ID:       2c732aca-bd66-4ad2-a4a2-bbfd6a6e5da5
+:END:
+
+#+begin_src emacs-lisp
+Channel luishp
+Master :luishp-remote:
+Slave :luishp-local:
+Create Slave
+Sync All
+Expunge Both
+SyncState *
+#+end_src
 
