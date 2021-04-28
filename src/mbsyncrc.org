@@ -8,7 +8,7 @@
 :ID:       510a2d07-fc4d-40d3-8d27-fbed2f2013f7
 :END:
 
-The =mbsyncrc= is the configuration file that controls =isync=, a program used
+The =mbsyncrc= is the confuration file that controls =isync=, a program used
 to sync mail from a remote server onto your local machine.
 
 * gmail account
@@ -56,27 +56,61 @@ Path ~/.mail/luishenriquezperez@gmail.com/
 Inbox ~/.mail/luishenriquezperez@gmail.com/Inbox
 #+end_src
 
-** DOC patterns
+** patterns
 :PROPERTIES:
-:ID:       2f4812a8-569b-4957-8e17-ca224b2c290d
+:ID:       fa7fa315-2099-4a8a-85d4-acef3f201f11
 :END:
 
 #+begin_src conf
-Channel gmail
+Channel gmail-inbox
 Master :gmail-remote:
 Slave :gmail-local:
-# Exclude everything under the internal [Gmail] folder, except the interesting folders
-# Patterns "INBOX" "Sent Items" "Deleted Items"
-Patterns *
-# Or include everything
-#Patterns *
-# Automatically create missing mailboxes, both locally and on the server
+Patterns "INBOX"
 Create Slave
-Sync All
 Expunge Both
-# Save the synchronization state files in the relevant directory
+SyncState *
+
+Channel gmail-sent
+Master :gmail-remote:"[Gmail]/Sent Mail"
+Slave :gmail-local:"sent"
+Create Slave
+Expunge Both
+SyncState *
+
+Channel gmail-all
+Master :gmail-remote:"[Gmail]/All Mail"
+Slave :gmail-local:"all"
+Create Slave
+Expunge Both
+SyncState *
+
+Channel gmail-trash
+Master :gmail-remote:"[Gmail]/Trash"
+Slave :gmail-local:"trash"
+Create Slave
+Expunge Both
 SyncState *
 #+end_src
+
+** group
+:PROPERTIES:
+:ID:       d80b6842-cdf7-4d80-9380-93ec3fcd7395
+:END:
+
+#+begin_src conf
+# GROUPS PUT TOGETHER CHANNELS, SO THAT WE CAN INVOKE
+# MBSYNC ON A GROUP TO SYNC ALL CHANNELS
+#
+# FOR INSTANCE: "mbsync gmail" GETS MAIL FROM
+# "gmail-inbox", "gmail-sent", and "gmail-trash"
+#
+Group gmail
+Channel gmail-inbox
+Channel gmail-sent
+Channel gmail-trash
+Channel gmail-all
+#+end_src
+
 
 * luishp account
 :PROPERTIES:
