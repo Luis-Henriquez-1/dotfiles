@@ -1,6 +1,6 @@
-#+title: mbsyncrc.org
+#+title: msmtprc.org
 #+author: Luis-Henriquez-Perez
-#+property: header-args :tangle ~/.mbsyncrc
+#+property: header-args tangle: ~/.msmtprc
 
 * DOC about
 :PROPERTIES:
@@ -42,7 +42,7 @@ passwordeval "pass email/luis@luishp.xyz | head -n 1"
 :ID:       ffed8028-18c4-4b36-a2a5-f8f60ea56b85
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src conf
 account gmail
 host smtp.gmail.com
 from luishenriquezperez@gmail.com
@@ -56,7 +56,7 @@ passwordeval "pass email/luishenriquezperez@gmail.com | head -n 1"
 :ID:       bd69e47b-68ea-45cc-b42d-d6960e7bb437
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src conf
 account default : luishp
 #+end_src
 
