@@ -4491,7 +4491,7 @@ template element as you're writing it.
   (callf2 cl-adjoin XL-CAPTURE-FILE org-agenda-files :test #'string=))
 #+end_src
 
-*** completing-read org-capture :bind:
+*** DOC completing-read org-capture :bind:
 :PROPERTIES:
 :ID:       ad2cc056-edda-490a-8cf9-10b370a21dc0
 :END:
@@ -4504,8 +4504,8 @@ let's me choose the template via completing-read.
 (defun org-capture/choose-template ()
   (interactive)
   (require 'org-capture)
-  (let* ((read-string (-map (fn! (format "%s %s" (car <>) (cadr <>)))
-			    (org-capture%template-list)))
+  (let* ((read-string (loopy (list (first second . _) (org-capture%template-list))
+			     (collect (format "%s %s" first second))))
 	 (selection (completing-read "Capture template: " read-string nil :require-match))
 	 (key (car (split-string selection "\s" t))))
     (org-capture nil key)))
