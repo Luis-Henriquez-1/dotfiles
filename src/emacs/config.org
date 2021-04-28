@@ -4235,6 +4235,30 @@ options. For this reason I wrote my own insert heading functions.
   "Number of newlines between headings.")
 #+end_src
 
+** DOC switch :popup:
+:PROPERTIES:
+:ID:       120e0129-8cc8-4010-b628-7b7a80c1efd4
+:END:
+
+#+begin_src emacs-lisp
+(defun! use-pop-to-buffer (_ buf &optional norecord)
+  "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
+  (:around org-switch-to-buffer-other-window)
+  (pop-to-buffer buf nil norecord))
+#+end_src
+
+** DOC another :popup:
+:PROPERTIES:
+:ID:       fcba7e55-600c-45e2-a224-91a9af6a9ff2
+:END:
+
+#+begin_src emacs-lisp
+(defun! use-switch-to-buffer-instead (orig-fn &rest args)
+  (:around org-src-switch-to-buffer)
+  (with-temp-advice! ((pop-to-buffer-same-window :override switch-to-buffer))
+    (apply orig-fn args)))
+#+end_src
+
 ** suppress deleting-windows :popup:
 :PROPERTIES:
 :ID:       9a991acc-a24c-4b28-bafa-876a7f973b90
@@ -4246,8 +4270,8 @@ various functions in org mode.
 #+begin_src emacs-lisp
 (defgadvice! suppress-delete-windows (orig-fn &rest args)
   "Inhibit the deletion of windows."
-  (cl-letf (((symbol-function #'delete-window) #'ignore)
-	    ((symbol-function #'delete-other-windows) #'ignore))
+  (with-temp-advice! ((delete-window :override ignore)
+		      (delete-other-windows :override ignore))
     (apply orig-fn args)))
 #+end_src
 
@@ -4379,7 +4403,7 @@ diary/journal using =org-mode=.
 #+begin_src emacs-lisp
 (use-package org-src
   :idle-require t
-  :rule ("bottom" "org source" :newfile "\\*Org Src")
+  :rule ("bottom" "org source" :newname "\\*Org Src")
   :set
   (org-src-window-setup                        . 'plain)
   (org-src-ask-before-returning-to-edit-buffer . nil)
