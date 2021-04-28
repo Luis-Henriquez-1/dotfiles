@@ -10376,7 +10376,7 @@ does not seem to be needed (feebleline doesn't do it and it works fine).
 #+begin_src emacs-lisp
 (defun! dont-redisplay (orig-fn &rest args)
   (:around mini-modeline-mode)
-  (cl-letf (((symbol-function #'redisplay) #'ignore))
+  (with-temp-advice! ((redisplay :override ignore))
     (apply orig-fn args)))
 #+end_src
 
