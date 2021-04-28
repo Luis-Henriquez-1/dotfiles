@@ -9118,7 +9118,7 @@ certain applications where I'd use it need to be loaded.
 :ID:       09686c53-e830-4366-b251-7505cff70e3f
 :END:
 
-** key-chord :keybind:
+** TODO key-chord :bind:
 :PROPERTIES:
 :ID:       20d6d9c1-50a1-4699-a67c-e6f04d3b5576
 :END:
@@ -9135,14 +9135,18 @@ This is better than evil escape as it only binds in insert.
   :before-call evil-insert-state evil-emacs-state)
 #+end_src
 
-** TODO key-chord :disabled:
+** TODO key-chord :bind:evil:
 :PROPERTIES:
 :ID:       65bb49db-7df4-4503-977d-b1285c7a48f3
 :END:
 
 #+begin_src emacs-lisp
 (defafter! use-j-k-as-escape (key-chord evil)
-  ())
+  (key-chord-define evil-insert-state-map "jk" #'evil-force-normal-state)
+  (key-chord-define evil-insert-state-map "kj" #'evil-force-normal-state)
+  (after! lispyville
+    (key-chord-define evil-insert-state-map "jk" #'lispyville-normal-state)
+    (key-chord-define evil-insert-state-map "kj" #'lispyville-normal-state)))
 #+end_src
 
 ** nameless :elisp:prog:
