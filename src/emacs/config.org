@@ -3788,7 +3788,7 @@ prompt asking me if I'm sure.
   ("b" #'xl/kill-emacs-brutally))
 #+end_src
 
-* org :org:
+* DOC org :org:
 :PROPERTIES:
 :ID:       090ce452-80bc-4565-a591-2e3e4d30d718
 :END:
