@@ -70,6 +70,13 @@ Create Slave
 Expunge Both
 SyncState *
 
+Channel gmail-drafts
+Master :gmail-remote:"[Gmail]/Drafts"
+Slave :gmail-local:"drafts"
+Create Slave
+Expunge Both
+SyncState *
+
 Channel gmail-sent
 Master :gmail-remote:"[Gmail]/Sent Mail"
 Slave :gmail-local:"sent"
@@ -124,7 +131,7 @@ Channel gmail-all
 
 #+begin_src conf
 IMAPAccount luishp
-Host gator4057.hostgator.com
+Host mail.privateemail.com
 User luis@luishp.xyz
 PassCmd "pass email/luis@luishp.xyz | head -n 1"
 SSLType IMAPS
@@ -163,7 +170,7 @@ Inbox ~/.mail/luis@luishp.xyz/Inbox
 Channel luishp
 Master :luishp-remote:
 Slave :luishp-local:
-Create Slave
+Create Both
 Sync All
 Expunge Both
 SyncState *
