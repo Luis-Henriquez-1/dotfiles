@@ -15,6 +15,9 @@ to sync mail from a remote server onto your local machine.
 :PROPERTIES:
 :ID:       0c1c5eae-b112-4d79-b083-940d182b4ffd
 :END:
+:LINKS:
+https://gist.github.com/MatthewZMD/39cc00260486d17450f7228a4f36891f
+:END:
 
 ** DOC settings
 :PROPERTIES:
