@@ -1,0 +1,50 @@
+#+title: guix.org
+#+author: Luis Henriquez-Perez
+
+* modules
+:PROPERTIES:
+:ID:       93f77d4c-9e0c-482e-badc-cbd36d508610
+:END:
+
+* service-modules
+:PROPERTIES:
+:ID:       da553d6b-7da3-4106-96a1-55a0fabc623c
+:END:
+
+* operating system
+:PROPERTIES:
+:ID:       3dc9b0ec-ba1f-4b51-859b-a6cf28999430
+:END:
+
+** main body
+:PROPERTIES:
+:ID:       8bb15936-1397-4c1a-a866-f9a6c1f6ddb0
+:END:
+
+#+begin_src emacs-lisp
+(operating-system
+ <settings>
+ <bootloader>
+ <users>
+ <packages>)
+#+end_src
+
+** general settings
+:PROPERTIES:
+:ID:       8991c73f-f063-41fc-bb9c-bd9297da68b1
+:END:
+
+** services
+:PROPERTIES:
+:ID:       d213453b-3356-45e3-8c79-124945325d0e
+:END:
+
+** swap devices
+:PROPERTIES:
+:ID:       a811a0a0-aa63-4af7-8610-97342cc8f30a
+:END:
+
+** filesystems
+:PROPERTIES:
+:ID:       cadd19ee-1f26-4858-9f0b-f96f9c295bbc
+:END:
