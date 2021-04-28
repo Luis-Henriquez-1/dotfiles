@@ -21,7 +21,7 @@
 :ID:       8bb15936-1397-4c1a-a866-f9a6c1f6ddb0
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src conf
 (operating-system
  <settings>
  <bootloader>
@@ -39,12 +39,35 @@
 :ID:       d213453b-3356-45e3-8c79-124945325d0e
 :END:
 
+#+begin_src conf
+(services
+ (remove (lambda (service)
+	   (eq? (service-kind service) gdm-service-type))
+	 %desktop-services))
+#+end_src
+
 ** swap devices
 :PROPERTIES:
 :ID:       a811a0a0-aa63-4af7-8610-97342cc8f30a
 :END:
 
+#+begin_src conf
+(swap-devices
+ (list (uuid "4f8329f0-b4e6-439c-9e24-1d470a4d0e34")))
+#+end_src
+
 ** filesystems
 :PROPERTIES:
 :ID:       cadd19ee-1f26-4858-9f0b-f96f9c295bbc
 :END:
+
+#+begin_src conf
+(file-systems
+ (cons* (file-system
+         (mount-point "/")
+         (device
+          (uuid "530578df-d85e-4dbc-ab37-44188dbe67d8"
+                'ext4))
+         (type "ext4"))
+        %base-file-systems))
+#+end_src
