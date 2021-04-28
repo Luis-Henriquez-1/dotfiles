@@ -2,13 +2,13 @@
 #+author: Luis-Henriquez-Perez
 #+property: header-args :tangle ~/.config/emacs/config.el
 
-* early-init :earlyinit:
+* DOC early-init :earlyinit:
 :PROPERTIES:
 :ID:       6c84aad1-edbc-4d1f-a327-ae7d8df5bb4f
 :HEADER-ARGS: :tangle ~/.config/emacs/early-init.el
 :END:
 
-** pause garbage collection :performance:
+** DOC pause garbage collection :performance:
 :PROPERTIES:
 :ID:       33c4ed1f-9382-49ff-9706-6ce5c0fd0d7c
 :END:
@@ -22,7 +22,7 @@ effectively stop garbage collection by setting the [[helpvar:gc-cons-threshold][
 (setq gc-cons-threshold most-positive-fixnum)
 #+end_src
 
-** disable tool bar, menu bar, and scroll bar :appearance:
+** DOC disable tool bar, menu bar, and scroll bar :appearance:
 :PROPERTIES:
 :ID:       f439de9a-b2b1-4926-a4ae-3d94ff83d05a
 :END:
@@ -61,7 +61,6 @@ Emacs from a script. :confused: I'm sure there's some way to do it.
 
 #+name: font
 #+begin_src emacs-lisp :tangle no
-(require 'cl)
 (cl-block nil
   (let ((fonts (list "fira code" "jetbrains mono" "hermit" "mononoki" "anonymous-pro"))
 	(font nil)
@@ -163,12 +162,12 @@ reasons that setting the font is efficient, this is too.
 :ID:       b9128118-e381-4abc-b078-776e437ef31c
 :END:
 
-** init :init:
+** DOC init :init:
 :PROPERTIES:
 :ID:       255e2012-7789-4f3d-8cf3-17b5dd810143
 :END:
 
-*** ensure lexical binding :performance:
+*** DOC ensure lexical binding :performance:
 :PROPERTIES:
 :ID:       2b8148c3-1418-4896-ba53-1673d2d82659
 :END:
@@ -5521,7 +5520,7 @@ all the completion frameworks.
 :ID:       f10c1865-13ad-47c9-b9b2-ec6533af62f3
 :END:
 
-** paragraph :write:
+** DOC paragraph :write:
 :PROPERTIES:
 :ID:       aeb973cb-41ad-4891-94b2-d0ea5c1baa33
 :END:
