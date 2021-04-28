@@ -5310,6 +5310,7 @@ helm wrappers around existing commands.
   :set
   (selectrum-max-window-height        . 15)
   (selectrum-num-candidates-displayed . 15)
+  (selectrum-fix-vertical-window-height . 15)
   (selectrum-fix-minibuffer-height    . t)
   (selectrum-should-sort-p            . t)
   (selectrum-count-style              . nil))
