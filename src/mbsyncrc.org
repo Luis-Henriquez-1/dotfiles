@@ -7,6 +7,9 @@
 :PROPERTIES:
 :ID:       510a2d07-fc4d-40d3-8d27-fbed2f2013f7
 :END:
+:LINKS:
+https://www.tomica.net/blog/2020/12/sending-mail-using-multiple-mu4e-contexts-in-emacs/
+:END:
 
 The =mbsyncrc= is the confuration file that controls =isync=, a program used
 to sync mail from a remote server onto your local machine.
