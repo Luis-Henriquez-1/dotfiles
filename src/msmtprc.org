@@ -46,7 +46,7 @@ passwordeval "pass email/luis@luishp.xyz | head -n 1"
 account gmail
 host smtp.gmail.com
 from luishenriquezperez@gmail.com
-port 465
+port 25
 user luishenriquezperez@gmail.com
 passwordeval "pass email/luishenriquezperez@gmail.com | head -n 1"
 #+end_src
