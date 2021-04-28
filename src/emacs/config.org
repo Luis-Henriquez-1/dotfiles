@@ -3793,6 +3793,20 @@ prompt asking me if I'm sure.
 :ID:       090ce452-80bc-4565-a591-2e3e4d30d718
 :END:
 
+** TODO =org-capture= still deletes other windows :org:capture:popup:
+:PROPERTIES:
+:ID:       018fc5a8-666f-4233-af33-0a562c729712
+:END:
+
+When you bring up the =org-capture= popup, other opened windows are deleted,
+which I find unnecessary and disorienting. This code suppresses this behavior.
+
+#+begin_src emacs-lisp
+(defafter! suppress-the-deletion-of-windows (org-capture)
+  "Don't let the `org-capture' popup delete other windows."
+  (xl-gadvice-suppress-delete-windows #'org-capture))
+#+end_src
+
 ** TODO add a todo-keyword for adding a doc :doc:todo:
 :PROPERTIES:
 :ID:       6bd0e450-19a4-4ef5-9938-5d8eea3615bd
