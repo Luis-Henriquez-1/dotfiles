@@ -85,7 +85,7 @@ SyncState *
 :ID:       9e0f3cd8-9e00-420f-9489-a847fb56d822
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src conf
 IMAPAccount luishp
 Host gator4057.hostgator.com
 User luis@luishp.xyz
@@ -100,7 +100,7 @@ Port 993
 :ID:       9b2e8ac6-c4ea-4674-a04e-27944f7e8ac0
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src conf
 IMAPStore luishp-remote
 Account luishp
 #+end_src
@@ -110,7 +110,7 @@ Account luishp
 :ID:       52bea900-99f4-48fd-ab92-84803068a9d9
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src conf
 MaildirStore luishp-local
 Subfolders Verbatim
 Path ~/.mail/luis@luishp.xyz/
@@ -122,7 +122,7 @@ Inbox ~/.mail/luis@luishp.xyz/Inbox
 :ID:       2c732aca-bd66-4ad2-a4a2-bbfd6a6e5da5
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src conf
 Channel luishp
 Master :luishp-remote:
 Slave :luishp-local:
