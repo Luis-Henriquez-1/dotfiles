@@ -6,6 +6,9 @@
 :PROPERTIES:
 :ID:       78dd98c4-75f3-4cf5-bdc8-071726a88f2e
 :END:
+:LINKS:
+https://tushartyagi.com/blog/configure-mu4e-and-msmtp/
+:END:
 
 * defaults
 :PROPERTIES:
