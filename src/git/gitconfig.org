@@ -1,3 +1,6 @@
+#+title: gitconfig.org
+#+author: Luis Henriquez-Perez
+
 #+begin_src conf
 [user]
 	name = Luis Henriquez-Perez
