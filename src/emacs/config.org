@@ -9656,7 +9656,7 @@ how to automate this across multiple OSes.
 
 This is annoying, but minor. =mu4e= itself is a great package.
 
-*** load-path :loadpath:guix:
+*** TODO load-path :loadpath:guix:
 :PROPERTIES:
 :ID:       8b4ab179-11c6-429c-9c8d-9296dfb215dc
 :END:
@@ -9674,7 +9674,7 @@ This is annoying, but minor. =mu4e= itself is a great package.
 	 (finally (cl-callf2 cl-adjoin mu4e-path load-path :test #'string=))))
 #+end_src
 
-*** maildir
+*** TODO maildir
 :PROPERTIES:
 :ID:       49debca7-6ae7-40e4-9bd0-73c3bba40539
 :END:
@@ -9833,7 +9833,7 @@ org-mu4e would do so each time you try again.
   (setq-local org-mu4e-convert-to-html nil))
 #+end_src
 
-*** initializing mu4e
+*** TODO initializing mu4e
 :PROPERTIES:
 :ID:       93cffd11-a812-4cda-b7dd-a06f70367afe
 :END:
@@ -9847,7 +9847,7 @@ asking me to run anything or do anything at all.
 The idea is to do preliminary things before the main entry point--the function
 [[helpfn:mu4e][mu4e]]--is called.
 
-*** mu4e database location
+*** TODO mu4e database location
 :PROPERTIES:
 :ID:       fe8f10c1-3035-4a97-9657-98236f50d0a8
 :END:
@@ -9860,7 +9860,7 @@ database is used to determine whether we'll run =mu init= or not.
   "Path where mu database should go.")
 #+end_src
 
-*** init mu4e database
+*** TODO init mu4e database
 :PROPERTIES:
 :ID:       4d107050-db05-4d7e-ae44-4bf356a44fd0
 :HEADER-ARGS: :tangle no
@@ -9877,7 +9877,7 @@ with the command =mu init --maildir=~/Maildir=.
       (fn! (call-process-shell-command (format "mu init --my-address=%s" <account>))))))
 #+end_src
 
-*** ensuring email directories
+*** TODO ensuring email directories
 :PROPERTIES:
 :ID:       704b7049-fac5-4fa7-b710-1bbfe50cea5f
 :END:
@@ -9892,7 +9892,7 @@ Make sure mail directories exist. =mbsync= will fail if they don't.
 	(mkdir dir t)))
 #+end_src
 
-*** contexts
+*** TODO contexts
 :PROPERTIES:
 :ID:       0e580010-d5b2-4708-a7dc-c586908409b5
 :END:
