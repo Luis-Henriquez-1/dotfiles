@@ -5661,7 +5661,7 @@ newlines added in the case that nothing was changed.
 #+begin_src emacs-lisp
 (defun org-edit-paragraph:maybe-remove-newline ()
   "Remove newline if that's all there is."
-  (when (and (-every-p (-partial #'= 10) (buffer-string))
+  (when (and (loopy (seq char (buffer-string)) (always (= 10 char)))
 	     (= (1+ org-edit-paragraph:default-post-blanks) (length (buffer-string))))
     (erase-buffer)))
 #+end_src
