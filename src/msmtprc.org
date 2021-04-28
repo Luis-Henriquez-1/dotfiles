@@ -2,7 +2,7 @@
 #+author: Luis-Henriquez-Perez
 #+property: header-args :tangle ~/.mbsyncrc
 
-* about
+* DOC about
 :PROPERTIES:
 :ID:       78dd98c4-75f3-4cf5-bdc8-071726a88f2e
 :END:
@@ -20,16 +20,16 @@ tls_trust_file /etc/ssl/certs/ca-certificates.crt
 logfile ~/.msmtp.log
 #+end_src
 
-* main email
+* luishp
 :PROPERTIES:
 :ID:       e2185489-49af-4d03-b438-6788992f8420
 :END:
 
 #+begin_src conf
 account luishp
-host mail.luishp.xyz
+host mail.privateemail.com
 from luis@luishp.xyz
-port 25
+port 465
 user luis@luishp.xyz
 passwordeval "pass email/luis@luishp.xyz | head -n 1"
 #+end_src
