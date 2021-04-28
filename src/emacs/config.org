@@ -9381,7 +9381,7 @@ Whatever emails I may use, I'll be adding their password in my password store so
 why not use this as a way to get email information?
 
 #+begin_src emacs-lisp
-(defun password-store:email-accounts ()
+(defun password-store%email-accounts ()
   "Return a list of email accounts."
   (->> (expand-file-name "email/" (password-store-dir))
        (directory-files)
@@ -9880,10 +9880,10 @@ leave function =mu4e= provides should do switching to a new context. So for now
 all I'll do is log the entering/leaving of a context for debugging purposes.
 
 #+begin_src emacs-lisp
-(defun mu4e-context::generate-switch-func (mail-address &optional leave)
+(defun mu4e-context%%generate-switch-func (mail-address &optional leave)
   "Return a function that enters the context of MAIL-ADDRESS."
   (let* ((to (if leave 'leave 'enter))
-	 (name (xl-symbol-intern 'mu4e-context: mail-address '- to '-func))
+	 (name (xl-symbol-intern 'mu4e-context% mail-address '- to '-func))
 	 (message (format "%s %s context." to mail-address))
 	 (fn `(lambda () (xl-log ,message))))
     (fset name fn)
@@ -9896,8 +9896,8 @@ all I'll do is log the entering/leaving of a context for debugging purposes.
 :END:
 
 #+begin_src emacs-lisp
-(defun mu4e-context::generate-enter-func (email-address)
-  (mu4e-context::generate-switch-func mail-address))
+(defun mu4e-context%%generate-enter-func (email-address)
+  (mu4e-context%%generate-switch-func mail-address))
 #+end_src
 
 **** exit func
@@ -9906,8 +9906,8 @@ all I'll do is log the entering/leaving of a context for debugging purposes.
 :END:
 
 #+begin_src emacs-lisp
-(defun mu4e-context::generate-leave-func (email-address)
-  (mu4e-context::generate-switch-func mail-address t))
+(defun mu4e-context%%generate-leave-func (email-address)
+  (mu4e-context%%generate-switch-func mail-address t))
 #+end_src
 
 **** default match fn
@@ -9920,9 +9920,9 @@ context based on what message you're dealing with. Right now, I don't have any
 special rules. The rule that I set basically uses the.
 
 #+begin_src emacs-lisp
-(defun mu4e-context::generate-match-func (mail-address)
+(defun mu4e-context%%generate-match-func (mail-address)
   "Return a default matcher for MAIL-ADDRESS."
-  (aprog1 (xl-symbol-intern 'mu4e-context: mail-address '-match-func)
+  (aprog1 (xl-symbol-intern 'mu4e-context% mail-address '-match-func)
     (fset it
 	  `(lambda (msg)
 	     (when msg
@@ -9938,7 +9938,7 @@ special rules. The rule that I set basically uses the.
 These are the default.
 
 #+begin_src emacs-lisp
-(defun mu4e-context::generate-vars (mail-address)
+(defun mu4e-context%%generate-vars (mail-address)
   "Return default variables for MAIL-ADDRESS."
   (let ((entry (format "email/%s" mail-address))
 	(folder (format "/%s" mail-address)))
@@ -9956,12 +9956,12 @@ These are the default.
 :END:
 
 #+begin_src emacs-lisp
-(defun mu4e-context::context-arguments (mail-address)
+(defun mu4e-context%%context-arguments (mail-address)
   "Return arguments for `mu4e' context."
   (loopy (with (args (list :name mail-address)))
 	 (list key '(:enter-func :leave-func :match-func :vars))
 	 (expr keyname (xl-keyword-name key))
-	 (expr generate-fn (xl-symbol-intern 'mu4e-context:: 'generate- keyname))
+	 (expr generate-fn (xl-symbol-intern 'mu4e-context%% 'generate- keyname))
 	 (expr fn (funcall generate-fn mail-address))
 	 (append args (list key fn))))
 #+end_src
@@ -9974,9 +9974,9 @@ These are the default.
 Create a context.
 
 #+begin_src emacs-lisp
-(defun mu4e-context::make-context (mail-address)
+(defun mu4e-context%%make-context (mail-address)
   "Create a new context with default values."
-  (apply #'make-mu4e-context (mu4e-context::context-arguments mail-address)))
+  (apply #'make-mu4e-context (mu4e-context%%context-arguments mail-address)))
 #+end_src
 
 **** add a context
@@ -9985,9 +9985,9 @@ Create a context.
 :END:
 
 #+begin_src emacs-lisp
-(defun mu4e-context::add-context (mail-address)
+(defun mu4e-context%%add-context (mail-address)
   "Create and add context."
-  (push (mu4e-context::make-context mail-address) mu4e-contexts))
+  (add-to-list 'mu4e-contexts (mu4e-context%%make-context mail-address)))
 #+end_src
 
 **** init contexts
@@ -10002,7 +10002,7 @@ time. This could be useful if I add an email and don't want to restart Emacs.
 #+begin_src emacs-lisp
 (defhook! init-contexts (mu4e-after-load-hook)
   "Define a context for each email account."
-  (-each (password-store%email-accounts) #'mu4e-context::add-context))
+  (-each (password-store%email-accounts) #'mu4e-context%%add-context))
 #+end_src
 
 * appearance :appearance:
