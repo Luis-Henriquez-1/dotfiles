@@ -7601,11 +7601,24 @@ lisp.
 :PROPERTIES:
 :ID:       26d59d00-72e3-4b8c-9845-e5d9627cd4aa
 :END:
+:LINKS:
+https://www.reddit.com/r/emacs/comments/idz35e/emacs_27_can_take_svg_screenshots_of_itself/
+:END:
 
 This headline contains utilities for taking screenshots. As I see it,
 screenshots are vital. I use maim to take screenshots because. I will note that
 when I used [[][escr]] to take screenshots, those screenshots would not show
 exwm windows. =escr= used [[][]]'s import.
+
+**** screenshot
+:PROPERTIES:
+:ID:       03f92301-27b0-4119-9a46-8e566388466b
+:END:
+
+#+begin_src emacs-lisp
+(use-package screenshot :commands screenshot)
+(straight-use-package '(screenshot :repo "tecosaur/screenshot" :type git :host github))
+#+end_src
 
 **** screenshot name
 :PROPERTIES:
