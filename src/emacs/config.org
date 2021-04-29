@@ -10071,9 +10071,12 @@ advice before [[helpfn:mu4e][mu4e]] so that I can check if the right emails are 
 time. This could be useful if I add an email and don't want to restart Emacs.
 
 #+begin_src emacs-lisp
-(defhook! init-contexts (mu4e-after-load-hook)
-  "Define a context for each email account."
-  (-each (password-store%email-accounts) #'mu4e-context%%add-context))
+(defafter! init-contexts (mu4e)
+  "Define a context for each email account also initialize the first."
+  (iter (with (accounts (password-store%email-accounts)))
+	(each mail-account accounts)
+	(add-to-list 'mu4e-contexts (mu4e-context%generate-context mail-account))
+	(finally-do (mu4e-context-switch nil (car accounts)))))
 #+end_src
 
 * appearance :appearance:
