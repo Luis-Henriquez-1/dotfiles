@@ -9745,7 +9745,7 @@ how to automate this.
 (defalias 'mu4e%mail-accounts 'password-store%email-accounts)
 #+end_src
 
-*** add mu4e to the load-path :loadpath:
+*** mu4e
 :PROPERTIES:
 :ID:       9dccb5e4-5d8e-4da6-99ae-9f8ed3bd8a5d
 :END:
@@ -9959,125 +9959,27 @@ Make sure mail directories exist. =mbsync= will fail if they don't.
 probably the hardest part of setting up =mu4e= for elisp. [[https://jherrlin.github.io/posts/emacs-mu4e/][this article]]. If you
 don't make contexts, =mu4e= will be confused and think that.
 
-**** default enter and exit
+**** mu4e%generate-context
 :PROPERTIES:
-:ID:       f2e2148b-dcab-4503-a1b1-75e48e35018f
-:END:
-
-Contexts provide the ability to specify an enter and exist function for each
-context. Right now I haven't had any special idea in mind for what the enter and
-leave function =mu4e= provides should do switching to a new context. So for now
-all I'll do is log the entering/leaving of a context for debugging purposes.
-
-#+begin_src emacs-lisp
-(defun mu4e-context%%generate-switch-func (mail-address &optional leave)
-  "Return a function that enters the context of MAIL-ADDRESS."
-  (let* ((to (if leave 'leave 'enter))
-	 (name (xl-symbol-intern 'mu4e-context% mail-address '- to '-func))
-	 (message (format "%s %s context." to mail-address))
-	 (fn `(lambda () (xl-log ,message))))
-    (fset name fn)
-    name))
-#+end_src
-
-**** enter func
-:PROPERTIES:
-:ID:       432f2ee9-1c41-4593-b27f-dbc837f8bcd2
+:ID:       cdbfbf97-47a9-4769-8d62-e7ea974f4bd1
 :END:
 
 #+begin_src emacs-lisp
-(defun mu4e-context%%generate-enter-func (email-address)
-  (mu4e-context%%generate-switch-func mail-address))
-#+end_src
-
-**** exit func
-:PROPERTIES:
-:ID:       0bafa172-2ea6-4b4e-aa4e-1fe2b0808b94
-:END:
-
-#+begin_src emacs-lisp
-(defun mu4e-context%%generate-leave-func (email-address)
-  (mu4e-context%%generate-switch-func mail-address t))
-#+end_src
-
-**** default match fn
-:PROPERTIES:
-:ID:       41ddf901-0ae9-4b00-bc06-b1b7b49ec8f2
-:END:
-
-The match fn take a =message= object. This is for dynamically setting the
-context based on what message you're dealing with. Right now, I don't have any
-special rules. The rule that I set basically uses the.
-
-#+begin_src emacs-lisp
-(defun mu4e-context%%generate-match-func (mail-address)
-  "Return a default matcher for MAIL-ADDRESS."
-  (aprog1 (xl-symbol-intern 'mu4e-context% mail-address '-match-func)
-    (fset it
-	  `(lambda (msg)
-	     (when msg
-	       (-any-p (fn! (mu4e-message-contact-field-matches msg <field> ,mail-address))
-		       (list :to :from :cc :bcc)))))))
-#+end_src
-
-**** default vars
-:PROPERTIES:
-:ID:       d8892b2c-7056-4d92-819b-8cb4d8c2eeb1
-:END:
-
-These are the default.
-
-#+begin_src emacs-lisp
-(defun mu4e-context%%generate-vars (mail-address)
-  "Return default variables for MAIL-ADDRESS."
+(defun mu4e-context%generate-context (mail-address)
+  "Generate a simple context for MAIL-ADDRESS."
   (let ((entry (format "email/%s" mail-address))
 	(folder (format "/%s" mail-address)))
-    `((user-mail-address     . ,mail-address)
-      (smtpmail-smtp-server  . ,(password-store-get-field entry "server"))
-      (smtpmail-smtp-service . ,(password-store-get-field entry "port"))
-      (mu4e-drafts-folder    . ,(concat folder "/drafts"))
-      (mu4e-trash-folder     . ,(concat folder "/trash"))
-      (mu4e-sent-folder      . ,(concat folder "/sent")))))
-#+end_src
-
-**** context arguments
-:PROPERTIES:
-:ID:       ceb57afe-e899-462c-bc4e-42b284f36605
-:END:
-
-#+begin_src emacs-lisp
-(defun mu4e-context%%context-arguments (mail-address)
-  "Return arguments for `mu4e' context."
-  (loopy (with (args (list :name mail-address)))
-	 (list key '(:enter-func :leave-func :match-func :vars))
-	 (expr keyname (xl-keyword-name key))
-	 (expr generate-fn (xl-symbol-intern 'mu4e-context%% 'generate- keyname))
-	 (expr fn (funcall generate-fn mail-address))
-	 (append args (list key fn))))
-#+end_src
-
-**** make a context
-:PROPERTIES:
-:ID:       4e45264d-e7cc-43f7-854b-8b22d4d4151e
-:END:
-
-Create a context.
-
-#+begin_src emacs-lisp
-(defun mu4e-context%%make-context (mail-address)
-  "Create a new context with default values."
-  (apply #'make-mu4e-context (mu4e-context%%context-arguments mail-address)))
-#+end_src
-
-**** add a context
-:PROPERTIES:
-:ID:       c488a02f-743a-492c-9775-5c8216f0b2b0
-:END:
-
-#+begin_src emacs-lisp
-(defun mu4e-context%%add-context (mail-address)
-  "Create and add context."
-  (add-to-list 'mu4e-contexts (mu4e-context%%make-context mail-address)))
+    (make-mu4e-context
+     :name mail-address
+     :enter-func nil
+     :leave-func nil
+     :match-func nil
+     :vars `((user-mail-address     . ,mail-address)
+	     (smtpmail-smtp-server  . ,(password-store-get-field entry "server"))
+	     (smtpmail-smtp-service . ,(password-store-get-field entry "port"))
+	     (mu4e-drafts-folder    . ,(concat folder "/drafts"))
+	     (mu4e-trash-folder     . ,(concat folder "/trash"))
+	     (mu4e-sent-folder      . ,(concat folder "/sent"))))))
 #+end_src
 
 **** init contexts
