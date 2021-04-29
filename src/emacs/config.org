@@ -5559,6 +5559,15 @@ all the completion frameworks.
 :ID:       f10c1865-13ad-47c9-b9b2-ec6533af62f3
 :END:
 
+** undo-tree
+:PROPERTIES:
+:ID:       35c9eb5f-6d6d-4011-89a2-38aa8b2211f7
+:END:
+
+#+begin_src emacs-lisp
+(use-package undo-tree)
+#+end_src
+
 ** DOC paragraph :write:
 :PROPERTIES:
 :ID:       aeb973cb-41ad-4891-94b2-d0ea5c1baa33
