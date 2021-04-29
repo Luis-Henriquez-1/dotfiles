@@ -9827,7 +9827,6 @@ how to automate this.
 *** mu4e-headers
 :PROPERTIES:
 :ID:       8bc93633-f3a0-494d-ae61-c05f6490cd87
-:HEADER-ARGS: :tangle no
 :END:
 
 These are custom icons used to spice up the =mu4e= display.
