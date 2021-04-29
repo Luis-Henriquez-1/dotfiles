@@ -9933,7 +9933,7 @@ The first time you run =mu= it needs to [initialize it's database]. This is done
 with the command =mu init --maildir=~/Maildir=.
 
 #+begin_src emacs-lisp
-(defadvice! init-database-maybe (:before mu4e)
+(defafter! init-database-maybe (mu4e)
   "Initialize the mu4e database if it does not exist."
   (iter (initially (unless (file-exists-p mu4e%mu-database-path) (return)))
 	(each account (mu4e%mail-accounts))
