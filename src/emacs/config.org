@@ -9834,18 +9834,7 @@ These are custom icons used to spice up the =mu4e= display.
 #+begin_src emacs-lisp
 (use-package mu4e-headers
   :set
-  (mu4e-headers-auto-update    . t)
-  (mu4e-headers-draft-mark     . (cons "D" (all-the-icons-faicon "pencil")))
-  (mu4e-headers-flagged-mark   . (cons "F" (all-the-icons-faicon "flag")))
-  (mu4e-headers-new-mark       . (cons "N" (all-the-icons-material "fiber_new")))
-  (mu4e-headers-passed-mark    . (cons "P" (all-the-icons-faicon "arrow-right")))
-  (mu4e-headers-seen-mark      . (cons "S" (all-the-icons-faicon "eye")))
-  (mu4e-headers-attach-mark    . (cons "a" (all-the-icons-material "attach_file")))
-  (mu4e-headers-replied-mark   . (cons "R" (all-the-icons-faicon "reply")))
-  (mu4e-headers-unread-mark    . (cons "u" (all-the-icons-faicon "eye-slash")))
-  (mu4e-headers-encrypted-mark . (cons "x" (all-the-icons-octicon "lock")))
-  (mu4e-headers-signed-mark    . (cons "s" (all-the-icons-faicon "certificate")))
-  (mu4e-headers-trash-mark     . (cons "T" (all-the-icons-faicon "trash"))))
+  (mu4e-headers-auto-update    . t))
 #+end_src
 
 *** mu4e-org
