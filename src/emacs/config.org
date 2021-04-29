@@ -10310,37 +10310,7 @@ variable should be anyway.
 #+begin_src emacs-lisp
 (defafter! set-the-right-modeline (mini-modeline)
   (setq mini-modeline-r-format
-	'("%e"
-	  (:eval (awhen (mini-modeline:display-current-workgroup)
-		  (concat it " ")))
-	  (:eval (format-time-string "%a %m/%d %T")))))
-#+end_src
-
-*** set the modeline display :workgroup:modeline:
-:PROPERTIES:
-:ID:       37f062a8-b9d9-4533-ba8e-d675a1d5f10a
-:END:
-
-#+begin_src emacs-lisp
-(defun! mini-modeline%display-current-workgroup (workgroups2 mini-modeline)
-  "Return the name of the current workgroup."
-  (when (featurep 'workgroups2) (wg-workgroup-name (wg-current-workgroup))))
-#+end_src
-
-*** dont redisplay
-:PROPERTIES:
-:ID:       b3afd056-7b0a-485f-8691-5cc7e4765ca1
-:END:
-
-Enabling =mini-modeline-mode= triggers a call to [[helpfn:redisplay][redisplay]]. During startup, this
-takes a long time and makes emacs unresponsive for a few seconds. This redisplay
-does not seem to be needed (feebleline doesn't do it and it works fine).
-
-#+begin_src emacs-lisp
-(defun! dont-redisplay (orig-fn &rest args)
-  (:around mini-modeline-mode)
-  (with-temp-advice! ((redisplay :override ignore))
-    (apply orig-fn args)))
+	'("%e" (:eval (format-time-string "%a %m/%d %T")))))
 #+end_src
 
 ** window divider :window:
