@@ -3803,6 +3803,7 @@ decided to increase [[helpvar:line-spacing][line-spacing]] for org-mode.
 
 #+begin_src emacs-lisp
 (defhook! increase-line-spacing (org-mode-hook)
+  "Set `line-spacing' to 0.2."
   (setq-local line-spacing 0.2))
 #+end_src
 
