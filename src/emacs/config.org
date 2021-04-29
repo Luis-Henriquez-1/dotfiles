@@ -3793,6 +3793,19 @@ prompt asking me if I'm sure.
 :ID:       090ce452-80bc-4565-a591-2e3e4d30d718
 :END:
 
+** increase line spacing
+:PROPERTIES:
+:ID:       25614f23-f337-4092-8d3d-5c5d75efe90c
+:END:
+
+Inspired by [[https://www.reddit.com/r/emacsporn/comments/kjwdd3/adding_some_whitespace_to_let_the_text_breathe/][this reddit post]] (which was in turn inspired by [[https://github.com/rougier/nano-emacs][nano emacs]]), I
+decided to increase [[helpvar:line-spacing][line-spacing]] for org-mode.
+
+#+begin_src emacs-lisp
+(defhook! increase-line-spacing (org-mode-hook)
+  (setq-local line-spacing 0.2))
+#+end_src
+
 ** TODO =org-capture= still deletes other windows :org:capture:popup:
 :PROPERTIES:
 :ID:       018fc5a8-666f-4233-af33-0a562c729712
