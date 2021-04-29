@@ -5081,11 +5081,11 @@ package without seeing it in action.
 As I learn more about embark I will improve this documentation over time.
 
 #+begin_src emacs-lisp
-(use-package embark
-  :init
-  (bind!
-    (:map selectrum-minibuffer-map)
-    (:ie "C-a" #'embark-act)))
+(use-package embark)
+
+(bind!
+  (:map selectrum-minibuffer-map)
+  (:ie "C-a" #'embark-act))
 
 (defhook! pause-selectrum (embark-collect-mode-hook)
   (when (eq embark-collect--kind :live)
