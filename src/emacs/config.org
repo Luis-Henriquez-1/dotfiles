@@ -6993,20 +6993,6 @@ Why not just go to the end of the ="= like any other around operator?
   :hook prog-mode-hook text-mode-hook)
 #+end_src
 
-**** evil-easymotion :evil:navigation:
-:PROPERTIES:
-:ID:       b18190a1-e0b3-4311-ad20-76d79f56c3a6
-:END:
-
-#+begin_src emacs-lisp
-(use-package evil-easymotion)
-;; (setq avy-style 'at)
-;; (evilem-make-motion evil-easymotion:word-begin #'evil-forward-word-begin)
-;; (evilem-make-motion-plain evil-easymotion:find-char #'evil-find-char)
-;; (general-def 'normal "w" #'evil-easymotion:word-begin)
-;; (general-def 'normal "f" #'evil-easymotion:find-char)
-#+end_src
-
 **** evil-goggles :evil:
 :PROPERTIES:
 :ID:       30d19955-dabf-472f-a485-22114e1eaaa4
