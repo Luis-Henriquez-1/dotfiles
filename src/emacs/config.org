@@ -9927,7 +9927,6 @@ database is used to determine whether we'll run =mu init= or not.
 *** TODO init mu4e database
 :PROPERTIES:
 :ID:       4d107050-db05-4d7e-ae44-4bf356a44fd0
-:HEADER-ARGS: :tangle no
 :END:
 
 The first time you run =mu= it needs to [initialize it's database]. This is done
