@@ -9794,7 +9794,7 @@ how to automate this.
   (mu4e-completing-read-function . #'completing-read)
   (mu4e-get-mail-command         . "mbsync -a")
   (mu4e-update-interval          . nil)
-  (mu4e-context-policy           . 'pick-first)
+  (mu4e-context-policy           . nil)
   (mu4e-use-fancy-chars          . (display-graphic-p))
   (mu4e-org-support              . t)
   (mu4e-index-cleanup            . t)
@@ -9836,7 +9836,7 @@ how to automate this.
 #+begin_src emacs-lisp
 (use-package mu4e-compose
   :set
-  (mu4e-compose-context-policy . 'ask-if-none))
+  (mu4e-compose-context-policy . nil))
 #+end_src
 
 *** mu4e-drafts
