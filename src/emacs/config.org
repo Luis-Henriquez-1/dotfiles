@@ -9886,9 +9886,9 @@ with the command =mu init --maildir=~/Maildir=.
 #+begin_src emacs-lisp
 (defadvice! init-database-maybe (:before mu4e)
   "Initialize the mu4e database if it does not exist."
-  (unless (file-exists-p mu4e%mu-database-path)
-    (-each (mu4e%mail-accounts)
-      (fn! (call-process-shell-command (format "mu init --my-address=%s" <account>))))))
+  (iter (initially (unless (file-exists-p mu4e%mu-database-path) (return)))
+	(each account (mu4e%mail-accounts))
+	(call-process-shell-command (format "mu init --my-address=%s" account))))
 #+end_src
 
 *** TODO ensuring email directories
