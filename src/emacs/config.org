@@ -9854,7 +9854,32 @@ it is definitely on my list of things to try out.
   (mu4e-org-convert-to-html            . t))
 #+end_src
 
-**** hook
+*** set the mu4e icons
+:PROPERTIES:
+:ID:       fddb7d53-6d72-4ad1-9d75-b65db20d8692
+:END:
+
+I don't want to do this immediately to avoid extra function calls on startup.
+Also, if I for some reason decide not to use the dashboard icons I don't want to
+pay the icon loading costs at startup.
+
+#+begin_src emacs-lisp
+(defafter! set-mu4e-marks (mu4e-headers)
+  "Set the mu4e marks."
+  (setq mu4e-headers-draft-mark     (cons "D" (all-the-icons-faicon "pencil")))
+  (setq mu4e-headers-flagged-mark   (cons "F" (all-the-icons-faicon "flag")))
+  (setq mu4e-headers-new-mark       (cons "N" (all-the-icons-material "fiber_new")))
+  (setq mu4e-headers-passed-mark    (cons "P" (all-the-icons-faicon "arrow-right")))
+  (setq mu4e-headers-seen-mark      (cons "S" (all-the-icons-faicon "eye")))
+  (setq mu4e-headers-attach-mark    (cons "a" (all-the-icons-material "attach_file")))
+  (setq mu4e-headers-replied-mark   (cons "R" (all-the-icons-faicon "reply")))
+  (setq mu4e-headers-unread-mark    (cons "u" (all-the-icons-faicon "eye-slash")))
+  (setq mu4e-headers-encrypted-mark (cons "x" (all-the-icons-octicon "lock")))
+  (setq mu4e-headers-signed-mark    (cons "s" (all-the-icons-faicon "certificate")))
+  (setq mu4e-headers-trash-mark     (cons "T" (all-the-icons-faicon "trash"))))
+#+end_src
+
+*** DOC hook
 :PROPERTIES:
 :ID:       fcdbaa17-20c6-4322-baed-27df5a0ad9a2
 :END:
