@@ -10085,13 +10085,13 @@ Create a context.
 :ID:       e74512a7-1d1f-4241-b245-5863e7730398
 :END:
 
-After mu4e is loaded, setup contexts. In the future, perhaps add this as an
-advice before [[helpfn:mu4e][mu4e]] so that I can check if the right emails are set up every
-time. This could be useful if I add an email and don't want to restart Emacs.
+If you don't specify contexts =mu4e= will think that the mail directory itself
+is a context and will keep prompting you about creating mu4e directories (e.g.).
 
 #+begin_src emacs-lisp
 (defafter! init-contexts (mu4e)
-  "Define a context for each email account also initialize the first."
+  "Define contexts for each email account and initialize the first.
+Information for contexts are."
   (iter (with (accounts (password-store%email-accounts)))
 	(each mail-account accounts)
 	(add-to-list 'mu4e-contexts (mu4e-context%generate-context mail-account))
