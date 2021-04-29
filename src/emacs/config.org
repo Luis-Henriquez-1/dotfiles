@@ -9720,24 +9720,6 @@ how to automate this across multiple OSes.
 
 This is annoying, but minor. =mu4e= itself is a great package.
 
-*** TODO load-path :loadpath:guix:
-:PROPERTIES:
-:ID:       8b4ab179-11c6-429c-9c8d-9296dfb215dc
-:END:
-
-#+begin_src emacs-lisp
-(defafter! add-mu4e-to-load-path (mu4e)
-  "Return load-path for mu4e."
-  (loopy (with (regexp "\\`[[:alnum:]]+-mu-\\(?:[[:digit:]]\\|\\.\\)+")
-	       (base-dir "/gnu/store/"))
-	 (each file (directory-files base-dir))
-	 (expr full-path (f-expand file base-dir))
-	 (when (and (string-match-p regexp file) (f-dir-p full-path))
-	   (expr mu4e-path (f-expand "share/emacs/site-lisp/" full-path))
-	   (when (f-dir-p mu4e-path) (break)))
-	 (finally (cl-callf2 cl-adjoin mu4e-path load-path :test #'string=))))
-#+end_src
-
 *** TODO maildir
 :PROPERTIES:
 :ID:       49debca7-6ae7-40e4-9bd0-73c3bba40539
