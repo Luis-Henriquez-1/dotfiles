@@ -162,181 +162,6 @@ reasons that setting the font is efficient, this is too.
 :ID:       b9128118-e381-4abc-b078-776e437ef31c
 :END:
 
-** DOC init :init:
-:PROPERTIES:
-:ID:       255e2012-7789-4f3d-8cf3-17b5dd810143
-:END:
-
-*** DOC ensure lexical binding :performance:
-:PROPERTIES:
-:ID:       2b8148c3-1418-4896-ba53-1673d2d82659
-:END:
-
-Emacs by default uses dynamic binding. Lexical binding is a [[https://nullprogram.com/blog/2016/12/22/][known way to boost
-startup speed]]. To enable it you add the following [[info:elisp#Using Lexical Binding][buffer-local variable]] on the
-top of your elisp file.
-
-#+begin_src emacs-lisp
-;; -*- lexical-binding: t -*-
-#+end_src
-
-*** config files and directores :core:dir:
-:PROPERTIES:
-:ID:       be8993d3-c8f7-451b-8cb4-04a9138e5c4e
-:END:
-
-It's useful to store directories which I reference frequently in variables and
-functions. This way I can reference the full path. Certain directories are
-important; and I end up referencing them alot.
-
-#+begin_src emacs-lisp
-(defvaralias 'XL-INIT-FILE 'user-init-file)
-
-(defvaralias 'XL-EMACS-DIR 'user-emacs-directory)
-
-(defconst XL-README-FILE (expand-file-name "README.org" "~/"))
-
-(defconst XL-LOCAL-DIR (concat XL-EMACS-DIR ".local/")
-  "Directory where I store files that need to exist, but I don't want to see.")
-
-(defconst XL-CACHE-DIR (concat XL-LOCAL-DIR "cache/")
-  "Directory where I store files used for caching information.")
-
-(defconst XL-RECIPE-FILE (concat XL-EMACS-DIR "recipes.el")
-  "File that stores the recipes for all the packages I install.")
-
-(defconst XL-PACKAGES-DIR (concat XL-LOCAL-DIR "packages/")
-  "Directory where packages are stored.")
-#+end_src
-
-*** convenience buffer for buffer
-:PROPERTIES:
-:ID:       3213e0c0-6b4c-4732-83cc-cd3168ecaf01
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-tangle-files ()
-  "Files that should be tangled in the order they should be tangled in."
-  (let ((regexp (rx (1+ anything) ".org")))
-    (directory-files "~/.tangld/src/emacs/org/" :full regexp :nosort)))
-#+end_src
-
-*** TODO tangle :tangle:core:xl:
-:PROPERTIES:
-:ID:       200842df-abca-4885-81fb-102d9f669353
-:END:
-
-Ideally, I want to tangle my org files into one =.el= file. Why just one? The
-control flow is extremely simple (compared to loading multiple files) and it
-saves us calls to =require= or =load= which would be necessary for multiple
-files.
-
-**** loading of the config
-:PROPERTIES:
-:ID:       b5356050-946b-42ff-8d3b-65d90ebecf85
-:END:
-
-The idea is to generate one file that contains the relevant contents of my
-headlines.
-
-#+begin_src emacs-lisp
-(defun xl-tangle-build ()
-  "Build my init file from my org files."
-  (interactive)
-  (iter (with (target "~/.config/emacs/init.el")
-	      (files (directory-files "~/.tangld/src/emacs/org/" :full))
-	      (tangle-regexp (rx (or "elisp" "emacs-lisp"))))
-	(each file files)
-	(expr alist (org-babel-tangle-collect-blocks tangle-regexp file))
-	(append contents (mapconcat (-partial #'nth 5) alist "\n"))
-	(finally-do (f-write body 'utf-8 target))))
-#+end_src
-
-**** order in which files should be loaded
-:PROPERTIES:
-:ID:       3c904e76-94f5-44b4-9dce-b5401ff9bce2
-:END:
-
-The loading order of most files does not matter.
-
-#+begin_src emacs-lisp
-(defun xl-tangle-priority (file)
-  (pcase file 
-    ((app f-filename "pacman.org")  3)
-    ((app f-filename "library.org") 2)
-    ((app f-filename "keybinding.org") 1)
-    (_ 0)))
-
-(defun xl-tangle-sort (&rest files)
-  (apply #'> (mapcar #'xl-tangle-priority files)))
-#+end_src
-
-**** generating elisp file
-:PROPERTIES:
-:ID:       98245bdc-9055-4ffd-b41e-444be6a4190b
-:END:
-
-#+begin_src emacs-lisp
-(defun xl/build-init-file ()
-  "Build an init file."
-  (interactive)
-  (let ((regexp (rx (1+ anything) ".org"))
-	(files (-sort #'xl-tangle-sort (directory-files "~/.tangld/src/emacs/org/" :full regexp :nosort))))
-    (dolist (file files)
-      (with-temp-buffer
-	(insert-file-contents file)
-	(goto-char (point-min))
-	(while (re-search-forward org-babel-src-block-regexp nil t nil)
-	  (expr body (match-string-no-properties 5))
-	  (collect code body))))
-    (f-write (mapconcat #'identity code "\n") 'utf-8 "~/.config/emacs/init.el")))
-#+end_src
-
-*** garbage collection :performance:
-:PROPERTIES:
-:ID:       dda841d2-25f3-4595-ab6a-87cb1bb72dba
-:END:
-
-Emacs garbage collects too frequently for most modern machines. This makes emacs
-less performant especially when performing a large number of calculations,
-because it spends resources garbage collecting when it doesn't have to. Indeed,
-increasing the value of [[helpvar:gc-cons-threshold][gc-cons-threshold]], the number of bytes of consing
-between garbage collections, is known to make a notable difference in user
-startup time. By default it is only 800 KB.
-
-*** gc cons threshold
-:PROPERTIES:
-:ID:       50e19a55-a04b-4ca0-8024-a88b23b5b41f
-:END:
-
-I define three levels on frequency with which emacs should perform garbage
-collection.
-
-#+begin_src emacs-lisp
-(defconst XL-GC-CONS-THRESHOLD-MAX most-positive-fixnum
-  "The upper limit for `gc-cons-threshold'.
-When VOID is performing computationally intensive operations,
-`gc-cons-threshold' is set to this value.")
-
-(defconst XL-GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
-  "The default value for `gc-cons-threshold'.
-This is the value of `gc-cons-threshold' that should be used in typical usages.")
-
-(defconst XL-GC-CONS-THRESHOLD-MIN (eval-when-compile (* 4 1024 1024))
-  "The value for `gc-cons-threshold'.")
-#+end_src
-
-*** text scaling
-:PROPERTIES:
-:ID:       5d242d0e-eeab-46de-bcee-ecfd79b2bffc
-:END:
-
-I change the text scale frequently because in some cases, such as viewing my
-main org file, I want a birds-eye view where I can see the structure of a
-document at a glance. However, when I'm doing something like editing a source
-block I want to focus on a very specific thing totally; therefore, I want the
-text to take up most of the screen.
-
 ** package management :pacman:
 :PROPERTIES:
 :ID:       00eaa1a5-b5fe-437d-9888-1846ea9a232b
@@ -485,6 +310,181 @@ Upon startup I read this file and register all the recipes in it with =straight=
 	(setq form (ignore-errors (read (current-buffer)))))
       (nreverse forms))))
 #+end_src
+
+***** DOC init :init:
+:PROPERTIES:
+:ID:       255e2012-7789-4f3d-8cf3-17b5dd810143
+:END:
+
+****** DOC ensure lexical binding :performance:
+:PROPERTIES:
+:ID:       2b8148c3-1418-4896-ba53-1673d2d82659
+:END:
+
+Emacs by default uses dynamic binding. Lexical binding is a [[https://nullprogram.com/blog/2016/12/22/][known way to boost
+startup speed]]. To enable it you add the following [[info:elisp#Using Lexical Binding][buffer-local variable]] on the
+top of your elisp file.
+
+#+begin_src emacs-lisp
+;; -*- lexical-binding: t -*-
+#+end_src
+
+****** config files and directores :core:dir:
+:PROPERTIES:
+:ID:       be8993d3-c8f7-451b-8cb4-04a9138e5c4e
+:END:
+
+It's useful to store directories which I reference frequently in variables and
+functions. This way I can reference the full path. Certain directories are
+important; and I end up referencing them alot.
+
+#+begin_src emacs-lisp
+(defvaralias 'XL-INIT-FILE 'user-init-file)
+
+(defvaralias 'XL-EMACS-DIR 'user-emacs-directory)
+
+(defconst XL-README-FILE (expand-file-name "README.org" "~/"))
+
+(defconst XL-LOCAL-DIR (concat XL-EMACS-DIR ".local/")
+  "Directory where I store files that need to exist, but I don't want to see.")
+
+(defconst XL-CACHE-DIR (concat XL-LOCAL-DIR "cache/")
+  "Directory where I store files used for caching information.")
+
+(defconst XL-RECIPE-FILE (concat XL-EMACS-DIR "recipes.el")
+  "File that stores the recipes for all the packages I install.")
+
+(defconst XL-PACKAGES-DIR (concat XL-LOCAL-DIR "packages/")
+  "Directory where packages are stored.")
+#+end_src
+
+****** convenience buffer for buffer
+:PROPERTIES:
+:ID:       3213e0c0-6b4c-4732-83cc-cd3168ecaf01
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-tangle-files ()
+  "Files that should be tangled in the order they should be tangled in."
+  (let ((regexp (rx (1+ anything) ".org")))
+    (directory-files "~/.tangld/src/emacs/org/" :full regexp :nosort)))
+#+end_src
+
+****** TODO tangle :tangle:core:xl:
+:PROPERTIES:
+:ID:       200842df-abca-4885-81fb-102d9f669353
+:END:
+
+Ideally, I want to tangle my org files into one =.el= file. Why just one? The
+control flow is extremely simple (compared to loading multiple files) and it
+saves us calls to =require= or =load= which would be necessary for multiple
+files.
+
+******* loading of the config
+:PROPERTIES:
+:ID:       b5356050-946b-42ff-8d3b-65d90ebecf85
+:END:
+
+The idea is to generate one file that contains the relevant contents of my
+headlines.
+
+#+begin_src emacs-lisp
+(defun xl-tangle-build ()
+  "Build my init file from my org files."
+  (interactive)
+  (iter (with (target "~/.config/emacs/init.el")
+	      (files (directory-files "~/.tangld/src/emacs/org/" :full))
+	      (tangle-regexp (rx (or "elisp" "emacs-lisp"))))
+	(each file files)
+	(expr alist (org-babel-tangle-collect-blocks tangle-regexp file))
+	(append contents (mapconcat (-partial #'nth 5) alist "\n"))
+	(finally-do (f-write body 'utf-8 target))))
+#+end_src
+
+******* order in which files should be loaded
+:PROPERTIES:
+:ID:       3c904e76-94f5-44b4-9dce-b5401ff9bce2
+:END:
+
+The loading order of most files does not matter.
+
+#+begin_src emacs-lisp
+(defun xl-tangle-priority (file)
+  (pcase file 
+    ((app f-filename "pacman.org")  3)
+    ((app f-filename "library.org") 2)
+    ((app f-filename "keybinding.org") 1)
+    (_ 0)))
+
+(defun xl-tangle-sort (&rest files)
+  (apply #'> (mapcar #'xl-tangle-priority files)))
+#+end_src
+
+******* generating elisp file
+:PROPERTIES:
+:ID:       98245bdc-9055-4ffd-b41e-444be6a4190b
+:END:
+
+#+begin_src emacs-lisp
+(defun xl/build-init-file ()
+  "Build an init file."
+  (interactive)
+  (let ((regexp (rx (1+ anything) ".org"))
+	(files (-sort #'xl-tangle-sort (directory-files "~/.tangld/src/emacs/org/" :full regexp :nosort))))
+    (dolist (file files)
+      (with-temp-buffer
+	(insert-file-contents file)
+	(goto-char (point-min))
+	(while (re-search-forward org-babel-src-block-regexp nil t nil)
+	  (expr body (match-string-no-properties 5))
+	  (collect code body))))
+    (f-write (mapconcat #'identity code "\n") 'utf-8 "~/.config/emacs/init.el")))
+#+end_src
+
+****** garbage collection :performance:
+:PROPERTIES:
+:ID:       dda841d2-25f3-4595-ab6a-87cb1bb72dba
+:END:
+
+Emacs garbage collects too frequently for most modern machines. This makes emacs
+less performant especially when performing a large number of calculations,
+because it spends resources garbage collecting when it doesn't have to. Indeed,
+increasing the value of [[helpvar:gc-cons-threshold][gc-cons-threshold]], the number of bytes of consing
+between garbage collections, is known to make a notable difference in user
+startup time. By default it is only 800 KB.
+
+****** gc cons threshold
+:PROPERTIES:
+:ID:       50e19a55-a04b-4ca0-8024-a88b23b5b41f
+:END:
+
+I define three levels on frequency with which emacs should perform garbage
+collection.
+
+#+begin_src emacs-lisp
+(defconst XL-GC-CONS-THRESHOLD-MAX most-positive-fixnum
+  "The upper limit for `gc-cons-threshold'.
+When VOID is performing computationally intensive operations,
+`gc-cons-threshold' is set to this value.")
+
+(defconst XL-GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
+  "The default value for `gc-cons-threshold'.
+This is the value of `gc-cons-threshold' that should be used in typical usages.")
+
+(defconst XL-GC-CONS-THRESHOLD-MIN (eval-when-compile (* 4 1024 1024))
+  "The value for `gc-cons-threshold'.")
+#+end_src
+
+****** text scaling
+:PROPERTIES:
+:ID:       5d242d0e-eeab-46de-bcee-ecfd79b2bffc
+:END:
+
+I change the text scale frequently because in some cases, such as viewing my
+main org file, I want a birds-eye view where I can see the structure of a
+document at a glance. However, when I'm doing something like editing a source
+block I want to focus on a very specific thing totally; therefore, I want the
+text to take up most of the screen.
 
 **** generate load-path :straight:pacman:core:
 :PROPERTIES:
@@ -2831,6 +2831,28 @@ HOOK is a hook function that follows XL naming conventions."
   (xl-symbol-intern fn '& name))
 #+end_src
 
+*** create additional hooks
+:PROPERTIES:
+:ID:       a88d6a5b-5b72-446d-a1ba-0ee153c26e0d
+:END:
+
+**** DOC loading theme :theme:
+:PROPERTIES:
+:ID:       b4773208-5e96-46d2-90d0-1731f6581f1b
+:END:
+
+Sometimes there are things that need tidying up after loading a theme. For
+example, if I'm using evil I need to update the cursor color.
+
+#+begin_src emacs-lisp
+(defvar xl-after-load-theme-hook nil
+  "Hook run after the theme is loaded with `load-theme'.")
+
+(defadvice! run-after-load-theme-hook (:after load-theme)
+  "Set up `xl-load-theme-hook' to run after `load-theme' is called."
+  (run-hooks 'xl-after-load-theme-hook))
+#+end_src
+
 ** keybinding :bind:
 :PROPERTIES:
 :ID:       b627fcf8-2f72-41a6-9ebe-08ff6c29fb54
@@ -5087,7 +5109,7 @@ Honestly, reading it's documentation can be a bit dizzying :dizzy-face:; not
 because the it's bad but because it is hard to wrap your mind around such a
 package without seeing it in action.
 
-*** embark
+** embark
 :PROPERTIES:
 :ID:       45768441-4ec6-475b-99c6-cfb587edb81d
 :END:
@@ -6450,7 +6472,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
   (:n "<" #'lispyville-barf))
 #+end_src
 
-**** escape :bind:
+**** DOC escape :bind:
 :PROPERTIES:
 :ID:       53a208ee-4389-4edd-ad46-02cd811f8d81
 :END:
@@ -7583,6 +7605,11 @@ lisp.
 :ID:       5675cbbc-beb1-4470-a1d2-08f253bb4535
 :END:
 
+*** webpage screenshot
+:PROPERTIES:
+:ID:       284482e6-f3a3-4850-9664-db83ebdd894e
+:END:
+
 *** screenshots :screenshot:
 :PROPERTIES:
 :ID:       26d59d00-72e3-4b8c-9845-e5d9627cd4aa
@@ -7793,16 +7820,6 @@ These are my newsfeed for =elfeed-org=.
 *** videos :video:
 :PROPERTIES:
 :ID:       a8c1f6aa-25f6-47aa-a625-2c870f322a8c
-:END:
-
-**** ytel
-:PROPERTIES:
-:ID:       dea17f59-bebc-426e-ae7a-56f8d8971260
-:END:
-
-***** get video
-:PROPERTIES:
-:ID:       2a0e30c8-7a82-4bea-a79c-6d77eca6893a
 :END:
 
 *** emms :music:
@@ -8949,6 +8966,15 @@ need to figure out the proper way to lazy load it.
   (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode))
 #+end_src
 
+*** exwm-outer-gaps
+:PROPERTIES:
+:ID:       6bf91f2b-a41b-43f9-bb22-4c01b27d1f07
+:END:
+
+#+begin_src emacs-lisp
+(use-package exwm-outer-gaps)
+#+end_src
+
 *** TODO org capture from an exwm buffer :exwm:org:capture:
 :PROPERTIES:
 :ID:       5428bdc1-c075-4387-b3ab-080d372c478f
@@ -9061,6 +9087,21 @@ current url and to add it to the kill ring.
     (xl-log "Copied %S to the kill ring." it)))
 #+end_src
 
+**** download webpage from browser
+:PROPERTIES:
+:ID:       6429c8d4-100b-415b-b551-d5f368abca8f
+:END:
+
+#+begin_src emacs-lisp
+(defun xl/download-webpage-from-browser ()
+  "Download webpage from browser."
+  (pcase exwm-class-name
+    ("qutebrowser" (exwm%qutebrowser-url))
+    ((or "icecat" "iceweasel" "firefox") (exwm%firefox-url)))
+  (let ((path (expand-file-name name "~/.tangld/src/")))
+    (xl-download-webpage url)))
+#+end_src
+
 *** appropriate name for exwm buffers
 :PROPERTIES:
 :ID:       3e32ba6d-dfb3-4bae-b3d8-21b6e38bfe51
@@ -9097,7 +9138,7 @@ windows).
 
 *** to start in char mode
 :PROPERTIES:
-:ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
+:ID:       cb9da3f1-3cbb-4a16-b5ae-b1e122a3a3fd
 :END:
 
 #+begin_src emacs-lisp
@@ -9162,6 +9203,11 @@ certain applications where I'd use it need to be loaded.
 * miscellaneous :miscellany:
 :PROPERTIES:
 :ID:       09686c53-e830-4366-b251-7505cff70e3f
+:END:
+
+** buffer management
+:PROPERTIES:
+:ID:       689c4fc9-6afd-432e-82be-2ed06050b2c7
 :END:
 
 ** TODO key-chord :bind:
@@ -9755,7 +9801,7 @@ This is annoying, but minor. =mu4e= itself is a great package.
 (defalias 'mu4e%mail-dir 'xl-mail-dir)
 #+end_src
 
-*** list email accounts
+*** BUG list email accounts
 :PROPERTIES:
 :ID:       0b7dcf44-b245-4ca8-9407-3d3c043e1d96
 :END:
