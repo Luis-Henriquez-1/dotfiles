@@ -7516,6 +7516,15 @@ screen need to be redisplayed.
 (use-package dmenu :commands dmenu)
 #+end_src
 
+** dmenu
+:PROPERTIES:
+:ID:       2b9348d3-eb71-4e55-abfb-b7b865bb81ac
+:END:
+
+#+begin_src emacs-lisp
+(use-package dmenu :commands dmenu)
+#+end_src
+
 ** TODO origami
 :PROPERTIES:
 :ID:       ac2cc043-331f-435b-b903-39681b84fefe
