@@ -9122,7 +9122,9 @@ current url and to add it to the kill ring.
     ("qutebrowser" (exwm%qutebrowser-url))
     ((or "icecat" "iceweasel" "firefox") (exwm%firefox-url)))
   (let ((path (expand-file-name (s-truncate 30 exwm-title t) "~/.tangld/src/multimedia/webshots/")))
-    (xl-download-webpage url)))
+    (message "putting %s at %s" (s-truncate 30 exwm-title t) path)
+    ;; (xl-download-webpage url)
+    ))
 #+end_src
 
 *** appropriate name for exwm buffers
