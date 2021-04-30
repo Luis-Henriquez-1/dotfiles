@@ -7507,6 +7507,15 @@ screen need to be redisplayed.
 :ID:       5f7b31a6-b99e-4ac8-a2be-2e0aaa4906d6
 :END:
 
+** dmenu
+:PROPERTIES:
+:ID:       2b9348d3-eb71-4e55-abfb-b7b865bb81ac
+:END:
+
+#+begin_src emacs-lisp
+(use-package dmenu :commands dmenu)
+#+end_src
+
 ** TODO origami
 :PROPERTIES:
 :ID:       ac2cc043-331f-435b-b903-39681b84fefe
@@ -7518,7 +7527,7 @@ screen need to be redisplayed.
 (use-package origami)
 #+end_src
 
-** pdf-tools :pdf:exec:
+** TODO pdf-tools :pdf:exec:
 :PROPERTIES:
 :ID:       63343f9d-6b19-43de-8302-d1344d571949
 :END:
