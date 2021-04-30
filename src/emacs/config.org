@@ -8970,7 +8970,7 @@ the frame approach is that it's easy to have a "gap" setup.
   (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode))
 #+end_src
 
-*** set exwm float positon config
+*** TODO set exwm float positon config
 :PROPERTIES:
 :ID:       cd2a21d8-67d9-442d-b7d9-dfd89c68162b
 :END:
