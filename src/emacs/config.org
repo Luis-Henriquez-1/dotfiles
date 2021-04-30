@@ -8973,6 +8973,7 @@ need to figure out the proper way to lazy load it.
 
 #+begin_src emacs-lisp
 (use-package exwm-outer-gaps)
+(straight-use-package '(exwm-outer-gaps :host github :type git :repo "lucasgruss/exwm-outer-gaps"))
 #+end_src
 
 *** TODO org capture from an exwm buffer :exwm:org:capture:
