@@ -10030,6 +10030,31 @@ Information for contexts are."
 :ID:       ebcad8f8-06d6-4c25-8ca6-c7f2190dca65
 :END:
 
+** mini-frame
+:PROPERTIES:
+:ID:       1e93b22f-e918-4a6e-9753-9e7657cbfcab
+:END:
+
+This package opens the minibuffer in a new frame. Using the default minibuffer
+creates a disturbance in the your window configuration when it pops up. The
+advantage that this offers over the minibuffer is that.
+
+Note that by default, [[helpvar:mini-frame-resize][mini-frame-resize]] is set to =t=. The problem I have with
+this is that when I first call a minibuffer completion command the candidates
+are not immediately visible. They are only visible when I type
+something. Setting it to =nil= makes the frame start at the size you specified.
+
+#+begin_src emacs-lisp
+(use-package! mini-frame
+  ;; :hook emacs-startup-hook
+  :set
+  (mini-frame-resize . nil)
+  (mini-frame-show-parameters . '((top . 10)
+				  (width . 0.95)
+				  (left . 0.5)
+				  (height . 15))))
+#+end_src
+
 ** highlight-quoted :elisp:lang:prog:
 :PROPERTIES:
 :ID:       d0973dce-693b-45ca-88e3-27da1bb217f7
