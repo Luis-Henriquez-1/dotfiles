@@ -9046,6 +9046,7 @@ simulating keys require *much* less boilerplate.
 #+begin_src emacs-lisp
 (defun xl-download-webpage (url path)
   "Download webpage at URL to webpage and save it at PATH."
+  (start-process-shell-command "" nil "weasyprint %s %s --")
   (call-process "weasyprint" nil nil nil url path))
 #+end_src
 
