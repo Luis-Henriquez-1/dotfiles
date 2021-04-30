@@ -7596,22 +7596,22 @@ screenshots are vital. I use maim to take screenshots because. I will note that
 when I used [[][escr]] to take screenshots, those screenshots would not show
 exwm windows. =escr= used [[][]]'s import.
 
-**** screenshot
-:PROPERTIES:
-:ID:       03f92301-27b0-4119-9a46-8e566388466b
-:END:
-
-#+begin_src emacs-lisp
-(use-package screenshot :commands screenshot)
-(straight-use-package '(screenshot :repo "tecosaur/screenshot" :type git :host github))
-#+end_src
-
 **** screenshot name
 :PROPERTIES:
 :ID:       7210e8a8-7cbc-40ec-bd70-f8cfc6a32c56
 :END:
 
 The name for the screenshot.
+
+***** screenshot dir
+:PROPERTIES:
+:ID:       54257850-47e7-4073-ab8b-c9c1adf4219e
+:END:
+
+#+begin_src emacs-lisp
+(defvar xl-screenshot-dir "~/.tangld/src/multimedia/screenshots/")
+(defun xl-screenshot-dir () xl-screenshot-dir)
+#+end_src
 
 ***** xl-screenshot-path
 :PROPERTIES:
@@ -7670,21 +7670,32 @@ had the side-effect of displaying the prompt in the screenshot which is not what
 I want. To avoid this, I decided to create the screenshot with the default name
 and then prompt to rename the file afterwards.
 
+***** toggle prompting for name
+:PROPERTIES:
+:ID:       5872ecd0-063b-4887-83c6-9a0a79988f47
+:END:
+
+#+begin_src emacs-lisp
+(defun xl/prompt-screenshot-name-toggle ()
+  "Toggle whether to prompt for screenshot name."
+  (interactive)
+  (setq xl-prompt-for-screenshot-name-p (not xl-prompt-for-screenshot-name-p)))
+#+end_src
+
 ***** fullscreen
 :PROPERTIES:
 :ID:       5cb29bb2-459a-4c84-9bf8-df179d2d2e8e
 :END:
 
-Take a s
-
 #+begin_src emacs-lisp
 (defun xl/take-fullscreen-screenshot ()
   "Take a fullscreen screenshot."
   (interactive)
-  (let ((name (xl-default-screenshot-name)))
-    (call-process "maim" nil nil nil "-u" name)
-    (awhen (xl-prompt-screenshot-name)
-      (rename-file name it t))))
+  (let* ((name (or (xl-prompt-screenshot-name) (xl-default-screenshot-name)))
+	 (path (f-expand name (xl-screenshot-dir))))
+    (call-process "maim" nil nil nil "-u" path)
+    (when (file-exists-p path)
+      (message "screenshot successful!"))))
 #+end_src
 
 ***** window
@@ -7696,12 +7707,13 @@ Take a s
 (defun xl/take-window-screenshot ()
   "Take a screenshot of the current Emacs window."
   (interactive)
-  (-let* ((name (xl-default-screenshot-name))
+  (-let* ((name (or (xl-prompt-screenshot-name) (xl-default-screenshot-name)))
+	  (path (f-expand name (xl-screenshot-dir)))
 	  ((x y w h) (window-pixel-edges))
 	  (geometry (format "%dx%d+%d+%d" w h x y)))
     (call-process "maim" nil nil nil "-u" "--geometry" geometry name)
-    (awhen (xl-prompt-screenshot-name)
-      (rename-file name it t))))
+    (when (file-exists-p path)
+      (message "screenshot successful!"))))
 #+end_src
 
 *** elfeed :newfeed:
