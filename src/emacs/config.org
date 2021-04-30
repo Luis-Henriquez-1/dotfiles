@@ -8966,6 +8966,22 @@ need to figure out the proper way to lazy load it.
   (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode))
 #+end_src
 
+*** set exwm float positon config
+:PROPERTIES:
+:ID:       cd2a21d8-67d9-442d-b7d9-dfd89c68162b
+:END:
+
+#+begin_src emacs-lisp
+(defafter! exwm-float-position-config ()
+  '((:name "NW" :key "1" :title nil :x 0 :y 0 :width 0.25 :height 0.25)
+    (:name "NE" :key "2" :title nil :x -0.25 :y 0 :width 0.25 :height 0.25)
+    (:name "SW" :key "3" :title nil :x 0 :y -0.25 :width 0.25 :height 0.25)
+    (:name "SE" :key "4" :title nil :x -0.25 :y -0.25 :width 0.25 :height 0.25)
+    (:name "Center" :key "5" :title nil :x 0.25 :y 0.25 :width 0.5 :height 0.5)
+    (:name "Hide" :key "h" :title nil :x 0.5 :y -1 :width 1 :height 1))
+  )
+#+end_src
+
 *** exwm-outer-gaps
 :PROPERTIES:
 :ID:       6bf91f2b-a41b-43f9-bb22-4c01b27d1f07
