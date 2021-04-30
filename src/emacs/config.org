@@ -8967,21 +8967,38 @@ https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcap
 :END:
 
 #+begin_src emacs-lisp
-(defun exwm::title-info (title)
+(defun exwm%title-info (title)
   "Return the webpage and the program."
   (-let [(_ webpage program) (s-match "\\([^z-a]+\\) - \\([^z-a]+\\)\\'" title)]
     (list webpage program)))
 #+end_src
 
-**** download webpage
+**** simulate keys
+:PROPERTIES:
+:ID:       b2688daa-eda9-480c-9d4b-2e054bcb633f
+:END:
+
+This is an improvement to the raw code provided [[https://www.reddit.com/r/emacs/comments/f6zzux/capturing_website_url_with_orgcapture_and_exwm/][on reddit]]. Using this make
+simulating keys require *much* less boilerplate.
+
+#+begin_src emacs-lisp
+(defun exwm%simulate-keys (keys &optional buffer msecs)
+  "Simulate keys in current buffer."
+  (iter (with (fid (exwm--buffer->id (or buffer (current-buffer)))))
+	(each key keys)
+	(exwm-input::fake-key-to-id key fid)
+	(sleep-for 0 (or msecs 300))))
+#+end_src
+
+**** download webpage :webshot:multimedia:
 :PROPERTIES:
 :ID:       3798402c-cd8b-43e2-aec5-f54736aafdd4
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-download-webpage (url)
-  "Download webpage at url to webpage folder."
-  (call-process "weasyprint" nil nil nil url))
+(defun xl-download-webpage (url path)
+  "Download webpage at URL to webpage and save it at PATH."
+  (call-process "weasyprint" nil nil nil url path))
 #+end_src
 
 **** replacement for fake id
@@ -9026,20 +9043,10 @@ Emacs simulates a keypress to firefox--specifically the keypresses to select the
 current url and to add it to the kill ring.
 
 #+begin_src emacs-lisp
-(defun exwm::firefox-url ()
+(defun exwm%firefox-url ()
   "Save the current firefox url to kill ring."
-  ;; We get the xwindow id of the buffer named Firefox
-  (let ((fid (exwm--buffer->id (current-buffer))))
-    ;; Send c-l to select url
-    (exwm-input::fake-key-to-id 'C-l fid)
-    ;; We sleep to avoid race conditions.
-    (sleep-for 0 300)
-    ;; Copy url to kill ring (note: this is not affected by simulation keys)
-    (exwm-input::fake-key-to-id 'C-c fid)
-    (sleep-for 0 300)
-    ;; try to set the state back
-    (exwm-input::fake-key-to-id 'escape fid)
-    (current-kill 0)))
+  (exwm%simulate-keys '(escape C-l C-c escape))
+  (current-kill 0))
 #+end_src
 
 **** url from qutebrowser
@@ -9048,24 +9055,15 @@ current url and to add it to the kill ring.
 :END:
 
 #+begin_src emacs-lisp
-(defun exwm::qutebrowser-url ()
-  (interactive)
-  (let ((fid (exwm--buffer->id (current-buffer))))
-    (sleep-for 0 300)
-    ;; if in insert state exit it.
-    (exwm-input::fake-key-to-id 'escape fid)
-    (sleep-for 0 300)
-    (exwm-input::fake-key-to-id 'y fid)
-    (sleep-for 0 300)
-    (exwm-input::fake-key-to-id 'y fid)
-    (sleep-for 0 300)
-    (aprog1 (current-kill 0)
-      (xl-log "Copied %S to the kill ring." it))))
+(defun exwm%qutebrowser-url ()
+  (exwm%simulate-keys '(escape y y))
+  (aprog1 (current-kill 0)
+    (xl-log "Copied %S to the kill ring." it)))
 #+end_src
 
 *** appropriate name for exwm buffers
 :PROPERTIES:
-:ID: b9712cdc-2cf9-482f-8f62-b2e4f56b9c97
+:ID:       3e32ba6d-dfb3-4bae-b3d8-21b6e38bfe51
 :END:
 
 By default each exwm buffer is named =*EXWM*=. We want them to have
