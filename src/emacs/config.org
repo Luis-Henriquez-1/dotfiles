@@ -9117,10 +9117,11 @@ current url and to add it to the kill ring.
 #+begin_src emacs-lisp
 (defun xl/download-webpage-from-browser ()
   "Download webpage from browser."
+  (interactive)
   (pcase exwm-class-name
     ("qutebrowser" (exwm%qutebrowser-url))
     ((or "icecat" "iceweasel" "firefox") (exwm%firefox-url)))
-  (let ((path (expand-file-name name "~/.tangld/src/")))
+  (let ((path (expand-file-name (s-truncate 30 exwm-title t) "~/.tangld/src/multimedia/webshots/")))
     (xl-download-webpage url)))
 #+end_src
 
