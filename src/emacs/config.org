@@ -8956,6 +8956,10 @@ an. One caveat is that mouse clicks only work in insert mode.
 This package provides a minor mode for configuring floating windows. I still
 need to figure out the proper way to lazy load it.
 
+Interestingly, Emacs offers two different ways of managing windows like a window
+manager. One is to use windows and the other is to use frames. The advantage of
+the frame approach is that it's easy to have a "gap" setup.
+
 #+begin_src emacs-lisp
 (use-package exwm-float
   :set
