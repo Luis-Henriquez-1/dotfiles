@@ -17,10 +17,24 @@
 :PROPERTIES:
 :ID:       976c09e0-1c90-4a4b-8779-ce79f2c69794
 :END:
+:LINKS:
+https://irreal.org/blog/?p=2559
+http://sleepomeno.github.io/blog/2014/02/16/This-is-not-an-org-mode-Tutorial/
+:END:
+
+I write my dotfiles in org-mode and tangle them to their corronding places with
+[[][tangld]. Org mode allows me to express my dotfiles in a homogenous syntax.
 
 ** tangld
 :PROPERTIES:
 :ID:       497747db-7e2e-4548-bc88-2bd37328d6eb
+:END:
+
+[[][tangld] is what I use to
+
+** tag-based
+:PROPERTIES:
+:ID:       9c7e9022-4dec-4299-a487-ea16000fb5ec
 :END:
 
 * Screenshots
