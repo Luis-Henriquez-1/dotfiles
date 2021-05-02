@@ -1,5 +1,6 @@
 #+title: guix.org
 #+author: Luis Henriquez-Perez
+#+property: header-args :tangle ~/guix.scm
 
 * modules
 :PROPERTIES:
