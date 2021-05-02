@@ -1,6 +1,6 @@
 #+title: config.org
 #+author: Luis-Henriquez-Perez
-#+property: header-args tangle: ~/.config/emacs/init.el
+#+property: header-args :tangle ~/.config/emacs/init.el
 
 * DOC early-init :earlyinit:
 :PROPERTIES:
