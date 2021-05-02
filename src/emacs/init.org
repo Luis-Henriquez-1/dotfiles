@@ -9933,6 +9933,28 @@ Information for contexts are."
 :ID:       ebcad8f8-06d6-4c25-8ca6-c7f2190dca65
 :END:
 
+** TODO customize org-block-begin-line face :theme:face:org:
+SCHEDULED: <2021-04-26 Mon>
+:PROPERTIES:
+:ID:       b2aa074f-8991-4a26-9b14-33f49164fc2e
+:END:
+:LINK:
+https://www.emacswiki.org/emacs/CustomizingFaces
+https://emacs.stackexchange.com/questions/19924/whats-the-difference-between-set-face-background-and-custom-set-faces
+:END:
+
+When a theme has and you fold these headings, the headings bleed out of the
+folded blocks. Eventually, I want to conditionally hide the headline colors when
+a headline is folded. But that's a bit complicated. It's easier to do away with
+the colors for now.
+
+#+begin_src emacs-lisp
+(defhook! remove-org-block-line-background (xl-after-load-theme-hook)
+  "Remove org block delimiter color."
+  (set-face-background 'org-block-end-line (face-attribute 'default :background))
+  (set-face-background 'org-block-begin-line (face-attribute 'default :background)))
+#+end_src
+
 ** mini-frame
 :PROPERTIES:
 :ID:       1e93b22f-e918-4a6e-9753-9e7657cbfcab
