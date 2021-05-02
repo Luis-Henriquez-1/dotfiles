@@ -40,6 +40,21 @@ I write my dotfiles in org-mode and tangle them to their corronding places with
 :ID:       9c7e9022-4dec-4299-a487-ea16000fb5ec
 :END:
 
+* Goals
+:PROPERTIES:
+:ID:       28970211-6d6f-455c-9b07-9e0f5d3c5ba3
+:END:
+
+** consistency
+:PROPERTIES:
+:ID:       c6b64409-53eb-43da-a859-9897d29f7d5b
+:END:
+
+** documentation
+:PROPERTIES:
+:ID:       6de0bc56-af6f-4981-bda5-26655c92e93b
+:END:
+
 * Screenshots
 :PROPERTIES:
 :ID:       878de7ed-1230-4466-8f37-ba55dcaeac19
