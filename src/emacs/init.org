@@ -9934,7 +9934,6 @@ Information for contexts are."
 :END:
 
 ** TODO customize org-block-begin-line face :theme:face:org:
-SCHEDULED: <2021-04-26 Mon>
 :PROPERTIES:
 :ID:       b2aa074f-8991-4a26-9b14-33f49164fc2e
 :END:
