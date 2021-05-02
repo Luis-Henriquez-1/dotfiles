@@ -7329,6 +7329,9 @@ screen need to be redisplayed.
 :ID:       2b9348d3-eb71-4e55-abfb-b7b865bb81ac
 :END:
 
+=dmenu= is a package that mimicks [[][dmenu]. It allows me to choose an
+executable to run.
+
 #+begin_src emacs-lisp
 (use-package dmenu
   :commands dmenu
