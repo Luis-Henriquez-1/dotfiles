@@ -3665,8 +3665,19 @@ prompt asking me if I'm sure.
 :ID:       fc48af85-da43-40bb-992d-e59ccbd8a6da
 :END:
 
+=org-tanglesync= is a package that.
+
 #+begin_src emacs-lisp
-(use-package org-tanglesync)
+(use-package org-tanglesync
+  :hook ((org-mode . org-tanglesync-mode)
+         ;; enable watch-mode globally:
+         ((prog-mode text-mode) . org-tanglesync-watch-mode))
+  :custom
+  (org-tanglesync-watch-files '("conf.org" "myotherconf.org"))
+  ;; :bind
+  ;; (( "C-c M-i" . org-tanglesync-process-buffer-interactive)
+  ;;  ( "C-c M-a" . org-tanglesync-process-buffer-automatic))
+  )
 #+end_src
 
 ** increase line spacing
