@@ -8,7 +8,7 @@
 :ID:       10bb2d0f-9ace-4057-8087-c6be2ad062ba
 :END:
 
-* Design
+* Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
 :END:
@@ -31,6 +31,9 @@ I write my dotfiles in org-mode and tangle them to their corronding places with
 :END:
 
 [[][tangld] is what I use to
+
+#+begin_src emacs-lisp
+#+end_src
 
 ** tag-based
 :PROPERTIES:
