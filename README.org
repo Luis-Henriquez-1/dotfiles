@@ -65,9 +65,11 @@ Org allows me to have expressive documentation.
 https://github.com/Y2Z/monolith
 :END:
 
-Saving links is good, but it is not enough.
+Saving links is good, but it is not enough. Websites can be (and are often)
+modified. They can be taken down in which case any links would them would either
+break or point to someplace else.
 
-**** monolith
+**** monolith :webshot:
 :PROPERTIES:
 :ID:       9ecae28c-1741-4aad-9c5b-646045e714d3
 :END:
