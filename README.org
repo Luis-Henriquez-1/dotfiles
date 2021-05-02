@@ -62,8 +62,9 @@ Org allows me to have expressive documentation.
 :ID:       8d3fabcd-0180-46f7-93f2-911c3b3a80f8
 :END:
 :LINKS:
-
 :END:
+
+Saving links is good, but it is not enough.
 
 ** performance
 :PROPERTIES:
