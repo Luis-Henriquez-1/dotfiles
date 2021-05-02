@@ -67,7 +67,8 @@ https://github.com/Y2Z/monolith
 
 Saving links is good, but it is not enough. Websites can be (and are often)
 modified. They can be taken down in which case any links would them would either
-break or point to someplace else.
+break or point to someplace else. A true data hoarder saves webpages they deem
+useful on their computer.
 
 **** monolith :webshot:
 :PROPERTIES:
