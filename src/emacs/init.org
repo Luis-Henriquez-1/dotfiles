@@ -8975,7 +8975,7 @@ a more descriptive name.
 
 *** char mode
 :PROPERTIES:
-:ID: 790c7f6e-6f66-4074-b51a-56b491bcde99
+:ID:       80dbac77-5b8c-4ef7-8d37-561f646af250
 :END:
 
 =EXWM= has two modes, =line-mode= and =char-mode=. It's best for Emacs and Next to
