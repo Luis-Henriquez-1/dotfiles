@@ -73,7 +73,7 @@ Saving links is good, but it is not enough.
 :END:
 
 #+begin_src shell
-monolith https://github.com/Y2Z/monolith
+monolith https://github.com/Y2Z/monolith -o ~/.tangld/src/multimedia/webshots/monolith-github-page.html
 #+end_src
 
 ** performance
