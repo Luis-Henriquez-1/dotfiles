@@ -295,16 +295,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+end_src
 
 
-* dotcrafter
-:PROPERTIES:
-:ID:       221c0b7f-a003-45dc-a349-ce1b373b808f
-:END:
-
-#+begin_src emacs-lisp
-("8589c71e64b60f9395b418c09b60815a86c7da8f" (dotcrafter :host github :branch "main" :repo "daviwil/dotcrafter.el" :package "dotcrafter" :type git :local-repo "dotcrafter.el"))
-#+end_src
-
-
 * edit-indirect
 :PROPERTIES:
 :ID:       eb3c702b-f50b-44ad-9151-b9661977e751
