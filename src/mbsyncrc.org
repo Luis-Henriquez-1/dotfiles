@@ -164,6 +164,35 @@ Path ~/.mail/luis@luishp.xyz/
 Inbox ~/.mail/luis@luishp.xyz/Inbox
 #+end_src
 
+** patterns
+:PROPERTIES:
+:ID:       9c1b80a6-15b2-40a7-b282-c5ea82125560
+:END:
+
+*** drafts
+:PROPERTIES:
+:ID:       39ebb011-629e-4fd3-b4b0-c6e41d1469b3
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+*** sent
+:PROPERTIES:
+:ID:       721e15f9-e8a8-476d-8902-62ad848ed6a9
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+*** trash
+:PROPERTIES:
+:ID:       9528ebc0-5ad3-4ac9-8a50-d62cea4d9a1d
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 ** DOC patterns
 :PROPERTIES:
 :ID:       2c732aca-bd66-4ad2-a4a2-bbfd6a6e5da5
