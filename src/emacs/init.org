@@ -9005,7 +9005,7 @@ windows).
     (exwm-input-release-keyboard (exwm--buffer->id (window-buffer)))))
 #+end_src
 
-*** exwm-edit :edit:exwm:
+*** exwm-edit :edit:
 :PROPERTIES:
 :ID:       39361fa6-0df0-416e-aed6-2f8cb3bf9fb9
 :END:
