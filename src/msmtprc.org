@@ -1,6 +1,6 @@
 #+title: msmtprc.org
 #+author: Luis-Henriquez-Perez
-#+property: header-args tangle: ~/.msmtprc
+#+property: header-args :tangle ~/.msmtprc
 
 * DOC about
 :PROPERTIES:
