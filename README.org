@@ -57,6 +57,11 @@ Org allows me to have expressive documentation.
 :ID:       6de0bc56-af6f-4981-bda5-26655c92e93b
 :END:
 
+** performance
+:PROPERTIES:
+:ID:       09a3a2aa-1e8a-4242-bac5-948e471ba169
+:END:
+
 * Screenshots
 :PROPERTIES:
 :ID:       878de7ed-1230-4466-8f37-ba55dcaeac19
