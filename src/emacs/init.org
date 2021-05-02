@@ -400,34 +400,6 @@ with the last and allowing me to choose which ones to add.
     versions-alist))
 #+end_src
 
-**** update recipe file :straight:pacman:core:
-:PROPERTIES:
-:ID:       63b9a6eb-bc36-4555-b0d6-0100841277ca
-:END:
-
-#+begin_src emacs-lisp
-(defun xl/update-recipes ()
-  "Update the recipe file with new recipes."
-  (interactive)
-  (with-temp-file XL-RECIPE-FILE
-    (iter (with (gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX)
-		(versions-alist (straight%versions-alist))
-		(packages (cl-sort (hash-table-keys straight--recipe-cache) #'string-lessp))
-		(recipe-cache straight--recipe-cache)
-		(print-length nil)
-		(print-level nil)
-		(print-quoted t))
-	  (for package packages)
-	  (expr recipe (hash-get package recipe-cache))
-	  (expr local-repo (plist-get recipe :local-repo))
-	  (when (and local-repo (assoc local-repo versions-alist))
-	    (expr revision (alist-get local-repo versions-alist))
-	    (expr package (substring-no-properties package))
-	    (expr recipe (cons (intern package) recipe))
-	    (prin1 (list package revision recipe) (current-buffer))
-	    (insert ?\n)))))
-#+end_src
-
 *** TODO package.el
 :PROPERTIES:
 :ID:       5ce11231-2f35-4f03-930c-61b0637f75ae
@@ -3660,26 +3632,6 @@ prompt asking me if I'm sure.
 :ID:       090ce452-80bc-4565-a591-2e3e4d30d718
 :END:
 
-** org-tanglesync
-:PROPERTIES:
-:ID:       fc48af85-da43-40bb-992d-e59ccbd8a6da
-:END:
-
-=org-tanglesync= is a package that.
-
-#+begin_src emacs-lisp
-(use-package org-tanglesync
-  :hook ((org-mode . org-tanglesync-mode)
-         ;; enable watch-mode globally:
-         ((prog-mode text-mode) . org-tanglesync-watch-mode))
-  :custom
-  (org-tanglesync-watch-files '("conf.org" "myotherconf.org"))
-  ;; :bind
-  ;; (( "C-c M-i" . org-tanglesync-process-buffer-interactive)
-  ;;  ( "C-c M-a" . org-tanglesync-process-buffer-automatic))
-  )
-#+end_src
-
 ** increase line spacing
 :PROPERTIES:
 :ID:       25614f23-f337-4092-8d3d-5c5d75efe90c
@@ -3694,7 +3646,7 @@ decided to increase [[helpvar:line-spacing][line-spacing]] for org-mode.
   (setq-local line-spacing 0.2))
 #+end_src
 
-** TODO =org-capture= still deletes other windows :org:capture:popup:
+** TODO =org-capture= still deletes other windows :capture:popup:
 :PROPERTIES:
 :ID:       018fc5a8-666f-4233-af33-0a562c729712
 :END:
