@@ -1,5 +1,6 @@
-#+title: xinitrc
+#+title: xinitrc.org
 #+author: Luis-Henriquez-Perez
+#+property: header-args :tangle ~/.xinitrc
 
 * first remap caps lock with escape
 :PROPERTIES:
