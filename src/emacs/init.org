@@ -9940,6 +9940,7 @@ Information for contexts are."
 :LINK:
 https://www.emacswiki.org/emacs/CustomizingFaces
 https://emacs.stackexchange.com/questions/19924/whats-the-difference-between-set-face-background-and-custom-set-faces
+https://emacs.stackexchange.com/questions/52324/prevent-org-source-block-face-from-bleeding-out-in-fold
 :END:
 
 When a theme has and you fold these headings, the headings bleed out of the
