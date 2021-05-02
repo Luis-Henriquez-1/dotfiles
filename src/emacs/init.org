@@ -7324,7 +7324,7 @@ screen need to be redisplayed.
 :ID:       5f7b31a6-b99e-4ac8-a2be-2e0aaa4906d6
 :END:
 
-** dmenu
+** DOC dmenu
 :PROPERTIES:
 :ID:       2b9348d3-eb71-4e55-abfb-b7b865bb81ac
 :END:
