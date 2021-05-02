@@ -1,6 +1,6 @@
 #+TITLE: mbsyncrc.org
 #+AUTHOR: Luis-Henriquez-Perez
-#+PROPERTY: header-args tangle: ~/.mbsyncrc
+#+PROPERTY: header-args :tangle ~/.mbsyncrc
 #+TAGS: email conf mbsync
 
 * about
