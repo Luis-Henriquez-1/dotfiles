@@ -9949,7 +9949,9 @@ the colors for now.
 
 #+begin_src emacs-lisp
 (defhook! remove-org-block-line-background (xl-after-load-theme-hook)
-  "Remove org block delimiter color."
+  "Remove org block delimiter color.
+Set the background of the faces `org-block-begin-line' and `org-block-end-line'
+to the default face background."
   (set-face-background 'org-block-end-line (face-attribute 'default :background))
   (set-face-background 'org-block-begin-line (face-attribute 'default :background)))
 #+end_src
