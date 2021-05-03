@@ -9666,7 +9666,7 @@ asking me to run anything or do anything at all.
 The idea is to do preliminary things before the main entry point--the function
 [[helpfn:mu4e][mu4e]]--is called.
 
-*** TODO mu4e database location
+**** TODO mu4e database location
 :PROPERTIES:
 :ID:       fe8f10c1-3035-4a97-9657-98236f50d0a8
 :END:
@@ -9679,7 +9679,7 @@ database is used to determine whether we'll run =mu init= or not.
   "Path where mu database should go.")
 #+end_src
 
-*** TODO init mu4e database
+**** TODO init mu4e database
 :PROPERTIES:
 :ID:       4d107050-db05-4d7e-ae44-4bf356a44fd0
 :END:
@@ -9695,7 +9695,7 @@ with the command =mu init --maildir=~/Maildir=.
 	(call-process-shell-command (format "mu init --my-address=%s" account))))
 #+end_src
 
-*** TODO ensuring email directories
+**** TODO ensuring email directories
 :PROPERTIES:
 :ID:       704b7049-fac5-4fa7-b710-1bbfe50cea5f
 :END:
