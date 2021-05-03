@@ -1647,7 +1647,7 @@ play.
 (use-package loopy
   :demand t
   :init
-  (callf2 cl-adjoin '-split loopy-default-flags)
+  (add-to-list 'loopy-default-flags '-split)
   (loopy-defalias 'fret 'finally-return)
   (loopy-defalias 'ret 'return))
 #+end_src
@@ -3669,7 +3669,7 @@ This keyword means I need to add documentation to a headline.
 
 #+begin_src emacs-lisp
 (defafter! add-doc-keyword (org)
-  (cl-callf2 cl-adjoin '(sequence "DOC" "|") org-todo-keywords))
+  (add-to-list 'org-todo-keywords '(sequence "DOC" "|")))
 #+end_src
 
 ** TODO add bug to use-package keywords :todo:debug:
@@ -3679,7 +3679,7 @@ This keyword means I need to add documentation to a headline.
 
 #+begin_src emacs-lisp
 (defafter! add-bug-keyword (org)
-  (cl-callf2 cl-adjoin '(sequence "BUG" "|") org-todo-keywords))
+  (add-to-list 'org-todo-keywords '(sequence "BUG" "|")))
 #+end_src
 
 ** TODO org-version
@@ -4456,7 +4456,7 @@ Instead of passing in the string I use =org-ml= to print the string.
 		 :file XL-CAPTURE-FILE
 		 :prepend t
 		 :empty-lines 1)))
-    (cl-callf2 cl-adjoin (car it) org-capture-templates)))
+    (add-to-list 'org-capture-templates (car it))))
 #+end_src
 
 ** org-clock
