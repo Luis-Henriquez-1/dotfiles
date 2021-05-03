@@ -8298,10 +8298,19 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 
 #+begin_src emacs-lisp
 (use-package em-term
-  :idle-require t
-  :config
-  (-each '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp")
-    (fn! (pushnew <command> eshell-visual-commands))))
+  :idle-require t)
+#+end_src
+
+*** populate eshell visual commands
+:PROPERTIES:
+:ID:       e46d897d-eca5-43be-83d1-05eab1184965
+:END:
+
+#+begin_src emacs-lisp
+(defafter! populate-eshell-visual-commands (em-term)
+  "Add common commands to `eshell-visual-commands'."
+  (iter (each command '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp"))
+	(pushnew command eshell-visual-commands)))
 #+end_src
 
 *** em-alias
