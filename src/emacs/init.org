@@ -4443,93 +4443,21 @@ Instead of passing in the string I use =org-ml= to print the string.
        (org-ml-to-trimmed-string)))
 #+end_src
 
-***** template
-:PROPERTIES:
-:ID:       5fd30ac2-57c1-4249-a5e7-4048e9597dc1
-:END:
-
-#+begin_src emacs-lisp
-(defmacro doct%set-template! (name &rest rest)
-  "Specify the doct arguments to create a capture template."
-  (declare (indent defun))
-  `(after! org-capture
-     (alet (doct (list (list "todo" ,@rest)))
-       (cl-callf2 cl-adjoin (car it) org-capture-templates))))
-#+end_src
-
 ***** todo
 :PROPERTIES:
 :ID:       2682910c-9620-4cbf-ab71-371ed29e25a1
 :END:
 
 #+begin_src emacs-lisp
-(doct%set-template! "todo"
-  :keys "t"
-  :template #'org-capture%todo-template
-  :file XL-CAPTURE-FILE
-  :prepend t
-  :empty-lines 1)
+(defafter! add-todo-capture-template (org-capture doct)
+  (alet (doct '(("todo"
+		 :keys "t"
+		 :template org-capture%todo-template
+		 :file XL-CAPTURE-FILE
+		 :prepend t
+		 :empty-lines 1)))
+    (cl-callf2 cl-adjoin (car it) org-capture-templates)))
 #+end_src
-
-***** annotation
-:PROPERTIES:
-:ID:       4ec64ef5-b005-4974-8ed8-fbcdc05d828c
-:END:
-
-#+begin_src emacs-lisp
-(doct%set-template! "annotate"
-  :keys "a"
-  :type 'plain
-  :target #'org-annotate-code-capture-finding-location
-  :file org-annotate-code-org-file
-  :template "%?")
-#+end_src
-
-**** test
-:PROPERTIES:
-:ID:       e5f5fc62-4791-4f25-ae0a-1517ac5ed598
-:HEADER-ARGS: :tangle no
-:END:
-
-The purpose of this template is to create tests for specific blocks of code.
-This template will add a headline to.
-
-***** template
-:PROPERTIES:
-:ID:       12a0bbc8-24a3-4d28-b14c-0050d268f901
-:HEADER-ARGS: :tangle no
-:END:
-
-#+begin_src emacs-lisp
-(defun org-capture%test-template ()
-  "Return capture template for an todo."
-  (->> (org-ml-build-headline! :title-text "%?")
-       (org-ml-headline-set-node-property "ID" "1234")
-       (org-ml-to-trimmed-string)))
-#+end_src
-
-***** test
-:PROPERTIES:
-:ID:       c5456618-d2d8-4347-aa2a-dfbf487046bd
-:END:
-
-#+begin_src emacs-lisp
-(doct%set-template! "test"
-  :keys "T"
-  :template #'
-  :file XL-TEST-FILE
-  :prepend t
-  :empty-lines 1)
-#+end_src
-
-**** question
-:PROPERTIES:
-:ID:       28b75872-0ed1-4852-8838-f015f0000bd5
-:HEADER-ARGS: :tangle no
-:END:
-
-The purpose of this template is to create headlines for questions I'd like
-answered.
 
 ** org-clock
 :PROPERTIES:
@@ -8861,96 +8789,6 @@ simulating keys require *much* less boilerplate.
 	(each key keys)
 	(exwm-input::fake-key-to-id key fid)
 	(sleep-for 0 (or msecs 300))))
-#+end_src
-
-**** download webpage :webshot:multimedia:
-:PROPERTIES:
-:ID:       3798402c-cd8b-43e2-aec5-f54736aafdd4
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-download-webpage (url path)
-  "Download webpage at URL to webpage and save it at PATH."
-  (start-process-shell-command "" nil "weasyprint %s %s --")
-  (call-process "weasyprint" nil nil nil url path))
-#+end_src
-
-**** replacement for fake id
-:PROPERTIES:
-:ID:       4f0436c4-bc37-49b0-a8a3-894e212d4d13
-:END:
-
-#+begin_src emacs-lisp
-(defun exwm-input::fake-key-to-id (event id)
-  "Fake a key event equivalent to Emacs event EVENT and send it
- to program with x window ID."
-  (let* ((keysym (xcb:keysyms:event->keysym exwm--connection event))
-         keycode)
-    (when (= 0 (car keysym))
-      (user-error "[EXWM] Invalid key: %s" (single-key-description event)))
-    (setq keycode (xcb:keysyms:keysym->keycode exwm--connection
-					       (car keysym)))
-    (when (/= 0 keycode)
-      (dolist (class '(xcb:KeyPress xcb:KeyRelease))
-        (xcb:+request exwm--connection
-	    (make-instance
-	     'xcb:SendEvent
-	     :propagate 0 :destination id
-	     :event-mask xcb:EventMask:NoEvent
-	     :event
-	     (xcb:marshal
-	      (make-instance
-	       class
-	       :detail keycode :time xcb:Time:CurrentTime
-	       :root exwm--root :event id :child 0 :root-x 0 :root-y 0
-	       :event-x 0 :event-y 0 :state (cdr keysym) :same-screen 0)
-	      exwm--connection)))))
-    (xcb:flush exwm--connection)))
-#+end_src
-
-**** url from firefox
-:PROPERTIES:
-:ID:       f407cc8c-0bb9-47fe-adeb-4e9d27b5c5b7
-:END:
-
-Emacs simulates a keypress to firefox--specifically the keypresses to select the
-current url and to add it to the kill ring.
-
-#+begin_src emacs-lisp
-(defun exwm%firefox-url ()
-  "Save the current firefox url to kill ring."
-  (exwm%simulate-keys '(escape C-l C-c escape))
-  (current-kill 0))
-#+end_src
-
-**** url from qutebrowser
-:PROPERTIES:
-:ID:       822cbb61-60b4-445e-9756-4bf797500375
-:END:
-
-#+begin_src emacs-lisp
-(defun exwm%qutebrowser-url ()
-  (exwm%simulate-keys '(escape y y))
-  (aprog1 (current-kill 0)
-    (xl-log "Copied %S to the kill ring." it)))
-#+end_src
-
-**** download webpage from browser
-:PROPERTIES:
-:ID:       6429c8d4-100b-415b-b551-d5f368abca8f
-:END:
-
-#+begin_src emacs-lisp
-(defun xl/download-webpage-from-browser ()
-  "Download webpage from browser."
-  (interactive)
-  (let* ((title (format "%s.png" (substring exwm-title 0 30)))
-	 (path (expand-file-name title "~/.tangld/src/multimedia/webshots/"))
-	 (url (pcase (downcase exwm-class-name)
-		("qutebrowser" (exwm%qutebrowser-url))
-		((or "icecat" "iceweasel" "firefox") (exwm%firefox-url)))))
-    (xl-download-webpage (current-kill 0) path)
-    (message "putting %s at %s" title (current-kill 0))))
 #+end_src
 
 *** appropriate name for exwm buffers
