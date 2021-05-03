@@ -1,8 +1,6 @@
 #+title: README.org
 #+author: Luis Henriquez
 
-* Introduction
-
 * Feature List
 :PROPERTIES:
 :ID:       10bb2d0f-9ace-4057-8087-c6be2ad062ba
