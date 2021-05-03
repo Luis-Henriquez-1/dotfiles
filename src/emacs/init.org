@@ -4404,7 +4404,7 @@ let's me choose the template via completing-read.
 (bind! ([remap org-capture] #'org-capture/choose-template))
 #+end_src
 
-*** capture templates
+*** capture templates :helper:
 :PROPERTIES:
 :ID:       c4fdb186-3509-42f1-9c3e-8bf80a5e6b47
 :END:
