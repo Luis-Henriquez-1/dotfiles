@@ -15,6 +15,9 @@
 :ID:       1034e7aa-073b-41d1-9209-11010fe729fd
 :END:
 
+This setting causes qutebrowser to create a window instead of a new tab. This
+setting particularly useful for a window-based [[][exwm] workflow.
+
 #+begin_src python
 c.tabs.tabs_are_windows = True
 #+end_src
