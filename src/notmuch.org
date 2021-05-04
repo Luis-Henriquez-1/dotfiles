@@ -1,0 +1,15 @@
+#+title: notmuch.org
+#+author: Luis Henriquez-Perez
+#+property: header-args :tangle ~/.notmuch-config
+
+* user-info
+:PROPERTIES:
+:ID:       c9614bec-d684-49c6-bfa8-90aa520b15d3
+:END:
+
+#+begin_src conf
+[user]
+name=Luis Henriquez
+primary_email=luis@luishp.xyz
+other_email=luishenriquezperez@gmail.com;
+#+end_src
