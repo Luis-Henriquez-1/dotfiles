@@ -54,18 +54,6 @@ important; and I end up referencing them alot.
   "Directory where packages are stored.")
 #+end_src
 
-*** convenience buffer for buffer
-:PROPERTIES:
-:ID:       3213e0c0-6b4c-4732-83cc-cd3168ecaf01
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-tangle-files ()
-  "Files that should be tangled in the order they should be tangled in."
-  (let ((regexp (rx (1+ anything) ".org")))
-    (directory-files "~/.tangld/src/emacs/org/" :full regexp :nosort)))
-#+end_src
-
 *** TODO tangle :tangle:core:xl:
 :PROPERTIES:
 :ID:       200842df-abca-4885-81fb-102d9f669353
