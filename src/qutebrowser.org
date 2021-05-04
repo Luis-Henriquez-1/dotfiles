@@ -1,6 +1,7 @@
 #+title: qutebrowser
 #+author: Luis Henriquez
 #+property: header-args :tangle ~/.config/qutebrowser/config.py
+#+tags: qutebrowser browser
 
 * about
 :PROPERTIES:
@@ -9,7 +10,7 @@
 
 [[][qutebrowser] is a minimal browser with vim keybindings.
 
-* open tabs in new window by default
+* open tabs in new window by default :window:
 :PROPERTIES:
 :ID:       1034e7aa-073b-41d1-9209-11010fe729fd
 :END:
