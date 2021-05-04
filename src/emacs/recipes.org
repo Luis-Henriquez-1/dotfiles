@@ -14,7 +14,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("a" "3d341eb7813ee02b00ab28e11c915295bfd4b5a7" (a :type git :flavor melpa :host github :repo "plexus/a.el" :package "a" :local-repo "a.el"))
 #+end_src
 
-
 * ace-window
 :PROPERTIES:
 :ID:       222b2656-1915-4340-88e1-6663f5cdd882
@@ -23,7 +22,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("ace-window" "c7cb315c14e36fded5ac4096e158497ae974bec9" (ace-window :type git :flavor melpa :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window"))
 #+end_src
-
 
 * aggressive-fill-paragraph
 :PROPERTIES:
@@ -34,7 +32,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("aggressive-fill-paragraph" "4a620e62b5e645a48b0a818bf4eb19daea4977df" (aggressive-fill-paragraph :type git :flavor melpa :host github :repo "davidshepherd7/aggressive-fill-paragraph-mode" :package "aggressive-fill-paragraph" :local-repo "aggressive-fill-paragraph-mode"))
 #+end_src
 
-
 * aggressive-indent
 :PROPERTIES:
 :ID:       c220c2b7-66e2-4be7-9077-5ed29d22dff3
@@ -43,7 +40,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("aggressive-indent" "b0ec0047aaae071ad1647159613166a253410a63" (aggressive-indent :type git :flavor melpa :host github :repo "Malabarba/aggressive-indent-mode" :package "aggressive-indent" :local-repo "aggressive-indent-mode"))
 #+end_src
-
 
 * all-the-icons
 :PROPERTIES:
@@ -54,7 +50,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("all-the-icons" "9aa16ae198073fe839a0abfa9a7d3a9dc85ef5f9" (all-the-icons :type git :flavor melpa :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el" :package "all-the-icons" :local-repo "all-the-icons.el"))
 #+end_src
 
-
 * all-the-icons-dired
 :PROPERTIES:
 :ID:       72247b68-2870-4a7e-ad2b-e8864d4300dc
@@ -63,7 +58,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("all-the-icons-dired" "fc2dfa1e9eb8bf1c402a675e7089638d702a27a5" (all-the-icons-dired :type git :flavor melpa :host github :repo "jtbm37/all-the-icons-dired" :package "all-the-icons-dired" :local-repo "all-the-icons-dired"))
 #+end_src
-
 
 * anaphora
 :PROPERTIES:
@@ -74,7 +68,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("anaphora" "3b2da3f759b244975852e79721c4a2dbad3905cf" (anaphora :type git :flavor melpa :host github :repo "rolandwalker/anaphora" :package "anaphora" :local-repo "anaphora"))
 #+end_src
 
-
 * annalist
 :PROPERTIES:
 :ID:       92348025-9a0f-44e5-b997-42dc0facb6c1
@@ -83,7 +76,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("annalist" "134fa3f0fb91a636a1c005c483516d4b64905a6d" (annalist :type git :flavor melpa :host github :repo "noctuid/annalist.el" :package "annalist" :local-repo "annalist.el"))
 #+end_src
-
 
 * async
 :PROPERTIES:
@@ -94,7 +86,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("async" "14f48de586b0977e3470f053b810d77b07ea427a" (async :type git :flavor melpa :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async"))
 #+end_src
 
-
 * auth-source-pass
 :PROPERTIES:
 :ID:       ea735f07-a9cf-4c9c-84ba-b898725ec425
@@ -103,7 +94,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("auth-source-pass" "aa7f17116ec3f760eb414d655ba20016b11a4a0e" (auth-source-pass :type git :flavor melpa :host github :repo "DamienCassou/auth-source-pass" :package "auth-source-pass" :local-repo "auth-source-pass"))
 #+end_src
-
 
 * auto-capitalize
 :PROPERTIES:
@@ -114,7 +104,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("auto-capitalize" "0ee14c76d5771aaa84a004463f8b8b3a195c2fd8" (auto-capitalize :type git :host github :repo "emacsmirror/auto-capitalize" :package "auto-capitalize" :local-repo "auto-capitalize"))
 #+end_src
 
-
 * avy
 :PROPERTIES:
 :ID:       18940373-812f-41dc-a9e0-2ef0c10f05ab
@@ -123,7 +112,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("avy" "e92cb37457b43336b765630dbfbea8ba4be601fa" (avy :type git :flavor melpa :host github :repo "abo-abo/avy" :package "avy" :local-repo "avy"))
 #+end_src
-
 
 * berrys-theme
 :PROPERTIES:
@@ -134,7 +122,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("berrys-theme" "888a14206b2fb3dc45b5273aeb05075f3e0b5f60" (berrys-theme :type git :flavor melpa :host github :repo "vbuzin/berrys-theme" :package "berrys-theme" :local-repo "berrys-theme"))
 #+end_src
 
-
 * bind-key
 :PROPERTIES:
 :ID:       3ce64849-5a7b-40e4-874f-0b69a97647bc
@@ -143,7 +130,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("bind-key" "365c73d2618dd0040a32c2601c5456ab5495b812" (bind-key :flavor melpa :files ("bind-key.el" "bind-key-pkg.el") :package "bind-key" :local-repo "use-package" :type git :repo "jwiegley/use-package" :host github))
 #+end_src
-
 
 * calfw
 :PROPERTIES:
@@ -154,7 +140,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("calfw" nil (calfw :type git :flavor melpa :files ("calfw.el" "calfw-pkg.el") :host github :repo "kiwanami/emacs-calfw" :package "calfw" :local-repo "emacs-calfw"))
 #+end_src
 
-
 * calfw-org
 :PROPERTIES:
 :ID:       c9e16f8c-9430-4f5a-9c18-01c53612050c
@@ -163,7 +148,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("calfw-org" "03abce97620a4a7f7ec5f911e669da9031ab9088" (calfw-org :type git :flavor melpa :files ("calfw-org.el" "calfw-org-pkg.el") :host github :repo "kiwanami/emacs-calfw" :package "calfw-org" :local-repo "emacs-calfw"))
 #+end_src
-
 
 * chess
 :PROPERTIES:
@@ -174,7 +158,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("chess" "b95b967293ee0df4869efb964b2cb730e9978a65" (chess :type git :host github :repo "emacs-straight/chess" :files ("*" (:exclude ".git")) :package "chess" :local-repo "chess"))
 #+end_src
 
-
 * company
 :PROPERTIES:
 :ID:       0e63abba-607f-4b50-8de5-daf764ecd19e
@@ -183,7 +166,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("company" "6116c4617a7934acfe84cb82a058e9b198f0f480" (company :type git :flavor melpa :host github :repo "company-mode/company-mode" :package "company" :local-repo "company-mode"))
 #+end_src
-
 
 * company-prescient
 :PROPERTIES:
@@ -194,7 +176,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("company-prescient" nil (company-prescient :flavor melpa :files ("company-prescient.el" "company-prescient-pkg.el") :package "company-prescient" :local-repo "prescient.el" :type git :repo "raxod502/prescient.el" :host github))
 #+end_src
 
-
 * consult
 :PROPERTIES:
 :ID:       e9c1d67e-137f-4ee0-a736-dd3079675547
@@ -203,7 +184,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("consult" nil (consult :type git :flavor melpa :files (:defaults (:exclude "consult-flycheck.el" "consult-selectrum.el") "consult-pkg.el") :host github :repo "minad/consult" :package "consult" :local-repo "consult"))
 #+end_src
-
 
 * consult-selectrum
 :PROPERTIES:
@@ -214,7 +194,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("consult-selectrum" "ebf8ad9aa01a04c48f5af5aee41ee4d4e5fe57d6" (consult-selectrum :type git :host github :repo "minad/consult" :files ("consult-selectrum.el") :package "consult-selectrum" :local-repo "consult"))
 #+end_src
 
-
 * counsel
 :PROPERTIES:
 :ID:       3bc65506-57f9-4233-b90c-c8ceae4fa8c6
@@ -223,7 +202,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("counsel" nil (counsel :flavor melpa :files ("counsel.el" "counsel-pkg.el") :package "counsel" :local-repo "swiper" :type git :repo "abo-abo/swiper" :host github))
 #+end_src
-
 
 * dash
 :PROPERTIES:
@@ -234,7 +212,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("dash" "7a9c9378772b687a452966ce4745c54afb19a2fc" (dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el"))
 #+end_src
 
-
 * dash-functional
 :PROPERTIES:
 :ID:       6fc2382a-9b92-43d4-8760-a74cd98cffff
@@ -243,7 +220,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("dash-functional" nil (dash-functional :flavor melpa :files ("dash-functional.el" "dash-functional-pkg.el") :package "dash-functional" :local-repo "dash.el" :type git :repo "magnars/dash.el" :host github))
 #+end_src
-
 
 * dashboard
 :PROPERTIES:
@@ -254,7 +230,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("dashboard" "2b1ef13392be2f07d2a52636edf578b89512d501" (dashboard :type git :flavor melpa :files (:defaults "banners" "dashboard-pkg.el") :host github :repo "emacs-dashboard/emacs-dashboard" :package "dashboard" :local-repo "emacs-dashboard"))
 #+end_src
 
-
 * db
 :PROPERTIES:
 :ID:       7515af03-c701-40de-a69d-6ae4e7cd3622
@@ -263,7 +238,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("db" "b3a423fb8e72f9013009cbe033d654df2ce31438" (db :type git :flavor melpa :files ("db.el" "db-pkg.el") :host github :repo "nicferrier/emacs-db" :package "db" :local-repo "emacs-db"))
 #+end_src
-
 
 * dbc
 :PROPERTIES:
@@ -274,7 +248,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("dbc" "6728e72f72347d098b7d75ac4c29a7d687cc9ed3" (dbc :host gitlab :type git :repo "matsievskiysv/display-buffer-control" :flavor melpa :package "dbc" :local-repo "display-buffer-control"))
 #+end_src
 
-
 * dmenu
 :PROPERTIES:
 :ID:       e09c6ff7-1027-43b8-9153-900b0cb9d22f
@@ -283,7 +256,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("dmenu" "e8cc9b27c79d3ecc252267c082ab8e9c82eab264" (dmenu :type git :flavor melpa :host github :repo "lujun9972/el-dmenu" :package "dmenu" :local-repo "el-dmenu"))
 #+end_src
-
 
 * doct
 :PROPERTIES:
@@ -294,7 +266,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("doct" "36075595cf5cf6460f215735b1aa562d6a07a496" (doct :type git :flavor melpa :host github :repo "progfolio/doct" :package "doct" :local-repo "doct"))
 #+end_src
 
-
 * edit-indirect
 :PROPERTIES:
 :ID:       eb3c702b-f50b-44ad-9151-b9661977e751
@@ -303,7 +274,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("edit-indirect" "bdc8f542fe8430ba55f9a24a7910639d4c434422" (edit-indirect :type git :flavor melpa :host github :repo "Fanael/edit-indirect" :package #("edit-indirect" 0 13 (face font-lock-string-face)) :local-repo "edit-indirect"))
 #+end_src
-
 
 * el-get
 :PROPERTIES:
@@ -314,7 +284,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("el-get" "84dd1837f9ac80a329ab0c2de6859777f445f8ff" (el-get :type git :host github :repo "dimitri/el-get" :build nil :files ("*.el" ("recipes" "recipes/el-get.rcp") "methods" "el-get-pkg.el") :flavor melpa :package "el-get" :local-repo "el-get"))
 #+end_src
 
-
 * el-mock
 :PROPERTIES:
 :ID:       16dd9b15-a3ae-43d3-9412-267a7785a0b3
@@ -323,7 +292,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("el-mock" "5df1d3a956544f1d3ad0bcd81daf47fff33ab8cc" (el-mock :type git :flavor melpa :host github :repo "rejeep/el-mock.el" :package "el-mock" :local-repo "el-mock.el"))
 #+end_src
-
 
 * elfeed
 :PROPERTIES:
@@ -334,7 +302,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("elfeed" "de4b64b3f5d9fd41d9dc72023632ae535dc912e2" (elfeed :type git :flavor melpa :host github :repo "skeeto/elfeed" :package "elfeed" :local-repo "elfeed"))
 #+end_src
 
-
 * elfeed-org
 :PROPERTIES:
 :ID:       3cba849b-efcd-4bab-bf8e-92d875db3e2f
@@ -343,7 +310,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("elfeed-org" "77b6bbf222487809813de260447d31c4c59902c9" (elfeed-org :type git :flavor melpa :host github :repo "remyhonig/elfeed-org" :package "elfeed-org" :local-repo "elfeed-org"))
 #+end_src
-
 
 * elfeed-score
 :PROPERTIES:
@@ -354,7 +320,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("elfeed-score" "5fff4152bdb2a5f38ab83f7fa6b2943647935f94" (elfeed-score :type git :flavor melpa :host github :repo "sp1ff/elfeed-score" :package "elfeed-score" :local-repo "elfeed-score"))
 #+end_src
 
-
 * elisp-demos
 :PROPERTIES:
 :ID:       53a87e5a-07e3-4f00-a48c-063d20242756
@@ -363,7 +328,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("elisp-demos" "ed9578dfdbbdd6874d497fc9873ebfe09f869570" (elisp-demos :type git :flavor melpa :files (:defaults "*.org" "elisp-demos-pkg.el") :host github :repo "xuchunyang/elisp-demos" :package "elisp-demos" :local-repo "elisp-demos"))
 #+end_src
-
 
 * elisp-refs
 :PROPERTIES:
@@ -374,7 +338,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("elisp-refs" "b3634a4567c655a1cda51b217629849cba0ac6a7" (elisp-refs :type git :flavor melpa :files (:defaults (:exclude "elisp-refs-bench.el") "elisp-refs-pkg.el") :host github :repo "Wilfred/elisp-refs" :package "elisp-refs" :local-repo "elisp-refs"))
 #+end_src
 
-
 * ellocate
 :PROPERTIES:
 :ID:       1285551a-9af4-4451-9284-4207495fac6a
@@ -383,7 +346,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("ellocate" "81405082f68f0577c9f176d3d4f034a7142aba59" (ellocate :type git :flavor melpa :host github :repo "walseb/ellocate" :package "ellocate" :local-repo "ellocate"))
 #+end_src
-
 
 * emacsmirror-mirror
 :PROPERTIES:
@@ -394,7 +356,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("emacsmirror-mirror" "73d68771488284cceb42f70fda551e0a516cb249" (emacsmirror-mirror :type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror"))
 #+end_src
 
-
 * embark
 :PROPERTIES:
 :ID:       448b8a12-8fa0-4b74-9754-fadeac8a7a9b
@@ -403,7 +364,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("embark" "974a0d82103c6e8991b49275d160fb4d6abab852" (embark :type git :flavor melpa :files ("embark.el" "embark.texi" "embark-pkg.el") :host github :repo "oantolin/embark" :package "embark" :local-repo "embark"))
 #+end_src
-
 
 * emms
 :PROPERTIES:
@@ -414,7 +374,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("emms" "5c3226bec64bc5ad6a496b1619144087ba400481" (emms :type git :flavor melpa :files ("*.el" "lisp/*.el" "doc/emms.texinfo" "emms-pkg.el") :repo "https://git.savannah.gnu.org/git/emms.git" :package "emms" :local-repo "emms"))
 #+end_src
 
-
 * emojify
 :PROPERTIES:
 :ID:       d00ca4f8-43a7-4211-b350-dbf8427f7ea5
@@ -423,7 +382,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("emojify" "cfa00865388809363df3f884b4dd554a5d44f835" (emojify :type git :flavor melpa :files (:defaults "data" "images" "emojify-pkg.el") :host github :repo "iqbalansari/emacs-emojify" :package "emojify" :local-repo "emacs-emojify"))
 #+end_src
-
 
 * engine-mode
 :PROPERTIES:
@@ -434,7 +392,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("engine-mode" "e0910f141f2d37c28936c51c3c8bb8a9ca0c01d1" (engine-mode :type git :flavor melpa :host github :repo "hrs/engine-mode" :package "engine-mode" :local-repo "engine-mode"))
 #+end_src
 
-
 * ert-expectations
 :PROPERTIES:
 :ID:       ca6f4a68-5337-4af8-8eb9-8a804fa6187d
@@ -443,7 +400,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("ert-expectations" "aed70e002c4305b66aed7f6d0d48e9addd2dc1e6" (ert-expectations :type git :flavor melpa :host github :repo "emacsorphanage/ert-expectations" :package "ert-expectations" :local-repo "ert-expectations"))
 #+end_src
-
 
 * eshell-up
 :PROPERTIES:
@@ -454,7 +410,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("eshell-up" "9c100bae5c3020e8d9307e4332d3b64e7dc28519" (eshell-up :type git :flavor melpa :host github :repo "peterwvj/eshell-up" :package "eshell-up" :local-repo "eshell-up"))
 #+end_src
 
-
 * eshell-z
 :PROPERTIES:
 :ID:       ec60969e-5788-4159-8769-8bb1b837e1c7
@@ -463,7 +418,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("eshell-z" "337cb241e17bd472bd3677ff166a0800f684213c" (eshell-z :type git :flavor melpa :host github :repo "xuchunyang/eshell-z" :package "eshell-z" :local-repo "eshell-z"))
 #+end_src
-
 
 * evil
 :PROPERTIES:
@@ -474,7 +428,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("evil" "cc9d6886b418389752a0591b9fcb270e83234cf9" (evil :type git :flavor melpa :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil" :package "evil" :local-repo "evil"))
 #+end_src
 
-
 * evil-collection
 :PROPERTIES:
 :ID:       2d588c07-de4b-44fe-a22b-637d2307b994
@@ -483,7 +436,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("evil-collection" "2d3d652cb51eeddc6c63ad9cbf251ecbd2f561d6" (evil-collection :type git :flavor melpa :files (:defaults "modes" "evil-collection-pkg.el") :host github :repo "emacs-evil/evil-collection" :package "evil-collection" :local-repo "evil-collection"))
 #+end_src
-
 
 * evil-easymotion
 :PROPERTIES:
@@ -494,7 +446,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("evil-easymotion" "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9" (evil-easymotion :type git :flavor melpa :host github :repo "PythonNut/evil-easymotion" :package "evil-easymotion" :local-repo "evil-easymotion"))
 #+end_src
 
-
 * evil-goggles
 :PROPERTIES:
 :ID:       8bf95bbd-befe-4427-bac6-89e438b646fe
@@ -503,7 +454,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("evil-goggles" "08a22058fd6a167f9f1b684c649008caef571459" (evil-goggles :type git :flavor melpa :host github :repo "edkolev/evil-goggles" :package "evil-goggles" :local-repo "evil-goggles"))
 #+end_src
-
 
 * evil-lion
 :PROPERTIES:
@@ -514,7 +464,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("evil-lion" "6b03593f5dd6e7c9ca02207f9a73615cf94c93ab" (evil-lion :type git :flavor melpa :files ("evil-lion.el" "evil-lion-pkg.el") :host github :repo "edkolev/evil-lion" :package "evil-lion" :local-repo "evil-lion"))
 #+end_src
 
-
 * evil-magit
 :PROPERTIES:
 :ID:       3cc219b9-d80d-4789-8ac5-d843c7fdfe07
@@ -523,7 +472,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("evil-magit" "f4a8c8d3a5a699baea9356be7c1c5fd8867f610c" (evil-magit :type git :flavor melpa :host github :repo "emacs-evil/evil-magit" :package #("evil-magit" 0 10 (face font-lock-string-face)) :local-repo "evil-magit"))
 #+end_src
-
 
 * evil-surround
 :PROPERTIES:
@@ -534,7 +482,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("evil-surround" "346d4d85fcf1f9517e9c4991c1efe68b4130f93a" (evil-surround :type git :flavor melpa :host github :repo "emacs-evil/evil-surround" :package "evil-surround" :local-repo "evil-surround"))
 #+end_src
 
-
 * evil-visualstar
 :PROPERTIES:
 :ID:       672ce9ac-f2e2-4baa-8c09-b074f17ba223
@@ -543,7 +490,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("evil-visualstar" "06c053d8f7381f91c53311b1234872ca96ced752" (evil-visualstar :type git :flavor melpa :host github :repo "bling/evil-visualstar" :package "evil-visualstar" :local-repo "evil-visualstar"))
 #+end_src
-
 
 * expand-region
 :PROPERTIES:
@@ -554,7 +500,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("expand-region" "ea6b4cbb9985ddae532bd2faf9bb00570c9f2781" (expand-region :type git :flavor melpa :host github :repo "magnars/expand-region.el" :package "expand-region" :local-repo "expand-region.el"))
 #+end_src
 
-
 * exwm
 :PROPERTIES:
 :ID:       0e658440-9676-48b7-8d39-2856a488e179
@@ -563,7 +508,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("exwm" "45ac28cc9cffe910c3b70979bc321a1a60e002ea" (exwm :type git :host github :repo "emacs-straight/exwm" :files ("*" (:exclude ".git")) :package #("exwm" 0 4 (face font-lock-string-face)) :local-repo "exwm"))
 #+end_src
-
 
 * exwm-edit
 :PROPERTIES:
@@ -574,7 +518,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("exwm-edit" "2fd9426922c8394ec8d21c50dcc20b7d03af21e4" (exwm-edit :type git :flavor melpa :host github :repo "agzam/exwm-edit" :package "exwm-edit" :local-repo "exwm-edit"))
 #+end_src
 
-
 * exwm-firefox-core
 :PROPERTIES:
 :ID:       db89e47f-856c-4263-b4e6-021f4729b1c4
@@ -583,7 +526,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("exwm-firefox-core" "e2fe2a895e8f973307ef52f8c9976b26e701cbd0" (exwm-firefox-core :type git :flavor melpa :host github :repo "walseb/exwm-firefox-core" :package "exwm-firefox-core" :local-repo "exwm-firefox-core"))
 #+end_src
-
 
 * exwm-firefox-evil
 :PROPERTIES:
@@ -594,7 +536,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("exwm-firefox-evil" "14643ee53a506ddcb5d2e06cb9f1be7310cd00b1" (exwm-firefox-evil :type git :flavor melpa :host github :repo "walseb/exwm-firefox-evil" :package #("exwm-firefox-evil" 0 17 (face font-lock-string-face)) :local-repo "exwm-firefox-evil"))
 #+end_src
 
-
 * exwm-float
 :PROPERTIES:
 :ID:       e1b8b372-4bf2-433f-9bf4-a5f019389db3
@@ -603,7 +544,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("exwm-float" "eb1b60b4a65e1ca5e323ef68a284ec6af72e637a" (exwm-float :type git :flavor melpa :host gitlab :repo "mtekman/exwm-float.el" :package "exwm-float" :local-repo "exwm-float.el"))
 #+end_src
-
 
 * f
 :PROPERTIES:
@@ -614,7 +554,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("f :type" "1814209e2ff43cf2e6d38c4cd476218915f550fb" (f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el"))
 #+end_src
 
-
 * figlet
 :PROPERTIES:
 :ID:       31a73fc2-dfaa-4f2d-b7de-b75d6a7284ae
@@ -623,7 +562,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("figlet" "19a38783a90e151faf047ff233a21a729db0cea9" (figlet :type git :flavor melpa :host github :repo "jpkotta/figlet" :package "figlet" :local-repo "figlet"))
 #+end_src
-
 
 * fortune-cookie
 :PROPERTIES:
@@ -634,7 +572,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("fortune-cookie" "6c1c08f5be83822c0b762872ab25e3dbee96f333" (fortune-cookie :type git :flavor melpa :host github :repo "andschwa/fortune-cookie" :package "fortune-cookie" :local-repo "fortune-cookie"))
 #+end_src
 
-
 * frame-cmds
 :PROPERTIES:
 :ID:       ad388d46-2bb0-49ed-935d-ae4abef6f7c7
@@ -643,7 +580,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("frame-cmds" "b803354c8cf7c9aafcea1ff4e67288bea0719599" (frame-cmds :type git :host github :repo "emacsmirror/frame-cmds" :package "frame-cmds" :local-repo "frame-cmds"))
 #+end_src
-
 
 * frame-fns
 :PROPERTIES:
@@ -654,7 +590,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("frame-fns" "b675ee568c0133709c2c39a125395486cdf1c610" (frame-fns :type git :host github :repo "emacsmirror/frame-fns" :package "frame-fns" :local-repo "frame-fns"))
 #+end_src
 
-
 * gcmh
 :PROPERTIES:
 :ID:       2f9abdad-b0b0-49f2-97d4-9d6a0395e02b
@@ -663,7 +598,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("gcmh" "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9" (gcmh :type git :flavor melpa :host gitlab :repo "koral/gcmh" :package "gcmh" :local-repo "gcmh"))
 #+end_src
-
 
 * gif-screencast
 :PROPERTIES:
@@ -674,7 +608,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("gif-screencast" "1145e676b160e7b1e5756f5b0f30dd31de252e1f" (gif-screencast :type git :flavor melpa :host gitlab :repo "Ambrevar/emacs-gif-screencast" :package "gif-screencast" :local-repo "emacs-gif-screencast"))
 #+end_src
 
-
 * git-auto-commit-mode
 :PROPERTIES:
 :ID:       46c20e72-0792-4cfa-be65-75fef0e69d3b
@@ -683,7 +616,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("git-auto-commit-mode" "a6b6e0fa183be381463e2b44ef128db1b6c4234b" (git-auto-commit-mode :type git :flavor melpa :host github :repo "ryuslash/git-auto-commit-mode" :package "git-auto-commit-mode" :local-repo "git-auto-commit-mode"))
 #+end_src
-
 
 * git-commit
 :PROPERTIES:
@@ -694,7 +626,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("git-commit" nil (git-commit :flavor melpa :files ("lisp/git-commit.el" "git-commit-pkg.el") :package "git-commit" :local-repo "magit" :type git :repo "magit/magit" :host github))
 #+end_src
 
-
 * git-gutter+
 :PROPERTIES:
 :ID:       4d1362d3-2ea1-40c3-88e6-d72a96ad72b8
@@ -703,7 +634,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("git-gutter+" "b7726997806d9a2da9fe84ff00ecf21d62b6f975" (git-gutter+ :type git :flavor melpa :files ("git-gutter+.el" "git-gutter+-pkg.el") :host github :repo "nonsequitur/git-gutter-plus" :package "git-gutter+" :local-repo "git-gutter-plus"))
 #+end_src
-
 
 * gnu-elpa-mirror
 :PROPERTIES:
@@ -714,7 +644,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("gnu-elpa-mirror" "fcb3cf5ba5f16885f7851885c954222aee6f03ab" (gnu-elpa-mirror :type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror"))
 #+end_src
 
-
 * goto-chg
 :PROPERTIES:
 :ID:       09c6c716-6fec-4350-973c-9b1a02d34588
@@ -723,7 +652,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("goto-chg" "2af612153bc9f5bed135d25abe62f46ddaa9027f" (goto-chg :type git :flavor melpa :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg"))
 #+end_src
-
 
 * grugru
 :PROPERTIES:
@@ -734,7 +662,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("grugru" "92e588e9749614ef6cb68b76b1d3aaadf7731406" (grugru :type git :flavor melpa :host github :repo "ROCKTAKEY/grugru" :package "grugru" :local-repo "grugru"))
 #+end_src
 
-
 * helm
 :PROPERTIES:
 :ID:       20888d72-81c7-4d40-a11f-f2ca2c6173af
@@ -743,7 +670,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("helm" "77e5a433bfef84992c35f34de8211f84af536a10" (helm :type git :flavor melpa :files ("*.el" "emacs-helm.sh" (:exclude "helm.el" "helm-lib.el" "helm-source.el" "helm-multi-match.el" "helm-core-pkg.el") "helm-pkg.el") :host github :repo "emacs-helm/helm" :package "helm" :local-repo "helm"))
 #+end_src
-
 
 * helm-core
 :PROPERTIES:
@@ -754,7 +680,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("helm-core" nil (helm-core :flavor melpa :files ("helm-core-pkg.el" "helm.el" "helm-lib.el" "helm-source.el" "helm-multi-match.el" "helm-core-pkg.el") :package "helm-core" :local-repo "helm" :type git :repo "emacs-helm/helm" :host github))
 #+end_src
 
-
 * helm-system-packages
 :PROPERTIES:
 :ID:       5c2d155c-d869-4f0d-ae6c-6b78c0edff3f
@@ -763,7 +688,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("helm-system-packages" "c331c69de0a37d2bc4d6f882cc021a905e7e56f9" (helm-system-packages :type git :flavor melpa :host github :repo "emacs-helm/helm-system-packages" :package "helm-system-packages" :local-repo "helm-system-packages"))
 #+end_src
-
 
 * helpful
 :PROPERTIES:
@@ -774,7 +698,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("helpful" "584ecc887bb92133119f93a6716cdf7af0b51dca" (helpful :type git :flavor melpa :host github :repo "Wilfred/helpful" :package "helpful" :local-repo "helpful"))
 #+end_src
 
-
 * hide-mode-line
 :PROPERTIES:
 :ID:       0b7b5174-491d-4c34-aa70-47594dfa0353
@@ -783,7 +706,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("hide-mode-line" "88888825b5b27b300683e662fa3be88d954b1cea" (hide-mode-line :type git :flavor melpa :host github :repo "hlissner/emacs-hide-mode-line" :package "hide-mode-line" :local-repo "emacs-hide-mode-line"))
 #+end_src
-
 
 * highlight-quoted
 :PROPERTIES:
@@ -794,7 +716,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("highlight-quoted" "24103478158cd19fbcfb4339a3f1fa1f054f1469" (highlight-quoted :type git :flavor melpa :host github :repo "Fanael/highlight-quoted" :package "highlight-quoted" :local-repo "highlight-quoted"))
 #+end_src
 
-
 * ht
 :PROPERTIES:
 :ID:       0149e245-3471-4f61-8015-e1a9a1843c3d
@@ -803,7 +724,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("ht" "2850301d19176b8d3bb6cc8d95af6ab7e529bd56" (ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el"))
 #+end_src
-
 
 * humanoid-themes
 :PROPERTIES:
@@ -814,7 +734,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("humanoid-themes" "c1f9989bcecd1d93a2d7469d6b5c812bd35fe0f3" (humanoid-themes :type git :flavor melpa :host github :repo "humanoid-colors/emacs-humanoid-themes" :package "humanoid-themes" :local-repo "emacs-humanoid-themes"))
 #+end_src
 
-
 * hydra
 :PROPERTIES:
 :ID:       6deff281-2804-4f64-b31b-9d0d02bd3b65
@@ -823,7 +742,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("hydra" nil (hydra :type git :flavor melpa :files (:defaults (:exclude "lv.el") "hydra-pkg.el") :host github :repo "abo-abo/hydra" :package "hydra" :local-repo "hydra"))
 #+end_src
-
 
 * idle-require
 :PROPERTIES:
@@ -834,7 +752,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("idle-require" "33592bb098223b4432d7a35a1d65ab83f47c1ec1" (idle-require :type git :flavor melpa :host github :repo "nschum/idle-require.el" :package "idle-require" :local-repo "idle-require.el"))
 #+end_src
 
-
 * iedit
 :PROPERTIES:
 :ID:       788b53bb-0f87-44ff-a081-d7ae4092c1b7
@@ -843,7 +760,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("iedit" "6eb7ff8191b1d271b6f4e7feb608dc72ca203a39" (iedit :type git :flavor melpa :host github :repo "victorhge/iedit" :package "iedit" :local-repo "iedit"))
 #+end_src
-
 
 * ivy
 :PROPERTIES:
@@ -854,7 +770,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("ivy" nil (ivy :flavor melpa :files (:defaults (:exclude "swiper.el" "counsel.el" "ivy-hydra.el" "ivy-avy.el") "doc/ivy-help.org" "ivy-pkg.el") :package "ivy" :local-repo "swiper" :type git :repo "abo-abo/swiper" :host github))
 #+end_src
 
-
 * key-chord
 :PROPERTIES:
 :ID:       2c78db23-fc17-4755-9547-c6d2ac5d261f
@@ -863,7 +778,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("key-chord" "7f7fd7c5bd2b996fa054779357e1566f7989e07d" (key-chord :type git :flavor melpa :host github :repo "emacsorphanage/key-chord" :package #("key-chord" 0 9 (face font-lock-string-face)) :local-repo "key-chord"))
 #+end_src
-
 
 * keyfreq
 :PROPERTIES:
@@ -874,7 +788,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("keyfreq" "e5fe9d585ce882f1ba9afa5d894eaa82c79be4f4" (keyfreq :type git :flavor melpa :host github :repo "dacap/keyfreq" :package "keyfreq" :local-repo "keyfreq"))
 #+end_src
 
-
 * kv
 :PROPERTIES:
 :ID:       7fe101cd-bebd-4517-9927-c3340b585c2e
@@ -883,7 +796,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("kv" "721148475bce38a70e0b678ba8aa923652e8900e" (kv :type git :flavor melpa :files ("kv.el" "kv-pkg.el") :host github :repo "nicferrier/emacs-kv" :package "kv" :local-repo "emacs-kv"))
 #+end_src
-
 
 * leaf
 :PROPERTIES:
@@ -894,7 +806,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("leaf" "e0c4b7484ab6ee3bbf8413f620ccb99af4328d2f" (leaf :type git :flavor melpa :host github :repo "conao3/leaf.el" :package "leaf" :local-repo "leaf.el"))
 #+end_src
 
-
 * let-alist
 :PROPERTIES:
 :ID:       4b77aae3-468f-48c1-bcf9-21cfa24aa534
@@ -903,7 +814,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("let-alist" "b299c78897cc307f9d5521927376fbd06a26f123" (let-alist :type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git")) :package "let-alist" :local-repo "let-alist"))
 #+end_src
-
 
 * lispy
 :PROPERTIES:
@@ -914,7 +824,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("lispy" "1ad128be0afc04b58967c1158439d99931becef4" (lispy :type git :flavor melpa :files (:defaults "lispy-clojure.clj" "lispy-python.py" "lispy-pkg.el") :host github :repo "abo-abo/lispy" :package "lispy" :local-repo "lispy"))
 #+end_src
 
-
 * lispyville
 :PROPERTIES:
 :ID:       f03a82df-2373-4226-a3e7-e87e51fa9099
@@ -923,7 +832,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("lispyville" "0f13f26cd6aa71f9fd852186ad4a00c4294661cd" (lispyville :type git :flavor melpa :host github :repo "noctuid/lispyville" :package "lispyville" :local-repo "lispyville"))
 #+end_src
-
 
 * list-utils
 :PROPERTIES:
@@ -934,7 +842,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("list-utils" "ca9654cd1418e874c876c6b3b7d4cd8339bfde77" (list-utils :type git :flavor melpa :host github :repo "rolandwalker/list-utils" :package "list-utils" :local-repo "list-utils"))
 #+end_src
 
-
 * log4e
 :PROPERTIES:
 :ID:       f96c341f-a0cb-41a6-b8da-fa79e3ac0ecb
@@ -943,7 +850,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("log4e" "7df0c1ff4656f8f993b87064b1567618eadb5546" (log4e :type git :flavor melpa :host github :repo "aki2o/log4e" :package "log4e" :local-repo "log4e"))
 #+end_src
-
 
 * loopy
 :PROPERTIES:
@@ -954,7 +860,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("loopy" "7d2d52f1b7191fe795adf0ee0adc5551e99d75f0" (loopy :host github :type git :repo "okamsn/loopy" :package "loopy" :local-repo "loopy"))
 #+end_src
 
-
 * lv
 :PROPERTIES:
 :ID:       3d621090-3347-4693-9b38-0e07a4902aea
@@ -963,7 +868,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("lv" "2d553787aca1aceb3e6927e426200e9bb9f056f1" (lv :flavor melpa :files ("lv.el" "lv-pkg.el") :package "lv" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github))
 #+end_src
-
 
 * macrostep
 :PROPERTIES:
@@ -974,7 +878,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("macrostep" "424e3734a1ee526a1bd7b5c3cd1d3ef19d184267" (macrostep :type git :flavor melpa :host github :repo "joddie/macrostep" :package "macrostep" :local-repo "macrostep"))
 #+end_src
 
-
 * magit
 :PROPERTIES:
 :ID:       274111c3-58b6-41f9-b7fd-2283e1ade07c
@@ -983,7 +886,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("magit" "86eec7ba39eb46fa1e4c2f37800d22c6dfd155c7" (magit :type git :flavor melpa :files ("lisp/magit" "lisp/magit*.el" "lisp/git-rebase.el" "Documentation/magit.texi" "Documentation/AUTHORS.md" "LICENSE" (:exclude "lisp/magit-libgit.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit"))
 #+end_src
-
 
 * map
 :PROPERTIES:
@@ -994,7 +896,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("map" "dc4f657bcce6ec644ebf96fe52d8035aa33882c0" (map :type git :host github :repo "emacs-straight/map" :files ("*" (:exclude ".git")) :package "map" :local-repo "map"))
 #+end_src
 
-
 * marginalia
 :PROPERTIES:
 :ID:       c04e1d8b-1e53-4b36-8527-621286ef24cd
@@ -1003,7 +904,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("marginalia" "86c0461271d407f5676a8af3776e73832458364f" (marginalia :type git :flavor melpa :host github :repo "minad/marginalia" :package "marginalia" :local-repo "marginalia"))
 #+end_src
-
 
 * melpa
 :PROPERTIES:
@@ -1014,7 +914,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("melpa" "1731327f28b2b47285a526b3ddd322d5b4a862e8" (melpa :type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa"))
 #+end_src
 
-
 * melpa-upstream-visit
 :PROPERTIES:
 :ID:       616acc41-85a4-4aa8-a964-63aa377614e6
@@ -1023,7 +922,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("melpa-upstream-visit" "7310c74fdead3c0f86ad6eff76cf989e63f70f66" (melpa-upstream-visit :type git :flavor melpa :host github :repo "laynor/melpa-upstream-visit" :package "melpa-upstream-visit" :local-repo "melpa-upstream-visit"))
 #+end_src
-
 
 * memoize
 :PROPERTIES:
@@ -1034,7 +932,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("memoize" "51b075935ca7070f62fae1d69fe0ff7d8fa56fdd" (memoize :type git :flavor melpa :host github :repo "skeeto/emacs-memoize" :package "memoize" :local-repo "emacs-memoize"))
 #+end_src
 
-
 * mini-modeline
 :PROPERTIES:
 :ID:       60e33d20-7051-48de-9254-234135bf05bb
@@ -1043,7 +940,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("mini-modeline" "7dcd0ab81bb7c298377708061176f5c5a50f77db" (mini-modeline :type git :flavor melpa :host github :repo "kiennq/emacs-mini-modeline" :package "mini-modeline" :local-repo "emacs-mini-modeline"))
 #+end_src
-
 
 * minimal-theme
 :PROPERTIES:
@@ -1054,7 +950,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("minimal-theme" "221b43aad320d226863892dfe4d85465e8eb81ce" (minimal-theme :type git :flavor melpa :host github :repo "anler/minimal-theme" :package "minimal-theme" :local-repo "minimal-theme"))
 #+end_src
 
-
 * mmt
 :PROPERTIES:
 :ID:       5c753c02-cc07-44f7-af4a-73ee4cb53404
@@ -1063,7 +958,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("mmt" "d7729563e656a3e8adef6bce60348861ba183c09" (mmt :type git :flavor melpa :host github :repo "mrkkrp/mmt" :package "mmt" :local-repo "mmt"))
 #+end_src
-
 
 * modus-operandi-theme
 :PROPERTIES:
@@ -1074,7 +968,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("modus-operandi-theme" "98f1e973b9085b0db9e3a63782863c77625f6e01" (modus-operandi-theme :type git :host github :repo "emacs-straight/modus-operandi-theme" :files ("*" (:exclude ".git")) :package "modus-operandi-theme" :local-repo "modus-operandi-theme"))
 #+end_src
 
-
 * modus-themes
 :PROPERTIES:
 :ID:       79031c97-b820-4f2f-b19c-397311d2ffb3
@@ -1083,7 +976,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("modus-themes" "a3ff6dc9468296a00b6691768dfbcb7c5206073f" (modus-themes :type git :flavor melpa :branch "main" :host gitlab :repo "protesilaos/modus-themes" :package "modus-themes" :local-repo "modus-themes"))
 #+end_src
-
 
 * nameless
 :PROPERTIES:
@@ -1094,7 +986,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("nameless" "a3a1ce3ec0c5724bcbfe553d831bd4f6b3fe863a" (nameless :type git :flavor melpa :host github :repo "Malabarba/Nameless" :package "nameless" :local-repo "Nameless"))
 #+end_src
 
-
 * noflet
 :PROPERTIES:
 :ID:       ef89e732-9791-4d97-976a-242b2c7a1c22
@@ -1103,7 +994,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("noflet" "7ae84dc3257637af7334101456dafe1759c6b68a" (noflet :type git :flavor melpa :host github :repo "nicferrier/emacs-noflet" :package "noflet" :local-repo "emacs-noflet"))
 #+end_src
-
 
 * orderless
 :PROPERTIES:
@@ -1114,7 +1004,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("orderless" "cbc0109eac542ef4fe0be027af1c62c4bbf846ee" (orderless :type git :flavor melpa :host github :repo "oantolin/orderless" :package "orderless" :local-repo "orderless"))
 #+end_src
 
-
 * org
 :PROPERTIES:
 :ID:       0a8c1d18-522a-43d7-a4ab-74f8d029feef
@@ -1123,7 +1012,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("org" "7fa8173282f85c2ca03cc7f51f28f6adfb250610" (org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :depth full :pre-build ("make" "autoloads" "EMACS=/run/current-system/profile/bin/emacs") :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org"))
 #+end_src
-
 
 * org-auto-tangle
 :PROPERTIES:
@@ -1134,7 +1022,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("org-auto-tangle" "5da721fff97a44a38a650b23bdf73b74f17d4a36" (org-auto-tangle :type git :flavor melpa :host github :repo "yilkalargaw/org-auto-tangle" :package "org-auto-tangle" :local-repo "org-auto-tangle"))
 #+end_src
 
-
 * org-fancy-priorities
 :PROPERTIES:
 :ID:       15ccc965-2f47-4ffa-b7c0-6b02f00cdfa4
@@ -1143,7 +1030,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("org-fancy-priorities" "819bb993b71e7253cefef7047306ab4e0f9d0a86" (org-fancy-priorities :type git :flavor melpa :host github :repo "harrybournis/org-fancy-priorities" :package "org-fancy-priorities" :local-repo "org-fancy-priorities"))
 #+end_src
-
 
 * org-journal
 :PROPERTIES:
@@ -1154,7 +1040,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("org-journal" "08d5fce95023c015372678d353388ad0dae8952b" (org-journal :type git :flavor melpa :host github :repo "bastibe/org-journal" :package "org-journal" :local-repo "org-journal"))
 #+end_src
 
-
 * org-link-minor-mode
 :PROPERTIES:
 :ID:       b973614d-9543-4a94-bcea-ae817fa84390
@@ -1163,7 +1048,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("org-link-minor-mode" "7b92df60f3fee7f609d649d80ef243b45771ebea" (org-link-minor-mode :type git :host github :repo "emacsattic/org-link-minor-mode" :package #("org-link-minor-mode" 0 19 (face font-lock-string-face)) :local-repo "org-link-minor-mode"))
 #+end_src
-
 
 * org-ml
 :PROPERTIES:
@@ -1174,7 +1058,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("org-ml" "9d8c26d12c972a60b94bcc3b364d857db997cfa3" (org-ml :type git :flavor melpa :host github :repo "ndwarshuis/org-ml" :package #("org-ml" 0 6 (face font-lock-string-face)) :local-repo "org-ml"))
 #+end_src
 
-
 * org-pretty-tags
 :PROPERTIES:
 :ID:       2dfb2ffb-65f1-421b-9e56-b4aeda30d1ba
@@ -1183,7 +1066,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("org-pretty-tags" "5c7521651b35ae9a7d3add4a66ae8cc176ae1c76" (org-pretty-tags :type git :flavor melpa :host gitlab :repo "marcowahl/org-pretty-tags" :package "org-pretty-tags" :local-repo "org-pretty-tags"))
 #+end_src
-
 
 * org-ql
 :PROPERTIES:
@@ -1194,7 +1076,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("org-ql" "208e103ecc146db71d878df3bd09c6eb60c2797d" (org-ql :type git :flavor melpa :files (:defaults (:exclude "helm-org-ql.el") "org-ql-pkg.el") :host github :repo "alphapapa/org-ql" :package "org-ql" :local-repo "org-ql"))
 #+end_src
 
-
 * org-super-agenda
 :PROPERTIES:
 :ID:       69005083-ab6d-453c-a5b1-d3df4401897e
@@ -1203,7 +1084,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("org-super-agenda" "f5e80e4d0da6b2eeda9ba21e021838fa6a495376" (org-super-agenda :type git :flavor melpa :host github :repo "alphapapa/org-super-agenda" :package "org-super-agenda" :local-repo "org-super-agenda"))
 #+end_src
-
 
 * org-superlinks
 :PROPERTIES:
@@ -1214,7 +1094,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("org-superlinks" "01fb73264a399143a79bb2c68d9b4dd868ddb052" (org-superlinks :host github :type git :repo "toshism/org-super-links" :package "org-superlinks" :local-repo "org-super-links"))
 #+end_src
 
-
 * org-superstar
 :PROPERTIES:
 :ID:       1b06b6b5-14f0-4564-8014-7a3d2c3fe471
@@ -1223,7 +1102,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("org-superstar" "7f83636db215bf5a10edbfdf11d12a132864a914" (org-superstar :type git :flavor melpa :host github :repo "integral-dw/org-superstar-mode" :package "org-superstar" :local-repo "org-superstar-mode"))
 #+end_src
-
 
 * org-tanglesync
 :PROPERTIES:
@@ -1234,7 +1112,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("org-tanglesync" "af83a73ae542d5cb3c9d433cbf2ce1d4f4259117" (org-tanglesync :type git :flavor melpa :host gitlab :repo "mtekman/org-tanglesync.el" :package "org-tanglesync" :local-repo "org-tanglesync.el"))
 #+end_src
 
-
 * origami
 :PROPERTIES:
 :ID:       3cd4cd75-4980-4a84-8cbf-8c1e9b7f1d49
@@ -1243,7 +1120,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("origami" "e558710a975e8511b9386edc81cd6bdd0a5bda74" (origami :type git :flavor melpa :host github :repo "gregsexton/origami.el" :package "origami" :local-repo "origami.el"))
 #+end_src
-
 
 * ov
 :PROPERTIES:
@@ -1254,7 +1130,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("ov" "c5b9aa4e1b00d702eb2caedd61c69a22a5fa1fab" (ov :type git :flavor melpa :host github :repo "emacsorphanage/ov" :package "ov" :local-repo "ov"))
 #+end_src
 
-
 * page-break-lines
 :PROPERTIES:
 :ID:       6ef128af-43c3-4693-8a23-0751802ace52
@@ -1263,7 +1138,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("page-break-lines" "69caea070379f3324c530e96e06625c3cd097cb9" (page-break-lines :type git :flavor melpa :host github :repo "purcell/page-break-lines" :package "page-break-lines" :local-repo "page-break-lines"))
 #+end_src
-
 
 * pass
 :PROPERTIES:
@@ -1274,7 +1148,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("pass" "a095d24cf06a7b0fbc3add480c101304a91cf788" (pass :type git :flavor melpa :host github :repo "NicolasPetton/pass" :package "pass" :local-repo "pass"))
 #+end_src
 
-
 * password-store
 :PROPERTIES:
 :ID:       4cc4f3e2-9ef3-4825-a031-cb4c0459c7d1
@@ -1283,7 +1156,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("password-store" "f152064da9832d6d3d2b4e75f43f63bf2d50716f" (password-store :type git :flavor melpa :files ("contrib/emacs/*.el" "password-store-pkg.el") :host github :repo "zx2c4/password-store" :package "password-store" :local-repo "password-store"))
 #+end_src
-
 
 * password-store-otp
 :PROPERTIES:
@@ -1294,7 +1166,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("password-store-otp" "04998c8578a060ab4a4e8f46f2ee0aafad4ab4d5" (password-store-otp :type git :flavor melpa :host github :repo "volrath/password-store-otp.el" :package "password-store-otp" :local-repo "password-store-otp.el"))
 #+end_src
 
-
 * pdf-tools
 :PROPERTIES:
 :ID:       4478102d-6073-4c25-b954-234a19d8f06e
@@ -1303,7 +1174,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("pdf-tools" "c510442ab89c8a9e9881230eeb364f4663f59e76" (pdf-tools :type git :flavor melpa :files ("lisp/*.el" "README" ("build" "Makefile") ("build" "server") (:exclude "lisp/tablist.el" "lisp/tablist-filter.el") "pdf-tools-pkg.el") :host github :repo "politza/pdf-tools" :package "pdf-tools" :local-repo "pdf-tools"))
 #+end_src
-
 
 * peg
 :PROPERTIES:
@@ -1314,7 +1184,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("peg" "014927e2130edcc453ca078a4fa06b48be63d834" (peg :type git :host github :repo "emacs-straight/peg" :files ("*" (:exclude ".git")) :package "peg" :local-repo "peg"))
 #+end_src
 
-
 * plural
 :PROPERTIES:
 :ID:       41a88dbf-0178-4169-9c97-62f40ce0abe6
@@ -1323,7 +1192,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("plural" "b91ce1594783c51dabeadbbcbb9caa00aaaa1353" (plural :type git :host github :repo "emacsmirror/plural" :package "plural" :local-repo "plural"))
 #+end_src
-
 
 * popup
 :PROPERTIES:
@@ -1334,7 +1202,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("popup" "bd5a0df7e5bc68af46eef37afe9e80764a1d4fd8" (popup :type git :flavor melpa :files ("popup.el" "popup-pkg.el") :host github :repo "auto-complete/popup-el" :package "popup" :local-repo "popup-el"))
 #+end_src
 
-
 * popwin
 :PROPERTIES:
 :ID:       57e279a3-c480-4e83-9736-4839e68b027b
@@ -1343,7 +1210,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("popwin" "215d6cb509b11c63394a20666565cd9e9b2c2eab" (popwin :type git :flavor melpa :host github :repo "emacsorphanage/popwin" :package "popwin" :local-repo "popwin"))
 #+end_src
-
 
 * ppp
 :PROPERTIES:
@@ -1354,7 +1220,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("ppp" "86dad69c3a7dae770f6b99285647dff2aad81930" (ppp :type git :flavor melpa :host github :repo "conao3/ppp.el" :package "ppp" :local-repo "ppp.el"))
 #+end_src
 
-
 * prefixed-core
 :PROPERTIES:
 :ID:       b041af87-2db6-418a-abb0-e00a89479a59
@@ -1363,7 +1228,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("prefixed-core" "9623e17ecb914128af696ec121fa610fa4fa08a3" (prefixed-core :type git :host github :repo "emacs-straight/prefixed-core" :files ("*" (:exclude ".git")) :package "prefixed-core" :local-repo "prefixed-core"))
 #+end_src
-
 
 * prescient
 :PROPERTIES:
@@ -1374,7 +1238,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("prescient" "42adc802d3ba6c747bed7ea1f6e3ffbbdfc7192d" (prescient :flavor melpa :files ("prescient.el" "prescient-pkg.el") :package "prescient" :local-repo "prescient.el" :type git :repo "raxod502/prescient.el" :host github))
 #+end_src
 
-
 * rainbow-delimiters
 :PROPERTIES:
 :ID:       f7ba679b-691f-43fe-80fb-29b2e8a81711
@@ -1383,7 +1246,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("rainbow-delimiters" "f43d48a24602be3ec899345a3326ed0247b960c6" (rainbow-delimiters :type git :flavor melpa :host github :repo "Fanael/rainbow-delimiters" :package "rainbow-delimiters" :local-repo "rainbow-delimiters"))
 #+end_src
-
 
 * ranger
 :PROPERTIES:
@@ -1394,7 +1256,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("ranger" "caf75f0060e503af078c7e5bb50d9aaa508e6f3e" (ranger :type git :flavor melpa :host github :repo "ralesi/ranger.el" :package "ranger" :local-repo "ranger.el"))
 #+end_src
 
-
 * restart-emacs
 :PROPERTIES:
 :ID:       43a64f6e-14f3-4ad3-ac03-44a3134cf1b5
@@ -1403,7 +1264,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("restart-emacs" "1607da2bc657fe05ae01f7fdf26f716eafead02c" (restart-emacs :type git :flavor melpa :host github :repo "iqbalansari/restart-emacs" :package "restart-emacs" :local-repo "restart-emacs"))
 #+end_src
-
 
 * s
 :PROPERTIES:
@@ -1414,7 +1274,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("s :type" "43ba8b563bee3426cead0e6d4ddc09398e1a349d" (s :type git :flavor melpa :files ("s.el" "s-pkg.el") :host github :repo "magnars/s.el" :package "s" :local-repo "s.el"))
 #+end_src
 
-
 * selectrum
 :PROPERTIES:
 :ID:       d478217d-dd71-4f98-aea9-a5f38493922d
@@ -1423,7 +1282,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("selectrum" "2009e5490034855d151b8ac0fa5af73c61c6e74f" (selectrum :type git :flavor melpa :host github :repo "raxod502/selectrum" :package "selectrum" :local-repo "selectrum"))
 #+end_src
-
 
 * selectrum-prescient
 :PROPERTIES:
@@ -1434,7 +1292,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("selectrum-prescient" nil (selectrum-prescient :type git :flavor melpa :files ("selectrum-prescient.el" "selectrum-prescient-pkg.el") :host github :repo "raxod502/prescient.el" :package "selectrum-prescient" :local-repo "prescient.el"))
 #+end_src
 
-
 * separedit
 :PROPERTIES:
 :ID:       aacb037e-e334-4257-adce-9e961ed69a41
@@ -1443,7 +1300,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("separedit" "dc0b3448f3d9738f5233c34c5c8fc172eda26323" (separedit :type git :flavor melpa :files ("separedit.el" "separedit-pkg.el") :host github :repo "twlz0ne/separedit.el" :package "separedit" :local-repo "separedit.el"))
 #+end_src
-
 
 * short-lambda
 :PROPERTIES:
@@ -1454,7 +1310,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("short-lambda" "ac2dc007e3f0a410ffdaee1be297d82076d99ef0" (short-lambda :type git :host github :repo "emacsattic/short-lambda" :package "short-lambda" :local-repo "short-lambda"))
 #+end_src
 
-
 * shut-up
 :PROPERTIES:
 :ID:       d63a28be-5f50-45ae-b7a2-854885fca675
@@ -1463,7 +1318,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("shut-up" "081d6b01e3ba0e60326558e545c4019219e046ce" (shut-up :type git :flavor melpa :host github :repo "cask/shut-up" :package "shut-up" :local-repo "shut-up"))
 #+end_src
-
 
 * smartparens
 :PROPERTIES:
@@ -1474,7 +1328,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("smartparens" "63695c64233d215a92bf08e762f643cdb595bdd9" (smartparens :type git :flavor melpa :host github :repo "Fuco1/smartparens" :package "smartparens" :local-repo "smartparens"))
 #+end_src
 
-
 * solarized-theme
 :PROPERTIES:
 :ID:       e49a0223-45aa-40df-a392-6398cdd0acbb
@@ -1483,7 +1336,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("solarized-theme" "93d124962106f4cec72e9c8ab8cb243c581d9d46" (solarized-theme :type git :flavor melpa :host github :repo "bbatsov/solarized-emacs" :package "solarized-theme" :local-repo "solarized-emacs"))
 #+end_src
-
 
 * spacemacs-theme
 :PROPERTIES:
@@ -1494,7 +1346,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("spacemacs-theme" "1f5b03254de6bfa9645711f2b79781f5cca8d203" (spacemacs-theme :type git :flavor melpa :host github :repo "nashamri/spacemacs-theme" :package "spacemacs-theme" :local-repo "spacemacs-theme"))
 #+end_src
 
-
 * spell-number
 :PROPERTIES:
 :ID:       3359a786-03d8-4034-9a15-59af2c9d55cd
@@ -1503,7 +1354,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("spell-number" "3ce612dce14326b2304f5272e86b10c16102acce" (spell-number :type git :host github :repo "emacsmirror/spell-number" :package "spell-number" :local-repo "spell-number"))
 #+end_src
-
 
 * stimmug-themes
 :PROPERTIES:
@@ -1514,7 +1364,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("stimmug-themes" "234b0e16bc535b4e3b55f959fa103e2d0ab6e4da" (stimmug-themes :repo "motform/stimmung-themes" :type git :host github :package "stimmug-themes" :local-repo "stimmung-themes"))
 #+end_src
 
-
 * straight
 :PROPERTIES:
 :ID:       c3e44cf7-98e4-4a67-a536-ef955681c3bf
@@ -1523,7 +1372,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("straight" "e1390a933b6f5a15079d6dec91eac97a17aad10c" (straight :type git :host github :repo "raxod502/straight.el" :files ("straight*.el") :branch "master" :package "straight" :local-repo "straight.el"))
 #+end_src
-
 
 * super-save
 :PROPERTIES:
@@ -1534,7 +1382,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("super-save" "886b5518c8a8b4e1f5e59c332d5d80d95b61201d" (super-save :type git :flavor melpa :host github :repo "bbatsov/super-save" :package #("super-save" 0 10 (face font-lock-string-face)) :local-repo "super-save"))
 #+end_src
 
-
 * swiper
 :PROPERTIES:
 :ID:       fe569a16-3618-4215-87d8-05f85882c01b
@@ -1543,7 +1390,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("swiper" "8f2abd397dba7205806cfa1615624adc8cd5145f" (swiper :type git :flavor melpa :files ("swiper.el" "swiper-pkg.el") :host github :repo "abo-abo/swiper" :package "swiper" :local-repo "swiper"))
 #+end_src
-
 
 * swiper-helm
 :PROPERTIES:
@@ -1554,7 +1400,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("swiper-helm" "93fb6db87bc6a5967898b5fd3286954cc72a0008" (swiper-helm :type git :flavor melpa :host github :repo "abo-abo/swiper-helm" :package "swiper-helm" :local-repo "swiper-helm"))
 #+end_src
 
-
 * system-packages
 :PROPERTIES:
 :ID:       e3c195d9-da50-4c02-95c9-901c3cdd211f
@@ -1563,7 +1408,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("system-packages" "05add2fe051846e2ecb3c23ef22c41ecc59a1f36" (system-packages :type git :flavor melpa :host gitlab :repo "jabranham/system-packages" :package "system-packages" :local-repo "system-packages"))
 #+end_src
-
 
 * tablist
 :PROPERTIES:
@@ -1574,7 +1418,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("tablist" "faab7a035ef2258cc4ea2182f67e3aedab7e2af9" (tablist :type git :flavor melpa :host github :repo "politza/tablist" :package "tablist" :local-repo "tablist"))
 #+end_src
 
-
 * tangld
 :PROPERTIES:
 :ID:       44eaad33-0edf-4d94-9d5e-bfbe1b33c2ce
@@ -1583,7 +1426,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("tangld" "2cf33fecffb54415fac63c83728964a72d1e6d2b" (tangld :repo "aldrichtr/tangld" :type git :host github :package "tangld" :local-repo "tangld"))
 #+end_src
-
 
 * toc-org
 :PROPERTIES:
@@ -1594,7 +1436,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("toc-org" "aef220c266f53d36055f74f4a243c6483c563d2a" (toc-org :type git :flavor melpa :host github :repo "snosov1/toc-org" :package "toc-org" :local-repo "toc-org"))
 #+end_src
 
-
 * transient
 :PROPERTIES:
 :ID:       77c07099-dc1b-4fac-ac63-85dec2194313
@@ -1603,7 +1444,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("transient" "90e640fe8fa3f309c7cf347501e86ca5cd0bd85e" (transient :type git :flavor melpa :files ("lisp/*.el" "docs/transient.texi" "transient-pkg.el") :host github :repo "magit/transient" :package "transient" :local-repo "transient"))
 #+end_src
-
 
 * transpose-frame
 :PROPERTIES:
@@ -1614,7 +1454,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("transpose-frame" "12e523d70ff78cc8868097b56120848befab5dbc" (transpose-frame :type git :flavor melpa :host github :repo "emacsorphanage/transpose-frame" :package "transpose-frame" :local-repo "transpose-frame"))
 #+end_src
 
-
 * ts
 :PROPERTIES:
 :ID:       9c8ae08f-20fb-4faf-9f1f-a57af0614714
@@ -1623,7 +1462,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("ts" "b7ca357a0ed57694e0b25ec1b1ca12e24a4ce541" (ts :type git :flavor melpa :host github :repo "alphapapa/ts.el" :package "ts" :local-repo "ts.el"))
 #+end_src
-
 
 * twilight-bright-theme
 :PROPERTIES:
@@ -1634,7 +1472,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("twilight-bright-theme" "322157cb2f3bf7920ecd209dafc31bc1c7959f49" (twilight-bright-theme :type git :flavor melpa :host github :repo "jimeh/twilight-bright-theme.el" :package "twilight-bright-theme" :local-repo "twilight-bright-theme.el"))
 #+end_src
 
-
 * undo-tree
 :PROPERTIES:
 :ID:       82938d74-53f2-4f04-abb4-072e278ea4b7
@@ -1643,7 +1480,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("undo-tree" "e326c6135e62f5fe8536528d3acd5e798f847407" (undo-tree :type git :host github :repo "emacs-straight/undo-tree" :files ("*" (:exclude ".git")) :package "undo-tree" :local-repo "undo-tree"))
 #+end_src
-
 
 * use-package
 :PROPERTIES:
@@ -1654,7 +1490,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("use-package" nil (use-package :type git :flavor melpa :files (:defaults (:exclude "bind-key.el" "bind-chord.el" "use-package-chords.el" "use-package-ensure-system-package.el") "use-package-pkg.el") :host github :repo "jwiegley/use-package" :package "use-package" :local-repo "use-package"))
 #+end_src
 
-
 * which-key
 :PROPERTIES:
 :ID:       58626f9c-f984-406f-abc8-3cf6d63cdf11
@@ -1663,7 +1498,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("which-key" "428aedfce0157920814fbb2ae5d00b4aea89df88" (which-key :type git :flavor melpa :host github :repo "justbur/emacs-which-key" :package "which-key" :local-repo "emacs-which-key"))
 #+end_src
-
 
 * with-editor
 :PROPERTIES:
@@ -1674,7 +1508,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("with-editor" "139ef3933ea7aa3fe67b87450a6a1ac0895e5c81" (with-editor :type git :flavor melpa :host github :repo "magit/with-editor" :package "with-editor" :local-repo "with-editor"))
 #+end_src
 
-
 * workgroups2
 :PROPERTIES:
 :ID:       c052f874-a3c5-4aa1-b8d0-7bd8e679b7da
@@ -1683,7 +1516,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("workgroups2" "c9403c68a7e6491134110d7cacc130c34eae85a0" (workgroups2 :type git :flavor melpa :files ("src/*.el" "workgroups2-pkg.el") :host github :repo "pashinin/workgroups2" :package "workgroups2" :local-repo "workgroups2"))
 #+end_src
-
 
 * xelb
 :PROPERTIES:
@@ -1694,7 +1526,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("xelb" "f5880e6628d82b387944ac5f3c284d528e5e21c7" (xelb :type git :host github :repo "emacs-straight/xelb" :files ("*" (:exclude ".git")) :package "xelb" :local-repo "xelb"))
 #+end_src
 
-
 * xr
 :PROPERTIES:
 :ID:       4a49ad29-356a-4883-a16c-949ee9fb981a
@@ -1703,7 +1534,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("xr" "277c5490d554ee3fe3e99e53d28a78a5fc3329c8" (xr :type git :host github :repo "emacs-straight/xr" :files ("*" (:exclude ".git")) :package "xr" :local-repo "xr"))
 #+end_src
-
 
 * yasnippet
 :PROPERTIES:
@@ -1714,7 +1544,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("yasnippet" "5cbdbf0d2015540c59ed8ee0fcf4788effdf75b6" (yasnippet :type git :flavor melpa :files ("yasnippet.el" "snippets" "yasnippet-pkg.el") :host github :repo "joaotavora/yasnippet" :package "yasnippet" :local-repo "yasnippet"))
 #+end_src
 
-
 * yasnippet-snippets
 :PROPERTIES:
 :ID:       b489fce9-30e6-448a-82c0-5f41ae26c608
@@ -1723,7 +1552,6 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("yasnippet-snippets" "899c027f442587e0f8ef90761f58b27907ca64b4" (yasnippet-snippets :type git :flavor melpa :files ("*.el" "snippets" ".nosearch" "yasnippet-snippets-pkg.el") :host github :repo "AndreaCrotti/yasnippet-snippets" :package "yasnippet-snippets" :local-repo "yasnippet-snippets"))
 #+end_src
-
 
 * zoom-frm
 :PROPERTIES:
@@ -1734,7 +1562,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("zoom-frm" "59e2fced1819e98acc92da93d8a22789f084d697" (zoom-frm :type git :host github :repo "emacsmirror/zoom-frm" :package "zoom-frm" :local-repo "zoom-frm"))
 #+end_src
 
-
 * zoom-window
 :PROPERTIES:
 :ID:       4bbff722-e17d-43b1-96b8-009d3d32d379
@@ -1744,7 +1571,6 @@ This file contains the recipes for the external packages used in my Emacs config
 ("zoom-window" "474ca4723517d95356145950b134652d5dc0c7f7" (zoom-window :type git :flavor melpa :host github :repo "emacsorphanage/zoom-window" :package "zoom-window" :local-repo "zoom-window"))
 #+end_src
 
-
 * zoutline
 :PROPERTIES:
 :ID:       b316cf7d-4ed9-46ee-8d76-e8cf535a503b
@@ -1753,4 +1579,3 @@ This file contains the recipes for the external packages used in my Emacs config
 #+begin_src emacs-lisp
 ("zoutline" "63756846f8540b6faf89d885438186e4fe1c7d8a" (zoutline :type git :flavor melpa :host github :repo "abo-abo/zoutline" :package "zoutline" :local-repo "zoutline"))
 #+end_src
-
