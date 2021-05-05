@@ -4560,7 +4560,6 @@ be exact. Therefore, I define a function I can use instead.
 (use-package org-refile
   :idle-require t
   :set
-  (org-refile-targets                     . `((,XL-README-FILE . (:level . 10))))
   (org-refile-use-outline-path            . 'file)
   (org-refile-allow-creating-parent-nodes . t)
   (org-reverse-note-order                 . t)
