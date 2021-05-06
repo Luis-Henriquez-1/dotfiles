@@ -1855,7 +1855,9 @@ variable. Also, I don't support the alternate =fn:= syntax.
 :END:
 
 =defun!= is meant to be a wrapper of and replacement for =defun=. I want a
-general macro that I can use for defining =defun= like.
+general macro that I can use for building other "defun-like" macros such as
+=defhook!= and =defadvice!=. More generally, there are patterns that are
+repeated very often.
 
 ***** parser alist
 :PROPERTIES:
@@ -1911,16 +1913,15 @@ general macro that I can use for defining =defun= like.
 (defun defun-macro%handle-hook (_ args rest state)
   "Generate code to define an xl hook."
   (let-alist state
-    (-let* ((orig-name (xl-intern-format "xl--%s-hook" .name))
-	    (hooks (loopy (while (and (car args) (not (keywordp (car args))))) (collect (pop args))))
-	    ((&plist :depth :local :append) args))
-      `((cl-defun ,orig-name ,.args ,.docstring ,@.body)
-	,@(loopy (each symbol hooks)
-		 (expr hook (xl-symbol-intern symbol '& .name))
-		 (append `((defalias ',hook ',orig-name)
-			   (add-hook ',symbol ',hook ,(or append depth) ,local)
-			   (xl-log-function #',hook))))
-	,@(defun-macro%process-clauses rest state)))))
+    (loopy (with (orig-name (xl-intern-format "xl--%s-hook" .name))
+		 (hooks (-split-with (-not #'keywordp) args)))
+	   (for symbol hooks)
+	   (expr hook (xl-symbol-intern symbol '& .name))
+	   (collect `(defalias ',hook ',orig-name))
+	   (collect `(add-hook ',symbol ',hook ,(or append depth) ,local))
+	   (collect `(xl-log-function ,'hook))
+	   (finally-return `(,@(defun ,orig-name ,.args ,.docstring ,@.body)
+			     ,@forms)))))
 #+end_src
 
 ****** parse advice
@@ -1934,16 +1935,17 @@ general macro that I can use for defining =defun= like.
 
 (defun defun-macro%handle-advice (where args rest state)
   (let-alist state
-    (-let* ((orig-advice-name (xl-intern-format "xl--%s-advice" .name))
-	    ((functions plist) (-split-with (-not #'keywordp) args))
-	    ((&plist :props) plist))
-      `((defun ,orig-advice-name ,.args ,.docstring ,@.body)
-	,@(loopy (each fn functions)
-		 (expr advice (xl-advice-gen-symbol fn .name))
-		 (append `((defalias ',advice ',orig-advice-name)
-			   (advice-add #',fn ,where #',advice)
-			   (xl-log-function #',advice))))
-	,@(defun-macro%process-clauses rest state)))))
+    (loopy (with (orig-advice (xl-intern-format "xl--%s-advice" .name))
+		 ((functions plist) (-split-with (-not #'keywordp) args))
+		 (props (plist-get :props plist)))
+	   (for fn functions)
+	   (expr advice (xl-advice-gen-symbol fn .name))
+	   (collect `(defalias ',advice ',orig-advice))
+	   (collect `(advice-add #',fn ,where #',advice))
+	   (collect `(xl-log-function #',advice))
+	   (finally-return `((defun ,orig-advice ,.args ,.docstring ,@.body)
+			     ,@loopy-result
+			     ,@(defun-macro%process-clauses rest state))))))
 #+end_src
 
 ****** parse generic advice
@@ -1973,6 +1975,7 @@ general macro that I can use for defining =defun= like.
 (add-to-list 'defun-macro%handler-alist '(:features . defun-macro%handle-features))
 
 (defun defun-macro%handle-features (_ features rest state)
+  "Generate code to run function after features."
   (let-alist state
     (let ((after-fn (gensym (format "xl--after-%s-" .name))))
       `((after! ,features
