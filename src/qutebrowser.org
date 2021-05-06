@@ -27,6 +27,8 @@ c.tabs.tabs_are_windows = True
 :ID:       70f3a021-7e19-4883-839d-388cd0df8ebc
 :END:
 
+The value of this variable determines where.
+
 #+begin_src python
 c.url.start_pages = "https://lite.qwant.com/"
 #+end_src
@@ -36,12 +38,11 @@ c.url.start_pages = "https://lite.qwant.com/"
 :ID:       c416faa3-f538-4e7e-ab69-039b1296829f
 :END:
 
+Set search engines to some of the intersting privacy respecting ones.
+https://restoreprivacy.com/private-search-engine/
+
 #+begin_src python
-# Set search engines to some of the intersting privacy respecting ones.
-# https://restoreprivacy.com/private-search-engine/
 c.url.searchengines = {"DEFAULT" : "https://www.qwant.com/?q={}&t=web",
-                       # "mg" : "https://metager3.de/en/meta/meta.ger3?eingabe={}&submit-query=&focus=web&s=&f=&m=",
-                       # "swiss" : "https://swisscows.com/web?query={}&region=en-US"
-                       # "quant" : "https://www.qwant.com/?q={}&t=web"
+                       "swiss" : "https://swisscows.com/web?query={}&region=en-US"
                        }
 #+end_src
