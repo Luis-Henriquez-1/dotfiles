@@ -779,6 +779,12 @@ for functions namespaced =frame=.
 (defalias 'atomp 'atom)
 (defalias 'buffer-next 'next-buffer)
 (defalias 'buffer-previous 'previous-buffer)
+(defalias 'char-backward 'backward-char)
+(defalias 'char-forward 'forward-char)
+(defalias 'add '+)
+(defalias 'subtract '-)
+(defalias 'multiply '*)
+(defalias 'square-root 'sqrt)
 #+end_src
 
 *** use-package :usepackage:
