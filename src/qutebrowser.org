@@ -28,7 +28,7 @@ c.tabs.tabs_are_windows = True
 :END:
 
 #+begin_src python
-c.url.start_pages = "https://www.qwant.com/"
+c.url.start_pages = "https://lite.qwant.com/"
 #+end_src
 
 * search engine
