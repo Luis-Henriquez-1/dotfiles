@@ -62,7 +62,7 @@ sh bootstraph.sh
 :ID:       28970211-6d6f-455c-9b07-9e0f5d3c5ba3
 :END:
 
-** reproducability
+** Reproducability
 :PROPERTIES:
 :ID:       c5afe78f-bbb4-4810-b259-b21e8e8c3cea
 :END:
@@ -72,7 +72,7 @@ setup onto a given machine. So if your computer ever crashes or is destroyed, or
 even if you just don't have access to your computer you can get a full, working
 setup on any computer.
 
-** consistency
+** Consistency
 :PROPERTIES:
 :ID:       c6b64409-53eb-43da-a859-9897d29f7d5b
 :END:
@@ -81,7 +81,7 @@ By consistency I mean being able to write configuration files in one language.
 All my configuration files are written in org mode. Making their strucutre, the
 same.
 
-** documentation
+** Documentation
 :PROPERTIES:
 :ID:       6de0bc56-af6f-4981-bda5-26655c92e93b
 :END:
@@ -113,11 +113,6 @@ useful on their computer.
 #+begin_src shell
 monolith https://github.com/Y2Z/monolith -o ~/.tangld/src/multimedia/webshots/monolith-github-page.html
 #+end_src
-
-** performance
-:PROPERTIES:
-:ID:       09a3a2aa-1e8a-4242-bac5-948e471ba169
-:END:
 
 * Screenshots
 :PROPERTIES:
