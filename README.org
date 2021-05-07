@@ -52,6 +52,11 @@ To bootstrap my config.
 sh bootstraph.sh
 #+end_src
 
+** Tangling
+:PROPERTIES:
+:ID:       5bb7ca90-711d-44ea-9272-cd8736ee9a2a
+:END:
+
 ** Library of Babel
 :PROPERTIES:
 :ID:       c495a9f3-8054-4045-af36-267406a4bc4a
