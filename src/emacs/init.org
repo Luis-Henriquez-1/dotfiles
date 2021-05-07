@@ -1920,14 +1920,15 @@ repeated very often.
   "Generate code to define an xl hook."
   (let-alist state
     (loopy (with (orig-name (xl-intern-format "xl--%s-hook" .name))
-		 (hooks (-split-with (-not #'keywordp) args)))
+		 ((hooks plist) (-split-with (-not #'keywordp) args))
+		 ((&plist :append :depth :local) plist))
 	   (for symbol hooks)
 	   (expr hook (xl-symbol-intern symbol '& .name))
 	   (collect `(defalias ',hook ',orig-name))
 	   (collect `(add-hook ',symbol ',hook ,(or append depth) ,local))
-	   (collect `(xl-log-function ,'hook))
-	   (finally-return `(,@(defun ,orig-name ,.args ,.docstring ,@.body)
-			     ,@forms)))))
+	   (collect `(xl-log-function ',hook))
+	   (finally-return `((defun ,orig-name ,.args ,.docstring ,@.body)
+			     ,@loopy-result)))))
 #+end_src
 
 ****** parse advice
