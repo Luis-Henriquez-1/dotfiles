@@ -53,7 +53,7 @@ will. Note that this script assumes Emacs is already installed.
 sh bootstraph.sh
 #+end_src
 
-** Tangling
+** Setting Up Dotfiles
 :PROPERTIES:
 :ID:       5bb7ca90-711d-44ea-9272-cd8736ee9a2a
 :END:
