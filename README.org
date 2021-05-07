@@ -46,7 +46,8 @@ Org allows me to have expressive documentation.
 :ID:       a73952cd-104f-4ccf-9e20-2252ef13442d
 :END:
 
-To bootstrap my config.
+To bootstrap my config run the [[][bootstrap.sh] script. It's a script that
+will. Note that this script assumes Emacs is already installed.
 
 #+begin_src shell
 sh bootstraph.sh
