@@ -58,8 +58,9 @@ sh bootstraph.sh
 :ID:       5bb7ca90-711d-44ea-9272-cd8736ee9a2a
 :END:
 
-Whenever I change a configuration file, I need to [[][tangle] it so that the
-changes are written to the file itself.
+My dotfiles are written as org-mode files. Each When I make a change to an org-mode
+file and want its target. Whenever I change a configuration file, I need to
+[[][tangle] it so that the changes are written to the file itself.
 
 #+begin_src emacs-lisp
 #+end_src
