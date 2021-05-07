@@ -52,6 +52,11 @@ To bootstrap my config.
 sh bootstraph.sh
 #+end_src
 
+** Library of Babel
+:PROPERTIES:
+:ID:       c495a9f3-8054-4045-af36-267406a4bc4a
+:END:
+
 * Goals
 :PROPERTIES:
 :ID:       28970211-6d6f-455c-9b07-9e0f5d3c5ba3
