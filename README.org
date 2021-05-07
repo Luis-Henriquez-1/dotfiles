@@ -47,6 +47,11 @@ Org allows me to have expressive documentation.
 :ID:       9c7e9022-4dec-4299-a487-ea16000fb5ec
 :END:
 
+* How it Works
+:PROPERTIES:
+:ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
+:END:
+
 * Goals
 :PROPERTIES:
 :ID:       28970211-6d6f-455c-9b07-9e0f5d3c5ba3
@@ -76,7 +81,9 @@ same.
 :ID:       6de0bc56-af6f-4981-bda5-26655c92e93b
 :END:
 
-Documentation is very important for me.
+Documentation is very important for me; and, its partly why I'm using org mode.
+Org Mode is a featureful markup language that lets me document my thoughts in a
+way that's not possible with just docstrings and comments.
 
 *** web page screenshots :webshot:
 :PROPERTIES:
