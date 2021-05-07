@@ -1,0 +1,13 @@
+#+title: nyxt.org
+#+author: Luis Henriquez-Perez
+#+property: header-args :tangle ~/.config/nyxt/config.lisp
+
+* set vim keybindings
+:PROPERTIES:
+:ID:       1e674259-3de6-446f-acd8-d824a6370a70
+:END:
+
+* add eval in emacs
+:PROPERTIES:
+:ID:       36e4b964-5d3b-44fa-8b63-f6c9a3f720e6
+:END:
