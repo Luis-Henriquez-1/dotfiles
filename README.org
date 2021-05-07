@@ -2,17 +2,6 @@
 #+author: Luis Henriquez-Perez
 #+tags: doc
 
-* Bootstrap
-:PROPERTIES:
-:ID:       a73952cd-104f-4ccf-9e20-2252ef13442d
-:END:
-
-To bootstrap my config.
-
-#+begin_src shell
-sh bootstraph.sh
-#+end_src
-
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
@@ -51,6 +40,17 @@ Org allows me to have expressive documentation.
 :PROPERTIES:
 :ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
 :END:
+
+** Bootstrap
+:PROPERTIES:
+:ID:       a73952cd-104f-4ccf-9e20-2252ef13442d
+:END:
+
+To bootstrap my config.
+
+#+begin_src shell
+sh bootstraph.sh
+#+end_src
 
 * Goals
 :PROPERTIES:
