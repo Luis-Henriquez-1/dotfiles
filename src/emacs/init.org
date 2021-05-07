@@ -7,6 +7,10 @@
 :ID:       b9128118-e381-4abc-b078-776e437ef31c
 :END:
 
+This headline contains all headlines that need to be loaded in a certain order.
+In other words, it should not matter in which order code blocks not in this
+headline are loaded.
+
 ** DOC init :init:
 :PROPERTIES:
 :ID:       255e2012-7789-4f3d-8cf3-17b5dd810143
