@@ -4744,53 +4744,6 @@ even increasing the gc-cons-threshold will help enough. But here goes nothing.
 :ID:       192b8e36-eb69-4439-bc6f-b97cb336ea2a
 :END:
 
-** embark
-:PROPERTIES:
-:ID:       9e6a5fc3-5a7f-4067-b35e-ef9fb0605fb8
-:END:
-
-This package provides a way of adding actions (think helm) to commands. The
-special thing about it is a generic way to do so.
-
-The idea of actions is to minimize code duplication. The scenario is this: you
-have an existing commands that allows you to select a candidate from a prompt
-and do =X= with a candidate =c= from the set of candidates =C=. You want to
-select from the same prompt, but instead you want to do =Y= with =c= not =X=. So
-what do you do? You're faced with rewriting the command, copying the code for
-the prompt and adding the code to do =Y= (with something like =helm= you'd
-rewrite the code in terms of sources and actions). That's a lot of work!
-:tired-face: And it's not scalable either you'd need to do this for any other
-commands you come accross in the future. This explains why there are so many
-=helm= packages.
-
-=embark= provides a way to add actions to an existing command without having to
-rewrite it.
-
-Honestly, reading it's documentation can be a bit dizzying :dizzy-face:; not
-because the it's bad but because it is hard to wrap your mind around such a
-package without seeing it in action.
-
-** embark
-:PROPERTIES:
-:ID:       45768441-4ec6-475b-99c6-cfb587edb81d
-:END:
-
-As I learn more about embark I will improve this documentation over time.
-
-#+begin_src emacs-lisp
-(use-package embark)
-
-(bind!
-  (:map selectrum-minibuffer-map)
-  (:ie "C-a" #'embark-act))
-
-(defhook! pause-selectrum (embark-collect-mode-hook)
-  (when (eq embark-collect--kind :live)
-    (with-selected-window (active-minibuffer-window)
-      (shrink-window selectrum-num-candidates-displayed)
-      (setq-local selectrum-num-candidates-displayed 0))))
-#+end_src
-
 ** marginalia
 :PROPERTIES:
 :ID:       0ce9957b-8805-4b2b-b5cb-52dc425a3dee
@@ -4827,66 +4780,6 @@ Marginalia adds descriptions to various commands.
 :PROPERTIES:
 :ID:       82854114-2325-4fa6-b3c8-08cd61f54153
 :END:
-
-** TODO helm :helm:
-:PROPERTIES:
-:ID:       2da24557-b05d-475e-8565-6a24e23309c0
-:END:
-
-The reason I have helm installed is because (1) helm has some useful functions
-that are not yet implemented for other completion frameworks and (2) selectrum
-has a [[helpfn:selectrum-helm-mode][selectrum-helm-mode]] which it can use to "selectrumify" helm functions--at
-least to some extent (sometimes the default action doesn't work).
-
-It seems like I may be able to add default actions via an advice. :shrug-tone4:
-We'll see. Basically, the idea would be to take reuse the code of helm commands
-for presenting candidates and then make the action selection work via an advice
-and, of course, add multiple actions via [[id][embark]].
-
-Oh and in regards for using selectrum instead of helm: the main reason is simply
-that helm is noticably slower with its command filtering. :turtle:
-
-*** helm
-:PROPERTIES:
-:ID:       0ef7946e-629b-4a4f-8e47-7d8826d04e7e
-:END:
-
-If you're scrolling down a list of candidates, you might be suprised to
-find. One "gotcha" in helm is the [[helpvar:helm-candidate-number-limit][helm-candidate-number-limit]]. By default helm
-limits the amount of candidates it displays to increase performace.
-
-Selectrum has no problem handling a large amount of candidates, particularly if
-you additionally pause garbage collection for the duration of expensive
-functions as I do. It handles the 16,143 candidates in [[helpfn:helm-system-packages][helm-system-packages]] on
-my T400 instantaneously.
-
-#+begin_src emacs-lisp
-(use-package helm
-  :set
-  (helm-candidate-number-limit . nil))
-#+end_src
-
-*** helm-system-packages
-:PROPERTIES:
-:ID:       3e6dd0e6-0632-454d-a496-d34ecd33b60f
-:END:
-
-#+begin_src emacs-lisp
-(use-package helm-system-packages
-  :gc-pause helm-system-packages
-  :no-sort helm-system-packages)
-#+end_src
-
-*** swiper-helm
-:PROPERTIES:
-:ID:       21a5285c-0447-452d-a7ef-e146b6bd60f0
-:END:
-
-#+begin_src emacs-lisp
-(use-package swiper-helm
-  :no-sort swiper-helm
-  :gc-pause swiper-helm)
-#+end_src
 
 ** prescient :cache:
 :PROPERTIES:
