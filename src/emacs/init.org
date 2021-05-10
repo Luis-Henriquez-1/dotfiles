@@ -5166,6 +5166,15 @@ When the user
     t))
 #+end_src
 
+** bind completion at point :bind:
+:PROPERTIES:
+:ID:       3b301d8b-624f-440c-a645-dfec105d9859
+:END:
+
+#+begin_src emacs-lisp
+(bind! (:ie "TAB" #'completion-at-point))
+#+end_src
+
 ** yasnippet
 :PROPERTIES:
 :ID:       611fa6f5-d889-4399-a090-37aeb043cd13
