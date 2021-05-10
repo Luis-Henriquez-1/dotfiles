@@ -771,6 +771,8 @@ for functions namespaced =frame=.
 (defalias 'multiply '*)
 (defalias 'square-root 'sqrt)
 (defalias 'hash-table-get 'hash-get)
+(defalias 'buffer-create-file-buffer 'create-file-buffer)
+(defalias 'find-file-get-create 'find-file-noselect)
 #+end_src
 
 *** use-package :usepackage:
