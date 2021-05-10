@@ -770,6 +770,7 @@ for functions namespaced =frame=.
 (defalias 'subtract '-)
 (defalias 'multiply '*)
 (defalias 'square-root 'sqrt)
+(defalias 'hash-table-get 'hash-get)
 #+end_src
 
 *** use-package :usepackage:
