@@ -5246,6 +5246,164 @@ all the completion frameworks.
 :ID:       f10c1865-13ad-47c9-b9b2-ec6533af62f3
 :END:
 
+** TODO easymotion :evil:edit:navigation:
+:PROPERTIES:
+:ID:       f2736330-20ab-4ffd-b7d8-8ea74e619857
+:header-args: :tangle no
+:END:
+
+=easymotion= is an Emacs package that allows you to move from one character to
+another.
+
+*** TODO evil-easymotion
+:PROPERTIES:
+:ID:       9be10754-3975-49d4-afa7-08a122161c19
+:END:
+
+#+begin_src emacs-lisp
+(use-package evil-easymotion
+  :set
+  (evilem-keys . (number-sequence ?a ?z))
+  (evilem-style . 'at))
+#+end_src
+
+*** definer :core:lib:
+:PROPERTIES:
+:ID:       f51fbecb-200e-4583-9434-6f1eeef876d9
+:END:
+
+#+begin_src emacs-lisp
+(add-to-list 'defun-macro%handler-alist '(:evilem . defun-macro%handle-evilem))
+
+(defun defun-macro%handle-evilem (_ bool rest state)
+  "Generate code to create an evil motion."
+  (let-alist state
+    (let ((name (xl-symbol-intern 'evilem% .name))
+	  (args (-flatten-n 1 rest)))
+      `((after! (,@.args evil-easymotion)
+	  (evilem-make-motion ,name (lambda () (interactive) ,.docstring ,@.body) ,@args))))))
+#+end_src
+
+*** convenience macro
+:PROPERTIES:
+:ID:       bf5a38d5-3ccf-42f0-90f6-910312994163
+:END:
+
+#+begin_src emacs-lisp
+(defmacro evilem%defmotion! (name args &rest body)
+  (declare (indent defun))
+  `(defun! ,name ,args (:evilem t) ,@body))
+#+end_src
+
+*** custom motions
+:PROPERTIES:
+:ID:       a9b0a117-d409-4559-b60f-07dd8464b52a
+:END:
+
+The following motions are variants of existing motions which I find more useful.
+
+**** dwim begin word
+:PROPERTIES:
+:ID:       80304718-0aa7-448c-9014-4e3a1c17d0e6
+:END:
+
+This is very similar to what =syntax-forward=, but it does not include the
+newline.
+
+#+begin_src emacs-lisp
+(bind! (:n "w" #'evilem%forward-word-begin))
+
+(evilem%defmotion! forward-word-begin ()
+  (:scope 'page)
+  (:initial-point #'point-min)
+  (alet (rx (or (seq bol (1+ white))
+		(seq (1+ white))
+		(seq bol (1+ punct))
+		(seq (1+ white) (1+ punct))
+		(seq (1+ punct)))
+	    word)
+    (save-match-data
+      (when (re-search-forward it nil t nil)
+	(backward-char)))))
+#+end_src
+
+**** dwim begin WORD
+:PROPERTIES:
+:ID:       191343fb-0cfb-43e7-a14c-6c59551d1b7c
+:END:
+
+#+begin_src emacs-lisp
+(bind! (:n "W" #'evilem%forward-word-begin))
+
+(evilem%defmotion! forward-WORD-begin ()
+  (:scope 'page)
+  (:initial-point #'point-min)
+  (alet (rx (or (seq bol (1+ white))
+		(seq (1+ white))
+		(seq bol (1+ punct))
+		(seq (1+ white) (1+ punct)))
+	    word)
+    (save-match-data
+      (when (re-search-forward it nil t nil)
+	(backward-char)))))
+#+end_src
+
+**** dwim end word
+:PROPERTIES:
+:ID:       9b970748-4462-413b-9966-c054bfb17352
+:END:
+
+#+begin_src emacs-lisp
+(bind! (:n "e" #'evilem%forward-word-end))
+
+(evilem%defmotion! forward-word-end ()
+  (:scope 'page)
+  (:initial-point #'point-min)
+  (alet (rx (1+ alnum))
+    (save-match-data
+      (awhen (save-excursion (incf (point)) (re-search-forward it nil t nil))
+	(setf (point) (1- (match-end 0)))))))
+#+end_src
+
+**** dwim end WORD
+:PROPERTIES:
+:ID:       46a63255-47e0-4b2d-bdda-96b393f53dd1
+:END:
+
+#+begin_src emacs-lisp
+(bind! (:n "E" #'evilem%forward-WORD-end))
+
+(evilem%defmotion! forward-WORD-end ()
+  (:scope 'page)
+  (:initial-point #'point-min)
+  (alet (rx (1+ alnum))
+    (save-match-data
+      (awhen (save-excursion (incf (point)) (re-search-forward it nil t nil))
+	(setf (point) (1- (match-end 0)))))))
+#+end_src
+
+**** org headline motion :org:
+:PROPERTIES:
+:ID:       d9ea0c1a-80b3-46ff-b319-6b89b90cb295
+:END:
+
+#+begin_src emacs-lisp
+(evilem%defmotion! headline-start (org)
+  (:scope 'page)
+  (:initial-point #'point-min)
+  (save-match-data (re-search-forward (rx bol (1+ "*") (1+ white)))))
+#+end_src
+
+*** TODO add evil easymotions :evil:bind:
+:PROPERTIES:
+:ID:       4696c5ad-3c95-43fc-8718-b579bf6a7242
+:END:
+
+#+begin_src emacs-lisp
+(after! easymotion
+  (evilem-make-motion my-evilem-motion-find-char #'evil-find-char :initial-point #'point-min :scope 'page))
+#+end_src
+
 ** undo-tree
 :PROPERTIES:
 :ID:       35c9eb5f-6d6d-4011-89a2-38aa8b2211f7
