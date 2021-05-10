@@ -10113,16 +10113,12 @@ When I'm using the dashboard.
   (:around startup%initial-buffer-choice)
   (get-buffer-create "*dashboard*"))
 #+end_src
-
-*** dashboard-init-info :startup:dashboard:asthetic:
-:PROPERTIES:
-:ID:       09019b05-a696-4b15-a5f8-b36b23c42e1a
 :END:
 
 [[helpvar:xl-init-time][xl-init-time]] is more accurate than dashboard's init time measure. So I use it
 instead.
 
-#+begin_src emacs-lisp
+#+begin_src emacs-lisp :tangle no
 (defadvice! show-package-load-time (:before dashboard-insert-startupify-lists)
   (setq dashboard-init-info
         (format "%d packages loaded in %.2f seconds"
