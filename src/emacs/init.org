@@ -5435,15 +5435,6 @@ newline.
   (sentence-end-double-space . nil))
 #+end_src
 
-** edit-indirect
-:PROPERTIES:
-:ID:       d08adcae-ab17-41f1-94c9-1d9a8cb385d7
-:END:
-
-#+begin_src emacs-lisp
-(use-package edit-indirect :commands edit-indirect)
-#+end_src
-
 ** edit-indirect :interface:extension:
 :PROPERTIES:
 :ID:       786b11a6-561b-4793-9c6c-f7630aba3774
@@ -5451,6 +5442,15 @@ newline.
 
 =edit-indirect= is a package that provides a means to edit text in an indirect
 buffer. It's the same concept as org-src buffers but is not tied to org-mode.
+
+*** edit-indirect
+:PROPERTIES:
+:ID:       d08adcae-ab17-41f1-94c9-1d9a8cb385d7
+:END:
+
+#+begin_src emacs-lisp
+(use-package edit-indirect :commands edit-indirect)
+#+end_src
 
 *** editing org descriptions
 :PROPERTIES:
