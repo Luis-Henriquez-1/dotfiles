@@ -5320,20 +5320,21 @@ This is very similar to what =syntax-forward=, but it does not include the
 newline.
 
 #+begin_src emacs-lisp
-(bind! (:n "w" #'evilem%forward-word-begin))
+(after! evil-easymotion
+  (bind! (:n "w" #'evilem%forward-word-begin))
 
-(evilem%defmotion! forward-word-begin ()
-  (:scope 'page)
-  (:initial-point #'point-min)
-  (alet (rx (or (seq bol (1+ white))
-		(seq (1+ white))
-		(seq bol (1+ punct))
-		(seq (1+ white) (1+ punct))
-		(seq (1+ punct)))
-	    word)
-    (save-match-data
-      (when (re-search-forward it nil t nil)
-	(backward-char)))))
+  (evilem%defmotion! forward-word-begin ()
+    (:scope 'page)
+    (:initial-point #'point-min)
+    (alet (rx (or (seq bol (1+ white))
+		  (seq (1+ white))
+		  (seq bol (1+ punct))
+		  (seq (1+ white) (1+ punct))
+		  (seq (1+ punct)))
+	      word)
+      (save-match-data
+	(when (re-search-forward it nil t nil)
+	  (backward-char))))))
 #+end_src
 
 **** dwim begin WORD
@@ -5342,19 +5343,20 @@ newline.
 :END:
 
 #+begin_src emacs-lisp
-(bind! (:n "W" #'evilem%forward-word-begin))
+(after! evil-easymotion
+  (bind! (:n "W" #'evilem%forward-word-begin))
 
-(evilem%defmotion! forward-WORD-begin ()
-  (:scope 'page)
-  (:initial-point #'point-min)
-  (alet (rx (or (seq bol (1+ white))
-		(seq (1+ white))
-		(seq bol (1+ punct))
-		(seq (1+ white) (1+ punct)))
-	    word)
-    (save-match-data
-      (when (re-search-forward it nil t nil)
-	(backward-char)))))
+  (evilem%defmotion! forward-WORD-begin ()
+    (:scope 'page)
+    (:initial-point #'point-min)
+    (alet (rx (or (seq bol (1+ white))
+		  (seq (1+ white))
+		  (seq bol (1+ punct))
+		  (seq (1+ white) (1+ punct)))
+	      word)
+      (save-match-data
+	(when (re-search-forward it nil t nil)
+	  (backward-char))))))
 #+end_src
 
 **** dwim end word
