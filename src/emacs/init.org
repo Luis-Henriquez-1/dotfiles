@@ -293,7 +293,14 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 #+begin_src emacs-lisp
 (require 'cl-lib)
 (cl-callf2 append (xl-generate-package-paths) load-path)
+#+end_src
 
+**** load required packages
+:PROPERTIES:
+:ID:       b2d85ac5-7150-4a76-b5f3-067f8040977a
+:END:
+
+#+begin_src emacs-lisp
 (require 'use-package)
 (require 'loopy)
 (require 'dash)
