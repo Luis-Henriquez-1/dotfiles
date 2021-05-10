@@ -9338,37 +9338,6 @@ are done before setting the =gc-cons-threshold= back to a normal value.
   (find-file (f-full "~/README.org")))
 #+end_src
 
-** idle-require :defer:
-:PROPERTIES:
-:ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
-:END:
-
-Idle require is a tool for loading autoload functions, files or features during
-idle time. The way to use this is to idle-require many small packages that
-individually don't take too much time. This helps ensure that in emacs loading
-of big packages like org-mode is snappy.
-
-When emacs goes idle for [[helpvar:idle-require-idle-delay][idle-require-idle-delay]] seconds, the features will
-start loading. [[helpvar:idle-require-load-break][idle-require-load-break]] is the break between features idle
-require loads.
-
-=idle-require= messages us to tell us when a package is being idle required and
-when it has finished idle-requiring packages. I don't want to see the message
-unless I'm debugging.
-
-Since we're evaluating a good amount of lisp expressions, we should boost
-garbage collection during this time.
-
-#+begin_src emacs-lisp
-(use-package idle-require
-  :demand t
-  ;; :xl-use-xl-log idle-require-mode idle-require-load-next
-  :gc-pause idle-require-load-next
-  :set
-  (idle-require-load-break . 2)
-  (idle-require-idle-delay . 10))
-#+end_src
-
 ** hideshow :prog:
 :PROPERTIES:
 :ID:       2222cf6a-5274-4a33-ae74-357676fbd61d
