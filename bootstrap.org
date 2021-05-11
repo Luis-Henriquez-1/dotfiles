@@ -59,21 +59,6 @@ change this so that I can provide myself options for what I want to do. For this
 I need to research how to prompt in the shell.
 
 #+begin_src emacs-lisp
-(org-babel-tangle "")
-
-(cl-find (lambda (str) (s-match (rx "boostrap.sh") str)) nowed)
-(let ((tangle-dir (expand-file-name))
-      (tan))
-  ;; (print (format "I did it. you passed in %s" command-line-args-left))
-  (print "Loading the library of babel from %s...")
-  (org-babel-lob-ingest "library-of-babel.org")
-  ;; find the command-line arg that contains the path to this file.
-  ;; then tangle the emacs.org file relative to that
-  (print "Tangling recipes...")
-  (org-babel-tangle-file "recipes.org")
-  (print "Tangling emacs config...")
-  (org-babel-tangle-file "emacs.org")
-  (print "Done."))
 #+end_src
 
 * main function
