@@ -6,6 +6,21 @@
 
 This is a library of code blocks that I use.
 
+* emacs :emacs:
+:PROPERTIES:
+:ID:       615daaa9-3a16-47d6-8616-845764ae030e
+:END:
+
+** font
+:PROPERTIES:
+:ID:       cb44ff8b-5f2b-4522-b0e2-ea85517337ef
+:END:
+
+** package management
+:PROPERTIES:
+:ID:       c3b7dc5e-52ca-4f64-b806-360c884c7834
+:END:
+
 * org extensions
 :PROPERTIES:
 :ID:       8f6c8447-8ec1-413e-8e35-f2f7feffafa5
