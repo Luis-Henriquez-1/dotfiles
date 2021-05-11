@@ -85,6 +85,8 @@ file and want its target. Whenever I change a configuration file, I need to
 :ID:       c495a9f3-8054-4045-af36-267406a4bc4a
 :END:
 
+The library of babel is where I put code I want to work on my config as a whole.
+
 * Goals
 :PROPERTIES:
 :ID:       28970211-6d6f-455c-9b07-9e0f5d3c5ba3
