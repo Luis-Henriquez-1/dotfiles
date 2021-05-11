@@ -1,7 +1,4 @@
-* #+title: library of babel
-:PROPERTIES:
-:ID:       987949f3-0b45-4b27-b6f0-0434da51f4ad
-:END:
+#+title: library of babel
 #+author: Luis Henriquez-Perez
 
 This is a library of code blocks that I use.
