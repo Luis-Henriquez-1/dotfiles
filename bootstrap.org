@@ -7,6 +7,13 @@ The purpose of this file is to boostrap my Emacs config. More specifically, it's
 the file that's evaluated that contains the instructions for how to bootstrap my
 Emacs config.
 
+* about
+:PROPERTIES:
+:ID:       c33e5124-fbc8-4d54-8b10-1f33ffbdd64f
+:END:
+
+To bootstrap my dotfiles run ~emacs --script bootstrap.sh~.
+
 * load org-mode
 :PROPERTIES:
 :ID:       c82d1f3f-ac39-492d-b7c8-b1bb7f6b80c7
@@ -30,6 +37,17 @@ such as.
 (org-babel-lob-ingest "library-of-babel.org")
 #+end_src
 
+* install packages
+:PROPERTIES:
+:ID:       e4ff6228-2533-45f0-bf96-be137efcb4b9
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-bootstrap:install-packages ()
+  "Install packages based on the recipe file."
+  )
+#+end_src
+
 * tangle emacs
 :PROPERTIES:
 :ID:       6bfe2d01-e068-4650-9f3e-4e4ddfc2f4a6
@@ -42,5 +60,33 @@ I need to research how to prompt in the shell.
 
 #+begin_src emacs-lisp
 (org-babel-tangle "")
+
+(cl-find (lambda (str) (s-match (rx "boostrap.sh") str)) nowed)
+(let ((tangle-dir (expand-file-name))
+      (tan))
+  ;; (print (format "I did it. you passed in %s" command-line-args-left))
+  (print "Loading the library of babel from %s...")
+  (org-babel-lob-ingest "library-of-babel.org")
+  ;; find the command-line arg that contains the path to this file.
+  ;; then tangle the emacs.org file relative to that
+  (print "Tangling recipes...")
+  (org-babel-tangle-file "recipes.org")
+  (print "Tangling emacs config...")
+  (org-babel-tangle-file "emacs.org")
+  (print "Done."))
+#+end_src
+
+* main function
+:PROPERTIES:
+:ID:       93236548-1044-4c66-a998-3e68aee23131
+:END:
+
+This function is called when.
+
+#+begin_src emacs-lisp
+(defun main ()
+  "Do the right thing based on the command line args."
+  (bootstrap:build-emacs)
+  )
 #+end_src
 
