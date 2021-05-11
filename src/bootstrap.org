@@ -1,0 +1,45 @@
+#+title: bootstrap.org
+#+author: Luis Henriquez-Perez
+#+property: header-args :tangle no
+#+tags: bootstrap dotfiles
+
+The purpose of this file is to boostrap my Emacs config. More specifically, it's
+the file that's evaluated that contains the instructions for how to bootstrap my
+Emacs config.
+
+* load org-mode
+:PROPERTIES:
+:ID:       c82d1f3f-ac39-492d-b7c8-b1bb7f6b80c7
+:END:
+
+#+begin_src emacs-lisp
+(require 'org)
+#+end_src
+
+* load the library of babel
+:PROPERTIES:
+:ID:       f6238cb4-9b85-49ef-baf3-eb63e7dbc0c5
+:END:
+
+The library of babel is what contains extensions that I've written to org-mode
+as well as things that are better done during tangling (for performance reasons)
+such as.
+
+#+begin_src emacs-lisp
+(require 'ob-lob)
+(org-babel-lob-ingest "library-of-babel.org")
+#+end_src
+
+* tangle emacs
+:PROPERTIES:
+:ID:       6bfe2d01-e068-4650-9f3e-4e4ddfc2f4a6
+:END:
+
+I conservatively just tangle the Emacs stuff and leave it to myself to do the
+rest in an Emacs session. As I accrue more knowledge on bootstrapping I'll
+change this so that I can provide myself options for what I want to do.
+
+#+begin_src emacs-lisp
+(org-babel-tangle "")
+#+end_src
+
