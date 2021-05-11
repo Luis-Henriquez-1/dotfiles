@@ -433,7 +433,7 @@ Installs packages with `straight-use-package' by side-effect."
     (xl-load-straight-bootstrap-file)
     (pcase-dolist (`(,_ ,_ ,recipe) recipes)
       (straight-use-package recipe))
-    (seq-filter (apply-partially #'string-match-p regexp) load-path)))
+    (cl-remove-if-not (apply-partially #'string-match-p regexp) load-path)))
 #+end_src
 
 **** set the load-path
