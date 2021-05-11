@@ -381,11 +381,14 @@ Upon startup I read this file and register all the recipes in it with =straight=
 #+begin_src emacs-lisp
 (defun xl-read-recipes ()
   "Read and return recipes from `XL-RECIPE-FILE'."
-  (require 'org)
-  (let (recipes)
-    (org-babel-map-src-blocks xl-recipe-file
-      (push (read body) recipes))
-    (nreverse recipes)))
+  (with-temp-buffer
+    (insert-file-contents-literally XL-RECIPE-FILE)
+    (let (forms form)
+      (setq form (ignore-errors (read (current-buffer))))
+      (while form
+	(push form forms)
+	(setq form (ignore-errors (read (current-buffer)))))
+      (nreverse forms))))
 #+end_src
 
 **** versions alist
