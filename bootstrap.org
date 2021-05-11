@@ -37,7 +37,8 @@ such as.
 
 I conservatively just tangle the Emacs stuff and leave it to myself to do the
 rest in an Emacs session. As I accrue more knowledge on bootstrapping I'll
-change this so that I can provide myself options for what I want to do.
+change this so that I can provide myself options for what I want to do. For this
+I need to research how to prompt in the shell.
 
 #+begin_src emacs-lisp
 (org-babel-tangle "")
