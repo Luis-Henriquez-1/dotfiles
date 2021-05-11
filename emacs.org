@@ -347,7 +347,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 
 #+begin_src emacs-lisp
 (defun xl-install-straight (base-dir)
-  "Install straight.el to BASE-DIR."
+  "Install straight to BASE-DIR."
   (let* ((repo (plist-get (cdr recipe) :repo))
 	 (repo-dir (concat base-dir "straight/repos/"))
 	 (github-link (format "https://github.com/%s.git" repo)))
