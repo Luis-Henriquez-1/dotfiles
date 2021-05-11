@@ -288,7 +288,6 @@ We don't need to clone everything from the git repos. Setting the depth to one
 conserves some disk space.
 
 #+begin_src emacs-lisp
-(setq straight-base-dir XL-PACKAGES-DIR)
 (setq straight-use-package-version 'straight)
 (setq straight-use-package-by-default nil)
 (setq straight-check-for-modifications nil)
@@ -330,10 +329,11 @@ initialization. We don't need =straight= to do this for us because it is handled
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-load-straight-bootstrap-file ()
+(defun xl-load-straight-bootstrap-file (target-dir)
+  "Load the boostrap file form TARGET-DIR."
   (defvar bootstrap-version)
   (let ((bootstrap-version 5)
-	(bootstrap-file (concat XL-PACKAGES-DIR "straight/repos/straight.el/bootstrap.el")))
+	(bootstrap-file (concat target-dir "straight/repos/straight.el/bootstrap.el")))
     (load bootstrap-file nil 'nomessage)))
 #+end_src
 
@@ -362,11 +362,11 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-straight-installed-p ()
+(defun xl-straight-installed-p (target-dir)
   "Return non-nil if straight is installed."
-  (let ((straight-dir (concat XL-PACKAGES-DIR "straight/")))
+  (let ((straight-dir (concat target-dir "straight/")))
     (and (file-exists-p straight-dir)
-	 (file-exists-p (concat XL-PACKAGES-DIR "straight/repos/straight.el/bootstrap.el")))))
+	 (file-exists-p (concat target-dir "straight/repos/straight.el/bootstrap.el")))))
 #+end_src
 
 **** read recipes
@@ -379,10 +379,10 @@ To do this I store the recipes of all the package I install in [[helpvar:XL-RECI
 Upon startup I read this file and register all the recipes in it with =straight=.
 
 #+begin_src emacs-lisp
-(defun xl-read-recipes ()
-  "Read and return recipes from `XL-RECIPE-FILE'."
+(defun xl-read-recipes (recipe-file)
+  "Read and return recipes from RECIPE-FILE."
   (with-temp-buffer
-    (insert-file-contents-literally XL-RECIPE-FILE)
+    (insert-file-contents-literally recipe-file)
     (let (forms form)
       (setq form (ignore-errors (read (current-buffer))))
       (while form
@@ -421,15 +421,16 @@ advantage of doing it this way is that it is fool-proof.
 
 #+name: generate-load-path
 #+begin_src emacs-lisp
-(defun xl-generate-package-paths ()
-  "Return a list of package load path.
-Installs packages with `straight-use-package' by side-effect."
+(defun xl-generate-package-paths (target-dir)
+  "Return a list of package load paths.
+Install packages with `straight-use-package' by side-effect."
   (pcase-let* ((recipes (xl-read-recipes))
 	       (load-path load-path)
+	       (straight-base-dir target-dir)
 	       (regexp (rx-to-string `(seq ,(expand-file-name straight-base-dir))))
 	       (`(,_ ,commit ,recipe) (assoc "straight" recipes)))
     (unless (xl-straight-installed-p)
-      (xl-install-straight recipe commit XL-PACKAGES-DIR))
+      (xl-install-straight recipe commit target-dir))
     (xl-load-straight-bootstrap-file)
     (pcase-dolist (`(,_ ,_ ,recipe) recipes)
       (straight-use-package recipe))
@@ -447,7 +448,7 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 
 #+begin_src emacs-lisp
 (require 'cl-lib)
-(cl-callf2 append (xl-generate-package-paths) load-path)
+(cl-callf2 append (xl-generate-package-paths XL-PACKAGES-DIR) load-path)
 #+end_src
 
 **** load required packages
