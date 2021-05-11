@@ -36,6 +36,21 @@ Org allows me to have expressive documentation.
 :ID:       9c7e9022-4dec-4299-a487-ea16000fb5ec
 :END:
 
+** prefer level-1 directory structure
+:PROPERTIES:
+:ID:       90e53ab7-9073-49c7-9105-3d949753abfb
+:END:
+
+I have never liked complex directory structures (or even complex file structures
+for that matter). It make is more diffult for me to traverse and more error
+prone because I need to remember what is in which directory. I also don't want
+others looking at my dotfiles to have to guess where stuff is. That's why I'd
+like to keep the directory hierarchy as minimal and simple as possible.
+
+As I mentioned, I'd ideally prefer a tag-based structure and, indeed, I have
+used tags throughout my org files so that my dotfiles can be used in this way.
+But I cannot ignore the fact that.
+
 * How it Works
 :PROPERTIES:
 :ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
