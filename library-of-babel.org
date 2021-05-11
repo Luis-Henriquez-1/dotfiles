@@ -1,0 +1,42 @@
+* #+title: library of babel
+:PROPERTIES:
+:ID:       987949f3-0b45-4b27-b6f0-0434da51f4ad
+:END:
+#+author: Luis Henriquez-Perez
+
+This is a library of code blocks that I use.
+
+* org extensions
+:PROPERTIES:
+:ID:       8f6c8447-8ec1-413e-8e35-f2f7feffafa5
+:END:
+
+** allow pretty printing source blocks
+:PROPERTIES:
+:ID:       935fe5b8-ae2c-47b9-938b-3512fa5506b2
+:END:
+
+** allow wrapping elisp source blocks with code
+:PROPERTIES:
+:ID:       e54b3c9d-9ab8-41fc-86e8-fd76084dc75b
+:END:
+
+* noweb references
+:PROPERTIES:
+:ID:       e18a7b93-6b1d-4462-908e-6922ab778eff
+:END:
+
+** generate autoloads
+:PROPERTIES:
+:ID:       bf289d48-c7ea-49af-bd01-c4555159b229
+:END:
+
+#+name: declare-autoloads
+#+begin_src emacs-lisp
+(loopy (list key (hash-table-keys straight--autoloads-cache))
+       (expr forms (cdr (hash-get key straight--autoloads-cache)))
+       (expr form `(ignore-errors ,@forms))
+       (collect autoload-forms form)
+       (finally-return `(progn ,@autoload-forms)))
+#+end_src
+
