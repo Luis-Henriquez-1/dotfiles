@@ -55,7 +55,8 @@ files, or for adding inline images.
 :ID:       7e0a68ef-5f9c-4017-97f2-2ea3454421e3
 :END:
 
-I use tags heavily in my dotfiles. Each headline should have at least one tag.
+I use tags heavily in my dotfiles. One of my desires is to abstract away the
+concept of files, operating instead by searching for tags. Tags are powerful.
 
 ** flexible directory structure
 :PROPERTIES:
