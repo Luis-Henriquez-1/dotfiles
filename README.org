@@ -83,6 +83,9 @@ any other Emacs package.
 :ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
 :END:
 
+To bootstrap my configuration you can run my [[bootstrap.sh][bootstraph.sh
+script] via ~~. Alternatively, you can.
+
 #+begin_src emacs-lisp
 #+end_src
 
