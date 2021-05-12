@@ -24,6 +24,11 @@ This headline explains why I use org-mode as the centerpiece of my configuration
 :ID:       05a0ce02-8dbf-4e4a-9c45-2ce857fe4a2a
 :END:
 
+** powerful searching via tags
+:PROPERTIES:
+:ID:       7e0a68ef-5f9c-4017-97f2-2ea3454421e3
+:END:
+
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
