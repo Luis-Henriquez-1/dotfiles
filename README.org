@@ -49,7 +49,7 @@ language.
 :ID:       7e0a68ef-5f9c-4017-97f2-2ea3454421e3
 :END:
 
-I use tags heavily in my dotfiles.
+I use tags heavily in my dotfiles. Each headline should have at least one tag.
 
 ** flexible directory structure
 :PROPERTIES:
