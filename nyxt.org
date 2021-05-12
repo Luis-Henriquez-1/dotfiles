@@ -3,7 +3,7 @@
 #+property: header-args :tangle ~/.config/nyxt/config.lisp
 
 [[https://nyxt.atlas.engineer/][Nyxt]] is a web-browser written entirely in common lisp. Because of that it is
-even even more customizable than [[][qutebrowser]. Eventually, I'd like to
+even even more customizable than [[./qutebrowser.org][qutebrowser]]. Eventually, I'd like to
 completely replace qutebrowser with Nyxt.
 
 * set vim keybindings
