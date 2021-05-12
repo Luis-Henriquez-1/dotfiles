@@ -30,7 +30,9 @@ problems more easily.
 One of the great strengths of using org-mode for all my dotfiles is the
 consistency and homogenuity it provides. Typically dotfiles are in several
 different languges. And documentation, in turn, is done via comments in several
-different syntaxes.
+different syntaxes. Most programming languages don't allow markup in their
+comments and don't allow linking to other files or websites. Thus, we're left
+with.
 
 ** documentation based
 :PROPERTIES:
