@@ -2,6 +2,9 @@
 #+author: Luis Henriquez-Perez
 #+property: header-args :tangle ~/.config/nyxt/config.lisp
 
+[[https://nyxt.atlas.engineer/][Nyxt]] is a web-browser written entirely in common lisp. Because of that it is
+even even more customizable than [[][qutebrowser].
+
 * set vim keybindings
 :PROPERTIES:
 :ID:       1e674259-3de6-446f-acd8-d824a6370a70
@@ -11,3 +14,6 @@
 :PROPERTIES:
 :ID:       36e4b964-5d3b-44fa-8b63-f6c9a3f720e6
 :END:
+
+#+begin_src emacs-lisp
+#+end_src
