@@ -2,6 +2,14 @@
 #+author: Luis Henriquez-Perez
 #+tags: doc
 
+* About
+:PROPERTIES:
+:ID:       0cb3dfbc-4eb6-4918-8100-ab6073af9e0e
+:END:
+
+I created this dotfile configuration for so I can reproduce my current system
+configuration quickly and easily on other machines.
+
 * Feature List
 :PROPERTIES:
 :ID:       a3a571ce-0abf-437b-b5bf-d95b4464fcfb
