@@ -114,45 +114,6 @@ early stage. You'll need Emacs installed--at least until.
 emacs --script bootstrap.sh
 #+end_src
 
-* Design Choices
-:PROPERTIES:
-:ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
-:END:
-
-** org-mode
-:PROPERTIES:
-:ID:       976c09e0-1c90-4a4b-8779-ce79f2c69794
-:END:
-:LINKS:
-https://irreal.org/blog/?p=2559
-http://sleepomeno.github.io/blog/2014/02/16/This-is-not-an-org-mode-Tutorial/
-:END:
-
-I write my dotfiles in org-mode and tangle them to their corronding places with [[][org-mode].
-Org mode allows me to express my dotfiles in a homogenous syntax.
-
-Org allows me to have expressive documentation.
-
-** tag-based
-:PROPERTIES:
-:ID:       9c7e9022-4dec-4299-a487-ea16000fb5ec
-:END:
-
-** prefer level-1 directory structure
-:PROPERTIES:
-:ID:       90e53ab7-9073-49c7-9105-3d949753abfb
-:END:
-
-I have never liked complex directory structures (or even complex file structures
-for that matter). It make is more diffult for me to traverse and more error
-prone because I need to remember what is in which directory. I also don't want
-others looking at my dotfiles to have to guess where stuff is. That's why I'd
-like to keep the directory hierarchy as minimal and simple as possible.
-
-As I mentioned, I'd ideally prefer a tag-based structure and, indeed, I have
-used tags throughout my org files so that my dotfiles can be used in this way.
-But I cannot ignore the fact that.
-
 * How it Works
 :PROPERTIES:
 :ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
