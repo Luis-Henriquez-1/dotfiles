@@ -34,6 +34,11 @@ This headline explains why I use org-mode as the centerpiece of my configuration
 :ID:       ff12f1ee-7c36-4385-9b67-eefbebc4c54d
 :END:
 
+** hackable and minimal
+:PROPERTIES:
+:ID:       bea7b6a6-e24a-41a4-9637-149c5f986685
+:END:
+
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
