@@ -12,7 +12,7 @@
 :ID:       45c846bf-5cbc-4437-af99-d9ec3b42cc2d
 :END:
 
-This headline explains why I use [[][org-mode] as the centerpiece of my configuration.
+This headline explains why I use [[https://orgmode.org/][org-mode]] as the centerpiece of my configuration.
 
 ** divide and conquer
 :PROPERTIES:
