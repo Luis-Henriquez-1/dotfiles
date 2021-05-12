@@ -333,7 +333,7 @@ initialization. We don't need =straight= to do this for us because it is handled
   "Load the boostrap file from TARGET-DIR."
   (defvar bootstrap-version)
   (let ((bootstrap-version 5)
-	(bootstrap-file (expand-file-name "repos/straight.el/bootstrap.el" target-dir)))
+	(bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" target-dir)))
     (load bootstrap-file nil 'nomessage)))
 #+end_src
 
