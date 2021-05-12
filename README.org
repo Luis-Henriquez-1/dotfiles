@@ -29,6 +29,11 @@ This headline explains why I use org-mode as the centerpiece of my configuration
 :ID:       7e0a68ef-5f9c-4017-97f2-2ea3454421e3
 :END:
 
+** flexible directory structure
+:PROPERTIES:
+:ID:       ff12f1ee-7c36-4385-9b67-eefbebc4c54d
+:END:
+
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
