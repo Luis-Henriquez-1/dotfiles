@@ -75,6 +75,9 @@ hierarchy to benefit.
 :ID:       bea7b6a6-e24a-41a4-9637-149c5f986685
 :END:
 
+Org is an Emacs package that's written en emacs-lisp. I can extend it just like
+any other Emacs package.
+
 #+begin_src emacs-lisp
 #+end_src
 
