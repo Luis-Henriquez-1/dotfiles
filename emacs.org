@@ -453,7 +453,7 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 (cl-callf2 append (xl-generate-package-paths XL-PACKAGES-DIR) load-path)
 #+end_src
 
-**** load required packages
+** load required packages
 :PROPERTIES:
 :ID:       b2d85ac5-7150-4a76-b5f3-067f8040977a
 :END:
