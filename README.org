@@ -56,6 +56,8 @@ I use tags heavily in my dotfiles. Each headline should have at least one tag.
 :ID:       ff12f1ee-7c36-4385-9b67-eefbebc4c54d
 :END:
 
+Since I can specify where I want my org files tangled.
+
 ** hackable and minimal
 :PROPERTIES:
 :ID:       bea7b6a6-e24a-41a4-9637-149c5f986685
