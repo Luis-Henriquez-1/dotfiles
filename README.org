@@ -97,6 +97,7 @@ what handles tangling.
 :END:
 
 #+begin_src emacs-lisp
+sh bootstrap.sh
 #+end_src
 
 ** with emacs
