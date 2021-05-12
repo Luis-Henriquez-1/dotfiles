@@ -19,7 +19,8 @@ This headline explains why I use org-mode as the centerpiece of my configuration
 :ID:       a28eda39-f3e5-4e73-a380-4f44d27d9a07
 :END:
 
-By dividing my dotfile config into small source blocks I can provide a.
+One of big goals for my dotfile design is to allow me to "divide and conquer"
+problems more easily.
 
 ** homogenous throughout dotfiles
 :PROPERTIES:
