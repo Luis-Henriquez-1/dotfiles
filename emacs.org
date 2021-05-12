@@ -349,7 +349,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 (defun xl-install-straight (target-dir)
   "Install straight to TARGET-DIR."
   (let* ((repo (plist-get (cdr recipe) :repo))
-	 (repo-dir (expand-file-name "repos/" target-dir))
+	 (repo-dir (expand-file-name "straight/repos/" target-dir))
 	 (github-link (format "https://github.com/%s.git" repo)))
     (make-directory repo-dir t)
     (shell-command (format "git -C %s clone %s" repo-dir github-link))
@@ -364,8 +364,8 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 #+begin_src emacs-lisp
 (defun xl-straight-installed-p (target-dir)
   "Return non-nil if straight is installed."
-  (and (file-exists-p target-dir)
-       (file-exists-p (expand-file-name "repos/straight.el/bootstrap.el" target-dir))))
+  (and (file-exists-p (expand-file-name "straight/" target-dir))
+       (file-exists-p (expand-file-name "straight/repos/straight.el/bootstrap.el" target-dir))))
 #+end_src
 
 **** read recipes
