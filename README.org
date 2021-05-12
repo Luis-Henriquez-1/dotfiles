@@ -78,6 +78,11 @@ hierarchy to benefit.
 Org is an Emacs package that's written en emacs-lisp. I can extend it just like
 any other Emacs package.
 
+* Bootstraping
+:PROPERTIES:
+:ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
+:END:
+
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
@@ -145,13 +150,6 @@ file and want its target. Whenever I change a configuration file, I need to
 
 #+begin_src emacs-lisp
 #+end_src
-
-** Library of Babel
-:PROPERTIES:
-:ID:       c495a9f3-8054-4045-af36-267406a4bc4a
-:END:
-
-The library of babel is where I put code I want to work on my config as a whole.
 
 * Goals
 :PROPERTIES:
