@@ -58,7 +58,7 @@ files, or for adding inline images.
 I use tags heavily in my dotfiles. One of my desires is to abstract away the
 concept of files, operating instead by searching for tags. Tags are powerful.
 They allow me to search for things that would be hard or impossible to search
-for otherwise.
+for otherwise[fn:1].
 
 ** flexible directory structure
 :PROPERTIES:
@@ -235,3 +235,11 @@ monolith https://github.com/Y2Z/monolith -o ~/.tangld/src/multimedia/webshots/mo
 :PROPERTIES:
 :ID:       878de7ed-1230-4466-8f37-ba55dcaeac19
 :END:
+
+* Footnotes
+
+[fn:1] For example, suppose I wanted to find all Emacs code I wrote dealing with
+performance. I could try to look for general terms such as
+[[][gc-cons-threshold] or idle or defer, but it's quite probably that I wrote
+some code block for some optimization that has none of these general terms. One
+such example is [[][this one].
