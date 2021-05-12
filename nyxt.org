@@ -11,7 +11,7 @@ completely replace qutebrowser with Nyxt.
 :ID:       1e674259-3de6-446f-acd8-d824a6370a70
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src common-lisp
 #+end_src
 
 * add eval in emacs
@@ -19,5 +19,5 @@ completely replace qutebrowser with Nyxt.
 :ID:       36e4b964-5d3b-44fa-8b63-f6c9a3f720e6
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src common-lisp
 #+end_src
