@@ -110,6 +110,7 @@ script] via ~~. Alternatively, you can. Right now my dotfiles are in a very
 early stage. You'll need Emacs installed--at least until.
 
 #+begin_src emacs-lisp
+emacs --script bootstrap.sh
 #+end_src
 
 * Design Choices
