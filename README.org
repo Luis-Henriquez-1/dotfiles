@@ -21,16 +21,6 @@ Org mode allows me to express my dotfiles in a homogenous syntax.
 
 Org allows me to have expressive documentation.
 
-** tangld
-:PROPERTIES:
-:ID:       497747db-7e2e-4548-bc88-2bd37328d6eb
-:END:
-
-[[][tangld] is what I use to
-
-#+begin_src emacs-lisp
-#+end_src
-
 ** tag-based
 :PROPERTIES:
 :ID:       9c7e9022-4dec-4299-a487-ea16000fb5ec
