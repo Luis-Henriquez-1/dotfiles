@@ -12,12 +12,7 @@ configuration quickly and easily on other machines. Additionally, I want to make
 a point to document my configuration extensively so that others can easily learn
 from mine.
 
-* Feature List
-:PROPERTIES:
-:ID:       a3a571ce-0abf-437b-b5bf-d95b4464fcfb
-:END:
-
-* org-mode
+* Why org-mode?
 :PROPERTIES:
 :ID:       45c846bf-5cbc-4437-af99-d9ec3b42cc2d
 :END:
