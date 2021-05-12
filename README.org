@@ -16,8 +16,8 @@ https://irreal.org/blog/?p=2559
 http://sleepomeno.github.io/blog/2014/02/16/This-is-not-an-org-mode-Tutorial/
 :END:
 
-I write my dotfiles in org-mode and tangle them to their corronding places with
-[[][tangld]. Org mode allows me to express my dotfiles in a homogenous syntax.
+I write my dotfiles in org-mode and tangle them to their corronding places with [[][org-mode].
+Org mode allows me to express my dotfiles in a homogenous syntax.
 
 Org allows me to have expressive documentation.
 
