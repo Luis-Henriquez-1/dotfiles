@@ -84,7 +84,8 @@ any other Emacs package.
 :END:
 
 To bootstrap my configuration you can run my [[bootstrap.sh][bootstraph.sh
-script] via ~~. Alternatively, you can.
+script] via ~~. Alternatively, you can. Right now my dotfiles are in a very
+early stage.
 
 #+begin_src emacs-lisp
 #+end_src
