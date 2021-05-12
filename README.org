@@ -67,6 +67,9 @@ hierarchy to benefit.
 :ID:       bea7b6a6-e24a-41a4-9637-149c5f986685
 :END:
 
+#+begin_src emacs-lisp
+#+end_src
+
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
