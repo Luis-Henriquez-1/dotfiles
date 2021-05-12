@@ -16,6 +16,8 @@ https://github.com/atlas-engineer/nyxt/blob/master/documents/README.org
 :END:
 
 #+begin_src common-lisp
+(define-configuration (buffer web-buffer)
+  ((default-modes (append '(vi-normal-mode) %slot-default))))
 #+end_src
 
 * add eval in emacs
