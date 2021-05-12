@@ -8,6 +8,8 @@ even even more customizable than [[./qutebrowser.org][qutebrowser]]. Eventually,
 completely replace qutebrowser with Nyxt. Being written in lisp allows nyxt to
 communicate directly with Emacs.
 
+https://github.com/atlas-engineer/nyxt/blob/master/documents/README.org
+
 * set vim keybindings
 :PROPERTIES:
 :ID:       1e674259-3de6-446f-acd8-d824a6370a70
