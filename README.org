@@ -43,7 +43,7 @@ easy to follow.
 
 Org files lend themselves well to documentation. As I mentioned Org is a markup
 language. It provides a syntax for links and a syntax for referencing other
-files.
+files, or for adding inline images.
 
 ** powerful searching via tags
 :PROPERTIES:
