@@ -449,7 +449,7 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 
 #+begin_src emacs-lisp
 (require 'cl-lib)
-(cl-callf2 append (xl-install-packages) load-path)
+(cl-callf2 append (xl-install-packages XL-RECIPE-FILE (expand-file-name "straight/" XL-PACKAGES-DIR)) load-path)
 #+end_src
 
 ** load required packages
