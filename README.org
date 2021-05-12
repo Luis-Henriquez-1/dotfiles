@@ -89,9 +89,6 @@ script] via ~~. Alternatively, you can.
 #+begin_src emacs-lisp
 #+end_src
 
-#+begin_src emacs-lisp
-#+end_src
-
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
