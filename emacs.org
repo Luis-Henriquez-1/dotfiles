@@ -421,10 +421,10 @@ advantage of doing it this way is that it is fool-proof.
 
 #+name: generate-load-path
 #+begin_src emacs-lisp
-(defun xl-generate-package-paths (target-dir)
-  "Return a list of package load paths.
-Install packages with `straight-use-package' by side-effect."
-  (pcase-let* ((recipes (xl-read-recipes))
+(defun xl-install-packages (recipe-file target-dir)
+  "Install packages specified by RECIPE-FILE to TARGET-DIR.
+Return a list of load-paths for the install packages."
+  (pcase-let* ((recipes (xl-read-recipes recipe-file))
 	       (load-path load-path)
 	       (straight-base-dir target-dir)
 	       (regexp (rx-to-string `(seq ,(expand-file-name straight-base-dir))))
