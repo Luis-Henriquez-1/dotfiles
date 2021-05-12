@@ -85,7 +85,7 @@ any other Emacs package.
 
 To bootstrap my configuration you can run my [[bootstrap.sh][bootstraph.sh
 script] via ~~. Alternatively, you can. Right now my dotfiles are in a very
-early stage.
+early stage. You'll need Emacs installed--at least until.
 
 #+begin_src emacs-lisp
 #+end_src
