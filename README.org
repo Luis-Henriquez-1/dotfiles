@@ -63,7 +63,8 @@ files, or for adding inline images.
 I use tags heavily in my dotfiles. One of my desires is to abstract away the
 concept of files, operating instead by searching for tags. Tags are powerful.
 They allow me to search for things that would be hard or impossible to search
-for otherwise[fn:1].
+for otherwise[fn:1]. They also don't suffer from the limitations that outlines
+inherently have.
 
 ** flexible directory structure
 :PROPERTIES:
