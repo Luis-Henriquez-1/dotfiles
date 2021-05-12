@@ -8,7 +8,8 @@
 :END:
 
 I created this dotfile configuration for so I can reproduce my current system
-configuration quickly and easily on other machines.
+configuration quickly and easily on other machines. Additionally, I want to make
+a point to document my configuration extensively.
 
 * Feature List
 :PROPERTIES:
