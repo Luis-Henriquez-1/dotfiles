@@ -12,6 +12,8 @@
 :ID:       45c846bf-5cbc-4437-af99-d9ec3b42cc2d
 :END:
 
+This headline explains why I use org-mode as the centerpiece of my configuration.
+
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
