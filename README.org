@@ -58,7 +58,9 @@ I use tags heavily in my dotfiles. Each headline should have at least one tag.
 :END:
 
 Since I can specify where I want my org files tangled, I am not tied to having
-my files in a particular file-directory hierarchy.
+my files in a particular file-directory hierarchy. And yet, because I
+[[][tangle] the files I can still reap the advantage and simulate having such a
+hierarchy to benefit.
 
 ** hackable and minimal
 :PROPERTIES:
