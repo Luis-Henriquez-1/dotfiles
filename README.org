@@ -42,7 +42,8 @@ easy to follow.
 :END:
 
 Org files lend themselves well to documentation. As I mentioned Org is a markup
-language.
+language. It provides a syntax for links and a syntax for referencing other
+files.
 
 ** powerful searching via tags
 :PROPERTIES:
