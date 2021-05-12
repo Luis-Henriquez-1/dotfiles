@@ -83,6 +83,9 @@ any other Emacs package.
 :ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
 :END:
 
+#+begin_src emacs-lisp
+#+end_src
+
 * Design Choices
 :PROPERTIES:
 :ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
