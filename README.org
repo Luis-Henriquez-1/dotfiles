@@ -83,6 +83,8 @@ any other Emacs package.
 :ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
 :END:
 
+Both ways I provide of bootstrapping require Emacs.
+
 ** with shell
 :PROPERTIES:
 :ID:       af7091c8-2af8-4ac8-b8e2-f796ca179f0a
