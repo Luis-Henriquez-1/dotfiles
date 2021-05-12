@@ -432,12 +432,14 @@ Return a list of load-paths for the install packages."
     (unless (xl-straight-installed-p target-dir)
       (xl-install-straight recipe commit target-dir))
     (xl-load-straight-bootstrap-file target-dir)
-    (pcase-dolist (`(,_ ,_ ,recipe) recipes)
-      (straight-use-package recipe))
+    (pcase-dolist (`(,_ ,commit ,recipe) recipes)
+      (straight-use-package recipe)
+      (when (straight-vc-commit-present-p recipe commit)
+	(straight-vc-check-out-commit recipe commit)))
     (cl-remove-if-not (apply-partially #'string-match-p regexp) load-path)))
 #+end_src
 
-**** set the load-path
+** set the load-path
 :PROPERTIES:
 :ID:       ea592f75-e8dd-4ee7-a44e-c2da9d76191b
 :END:
