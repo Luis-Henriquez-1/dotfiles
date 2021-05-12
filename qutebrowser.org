@@ -8,8 +8,10 @@
 :ID:       6ea6075e-1826-4f4d-ad2c-4dc2a788efc5
 :END:
 
-[[https://www.qutebrowser.org/index.html][qutebrowser]] is a minimal browser with vim keybindings. It is more lightweight
-and customizable than [[https://www.mozilla.org/en-US/firefox/new/][firefox]] or [[any of its derivatives]].
+[[https://www.qutebrowser.org/index.html][Qutebrowser]] is a minimal browser with vim keybindings. It is more lightweight
+and customizable than [[https://www.mozilla.org/en-US/firefox/new/][firefox]] or [[any of its derivatives]]. I eventually would like
+to switch to [[][nyxt] which is even more customizable because it is written in
+[[common lisp]].
 
 * open tabs in new window by default :window:
 :PROPERTIES:
