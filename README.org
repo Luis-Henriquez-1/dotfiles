@@ -12,6 +12,11 @@ configuration quickly and easily on other machines. Additionally, I want to make
 a point to document my configuration extensively so that others can easily learn
 from mine.
 
+Just like in every dotfile system, the main purpose is to reproduce a computer
+setup onto a given machine. So if your computer ever crashes or is destroyed, or
+even if you just don't have access to your computer you can get a full, working
+setup on any computer.
+
 * Why org-mode?
 :PROPERTIES:
 :ID:       45c846bf-5cbc-4437-af99-d9ec3b42cc2d
@@ -174,40 +179,7 @@ file and want its target. Whenever I change a configuration file, I need to
 #+begin_src emacs-lisp
 #+end_src
 
-* Goals
-:PROPERTIES:
-:ID:       28970211-6d6f-455c-9b07-9e0f5d3c5ba3
-:END:
-
-** Reproducability
-:PROPERTIES:
-:ID:       c5afe78f-bbb4-4810-b259-b21e8e8c3cea
-:END:
-
-Just like in every dotfile system, the main purpose is to reproduce a computer
-setup onto a given machine. So if your computer ever crashes or is destroyed, or
-even if you just don't have access to your computer you can get a full, working
-setup on any computer.
-
-** Consistency
-:PROPERTIES:
-:ID:       c6b64409-53eb-43da-a859-9897d29f7d5b
-:END:
-
-By consistency I mean being able to write configuration files in one language.
-All my configuration files are written in org mode. Making their strucutre, the
-same.
-
-** Documentation
-:PROPERTIES:
-:ID:       6de0bc56-af6f-4981-bda5-26655c92e93b
-:END:
-
-Documentation is very important for me; and, its partly why I'm using org mode.
-Org Mode is a featureful markup language that lets me document my thoughts in a
-way that's not possible with just docstrings and comments.
-
-*** web page screenshots :webshot:
+* web page screenshots :webshot:
 :PROPERTIES:
 :ID:       8d3fabcd-0180-46f7-93f2-911c3b3a80f8
 :END:
@@ -220,7 +192,7 @@ modified. They can be taken down in which case any links would them would either
 break or point to someplace else. A true data hoarder saves webpages they deem
 useful on their computer.
 
-**** monolith :webshot:
+** monolith :webshot:
 :PROPERTIES:
 :ID:       9ecae28c-1741-4aad-9c5b-646045e714d3
 :END:
