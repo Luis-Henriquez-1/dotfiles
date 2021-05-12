@@ -261,7 +261,7 @@ what its doing via [[hfn:void-log][xl-log]].
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
 
-** Package Management
+** package management
 :PROPERTIES:
 :ID:       1bb76e0a-c9a4-4024-be8f-942eaebb345f
 :END:
