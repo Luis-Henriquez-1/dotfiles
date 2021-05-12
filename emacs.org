@@ -425,18 +425,15 @@ advantage of doing it this way is that it is fool-proof.
 Return a list of load-paths for the install packages."
   (pcase-let* ((recipes (xl-read-recipes recipe-file))
 	       (load-path load-path)
-	       (straight-base-dir target-dir)
-	       (regexp (rx-to-string `(seq ,(expand-file-name straight-base-dir))))
 	       (`(,_ ,commit ,recipe) (assoc "straight" recipes)))
     (unless (xl-straight-installed-p target-dir)
       (xl-install-straight recipe commit target-dir))
     (xl-load-straight-bootstrap-file target-dir)
-    (pcase-dolist (`(,_ ,commit ,recipe) recipes)
-      (straight-use-package recipe)
-      ;; (when (straight-vc-commit-present-p recipe commit)
-      ;; 	(straight-vc-check-out-commit recipe commit))
-      )
-    (cl-remove-if-not (apply-partially #'string-match-p regexp) load-path)))
+    (let* ((straight-base-dir target-dir)
+	   (regexp (rx-to-string `(seq ,(expand-file-name straight-base-dir)))))
+      (pcase-dolist (`(,_ ,commit ,recipe) recipes)
+	(straight-use-package recipe))
+      (cl-remove-if-not (apply-partially #'string-match-p regexp) load-path))))
 #+end_src
 
 ** set the load-path
