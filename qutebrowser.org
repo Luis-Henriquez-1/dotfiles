@@ -9,7 +9,7 @@
 :END:
 
 [[https://www.qutebrowser.org/index.html][qutebrowser]] is a minimal browser with vim keybindings. It is more lightweight
-and customizable than [[https://www.mozilla.org/en-US/firefox/new/][firefox]] or any of its derivatives.
+and customizable than [[https://www.mozilla.org/en-US/firefox/new/][firefox]] or [[any of its derivatives]].
 
 * open tabs in new window by default :window:
 :PROPERTIES:
