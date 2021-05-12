@@ -9,7 +9,8 @@
 
 I created this dotfile configuration for so I can reproduce my current system
 configuration quickly and easily on other machines. Additionally, I want to make
-a point to document my configuration extensively.
+a point to document my configuration extensively so that others can easily learn
+from mine.
 
 * Feature List
 :PROPERTIES:
