@@ -4,7 +4,8 @@
 
 [[https://nyxt.atlas.engineer/][Nyxt]] is a web-browser written entirely in common lisp. Because of that it is
 even even more customizable than [[./qutebrowser.org][qutebrowser]]. Eventually, I'd like to
-completely replace qutebrowser with Nyxt.
+completely replace qutebrowser with Nyxt. Being written in lisp allows nyxt to
+communicate directly with Emacs.
 
 * set vim keybindings
 :PROPERTIES:
