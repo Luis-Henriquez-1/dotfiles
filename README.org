@@ -29,6 +29,8 @@ This headline explains why I use org-mode as the centerpiece of my configuration
 :ID:       7e0a68ef-5f9c-4017-97f2-2ea3454421e3
 :END:
 
+I use tags heavily in my dotfiles.
+
 ** flexible directory structure
 :PROPERTIES:
 :ID:       ff12f1ee-7c36-4385-9b67-eefbebc4c54d
