@@ -2,6 +2,11 @@
 #+author: Luis-Henriquez-Perez
 #+property: header-args :tangle ~/.config/emacs/init.el
 
+* about
+:PROPERTIES:
+:ID:       3874f93d-fe10-4452-a203-6d465e599db9
+:END:
+
 * core :core:
 :PROPERTIES:
 :ID:       b9128118-e381-4abc-b078-776e437ef31c
