@@ -17,7 +17,7 @@ and customizable than [[https://www.mozilla.org/en-US/firefox/new/][firefox]] or
 :END:
 
 This setting causes qutebrowser to create a window instead of a new tab. This
-setting particularly useful for a window-based [[][exwm] workflow.
+setting particularly useful for a window-based [[https://github.com/ch11ng/exwm][exwm]] workflow.
 
 #+begin_src python
 c.tabs.tabs_are_windows = True
