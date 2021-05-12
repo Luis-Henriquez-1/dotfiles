@@ -39,6 +39,9 @@ with a.
 :ID:       05a0ce02-8dbf-4e4a-9c45-2ce857fe4a2a
 :END:
 
+Org files lend themselves well to documentation. As I mentioned Org is a markup
+language.
+
 ** powerful searching via tags
 :PROPERTIES:
 :ID:       7e0a68ef-5f9c-4017-97f2-2ea3454421e3
