@@ -32,7 +32,9 @@ consistency and homogenuity it provides. Typically dotfiles are in several
 different languges. And documentation, in turn, is done via comments in several
 different syntaxes. Most programming languages don't allow markup in their
 comments and don't allow linking to other files or websites. Thus, we're left
-with a.
+with a mess. Instead, with org-mode I can document all my dotfiles the same way.
+All of them will have the same general structure, so it is very predictable and
+easy to follow.
 
 ** documentation based
 :PROPERTIES:
