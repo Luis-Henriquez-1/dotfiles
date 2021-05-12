@@ -27,6 +27,11 @@ problems more easily.
 :ID:       b4906e21-20fd-4bb4-9f2f-e6e745d0b41e
 :END:
 
+One of the great strengths of using org-mode for all my dotfiles is the
+consistency and homogenuity it provides. Typically dotfiles are in several
+different languges. And documentation, in turn, is done via comments in several
+different syntaxes.
+
 ** documentation based
 :PROPERTIES:
 :ID:       05a0ce02-8dbf-4e4a-9c45-2ce857fe4a2a
