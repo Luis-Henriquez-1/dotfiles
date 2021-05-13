@@ -3,7 +3,7 @@
 #+property: header-args :tangle no
 #+tags: doc
 
-[[file:file:multimedia/screenshots/dashboard.png][dashboard]]
+[[image:file:multimedia/screenshots/dashboard.png][dashboard]]
 
 * About
 :PROPERTIES:
