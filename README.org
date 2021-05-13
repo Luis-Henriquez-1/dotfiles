@@ -31,7 +31,9 @@ This headline explains why I use [[https://orgmode.org/][org-mode]] as the cente
 :END:
 
 One of big goals for my dotfile design is to allow me to "divide and conquer"
-problems more easily.
+problems more easily. This is achieved via the division of code into source
+blocks. Usually I have at most one source block per headline. And, the headlines
+are tagged.
 
 ** homogenous throughout dotfiles
 :PROPERTIES:
