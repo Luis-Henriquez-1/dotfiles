@@ -7611,12 +7611,12 @@ and then prompt to rename the file afterwards.
 :ID:       5cb29bb2-459a-4c84-9bf8-df179d2d2e8e
 :END:
 
-At first I tried implementing this with [[][sleep-for], but doing it that way
-makes it so that you include the prompt in the screenshot like in [[][this
-picture]. I don't want to completely discount this way of doing it, because
-sometimes you do want to take a screenshot of the prompt itself. Generally
-speaking though, it's not what you want. It looks like we need an idle timer for
-screenshots because otherwise you.
+At first I tried implementing this with [[helpfn:sleep-for][sleep-for]], but doing it that way makes
+it so that you include the prompt in the screenshot like in [[multimedia/screenshots/screenshot-using-sleep-for.png][this picture]]. I
+don't want to completely discount this way of doing it, because sometimes you do
+want to take a screenshot of the prompt itself. Generally speaking though, it's
+not what you want. It looks like we need an idle timer for screenshots because
+otherwise you.
 
 #+begin_src emacs-lisp
 (defun xl/take-fullscreen-screenshot ()
