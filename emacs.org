@@ -1,5 +1,5 @@
 #+title: emacs.org
-#+author: Luis-Henriquez-Perez
+#+author: Luis Henriquez-Perez
 #+property: header-args :tangle ~/.config/emacs/init.el
 
 * readme
