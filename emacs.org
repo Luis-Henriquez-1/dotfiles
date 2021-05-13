@@ -7618,6 +7618,7 @@ and then prompt to rename the file afterwards.
   (let* ((name (or (xl-prompt-screenshot-name) (xl-default-screenshot-name)))
 	 (path (f-expand name (xl-screenshot-dir))))
     (call-process "maim" nil nil nil "-u" path)
+    (sleep-for 1)
     (when (file-exists-p path)
       (message "screenshot successful!"))))
 #+end_src
