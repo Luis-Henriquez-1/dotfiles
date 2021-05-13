@@ -7611,6 +7611,8 @@ and then prompt to rename the file afterwards.
 :ID:       5cb29bb2-459a-4c84-9bf8-df179d2d2e8e
 :END:
 
+It looks like we need an idle timer for screenshots because otherwise you.
+
 #+begin_src emacs-lisp
 (defun xl/take-fullscreen-screenshot ()
   "Take a fullscreen screenshot."
@@ -7618,9 +7620,10 @@ and then prompt to rename the file afterwards.
   (let* ((name (or (xl-prompt-screenshot-name) (xl-default-screenshot-name)))
 	 (path (f-expand name (xl-screenshot-dir))))
     (sleep-for 2)
-    (call-process "maim" nil nil nil "-u" path)
-    (when (file-exists-p path)
-      (message "screenshot successful!"))))
+    (alet (lambda () (call-process "maim" nil nil nil "-u" path)
+	    (when (file-exists-p path)
+	      (message "screenshot successful!")))
+      (run-with-timer 2 nil))))
 #+end_src
 
 ***** window
