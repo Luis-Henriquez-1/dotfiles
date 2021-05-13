@@ -135,6 +135,9 @@ file and want its target. Whenever I change a configuration file, I need to
 [[][tangle] it so that the changes are written to the file itself.
 
 #+begin_src emacs-lisp
+To generate my config, I simply need to tangle all of the org files in my
+dotfile directory. The first time through I'll use the tangle script. My tangle
+script will optionally.
 #+end_src
 
 * Footnotes
