@@ -7619,9 +7619,10 @@ It looks like we need an idle timer for screenshots because otherwise you.
   (interactive)
   (let* ((name (or (xl-prompt-screenshot-name) (xl-default-screenshot-name)))
 	 (path (f-expand name (xl-screenshot-dir))))
-    (alet (lambda () (call-process "maim" nil nil nil "-u" path)
-	    (when (file-exists-p path)
-	      (message "screenshot successful!")))
+    (alet `(lambda ()
+	     (call-process "maim" nil nil nil "-u" ,path)
+	     (when (file-exists-p ,path)
+	       (message "screenshot successful!")))
       (run-with-timer 2 nil it))))
 #+end_src
 
