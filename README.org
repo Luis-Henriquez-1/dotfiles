@@ -134,9 +134,6 @@ My dotfiles are written as org-mode files. Each When I make a change to an org-m
 file and want its target. Whenever I change a configuration file, I need to
 [[][tangle] it so that the changes are written to the file itself.
 
-#+begin_src emacs-lisp
-#+end_src
-
 * Screenshots
 :PROPERTIES:
 :ID:       878de7ed-1230-4466-8f37-ba55dcaeac19
