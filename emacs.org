@@ -7611,7 +7611,9 @@ and then prompt to rename the file afterwards.
 :ID:       5cb29bb2-459a-4c84-9bf8-df179d2d2e8e
 :END:
 
-It looks like we need an idle timer for screenshots because otherwise you.
+At first I tried implementing this with [[][sleep-for], but doing it that way
+makes it so that. It looks like we need an idle timer for screenshots because
+otherwise you.
 
 #+begin_src emacs-lisp
 (defun xl/take-fullscreen-screenshot ()
