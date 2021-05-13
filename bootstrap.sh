@@ -18,16 +18,7 @@
     (printf "Tangling %s..." file)
     (org-babel-tangle-file file))
 
-  (printf "Done!")
-  ;; Testing stuff
-  ;; (let* ((bootstrap-file (cl-find-if (apply-partially #'string-match "bootstrap\\.sh") command-line-args))
-  ;; 	 (dotfiles-dir (file-name-directory bootstrap-file)))
-  ;;   (printf "Loading the library of babel from %s..." (expand-file-name "library-of-babel.org" dotfiles-dir))
-  ;;   (org-babel-lob-ingest (expand-file-name "library-of-babel.org" dotfiles-dir))
-  ;;   (printf "Tangling emacs config from %s..." (expand-file-name "emacs.org" dotfiles-dir))
-  ;;   (org-babel-tangle-file (expand-file-name "emacs.org" dotfiles-dir))
-  ;;   (printf "Done."))
-  )
+  (printf "Done!"))
 
 ;; Local Variables:
 ;; mode: emacs-lisp
