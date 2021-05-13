@@ -14,6 +14,8 @@
 :ID:       0cb3dfbc-4eb6-4918-8100-ab6073af9e0e
 :END:
 
+Welcome! This is my dotfile configuration.
+
 I created this dotfile configuration for so I can reproduce my current system
 configuration quickly and easily on other machines. Additionally, I want to make
 a point to document my configuration extensively so that others can easily learn
