@@ -134,6 +134,9 @@ My dotfiles are written as org-mode files. Each When I make a change to an org-m
 file and want its target. Whenever I change a configuration file, I need to
 [[][tangle] it so that the changes are written to the file itself.
 
+#+begin_src emacs-lisp
+#+end_src
+
 * Footnotes
 
 [fn:1] For example, suppose I wanted to find all Emacs code I wrote dealing with
