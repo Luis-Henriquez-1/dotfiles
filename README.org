@@ -3,6 +3,8 @@
 #+property: header-args :tangle no
 #+tags: doc
 
+[[file:file:multimedia/screenshots/dashboard.png][dashboard]]
+
 * About
 :PROPERTIES:
 :ID:       0cb3dfbc-4eb6-4918-8100-ab6073af9e0e
