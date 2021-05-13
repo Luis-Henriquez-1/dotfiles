@@ -1,5 +1,6 @@
 #+title: README.org
 #+author: Luis Henriquez-Perez
+#+property: header-args :tangle no
 #+tags: doc
 
 * About
@@ -89,8 +90,11 @@ any other Emacs package.
 :ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
 :END:
 
-Both ways I provide of bootstrapping require Emacs installed because Emacs is
-what handles tangling.
+One of the first question one asks about someone's dotfiles is how to bootstrap
+it. The goal is to have bootstrapping to be as easy and painless as possible.
+Ideally, you want to have to just run one command and then have your dotfiles
+setup. I try to keep it as simple as I can. Both ways I provide of bootstrapping
+require Emacs installed because Emacs is what handles tangling.
 
 ** with shell
 :PROPERTIES:
