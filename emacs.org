@@ -7533,7 +7533,7 @@ The name for the screenshot.
 :END:
 
 #+begin_src emacs-lisp
-(defvar xl-screenshot-dir "~/.tangld/src/multimedia/screenshots/")
+(defvar xl-screenshot-dir "~/.tangld/multimedia/screenshots/")
 (defun xl-screenshot-dir () xl-screenshot-dir)
 #+end_src
 
