@@ -91,7 +91,12 @@ hierarchy to benefit.
 Org is an Emacs package that's written en emacs-lisp. I can extend it just like
 any other Emacs package.
 
-* Bootstraping
+* How it Works
+:PROPERTIES:
+:ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
+:END:
+
+** Bootstrap
 :PROPERTIES:
 :ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
 :END:
@@ -102,7 +107,7 @@ Ideally, you want to have to just run one command and then have your dotfiles
 setup. I try to keep it as simple as I can. Both ways I provide of bootstrapping
 require Emacs installed because Emacs is what handles tangling.
 
-** with shell
+*** with shell
 :PROPERTIES:
 :ID:       af7091c8-2af8-4ac8-b8e2-f796ca179f0a
 :END:
@@ -111,7 +116,7 @@ require Emacs installed because Emacs is what handles tangling.
 sh bootstrap.sh
 #+end_src
 
-** with emacs
+*** with emacs
 :PROPERTIES:
 :ID:       09da6062-f2d1-45b4-8eeb-985e428f26a7
 :END:
@@ -124,60 +129,6 @@ early stage. You'll need Emacs installed--at least until.
 emacs --script bootstrap.sh
 #+end_src
 
-* Design Choices
-:PROPERTIES:
-:ID:       9f67931c-d9c6-4f6d-8a07-eab363d3d6bf
-:END:
-
-** org-mode
-:PROPERTIES:
-:ID:       976c09e0-1c90-4a4b-8779-ce79f2c69794
-:END:
-:LINKS:
-:END:
-
-I write my dotfiles in org-mode and tangle them to their corronding places with [[][org-mode].
-Org mode allows me to express my dotfiles in a homogenous syntax.
-
-Org allows me to have expressive documentation.
-
-** tag-based
-:PROPERTIES:
-:ID:       9c7e9022-4dec-4299-a487-ea16000fb5ec
-:END:
-
-** prefer level-1 directory structure
-:PROPERTIES:
-:ID:       90e53ab7-9073-49c7-9105-3d949753abfb
-:END:
-
-I have never liked complex directory structures (or even complex file structures
-for that matter). It make is more diffult for me to traverse and more error
-prone because I need to remember what is in which directory. I also don't want
-others looking at my dotfiles to have to guess where stuff is. That's why I'd
-like to keep the directory hierarchy as minimal and simple as possible.
-
-As I mentioned, I'd ideally prefer a tag-based structure and, indeed, I have
-used tags throughout my org files so that my dotfiles can be used in this way.
-But I cannot ignore the fact that.
-
-* How it Works
-:PROPERTIES:
-:ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
-:END:
-
-** Bootstrap
-:PROPERTIES:
-:ID:       a73952cd-104f-4ccf-9e20-2252ef13442d
-:END:
-
-To bootstrap my config run the [[][bootstrap.sh] script. It's a script that
-will. Note that this script assumes Emacs is already installed.
-
-#+begin_src shell
-sh bootstraph.sh
-#+end_src
-
 ** Setting Up Dotfiles
 :PROPERTIES:
 :ID:       5bb7ca90-711d-44ea-9272-cd8736ee9a2a
@@ -188,30 +139,6 @@ file and want its target. Whenever I change a configuration file, I need to
 [[][tangle] it so that the changes are written to the file itself.
 
 #+begin_src emacs-lisp
-#+end_src
-
-* web page screenshots :webshot:
-:PROPERTIES:
-:ID:       8d3fabcd-0180-46f7-93f2-911c3b3a80f8
-:END:
-:LINKS:
-https://github.com/Y2Z/monolith
-:END:
-
-Saving links is good, but it is not enough. Websites can be (and are often)
-modified. They can be taken down in which case any links would them would either
-break or point to someplace else. A true data hoarder saves webpages they deem
-useful on their computer.
-
-** monolith :webshot:
-:PROPERTIES:
-:ID:       9ecae28c-1741-4aad-9c5b-646045e714d3
-:END:
-
-[[https://github.com/Y2Z/monolith][monolith]] is a program meant to
-
-#+begin_src shell
-monolith https://github.com/Y2Z/monolith -o ~/.tangld/src/multimedia/webshots/monolith-github-page.html
 #+end_src
 
 * Screenshots
