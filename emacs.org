@@ -7612,7 +7612,7 @@ and then prompt to rename the file afterwards.
 :END:
 
 At first I tried implementing this with [[helpfn:sleep-for][sleep-for]], but doing it that way makes
-it so that you include the prompt in the screenshot like in [[multimedia/screenshots/screenshot-using-sleep-for.png][this picture]]. I
+it so that you include the prompt in the screenshot like in [[file:multimedia/screenshots/screenshot-using-sleep-for.png][this picture]]. I
 don't want to completely discount this way of doing it, because sometimes you do
 want to take a screenshot of the prompt itself. Generally speaking though, it's
 not what you want. It looks like we need an idle timer for screenshots because
