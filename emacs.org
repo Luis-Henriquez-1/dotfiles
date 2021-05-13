@@ -7635,6 +7635,7 @@ and then prompt to rename the file afterwards.
 	  (path (f-expand name (xl-screenshot-dir)))
 	  ((x y w h) (window-pixel-edges))
 	  (geometry (format "%dx%d+%d+%d" w h x y)))
+    (sleep-for 1)
     (call-process "maim" nil nil nil "-u" "--geometry" geometry name)
     (when (file-exists-p path)
       (message "screenshot successful!"))))
