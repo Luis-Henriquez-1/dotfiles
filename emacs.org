@@ -9569,6 +9569,7 @@ most important.
 
 #+begin_src emacs-lisp
 (defafter! sort-newest-first (notmuch)
+  "Tell notmuch to."
   (set! notmuch-search-oldest-first nil))
 #+end_src
 
