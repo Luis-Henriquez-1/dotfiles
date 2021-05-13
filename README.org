@@ -22,10 +22,6 @@ setup on any computer.
 :PROPERTIES:
 :ID:       45c846bf-5cbc-4437-af99-d9ec3b42cc2d
 :END:
-:LINKS:
-https://irreal.org/blog/?p=2559
-http://sleepomeno.github.io/blog/2014/02/16/This-is-not-an-org-mode-Tutorial/
-:END:
 
 This headline explains why I use [[https://orgmode.org/][org-mode]] as the centerpiece of my configuration.
 
