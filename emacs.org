@@ -7623,7 +7623,7 @@ It looks like we need an idle timer for screenshots because otherwise you.
     (alet (lambda () (call-process "maim" nil nil nil "-u" path)
 	    (when (file-exists-p path)
 	      (message "screenshot successful!")))
-      (run-with-timer 2 nil))))
+      (run-with-timer 2 nil it))))
 #+end_src
 
 ***** window
