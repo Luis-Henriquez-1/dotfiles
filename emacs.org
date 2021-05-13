@@ -9568,8 +9568,8 @@ unconventional for email clients considering that the newer emails are among the
 most important.
 
 #+begin_src emacs-lisp
-(defafter! ()
-  (setq notmuch-search-oldest-first nil))
+(defafter! sort-newest-first (notmuch)
+  (set! notmuch-search-oldest-first nil))
 #+end_src
 
 ** TODO gnus
