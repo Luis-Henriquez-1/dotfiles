@@ -26,6 +26,57 @@ setup onto a given machine. So if your computer ever crashes or is destroyed, or
 even if you just don't have access to your computer you can get a full, working
 setup on any computer.
 
+* How it Works
+:PROPERTIES:
+:ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
+:END:
+
+** Bootstrap
+:PROPERTIES:
+:ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
+:END:
+
+One of the first question one asks about someone's dotfiles is how to bootstrap
+it. The goal is to have bootstrapping to be as easy and painless as possible.
+Ideally, you want to have to just run one command and then have your dotfiles
+setup. I try to keep it as simple as I can. Both ways I provide of bootstrapping
+require Emacs installed because Emacs is what handles tangling.
+
+*** with shell
+:PROPERTIES:
+:ID:       af7091c8-2af8-4ac8-b8e2-f796ca179f0a
+:END:
+
+#+begin_src emacs-lisp
+sh bootstrap.sh
+#+end_src
+
+*** with emacs
+:PROPERTIES:
+:ID:       09da6062-f2d1-45b4-8eeb-985e428f26a7
+:END:
+
+To bootstrap my configuration you can run my [[bootstrap.sh][bootstraph.sh
+script] via ~~. Alternatively, you can. Right now my dotfiles are in a very
+early stage. You'll need Emacs installed--at least until.
+
+#+begin_src emacs-lisp
+emacs --script bootstrap.sh
+#+end_src
+
+** Setting Up Dotfiles
+:PROPERTIES:
+:ID:       5bb7ca90-711d-44ea-9272-cd8736ee9a2a
+:END:
+
+My dotfiles are written as org-mode files. Each When I make a change to an org-mode
+file and want its target. Whenever I change a configuration file, I need to
+[[][tangle] it so that the changes are written to the file itself.
+
+To generate my config, I simply need to tangle all of the org files in my
+dotfile directory. The first time through I'll use the tangle script. My tangle
+script will optionally.
+
 * Why org-mode?
 :PROPERTIES:
 :ID:       45c846bf-5cbc-4437-af99-d9ec3b42cc2d
@@ -94,57 +145,6 @@ hierarchy to benefit.
 
 Org is an Emacs package that's written en emacs-lisp. I can extend it just like
 any other Emacs package.
-
-* How it Works
-:PROPERTIES:
-:ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
-:END:
-
-** Bootstrap
-:PROPERTIES:
-:ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
-:END:
-
-One of the first question one asks about someone's dotfiles is how to bootstrap
-it. The goal is to have bootstrapping to be as easy and painless as possible.
-Ideally, you want to have to just run one command and then have your dotfiles
-setup. I try to keep it as simple as I can. Both ways I provide of bootstrapping
-require Emacs installed because Emacs is what handles tangling.
-
-*** with shell
-:PROPERTIES:
-:ID:       af7091c8-2af8-4ac8-b8e2-f796ca179f0a
-:END:
-
-#+begin_src emacs-lisp
-sh bootstrap.sh
-#+end_src
-
-*** with emacs
-:PROPERTIES:
-:ID:       09da6062-f2d1-45b4-8eeb-985e428f26a7
-:END:
-
-To bootstrap my configuration you can run my [[bootstrap.sh][bootstraph.sh
-script] via ~~. Alternatively, you can. Right now my dotfiles are in a very
-early stage. You'll need Emacs installed--at least until.
-
-#+begin_src emacs-lisp
-emacs --script bootstrap.sh
-#+end_src
-
-** Setting Up Dotfiles
-:PROPERTIES:
-:ID:       5bb7ca90-711d-44ea-9272-cd8736ee9a2a
-:END:
-
-My dotfiles are written as org-mode files. Each When I make a change to an org-mode
-file and want its target. Whenever I change a configuration file, I need to
-[[][tangle] it so that the changes are written to the file itself.
-
-To generate my config, I simply need to tangle all of the org files in my
-dotfile directory. The first time through I'll use the tangle script. My tangle
-script will optionally.
 
 * Footnotes
 
