@@ -2,7 +2,7 @@
 #+author: Luis-Henriquez-Perez
 #+property: header-args :tangle ~/.config/stumwm/stumwmrc.lisp
 
-[[][stumpwm] is a window manager written entirely in [[][common lisp]. Because
+[[https://github.com/stumpwm/stumpwm][Stumpwm] is a window manager written entirely in [[][common lisp]. Because
 of this it is extensible in ways that other window managers can never be. I am
 torn between this window manager and [[][exwm]. I've invested heavily in Emacs
 and when using stumpwm there is a problem of compatibility between languages.
