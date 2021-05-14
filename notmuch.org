@@ -2,6 +2,8 @@
 #+author: Luis Henriquez-Perez
 #+property: header-args :tangle ~/.notmuch-config
 
+[[file:]]
+
 * user-info
 :PROPERTIES:
 :ID:       c9614bec-d684-49c6-bfa8-90aa520b15d3
