@@ -63,7 +63,6 @@ I need to research how to prompt in the shell.
 #+begin_src emacs-lisp
 (defun boostrap-emacs ()
   "Bootstrap emacs."
-  ;; Download needed packages.
   (xl-install-packages)
   )
 #+end_src
