@@ -156,6 +156,8 @@ any other Emacs package.
 :ID:       327bbe55-6e3c-4628-8adf-73563bb2a754
 :END:
 
+I don't like bash as a language or any of the other DSLs. i want to whenever possible, use elisp.
+
 * Footnotes
 
 [fn:1] For example, suppose I wanted to find all Emacs code I wrote dealing with
