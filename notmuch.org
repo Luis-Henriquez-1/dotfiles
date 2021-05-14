@@ -2,7 +2,7 @@
 #+author: Luis Henriquez-Perez
 #+property: header-args :tangle ~/.notmuch-config
 
-[[file:]]
+[[file:multimedia/pictures/notmuch-logo.png]]
 
 * user-info
 :PROPERTIES:
