@@ -13,11 +13,15 @@
   (print (apply #'format format-string args)))
 
 (defun main ()
-  ;; Tangle my emacs files.
-  (dolist (file (directory-files "emacs/" t (rx (1+ anything) ".org")))
-    (printf "Tangling %s..." file)
-    (org-babel-tangle-file file))
-
+  (let* ((bootstrap-file (cl-find-if (apply-partially #'string-match (rx "bootstrap.sh"))
+				     command-line-args))
+	 (dotfile-dir (file-name-directory (directory-file-name
+					    bootstrap-file)))
+	 (emacs-dir (expand-file-name "emacs/" dotfile-dir)))
+    (when (y-or-n-p "Tangle emacs dir? ")
+      (dolist (file (directory-files emacs-dir t (rx (1+ anything) ".org")))
+        (printf "Tangling %s..." file)
+        (org-babel-tangle-file file))))
   (printf "Done!"))
 
 ;; Local Variables:
