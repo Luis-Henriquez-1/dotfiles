@@ -7,6 +7,8 @@
 :ID:       53ec10a9-c123-46ad-8a21-99229b02a496
 :END:
 
+[[file:../multimedia/screenshots/emacs-logo.png]]
+
 * core :core:
 :PROPERTIES:
 :ID:       b9128118-e381-4abc-b078-776e437ef31c
