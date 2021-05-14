@@ -2,12 +2,50 @@
 #+author: Luis Henriquez-Perez
 #+property: header-args :tangle ~/.config/emacs/init.el
 
-* About
+[[file:../multimedia/screenshots/emacs-logo.png]]
+
+* readme :doc:
 :PROPERTIES:
 :ID:       53ec10a9-c123-46ad-8a21-99229b02a496
 :END:
 
-[[file:../multimedia/screenshots/emacs-logo.png]]
+This is heading tries to explain my Emacs config, why I made it the way did.
+
+** goals and principles
+:PROPERTIES:
+:ID:       83ec82d2-0387-4d47-b0f9-d2429c2d777f
+:END:
+
+*** almost impervious to loading order
+:PROPERTIES:
+:ID:       c8e53df8-acf3-40f1-a551-c26a1d58bd4f
+:END:
+
+*** reproducible
+:PROPERTIES:
+:ID:       30b0deee-bc8d-4f00-9105-b43f0b3433ed
+:END:
+
+I want my configuration to be completely reproducible. That is, using my
+[[file:recipes.org][recipes]], this file as well as my version of Emacs, you should be able to
+completely reproduce my setup.
+
+I choose to.
+
+*** effective and elegant set of macros
+:PROPERTIES:
+:ID:       90a118c1-7f18-48dd-aad7-6b9b8edba36e
+:END:
+
+*** asthetic and minimalistic design
+:PROPERTIES:
+:ID:       433777aa-8cfd-4189-9ce8-b06b5f86e349
+:END:
+
+*** fast and efficient
+:PROPERTIES:
+:ID:       fcb9e85e-b466-49d1-9493-6b72e3c66c1a
+:END:
 
 * core :core:
 :PROPERTIES:
