@@ -23,18 +23,25 @@ To bootstrap my dotfiles run ~emacs --script bootstrap.sh~.
 (require 'org)
 #+end_src
 
-* load the library of babel
+* make sure that I can evaluate source blocks
 :PROPERTIES:
-:ID:       f6238cb4-9b85-49ef-baf3-eb63e7dbc0c5
+:ID:       e27c9aa4-9b46-47e3-b3a3-d4a4d9d7692c
 :END:
 
-The library of babel is what contains extensions that I've written to org-mode
-as well as things that are better done during tangling (for performance reasons)
-such as.
+By default org blocks make you confirm before evaluating them. If we don't want
+to be promted for evaluating every source block--and, trust me, we don't--then
+we should disable this.
 
 #+begin_src emacs-lisp
-(require 'ob-lob)
-(org-babel-lob-ingest "library-of-babel.org")
+(setq org-confirm-babel-evaluate nil)
+#+end_src
+
+* other settings
+:PROPERTIES:
+:ID:       692bf002-24b5-4e51-bb8c-fea4c578cdfb
+:END:
+
+#+begin_src emacs-lisp
 #+end_src
 
 * install packages
@@ -48,7 +55,7 @@ such as.
   )
 #+end_src
 
-* tangle emacs
+* setup emacs
 :PROPERTIES:
 :ID:       6bfe2d01-e068-4650-9f3e-4e4ddfc2f4a6
 :END:
@@ -59,6 +66,8 @@ change this so that I can provide myself options for what I want to do. For this
 I need to research how to prompt in the shell.
 
 #+begin_src emacs-lisp
+(org-babel-tangle-file )
+(org-babel-tangle-file )
 #+end_src
 
 * main function
