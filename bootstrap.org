@@ -16,6 +16,11 @@ Emacs config.
 
 To bootstrap my dotfiles run ~emacs --script bootstrap.sh~.
 
+* a note about Emacs scripts
+:PROPERTIES:
+:ID:       9e2ea0bd-b233-4e74-b451-9ae0686c50df
+:END:
+
 * load org-mode
 :PROPERTIES:
 :ID:       c82d1f3f-ac39-492d-b7c8-b1bb7f6b80c7
