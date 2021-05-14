@@ -64,6 +64,8 @@ I need to research how to prompt in the shell.
 (defun boostrap-emacs ()
   "Bootstrap emacs."
   (xl-install-packages)
+  (org-babel-tangle-file)
+  (org-babel-tangle-file)
   )
 #+end_src
 
