@@ -1,28 +1,24 @@
 :;exec emacs -batch -l "$0" -f main "$@"
 
 ;; For now I write this code here. But eventually, I want it all to go in
-;; boostrap.org. This file should only load the bootstrap.org file.
+;; bootstrap.org. This file should only load the bootstrap.org file.
+
+;; As I mentioned (here), we want to minimize the amount of elisp code written
+;; in non org files. Therefore, the only purpose of this file is to run the
+;; bootstrap.org file which will actually do the bootstrapping.
 
 (require 'org)
-(require 'ob-lob)
-(require 'cl-lib)
-(require 'rx)
+(require 'org-babel)
 
 (defun printf (format-string &rest args)
   "Same as print, but allows format."
   (print (apply #'format format-string args)))
 
-(defun main ()
-  (let* ((bootstrap-file (cl-find-if (apply-partially #'string-match (rx "bootstrap.sh"))
-				     command-line-args))
-	 (dotfile-dir (file-name-directory (directory-file-name
-					    bootstrap-file)))
-	 (emacs-dir (expand-file-name "emacs/" dotfile-dir)))
-    (when (y-or-n-p "Tangle emacs dir? ")
-      (dolist (file (directory-files emacs-dir t (rx (1+ anything) ".org")))
-        (printf "Tangling %s..." file)
-        (org-babel-tangle-file file))))
-  (printf "Done!"))
+;; We want to load the file but
+(defun org-babel%load-file ()
+  "")
+
+(org-babel-map-src-blocks)
 
 ;; Local Variables:
 ;; mode: emacs-lisp

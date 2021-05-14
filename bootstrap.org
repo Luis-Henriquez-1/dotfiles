@@ -21,6 +21,9 @@ To bootstrap my dotfiles run ~emacs --script bootstrap.sh~.
 :ID:       9e2ea0bd-b233-4e74-b451-9ae0686c50df
 :END:
 
+https://www.emacswiki.org/emacs/EmacsScripts
+https://kitchingroup.cheme.cmu.edu/blog/2014/08/06/Writing-scripts-in-Emacs-lisp/
+
 * load org-mode
 :PROPERTIES:
 :ID:       c82d1f3f-ac39-492d-b7c8-b1bb7f6b80c7
@@ -55,7 +58,26 @@ These settings ensure that creating non-existent directories is on.
 #+begin_src emacs-lisp
 #+end_src
 
-* setup emacs
+* emacs
+:PROPERTIES:
+:ID:       c492e7df-8297-4415-ab9f-df5bfba262c1
+:END:
+
+** install packages from recipe file
+:PROPERTIES:
+:ID:       c1c4b6c3-b3ee-49a5-a62a-37d741f2c421
+:END:
+
+#+begin_src emacs-lisp
+(defun bootstrap--install-emacs-packages ()
+  "Install package."
+  (princ "Tangling recipe file...")
+  (org-babel-tangle-file)
+  (princ "Installing packages from recipe file...")
+  ())
+#+end_src
+
+** setup emacs
 :PROPERTIES:
 :ID:       6bfe2d01-e068-4650-9f3e-4e4ddfc2f4a6
 :END:
@@ -67,11 +89,18 @@ I need to research how to prompt in the shell.
 
 #+begin_src emacs-lisp
 (defun boostrap-emacs ()
-  "Bootstrap emacs."
-  (xl-install-packages)
-  (org-babel-tangle-file)
-  (org-babel-tangle-file)
-  )
+  "Bootstrap emacs.
+This means install all of the packages specified in the recipe file and tangle emacs."
+  (let* ((bootstrap-file (cl-find-if (apply-partially #'string-match (rx "bootstrap.sh"))
+				     command-line-args))
+	 (dotfile-dir (file-name-directory (directory-file-name
+					    bootstrap-file)))
+	 (emacs-dir (expand-file-name "emacs/" dotfile-dir)))
+    (when (y-or-n-p "Tangle emacs dir? ")
+      (dolist (file (directory-files emacs-dir t (rx (1+ anything) ".org")))
+        (printf "Tangling %s..." file)
+        (org-babel-tangle-file file))))
+  (printf "Done!"))
 #+end_src
 
 * main function
