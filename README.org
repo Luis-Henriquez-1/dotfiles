@@ -158,6 +158,11 @@ any other Emacs package.
 
 I don't like bash as a language or any of the other DSLs. i want to whenever possible, use elisp.
 
+* Acknowledgements
+:PROPERTIES:
+:ID:       cf443133-b301-4291-80c0-f9bfd44d6c61
+:END:
+
 * Footnotes
 
 [fn:1] For example, suppose I wanted to find all Emacs code I wrote dealing with
