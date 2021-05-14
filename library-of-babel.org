@@ -18,6 +18,11 @@ This is a library of code blocks that I use.
 :ID:       e54b3c9d-9ab8-41fc-86e8-fd76084dc75b
 :END:
 
+** load subtree from file
+:PROPERTIES:
+:ID:       3dd7e72a-d3d3-4ce5-b85f-e25c22d25f0e
+:END:
+
 * noweb references
 :PROPERTIES:
 :ID:       e18a7b93-6b1d-4462-908e-6922ab778eff
