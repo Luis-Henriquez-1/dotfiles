@@ -21,6 +21,8 @@ To bootstrap my dotfiles run ~emacs --script bootstrap.sh~.
 
 #+begin_src emacs-lisp
 (require 'org)
+(require 'rx)
+(require 'subr-x)
 #+end_src
 
 * make sure that I can evaluate source blocks
@@ -41,18 +43,9 @@ we should disable this.
 :ID:       692bf002-24b5-4e51-bb8c-fea4c578cdfb
 :END:
 
-#+begin_src emacs-lisp
-#+end_src
-
-* install packages
-:PROPERTIES:
-:ID:       e4ff6228-2533-45f0-bf96-be137efcb4b9
-:END:
+These settings ensure that creating non-existent directories is on.
 
 #+begin_src emacs-lisp
-(defun xl-bootstrap:install-packages ()
-  "Install packages based on the recipe file."
-  )
 #+end_src
 
 * setup emacs
@@ -66,8 +59,11 @@ change this so that I can provide myself options for what I want to do. For this
 I need to research how to prompt in the shell.
 
 #+begin_src emacs-lisp
-(org-babel-tangle-file )
-(org-babel-tangle-file )
+(defun boostrap-emacs ()
+  "Bootstrap emacs."
+  ;; Download needed packages.
+  ()
+  )
 #+end_src
 
 * main function
