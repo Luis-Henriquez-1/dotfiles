@@ -3,6 +3,8 @@
 #+property: header-args :tangle no
 #+tags: bootstrap dotfiles
 
+[file:multimedia/screenshots/]
+
 The purpose of this file is to boostrap my Emacs config. More specifically, it's
 the file that's evaluated that contains the instructions for how to bootstrap my
 Emacs config.
