@@ -4,49 +4,6 @@
 
 [[file:../multimedia/screenshots/emacs-logo.png]]
 
-* readme :doc:
-:PROPERTIES:
-:ID:       53ec10a9-c123-46ad-8a21-99229b02a496
-:END:
-
-This is heading tries to explain my Emacs config, why I made it the way did.
-
-** goals and principles
-:PROPERTIES:
-:ID:       83ec82d2-0387-4d47-b0f9-d2429c2d777f
-:END:
-
-*** almost impervious to loading order
-:PROPERTIES:
-:ID:       c8e53df8-acf3-40f1-a551-c26a1d58bd4f
-:END:
-
-*** reproducible
-:PROPERTIES:
-:ID:       30b0deee-bc8d-4f00-9105-b43f0b3433ed
-:END:
-
-I want my configuration to be completely reproducible. That is, using my
-[[file:recipes.org][recipes]], this file as well as my version of Emacs, you should be able to
-completely reproduce my setup.
-
-I choose to.
-
-*** effective and elegant set of macros
-:PROPERTIES:
-:ID:       90a118c1-7f18-48dd-aad7-6b9b8edba36e
-:END:
-
-*** asthetic and minimalistic design
-:PROPERTIES:
-:ID:       433777aa-8cfd-4189-9ce8-b06b5f86e349
-:END:
-
-*** fast and efficient
-:PROPERTIES:
-:ID:       fcb9e85e-b466-49d1-9493-6b72e3c66c1a
-:END:
-
 * core :core:
 :PROPERTIES:
 :ID:       b9128118-e381-4abc-b078-776e437ef31c
@@ -61,6 +18,8 @@ headline are loaded.
 :ID:       e5df5609-ebc1-40ac-a615-1841d8c1781e
 :header-args: :tangle ~/.config/emacs/early-init.el
 :END:
+
+This headline corresponds to Emacs's newly introduced [[https://www.gnu.org/software/emacs/manual/html_node/emacs/Early-Init-File.html][early-init]] file.
 
 *** DOC pause garbage collection :performance:
 :PROPERTIES:
@@ -135,9 +94,9 @@ This is the most efficient way to set the font. Reason being, it's done before
 the initialization of the frame and it avoids the usage of functions like
 [[helpfn:set-frame-font][set-frame-font]], which more than just set the font. A caveat is that this will
 cause your emacs to crash if the font you specify does not exist. And, you can't
-check the existing fonts at this time either because the [[https://emacs.stackexchange.com/questions/62318/storing-string-in-variable-fails-to-work-in-early-init-el/62320?noredirect=1#comment98194_62320][frame hasn't been
-initialized yet]] so functions like [[helpfn:font-family-list][font-family-list]] and [[helpfn:find-font][find-font]] will not return
-reliable values (trust me, I tried).
+check the existing fonts at this time either because the
+[[https://emacs.stackexchange.com/questions/62318/storing-string-in-variable-fails-to-work-in-early-init-el/62320?noredirect=1#comment98194_62320][frame hasn't been initialized yet]] so functions like [[helpfn:font-family-list][font-family-list]] and [[helpfn:find-font][find-font]]
+will not return reliable values (trust me, I tried).
 
 #+begin_src emacs-lisp :noweb yes
 (push (cons 'font <<font()>>) default-frame-alist)
@@ -806,24 +765,24 @@ If object is already unquoted, return OBJ."
     (_ obj)))
 #+end_src
 
-**** macro keyword arguments obselete:
+**** macro keyword arguments
 :PROPERTIES:
 :ID:       dc7a63e6-041b-4855-b206-6d72ef732de1
 :END:
 
-Following past examples (such as that of), I initially opted for allowing
-keyword arguments in the "function args" part of defun-like macros. This is fine
-when there's only one keyword argument, but any more and it starts to get
-crowded. It doesn't help that emacs functions tend towards longer names due to a
-lack of namespaces. Therefore, I support keyword args in the function body.
+This macro is meant to be a temporary solution--until I or someone else creates
+sufficiently advanced destructuring mechanism--for having to split a
+"defun-like" body.
 
 #+begin_src emacs-lisp
-(defun xl-keyword-macro-args (body)
-  "Return list of (docstring KEYWORD-ARGS BODY)."
+(defun xl-parse-defun-body (body)
+  "Return list of (docstring KEYWORD-ARGS BODY).
+BODY is the body of a defun-like form."
   (loopy (with (docstring (when (stringp (car body)) (pop body))))
-	 (while (keywordp (car body)))
-	 (append plist (list (pop body) (pop body)))
-	 (finally-return (list docstring plist body))))
+	 (list form body)
+	 (while (keywordp (car-safe (car-safe body))))
+	 (append alist (list (pop body) (pop body)))
+	 (finally-return (list docstring alist body))))
 #+end_src
 
 **** true-list-p
@@ -1907,10 +1866,11 @@ same thing, except it uses =after!= instead of =with-eval-after-load=.
 **** DOC with-temp-advice! :new:unused:webcode:
 :PROPERTIES:
 :ID:       5fb1f2e9-53d2-4830-b6b2-abef3477002d
+:REFERENCES: [[][link to references]]
 :END:
-:LINKS:
-https://emacs.stackexchange.com/questions/54500/how-to-add-a-locally-override-the-message-function
-:END:
+
+=with-temp-advice!= is a macro to be used as a replacement for =cl-flet= and
+=cl-letf=.
 
 #+begin_src emacs-lisp
 (defmacro with-temp-advice! (advices &rest body)
@@ -2019,280 +1979,216 @@ variable. Also, I don't support the alternate =fn:= syntax.
 	 (-let [,it ,argsym] ,@body)))))
 #+end_src
 
-**** defun! :extension:
+**** defmacro!
 :PROPERTIES:
-:ID:       2e345fe9-4c03-4c81-bedf-6f40ea0b755c
+:ID:       a108d500-b2e8-4dfa-b8f5-2e2bdaf9a443
 :END:
 
-=defun!= is meant to be a wrapper of and replacement for =defun=. I want a
-general macro that I can use for building other "defun-like" macros such as
-=defhook!= and =defadvice!=. More generally, there are patterns that are
-repeated very often.
-
-***** parser alist
+***** defmacro helper
 :PROPERTIES:
-:ID:       fa0773f5-d6be-4c9f-966f-7e8c2e68e40e
+:ID:       08db6f74-4145-445e-aa03-eea69085234e
 :END:
+
+This helper is for replacing symbols of the form.
 
 #+begin_src emacs-lisp
-(defvar defun-macro%handler-alist nil)
+(defun xl-defmacro%%process-anaphoric-symbols (obj)
+  "Replace anaphoric symbols with a format form."
+  (if (or (not (member (type-of obj) '(string symbol)))
+	  (not (s-matches-p XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj))))
+      obj
+    (let* ((string (xl-to-string obj))
+	   (matches (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP string))
+	   (replacements (--map (cons (car it) "%s") matches))
+	   (symbols (--map (intern (-second-item it)) matches)))
+      `(,'\, (,(if (symbolp obj) 'xl-intern-format 'format)
+	      ,(s-replace-all replacements string)
+	      ,@symbols)))))
 #+end_src
 
-***** process clauses
+***** add proper syntax highlighting
 :PROPERTIES:
-:ID:       ca8193b2-54dd-4637-90bb-670e0b5ad8f8
+:ID:       4d8be369-2944-4e25-be29-499b04a77cf6
 :END:
 
+***** defmacro!
+:PROPERTIES:
+:ID:       be7248e3-75b6-46e8-8b38-b1144870b9b1
+:END:
+
+When you start writing many macros you many notice that you often need to create
+names for functions and variables. Typically, you create these symbols via
+something like ~(intern (format "some-name-%s"))~. But doing this all time time
+and often multiple times in one macro quickly becomes tedious. This macro is
+designed to deal with this problem.
+
+It replaces.
+
 #+begin_src emacs-lisp
-(defun defun-macro%process-clauses (alist state)
-  "Return the form generated by ALIST."
-  (-let* ((((name . args)) alist)
-	  (fn (or (alist-get name defun-macro%handler-alist) #'ignore))
-	  (rest (cdr alist)))
-    (funcall fn name args rest state)))
+(defmacro defmacro! (name args &rest body)
+  "Same as `defmacro' but."
+  (declare (indent defun))
+  (-let [(docstring _ body) (xl-parse-defun-body body)]
+    `(defmacro ,name ,args
+       ,docstring
+       ,@(-tree-map #'xl-defmacro%%process-anaphoric-symbols body))))
 #+end_src
 
-***** defun!
+**** let!
 :PROPERTIES:
-:ID:       3ad5b063-3bb4-4a90-b875-f154a13dd7a6
+:ID:       edfcb9c8-b9a7-4b7b-be8e-42c1df5b87b1
 :END:
 
+There are lots of "let-like" macros in elisp (probably in other lisps as well).
+There's =cl-letf=, =cl-flet=, =let-alist=. Ones that I've written include
+=with-temp-advice=. Dash has =-let=. What I want is one let macro that I can use
+to do everything. It will recognize what it should do for each binding by
+looking at its structure.
+
 #+begin_src emacs-lisp
-(defmacro defun! (name args &rest body)
-  "Extensible macro builder that is a variant of `defun'."
-  (declare (indent defun) (doc-string 3))
-  (let* ((docstring (when (stringp (car body)) (pop body)))
-	 (alist (loopy (while (keywordp (ignore-errors (caar body)))) (collect (pop body))))
-	 (state (a-list 'name name 'args args 'docstring docstring 'body body)))
-    (macroexp-progn (defun-macro%process-clauses alist state))))
+(defmacro let! (bindings &rest body)
+  "Generic let macro."
+  (loopy (list binding bindings)
+	 (collect wrappers (-first ))
+	 (finally-return (xl-wrap-form wrappers (macroexp-progn body)))))
 #+end_src
 
-***** parsers
+**** defadvice!
 :PROPERTIES:
-:ID:       3c3233ab-1cf2-47d5-bbad-d7e71bbc13aa
-:END:
-
-****** parse-hook
-:PROPERTIES:
-:ID:       f7c0897d-79da-4e73-8ba7-ac5bdedacbfb
+:ID:       6dd44e4c-0f11-4a45-9ad0-9b5ac35d4e58
 :END:
 
 #+begin_src emacs-lisp
-(add-to-list 'defun-macro%handler-alist '(:hook . defun-macro%handle-hook))
-
-(defun defun-macro%handle-hook (_ args rest state)
-  "Generate code to define an xl hook."
-  (let-alist state
-    (loopy (with (orig-name (xl-intern-format "xl--%s-hook" .name))
-		 ((hooks plist) (-split-with (-not #'keywordp) args))
-		 ((&plist :append :depth :local) plist))
-	   (for symbol hooks)
-	   (expr hook (xl-symbol-intern symbol '& .name))
-	   (collect `(defalias ',hook ',orig-name))
-	   (collect `(add-hook ',symbol ',hook ,(or append depth) ,local))
-	   (collect `(xl-log-function ',hook))
-	   (finally-return `((defun ,orig-name ,.args ,.docstring ,@.body)
-			     ,@loopy-result)))))
+(defmacro! defadvice! (name args &rest body)
+  "Define an advice."
+  (-let [(docstring alist body) (xl-parse-defun-body body)]
+    (let-alist alist
+      (loopy (for fn .functions)
+	     (expr advice (xl-advice-gen-symbol fn name))
+	     (collect `(defalias ',advice ',orig-advice))
+	     (collect `(advice-add #',fn ,where #',advice))
+	     (collect `(xl-log-function #',advice))
+	     (finally-return `((defun xl--<name>-advice ,.args ,.docstring ,@.body)
+			       ,@loopy-result))))))
 #+end_src
 
-****** parse advice
+**** defhook!
 :PROPERTIES:
-:ID:       fbff4b81-3a11-42df-a61f-42e6c5771734
+:ID:       8ea918ba-e25f-4296-a83d-dbb05c4f9130
 :END:
 
 #+begin_src emacs-lisp
-(iter (for type '(:override :around :before :after :after-while))
-      (add-to-list 'defun-macro%handler-alist (cons type 'defun-macro%handle-advice)))
-
-(defun defun-macro%handle-advice (where args rest state)
-  (let-alist state
-    (loopy (with (orig-advice (xl-intern-format "xl--%s-advice" .name))
-		 ((functions plist) (-split-with (-not #'keywordp) args))
-		 (props (plist-get :props plist)))
-	   (for fn functions)
-	   (expr advice (xl-advice-gen-symbol fn .name))
-	   (collect `(defalias ',advice ',orig-advice))
-	   (collect `(advice-add #',fn ,where #',advice))
-	   (collect `(xl-log-function #',advice))
-	   (finally-return `((defun ,orig-advice ,.args ,.docstring ,@.body)
-			     ,@loopy-result
-			     ,@(defun-macro%process-clauses rest state))))))
+(defmacro! defhook! (name args &rest body)
+  "Define a hook."
+  (declare (indent defun))
+  (-let [(docstring alist body) (xl-parse-defun-body body)]
+    (let-alist alist
+      (loopy (for symbol .hook)
+	     (expr hook (xl-symbol-intern symbol '& name))
+	     (collect `(defalias ',hook xl--<name>-hook))
+	     (collect `(add-hook ',symbol ',hook ,(or .append .depth) ,.local))
+	     (collect `(xl-log-function ',hook))
+	     (finally-return `(progn (defun xl--<name>-hook ,args ,.docstring ,@body)
+				     ,@loopy-result))))))
 #+end_src
 
-****** parse generic advice
+**** defhooksym!
 :PROPERTIES:
-:ID:       73f153c5-b005-41c1-bc35-3aa47b4339f1
+:ID:       fa00650b-5a4d-4e22-b22c-035be0875524
 :END:
 
 #+begin_src emacs-lisp
-(add-to-list 'defun-macro%handler-alist '(:gadvice . defun-macro%handle-gadvice))
-
-(cl-defun defun-macro%handle-gadvice (_ bool rest state)
-  (let-alist state
-    (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
-	  (advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
-      (when bool
-	`((defun ,generic-advice-fn (fn) (advice-add fn :around #',advice-fn))
-	  (defun ,advice-fn ,.args ,.docstring ,@.body)
-	  ,@(defun-macro%process-clauses rest state))))))
+(defmacro defhooksym! (name args &rest body)
+  "Define a new hook symbol."
+  `(progn
+     (defvar ,name nil ,docstring)
+     (defadvice! run-<name> ()
+       "Run hooks."
+       (:around)
+       ,@body)
+     (xl-gadvice-expire ',name)))
 #+end_src
 
-****** parse =defafter!= :defer:
+**** defafter!
 :PROPERTIES:
-:ID:       76e34252-c93f-4de2-b13c-2e188cd4a476
+:ID:       892a40f9-7023-4cdc-a73c-c03d79037fca
 :END:
 
 #+begin_src emacs-lisp
-(add-to-list 'defun-macro%handler-alist '(:features . defun-macro%handle-features))
-
-(defun defun-macro%handle-features (_ features rest state)
-  "Generate code to run function after features."
-  (let-alist state
-    (let ((after-fn (gensym (format "xl--after-%s-" .name))))
-      `((after! ,features
-	  (cl-defun ,after-fn ,.args ,.docstring ,@.body)
-	  (funcall #',after-fn))
-	,@(defun-macro%process-clauses rest state)))))
+(defmacro defafter! (name features &rest body)
+  "Load feature after."
+  `(defhook! ,name (feature)
+     ,docstring
+     (:hook xl-after-load-feature-hook)
+     (when ,feature ,@body)))
 #+end_src
 
-***** extensions
+**** defbefore!
 :PROPERTIES:
-:ID:       1d8a1e3b-6f65-432a-9340-e1afe797c0ca
-:END:
-
-****** defhook!
-:PROPERTIES:
-:ID:       57e8e84e-c928-451f-8cfc-1c3b638bc318
+:ID:       34ef94f2-5bf8-4868-a488-3ce8049b59ea
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defhook! (name args docstring &rest body)
-  "Wrapper around `defun!'."
-  (declare (indent defun) (doc-string 3))
-  `(defun! ,name (&rest _) ,docstring (:hook ,@args) ,@body))
+(defmacro defbefore! (name args &rest body)
+  "Evaluate BODY just before feature is loaded.
+If feature is already loaded, eval BODY immediately."
+  `(progn
+     (defhook! ,name ()
+       ,docstring
+       (:hook xl-before-load-feature-hook)
+       (when (meet-condition) ,@body))
+     (xl-gadvice-expire #',name)
+     (when (meet-condition) ())))
 #+end_src
 
-****** defadvice!
+**** defcapture!
 :PROPERTIES:
-:ID:       6742346f-f9f5-4898-a1f1-668271f52b8e
+:ID:       ed0d3e09-b401-4933-a2f9-2e661bc1f313
 :END:
 
+This macro is for creating org-capture templates. It is smart enough not to try
+to define them until the feature =org-capture= is loaded.
+
 #+begin_src emacs-lisp
-(defmacro defadvice! (name args docstring &rest body)
-  "Wrapper around `defun!'."
-  (declare (indent defun) (doc-string 3))
-  `(defun! ,name (&rest _) ,docstring (,@args) ,@body))
+(defmacro defcapture! (name args &rest body)
+  "Define a capture template."
+  `(defafter! define-capture-template (org-capture)
+     ""
+     `(doct)))
 #+end_src
 
-****** defgadvice!
+**** deftimer!
 :PROPERTIES:
-:ID:       141da0b0-f721-4576-921b-7d800291267a
+:ID:       34822ce0-8eb7-4f2c-af02-4c9e55fd85f7
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defgadvice! (name args docstring &rest body)
-  (declare (indent defun) (doc-string 3))
-  `(defun! ,name ,args ,docstring (:gadvice t) ,@body))
+(defmacro! deftimer! (name args ,@body)
+  "Define a timer."
+  `(progn
+     (defun xl-timer--<name> () ,docstring ,@body)
+     (funcall #',timer-fn ,.secs ,.repeat #',.function)))
 #+end_src
 
-****** defafter! :defer:
+**** defgadvice!
 :PROPERTIES:
-:ID:       b6179567-c840-4dfa-891e-3e27384dfdb9
+:ID:       2d3c9da3-bd6e-41c5-b9c4-0b6a4584af06
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defafter! (name args &rest body)
-  (declare (indent defun) (doc-string 3))
-  (let ((docstring (when (stringp (car body)) (pop body))))
-    `(defun! ,name () ,@(when docstring (list docstring))
-       (:features ,@args)
-       ,@body)))
+(defmacro! defgadvice! ()
+  `(progn (defun xl-gadvice-<name> ())
+	  (defun)))
 #+end_src
 
-*** anaphora :anaphora:
+**** defun!
 :PROPERTIES:
-:ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
+:ID:       817ba478-3c4d-40e0-9d59-ccc84cdcbe53
 :END:
 
-Anaphora refers to the ability to refer to. I have decided it is best to use
-=<>= to denote the symbol referred to by anaphoric macros because it is easy to
-type (assuming parentheses completion), because such a symbol uncommon in lisp.
-A key advantage to this is that there is a consistent "syntax" for anaphoric
-variables as opposed to using =it=. A consequence of this is that you have more
-flexibility to name variables. Additionally, I like that it looks like a slot or
-placeholder.
-
-https://en.wikipedia.org/wiki/Anaphoric_macro
-
-**** anaphoric symbol regexp :anaphora:core:library:emacs:config:
-:PROPERTIES:
-:ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
-:END:
+This will be like =defun= except it will accept destructuring.
 
 #+begin_src emacs-lisp
-(defconst XL-ANAPHORIC-SYMBOL-REGEXP
-  (eval-when-compile (rx "<" (group (zero-or-more (not (any white ">" "<")))) ">"))
-  "Regular expression that matches an anaphoric symbol.")
-#+end_src
-
-**** anaphoric symbol :anaphora:core:library:
-:PROPERTIES:
-:ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-anaphoric-symbol-p (obj)
-  "Return non-nil if OBJ is an anaphoric symbol."
-  (and (symbolp obj)
-       (string-match-p XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
-#+end_src
-
-**** true anaphora name :anaphora:
-:PROPERTIES:
-:ID:       2833cd75-9c85-4c0e-9523-4489d387150a
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-anaphoric-true-symbol (symbol)
-  "Return the symbol that corresponds to the anaphoric symbol."
-  (save-match-data
-    (string-match XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name symbol))
-    (intern (match-string 1 (symbol-name symbol)))))
-#+end_src
-
-**** take symbol and return anaphoric symbol :anaphora:
-:PROPERTIES:
-:ID:       4b89588e-f3c3-49d3-8851-fdd214cee563
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-anaphoric-symbol (symbol)
-  "Return anaphoric form of symbol."
-  (xl-symbol-intern '< symbol '>))
-#+end_src
-
-**** body symbols :anaphora:
-:PROPERTIES:
-:ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-anaphoric-symbols (body)
-  "Return all the anaphoric symbols in body."
-  (->> (-flatten body)
-       (-filter #'xl-anaphoric-symbol-p)
-       (-uniq)))
-#+end_src
-
-**** all anaphoric symbols in obj :anaphora:
-:PROPERTIES:
-:ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-anaphoric-symbols-in-obj (obj)
-  "Return a list of anaphoric symbols in OBJ."
-  (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
 #+end_src
 
 *** generate a logging function
@@ -3502,8 +3398,9 @@ binding for the same key (this is opposed to =overriding-maps=, which completely
 override an evil keymap).
 
 #+begin_src emacs-lisp
-(defhook! make-intercept-map (evil-mode-hook)
+(defhook! make-intercept-map ()
   "Register `xl-override-map' as an intercept map."
+  (:hook evil-mode-hook)
   (iter (each state '(normal motion visual insert emacs))
 	(evil-make-intercept-map xl-override-mode-map state t)))
 #+end_src
@@ -6144,8 +6041,9 @@ larger text objects. It's saves me keystrokes.
 :END:
 
 #+begin_src emacs-lisp
-(defhook! disable-smartparens-navigate-skip-match (after-change-major-mode-hook)
+(defhook! disable-smartparens-navigate-skip-match ()
   "Disable smartparents skip match feature."
+  (:hook after-change-major-mode-hook)
   (setq sp-navigate-skip-match nil)
   (setq sp-navigate-consider-sgml-tags nil))
 #+end_src
@@ -9568,6 +9466,8 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 :PROPERTIES:
 :ID:       816e5dc0-92b6-4197-97fc-8129902a812f
 :END:
+
+[[file:multimedia/pictures/email-icon.jpeg]]
 
 ** sendmail
 :PROPERTIES:
