@@ -32,10 +32,12 @@ setup on any computer.
 :ID:       00e2ab6a-254a-4bf7-b44b-44555243d1cd
 :END:
 
-** Bootstrap
+** TODO Bootstrap
 :PROPERTIES:
 :ID:       e0d7acfa-0205-4cb2-b4ed-711340af250e
 :END:
+
+*Note: The bootstrap file is not yet working here I merely state what I envision it should do*
 
 One of the first question one asks about someone's dotfiles is how to bootstrap
 it. The goal is to have bootstrapping to be as easy and painless as possible.
