@@ -2,6 +2,8 @@
 #+author: Luis Henriquez-Perez
 #+property: header-args :tangle no
 
+[[file:multimedia/pictures/guix-sd-logo.png]]
+
 * modules
 :PROPERTIES:
 :ID:       93f77d4c-9e0c-482e-badc-cbd36d508610
