@@ -4,6 +4,9 @@
 
 [[file:multimedia/pictures/guix-sd-logo.png]]
 
+[[https://guix.gnu.org/][Guix]] (pronounced "geeks") is a completely [[][free as in freedom] operating system that focuses
+on providing a completely reproducible Emacs config.
+
 * modules
 :PROPERTIES:
 :ID:       93f77d4c-9e0c-482e-badc-cbd36d508610
