@@ -146,6 +146,16 @@ hierarchy to benefit.
 Org is an Emacs package that's written en emacs-lisp. I can extend it just like
 any other Emacs package.
 
+* Goals
+:PROPERTIES:
+:ID:       dd05074d-9bec-4179-a59a-6dac2f437490
+:END:
+
+** use org-mode and elisp as much as we can
+:PROPERTIES:
+:ID:       327bbe55-6e3c-4628-8adf-73563bb2a754
+:END:
+
 * Footnotes
 
 [fn:1] For example, suppose I wanted to find all Emacs code I wrote dealing with
