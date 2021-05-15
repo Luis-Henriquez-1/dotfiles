@@ -19,7 +19,7 @@ on providing a completely reproducible operating system. This file generates my
 * making xorg work
 :PROPERTIES:
 :ID:       ad38547b-90de-4045-835b-e8a981427f40
-:header-args: :tangle ~/xinit.sh
+:HEADER-ARGS: :tangle ~/xinit.sh
 :END:
 
 #+begin_src emacs-lisp
