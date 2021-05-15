@@ -4,7 +4,7 @@
 
 [[file:../multimedia/screenshots/emacs-logo.png]]
 
-* readme :doc:
+* README :doc:
 :PROPERTIES:
 :ID:       53ec10a9-c123-46ad-8a21-99229b02a496
 :END:
