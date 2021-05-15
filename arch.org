@@ -27,6 +27,8 @@ Before you install arch or any OS, you need the ISO.
 :ID:       e25bf324-fd01-461e-96f9-d7d5fb03705f
 :END:
 
+There are several install scrips available.
+
 #+begin_src emacs-lisp
 #+end_src
 
