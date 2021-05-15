@@ -1,0 +1,14 @@
+#+title: references.org
+#+author: Luis Henriquez-Perez
+#+tags: reference
+
+[[file:multimedia/pictures/reference.png]]
+
+The purpose of this file is contain references.
+
+Let me explain. Often when I write descriptions for headlines I want to add
+reference links. You might think "Ok, just add them in the description.". But
+the thing is, that sometimes there are several and/or I don't want to discuss
+every one of them. I was thinking of creating a separate drawer for them, but I
+don't like the extra space it consumes and it does not work well with
+[[][github] and [[][gitlab] because they don't hide them.
