@@ -7,7 +7,30 @@
 
 This file is meant to document arch-linux specific things.
 
-* install
+* pre-installation
+:PROPERTIES:
+:ID:       ea7ebf32-2140-4c19-a59b-38d27e994926
+:END:
+
+** get the iso
+:PROPERTIES:
+:ID:       81f375c7-ae01-487b-a48f-993b263b8851
+:END:
+
+Before you install arch or any OS, you need the ISO.
+
+#+begin_src sh
+#+end_src
+
+** get the install script
+:PROPERTIES:
+:ID:       e25bf324-fd01-461e-96f9-d7d5fb03705f
+:END:
+
+* install arch
 :PROPERTIES:
 :ID:       9355df90-6eae-4f47-9f33-3c8834754fe1
 :END:
+
+#+begin_src emacs-lisp
+#+end_src
