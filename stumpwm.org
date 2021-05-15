@@ -11,8 +11,3 @@ and when using stumpwm there is a problem of compatibility between languages.
 There is also an overlap problem.
 
 The advantage stumwm has over exwm is that it is more resistant to crashing.
-
-* general settings
-:PROPERTIES:
-:ID:       9280cb94-597b-4d60-9fda-4fcd67ff8b66
-:END:
