@@ -49,6 +49,7 @@ on providing a completely reproducible operating system. This file generates my
 :ID:       8991c73f-f063-41fc-bb9c-bd9297da68b1
 :END:
 
+#+name: settings
 #+begin_src scheme
 (locale "en_US.utf8")
 (timezone "America/New_York")
@@ -61,6 +62,7 @@ on providing a completely reproducible operating system. This file generates my
 :ID:       2c5adf97-279b-4448-a8a8-aed3a55f4131
 :END:
 
+#+name: bootloader
 #+begin_src scheme
 (bootloader
  (bootloader-configuration
@@ -74,6 +76,7 @@ on providing a completely reproducible operating system. This file generates my
 :ID:       03fa1b2b-1a8b-46fb-b335-250a352410b6
 :END:
 
+#+name: users
 #+begin_src scheme
 (users (cons* (user-account
                (name "luis")
@@ -104,6 +107,7 @@ on providing a completely reproducible operating system. This file generates my
 :ID:       d213453b-3356-45e3-8c79-124945325d0e
 :END:
 
+#+name services
 #+begin_src conf
 (services
   (remove (lambda (service)
