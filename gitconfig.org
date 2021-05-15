@@ -3,6 +3,8 @@
 #+property: header-args :tangle ~/.config/git/gitconfig
 #+tags: git
 
+[[file:multimedia/pictures/git-icon.png]]
+
 #+begin_src conf
 [user]
 	name = Luis Henriquez-Perez
