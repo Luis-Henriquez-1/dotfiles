@@ -8,7 +8,7 @@
 on providing a completely reproducible operating system. This file generates my
 [[][config.scm] file, which is located at.
 
-* DOC modules
+* modules
 :PROPERTIES:
 :ID:       93f77d4c-9e0c-482e-badc-cbd36d508610
 :END:
@@ -17,7 +17,7 @@ on providing a completely reproducible operating system. This file generates my
 (use-modules (gnu) (srfi srfi-1) (gnu services desktop))
 #+end_src
 
-* DOC service-modules
+* service-modules
 :PROPERTIES:
 :ID:       da553d6b-7da3-4106-96a1-55a0fabc623c
 :END:
@@ -26,7 +26,7 @@ on providing a completely reproducible operating system. This file generates my
 (use-service-modules desktop networking ssh xorg version-control)
 #+end_src
 
-* DOC operating system
+* operating system
 :PROPERTIES:
 :ID:       3dc9b0ec-ba1f-4b51-859b-a6cf28999430
 :END:
@@ -144,7 +144,7 @@ on providing a completely reproducible operating system. This file generates my
         %base-file-systems))
 #+end_src
 
-* DOC guix package recipes
+* guix package recipes
 :PROPERTIES:
 :ID:       33f1ff76-74e4-42b6-8c1a-bbb1d9499c08
 :END:
