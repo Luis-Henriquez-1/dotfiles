@@ -27,7 +27,8 @@ Before you install arch or any OS, you need the ISO.
 :ID:       e25bf324-fd01-461e-96f9-d7d5fb03705f
 :END:
 
-There are several install scrips available.
+There are several install scrips available. I use the one I found that has the
+most stars, [[][aui]
 
 #+begin_src sh
 git clone git://github.com/helmuthdu/aui
