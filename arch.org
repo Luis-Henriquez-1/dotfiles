@@ -29,7 +29,8 @@ Before you install arch or any OS, you need the ISO.
 
 There are several install scrips available.
 
-#+begin_src emacs-lisp
+#+begin_src sh
+git clone git://github.com/helmuthdu/aui
 #+end_src
 
 * install arch
