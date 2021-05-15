@@ -5,17 +5,26 @@
 [[file:multimedia/pictures/guix-sd-logo.png]]
 
 [[https://guix.gnu.org/][Guix]] (pronounced "geeks") is a completely [[][free as in freedom] operating system that focuses
-on providing a completely reproducible operating system.
+on providing a completely reproducible operating system. This file generates my
+[[][config.scm] file, which is located at.
 
 * modules
 :PROPERTIES:
 :ID:       93f77d4c-9e0c-482e-badc-cbd36d508610
 :END:
 
+#+begin_src scheme
+(use-modules (gnu) (srfi srfi-1) (gnu services desktop))
+#+end_src
+
 * service-modules
 :PROPERTIES:
 :ID:       da553d6b-7da3-4106-96a1-55a0fabc623c
 :END:
+
+#+begin_src scheme
+(use-service-modules desktop networking ssh xorg version-control)
+#+end_src
 
 * operating system
 :PROPERTIES:
@@ -40,6 +49,56 @@ on providing a completely reproducible operating system.
 :ID:       8991c73f-f063-41fc-bb9c-bd9297da68b1
 :END:
 
+#+begin_src scheme
+(locale "en_US.utf8")
+(timezone "America/New_York")
+(keyboard-layout (keyboard-layout "us"))
+(host-name "antelope")
+#+end_src
+
+** bootloader
+:PROPERTIES:
+:ID:       2c5adf97-279b-4448-a8a8-aed3a55f4131
+:END:
+
+#+begin_src scheme
+(bootloader
+ (bootloader-configuration
+  (bootloader grub-bootloader)
+  (target "/dev/sda")
+  (keyboard-layout keyboard-layout)))
+#+end_src
+
+** users
+:PROPERTIES:
+:ID:       03fa1b2b-1a8b-46fb-b335-250a352410b6
+:END:
+
+#+begin_src scheme
+(users (cons* (user-account
+               (name "luis")
+	       (comment "Luis")
+               (group "users")
+               (home-directory "/home/luis")
+               (supplementary-groups
+                '("wheel" "netdev" "audio" "video")))
+              %base-user-accounts))
+#+end_src
+
+** packages
+:PROPERTIES:
+:ID:       73f72e13-108a-42bf-ac05-5c01f118765d
+:END:
+
+#+begin_src scheme
+(packages
+ (append
+  (list (specification->package "emacs")
+	(specification->package "git")
+	(specification->package "nss-certs"))
+  %base-packages))
+#+end_src
+
 ** services
 :PROPERTIES:
 :ID:       d213453b-3356-45e3-8c79-124945325d0e
@@ -47,9 +106,9 @@ on providing a completely reproducible operating system.
 
 #+begin_src conf
 (services
- (remove (lambda (service)
-	   (eq? (service-kind service) gdm-service-type))
-	 %desktop-services))
+  (remove (lambda (service)
+	    (eq? (service-kind service) gdm-service-type))
+	  %desktop-services))
 #+end_src
 
 ** swap devices
@@ -77,3 +136,11 @@ on providing a completely reproducible operating system.
          (type "ext4"))
         %base-file-systems))
 #+end_src
+
+* guix package recipes
+:PROPERTIES:
+:ID:       33f1ff76-74e4-42b6-8c1a-bbb1d9499c08
+:END:
+
+This is a list of all the packages I am using. The idea is to reproduce my OS if I have to.
+
