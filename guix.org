@@ -132,6 +132,7 @@ on providing a completely reproducible operating system. This file generates my
 :ID:       cadd19ee-1f26-4858-9f0b-f96f9c295bbc
 :END:
 
+#+name: filesystems
 #+begin_src conf
 (file-systems
  (cons* (file-system
