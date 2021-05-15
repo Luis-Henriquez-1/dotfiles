@@ -16,6 +16,15 @@ on providing a completely reproducible operating system. This file generates my
 #+begin_src sh
 #+end_src
 
+* making xorg work
+:PROPERTIES:
+:ID:       ad38547b-90de-4045-835b-e8a981427f40
+:header-args: :tangle ~/xinit.sh
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 * modules
 :PROPERTIES:
 :ID:       93f77d4c-9e0c-482e-badc-cbd36d508610
