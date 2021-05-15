@@ -27,6 +27,9 @@ Before you install arch or any OS, you need the ISO.
 :ID:       e25bf324-fd01-461e-96f9-d7d5fb03705f
 :END:
 
+#+begin_src emacs-lisp
+#+end_src
+
 * install arch
 :PROPERTIES:
 :ID:       9355df90-6eae-4f47-9f33-3c8834754fe1
