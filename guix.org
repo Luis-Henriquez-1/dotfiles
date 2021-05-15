@@ -22,7 +22,14 @@ on providing a completely reproducible operating system. This file generates my
 :HEADER-ARGS: :tangle ~/xinit.sh
 :END:
 
-#+begin_src emacs-lisp
+#+begin_src sh
+#!/bin/sh
+
+DIR=$HOME/.guix-profile
+
+$DIR/bin/xinit -- $DIR/bin/Xorg :0 vt1 -keeptty \
+	       -configdir $DIR/share/X11/xorg.conf.d \
+	       -modulepath $DIR/lib/xorg/modules
 #+end_src
 
 * modules
