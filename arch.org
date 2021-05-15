@@ -3,6 +3,8 @@
 #+property: header-args :tangle no
 #+tags: arch
 
+[[file:multimedia/pictures/archlinux-logo.png]]
+
 This file is meant to document arch-linux specific things.
 
 * install
