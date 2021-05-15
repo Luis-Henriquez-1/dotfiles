@@ -1,9 +1,11 @@
 #+title: recipes.org
-#+author: Luis-Henriquez-Perez
+#+author: Luis Henriquez-Perez
 #+property: header-args :tangle ~/.config/emacs/recipes.el
 #+tags: recipe emacs config
 
-This file contains the recipes for the external packages used in my Emacs config.
+This file contains the recipes for the external packages used in my Emacs
+config. These recipes allow me or someone else to recreate my Emacs config with
+great precision.
 
 * a
 :PROPERTIES:
