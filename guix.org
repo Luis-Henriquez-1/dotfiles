@@ -93,6 +93,7 @@ on providing a completely reproducible operating system. This file generates my
 :ID:       73f72e13-108a-42bf-ac05-5c01f118765d
 :END:
 
+#+name: packages
 #+begin_src scheme
 (packages
  (append
@@ -120,6 +121,7 @@ on providing a completely reproducible operating system. This file generates my
 :ID:       a811a0a0-aa63-4af7-8610-97342cc8f30a
 :END:
 
+#+name: swap
 #+begin_src conf
 (swap-devices
  (list (uuid "4f8329f0-b4e6-439c-9e24-1d470a4d0e34")))
