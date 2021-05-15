@@ -8,6 +8,11 @@
 on providing a completely reproducible operating system. This file generates my
 [[][config.scm] file, which is located at.
 
+* get the iso
+:PROPERTIES:
+:ID:       a34b1a13-18b0-45d0-a6c3-5baf2a8fe4ac
+:END:
+
 * modules
 :PROPERTIES:
 :ID:       93f77d4c-9e0c-482e-badc-cbd36d508610
