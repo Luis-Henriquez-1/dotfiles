@@ -1,0 +1,7 @@
+#+title: tests.org
+#+author: Luis Henriquez-Perez
+#+tags: test
+
+[[file:multimedia/pictures/debug.jpg]]
+
+The purpose of this file is to contain tests for code.
