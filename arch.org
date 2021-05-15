@@ -1,0 +1,11 @@
+#+title: arch.org
+#+author: Luis Henriquez-Perez
+#+property: header-args :tangle no
+#+tags: arch
+
+This file is meant to document arch-linux specific things.
+
+* install
+:PROPERTIES:
+:ID:       9355df90-6eae-4f47-9f33-3c8834754fe1
+:END:
