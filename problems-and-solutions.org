@@ -80,11 +80,18 @@ well. This is a form of [[][transclusion].
 
 The searching part is already done well by [[][org-ql].
 
-* how do I deal with multiple OSes?
+* how do I deal with multiple OSes? :os:dotfiles:org:
 :PROPERTIES:
 :ID:       93f4f4de-09ee-48d5-93f4-22746ef3542d
 :END:
 
 I still need to work out how my dotfiles will elegantly and robustly handle
 multiple operating systems. Right now it assumes arch. I have some ideas.
+
+* removing excessive tags :org:tag:
+:PROPERTIES:
+:ID:       39d7b36f-b92a-4682-ad0b-bc6ba5026e61
+:END:
+
+I'd like to write a function that remove any unnecessary tags from an org file.
 
