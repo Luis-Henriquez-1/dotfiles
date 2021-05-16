@@ -391,7 +391,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 [[https://github.com/raxod502/straight.el#bootstrapping-straightel][bootstrap code]]) from [[https://github.com/kinnala/diy-emacs][diy-emacs]].
 
 #+begin_src emacs-lisp
-(defun xl-install-straight (target-dir)
+(defun xl-install-straight (recipe commit target-dir)
   "Install straight to TARGET-DIR."
   (let* ((repo (plist-get (cdr recipe) :repo))
 	 (repo-dir (expand-file-name "straight/repos/" target-dir))
