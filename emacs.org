@@ -9117,8 +9117,8 @@ This is better than evil escape as it only binds in insert.
   (key-chord-define evil-emacs-state-map "jk" #'evil-force-normal-state)
   (key-chord-define evil-emacs-state-map "kj" #'evil-force-normal-state)
   (after! lispyville
-    (key-chord-define evil-emacs-state-map "jk" #'evil-force-normal-state)
-    (key-chord-define evil-emacs-state-map "kj" #'evil-force-normal-state)
+    (key-chord-define evil-emacs-state-map "jk" #'lispyville-normal-state)
+    (key-chord-define evil-emacs-state-map "kj" #'lispyville-normal-state)
     (key-chord-define evil-insert-state-map "jk" #'lispyville-normal-state)
     (key-chord-define evil-insert-state-map "kj" #'lispyville-normal-state)))
 #+end_src
