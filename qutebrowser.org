@@ -46,6 +46,16 @@ https://restoreprivacy.com/private-search-engine/
 
 #+begin_src python
 c.url.searchengines = {"DEFAULT" : "https://www.qwant.com/?q={}&t=web",
-                       "swiss" : "https://swisscows.com/web?query={}&region=en-US"
-                       }
+                       "swiss"   : "https://swisscows.com/web?query={}&region=en-US"}
+#+end_src
+
+* autoconfig
+:PROPERTIES:
+:ID:       f9c469af-38ea-4486-9d00-86e6e1dbe21a
+:END:
+
+Without this, I get an error.
+
+#+begin_src python
+config.load_autoconfig(false)
 #+end_src
