@@ -42,33 +42,21 @@ git clone git://github.com/helmuthdu/aui
 https://jherrlin.github.io/posts/arch-install/
 https://wiki.archlinux.org/title/Installation_guide
 
-* Emacs service
+* Emacs service :systemd:service:emacs:
 :PROPERTIES:
 :ID:       ad64d69e-71cf-48fa-bddf-ca9ebcb615f0
 :END:
 
-** set up Emacs service :systemd:
-:PROPERTIES:
-:ID:       74734a2d-a089-49da-b857-425d2d52d582
-:HEADER-ARGS: :tangle no
-:END:
+This is starting Emacs in the background on startup.
 
-#+begin_src sh
-systemctl --user status emacs.service  # Service status
-systemctl --user enable emacs.service  # Start service on boot
-systemctl --user start emacs.service   # Start service
-systemctl --user stop emacs.service    # Stop service
-journalctl --user -u emacs.service     # Service stdout
-#+end_src
+https://jherrlin.github.io/posts/emacs-gnupg-and-pass/
+https://wiki.archlinux.org/title/Emacs
 
-** emacs service :systemd:service:emacs:
+** emacs service 
 :PROPERTIES:
 :ID:       b0149fb5-fa0c-4976-b6fa-c0be6254a303
 :HEADER-ARGS: :tangle ~/.config/systemd/user/emacs.service
 :END:
-
-https://jherrlin.github.io/posts/emacs-gnupg-and-pass/
-https://wiki.archlinux.org/title/Emacs
 
 #+begin_src conf
 [Unit]
@@ -84,6 +72,20 @@ Restart=on-failure
 
 [Install]
 WantedBy=default.target
+#+end_src
+
+** set up Emacs service 
+:PROPERTIES:
+:ID:       74734a2d-a089-49da-b857-425d2d52d582
+:HEADER-ARGS: :tangle no
+:END:
+
+#+begin_src sh
+systemctl --user status emacs.service  # Service status
+systemctl --user enable emacs.service  # Start service on boot
+systemctl --user start emacs.service   # Start service
+systemctl --user stop emacs.service    # Stop service
+journalctl --user -u emacs.service     # Service stdout
 #+end_src
 
 * gnupg :gpg:
