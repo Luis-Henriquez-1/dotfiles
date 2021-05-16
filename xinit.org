@@ -28,4 +28,3 @@ choosing. I don't use the default display manager provied with =guix= because.
 #+begin_src sh
 exec emacs
 #+end_src
-
