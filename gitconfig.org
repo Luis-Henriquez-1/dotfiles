@@ -1,6 +1,6 @@
 #+title: gitconfig.org
 #+author: Luis Henriquez-Perez
-#+property: header-args :tangle ~/.config/git/gitconfig
+#+property: header-args :tangle ~/.config/git/config
 #+tags: git
 
 [[file:multimedia/pictures/git-icon.png]]
