@@ -1,0 +1,90 @@
+#+title: problems-and-solutions.org
+#+author: Luis Henriquez-Perez
+
+This file is for documenting differences between observed and expected behavior
+as well as the solution to those problems.
+
+* BUG cursor was hollow during after install :cursor:display:
+:PROPERTIES:
+:ID:       2bb789c2-ca61-401b-b2ae-94e4891765ff
+:END:
+
+After first installing.
+
+* BUG key-chord-mode not being enabled :startup:
+:PROPERTIES:
+:ID:       37386985-e160-4f96-b5d7-de9689b26157
+:END:
+=key-chord-mode= should be enabled after the either =evil-insert-state= or
+=evil-emacs-state= is entered as I [[][specify in its use-package form] However, it
+was not enabled yet.
+
+* terminal gui Emacs cannot see the font :font:
+:PROPERTIES:
+:ID:       e4eeba57-fd52-4203-887a-68c0734567b4
+:END:
+
+So I found out that since the frame has never been created, terminal Emacs can't
+see the font. Looks like I'll need some script to get it?
+
+* poppler not working on guix :guix:
+:PROPERTIES:
+:ID:       10e01ab4-b8cb-45fb-b687-f9b2451e5a21
+:END:
+
+* org-mode needs to be restarted sometimes :org:
+:PROPERTIES:
+:ID:       a6caeed6-34fb-4b82-8b51-485265474446
+:END:
+
+After modifying the header args org-mode needs to be restarted so the new
+changes can take effect. I realized this after I had changed the tangle target
+of an org file to something else and realized.
+
+* how to trigger prompt for pinentry :emacs:gpg:pinentry:
+:PROPERTIES:
+:ID:       83466e70-ba4b-4e1a-b2a6-4a0fd5e18e87
+:END:
+
+I setup git so that I sign all of my commits with my gpg key. However, magit
+does not prompt me for my gpg key when it needs it. I have been getting around
+this by using [[][password-store-copy] from [[][pass] to induce a gpg prompt.
+
+* do I need both =/usr/bin/pinentry-emacs= and [[][emacs-pinentry] package? :gpg:pinentry:
+:PROPERTIES:
+:ID:       a752ecc7-3761-44d7-b98e-0d5f8e2d812b
+:END:
+
+* create =org-babel-tangle-subtree= :org:tangle:
+:PROPERTIES:
+:ID:       c7386043-ffe3-4d2d-9d56-3403c0324699
+:END:
+
+I often end up having to narrow the buffer to the subtree and then tangle. It
+would be faster if I had a function that did those steps for me.
+
+* generate a buffer of headings that I look up by tags :org:transclusion:
+:PROPERTIES:
+:ID:       96bd6106-e9e9-4c6e-b5df-a557b07c2fff
+:END:
+
+https://github.com/nobiot/org-transclusion
+
+A desire of mine has been to be able to search for content via headline tags.
+Obviously, in my case this would yield very powerful searches because virtually
+all of my dotfiles are in org-mode and contain tags. More specifically, when
+searching for headline tags I want to generate a buffer that contains all the
+headlines which match the tags I searched for. Also, when I edit any of those
+headlines, the original org buffers that contains those headlines are edited as
+well. This is a form of [[][transclusion].
+
+The searching part is already done well by [[][org-ql].
+
+* how do I deal with multiple OSes?
+:PROPERTIES:
+:ID:       93f4f4de-09ee-48d5-93f4-22746ef3542d
+:END:
+
+I still need to work out how my dotfiles will elegantly and robustly handle
+multiple operating systems. Right now it assumes arch. I have some ideas.
+
