@@ -42,7 +42,7 @@ git clone git://github.com/helmuthdu/aui
 https://jherrlin.github.io/posts/arch-install/
 https://wiki.archlinux.org/title/Installation_guide
 
-* Emacs :systemd:
+* set up Emacs service :systemd:
 :PROPERTIES:
 :ID:       74734a2d-a089-49da-b857-425d2d52d582
 :HEADER-ARGS: :tangle no
