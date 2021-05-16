@@ -1012,7 +1012,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("org" "7fa8173282f85c2ca03cc7f51f28f6adfb250610" (org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :depth full :pre-build ("make" "autoloads" "EMACS=/run/current-system/profile/bin/emacs") :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org"))
+("org" "7fa8173282f85c2ca03cc7f51f28f6adfb250610" (org :type git :repo "https://code.orgmode.org/bzg/org-mode.git" :local-repo "org" :depth full :pre-build ("make" "autoloads" "EMACS=/usr/bin/emacs") :build (:not autoloads) :files (:defaults "lisp/*.el" ("etc/styles/" "etc/styles/*")) :package "org"))
 #+end_src
 
 * org-auto-tangle
