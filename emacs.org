@@ -9406,7 +9406,7 @@ gpg passphrase via emacs.
 (use-package epa-config
   :set
   (epg-gpg-program   . "gpg2")
-  (epa-pinentry-mode . 'loopback))
+  (epg-pinentry-mode . 'loopback))
 #+end_src
 
 ** chess :amusement:
