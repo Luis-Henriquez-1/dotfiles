@@ -48,16 +48,6 @@ we should disable this.
 (setq org-confirm-babel-evaluate nil)
 #+end_src
 
-* other settings
-:PROPERTIES:
-:ID:       692bf002-24b5-4e51-bb8c-fea4c578cdfb
-:END:
-
-These settings ensure that creating non-existent directories is on.
-
-#+begin_src emacs-lisp
-#+end_src
-
 * emacs
 :PROPERTIES:
 :ID:       c492e7df-8297-4415-ab9f-df5bfba262c1

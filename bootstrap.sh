@@ -8,17 +8,26 @@
 ;; bootstrap.org file which will actually do the bootstrapping.
 
 (require 'org)
-(require 'org-babel)
 
 (defun printf (format-string &rest args)
   "Same as print, but allows format."
   (print (apply #'format format-string args)))
 
-;; We want to load the file but
-(defun org-babel%load-file ()
-  "")
+(setq org-babel-default-header-args
+      '((:session . "none")
+	(:results . "silent")
+	(:mkdirp  . "yes")
+	(:exports . "code")
+	(:cache   .  "no")
+	(:noweb   .  "no")
+	(:hlines  .  "no")
+	(:tangle  .  "no")))
 
-(org-babel-map-src-blocks)
+(setq org-confirm-babel-evaluate nil)
+
+(defun main ()
+  (org-babel-tangle-file "~/dotfiles/recipes.org")
+  (org-babel-tangle-file "~/dotfiles/emacs.org"))
 
 ;; Local Variables:
 ;; mode: emacs-lisp
