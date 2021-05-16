@@ -1,6 +1,7 @@
-#+title: stumpwmrc.org
+#+title: stumpwm.org
 #+author: Luis-Henriquez-Perez
 #+property: header-args :tangle ~/.config/stumwm/stumwmrc.lisp
+#+tags: stumwm
 
 [[file:multimedia/pictures/stumpwm-logo.png]]
 
@@ -11,3 +12,16 @@ and when using stumpwm there is a problem of compatibility between languages.
 There is also an overlap problem.
 
 The advantage stumwm has over exwm is that it is more resistant to crashing.
+
+* settings
+:PROPERTIES:
+:ID:       cfb766d9-e9e1-40bb-ab23-4ae552126c4d
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+* bindings :bind:
+:PROPERTIES:
+:ID:       2dd74a4c-4cb3-459b-ac49-ca33afd672a1
+:END:
