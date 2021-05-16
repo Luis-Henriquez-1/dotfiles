@@ -240,6 +240,15 @@ login.
 
 Audio does not work by default in arch.
 
+* connecting to wifi
+:PROPERTIES:
+:ID:       bfbe1060-4683-4c31-a122-fd8074a36049
+:END:
+
+https://github.com/luckysori/nmcli-wifi/blob/master/nmcli-wifi.el
+
+I use [[https://wiki.archlinux.org/title/NetworkManager][network manager]] to connect to wifi.
+
 * gitconfig :git:
 :PROPERTIES:
 :ID:       8c2e9f57-e17c-4c14-8200-55aca2d91fd5
