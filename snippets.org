@@ -1,0 +1,21 @@
+#+title: snippets.org
+
+* org
+:PROPERTIES:
+:ID:       564339fd-10a6-46b5-a8c0-d972cd6ce098
+:END:
+
+** link
+:PROPERTIES:
+:ID:       f06b9ecb-2648-4b20-a902-e3a208612478
+:END:
+
+* elisp
+:PROPERTIES:
+:ID:       2ead6042-cfb8-422a-83ac-0b59aedb5a86
+:END:
+
+** defun
+:PROPERTIES:
+:ID:       7455f003-50a3-4aa5-849b-fdc57f8cdbfe
+:END:
