@@ -39,5 +39,225 @@ git clone git://github.com/helmuthdu/aui
 :ID:       9355df90-6eae-4f47-9f33-3c8834754fe1
 :END:
 
-#+begin_src emacs-lisp
+https://jherrlin.github.io/posts/arch-install/
+https://wiki.archlinux.org/title/Installation_guide
+
+* Emacs :systemd:
+:PROPERTIES:
+:ID:       74734a2d-a089-49da-b857-425d2d52d582
+:HEADER-ARGS: :tangle no
+:END:
+
+#+begin_src sh
+systemctl --user status emacs.service  # Service status
+systemctl --user enable emacs.service  # Start service on boot
+systemctl --user start emacs.service   # Start service
+systemctl --user stop emacs.service    # Stop service
+journalctl --user -u emacs.service     # Service stdout
 #+end_src
+
+* emacs service :systemd:service:emacs:
+:PROPERTIES:
+:ID:       b0149fb5-fa0c-4976-b6fa-c0be6254a303
+:HEADER-ARGS: :tangle ~/.config/systemd/user/emacs.service
+:END:
+
+https://jherrlin.github.io/posts/emacs-gnupg-and-pass/
+https://wiki.archlinux.org/title/Emacs
+
+#+begin_src conf
+[Unit]
+Description=Emacs text editor
+Documentation=info:emacs man:emacs(1) https://gnu.org/software/emacs/
+
+[Service]
+Type=simple
+ExecStart=/usr/bin/emacs --fg-daemon --debug-init
+ExecStop=/usr/bin/emacsclient --eval "(kill-emacs)"
+Environment=SSH_AUTH_SOCK=%t/keyring/ssh
+Restart=on-failure
+
+[Install]
+WantedBy=default.target
+#+end_src
+
+* gnupg :gpg:
+:PROPERTIES:
+:ID:       9c6408e7-f270-4dc9-9b12-50d9706d98d6
+:END:
+
+[[file:multimedia/pictures/gnupg-logo.jpg]]
+
+** gpg conf
+:PROPERTIES:
+:ID:       90f89498-a4de-4106-ac2d-b5c157a927e1
+:HEADER-ARGS: :tangle ~/.gnupg/gpg.conf
+:END:
+
+#+begin_src conf
+personal-digest-preferences SHA256
+cert-digest-algo SHA256
+default-preference-list SHA512 SHA384 SHA256 SHA224 AES256 AES192 AES CAST5 ZLIB BZIP2 ZIP Uncompressed
+#+end_src
+
+** gpg-agent
+:PROPERTIES:
+:ID:       c04fbd57-6d2d-403f-8fb2-bbd71d69a33b
+:HEADER-ARGS: :tangle ~/.gnupg/gpg-agent.conf
+:END:
+
+https://www.masteringemacs.org/article/keeping-secrets-in-emacs-gnupg-auth-sources
+https://emacs.stackexchange.com/questions/32881/enabling-minibuffer-pinentry-with-emacs-25-and-gnupg-2-1-on-ubuntu-xenial
+
+*** allow Emacs :gpg:emacs:
+:PROPERTIES:
+:ID:       7e31ff3c-cab2-4c9c-9b9f-e1c0a1b89ef8
+:END:
+
+#+begin_src conf
+allow-emacs-pinentry
+allow-loopback-pinentry
+#+end_src
+
+*** don't check for my password in a long tme
+:PROPERTIES:
+:ID:       79e83f5b-37e9-4498-a8d6-022113c8a6bc
+:END:
+
+https://gist.github.com/tknv/43604e851a371949343b78261c48f190
+https://www.reddit.com/r/GnuPG/comments/7qi6os/show_me_your_gpgconf_gpgagentconf/
+
+#+begin_src conf
+max-cache-ttl 28800
+default-cache-ttl 28800
+#+end_src
+
+*** pinentry
+:PROPERTIES:
+:ID:       05b9d7cd-e296-4e4a-ae15-22152cd82ac9
+:END:
+
+#+begin_src conf
+pinentry-program /usr/bin/pinentry-emacs
+#+end_src
+
+*** reloading gpg-agent
+:PROPERTIES:
+:ID:       52aa3f62-3b99-4690-aed6-5e90319d9700
+:END:
+
+After you write your gpg settings the way you want them you'll probably have to
+reload the =gpg-agent=. I want to emphasize this because I didn't know I had to
+and it took me a hell of a time figuring out that I needed to do that.
+
+#+begin_src sh
+gpgconf --kill gpg-agent
+#+end_src
+
+** setup gpg with paperkey
+:PROPERTIES:
+:ID:       88f44998-3a7b-4490-84fe-6b8b5c1be203
+:END:
+
+I save my gpg password on a usb-drive.
+
+https://github.com/hlissner/doom-emacs/issues/4647
+
+*** pinentry
+:PROPERTIES:
+:ID:       7f0fc393-5ef4-41fd-92b3-a449282c68b2
+:END:
+
+The pinentry refers to how gpg will prompt you for your gpg password (pin). If
+you try to set up gpg without this you'll notice.
+
+*** importing existing keys
+:PROPERTIES:
+:ID:       a5b4d405-3013-49c8-ae81-24dc0627b756
+:END:
+
+**** if you have your public and private key
+:PROPERTIES:
+:ID:       6f0e8e40-c0ef-40fd-8d9a-9960d18969f6
+:END:
+
+https://www.debuntu.org/how-to-importexport-gpg-key-pair/
+
+To enable your public and private key you have to import them. But before you do
+this you *should set up the pinentry*. A red-flag that you did not set this up
+yet is if you keep getting timeouts.
+
+#+begin_src emacs-lisp
+gpg --import luis-id-pub.gpg
+gpg --import luis-id-sec.gpg
+#+end_src
+
+**** confirming that it works
+:PROPERTIES:
+:ID:       92a4f87e-a6f9-4e22-b971-83b5df1f3b5c
+:END:
+
+When you've successfully imported your public and private key, you should your
+keys with the following commands.
+
+#+begin_src sh
+gpg --list-keys
+gpg --list-secret-keys
+#+end_src
+
+* setting up graphical interface :os:arch:
+:PROPERTIES:
+:ID:       3c6e034b-b55f-439b-aa3f-317d0f862252
+:END:
+
+Essentially you needd to install xorg and make sure you have the necessary fonts
+installed. Then you can start the server by running =startx= (=xinit= didn't
+work for me).
+
+#+begin_src sh
+pacman -S --needed xorg-server xorg-xinit
+#+end_src
+
+* display manager :os:displaymanager:
+:PROPERTIES:
+:ID:       9980c56b-ba99-4628-ba15-102cd573cbe9
+:END:
+
+The display manager (or login manager) is what displayed after you boot the
+system. Typically it prompts your for username and password; and if you have
+multiplem OSes, it can provide you the choice for which one to go into when you
+login.
+
+* clean dotfiles from homedirectory :os:
+:PROPERTIES:
+:ID:       509434c6-e97a-4055-b787-c89a02b6fe8a
+:END:
+
+* enable audio :os:audio:
+:PROPERTIES:
+:ID:       3686194c-fa41-4dc3-b755-461dc9f4bbd7
+:END:
+
+Audio does not work by default in arch.
+
+* gitconfig :git:
+:PROPERTIES:
+:ID:       8c2e9f57-e17c-4c14-8200-55aca2d91fd5
+:HEADER-ARGS: :tangle ~/.config/git/config
+:END:
+
+[[file:multimedia/pictures/git-icon.png]]
+
+#+begin_src conf
+[user]
+	name = Luis Henriquez-Perez
+	email = luis@luishp.xyz
+	signingkey = C3F33DA91721A6B7365FBF668DAA027F8C199794
+[commit]
+	gpgsign = true
+[gpg]
+	program = "/usr/bin/gpg"
+[github]
+	user = Luis-Henriquez-Perez
+#+end_src
+
