@@ -6705,7 +6705,7 @@ state and disables it everywhere in favor of normal state.
 (xl-advice-add #'evil-motion-state :override #'evil-normal-state)
 #+end_src
 
-***** cursors
+***** cursors :cursor:
 :PROPERTIES:
 :ID: a5f558fb-221c-4b33-a7cd-29308ef74b0d
 :END:
