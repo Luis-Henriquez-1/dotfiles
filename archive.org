@@ -1,0 +1,11 @@
+#+title: archive.org
+#+author: Luis Henriquez-Perez
+
+I try to avoid deleting headlines. There's no reason to delete them if they
+might prove useful later. This file will contain the headlines that for
+some reason I'm not using.
+
+You may wonder that if I'm using version control why have this file. Why not get
+the headlines back searching my vcs history. Well, version control does not
+"know" about org headlines. And I don't know of a way to search through it
+painlessly.
