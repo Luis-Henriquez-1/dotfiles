@@ -4435,6 +4435,7 @@ source blocks.
 	'((:session . "none")
 	  (:results . "silent")
 	  (:exports . "code")
+	  (:mkdirp  . "yes")
 	  (:cache   .  "no")
 	  (:noweb   .  "no")
 	  (:hlines  .  "no")
