@@ -12,3 +12,13 @@ the thing is, that sometimes there are several and/or I don't want to discuss
 every one of them. I was thinking of creating a separate drawer for them, but I
 don't like the extra space it consumes and it does not work well with
 [[https://github.com/][github]] and [[https://about.gitlab.com/][gitlab]] because they don't hide them.
+
+* [[id:0c1c5eae-b112-4d79-b083-940d182b4ffd][gmail account]]
+:PROPERTIES:
+:ID:       aaa13ad6-128d-417c-9fef-0180b12b3fd5
+:END:
+
+** https://gist.github.com/MatthewZMD/39cc00260486d17450f7228a4f36891f
+:PROPERTIES:
+:ID:       2efa6e2f-fdc0-45d4-ae80-dba82a70b55a
+:END:
