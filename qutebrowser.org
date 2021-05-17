@@ -1,5 +1,5 @@
 #+title: qutebrowser
-#+author: Luis Henriquez
+#+author: Luis Henriquez-Perez
 #+property: header-args :tangle ~/.config/qutebrowser/config.py
 #+tags: qutebrowser browser web
 
