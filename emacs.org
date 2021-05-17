@@ -5132,7 +5132,7 @@ helm wrappers around existing commands.
   (selectrum-fix-vertical-window-height . 15)
   (selectrum-fix-minibuffer-height    . t)
   (selectrum-should-sort-p            . t)
-  (selectrum-count-style              . nil))
+  (selectrum-count-style              . 'matches))
 #+end_src
 
 ** company
