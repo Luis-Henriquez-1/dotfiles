@@ -95,3 +95,37 @@ multiple operating systems. Right now it assumes arch. I have some ideas.
 
 I'd like to write a function that remove any unnecessary tags from an org file.
 
+* definitive way for adding links :org:links:
+:PROPERTIES:
+:ID:       2bdbc233-f4e9-432c-b5fa-70a78b974906
+:END:
+
+* TODO creating a reference for headline at point
+:PROPERTIES:
+:ID:       0a729a62-88f4-4993-bdf7-30db09354c12
+:END:
+
+This headline contains the logic for creating a reference. A reference will
+consist of two parts. One is. One is a property on the headline whose value is a
+link.
+
+** parse file
+:PROPERTIES:
+:ID:       6bc2f3f0-df67-4e8d-9a48-56f7b5cc61bf
+:END:
+
+** main function
+:PROPERTIES:
+:ID:       a0dfdc42-fd08-4ca6-a36d-35d877b6c845
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-create-reference ()
+  "Creates a reference to a headline."
+  (interactive)
+  (let ((headline (org-ml-parse-headline-at (point)))
+	(reference-buffer (org-ml-parse-this-buffer)))
+    (if (not (has-reference-property-p headline))
+	(add-reference-property headline))))
+#+end_src
+
