@@ -4982,16 +4982,6 @@ Marginalia adds descriptions to various commands.
   (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
 #+end_src
 
-** TODO vertico
-:PROPERTIES:
-:ID:       ccc096ce-222a-402a-b0a8-5dff543419c8
-:END:
-
-** TODO ivy :ivy:
-:PROPERTIES:
-:ID:       82854114-2325-4fa6-b3c8-08cd61f54153
-:END:
-
 ** prescient :cache:
 :PROPERTIES:
 :ID:       4445c814-9899-4d54-affe-0cee38642690
