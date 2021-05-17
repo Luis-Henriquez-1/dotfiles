@@ -249,6 +249,14 @@ login.
 
 Audio does not work by default in arch.
 
+** enable audio
+:PROPERTIES:
+:ID:       b2ee6eef-1bd3-4b7c-aacc-5ab5a311a95f
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 * connecting to wifi
 :PROPERTIES:
 :ID:       bfbe1060-4683-4c31-a122-fd8074a36049
