@@ -7407,6 +7407,20 @@ will change.
   (disabled-command-function . nil))
 #+end_src
 
+** move to trash instead of deleting :backup:
+:PROPERTIES:
+:ID:       b6f33596-1b9c-45bf-bce5-ece5042782ac
+:END:
+
+By default Emacs actually deletes files. By setting this to =t=, you tell Emacs
+to move a file to trash instead of actually deleting it. This is better because
+if you accidentally delete a file or discover you can still just go get your
+file from the trash.
+
+#+begin_src emacs-lisp
+(setq delete-by-moving-to-trash t)
+#+end_src
+
 ** don't prompt me when loading theme :theme:
 :PROPERTIES:
 :ID:       eaa6531c-1188-41c7-a645-a82d9f482449
