@@ -1820,6 +1820,118 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :ID:       40a33da1-6d4b-4395-adfb-a4cdba7ec28c
 :END:
 
+**** defhook!
+:PROPERTIES:
+:ID:       8ea918ba-e25f-4296-a83d-dbb05c4f9130
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defhook! (name args &rest body)
+  "Define a hook that follows XL naming conventions."
+  (declare (indent defun))
+  (loopy (with ((docstring alist body) (xl-parse-defun-body body))
+	       (base-hook (xl-intern-format "xl--%s-hook" name))
+	       ((&alist :append :local (:hook hooks)) alist))
+	 (for symbol hooks)
+	 (expr hook (xl-hook-gen-name symbol name))
+	 (collect `(defalias ',symbol ,base-hook))
+	 (collect `(add-hook ',symbol ',hook ,(or append depth) ,local))
+	 (collect `(xl-log-function ',hook))
+	 (finally-return `(progn (defun ,base-hook ,args ,docstring ,@body)
+				 ,@loopy-result))))
+#+end_src
+
+**** defadvice!
+:PROPERTIES:
+:ID:       6dd44e4c-0f11-4a45-9ad0-9b5ac35d4e58
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defadvice! (name args &rest body)
+  "Define an advice that follows XL naming conventions."
+  (declare (indent defun))
+  (loopy (with ((docstring alist body) (xl-parse-defun-body body))
+	       (orig-fn (xl-intern-format "xl--%s-advice" name))
+	       ((where . functions) (--first (member (car it))))
+	       ((&alist :props) alist))
+	 (for fn functions)
+	 (expr advice (xl-advice-gen-symbol fn name))
+	 (collect `(defalias ',advice ',orig-fn))
+	 (collect `(advice-add #',fn ,where #',advice ,props))
+	 (collect `(xl-log-function #',advice))
+	 (finally-return `((defun ,orig-fn ,.args ,docstring ,@.body)
+			   ,@loopy-result))))
+#+end_src
+
+**** defhooksym!
+:PROPERTIES:
+:ID:       687c424f-967b-4950-98dc-2ee51532135a
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defhooksym! (name args &rest body)
+  "Define a hook."
+  (declare (indent defun))
+  `(progn (defvar ,name nil ,docstring)
+	  (defadvice! ,name ,args
+	    "Run..."
+	    ,@body)))
+#+end_src
+
+**** before-load-hook
+:PROPERTIES:
+:ID:       296c2ea1-204c-4140-9e0c-e9037768b02e
+:END:
+
+#+begin_src emacs-lisp
+(defhooksym! xl-before-load-hook ()
+  (:before require)
+  (run-hook 'xl-before-load-hook))
+#+end_src
+
+**** after-load-hook
+:PROPERTIES:
+:ID:       1cbc237b-b2f5-4a7d-a929-85887f8f76d1
+:END:
+
+#+begin_src emacs-lisp
+(defhooksym! xl-before-load-hook (&rest _)
+  (:after provide)
+  (run-hook 'xl-before-load-hook))
+#+end_src
+
+**** defafter!
+:PROPERTIES:
+:ID:       892a40f9-7023-4cdc-a73c-c03d79037fca
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defafter! (name features &rest body)
+  "Load feature after."
+  (declare (indent defun))
+  `(progn
+     (defhook! ,name (feature)
+       ,docstring
+       (:hook xl-after-load-feature-hook)
+       (when ,feature ,@body))))
+#+end_src
+
+**** defbefore!
+:PROPERTIES:
+:ID:       b58e4e3b-f141-4bbc-a898-3aef9f6813f4
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defbefore! (name args &rest body)
+  ""
+  (declare (indent defun))
+  `(progn
+     (defhook! ,name (feature)
+       ,docstring
+       (:hook xl-before-load-feature-hook)
+       (when ,feature ,@body))))
+#+end_src
+
 **** eval-after-load! :defer:
 :PROPERTIES:
 :ID:       8d831084-539b-4072-a86a-b55afb09bf02
@@ -2159,30 +2271,6 @@ repeated very often.
 :PROPERTIES:
 :ID:       1d8a1e3b-6f65-432a-9340-e1afe797c0ca
 :END:
-
-****** defhook!
-:PROPERTIES:
-:ID:       57e8e84e-c928-451f-8cfc-1c3b638bc318
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defhook! (name args docstring &rest body)
-  "Wrapper around `defun!'."
-  (declare (indent defun) (doc-string 3))
-  `(defun! ,name (&rest _) ,docstring (:hook ,@args) ,@body))
-#+end_src
-
-****** defadvice!
-:PROPERTIES:
-:ID:       6742346f-f9f5-4898-a1f1-668271f52b8e
-:END:
-
-#+begin_src emacs-lisp
-(defmacro defadvice! (name args docstring &rest body)
-  "Wrapper around `defun!'."
-  (declare (indent defun) (doc-string 3))
-  `(defun! ,name (&rest _) ,docstring (,@args) ,@body))
-#+end_src
 
 ****** defgadvice!
 :PROPERTIES:
