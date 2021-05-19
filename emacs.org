@@ -940,15 +940,19 @@ Otherwise, return OBJ."
 :ID:       44f57f99-8290-48ad-8f5c-bdbecce9ab52
 :END:
 
-The purpose of this function is to parse.
+The purpose of this function is to parse a defun body. To be honest, this
+function should not exist. Parsing the body of defun is something that should be
+done by a pattern matching program, however in Emacs the most powerful
+pattern-matching program, [[][pcase] doesn't have the features that would be
+required to pattern match this. You'd need to add an ability to explicity
+specify optional matches for pcase.
 
 #+begin_src emacs-lisp
 (defun xl-parse-defun-body (body)
   "Return a list of (docstring alist body)."
   (loopy (with (docstring (when (stringp (car body)) (pop body))))
 	 (while (keywordp (car-safe (car body))))
-	 (expr (key . rest) (pop body))
-	 (collect alist (cons key (xl-dwim-single rest)))
+	 (collect alist (pop body))
 	 (finally-return (list docstring alist body))))
 #+end_src
 
@@ -1848,13 +1852,15 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
   (declare (indent defun))
   (loopy (with ((docstring alist body) (xl-parse-defun-body body))
 	       (base-hook (xl-intern-format "xl--%s-hook" name))
-	       ((&alist :append :local (:hook hooks)) alist))
+	       (hooks (alist-get :hook alist))
+	       ((&alist :append :local) alist))
 	 (for symbol hooks)
 	 (expr hook (xl-hook-gen-name symbol name))
 	 (collect `(defalias ',symbol ,base-hook))
 	 (collect `(add-hook ',symbol ',hook ,(or append depth) ,local))
 	 (collect `(xl-log-function ',hook))
-	 (finally-return `(progn (defun ,base-hook ,args ,docstring ,@body)
+	 (finally-return `(progn ',alist
+				 (defun ,base-hook ,args ,docstring ,@body)
 				 ,@loopy-result))))
 #+end_src
 
@@ -2033,7 +2039,7 @@ same thing, except it uses =after!= instead of =with-eval-after-load=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-**** DOC with-temp-advice! :new:unused:webcode:
+**** with-temp-advice! :new:unused:webcode:
 :PROPERTIES:
 :ID:       5fb1f2e9-53d2-4830-b6b2-abef3477002d
 :END:
