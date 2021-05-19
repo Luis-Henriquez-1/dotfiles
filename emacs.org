@@ -943,9 +943,9 @@ Otherwise, return OBJ."
 The purpose of this function is to parse.
 
 #+begin_src emacs-lisp
-(defun xl-parse-body ()
+(defun xl-parse-defun-body (body)
   "Return a list of (docstring alist body)."
-  (loopy (with (docstring (when (stringp (car body) (pop body)))))
+  (loopy (with (docstring (when (stringp (car body)) (pop body))))
 	 (while (keywordp (car-safe (car body))))
 	 (expr (key . rest) (pop body))
 	 (collect alist (cons key (xl-dwim-single rest)))
