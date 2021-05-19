@@ -5458,23 +5458,6 @@ another.
   (evilem-style . 'at))
 #+end_src
 
-*** definer :core:lib:
-:PROPERTIES:
-:ID:       f51fbecb-200e-4583-9434-6f1eeef876d9
-:END:
-
-#+begin_src emacs-lisp
-(add-to-list 'defun-macro%handler-alist '(:evilem . defun-macro%handle-evilem))
-
-(defun defun-macro%handle-evilem (_ bool rest state)
-  "Generate code to create an evil motion."
-  (let-alist state
-    (let ((name (xl-symbol-intern 'evilem% .name))
-	  (args (-flatten-n 1 rest)))
-      `((after! (,@.args evil-easymotion)
-	  (evilem-make-motion ,name (lambda () (interactive) ,.docstring ,@.body) ,@args))))))
-#+end_src
-
 *** convenience macro
 :PROPERTIES:
 :ID:       bf5a38d5-3ccf-42f0-90f6-910312994163
