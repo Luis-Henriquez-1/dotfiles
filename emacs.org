@@ -935,6 +935,23 @@ Otherwise, return OBJ."
   (if (= (safe-length obj) 1) (car obj) obj))
 #+end_src
 
+**** parse body
+:PROPERTIES:
+:ID:       44f57f99-8290-48ad-8f5c-bdbecce9ab52
+:END:
+
+The purpose of this function is to parse.
+
+#+begin_src emacs-lisp
+(defun xl-parse-body ()
+  "Return a list of (docstring alist body)."
+  (loopy (with (docstring (when (stringp (car body) (pop body)))))
+	 (while (keywordp (car-safe (car body))))
+	 (expr (key . rest) (pop body))
+	 (collect alist (cons key (xl-dwim-single rest)))
+	 (finally-return (list docstring alist body))))
+#+end_src
+
 *** aliases :alias:
 :PROPERTIES:
 :ID:       bad5a570-2b94-4ada-88f0-de9f32fa9b7e
@@ -1923,7 +1940,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 
 #+begin_src emacs-lisp
 (defmacro defbefore! (name args &rest body)
-  ""
+  "Load feature before."
   (declare (indent defun))
   `(progn
      (defhook! ,name (feature)
