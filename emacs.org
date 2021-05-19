@@ -1852,7 +1852,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
   (declare (indent defun))
   (loopy (with ((docstring alist body) (xl-parse-defun-body body))
 	       (orig-fn (xl-intern-format "xl--%s-advice" name))
-	       ((where . functions) (--first (member (car it))))
+	       ((where functions) (--first (member (car it) (mapcar #'car advice--where-alist)) alist))
 	       ((&alist :props) alist))
 	 (for fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
