@@ -2020,9 +2020,8 @@ same thing, except it uses =after!= instead of =with-eval-after-load=.
 :PROPERTIES:
 :ID:       5fb1f2e9-53d2-4830-b6b2-abef3477002d
 :END:
-:LINKS:
+
 https://emacs.stackexchange.com/questions/54500/how-to-add-a-locally-override-the-message-function
-:END:
 
 #+begin_src emacs-lisp
 (defmacro with-temp-advice! (advices &rest body)
