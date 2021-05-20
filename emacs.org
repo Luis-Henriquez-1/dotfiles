@@ -504,7 +504,6 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 (require 'use-package)
 (require 'loopy)
 (require 'dash)
-(require 'defhook)
 #+end_src
 
 ** library :library:
@@ -1898,7 +1897,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
   (declare (indent defun))
   `(progn (defvar ,name nil ,docstring)
 	  (defadvice! ,name ,args
-	    "Run..."
+	    "Run"
 	    ,@body)))
 #+end_src
 
