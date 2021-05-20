@@ -1923,9 +1923,8 @@ This macro is for defining =defun-like= macros.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defadvice! (name args &rest body)
+(defunmacro! defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
-  (declare (indent defun))
   (loopy (with (orig-fn (xl-intern-format "xl--%s-advice" name)))
 	 (for fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
