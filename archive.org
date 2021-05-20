@@ -9,3 +9,37 @@ You may wonder that if I'm using version control why have this file. Why not get
 the headlines back searching my vcs history. Well, version control does not
 "know" about org headlines. And I don't know of a way to search through it
 painlessly.
+
+*** temporarily disable modes
+:PROPERTIES:
+:ID:       f18bf0e3-8704-443e-95ea-6c9d135f6b0c
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-disabled-modes! (modes &rest body)
+  "Temporarily disable modes and then restore them after body is evaluated."
+  (declare (indent defun))
+  (mmt-with-gensyms (to-re-enable mode)
+    `(loopy (list ,mode ',modes)
+	    (when (bound-and-true-p ,mode)
+	      (collect ,to-re-enable ,mode))
+	    (finally-do (--map (funcall it -1) ,to-re-enable)
+			(progn ,@body)
+			(--map (funcall it +1) ,to-re-enable)))))
+#+end_src
+
+*** set up Emacs service
+:PROPERTIES:
+:ID:       74734a2d-a089-49da-b857-425d2d52d582
+:HEADER-ARGS: :tangle no
+:END:
+
+This showcases how to do things with a service.
+
+#+begin_src sh
+systemctl --user status emacs.service  # Service status
+systemctl --user enable emacs.service  # Start service on boot
+systemctl --user start emacs.service   # Start service
+systemctl --user stop emacs.service    # Stop service
+journalctl --user -u emacs.service     # Service stdout
+#+end_src
