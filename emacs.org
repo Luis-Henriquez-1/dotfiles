@@ -1841,6 +1841,14 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :ID:       40a33da1-6d4b-4395-adfb-a4cdba7ec28c
 :END:
 
+**** generate font-lock
+:PROPERTIES:
+:ID:       0353d5ad-d937-4e7d-8f33-30624b1905de
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 **** add defhook fontlock
 :PROPERTIES:
 :ID:       41585612-f351-4c73-82c2-73e7e2e59f50
