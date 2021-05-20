@@ -2040,7 +2040,7 @@ same thing, except it uses =after!= instead of =with-eval-after-load=.
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-**** with-temp-advice! :new:unused:webcode:
+**** with-temp-advice!
 :PROPERTIES:
 :ID:       5fb1f2e9-53d2-4830-b6b2-abef3477002d
 :END:
