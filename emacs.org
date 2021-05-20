@@ -1944,7 +1944,7 @@ This macro is for defining =defun-like= macros.
   "Define a hook."
   (declare (indent defun))
   `(progn (defvar ,name nil ,docstring)
-	  (defadvice! ,name ,args
+	  (defadvice! run-<name>-hook ,args
 	    "Run"
 	    ,@body)))
 #+end_src
