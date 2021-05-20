@@ -4955,7 +4955,20 @@ even increasing the gc-cons-threshold will help enough. But here goes nothing.
 :ID:       192b8e36-eb69-4439-bc6f-b97cb336ea2a
 :END:
 
-** marginalia
+** selectrum
+:PROPERTIES:
+:ID:       6749192c-7f5c-4e53-9c09-33031681b21a
+:END:
+
+Selectrum is another completion framework. It distinguishes itself from the rest
+by striving to work with the built-in emacs [[helpfn:completing-read][completing-read]] instead of replacing
+it like [[https://github.com/emacs-helm/helm][helm]] and [[https://github.com/emacs-helm/helm][ivy]] do. It promises to work with the existing Emacs framework
+instead of replacing it as does Ivy and Helm. :recycle:
+
+I use it over helm because helm is too slow. I use it over ivy because the
+codebase is less buggy.
+
+*** marginalia
 :PROPERTIES:
 :ID:       0ce9957b-8805-4b2b-b5cb-52dc425a3dee
 :END:
@@ -4969,30 +4982,53 @@ Marginalia adds descriptions to various commands.
   (marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light nil)))
 #+end_src
 
-** orderless
+*** orderless
+:PROPERTIES:
+:ID:       9b2da58b-cade-449d-a458-a6b35732269d
+:END:
+
+**** use orderless for filtering
+:PROPERTIES:
+:ID:       6544c257-7322-4aeb-9d08-9581128c3c04
+:END:
+
+The variable [[helpvar:orderless-matching-styles][orderless-matching-styles]] is a list of functions; it determines how
+candidates are filtered. In my current setup I use
+=orderless-string-leading-initialism=.
+
+#+begin_src emacs-lisp
+(defafter! set-up-filtering (selectrum orderless)
+  "Set up orderless filtering for selectrum."
+  (setq orderless-matching-styles '(orderless-strict-leading-initialism orderless-initialism orderless-regexp))
+  (setq selectrum-refine-candidates-function #'orderless-filter))
+#+end_src
+
+**** highlight only visible characters
+:PROPERTIES:
+:ID:       09c4bacb-00e1-40e0-bf99-fd29ddd87f6e
+:END:
+
+This block ensures that selectrum uses orderless to highlight matches and that
+matches are only highlighted when they need to be.
+
+#+begin_src emacs-lisp
+(defafter! highlight-only-visible-characters (selectrum orderless)
+  "Make selectrum use orderless to highlight matches."
+  (setq orderless-skip-highlighting (lambda () selectrum-is-active))
+  (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
+#+end_src
+
+**** orderless
 :PROPERTIES:
 :ID:       9702810e-2013-4c41-ba12-0b55de6ceb38
 :END:
 
 #+begin_src emacs-lisp
 (use-package orderless
-  :commands orderless-filter orderless-highlight-matches
-  :set
-  (selectrum-refine-candidates-function    . #'orderless-filter)
-  (selectrum-highlight-candidates-function . #'orderless-highlight-matches))
+  :commands orderless-filter orderless-highlight-matches)
 #+end_src
 
-** TODO vertico
-:PROPERTIES:
-:ID:       ccc096ce-222a-402a-b0a8-5dff543419c8
-:END:
-
-** TODO ivy :ivy:
-:PROPERTIES:
-:ID:       82854114-2325-4fa6-b3c8-08cd61f54153
-:END:
-
-** prescient :cache:
+*** prescient :cache:
 :PROPERTIES:
 :ID:       4445c814-9899-4d54-affe-0cee38642690
 :END:
@@ -5007,16 +5043,6 @@ This package.
   :config
   (prescient-persist-mode))
 #+end_src
-
-** selectrum :selectrum:
-:PROPERTIES:
-:ID:       f8a9cdba-a4a9-42aa-a505-e88ad0b4114d
-:END:
-
-Selectrum is another completion framework. It distinguishes itself from the rest
-by striving to work with the built-in emacs [[helpfn:completing-read][completing-read]] instead of replacing
-it like [[https://github.com/emacs-helm/helm][helm]] and [[https://github.com/emacs-helm/helm][ivy]] do. It promises to work with the existing Emacs framework
-instead of replacing it as does Ivy and Helm. :recycle:
 
 *** selectrum-prescient :cache:
 :PROPERTIES:
@@ -5070,7 +5096,7 @@ down the alphabet. Fun fact, I actually contributed this feature to selectrum. :
 #+begin_src emacs-lisp
 (bind!
   (:map selectrum-minibuffer-map)
-  (:ie "C-o" #'selectrum-submit-exact-input)
+  (:ie "C-i" #'selectrum-submit-exact-input)
   (:ie "TAB" #'selectrum-next-candidate)
   (:ie "C-k" #'selectrum-previous-candidate)
   (:ie "C-j" #'selectrum-next-candidate)
@@ -5115,6 +5141,58 @@ If I don't include this, I get an.
 (use-package consult-selectrum
   :after (consult)
   :demand t)
+#+end_src
+
+*** embark
+:PROPERTIES:
+:ID:       3d6373e2-0389-4936-a8f5-db693de9874a
+:END:
+
+*** temporarily disable modes
+:PROPERTIES:
+:ID:       f18bf0e3-8704-443e-95ea-6c9d135f6b0c
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-disabled-modes! (modes &rest body)
+  "Temporarily disable modes and then restore them after body is evaluated."
+  (declare (indent defun))
+  (mmt-with-gensyms (to-re-enable mode)
+    `(loopy (list ,mode ',modes)
+	    (when (bound-and-true-p ,mode)
+	      (collect ,to-re-enable ,mode))
+	    (finally-do (--map (funcall it -1) ,to-re-enable)
+			(progn ,@body)
+			(--map (funcall it +1) ,to-re-enable)))))
+#+end_src
+
+*** embark action indicator
+:PROPERTIES:
+:ID:       88da23cf-0527-49cc-8d4f-2df71f556431
+:END:
+
+Having embark bindings available in the minibuffer is useful, but by default
+embark does not provide a way to actually see these bindings. You have to set
+the =embark-action-indicator=.
+
+#+begin_src emacs-lisp
+(setq embark-action-indicator
+      (lambda (map &optional _target)
+	(which-key--show-keymap "Embark" map nil nil 'no-paging)
+        #'which-key--hide-popup-ignore-command)
+      embark-become-indicator embark-action-indicator)
+#+end_src
+
+*** embark
+:PROPERTIES:
+:ID:       8e173a40-938f-4770-a10a-4e55777a3f48
+:END:
+
+#+begin_src emacs-lisp
+(bind!
+  (:map selectrum-minibuffer-map)
+  (:ie "C-a" #'embark-act)
+  (:ie "C-o" #'embark-act))
 #+end_src
 
 *** selectrum
