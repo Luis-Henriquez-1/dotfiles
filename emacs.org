@@ -1876,8 +1876,8 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
   (declare (indent defun))
-  (let ()
-    `(defmacro ,name ,args
+  `(defmacro ,name ,args
+     (let ()
        ,@(-tree-map #'xl-defmacro-helpe body))))
 #+end_src
 
