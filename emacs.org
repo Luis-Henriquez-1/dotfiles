@@ -1904,7 +1904,6 @@ This macro is for defining =defun-like= macros.
 (defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (loopy (with ((docstring alist body) (xl-parse-defun-body body))
-	       (args (or .args '(&rest _)))
 	       (base-hook (xl-intern-format "xl--%s-hook" name)))
 	 (for hook hooks)
 	 (expr hook (xl-hook-gen-name symbol name))
