@@ -1884,7 +1884,7 @@ This macro is for defining =defun-like= macros.
 #+begin_src emacs-lisp
 (defmacro defunmacro! (name args &rest body)
   "Define a macro for defining function names."
-  (let (())
+  (-let (((args plist) (-split-at )))
     `(progn
        (defhook! add-<name>-font-lock-keywords (emacs-lisp-mode-hook :expire t)
 	 "Add font lock keywords for <name>."
