@@ -1895,8 +1895,10 @@ This macro is for defining =defun-like= macros.
        ;; 	 (font-lock-add-keywords 'emacs-lisp-mode (xl-defun-form-font-lock ,name)))
        (defmacro! ,name (name args &rest body)
 	 (declare (indent defun))
-	 (let ((!docstring))
-	   (let-alist ,<$alist>
+	 (let* ((,!docstring)
+		(body ())
+		(,!alist))
+	   (let-alist ,!alist
 	     ,@body))))))
 #+end_src
 
