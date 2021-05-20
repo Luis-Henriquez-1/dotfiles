@@ -1848,7 +1848,8 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
-  `(defmacro ,name ,args ,body))
+  `(defmacro ,name ,args
+     ,@(mapcar #' body)))
 #+end_src
 
 **** generate font-lock
