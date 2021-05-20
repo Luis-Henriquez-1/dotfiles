@@ -1895,8 +1895,8 @@ This macro is for defining =defun-like= macros.
      (defmacro! ,name (name args &rest body)
        (declare (indent defun))
        (let* ((,!docstring)
-	      (body ())
-	      (,!alist))
+	      (,!alist)
+	      (body ()))
 	 (let-alist ,!alist
 	   ,@body)))))
 #+end_src
