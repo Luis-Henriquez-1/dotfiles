@@ -1911,7 +1911,7 @@ This macro is for defining =defun-like= macros.
 	 (collect `(defalias ',hook ,xl--<name>-hook))
 	 (collect `(add-hook ',hook ',hook ,(or .append .depth) ,local))
 	 (collect `(xl-log-function ',hook))
-	 (finally-return `(progn (defun ,xl--<name>-hook ,args ,docstring ,@body)
+	 (finally-return `(progn (defun ,xl--<name>-hook ,args ,@body)
 				 ,@loopy-result))))
 #+end_src
 
