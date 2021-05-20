@@ -1599,19 +1599,6 @@ hash-tables.
 (use-package ht)
 #+end_src
 
-**** dash-functional 
-:PROPERTIES:
-:ID:       704fc35f-0ad0-4eb3-9eb5-d8335465dbd8
-:END:
-
-=dash-functional= provides "function combinators". These are functions that take
-one or more functions as arguments and return a function. One example of this is
-emacs's [[helpfn:apply-partially][apply-partially]]. These functions can help.
-
-#+begin_src emacs-lisp
-(use-package dash-functional :demand t)
-#+end_src
-
 **** s 
 :PROPERTIES:
 :ID:       b96acb97-3963-4713-a03b-6294c65903fd

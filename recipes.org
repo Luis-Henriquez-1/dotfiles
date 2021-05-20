@@ -214,15 +214,6 @@ great precision.
 ("dash" "7a9c9378772b687a452966ce4745c54afb19a2fc" (dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el"))
 #+end_src
 
-* dash-functional
-:PROPERTIES:
-:ID:       6fc2382a-9b92-43d4-8760-a74cd98cffff
-:END:
-
-#+begin_src emacs-lisp
-("dash-functional" nil (dash-functional :flavor melpa :files ("dash-functional.el" "dash-functional-pkg.el") :package "dash-functional" :local-repo "dash.el" :type git :repo "magnars/dash.el" :host github))
-#+end_src
-
 * dashboard
 :PROPERTIES:
 :ID:       a4db070f-1b8b-4be9-b424-7dfdc71f7cee
