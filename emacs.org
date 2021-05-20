@@ -1852,6 +1852,9 @@ something like ~(intern (format "some-name-%s"))~. But doing this all time time
 and often multiple times in one macro quickly becomes tedious. This macro is
 designed to deal with this problem.
 
+This macro introduces two different anaphoric macro-esque syntaxes. One is that
+it replaces symbols of the form =<symbol>=.
+
 https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 
 #+begin_src emacs-lisp
