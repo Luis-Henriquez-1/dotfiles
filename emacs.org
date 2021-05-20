@@ -1850,7 +1850,11 @@ The font lock patters that I use are fairly regular.
 
 #+begin_src emacs-lisp
 (defun xl-gen-defun-font-lock (name)
-  "Return.")
+  "Return."
+  `((,(format "(\\(%s!\\)[[:space:]]+\\([-[:word:]]+\\)[[:space:]]+(\\([-[:word:]]+\\)" name)
+     (1 font-lock-keyword-face)
+     (2 font-lock-function-name-face)
+     (3 font-lock-variable-name-face))))
 #+end_src
 
 **** add defhook fontlock
