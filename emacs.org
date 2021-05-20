@@ -1862,11 +1862,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   (declare (indent defun))
   (let ()
     `(defmacro ,name ,args
-       ,@(--tree-map (pcase it
-		       ((and (pred symbolp) (app s-match-strings-all)))
-		       ((pred stringp))
-		       (_
-			()))))))
+       ,@(--tree-map ))))
 #+end_src
 
 **** generate font-lock
