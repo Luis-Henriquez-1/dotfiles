@@ -1849,9 +1849,9 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 #+begin_src emacs-lisp
 (pcase it
   ((and (pred symbolp) (app s-match-strings-all)))
-  ((pred stringp))
+  ((and (pred stringp) (app s-match-strings-all)))
   (_
-   ()))
+   it))
 #+end_src
 
 **** defmacro!
