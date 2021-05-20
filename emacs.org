@@ -1901,16 +1901,15 @@ This macro is for defining =defun-like= macros.
 :END:
 
 #+begin_src emacs-lisp
-(defunmacro! defhook! (name args &rest body)
+(defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (loopy (with ((docstring alist body) (xl-parse-defun-body body))
-	       (base-hook (xl-intern-format "xl--%s-hook" name))
-	       (hooks (alist-get :hook alist))
-	       ((&alist :append :local) alist))
+	       (args (or .args '(&rest _)))
+	       (base-hook (xl-intern-format "xl--%s-hook" name)))
 	 (for symbol hooks)
 	 (expr hook (xl-hook-gen-name symbol name))
 	 (collect `(defalias ',symbol ,base-hook))
-	 (collect `(add-hook ',symbol ',hook ,(or append depth) ,local))
+	 (collect `(add-hook ',symbol ',hook ,(or .append .depth) ,local))
 	 (collect `(xl-log-function ',hook))
 	 (finally-return `(progn ',alist
 				 (defun ,base-hook ,args ,docstring ,@body)
