@@ -504,6 +504,7 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 (require 'use-package)
 (require 'loopy)
 (require 'dash)
+(require 'defhook)
 #+end_src
 
 ** library :library:
