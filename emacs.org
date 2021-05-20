@@ -1886,9 +1886,9 @@ This macro is for defining =defun-like= macros.
   "Define a macro for defining function names."
   (-let (((args plist) (-split-at )))
     `(progn
-       (defhook! add-<name>-font-lock-keywords (emacs-lisp-mode-hook :expire t)
-	 "Add font lock keywords for <name>."
-	 (font-lock-add-keywords 'emacs-lisp-mode (xl-defun-form-font-lock ,name)))
+       ;; (defhook! add-<name>-font-lock-keywords (emacs-lisp-mode-hook :expire t)
+       ;; 	 "Add font lock keywords for <name>."
+       ;; 	 (font-lock-add-keywords 'emacs-lisp-mode (xl-defun-form-font-lock ,name)))
        (defmacro! ,name (name args &rest body)
 	 (declare (indent defun))
 	 (let-alist ,<$alist>
