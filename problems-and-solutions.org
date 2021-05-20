@@ -95,3 +95,57 @@ multiple operating systems. Right now it assumes arch. I have some ideas.
 
 I'd like to write a function that remove any unnecessary tags from an org file.
 
+* definitive way for adding links :org:links:
+:PROPERTIES:
+:ID:       2bdbc233-f4e9-432c-b5fa-70a78b974906
+:END:
+
+* TODO creating a reference for headline at point
+:PROPERTIES:
+:ID:       0a729a62-88f4-4993-bdf7-30db09354c12
+:END:
+
+This headline contains the logic for creating a reference. A reference will
+consist of two parts. One is. One is a property on the headline whose value is a
+link.
+
+** parse file
+:PROPERTIES:
+:ID:       6bc2f3f0-df67-4e8d-9a48-56f7b5cc61bf
+:END:
+
+** main function
+:PROPERTIES:
+:ID:       a0dfdc42-fd08-4ca6-a36d-35d877b6c845
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-create-reference ()
+  "Creates a reference to a headline."
+  (interactive)
+  (let ((headline (org-ml-parse-headline-at (point)))
+	(reference-buffer (org-ml-parse-this-buffer)))
+    (if (not (has-reference-property-p headline))
+	(add-reference-property headline))))
+#+end_src
+
+* set up a system for pdf webshot
+:PROPERTIES:
+:ID:       1c92e53d-a781-4368-8ef4-628e5c1f5f6a
+:END:
+
+There is a great need for me to save the webpages that I visit. For this there
+are two packages that can help: [[][monolith] and [[https://github.com/wkhtmltopdf/wkhtmltopdf][wkhtmltopdf]]. =monolith= saves
+a webpage as html and =wkhtmltopdf= converts an html page to a pdf.
+
+* prompt indicator does not show up immediately
+:PROPERTIES:
+:ID:       56a6fa78-dbb1-476e-ad34-20e00e6039ac
+:END:
+
+=embark= prompt indicator does not show up immediately after I press the binding
+for it. It shows up after pressing another binding.
+
+This is because of =mini-modeline-mode=. I need to disable it for the duration
+of the embark prompt. Also, the embark prompt needs to be changed or reworked
+somehow because it's very ugly.
