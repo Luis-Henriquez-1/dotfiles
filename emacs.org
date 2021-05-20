@@ -1848,8 +1848,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
-  `(defmacro ,name ,args
-     ,@(mapcar #' body)))
+  `(defmacro ,name ,args ,@(mapcar #'def body)))
 #+end_src
 
 **** generate font-lock
@@ -1868,7 +1867,7 @@ The font lock patters that I use are fairly regular.
      (3 font-lock-variable-name-face))))
 #+end_src
 
-**** add defhook fontlock
+**** defunmacro!
 :PROPERTIES:
 :ID:       41585612-f351-4c73-82c2-73e7e2e59f50
 :END:
@@ -1884,6 +1883,7 @@ This macro is for defining =defun-like= macros.
 	 "Add font lock keywords for <name>."
 	 (font-lock-add-keywords 'emacs-lisp-mode (xl-defun-form-font-lock ,name)))
        (defmacro! ,name (name args &rest body)
+	 (declare (indent defun))
 	 (let-alist ,<$alist>
 	   ,@body)))))
 #+end_src
@@ -1894,9 +1894,8 @@ This macro is for defining =defun-like= macros.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defhook! (name args &rest body)
+(defunmacro! defhook! (name args &rest body)
   "Define a hook that follows XL naming conventions."
-  (declare (indent defun))
   (loopy (with ((docstring alist body) (xl-parse-defun-body body))
 	       (base-hook (xl-intern-format "xl--%s-hook" name))
 	       (hooks (alist-get :hook alist))
