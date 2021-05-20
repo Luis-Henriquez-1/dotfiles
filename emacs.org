@@ -1858,7 +1858,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 (defmacro defmacro! (name args &rest body)
   (declare (indent defun))
   `(defmacro ,name ,args
-     ,@(--tree-map (lambda ()))))
+     ,@(--tree-map ())))
 #+end_src
 
 **** generate font-lock
