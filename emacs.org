@@ -5025,6 +5025,7 @@ matches are only highlighted when they need to be.
 
 #+begin_src emacs-lisp
 (use-package orderless
+  :before-call selectrum-mode
   :commands orderless-filter orderless-highlight-matches)
 #+end_src
 
