@@ -4969,12 +4969,7 @@ Marginalia adds descriptions to various commands.
   (marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light nil)))
 #+end_src
 
-*** orderless
-:PROPERTIES:
-:ID:       9b2da58b-cade-449d-a458-a6b35732269d
-:END:
-
-**** use orderless for filtering
+*** use orderless for filtering
 :PROPERTIES:
 :ID:       6544c257-7322-4aeb-9d08-9581128c3c04
 :END:
@@ -4990,7 +4985,7 @@ order which filtered candidates are displayed. In my current setup I use
   (setq selectrum-refine-candidates-function #'orderless-filter))
 #+end_src
 
-**** highlight only visible characters
+*** highlight only visible characters
 :PROPERTIES:
 :ID:       09c4bacb-00e1-40e0-bf99-fd29ddd87f6e
 :END:
@@ -5005,7 +5000,7 @@ matches are only highlighted when they need to be.
   (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
 #+end_src
 
-**** load orderless before selectrum
+*** load orderless before selectrum
 :PROPERTIES:
 :ID:       9702810e-2013-4c41-ba12-0b55de6ceb38
 :END:
