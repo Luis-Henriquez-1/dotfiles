@@ -100,6 +100,33 @@ I'd like to write a function that remove any unnecessary tags from an org file.
 :ID:       2bdbc233-f4e9-432c-b5fa-70a78b974906
 :END:
 
+* investigation on destructuring
+:PROPERTIES:
+:ID:       54546f11-6e78-48e3-9efd-c92b74c37cff
+:END:
+
+I eventually want to come up with a solution to adding features such as
+=one-or-more= and =optional= to pcase destructuring. Additionally, I want to see
+whether its possible to use a much friendlier syntax to pcases, and just convert
+to it in the background.
+
+** pcase-lambda work with logical
+:PROPERTIES:
+:ID:       b419b5f4-b739-4420-9c7c-265a8cf4b170
+:END:
+
+#+begin_src emacs-lisp
+(pcase-lambda (`(,(and (pred stringp) ,it))))
+#+end_src
+
+** pcase!
+:PROPERTIES:
+:ID:       cceb8e3f-8b0b-4551-91d3-27e24f4ba1c7
+:END:
+
+This is a prototype wrapper around the built-in pcase macro that tries to
+provide better syntax than pcase and add more logical.
+
 * TODO creating a reference for headline at point
 :PROPERTIES:
 :ID:       0a729a62-88f4-4993-bdf7-30db09354c12
