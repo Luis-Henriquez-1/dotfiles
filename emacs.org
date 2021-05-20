@@ -1846,6 +1846,8 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :ID:       0353d5ad-d937-4e7d-8f33-30624b1905de
 :END:
 
+The font lock patters that I use are fairly regular.
+
 #+begin_src emacs-lisp
 #+end_src
 
