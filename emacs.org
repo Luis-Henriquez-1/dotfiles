@@ -1849,11 +1849,11 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 #+begin_src emacs-lisp
 (defhook add-defhook-font-lock-keywords (emacs-lisp-mode-hook)
   "Add font lock keywords for `defhook!'."
-  '(("(\\(defhook!\\)[[:space:]]+\\([-[:word:]]+\\)[[:space:]]+(\\([-[:word:]]+\\)"
-     (1 font-lock-keyword-face)
-     (2 font-lock-function-name-face)
-     (3 font-lock-variable-name-face)))
-  (font-lock-add-keywords nil defhook-font-lock-keywords))
+  (alet '(("(\\(defhook!\\)[[:space:]]+\\([-[:word:]]+\\)[[:space:]]+(\\([-[:word:]]+\\)"
+	   (1 font-lock-keyword-face)
+	   (2 font-lock-function-name-face)
+	   (3 font-lock-variable-name-face)))
+    (font-lock-add-keywords nil it)))
 #+end_src
 
 **** defhook!
