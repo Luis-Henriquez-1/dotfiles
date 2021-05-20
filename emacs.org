@@ -1846,6 +1846,12 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :ID:       9b476d3f-b7a3-4657-9059-ed59b414337f
 :END:
 
+When you start writing many macros you many notice that you often need to create
+names for functions and variables. Typically, you create these symbols via
+something like ~(intern (format "some-name-%s"))~. But doing this all time time
+and often multiple times in one macro quickly becomes tedious. This macro is
+designed to deal with this problem.
+
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
   `(defmacro ,name ,args ,@(mapcar #'def body)))
