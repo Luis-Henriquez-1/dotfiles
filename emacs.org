@@ -4992,13 +4992,13 @@ Marginalia adds descriptions to various commands.
 :ID:       6544c257-7322-4aeb-9d08-9581128c3c04
 :END:
 
-The variable [[helpvar:orderless-matching-styles][orderless-matching-styles]] is a list of functions; it determines how
-candidates are filtered. In my current setup I use
+The variable [[helpvar:orderless-matching-styles][orderless-matching-styles]] is a list of functions; it determines the
+order which filtered candidates are displayed. In my current setup I use
 =orderless-string-leading-initialism=.
 
 #+begin_src emacs-lisp
 (defafter! set-up-filtering (selectrum orderless)
-  "Set up orderless filtering for selectrum."
+  "Set filtering preferences for selectrum."
   (setq orderless-matching-styles '(orderless-strict-leading-initialism orderless-initialism orderless-regexp))
   (setq selectrum-refine-candidates-function #'orderless-filter))
 #+end_src
