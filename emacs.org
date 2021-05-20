@@ -1863,9 +1863,14 @@ The font lock patters that I use are fairly regular.
 :END:
 
 #+begin_src emacs-lisp
-(defhook! add-defhook-font-lock-keywords (emacs-lisp-mode-hook :expire t)
-  "Add font lock keywords for `defhook!'."
-  (font-lock-add-keywords 'emacs-lisp-mode (xl-gen-defun-font-lock "defhook!")))
+(defmacro defunmacro! (name args &rest body)
+  "Define a macro for defining function names."
+  `(progn
+     (defhook! ,add-<name>-font-lock-keywords (emacs-lisp-mode-hook :expire t)
+       "Add font lock keywords for `defhook!'."
+       (font-lock-add-keywords 'emacs-lisp-mode (xl-gen-defun-font-lock "defhook!")))
+     (defmacro ,name (name args &rest body)
+       ())))
 #+end_src
 
 **** defhook!
