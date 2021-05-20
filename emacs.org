@@ -1854,6 +1854,7 @@ designed to deal with this problem.
 
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
+  (declare (indent defun))
   `(defmacro ,name ,args ,@(mapcar #'def body)))
 #+end_src
 
