@@ -1930,8 +1930,8 @@ This macro is for defining =defun-like= macros.
 	 (collect `(defalias ',advice ',orig-fn))
 	 (collect `(advice-add #',fn ,where #',advice ,.props))
 	 (collect `(xl-log-function #',advice))
-	 (finally-return `((defun ,xl--<name>-advice ,.args ,docstring ,@.body)
-			   ,@loopy-result))))
+	 (finally-return `(progn (defun ,xl--<name>-advice ,.args ,docstring ,@.body)
+				 ,@loopy-result))))
 #+end_src
 
 **** defhooksym!
