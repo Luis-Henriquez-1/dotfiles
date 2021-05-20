@@ -1847,6 +1847,9 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :END:
 
 #+begin_src emacs-lisp
+(defhook add-defhook-font-lock-keywords (emacs-lisp-mode-hook)
+  "Add font lock keywords for `defhook!'."
+  )
 #+end_src
 
 **** defhook!
