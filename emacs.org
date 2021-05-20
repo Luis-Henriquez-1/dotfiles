@@ -1862,7 +1862,8 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   (declare (indent defun))
   (let ()
     `(defmacro ,name ,args
-       ,@(--tree-map ()))))
+       ,@(--tree-map (pcase it
+		       ((pred symbolp)))))))
 #+end_src
 
 **** generate font-lock
