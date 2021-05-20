@@ -1863,10 +1863,10 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   (let ()
     `(defmacro ,name ,args
        ,@(--tree-map (pcase it
-		       ((pred symbolp)
-			())
+		       ((and (pred symbolp) (app s-match-strings-all)))
 		       ((pred stringp))
-		       (_ ))))))
+		       (_
+			()))))))
 #+end_src
 
 **** generate font-lock
