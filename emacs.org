@@ -5148,25 +5148,7 @@ If I don't include this, I get an.
 :ID:       3d6373e2-0389-4936-a8f5-db693de9874a
 :END:
 
-*** temporarily disable modes
-:PROPERTIES:
-:ID:       f18bf0e3-8704-443e-95ea-6c9d135f6b0c
-:END:
-
-#+begin_src emacs-lisp
-(defmacro with-disabled-modes! (modes &rest body)
-  "Temporarily disable modes and then restore them after body is evaluated."
-  (declare (indent defun))
-  (mmt-with-gensyms (to-re-enable mode)
-    `(loopy (list ,mode ',modes)
-	    (when (bound-and-true-p ,mode)
-	      (collect ,to-re-enable ,mode))
-	    (finally-do (--map (funcall it -1) ,to-re-enable)
-			(progn ,@body)
-			(--map (funcall it +1) ,to-re-enable)))))
-#+end_src
-
-*** embark action indicator
+**** embark action indicator
 :PROPERTIES:
 :ID:       88da23cf-0527-49cc-8d4f-2df71f556431
 :END:
@@ -5183,7 +5165,7 @@ the =embark-action-indicator=.
       embark-become-indicator embark-action-indicator)
 #+end_src
 
-*** embark
+**** embark
 :PROPERTIES:
 :ID:       8e173a40-938f-4770-a10a-4e55777a3f48
 :END:
@@ -5195,7 +5177,7 @@ the =embark-action-indicator=.
   (:ie "C-o" #'embark-act))
 #+end_src
 
-*** selectrum
+**** selectrum
 :PROPERTIES:
 :ID:       6e670980-7794-4505-a285-184416a5b377
 :END:
