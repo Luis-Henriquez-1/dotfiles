@@ -1883,7 +1883,8 @@ The font lock patters that I use are fairly regular.
 :ID:       41585612-f351-4c73-82c2-73e7e2e59f50
 :END:
 
-This macro is for defining =defun-like= macros.
+This macro is for defining =defun-like= macros. It does some preprocessing I
+need to do with.
 
 #+begin_src emacs-lisp
 (defmacro defunmacro! (name args &rest body)
