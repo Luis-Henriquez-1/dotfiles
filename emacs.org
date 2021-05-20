@@ -5005,15 +5005,13 @@ matches are only highlighted when they need to be.
   (setq selectrum-highlight-candidates-function #'orderless-highlight-matches))
 #+end_src
 
-**** orderless
+**** load orderless before selectrum
 :PROPERTIES:
 :ID:       9702810e-2013-4c41-ba12-0b55de6ceb38
 :END:
 
 #+begin_src emacs-lisp
-(use-package orderless
-  :before-call selectrum-mode
-  :commands orderless-filter orderless-highlight-matches)
+(xl-load-before-call 'orderless #'selectrum-mode)
 #+end_src
 
 *** prescient :cache:
