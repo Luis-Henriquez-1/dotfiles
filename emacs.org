@@ -1906,10 +1906,10 @@ This macro is for defining =defun-like= macros.
   (loopy (with ((docstring alist body) (xl-parse-defun-body body))
 	       (args (or .args '(&rest _)))
 	       (base-hook (xl-intern-format "xl--%s-hook" name)))
-	 (for symbol hooks)
+	 (for hook hooks)
 	 (expr hook (xl-hook-gen-name symbol name))
-	 (collect `(defalias ',symbol ,base-hook))
-	 (collect `(add-hook ',symbol ',hook ,(or .append .depth) ,local))
+	 (collect `(defalias ',hook ,base-hook))
+	 (collect `(add-hook ',hook ',hook ,(or .append .depth) ,local))
 	 (collect `(xl-log-function ',hook))
 	 (finally-return `(progn ',alist
 				 (defun ,base-hook ,args ,docstring ,@body)
