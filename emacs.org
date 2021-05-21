@@ -1876,9 +1876,10 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
   (declare (indent defun))
-  `(defmacro ,name ,args
-     (let ()
-       ,@(-tree-map #'xl-defmacro-helpe body))))
+  (let ((anaphoric-vars ()))
+    `(defmacro ,name ,args
+       (let ()
+	 ,@(-tree-map #'xl-defmacro-helpe body)))))
 #+end_src
 
 **** generate font-lock
