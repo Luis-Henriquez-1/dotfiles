@@ -1954,7 +1954,7 @@ need to do with.
   (loopy (list hook hooks)
 	 (expr hook (xl-hook-gen-name symbol name))
 	 (collect `(defalias ',hook ,xl--<name>-hook))
-	 (collect `(add-hook ',hook ',hook ,(or .append .depth) ,local))
+	 (collect `(add-hook ',hook ',hook ,(or .append .depth) ,.local))
 	 (collect `(xl-log-function ',hook))
 	 (finally-return `(progn (defun ,xl--<name>-hook ,args ,@body)
 				 ,@loopy-result))))
