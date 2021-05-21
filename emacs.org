@@ -1961,7 +1961,7 @@ functions.
 	 (collect `(defalias ',hook ,xl--<name>-hook))
 	 (collect `(add-hook ',hook ',hook ,(or .append .depth) ,.local))
 	 (collect `(xl-log-function ',hook))
-	 (finally-return `(progn (defun ,xl--<name>-hook ,args ,@body)
+	 (finally-return `(progn (defun ,xl--<name>-hook ,.args ,@body)
 				 ,@loopy-result))))
 #+end_src
 
