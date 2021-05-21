@@ -1930,7 +1930,7 @@ The font lock patters that I use are fairly regular.
 
 This macro is for defining =defun-like= macros. It does some preprocessing I
 need to do with. Also, I want to automate adding syntax highlighting for such
-functions.
+functions as well as declaring their indentation.
 
 #+begin_src emacs-lisp
 (defmacro! defunmacro! (name args &rest body)
