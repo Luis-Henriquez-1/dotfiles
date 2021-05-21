@@ -1901,7 +1901,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
      (mmt-once-only ,@(->> (-flatten body)
 			(--filter (s-matches-p (rx bow "!" ())))
 			(-uniq))
-       ,@(-tree-map #'xl--replace-anaphoric-symbols body))))
+       ,@(-tree-map #'xl-replace-anaphoric-symbols body))))
 #+end_src
 
 **** generate font-lock
