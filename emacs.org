@@ -1846,6 +1846,9 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :ID:       67e4ef77-587e-404b-9524-ee2881267b77
 :END:
 
+#+begin_src emacs-lisp
+#+end_src
+
 **** defmacro helper
 :PROPERTIES:
 :ID:       ba379b42-0d47-4413-aa9d-8b2e1f2f1235
