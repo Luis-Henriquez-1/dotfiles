@@ -1855,9 +1855,11 @@ writting tendencies easier.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl--symbol-matches-p (args)
+(defun xl--exclam-symbol-p (obj)
   "docstring"
-  (when (symbolp) (s-matches-p (rx bow "!" (1+ (not white))))))
+  (and (symbolp obj)
+       (s-matches-p (rx bow "!" (1+ (not white))))
+       t))
 #+end_src
 
 ***** defmacro helper
