@@ -1852,6 +1852,8 @@ creation of a =once-only!= variable binding. However, if such a symbol is within
 a string or part of a larger symbol, then it will single the replacement of a
 format string.
 
+I wasn't completely sure as to what the syntax of this variable should be.
+
 #+begin_src emacs-lisp
 (defhook add-syntax-highlighting-for-anaphoric-symbol (emacs-lisp-mode-hook)
   ""
