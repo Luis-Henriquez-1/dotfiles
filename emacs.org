@@ -1930,7 +1930,7 @@ This macro is for defining =defun-like= macros. It does some preprocessing I
 need to do with.
 
 #+begin_src emacs-lisp
-(defmacro defunmacro! (name args &rest body)
+(defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
   `(progn
      ;; (defhook! add-<name>-font-lock-keywords (emacs-lisp-mode-hook :expire t)
