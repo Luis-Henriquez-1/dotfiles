@@ -1897,7 +1897,9 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   "Define a macro."
   (declare (indent defun))
   `(defmacro ,name ,args
-     (mmt-once-only ,@(-filter #'xl-exclam-var-p (-flatten body))
+     (mmt-once-only ,@(->> (-flatten body)
+			(--filter (s-matches-p (rx bow "!" ())))
+			(-uniq))
        ,@(-tree-map #'xl--replace-anaphoric-symbols body))))
 #+end_src
 
