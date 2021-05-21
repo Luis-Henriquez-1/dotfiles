@@ -1929,7 +1929,8 @@ The font lock patters that I use are fairly regular.
 :END:
 
 This macro is for defining =defun-like= macros. It does some preprocessing I
-need to do with.
+need to do with. Also, I want to automate adding syntax highlighting for such
+functions.
 
 #+begin_src emacs-lisp
 (defmacro! defunmacro! (name args &rest body)
