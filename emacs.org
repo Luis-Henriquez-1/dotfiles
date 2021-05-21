@@ -1881,17 +1881,12 @@ writting tendencies easier.
        t))
 #+end_src
 
-***** contains-an-excam-symbol
-:PROPERTIES:
-:ID:       bd154d50-d350-4369-a980-b60a8872b85f
-:END:
-
 ***** contains-an-exclam symbol
 :PROPERTIES:
 :ID:       878ae252-9d31-40e4-8932-e9362d1fa061
 :END:
 
-***** defmacro helper
+***** replace excam symbol
 :PROPERTIES:
 :ID:       ba379b42-0d47-4413-aa9d-8b2e1f2f1235
 :END:
@@ -1933,7 +1928,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
      (mmt-once-only ,@(->> (-flatten body)
 			(-filter #'xl--exclam-symbol-p)
 			(-uniq))
-       ,@(-tree-map #'xl-replace-anaphoric-symbols body))))
+       ,@(-tree-map #' body))))
 #+end_src
 
 **** generate font-lock
