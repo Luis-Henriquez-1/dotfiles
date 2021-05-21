@@ -1866,7 +1866,7 @@ writting tendencies easier.
 
 #+begin_src emacs-lisp
 (defun replace-anaphoric-symbols (thing)
-  "Replace anaphoric symbols."
+  "Replace THING with a format form."
   (loopy (with (regexp XL-ANAPHORIC-SYMBOL-REGEXP)
 	       (matches (s-match-strings-all regexp (xl-to-string thing))))
 	 (initially-do (unless matches (return thing)))
