@@ -1865,17 +1865,16 @@ writting tendencies easier.
 :END:
 
 #+begin_src emacs-lisp
-(defun replace-anaphoric-symbols (thing)
-  "Replace THING with a format form."
+(defun replace-anaphoric-symbols (obj)
+  "Replace OBJ with a format form."
   (loopy (with (regexp XL-ANAPHORIC-SYMBOL-REGEXP)
-	       (format-fn (if (symbolp)))
-	       (matches (s-match-strings-all regexp (xl-to-string thing))))
-	 ;; (before-do)
-	 (initially-do (unless matches (return thing)))
+	       (format-fn (if (symbolp obj)))
+	       (matches (s-match-strings-all regexp (xl-to-string obj))))
+	 (initially-do (unless matches (return obj)))
 	 (list (match name) matches)
 	 (collect replacements (cons match "%s"))
 	 (collect fargs name)
-	 (finally-return `(format ,(s-replace-all replacements thing) ,@fargs))))
+	 (finally-return `(format ,(s-replace-all replacements obj) ,@fargs))))
 #+end_src
 
 ***** defmacro!
