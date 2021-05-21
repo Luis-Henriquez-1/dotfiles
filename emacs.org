@@ -1846,7 +1846,8 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :ID:       5e7f7096-482f-45fd-8bc9-8e1c5c378b35
 :END:
 
-The purpose of this headline is to write a macro that'll help me.
+The purpose of this headline is to write a macro that'll make some common macro
+writting tendencies easier.
 
 ***** if a symbol matches
 :PROPERTIES:
