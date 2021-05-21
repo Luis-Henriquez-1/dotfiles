@@ -1868,15 +1868,12 @@ writting tendencies easier.
 (defun replace-anaphoric-symbols (thing)
   "Replace anaphoric symbols."
   (loopy (with (regexp XL-ANAPHORIC-SYMBOL-REGEXP)
-	       (matches (s-match-strings-all regexp (xl-to-string thing)))
-	       ())
-	 (initially-do (unless (symbolp)))
+	       (matches (s-match-strings-all regexp (xl-to-string thing))))
+	 (initially-do (unless matches (return thing)))
 	 (list (match name) matches)
 	 (collect replacements (cons match "%s"))
 	 (collect fargs name)
-	 (finally-return
-	  `(format ,(s-replace-all replacements thing) ,@fargs))
-	 ))
+	 (finally-return `(format ,(s-replace-all replacements thing) ,@fargs))))
 #+end_src
 
 ***** defmacro!
