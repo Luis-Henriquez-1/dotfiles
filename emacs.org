@@ -1867,14 +1867,16 @@ writting tendencies easier.
 #+begin_src emacs-lisp
 (defun replace-anaphoric-symbols (thing)
   "Replace anaphoric symbols."
-  (let ((regexp XL-ANAPHORIC-SYMBOL-REGEXP))
-    (acond ((and (stringp thing) (s-match-strings-all regexp thing))
-	    `(format ,(s-replace-all ) ,@)
-	    )
-	   ((and (symbolp thing) (s-match-strings-all regexp (symbol-name thing)))
-	    `(format ,(s-replace-all ) ,@))
-	   (t
-	    thing))))
+  (loopy (with (regexp XL-ANAPHORIC-SYMBOL-REGEXP)
+	       (matches (s-match-strings-all regexp (xl-to-string thing)))
+	       ())
+	 (initially-do (unless (symbolp)))
+	 (list (match name) matches)
+	 (collect replacements (cons match "%s"))
+	 (collect fargs name)
+	 (finally-return
+	  `(format ,(s-replace-all replacements thing) ,@fargs))
+	 ))
 #+end_src
 
 ***** defmacro!
