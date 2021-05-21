@@ -2022,7 +2022,7 @@ need to do with.
 
 #+begin_src emacs-lisp
 (defmacro defafter! (name features &rest body)
-  "Load feature after."
+  "Eval body after FEATURES are loaded."
   (declare (indent defun))
   `(progn
      (defhook! ,name (feature)
