@@ -1887,6 +1887,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
+  "Define a macro."
   (declare (indent defun))
   (let ((anaphoric-vars (--filter () (-flatten body))))
     `(defmacro ,name ,args
