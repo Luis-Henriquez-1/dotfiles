@@ -1855,9 +1855,7 @@ The purpose of this headline is to write a macro that'll help me.
 
 #+begin_src emacs-lisp
 (defun xl--symbol-matches-p (args)
-  "docstring"
-  (interactive "P")
-  )
+  "docstring")
 #+end_src
 
 ***** defmacro helper
