@@ -1856,7 +1856,7 @@ writting tendencies easier.
 
 #+begin_src emacs-lisp
 (defun xl--exclam-symbol-p (obj)
-  "docstring"
+  "Return non-nil if OBJ."
   (and (symbolp obj)
        (s-matches-p (rx bow "!" (1+ (not white))))
        t))
