@@ -1870,6 +1870,7 @@ writting tendencies easier.
   (loopy (with (regexp XL-ANAPHORIC-SYMBOL-REGEXP)
 	       (format-fn (if (symbolp)))
 	       (matches (s-match-strings-all regexp (xl-to-string thing))))
+	 ;; (before-do)
 	 (initially-do (unless matches (return thing)))
 	 (list (match name) matches)
 	 (collect replacements (cons match "%s"))
