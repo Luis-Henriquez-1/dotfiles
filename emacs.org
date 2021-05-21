@@ -1865,14 +1865,16 @@ writting tendencies easier.
 :END:
 
 #+begin_src emacs-lisp
-(defun helper ()
-  (pcase it
-    ((and (pred symbolp) (and (app s-match-strings-all)))
-     ())
-    ((and (pred stringp) (app s-match-strings-all))
-     ())
-    (_
-     it)))
+(defun replace-anaphoric-symbols (thing)
+  "Replace anaphoric symbols."
+  (let ((regexp XL-ANAPHORIC-SYMBOL-REGEXP))
+    (acond ((and (stringp thing) (s-match-strings-all regexp thing))
+	    `(format (s-replace-all ,) ,@)
+	    )
+	   ((and (symbolp thing) (s-match-strings-all regexp (symbol-name thing)))
+	    `(format (s-replace-all ,) ,@))
+	   (t
+	    thing))))
 #+end_src
 
 ***** defmacro!
