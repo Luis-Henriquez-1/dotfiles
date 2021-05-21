@@ -1970,10 +1970,9 @@ need to do with.
 #+begin_src emacs-lisp
 (defunmacro! defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
-  (loopy (with (orig-fn (xl-intern-format "xl--%s-advice" name)))
-	 (for fn functions)
+  (loopy (list fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
-	 (collect `(defalias ',advice ',orig-fn))
+	 (collect `(defalias ',advice ',xl--<name>-advice))
 	 (collect `(advice-add #',fn ,where #',advice ,.props))
 	 (collect `(xl-log-function #',advice))
 	 (finally-return `(progn (defun ,xl--<name>-advice ,.args ,docstring ,@.body)
