@@ -1900,7 +1900,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   (declare (indent defun))
   `(defmacro ,name ,args
      (mmt-once-only ,@(->> (-flatten body)
-			(-filter #'xl--exclam-symbol-p world)
+			(-filter #'xl--exclam-symbol-p)
 			(-uniq))
        ,@(-tree-map #'xl-replace-anaphoric-symbols body))))
 #+end_src
