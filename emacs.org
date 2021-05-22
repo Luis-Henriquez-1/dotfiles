@@ -1907,22 +1907,23 @@ should be done.
 :END:
 
 #+begin_src emacs-lisp
-(cl-defun xl-replace-special-format-symbols (tree)
+(defun xl-replace-special-format-symbols (form)
   "Replace all format symbols."
   (cond
-   ((null tree) nil)
-   ((xl-true-list-p tree)
-    (mapcar (lambda (x) (-tree-map #'xl-replace-special-format-symbols x)) tree))
-   ((and (member (type-of tree) '(symbol string))
-	 (xl-special-macro-symbol-p tree))
-    (loopy (with (format-fn (if (symbolp tree) 'xl-intern-format 'format))
+   ((null (car form)) nil)
+   ((xl-true-list-p form)
+    (cons (xl-replace-special-format-symbols (car form))
+	  (xl-replace-special-format-symbols (cdr form))))
+   ((and (member (type-of form) '(symbol string))
+	 (xl-special-macro-symbol-p form))
+    (loopy (with (format-fn (if (symbolp form) 'xl-intern-format 'format))
 		 (matches (xl-special-macro-symbols obj)))
 	   (list (match name) matches)
 	   (collect replacements (cons match "%s"))
 	   (collect fargs name)
-	   (finally-return `(format ,(s-replace-all replacements tree) ,@fargs))))
+	   (finally-return `(format ,(s-replace-all replacements form) ,@fargs))))
    (t
-    tree)))
+    form)))
 #+end_src
 
 ***** defmacro!
