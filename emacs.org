@@ -1889,22 +1889,21 @@ writting tendencies easier.
 :END:
 
 #+begin_src emacs-lisp
-(cl-defun xl-replace-special-format-symbols (obj)
+(cl-defun xl-replace-special-format-symbols (tree)
   "Replace OBJ with a format form."
   (cond
-   ((not tree) nil)
-   ((-cons-pair? tree) (funcall fn tree))
+   ((null tree) nil)
    ((xl-true-list-p tree)
-    (mapcar (lambda (x) (-tree-map fn x)) tree))
-   (t (funcall fn tree)))
-  (unless (member (type-of obj) '(string symbol))
-    (return obj))
-  (loopy (with (regexp )
-	       (format-fn (if (symbolp obj) 'xl-intern-format 'format)))
-	 (list (match name) (s-match-strings-all regexp (xl-to-string obj)))
-	 (collect replacements (cons match "%s"))
-	 (collect fargs name)
-	 (finally-return `(format ,(s-replace-all replacements obj) ,@fargs))))
+    (mapcar (lambda (x) (-tree-map #'xl-replace-special-format-symbols x)) tree))
+   ((or (not (member (type-of tree) '(symbol string)))
+	(not (string-match-p))))
+   (t
+    (loopy (with (regexp )
+		 (format-fn (if (symbolp obj) 'xl-intern-format 'format)))
+	   (list (match name) (s-match-strings-all regexp (xl-to-string obj)))
+	   (collect replacements (cons match "%s"))
+	   (collect fargs name)
+	   (finally-return `(format ,(s-replace-all replacements obj) ,@fargs))))))
 #+end_src
 
 ***** defmacro!
