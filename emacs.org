@@ -1912,8 +1912,9 @@ should be done.
   (cond
    ((null tree) nil)
    ((xl-true-list-p tree)
-    (mapcar (lambda (x) (-tree-map #'xl-replace-special-format-symbols x)) obj))
+    (mapcar (lambda (x) (-tree-map #'xl-replace-special-format-symbols x)) tree))
    ((or (not (member (type-of tree) '(symbol string)))
+	(xl-special-macro-symbol-p tree)
 	(not (xl-contains-special-macro-symbol-p tree)))
     tree)
    (t
