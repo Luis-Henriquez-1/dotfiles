@@ -2132,11 +2132,6 @@ functions as well as declaring their indentation.
   (run-hook 'xl-before-load-hook))
 #+end_src
 
-**** resolve-logic
-:PROPERTIES:
-:ID:       5218a4f3-8f69-4078-a772-5b1e9630765b
-:END:
-
 **** defafter!
 :PROPERTIES:
 :ID:       892a40f9-7023-4cdc-a73c-c03d79037fca
