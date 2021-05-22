@@ -1925,7 +1925,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
        ,@(-tree-map #' body))))
 #+end_src
 
-**** generate font-lock
+**** font lock for
 :PROPERTIES:
 :ID:       0353d5ad-d937-4e7d-8f33-30624b1905de
 :END:
@@ -1956,7 +1956,7 @@ functions as well as declaring their indentation.
   `(progn
      (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
        "Add font lock keywords for !name."
-       (font-lock-add-keywords 'emacs-lisp-mode (xl-defun-form-font-lock ,name)))
+       (font-lock-add-keywords nil (xl-defun-form-font-lock ,name)))
      (add-hook 'emacs-lisp-mode-hook emacs-lisp-mode-hook&add-!name-font-lock-keywords)
      (defmacro! ,name (name args &rest body)
        (declare (indent defun))
