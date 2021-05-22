@@ -1912,8 +1912,7 @@ writting tendencies easier.
    ((xl-true-list-p tree)
     (mapcar (lambda (x) (-tree-map #'xl-replace-special-format-symbols x)) obj))
    ((or (not (member (type-of tree) '(symbol string)))
-	(and (not )
-	     (not (string-match-p regexp (xl-to-string tree)))))
+	(not (xl-contains-special-macro-symbol-p tree)))
     tree)
    (t
     (loopy (with (format-fn (if (symbolp tree) 'xl-intern-format 'format))
