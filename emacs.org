@@ -1909,21 +1909,21 @@ should be done.
 #+begin_src emacs-lisp
 (defun xl-replace-special-format-symbols (form)
   "Replace all format symbols."
-  (cond
-   ((null (car form)) nil)
-   ((xl-true-list-p form)
-    (cons (xl-replace-special-format-symbols (car form))
-	  (xl-replace-special-format-symbols (cdr form))))
-   ((and (member (type-of form) '(symbol string))
-	 (xl-special-macro-symbol-p form))
-    (loopy (with (format-fn (if (symbolp form) 'xl-intern-format 'format))
-		 (matches (xl-special-macro-symbols obj)))
-	   (list (match name) matches)
-	   (collect replacements (cons match "%s"))
-	   (collect fargs name)
-	   (finally-return `(format ,(s-replace-all replacements form) ,@fargs))))
-   (t
-    form)))
+  (pcase (car form)
+    ((pred null)
+     nil)
+    ((pred xl-true-list-form)
+     (cons (xl-replace-special-format-symbols (car form))
+	   (xl-replace-special-format-symbols (cdr form))))
+    ((and (pred symbolp) (pred stringp))
+     (loopy (with (format-fn (if (symbolp form) 'xl-intern-format 'format))
+		  (matches (xl-special-macro-symbols obj)))
+	    (list (match name) matches)
+	    (collect replacements (cons match "%s"))
+	    (collect fargs name)
+	    (finally-return `(format ,(s-replace-all replacements form) ,@fargs))))
+    (_
+     (cons (car form) (xl-replace-special-format-symbols (cdr form))))))
 #+end_src
 
 ***** defmacro!
