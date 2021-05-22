@@ -1919,7 +1919,8 @@ I wasn't completely sure as to what the syntax of this variable should be.
 
 #+begin_src emacs-lisp
 (defmacro with-map! (map &rest body)
-  "Let-bind dotted symbols to their values in BODY."
+  "Let-bind dotted symbols to their values in BODY.
+This is similar to `let-alist' but map can be any key value sequence."
   (alet (->> body
 	  (-select body)
 	  (-uniq)
