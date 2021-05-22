@@ -2097,10 +2097,8 @@ functions as well as declaring their indentation.
   "Load feature before."
   (declare (indent defun))
   `(progn
-     (defhook! ,name (feature)
-       ,docstring
-       (:hook xl-before-load-feature-hook)
-       (when ,feature ,@body))))
+     (defhook! ,name (xl-before-load-feature-hook :args (feature))
+       ,@body)))
 #+end_src
 
 **** font-lock for =defunmacro!=
