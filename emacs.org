@@ -1920,11 +1920,10 @@ I wasn't completely sure as to what the syntax of this variable should be.
 #+begin_src emacs-lisp
 (defmacro with-map! (map &rest body)
   "Let-bind dotted symbols to their values in BODY."
-  ;; (-select #'xl-dotted-symbol-p body)
   (alet (->> body
-	  (--select body)
+	  (-select body)
 	  (-uniq)
-	  (-map))
+	  (-map ()))
     `(map-let ,it ,map
        ,@body)))
 #+end_src
