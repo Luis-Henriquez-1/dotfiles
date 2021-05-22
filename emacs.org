@@ -688,6 +688,17 @@ To avoid.
   (s-matches-p "\\`xl-.+" (symbol-name symbol)))
 #+end_src
 
+***** special macro symbol
+:PROPERTIES:
+:ID:       9f20c6a1-c18d-4585-ae55-b2febadb1095
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-special-macro-symbol-p (obj)
+  "Return non-nil if OBJ is a special macro symbol."
+  (s-matches-p (rx bos "!" (1+ (not white))) (symbol-name it)))
+#+end_src
+
 ***** TODO xl-interactive-function-p
 :PROPERTIES:
 :ID:       4994e720-e156-408b-b94c-19acbb684fe7
@@ -1875,17 +1886,6 @@ writting tendencies easier.
 
 The special macro symbols refer to symbols that designate that something special
 should be done.
-
-***** special macro symbol
-:PROPERTIES:
-:ID:       9f20c6a1-c18d-4585-ae55-b2febadb1095
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-special-macro-symbol-p (obj)
-  "Return non-nil if OBJ is a special macro symbol."
-  (s-matches-p (rx bos "!" (1+ (not white))) (symbol-name it)))
-#+end_src
 
 ***** special macro symbols
 :PROPERTIES:
