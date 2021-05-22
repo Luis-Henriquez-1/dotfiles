@@ -1904,7 +1904,8 @@ I wasn't completely sure as to what the syntax of this variable should be.
 
 The purpose of this headline is to write a macro that'll make some common macro
 writting tendencies easier. Specifically, there are two common things done in
-macros that I want to facilitate. One is the creation of names.
+macros that I want to facilitate. One is the creation of names. The other is the
+declaration of unique symbols.
 
 ***** special macro symbol
 :PROPERTIES:
@@ -1975,7 +1976,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   "Define a macro."
   (declare (indent defun))
   `(defmacro ,name ,args
-     (mmt-with-unique-names ,(xl-special-macro-symbols body)
+     (mmt-once-only ,(xl-special-macro-symbols body)
        ,@(xl-macro-format-form body))))
 #+end_src
 
