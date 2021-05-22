@@ -123,6 +123,7 @@ Channel gmail-all
 * luishp account
 :PROPERTIES:
 :ID:       9435b5d3-b14a-48b7-bafa-dfeb7d09e8b1
+:header-args: :tangle no
 :END:
 
 ** DOC settings
