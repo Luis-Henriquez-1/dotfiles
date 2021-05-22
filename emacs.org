@@ -1913,7 +1913,7 @@ This is similar to `let-alist' but map can be any key value structure."
 	 (unless (and (symbolp obj) (s-matches-p dot-regexp (symbol-name obj)))
 	   (skip))
 	 (expr symbol obj)
-	 (expr name (intern (s-match regexp s)))
+	 (expr name (intern (map-elt 1 (s-match regexp s))))
 	 (unioning bindings (list symbol name) :test #'car)
 	 (finally-return `(map-let ,bindings ,map ,@body))))
 #+end_src
