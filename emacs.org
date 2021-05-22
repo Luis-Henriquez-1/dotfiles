@@ -1888,7 +1888,7 @@ writting tendencies easier.
 :END:
 
 #+begin_src emacs-lisp
-(defun replace-anaphoric-symbols (obj)
+(defun xl-replace-special-format-symbols (obj)
   "Replace OBJ with a format form."
   (loopy (with (regexp XL-ANAPHORIC-SYMBOL-REGEXP)
 	       (format-fn (if (symbolp obj) 'xl-intern-format 'format))
