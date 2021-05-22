@@ -1969,6 +1969,7 @@ should be done.
 
 #+begin_src emacs-lisp
 (defun xl-macro-format-symbol (symbol)
+  ""
   (alet (xl-macro-format-string (symbol-name symbol))
     (if (stringp it) symbol `(intern ,it))))
 #+end_src
@@ -2052,7 +2053,7 @@ functions as well as declaring their indentation.
        (font-lock-add-keywords nil (xl-generate-defun-font-lock ,name)))
      (add-hook 'emacs-lisp-mode-hook emacs-lisp-mode-hook&add-!name-font-lock-keywords)
      (defmacro! ,name (name args &rest body)
-       (declare (indent defun))
+       (declare (indent defun) (doc-string 3))
        (let* ((,!docstring (when (stringp (car body)) (pop body)))
 	      (,!alist ())
 	      (body (cons ,!docstring body)))
