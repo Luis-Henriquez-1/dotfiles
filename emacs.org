@@ -708,7 +708,7 @@ To avoid.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-special-macro-regexp (&optional lax)
+(defun xl-special-macro-symbol-regexp (&optional lax)
   "Return regexp used for special symbols."
   (if lax (rx "!" (1+ (not white)))
     (rx bos "!" (1+ (not white)) eos)))
@@ -1920,7 +1920,7 @@ should be done.
 
 #+begin_src emacs-lisp
 (defun xl-macro-format-string (string)
-  (loopy (with (regexp (xl-special-macro-symbol-regexp 'lax))
+  (loopy (with (regexp (xl-special-macro-symbol-regexp t))
 	       (matches (s-match-strings-all regexp string)))
 	 (initially (unless matches (return string)))
 	 (list (match name) matches)
