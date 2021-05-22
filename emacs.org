@@ -2010,7 +2010,7 @@ functions as well as declaring their indentation.
   "Define a hook."
   (declare (indent defun))
   `(progn (defvar ,name nil ,docstring)
-	  (defadvice! ,run-<name>-hook ,args
+	  (defadvice! ,run-!name-hook ,args
 	    "Run"
 	    ,@body)))
 #+end_src
