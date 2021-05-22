@@ -1916,7 +1916,7 @@ should be done.
 
 #+begin_src emacs-lisp
 (defun xl-macro-format-string (string)
-  (loopy (with (regexp (xl-special-macro-symbol-regexp))
+  (loopy (with (regexp (xl-special-macro-symbol-regexp 'lax))
 	       (matches (s-match-strings-all regexp string)))
 	 (initially (unless matches (return string)))
 	 (list (match name) matches)
