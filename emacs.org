@@ -688,6 +688,20 @@ To avoid.
   (s-matches-p "\\`xl-.+" (symbol-name symbol)))
 #+end_src
 
+***** special macro symbols
+:PROPERTIES:
+:ID:       67e4ef77-587e-404b-9524-ee2881267b77
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-special-macro-symbols (form)
+  "Return the special macro symbols in FORM."
+  (->> form
+    (-flatten)
+    (-select #'xl-special-macro-symbol-p)
+    (-uniq)))
+#+end_src
+
 ***** special macro symbol
 :PROPERTIES:
 :ID:       9f20c6a1-c18d-4585-ae55-b2febadb1095
@@ -1886,20 +1900,6 @@ writting tendencies easier.
 
 The special macro symbols refer to symbols that designate that something special
 should be done.
-
-***** special macro symbols
-:PROPERTIES:
-:ID:       67e4ef77-587e-404b-9524-ee2881267b77
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-special-macro-symbols (form)
-  "Return the special macro symbols in FORM."
-  (->> form
-    (-flatten)
-    (-select #'xl-special-macro-symbol-p)
-    (-uniq)))
-#+end_src
 
 ***** anaphoric symbols
 :PROPERTIES:
