@@ -1915,7 +1915,7 @@ writting tendencies easier.
     tree)
    (t
     (loopy (with (format-fn (if (symbolp tree) 'xl-intern-format 'format))
-		 (matches (s-match-strings-all regexp (xl-to-string tree))))
+		 (matches (xl-special-macro-symbols obj)))
 	   (list (match name) matches)
 	   (collect replacements (cons match "%s"))
 	   (collect fargs name)
