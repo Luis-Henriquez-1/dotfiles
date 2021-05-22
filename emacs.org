@@ -1915,7 +1915,7 @@ I wasn't completely sure as to what the syntax of this variable should be.
 
 #+begin_src emacs-lisp
 (defmacro with-map! (map &rest body)
-  "Similar to `let-alist' but works for any."
+  "Let-bind dotted symbols to their values in BODY."
   (-select #'xl-dotted-symbol-p body)
   (--map (list it (xl-dotted-symbol-name it)))
   (map-let keys map ,@body))
