@@ -1882,7 +1882,7 @@ writting tendencies easier.
     (-uniq)))
 #+end_src
 
-***** replace excam symbol
+***** anaphoric symbols
 :PROPERTIES:
 :ID:       ba379b42-0d47-4413-aa9d-8b2e1f2f1235
 :END:
