@@ -1904,6 +1904,8 @@ I wasn't completely sure as to what the syntax of this variable should be.
 :END:
 
 #+begin_src emacs-lisp
+(defmacro wrap! (form &rest body)
+  )
 #+end_src
 
 **** let-key-val
