@@ -1906,6 +1906,7 @@ I wasn't completely sure as to what the syntax of this variable should be.
 #+begin_src emacs-lisp
 (defmacro wrap! (wrappers &rest body)
   "Wrap WRAPPERS around BODY."
+  (declare (indent 1))
   (loopy (list wrapper (reverse wrappers))
 	 (expr form `(,@wrapper ,form) :init `(progn ,@body))
 	 (fret form)))
