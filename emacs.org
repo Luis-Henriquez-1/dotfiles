@@ -1903,7 +1903,8 @@ I wasn't completely sure as to what the syntax of this variable should be.
 :END:
 
 The purpose of this headline is to write a macro that'll make some common macro
-writting tendencies easier.
+writting tendencies easier. Specifically, there are two common things done in
+macros that I want to facilitate. One is the creation of names.
 
 ***** special macro symbol
 :PROPERTIES:
