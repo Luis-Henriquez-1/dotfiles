@@ -2091,9 +2091,8 @@ functions as well as declaring their indentation.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defbefore! (name args &rest body)
+(defunmacro! defbefore! (name args &rest body)
   "Load feature before."
-  (declare (indent defun))
   `(defhook! ,name (xl-before-load-feature-hook :args (feature))
      ,@body))
 #+end_src
