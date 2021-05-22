@@ -1928,14 +1928,6 @@ writting tendencies easier. Specifically, there are two common things done in
 macros that I want to facilitate. One is the creation of names. The other is the
 declaration of unique symbols.
 
-***** special macro symbol
-:PROPERTIES:
-:ID:       f4ffe898-e378-42c3-8779-92f14d0bce0c
-:END:
-
-The special macro symbols refer to symbols that designate that something special
-should be done.
-
 ***** format string
 :PROPERTIES:
 :ID:       1e70276c-ae37-41bd-9706-81baa5af3673
