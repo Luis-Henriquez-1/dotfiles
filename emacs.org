@@ -1907,7 +1907,7 @@ should be done.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-format-form (string)
+(defun xl-macro-format-string (string)
   (loopy (with (regexp (xl-special-macro-symbol-regexp))
 	       (matches (s-match-strings-all regexp string)))
 	 (initially (unless matches (return string)))
