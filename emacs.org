@@ -1914,10 +1914,10 @@ I wasn't completely sure as to what the syntax of this variable should be.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro with-map! (map)
+(defmacro with-map! (map &rest body)
   "Similar to `let-alist' but works for any."
-  ()
-  ())
+  (-select #'dotted-symbols)
+  (map-let keys map ,@body))
 #+end_src
 
 **** defmacro!
