@@ -1879,6 +1879,12 @@ writting tendencies easier.
 :END:
 
 #+begin_src emacs-lisp
+(defun xl-special-macro-symbol-p (obj)
+  "Return non-nil if OBJ is a special macro symbol."
+  )
+#+end_src
+
+#+begin_src emacs-lisp
 #+end_src
 
 ***** special macro symbols
