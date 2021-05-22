@@ -1932,7 +1932,9 @@ I wasn't completely sure as to what the syntax of this variable should be.
   "Let-bind dotted symbols to their values in BODY.
 This is similar to `let-alist' but map can be any key value structure."
   (alet (->> body
-	  (-select body)
+	  (-flatten)
+	  (-select #'symbolp)
+	  (-select (s-matches-p (rx "." (1+ (not white))) (symbol-name it)) body)
 	  (-uniq)
 	  (-map ()))
     `(map-let ,it ,map
