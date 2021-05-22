@@ -2046,7 +2046,7 @@ functions as well as declaring their indentation.
   (declare (indent defun))
   `(progn (defvar ,name nil ,docstring)
 	  (defadvice! ,run-!name-hook ,args
-	    "Run"
+	    "Run hook after."
 	    ,@body)))
 #+end_src
 
