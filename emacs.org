@@ -1933,7 +1933,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 The font lock patters that I use are fairly regular.
 
 #+begin_src emacs-lisp
-(defun xl-genenerate-defun-font-lock (name)
+(defun xl-generate-defun-font-lock (name)
   "Return the form to add to font lock for macro with NAME."
   `((,(format "(\\(%s!\\)[[:space:]]+\\([-[:word:]]+\\)[[:space:]]+(\\([-[:word:]]+\\)" name)
      (1 font-lock-keyword-face)
