@@ -1895,7 +1895,6 @@ writting tendencies easier.
   (->> form
     (-flatten)
     (-select #'xl-special-macro-symbol-p)
-    (--select )
     (-uniq)))
 #+end_src
 
