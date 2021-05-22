@@ -1921,9 +1921,10 @@ I wasn't completely sure as to what the syntax of this variable should be.
 (defmacro with-map! (map &rest body)
   "Let-bind dotted symbols to their values in BODY."
   (-select #'xl-dotted-symbol-p body)
-  (--map (list it (xl-dotted-symbol-name it)))
-  (map-let keys map
-    ,@body))
+  (--map (list (xl-dotted-symbol-name it) it))
+  (let ()
+    `(map-let keys ,map
+       ,@body)))
 #+end_src
 
 **** defmacro!
