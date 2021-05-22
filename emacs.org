@@ -1941,14 +1941,6 @@ The font lock patters that I use are fairly regular.
      (3 font-lock-variable-name-face))))
 #+end_src
 
-**** font-lock for =defunmacro!=
-:PROPERTIES:
-:ID:       5c116171-e820-4700-b882-9452e8168586
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
 **** defunmacro!
 :PROPERTIES:
 :ID:       41585612-f351-4c73-82c2-73e7e2e59f50
@@ -2076,6 +2068,14 @@ functions as well as declaring their indentation.
        ,docstring
        (:hook xl-before-load-feature-hook)
        (when ,feature ,@body))))
+#+end_src
+
+**** font-lock for =defunmacro!=
+:PROPERTIES:
+:ID:       5c116171-e820-4700-b882-9452e8168586
+:END:
+
+#+begin_src emacs-lisp
 #+end_src
 
 **** eval-after-load! :defer:
