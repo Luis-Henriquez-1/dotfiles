@@ -2087,7 +2087,6 @@ functions as well as declaring their indentation.
 (defunmacro! defafter! (name features &rest body)
   "Eval body after FEATURES are loaded."
   `(defhook! ,name (xl-after-load-feature-hook :args (feature))
-     ;; (xl-resolve-logic)
      ,@body))
 #+end_src
 
