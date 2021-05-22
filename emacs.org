@@ -1907,6 +1907,7 @@ I wasn't completely sure as to what the syntax of this variable should be.
 (defmacro with-map! (map &rest body)
   "Let-bind dotted symbols to their values in BODY.
 This is similar to `let-alist' but map can be any key value structure."
+  (declare (indent 1))
   (loopy (with (symbols (-flatten body))
 	       (dot-regexp ))
 	 (list obj symbols)
