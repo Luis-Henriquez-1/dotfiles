@@ -1892,10 +1892,9 @@ writting tendencies easier.
 (defun xl-replace-special-format-symbols (obj)
   "Replace OBJ with a format form."
   (loopy (with (regexp XL-ANAPHORIC-SYMBOL-REGEXP)
-	       (format-fn (if (symbolp obj) 'xl-intern-format 'format))
-	       (matches (s-match-strings-all regexp (xl-to-string obj))))
-	 (initially-do (unless matches (return obj)))
-	 (list (match name) matches)
+	       (format-fn (if (symbolp obj) 'xl-intern-format 'format)))
+	 (initially-do (unless (member (type-of obj) '(string symbol)) (return obj)))
+	 (list (match name) (s-match-strings-all regexp (xl-to-string obj)))
 	 (collect replacements (cons match "%s"))
 	 (collect fargs name)
 	 (finally-return `(format ,(s-replace-all replacements obj) ,@fargs))))
