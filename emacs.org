@@ -708,6 +708,10 @@ To avoid.
 :END:
 
 #+begin_src emacs-lisp
+(defun xl-special-macro-regexp (&optional lax)
+  "R"
+  (rx bos "!" (1+ (not white)) eos)
+  )
 #+end_src
 
 ***** special macro symbol
