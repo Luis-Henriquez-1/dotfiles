@@ -1910,6 +1910,7 @@ should be done.
 (defun xl-format-form (string)
   (loopy (with (regexp (xl-special-macro-symbol-regexp))
 	       (matches (s-match-strings-all regexp string)))
+	 (initially (unless matches (return string)))
 	 (list (match name) matches)
 	 (collect replacements (cons match "%s"))
 	 (collect format-args name)
