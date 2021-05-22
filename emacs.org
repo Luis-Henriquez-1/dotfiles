@@ -710,9 +710,9 @@ To avoid.
 #+begin_src emacs-lisp
 (defun xl-special-macro-symbol-regexp (&optional lax)
   "Return regexp used for special symbols."
-  (rx-to-string )
+  (rx-to-string '(bos "!" (group (1+ (not white))) eos))
   (if lax (rx "!" (group (1+ (not white))))
-    (rx bos "!" (group (1+ (not white))) eos)))
+    (rx )))
 #+end_src
 
 ***** special macro symbol
