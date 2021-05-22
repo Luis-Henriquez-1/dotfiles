@@ -947,30 +947,6 @@ This function came from [[https://emacs.stackexchange.com/questions/19877/how-to
   (eval (car (read-from-string (format "(progn %s)" string)))))
 #+end_src
 
-**** wrapping forms
-:PROPERTIES:
-:ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
-:END:
-
-When writing macros in lisp it is not uncommon to need to write a macro that can
-nest a form within some number of other forms (for an example, see [[id][after!]]). This
-macro makes this problem much easier.
-
-The original idea for this macro came from [[https://gitlab.common-lisp.net/iterate/iterate/-/blob/master/iterate.lisp][iter's source code]].
-
-#+begin_src emacs-lisp
-(defun xl-wrap-form (wrappers form)
-  "Wrap FORM with each wrapper in WRAPPERS.
-WRAPPERS are a list of forms to wrap around FORM."
-  (declare (pure t) (side-effect-free t))
-  (setq wrappers (reverse wrappers))
-  (if (consp wrappers)
-      (xl-wrap-form (cdr wrappers)
-                    (append (car wrappers)
-                            (list form)))
-    form))
-#+end_src
-
 **** dwim single
 :PROPERTIES:
 :ID:       13c4df8f-86f6-46e8-8507-60c08b96fb14
