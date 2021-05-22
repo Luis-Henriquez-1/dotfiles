@@ -1904,8 +1904,11 @@ I wasn't completely sure as to what the syntax of this variable should be.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro wrap! (form &rest body)
-  )
+(defmacro wrap! (wrappers &rest body)
+  "Wrap WRAPPERS around BODY."
+  (loopy (list wrapper wrappers)
+	 (append form)
+	 (fret `())))
 #+end_src
 
 **** with-map!
