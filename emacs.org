@@ -1898,6 +1898,18 @@ I wasn't completely sure as to what the syntax of this variable should be.
   (alet))
 #+end_src
 
+**** let-key-val
+:PROPERTIES:
+:ID:       02bc8acb-5be4-4772-96bc-79cd3392818f
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-map! (map)
+  "Similar to `let-alist' but works for any."
+  ()
+  ())
+#+end_src
+
 **** defmacro!
 :PROPERTIES:
 :ID:       5e7f7096-482f-45fd-8bc9-8e1c5c378b35
