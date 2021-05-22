@@ -1881,7 +1881,7 @@ writting tendencies easier.
 #+begin_src emacs-lisp
 (defun xl-special-macro-symbol-p (obj)
   "Return non-nil if OBJ is a special macro symbol."
-  )
+  (s-matches-p (rx bos "!" (1+ (not white))) (symbol-name it)))
 #+end_src
 
 ***** special macro symbols
@@ -1895,7 +1895,7 @@ writting tendencies easier.
   (->> form
     (-flatten)
     (-select #'symbolp)
-    (--select (s-matches-p (rx bos "!" (1+ (not white))) (symbol-name it)))
+    (--select )
     (-uniq)))
 #+end_src
 
