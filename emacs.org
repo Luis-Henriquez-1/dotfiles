@@ -1873,6 +1873,14 @@ writting tendencies easier.
 :ID:       54ed8c3f-1c59-42a5-9ec2-25252c952761
 :END:
 
+***** special macro symbol
+:PROPERTIES:
+:ID:       9f20c6a1-c18d-4585-ae55-b2febadb1095
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 ***** special macro symbols
 :PROPERTIES:
 :ID:       67e4ef77-587e-404b-9524-ee2881267b77
@@ -1901,7 +1909,8 @@ writting tendencies easier.
    ((xl-true-list-p tree)
     (mapcar (lambda (x) (-tree-map #'xl-replace-special-format-symbols x)) obj))
    ((or (not (member (type-of tree) '(symbol string)))
-	(not (string-match-p regexp (xl-to-string tree))))
+	(and (not )
+	     (not (string-match-p regexp (xl-to-string tree)))))
     tree)
    (t
     (loopy (with (format-fn (if (symbolp tree) 'xl-intern-format 'format))
