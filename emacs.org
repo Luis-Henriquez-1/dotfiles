@@ -5481,7 +5481,6 @@ all the completion frameworks.
 ** TODO easymotion :evil:edit:navigation:
 :PROPERTIES:
 :ID:       f2736330-20ab-4ffd-b7d8-8ea74e619857
-:header-args: :tangle no
 :END:
 
 =easymotion= is an Emacs package that allows you to move from one character to
