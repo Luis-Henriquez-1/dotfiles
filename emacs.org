@@ -1879,7 +1879,7 @@ writting tendencies easier.
   (->> form
     (-flatten)
     (-select #'symbolp)
-    (--select (s-matches-p (rx bow "!" (1+ (not white))) (symbol-name it)))
+    (--select (s-matches-p (rx bos "!" (1+ (not white))) (symbol-name it)))
     (-uniq)))
 #+end_src
 
