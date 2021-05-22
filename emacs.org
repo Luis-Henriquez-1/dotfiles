@@ -1870,6 +1870,14 @@ writting tendencies easier.
 
 ***** special macro symbol
 :PROPERTIES:
+:ID:       f4ffe898-e378-42c3-8779-92f14d0bce0c
+:END:
+
+The special macro symbols refer to symbols that designate that something special
+should be done.
+
+***** special macro symbol
+:PROPERTIES:
 :ID:       9f20c6a1-c18d-4585-ae55-b2febadb1095
 :END:
 
