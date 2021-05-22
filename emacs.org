@@ -1922,7 +1922,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   (declare (indent defun))
   `(defmacro ,name ,args
      (mmt-once-only ,@(xl-special-macros-symbols body)
-       ,@(-tree-map #' body))))
+       ,@(-tree-map #'xl-replace-special-format-symbols body))))
 #+end_src
 
 **** font lock for
