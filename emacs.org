@@ -1868,6 +1868,11 @@ I wasn't completely sure as to what the syntax of this variable should be.
 The purpose of this headline is to write a macro that'll make some common macro
 writting tendencies easier.
 
+***** regexp for special macro symbols
+:PROPERTIES:
+:ID:       54ed8c3f-1c59-42a5-9ec2-25252c952761
+:END:
+
 ***** special macro symbols
 :PROPERTIES:
 :ID:       67e4ef77-587e-404b-9524-ee2881267b77
