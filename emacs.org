@@ -1908,12 +1908,12 @@ I wasn't completely sure as to what the syntax of this variable should be.
   "Let-bind dotted symbols to their values in BODY.
 This is similar to `let-alist' but map can be any key value structure."
   (declare (indent 1))
-  (loopy (with (dot-regexp ))
+  (loopy (with (dot-regexp (rx bos "." (group (1+ (not white))) eos)))
 	 (list obj (-flatten body))
 	 (unless (and (symbolp obj) (s-matches-p dot-regexp (symbol-name obj)))
 	   (skip))
 	 (expr symbol obj)
-	 (expr name (intern (map-elt 1 (s-match regexp s))))
+	 (expr name (intern (nth 1 (s-match regexp s))))
 	 (unioning bindings (list symbol name) :test #'car)
 	 (finally-return `(map-let ,bindings ,map ,@body))))
 #+end_src
