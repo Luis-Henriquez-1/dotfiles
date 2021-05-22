@@ -1922,7 +1922,7 @@ should be done.
 	   (collect fargs name)
 	   (finally-return `(format ,(s-replace-all replacements tree) ,@fargs))))
    (t
-    )))
+    tree)))
 #+end_src
 
 ***** defmacro!
