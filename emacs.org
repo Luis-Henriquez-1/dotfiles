@@ -1954,9 +1954,9 @@ functions as well as declaring their indentation.
 (defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
   `(progn
-     ;; (defhook! add-<name>-font-lock-keywords (emacs-lisp-mode-hook :expire t)
-     ;; 	 "Add font lock keywords for <name>."
-     ;; 	 (font-lock-add-keywords 'emacs-lisp-mode (xl-defun-form-font-lock ,name)))
+     (defhook! add-!name-font-lock-keywords (emacs-lisp-mode-hook :expire t)
+       "Add font lock keywords for <name>."
+       (font-lock-add-keywords 'emacs-lisp-mode (xl-defun-form-font-lock ,name)))
      (defmacro! ,name (name args &rest body)
        (declare (indent defun))
        (let* ((,!docstring (when (stringp (car body)) (pop body)))
