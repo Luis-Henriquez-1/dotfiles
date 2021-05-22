@@ -1922,7 +1922,9 @@ should be done.
 		(list (match name) matches)
 		(collect replacements (cons match "%s"))
 		(collect fargs name)
-		(finally-return `(,format-fn ,(s-replace-all replacements form) ,@fargs))))
+		(finally-return
+		 (cons `(,format-fn ,(s-replace-all replacements form) ,@fargs)
+		       ))))
 	(_
 	 (cons (car form) (xl-replace-special-format-symbols (cdr form))))))
 #+end_src
