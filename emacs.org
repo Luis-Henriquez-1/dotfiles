@@ -2139,14 +2139,6 @@ functions as well as declaring their indentation.
      ,@body))
 #+end_src
 
-**** font-lock for =defunmacro!=
-:PROPERTIES:
-:ID:       5c116171-e820-4700-b882-9452e8168586
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
 **** eval-after-load! :defer:
 :PROPERTIES:
 :ID:       8d831084-539b-4072-a86a-b55afb09bf02
