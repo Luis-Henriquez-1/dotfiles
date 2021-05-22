@@ -2081,7 +2081,6 @@ functions as well as declaring their indentation.
 #+begin_src emacs-lisp
 (defunmacro! defafter! (name features &rest body)
   "Eval body after FEATURES are loaded."
-  (declare (indent defun))
   `(defhook! ,name (xl-after-load-feature-hook :args (feature))
      ,@body))
 #+end_src
