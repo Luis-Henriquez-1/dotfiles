@@ -2006,7 +2006,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   "Define a macro."
   (declare (indent defun))
   `(defmacro ,name ,args
-     (mmt-once-only ,(xl-special-macro-symbols body)
+     (mmt-with-unique-names ,(xl-special-macro-symbols body)
        ,@(xl-macro-format-form body))))
 #+end_src
 
