@@ -1907,14 +1907,13 @@ should be done.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-format-form (symbol)
-  (loopy (with (format-fn (if (symbolp obj) #'format #'xl-intern-format))
-	       (regexp (xl-special-macro-symbol-regexp))
-	       (matches ))
+(defun xl-format-form (string)
+  (loopy (with (regexp (xl-special-macro-symbol-regexp))
+	       (matches (s-match-strings-all regexp string)))
 	 (list (match name) matches)
 	 (collect replacements (cons match "%s"))
 	 (collect format-args name)
-	 (fret `(,format-fn ,(s-replace-all replacements form) ,@fargs))))
+	 (fret `(format ,(s-replace-all replacements form) ,@fargs))))
 #+end_src
 
 ***** anaphoric symbols
