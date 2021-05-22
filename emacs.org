@@ -1929,7 +1929,14 @@ should be done.
 	 (collect replacements (cons match "%s"))
 	 (collect format-args name)
 	 (after (cl-return `(format ,(s-replace-all replacements string) ,@format-args)))))
+#+end_src
 
+***** format symbol
+:PROPERTIES:
+:ID:       8cd69453-02aa-466d-9763-0d749ace208d
+:END:
+
+#+begin_src emacs-lisp
 (defun xl-macro-format-symbol (symbol)
   (alet (xl-macro-format-string (symbol-name symbol))
     (if (stringp it) symbol `(intern ,it))))
