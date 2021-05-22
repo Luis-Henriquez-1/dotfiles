@@ -864,6 +864,17 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 	 (finally-return (list docstring plist body))))
 #+end_src
 
+**** xl-snoc
+:PROPERTIES:
+:ID:       faa5589c-864d-4920-9337-a7505b864d9f
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-snoc (elt list)
+  "Add elt to end of list."
+  (-snoc list elt))
+#+end_src
+
 **** true-list-p
 :PROPERTIES:
 :ID:       43089182-316b-4191-a3f1-6f2d1b1b971e
@@ -1907,6 +1918,7 @@ I wasn't completely sure as to what the syntax of this variable should be.
 (defmacro wrap! (wrappers &rest body)
   "Wrap WRAPPERS around BODY."
   (declare (indent 1))
+
   (loopy (list wrapper (reverse wrappers))
 	 (expr form `(,@wrapper ,form) :init `(progn ,@body))
 	 (fret form)))
