@@ -1907,11 +1907,14 @@ should be done.
 :END:
 
 #+begin_src emacs-lisp
-(let ((matches ())
-      (replacements )
-      (fargs ())
-      (format-fn))
-  `(,format-fn ,(s-replace-all replacements form) ,@fargs))
+(defun xl-format-form (symbol)
+  (loopy (with (format-fn (if (symbolp obj) #'format #'xl-intern-format))
+	       (regexp (xl-special-macro-symbol-regexp))
+	       (matches ))
+	 (list (match name) matches)
+	 (collect replacements (cons match "%s"))
+	 (collect format-args name)
+	 (fret `(,format-fn ,(s-replace-all replacements form) ,@fargs))))
 #+end_src
 
 ***** anaphoric symbols
@@ -1929,7 +1932,8 @@ should be done.
 		(xl-replace-special-format-symbols (cdr form))))
 	 ((and (or (symbolp form) (stringp form))
 	       (not (xl-special-macro-symbol-p form))
-	       (xl-symbol-to-format)))
+	       (xl-symbol-to-format))
+	  `())
 	 (_
 	  (cons (car form) (xl-replace-special-format-symbols (cdr form))))))
 #+end_src
