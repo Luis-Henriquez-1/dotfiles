@@ -2082,9 +2082,8 @@ functions as well as declaring their indentation.
 (defunmacro! defafter! (name features &rest body)
   "Eval body after FEATURES are loaded."
   (declare (indent defun))
-  `(progn
-     (defhook! ,name (xl-after-load-feature-hook :args (feature))
-       ,@body)))
+  `(defhook! ,name (xl-after-load-feature-hook :args (feature))
+     ,@body))
 #+end_src
 
 **** defbefore!
