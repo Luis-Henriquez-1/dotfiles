@@ -1915,7 +1915,7 @@ declaration of unique symbols.
 The special macro symbols refer to symbols that designate that something special
 should be done.
 
-***** replace format symbol
+***** format string
 :PROPERTIES:
 :ID:       1e70276c-ae37-41bd-9706-81baa5af3673
 :END:
