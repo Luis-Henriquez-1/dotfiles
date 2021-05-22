@@ -1917,14 +1917,16 @@ should be done.
 	((and (or (symbolp form) (stringp form))
 	      (not (xl-special-macro-symbol-p form))
 	      ())
-	 (loopy (with (format-fn (if (symbolp form) 'xl-intern-format 'format))
-		      (matches (xl-special-macro-symbols obj)))
-		(list (match name) matches)
-		(collect replacements (cons match "%s"))
-		(collect fargs name)
-		(finally-return
-		 (cons `(,format-fn ,(s-replace-all replacements form) ,@fargs)
-		       ))))
+	 `(,format-fn ,(s-replace-all replacements form) ,@fargs)
+	 ;; (loopy (with (format-fn (if (symbolp form) 'xl-intern-format 'format))
+	 ;; 	      (matches (xl-special-macro-symbols obj)))
+	 ;; 	(list (match name) matches)
+	 ;; 	(collect replacements (cons match "%s"))
+	 ;; 	(collect fargs name)
+	 ;; 	(finally-return
+	 ;; 	 (cons `(,format-fn ,(s-replace-all replacements form) ,@fargs)
+	 ;; 	       )))
+	 )
 	(_
 	 (cons (car form) (xl-replace-special-format-symbols (cdr form))))))
 #+end_src
