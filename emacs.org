@@ -1918,10 +1918,8 @@ I wasn't completely sure as to what the syntax of this variable should be.
 (defmacro wrap! (wrappers &rest body)
   "Wrap WRAPPERS around BODY."
   (declare (indent 1))
-
   (loopy (list wrapper (reverse wrappers))
-	 (expr form `(,@wrapper ,form) :init `(progn ,@body))
-	 (fret form)))
+	 (reduce wrapper #'xl-snoc :init (macroexp-progn body))))
 #+end_src
 
 **** with-map!
