@@ -1881,11 +1881,6 @@ writting tendencies easier.
        t))
 #+end_src
 
-***** contains-an-exclam symbol
-:PROPERTIES:
-:ID:       878ae252-9d31-40e4-8932-e9362d1fa061
-:END:
-
 ***** replace excam symbol
 :PROPERTIES:
 :ID:       ba379b42-0d47-4413-aa9d-8b2e1f2f1235
