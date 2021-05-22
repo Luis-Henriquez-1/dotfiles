@@ -2040,7 +2040,7 @@ functions as well as declaring their indentation.
        (let* ((,!docstring (when (stringp (car body)) (pop body)))
 	      (,!alist ())
 	      (body (cons ,!docstring body)))
-	 (let-alist ,!alist
+	 (wrap! ((let-alist ,!alist) (let-alist ,!plist))
 	   ,@body)))))
 #+end_src
 
