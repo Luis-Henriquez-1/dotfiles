@@ -1876,12 +1876,10 @@ writting tendencies easier.
 #+begin_src emacs-lisp
 (defun xl-special-macro-symbols (form)
   "Return the special macro symbols in FORM."
-  (->> (map)
-    ()
-    ())
-  (and (symbolp obj)
-       (s-matches-p (rx bow "!" (1+ (not white))))
-       t))
+  (->> (-flatten)
+    (-select #'symbolp)
+    (--select (s-matches-p (rx bow "!" (1+ (not white))) it))
+    (-uniq)))
 #+end_src
 
 ***** replace excam symbol
