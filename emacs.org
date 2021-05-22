@@ -1896,10 +1896,10 @@ writting tendencies easier.
    ((xl-true-list-p tree)
     (mapcar (lambda (x) (-tree-map #'xl-replace-special-format-symbols x)) tree))
    ((or (not (member (type-of tree) '(symbol string)))
-	(not (string-match-p))))
+	(not (string-match-p regexp (xl-to-string tree))))
+    tree)
    (t
-    (loopy (with (regexp )
-		 (format-fn (if (symbolp obj) 'xl-intern-format 'format)))
+    (loopy (with (format-fn (if (symbolp obj) 'xl-intern-format 'format)))
 	   (list (match name) (s-match-strings-all regexp (xl-to-string obj)))
 	   (collect replacements (cons match "%s"))
 	   (collect fargs name)
