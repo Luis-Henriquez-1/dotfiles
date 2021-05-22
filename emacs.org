@@ -1918,7 +1918,8 @@ I wasn't completely sure as to what the syntax of this variable should be.
   "Let-bind dotted symbols to their values in BODY."
   (-select #'xl-dotted-symbol-p body)
   (--map (list it (xl-dotted-symbol-name it)))
-  (map-let keys map ,@body))
+  (map-let keys map
+    ,@body))
 #+end_src
 
 **** defmacro!
