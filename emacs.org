@@ -1909,11 +1909,10 @@ I wasn't completely sure as to what the syntax of this variable should be.
 This is similar to `let-alist' but map can be any key value structure."
   (declare (indent 1))
   (loopy (with (dot-regexp (rx bos "." (group (1+ (not white))) eos)))
-	 (list obj (-flatten body))
-	 (unless (and (symbolp obj) (s-matches-p dot-regexp (symbol-name obj)))
-	   (skip))
-	 (expr symbol obj)
-	 (expr name (intern (nth 1 (s-match regexp s))))
+	 (for sym (-select #'symbolp (-flatten body)))
+	 (expr sym-name (symbol-name sym))
+	 (unless (s-matches-p dot-regexp sym-name) (skip))
+	 (expr name (intern (nth 1 (symbol-name obj))))
 	 (unioning bindings (list symbol name) :test #'car)
 	 (finally-return `(map-let ,bindings ,map ,@body))))
 #+end_src
