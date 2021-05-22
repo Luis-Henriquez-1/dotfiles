@@ -5507,7 +5507,7 @@ another.
 #+begin_src emacs-lisp
 (defunmacro! evilem%defmotion! (name features &rest body)
   `(after! evil
-     ,.bind
+     ,@(when .bind `((bind! ,@.bind)))
      (evilem-make-motion
       :scope ,.scope
       :initial-point ,.initial-point)))
