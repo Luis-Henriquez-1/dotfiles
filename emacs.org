@@ -1901,6 +1901,19 @@ writting tendencies easier.
 The special macro symbols refer to symbols that designate that something special
 should be done.
 
+***** replace format symbol
+:PROPERTIES:
+:ID:       1e70276c-ae37-41bd-9706-81baa5af3673
+:END:
+
+#+begin_src emacs-lisp
+(let ((matches ())
+      (replacements )
+      (fargs ())
+      (format-fn))
+  `(,format-fn ,(s-replace-all replacements form) ,@fargs))
+#+end_src
+
 ***** anaphoric symbols
 :PROPERTIES:
 :ID:       ba379b42-0d47-4413-aa9d-8b2e1f2f1235
@@ -1917,11 +1930,7 @@ should be done.
 	((and (or (symbolp form) (stringp form))
 	      (not (xl-special-macro-symbol-p form))
 	      ())
-	 (let ((matches ())
-	       (replacements )
-	       (fargs ())
-	       (format-fn))
-	   `(,format-fn ,(s-replace-all replacements form) ,@fargs)))
+	 )
 	(_
 	 (cons (car form) (xl-replace-special-format-symbols (cdr form))))))
 #+end_src
