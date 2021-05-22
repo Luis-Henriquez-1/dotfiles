@@ -1929,16 +1929,17 @@ should be done.
 #+begin_src emacs-lisp
 (defun xl-macro-format-form (form)
   "Replace all format symbols."
-  (acond ((null form)
-	  nil)
-	 ((xl-true-list-p form)
-	  (mapcar #'xl-macro-format-form form))
-	 ((and (symbolp form) (not (xl-special-macro-symbol-p form)))
-	  (xl-macro-format-symbol form))
-	 ((stringp form)
-	  (xl-macro-format-string form))
-	 (_
-	  form)))
+  (pcase form
+    ((pred null)
+     nil)
+    ((pred xl-true-list-p)
+     (mapcar #'xl-macro-format-form form))
+    ((and (pred symbolp) (app not (pred xl-special-macro-symbol-p)))
+     (xl-macro-format-symbol form))
+    ((pred stringp)
+     (xl-macro-format-string form))
+    (_
+     form)))
 #+end_src
 
 ***** defmacro!
