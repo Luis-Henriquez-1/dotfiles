@@ -710,8 +710,8 @@ To avoid.
 #+begin_src emacs-lisp
 (defun xl-special-macro-symbol-regexp (&optional lax)
   "Return regexp used for special symbols."
-  (if lax (rx "!" (1+ (not white)))
-    (rx bos "!" (1+ (not white)) eos)))
+  (if lax (rx "!" (group (1+ (not white))))
+    (rx bos "!" (group (1+ (not white))) eos)))
 #+end_src
 
 ***** special macro symbol
@@ -1922,11 +1922,11 @@ should be done.
 (defun xl-macro-format-string (string)
   (loopy (with (regexp (xl-special-macro-symbol-regexp t))
 	       (matches (s-match-strings-all regexp string)))
-	 (initially (unless matches (return string)))
+	 (initially (unless matches (cl-return string)))
 	 (list (match name) matches)
 	 (collect replacements (cons match "%s"))
 	 (collect format-args name)
-	 (fret `(format ,(s-replace-all replacements form) ,@fargs))))
+	 (after (cl-return `(format ,(s-replace-all replacements string) ,@format-args)))))
 
 (defun xl-macro-format-symbol (symbol)
   (alet (xl-macro-format-string (symbol-name symbol))
