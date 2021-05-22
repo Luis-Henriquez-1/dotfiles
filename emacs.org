@@ -1929,8 +1929,7 @@ should be done.
 		(xl-replace-special-format-symbols (cdr form))))
 	 ((and (or (symbolp form) (stringp form))
 	       (not (xl-special-macro-symbol-p form))
-	       (xl-symbol-to-format))
-	  )
+	       (xl-symbol-to-format)))
 	 (_
 	  (cons (car form) (xl-replace-special-format-symbols (cdr form))))))
 #+end_src
