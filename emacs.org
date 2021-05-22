@@ -1943,7 +1943,7 @@ should be done.
 
 #+begin_src emacs-lisp
 (defun xl-macro-format-string (string)
-  "Return."
+  "Return format form for string."
   (loopy (with (regexp (xl-special-macro-symbol-regexp t))
 	       (matches (s-match-strings-all regexp string)))
 	 (initially (unless matches (cl-return string)))
