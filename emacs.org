@@ -1993,10 +1993,10 @@ functions as well as declaring their indentation.
   "Define an advice that follows XL naming conventions."
   (loopy (list fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
-	 (collect `(defalias ',advice ',xl--<name>-advice))
+	 (collect `(defalias ',advice ',xl--!name-advice))
 	 (collect `(advice-add #',fn ,where #',advice ,.props))
 	 (collect `(xl-log-function #',advice))
-	 (finally-return `(progn (defun ,xl--<name>-advice ,.args ,docstring ,@.body)
+	 (finally-return `(progn (defun ,xl--!name-advice ,.args ,docstring ,@.body)
 				 ,@loopy-result))))
 #+end_src
 
