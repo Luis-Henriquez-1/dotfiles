@@ -1960,7 +1960,7 @@ should be done.
 
 #+begin_src emacs-lisp
 (defun xl-macro-format-symbol (symbol)
-  ""
+  "Return format form for symbol."
   (alet (xl-macro-format-string (symbol-name symbol))
     (if (stringp it) symbol `(intern ,it))))
 #+end_src
