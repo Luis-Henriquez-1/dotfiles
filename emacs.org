@@ -1894,7 +1894,7 @@ writting tendencies easier.
   "Return the special macro symbols in FORM."
   (->> form
     (-flatten)
-    (-select #'symbolp)
+    (-select #'xl-special-macro-symbol-p)
     (--select )
     (-uniq)))
 #+end_src
