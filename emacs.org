@@ -1884,9 +1884,6 @@ writting tendencies easier.
   )
 #+end_src
 
-#+begin_src emacs-lisp
-#+end_src
-
 ***** special macro symbols
 :PROPERTIES:
 :ID:       67e4ef77-587e-404b-9524-ee2881267b77
