@@ -1946,6 +1946,9 @@ The font lock patters that I use are fairly regular.
 :ID:       5c116171-e820-4700-b882-9452e8168586
 :END:
 
+#+begin_src emacs-lisp
+#+end_src
+
 **** defunmacro!
 :PROPERTIES:
 :ID:       41585612-f351-4c73-82c2-73e7e2e59f50
