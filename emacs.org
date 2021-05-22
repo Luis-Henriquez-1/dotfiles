@@ -1876,6 +1876,7 @@ writting tendencies easier.
 #+begin_src emacs-lisp
 (defun xl-special-macro-symbols (form)
   "Return the special macro symbols in FORM."
+  (-)
   (and (symbolp obj)
        (s-matches-p (rx bow "!" (1+ (not white))))
        t))
@@ -1920,9 +1921,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   "Define a macro."
   (declare (indent defun))
   `(defmacro ,name ,args
-     (mmt-once-only ,@(->> (-flatten body)
-			(-filter #'xl--exclam-symbol-p)
-			(-uniq))
+     (mmt-once-only ,@(xl-special-macros-symbols)
        ,@(-tree-map #' body))))
 #+end_src
 
