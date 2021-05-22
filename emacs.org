@@ -2308,22 +2308,7 @@ variable. Also, I don't support the alternate =fn:= syntax.
 	 (-let [,it ,argsym] ,@body)))))
 #+end_src
 
-**** defun! :extension:
-:PROPERTIES:
-:ID:       2e345fe9-4c03-4c81-bedf-6f40ea0b755c
-:END:
-
-=defun!= is meant to be a wrapper of and replacement for =defun=. I want a
-general macro that I can use for building other "defun-like" macros such as
-=defhook!= and =defadvice!=. More generally, there are patterns that are
-repeated very often.
-
-***** parsers
-:PROPERTIES:
-:ID:       3c3233ab-1cf2-47d5-bbad-d7e71bbc13aa
-:END:
-
-****** parse generic advice
+**** parse generic advice
 :PROPERTIES:
 :ID:       73f153c5-b005-41c1-bc35-3aa47b4339f1
 :END:
@@ -2341,12 +2326,7 @@ repeated very often.
 	  ,@(defun-macro%process-clauses rest state))))))
 #+end_src
 
-***** extensions
-:PROPERTIES:
-:ID:       1d8a1e3b-6f65-432a-9340-e1afe797c0ca
-:END:
-
-****** defgadvice!
+**** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
