@@ -1971,7 +1971,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   (declare (indent defun))
   `(defmacro ,name ,args
      (mmt-with-unique-names ,(xl-special-macro-symbols body)
-       ,@(xl-replace-special-format-symbols body))))
+       ,@(xl-macro-format-form body))))
 #+end_src
 
 **** font lock for
