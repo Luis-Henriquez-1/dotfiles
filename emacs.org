@@ -2029,7 +2029,6 @@ functions as well as declaring their indentation.
 #+begin_src emacs-lisp
 (defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
-  ;; (,!docstring )
   (-let ((docstring (when (stringp (car body)) (pop body)))
 	 ((_ args-var) args)
 	 (alist (gensym "alist-")))
