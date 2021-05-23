@@ -529,7 +529,8 @@ that is concise and efficient.
 (defconst XL-ADVICE-KEYWORDS '(:around :before :after
 			       :override :after-until :after-while
 			       :before-until :before-while :filter-args
-			       :filter-return))
+			       :filter-return)
+  "All possible advice keywords.")
 #+end_src
 
 *** helpers :helper:
