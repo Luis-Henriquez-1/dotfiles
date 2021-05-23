@@ -2015,7 +2015,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   `(defmacro ,name ,args ,@(xl-macro-format-form body)))
 #+end_src
 
-**** font lock for
+**** font lock
 :PROPERTIES:
 :ID:       0353d5ad-d937-4e7d-8f33-30624b1905de
 :END:
@@ -2026,8 +2026,8 @@ The font lock patters that I use are fairly regular.
 (defun xl-generate-defun-font-lock (name)
   "Return the form to add to font lock for macro with NAME."
   (alet `(seq "(" (group ,(xl-to-string name)) (1+ space) (group (1+ (any "-" word))) (1+ space)
-	      "(" (group (+ (any "-" word))))
-    `((,it
+	      "(" (group (* (any "-" word))))
+    `((,(rx-to-string it)
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face)
        (3 font-lock-variable-name-face)))))
