@@ -869,6 +869,8 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 :ID:       faa5589c-864d-4920-9337-a7505b864d9f
 :END:
 
+This is similar to dash's [[][-snoc].
+
 #+begin_src emacs-lisp
 (defun xl-snoc (elt list)
   "Add elt to end of list."
