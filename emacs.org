@@ -2161,7 +2161,8 @@ This macro lets me define advices in a convenient syntax.
 :ID:       687c424f-967b-4950-98dc-2ee51532135a
 :END:
 
-This macro is for creating new hook variables.
+This macro is for creating new hook variables and attaching them to where they
+should run.
 
 #+begin_src emacs-lisp
 (defunmacro! defhooksym! (name args &rest body)
