@@ -1891,25 +1891,6 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :ID:       40a33da1-6d4b-4395-adfb-a4cdba7ec28c
 :END:
 
-**** add syntax highlighting for special symbols
-:PROPERTIES:
-:ID:       500c7883-fcf6-4b6f-97ac-e89388748bcd
-:END:
-
-Symbols I've made that start with an exclamation point (=!=), will be used for
-special purposes. Specifically a symbol such as =!hello= will signal the
-creation of a =once-only!= variable binding. However, if such a symbol is within
-a string or part of a larger symbol, then it will single the replacement of a
-format string.
-
-I wasn't completely sure as to what the syntax of this variable should be.
-
-#+begin_src emacs-lisp
-(defhook add-syntax-highlighting-for-anaphoric-symbol (emacs-lisp-mode-hook)
-  ""
-  (alet))
-#+end_src
-
 **** eval-after-load! :defer:
 :PROPERTIES:
 :ID:       8d831084-539b-4072-a86a-b55afb09bf02
@@ -2395,6 +2376,25 @@ variable. Also, I don't support the alternate =fn:= syntax.
 	`((defun ,generic-advice-fn (fn) (advice-add fn :around #',advice-fn))
 	  (defun ,advice-fn ,.args ,.docstring ,@.body)
 	  ,@(defun-macro%process-clauses rest state))))))
+#+end_src
+
+**** add syntax highlighting for special symbols
+:PROPERTIES:
+:ID:       500c7883-fcf6-4b6f-97ac-e89388748bcd
+:END:
+
+Symbols I've made that start with an exclamation point (=!=), will be used for
+special purposes. Specifically a symbol such as =!hello= will signal the
+creation of a =once-only!= variable binding. However, if such a symbol is within
+a string or part of a larger symbol, then it will single the replacement of a
+format string.
+
+I wasn't completely sure as to what the syntax of this variable should be.
+
+#+begin_src emacs-lisp
+(defhook add-syntax-highlighting-for-anaphoric-symbol (emacs-lisp-mode-hook)
+  ""
+  (alet))
 #+end_src
 
 **** defgadvice!
