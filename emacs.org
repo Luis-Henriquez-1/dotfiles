@@ -2100,7 +2100,7 @@ functions as well as declaring their indentation.
 	 (alist (gensym "alist-")))
     `(progn
        (after! lisp-extra-font-lock
-	 (add-to-list 'lisp-extra-font-lock-defun-functions ',name))
+	 (add-to-list 'lisp-extra-font-lock-defun-functions ',(symbol-name name)))
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
