@@ -2040,7 +2040,7 @@ functions as well as declaring their indentation.
        (defmacro! ,name ,args
 	 (declare (indent defun) (doc-string 3))
 	 ,@(when docstring (list docstring))
-	 (-let* (((,(car args) ,!alist) (-split-with (-not #'keywordp) args)))
+	 (-let* (((,(cl-second args) ,!alist) (-split-with (-not #'keywordp) args)))
 	   (let-alist ,!alist
 	     ,@body))))))
 #+end_src
