@@ -2067,6 +2067,9 @@ functions as well as declaring their indentation.
 :ID:       8ea918ba-e25f-4296-a83d-dbb05c4f9130
 :END:
 
+This is a convenience macro for creating hooks. It allows me to define hooks in
+a concise, easily-readable, and familiar way. It has a similar syntax to =defun=.
+
 #+begin_src emacs-lisp
 (defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
