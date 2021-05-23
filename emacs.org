@@ -2093,11 +2093,13 @@ functions as well as declaring their indentation.
   (loopy (with fns (append .override .after .before .after-until .after-while))
 	 (list fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
-	 (collect `(defalias ',advice ',xl--!name-advice))
+	 (cond (loopy-first-iteration-p
+		(collect `(defun ,xl--!name-advice ,.args ,docstring ,@.body)))
+	       (t
+		(collect `(defalias ',advice ',xl--!name-advice))))
 	 (collect `(advice-add #',fn ,where #',advice ,.props))
 	 (collect `(xl-log-function #',advice))
-	 (finally-return `(progn (defun ,xl--!name-advice ,.args ,docstring ,@.body)
-				 ,@loopy-result))))
+	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
 
 **** defhooksym!
