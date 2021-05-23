@@ -2067,9 +2067,10 @@ many--then they can go in front of the body instead.
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
-	 (-let (((,args-var ,<plist>) (-split-with (-not #'keywordp) ,args-var))
-		((,<alist> body) (--split-with (and (listp it) (keyword (car it))) body)))
-	   (let ((.MAP (append ,<plist> ,<alist>)))
+	 (-let* (((,args-var ,<plist>) (-split-with (-not #'keywordp) ,args-var))
+		 ((,<alist> body) (--split-with (and (listp it) (keyword (car it))) body))
+		 ((.MAP (append ,<plist> ,<alist>))))
+	   (let ()
 	     (if .MAP (with-map! .MAP ,@body) (progn ,@body))))))))
 #+end_src
 
