@@ -2021,7 +2021,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 :END:
 
 The font lock patters that I use are fairly regular. Many macros I define have a
-=defun-like= syntax. Therefore,
+"defun-like" syntax. Therefore,
 
 #+begin_src emacs-lisp
 (defun xl-generate-defun-font-lock (name)
