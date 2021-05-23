@@ -1978,7 +1978,7 @@ This is similar to `let-alist' but map can be any key value structure."
 	 (unless group1 (skip))
 	 (expr name (intern group1))
 	 (unioning bindings (list (list (macroexp-quote name) sym)))
-	 (finally-return `(map-let ,bindings ,map ,@body))))
+	 (finally-return `(let ((.MAP ',map)) (map-let ,bindings ,map ,@body)))))
 #+end_src
 
 **** defmacro!
