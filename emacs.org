@@ -2061,7 +2061,7 @@ functions as well as declaring their indentation.
 	 ((_ args-var) args)
 	 (alist (gensym "alist-")))
     `(progn
-       (add-to-list)
+       (add-to-list 'lisp-extra-font-lock-defun-functions ',name)
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
