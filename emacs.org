@@ -1901,6 +1901,26 @@ I wasn't completely sure as to what the syntax of this variable should be.
 	 (reduce wrapper #'xl-snoc :init (macroexp-progn body))))
 #+end_src
 
+**** with-map!
+:PROPERTIES:
+:ID:       02bc8acb-5be4-4772-96bc-79cd3392818f
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-map! (map &rest body)
+  "Let-bind dotted symbols to their values in BODY.
+This is similar to `let-alist' but map can be any key value structure."
+  (declare (indent 1))
+  (loopy (with (dot-regexp (rx bos "." (group (1+ (not white))) eos)))
+	 (for sym (-select #'symbolp (-flatten body)))
+	 (expr sym-name (symbol-name sym))
+	 (expr (_ group1) (s-match dot-regexp sym-name))
+	 (unless group1 (skip))
+	 (expr name (intern group1))
+	 (unioning bindings (list (list (macroexp-quote name) sym)))
+	 (finally-return `(map-let ,bindings ,map ,@body))))
+#+end_src
+
 **** defmacro!
 :PROPERTIES:
 :ID:       5e7f7096-482f-45fd-8bc9-8e1c5c378b35
@@ -2023,7 +2043,7 @@ functions as well as declaring their indentation.
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
 	 (-let (((,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)))
-	   (let-alist ,alist
+	   (with-map! ,(-map-when #'keywordp ( #'xl-keyword-name))
 	     ,@body))))))
 #+end_src
 
