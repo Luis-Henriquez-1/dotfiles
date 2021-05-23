@@ -2030,18 +2030,19 @@ functions as well as declaring their indentation.
 #+begin_src emacs-lisp
 (defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
-  `(progn
-     ;; (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
-     ;;   "Add font lock keywords for !name."
-     ;;   (font-lock-add-keywords nil (xl-generate-defun-font-lock ,name)))
-     ;; (add-hook 'emacs-lisp-mode-hook #',emacs-lisp-mode-hook&add-!name-font-lock-keywords)
-     (defmacro! ,name ,args
-       (declare (indent defun) (doc-string 3))
-       (-let* ((,!docstring (when (stringp (car body)) (pop body)))
-	       ((,(car args) ,!alist) (-split-with (-not #'keywordp) args))
-	       (body (cons ,!docstring body)))
-	 (let-alist ,!alist
-	   ,@body)))))
+  ;; (,!docstring )
+  (let ((docstring (when (stringp (car body)) (pop body))))
+    `(progn
+       ;; (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
+       ;;   "Add font lock keywords for !name."
+       ;;   (font-lock-add-keywords nil (xl-generate-defun-font-lock ,name)))
+       ;; (add-hook 'emacs-lisp-mode-hook #',emacs-lisp-mode-hook&add-!name-font-lock-keywords)
+       (defmacro! ,name ,args
+	 (declare (indent defun) (doc-string 3))
+	 ,@(when docstring (list docstring))
+	 (-let* (((,(car args) ,!alist) (-split-with (-not #'keywordp) args)))
+	   (let-alist ,!alist
+	     ,@body))))))
 #+end_src
 
 **** defhook!
