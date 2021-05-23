@@ -2051,7 +2051,7 @@ functions as well as declaring their indentation.
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
 	 (-let [(,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)]
-	   (let-alist (loopy (list (key . val) (map-into alist 'alist))
+	   (with-map! (loopy (list (key . val) (map-into ,alist 'alist))
 			     (expr new (intern (xl-keyword-name key)))
 			     (collect (cons new val)))
 	     ,@body))))))
@@ -2063,7 +2063,7 @@ functions as well as declaring their indentation.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro! defhook! (name hooks &rest body)
+(defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (loopy (list hook hooks)
 	 (expr fn (xl-hook-gen-name hook name))
