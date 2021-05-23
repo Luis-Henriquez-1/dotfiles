@@ -2034,6 +2034,9 @@ functions as well as declaring their indentation.
   (-let ((docstring (when (stringp (car body)) (pop body)))
 	 ((_ args-var) args)
 	 (alist (gensym "alist-")))
+    (loopy (list (key . val) (map-into alist 'alist))
+	   (expr new (intern (xl-keyword-name key)))
+	   (collect (cons new val)))
     `(progn
        ;; (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
        ;;   "Add font lock keywords for !name."
@@ -2056,14 +2059,14 @@ functions as well as declaring their indentation.
 (defmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (-let [(hooks alist) (-split-with (-not #'keywordp) hooks)]
-    (let-alist (map-into alist 'alist)
-      (loopy (list hook hooks)
-	     (expr fn (xl-hook-gen-name hook name))
-	     (collect `(defalias ',fn ,xl--!name-hook))
-	     (collect `(add-hook ',hook ',fn ,(or .append .depth) ,.local))
-	     (collect `(xl-log-function ',fn))
-	     (finally-return `(progn (defun ,xl--!name-hook ,.args ,@body)
-				     ,@loopy-result))))))
+    (let-alist 
+	(loopy (list hook hooks)
+	       (expr fn (xl-hook-gen-name hook name))
+	       (collect `(defalias ',fn ,xl--!name-hook))
+	       (collect `(add-hook ',hook ',fn ,(or .append .depth) ,.local))
+	       (collect `(xl-log-function ',fn))
+	       (finally-return `(progn (defun ,xl--!name-hook ,.args ,@body)
+				       ,@loopy-result))))))
 #+end_src
 
 **** defadvice!
