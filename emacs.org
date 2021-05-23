@@ -2043,7 +2043,7 @@ functions as well as declaring their indentation.
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
 	 (-let (((,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)))
-	   (let-alist ,(-partition-before-pred #'keywordp ,alist)
+	   (let-alist (map-into ,alist 'alist)
 	     ,@body))))))
 #+end_src
 
