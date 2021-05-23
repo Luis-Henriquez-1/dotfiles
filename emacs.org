@@ -2025,7 +2025,7 @@ The font lock patters that I use are fairly regular.
 #+begin_src emacs-lisp
 (defun xl-generate-defun-font-lock (name)
   "Return the form to add to font lock for macro with NAME."
-  `((,(format "(\\(%s\\)[[:space:]]+\\([-[:word:]]+\\)[[:space:]]+(\\([-[:word:]]+\\)" name)
+  `((,(format "(\\(hello\\)[[:space:]]+\\([-[:word:]]+\\)[[:space:]]+(\\([-[:word:]]+\\)" name)
      (1 font-lock-keyword-face)
      (2 font-lock-function-name-face)
      (3 font-lock-variable-name-face))))
@@ -2067,10 +2067,11 @@ functions as well as declaring their indentation.
   "Define a hook that follows XL naming conventions."
   (loopy (list hook hooks)
 	 (expr fn (xl-hook-gen-name hook name))
-	 (if loopy-first-iteration-p
-	     (group (collect `(defun ,fn ,.args ,@body))
-		    (expr orig-fn fn))
-	   (collect `(defalias ',fn ',orig-fn)))
+	 (cond (loopy-first-iteration-p
+		(collect `(defun ,fn ,.args ,@body))
+		(expr orig-fn fn))
+	       (t
+		(collect `(defalias ',fn ',orig-fn))))
 	 (collect `(add-hook ',hook #',fn ,(or .append .depth) ,.local))
 	 (collect `(xl-log-function ',fn))
 	 (finally-return (macroexp-progn loopy-result))))
