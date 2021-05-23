@@ -2031,7 +2031,8 @@ functions as well as declaring their indentation.
 (defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
   ;; (,!docstring )
-  (let ((docstring (when (stringp (car body)) (pop body))))
+  (-let ((docstring (when (stringp (car body)) (pop body)))
+	 ((_ args-var) args))
     `(progn
        ;; (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
        ;;   "Add font lock keywords for !name."
@@ -2040,7 +2041,7 @@ functions as well as declaring their indentation.
        (defmacro! ,name ,args
 	 (declare (indent defun) (doc-string 3))
 	 ,@(when docstring (list docstring))
-	 (-let* (((,(cl-second args) ,!alist) (-split-with (-not #'keywordp) args)))
+	 (-let* (((,args-var ,!alist) (-split-with (-not #'keywordp) args)))
 	   (let-alist ,!alist
 	     ,@body))))))
 #+end_src
