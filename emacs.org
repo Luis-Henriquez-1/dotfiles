@@ -2090,6 +2090,8 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 :ID:       6dd44e4c-0f11-4a45-9ad0-9b5ac35d4e58
 :END:
 
+This macro lets me define advices in a convenient syntax.
+
 #+begin_src emacs-lisp
 (defunmacro! defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
