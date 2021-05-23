@@ -2037,9 +2037,9 @@ functions as well as declaring their indentation.
      (add-hook 'emacs-lisp-mode-hook #'emacs-lisp-mode-hook&add-!name-font-lock-keywords)
      (defmacro! ,name (name args &rest body)
        (declare (indent defun) (doc-string 3))
-       (let* ((,!docstring (when (stringp (car body)) (pop body)))
-	      (,!alist)
-	      (body (cons ,!docstring body)))
+       (-let* ((,!docstring (when (stringp (car body)) (pop body)))
+	       ((args ,!alist) (-split-with (-not #'keywordp) args))
+	       (body (cons ,!docstring body)))
 	 (wrap! ((let-alist ,!alist))
 	   ,@body)))))
 #+end_src
