@@ -1872,16 +1872,6 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 (use-package map :demand t)
 #+end_src
 
-*** extra-font-lock
-:PROPERTIES:
-:ID:       829054b3-a60e-44b1-bef5-c4b5c0b2c999
-:END:
-
-#+begin_src emacs-lisp
-(use-package lisp-extra-font-lock
-  :hook emacs-lisp-mode-hook)
-#+end_src
-
 *** custom macros
 :PROPERTIES:
 :ID:       40a33da1-6d4b-4395-adfb-a4cdba7ec28c
