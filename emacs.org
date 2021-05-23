@@ -4330,7 +4330,7 @@ options. For this reason I wrote my own insert heading functions.
 :END:
 
 #+begin_src emacs-lisp
-(defun! use-switch-to-buffer-instead (orig-fn &rest args)
+(defadvice! use-switch-to-buffer-instead (orig-fn &rest args)
   (:around org-src-switch-to-buffer)
   (with-temp-advice! ((pop-to-buffer-same-window :override switch-to-buffer))
     (apply orig-fn args)))
@@ -4756,10 +4756,10 @@ This package displays a calendar.
 forces agenda view to rely on [[helpvar:display-buffer-alist][display-buffer-alist]] for it's display.
 
 #+begin_src emacs-lisp
-(defun! use-display-buffer (abuf filter-alist)
+(defadvice! use-display-buffer (abuf filter-alist)
   "Use `display-buffer' to display the agenda buffer.
 Unlike `org-agenda-prepare-window', this function does not store the window configuration."
-  :override org-agenda-prepare-window
+  (:override org-agenda-prepare-window)
   (display-buffer abuf)
   (setq org-agenda-tag-filter (cdr (assq 'tag filter-alist)))
   (setq org-agenda-category-filter (cdr (assq 'cat filter-alist)))
