@@ -2404,6 +2404,11 @@ variable. Also, I don't support the alternate =fn:= syntax.
 #+end_src
 
 
+*** create a hook for adding font lock
+:PROPERTIES:
+:ID:       2f3b865c-6ef1-41e0-bde0-33a7bb7650b9
+:END:
+
 *** generate a logging function
 :PROPERTIES:
 :ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
