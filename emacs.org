@@ -2336,30 +2336,6 @@ Note that I may depreciate this in favor of setf.
   `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
 #+end_src
 
-**** fn!
-:PROPERTIES:
-:ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
-:END:
-
-This is a macro for writing anaphoric lambdas. It is based on [[https://github.com/troyp/fn.el][fn]], the main
-difference being that in a few special cases you can specify a named anaphoric
-variable. Also, I don't support the alternate =fn:= syntax.
-
-#+begin_src emacs-lisp
-(defmacro fn! (&rest body)
-  "Expand into an anaphoric macro with body BODY."
-  (let* ((argsym (make-symbol "ARGS"))
-	 (symbolic-placeholders (-uniq (xl-anaphoric-symbols body)))
-	 (number-fn (lambda (it) (s-matches-p "<[[:digit:]]>" (symbol-name it))))
-	 (numbers-p (-all-p number-fn symbolic-placeholders)))
-    (alet (if numbers-p
-	      (-sort (lambda (it other) (string-lessp (symbol-name it) (symbol-name other)))
-		     symbolic-placeholders)
-	    symbolic-placeholders)
-      `(lambda (&rest ,argsym)
-	 (-let [,it ,argsym] ,@body)))))
-#+end_src
-
 **** parse generic advice
 :PROPERTIES:
 :ID:       73f153c5-b005-41c1-bc35-3aa47b4339f1
@@ -9485,23 +9461,6 @@ I build my =mbsyncrc= and my =msmtprc= via tangling.
 
 #+begin_src emacs-lisp
 (use-package password-store)
-#+end_src
-
-*** email accounts :email:
-:PROPERTIES:
-:ID:       3a3c6778-dc5d-45cf-87d1-1c6aacbbae46
-:END:
-
-Whatever emails I may use, I'll be adding their password in my password store so
-why not use this as a way to get email information?
-
-#+begin_src emacs-lisp
-(defun password-store%email-accounts ()
-  "Return a list of email accounts."
-  (->> (expand-file-name "email/" (password-store-dir))
-       (directory-files)
-       (cddr)
-       (mapcar (fn! (s-chop-suffix ".gpg" <>)))))
 #+end_src
 
 *** epa :gpg:
