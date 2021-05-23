@@ -2115,8 +2115,7 @@ functions as well as declaring their indentation.
 :END:
 
 #+begin_src emacs-lisp
-(defhooksym! xl-before-load-hook ()
-  (:before require)
+(defhooksym! xl-before-load-hook (:before require)
   (run-hook 'xl-before-load-hook))
 #+end_src
 
@@ -2126,8 +2125,7 @@ functions as well as declaring their indentation.
 :END:
 
 #+begin_src emacs-lisp
-(defhooksym! xl-before-load-hook (&rest _)
-  (:after provide)
+(defhooksym! xl-before-load-hook (:after provide)
   (run-hook 'xl-before-load-hook))
 #+end_src
 
