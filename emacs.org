@@ -10252,7 +10252,6 @@ When I'm using the dashboard.
   (:around startup%initial-buffer-choice)
   (get-buffer-create "*dashboard*"))
 #+end_src
-:END:
 
 [[helpvar:xl-init-time][xl-init-time]] is more accurate than dashboard's init time measure. So I use it
 instead.
