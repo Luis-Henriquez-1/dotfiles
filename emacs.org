@@ -2140,11 +2140,11 @@ This macro lets me define advices in a convenient syntax.
 #+begin_src emacs-lisp
 (defunmacro! defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
-  (loopy (with ())
+  (loopy (with ((args plist) (-split-with (-not #'keywordp) args)))
 	 (list fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
 	 (cond (loopy-first-iteration-p
-		(collect `(defun ,advice ,.args ,docstring ,@.body))
+		(collect `(defun ,advice ,(or args .args) ,docstring ,@.body))
 		(expr orig-fn advice))
 	       (t
 		(collect `(defalias ',advice ',orig-fn))))
