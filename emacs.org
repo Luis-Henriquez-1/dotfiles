@@ -2104,11 +2104,13 @@ functions as well as declaring their indentation.
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
+	 (loopy (list (key . val) (map-into ,alist 'alist))
+		(expr new (intern (xl-keyword-name key)))
+		(collect (cons new val))
+		(finally-do (set )))
 	 (-let [(,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)]
-	   (with-map! (loopy (list (key . val) (map-into ,alist 'alist))
-			     (expr new (intern (xl-keyword-name key)))
-			     (collect (cons new val)))
-	     ,@body))))))
+	   (with-map! 
+	       ,@body))))))
 #+end_src
 
 **** defhook!
