@@ -2090,8 +2090,7 @@ functions as well as declaring their indentation.
 #+begin_src emacs-lisp
 (defunmacro! defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
-  (loopy (with fns (append .override .after .before .after-until .after-while))
-	 (list fn functions)
+  (loopy (list fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
 	 (cond (loopy-first-iteration-p
 		(collect `(defun ,xl--!name-advice ,.args ,docstring ,@.body)))
