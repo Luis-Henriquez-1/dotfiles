@@ -2040,7 +2040,7 @@ functions as well as declaring their indentation.
        (-let* ((,!docstring (when (stringp (car body)) (pop body)))
 	       ((args ,!alist) (-split-with (-not #'keywordp) args))
 	       (body (cons ,!docstring body)))
-	 (wrap! ((let-alist ,!alist))
+	 (let-alist ,!alist
 	   ,@body)))))
 #+end_src
 
