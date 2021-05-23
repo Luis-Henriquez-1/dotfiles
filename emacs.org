@@ -722,7 +722,7 @@ To avoid.
 #+begin_src emacs-lisp
 (defun xl-special-macro-symbol-regexp (&optional lax)
   "Return regexp used for special symbols."
-  (alet '(bos "!" (group (1+ alnum)) eos)
+  (alet '(bos "<" (not (any white "<" ">")) ">" eos)
     (rx-to-string (cons 'seq (if lax (-slice it 1 -1) it)))))
 #+end_src
 
