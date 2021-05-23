@@ -2047,7 +2047,10 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 (defmacro defmacro! (name args &rest body)
   "Define a macro."
   (declare (indent defun))
-  `(defmacro ,name ,args ,@(xl-macro-format-form body)))
+  (let ((special-vars (xl-special-macro-symbols body)))
+    `(defmacro ,name ,args
+       (mmt-with-unique-names ,special-vars
+	 ,@(xl-macro-format-form body)))))
 #+end_src
 
 **** defunmacro!
