@@ -2047,6 +2047,7 @@ functions as well as declaring their indentation.
 	 ((_ args-var) args)
 	 (alist (gensym "alist-")))
     `(progn
+       (font-lock-add-keywords 'emacs-lisp-mode (xl-generate-defun-font-lock ',name))
        ;; (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
        ;;   "Add font lock keywords for !name."
        ;;   (font-lock-add-keywords nil (xl-generate-defun-font-lock ,name)))
