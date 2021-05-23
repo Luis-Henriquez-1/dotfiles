@@ -2074,9 +2074,9 @@ functions as well as declaring their indentation.
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
 	 (-let (((,args-var ,<plist>) (-split-with (-not #'keywordp) ,args-var))
-		(body ,<alist>) (-split-with))
+		((body ,<alist>) (-split-with)))
 	   (let ((.MAP (append ,<plist> ,<alist>)))
-	     (with-map! ,@body)))))))
+	     (with-map! .MAP ,@body)))))))
 #+end_src
 
 **** defhook!
@@ -4731,7 +4731,7 @@ forces agenda view to rely on [[helpvar:display-buffer-alist][display-buffer-ali
 (defadvice! use-display-buffer (abuf filter-alist)
   "Use `display-buffer' to display the agenda buffer.
 Unlike `org-agenda-prepare-window', this function does not store the window configuration."
-  (:override org-agenda-prepare-window)
+  :override org-agenda-prepare-window
   (display-buffer abuf)
   (setq org-agenda-tag-filter (cdr (assq 'tag filter-alist)))
   (setq org-agenda-category-filter (cdr (assq 'cat filter-alist)))
