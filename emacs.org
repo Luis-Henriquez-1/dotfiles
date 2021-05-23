@@ -2062,9 +2062,7 @@ functions as well as declaring their indentation.
 	     (collect `(defalias ',fn ,xl--!name-hook))
 	     (collect `(add-hook ',hook ',fn ,(or .append .depth) ,.local))
 	     (collect `(xl-log-function ',fn))
-	     (finally-return `(progn ',alist
-				     ,(map-into alist 'alist)
-				     (defun ,xl--!name-hook ,.args ,@body)
+	     (finally-return `(progn (defun ,xl--!name-hook ,.args ,@body)
 				     ,@loopy-result))))))
 #+end_src
 
