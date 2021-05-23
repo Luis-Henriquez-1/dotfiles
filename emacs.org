@@ -2087,7 +2087,7 @@ functions as well as declaring their indentation.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defhooksym! (name args &rest body)
+(defunmacro! defhooksym! (name args &rest body)
   "Define a hook."
   (declare (indent defun))
   `(progn (defvar ,name nil ,docstring)
