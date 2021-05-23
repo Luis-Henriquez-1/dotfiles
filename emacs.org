@@ -2042,7 +2042,7 @@ functions as well as declaring their indentation.
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
-	 (-let (((,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)))
+	 (-let [(,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)]
 	   (let-alist (map-into ,alist 'alist)
 	     ,@body))))))
 #+end_src
@@ -2053,15 +2053,19 @@ functions as well as declaring their indentation.
 :END:
 
 #+begin_src emacs-lisp
-(defunmacro! defhook! (name hooks &rest body)
+(defmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
-  (loopy (list hook hooks)
-	 (expr fn (xl-hook-gen-name hook name))
-	 (collect `(defalias ',fn ,xl--!name-hook))
-	 (collect `(add-hook ',hook ',fn ,(or .append .depth) ,.local))
-	 (collect `(xl-log-function ',fn))
-	 (finally-return `(progn (defun ,xl--!name-hook ,.args ,@body)
-				 ,@loopy-result))))
+  (-let [(hooks alist) (-split-with (-not #'keywordp) hooks)]
+    (let-alist (map-into alist 'alist)
+      (loopy (list hook hooks)
+	     (expr fn (xl-hook-gen-name hook name))
+	     (collect `(defalias ',fn ,xl--!name-hook))
+	     (collect `(add-hook ',hook ',fn ,(or .append .depth) ,.local))
+	     (collect `(xl-log-function ',fn))
+	     (finally-return `(progn ',alist
+				     ,(map-into alist 'alist)
+				     (defun ,xl--!name-hook ,.args ,@body)
+				     ,@loopy-result))))))
 #+end_src
 
 **** defadvice!
