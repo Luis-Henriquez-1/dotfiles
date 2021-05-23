@@ -1924,7 +1924,7 @@ declaration of unique symbols.
 	 (initially (unless matches (cl-return string)))
 	 (list (match name) matches)
 	 (collect replacements (cons match "%s"))
-	 (collect format-args (macroexp-quote (intern name)))
+	 (collect format-args (intern name))
 	 (after (cl-return `(format ,(s-replace-all replacements string) ,@format-args)))))
 #+end_src
 
