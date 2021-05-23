@@ -2034,9 +2034,6 @@ functions as well as declaring their indentation.
   (-let ((docstring (when (stringp (car body)) (pop body)))
 	 ((_ args-var) args)
 	 (alist (gensym "alist-")))
-    (loopy (list (key . val) (map-into alist 'alist))
-	   (expr new (intern (xl-keyword-name key)))
-	   (collect (cons new val)))
     `(progn
        ;; (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
        ;;   "Add font lock keywords for !name."
@@ -2045,6 +2042,9 @@ functions as well as declaring their indentation.
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
+	 (loopy (list (key . val) (map-into alist 'alist))
+		(expr new (intern (xl-keyword-name key)))
+		(collect (cons new val)))
 	 (-let [(,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)]
 	   (let-alist (map-into ,alist 'alist)
 	     ,@body))))))
