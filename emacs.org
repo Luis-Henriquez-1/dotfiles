@@ -1992,6 +1992,14 @@ declaration of unique symbols.
 	 form)))
 #+end_src
 
+***** register with font-lock
+:PROPERTIES:
+:ID:       070c32a2-3010-4400-a889-72844ab444e2
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 ***** defmacro!
 :PROPERTIES:
 :ID:       9b476d3f-b7a3-4657-9059-ed59b414337f
