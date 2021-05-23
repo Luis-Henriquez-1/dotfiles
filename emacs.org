@@ -2047,18 +2047,13 @@ functions as well as declaring their indentation.
 	 ((_ args-var) args)
 	 (alist (gensym "alist-")))
     `(progn
-       ;; (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
-       ;;   "Add font lock keywords for !name."
-       ;;   (font-lock-add-keywords nil (xl-generate-defun-font-lock ,name)))
-       ;; (add-hook 'emacs-lisp-mode-hook #',emacs-lisp-mode-hook&add-!name-font-lock-keywords)
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
-	 (loopy (list (key . val) (map-into alist 'alist))
-		(expr new (intern (xl-keyword-name key)))
-		(collect (cons new val)))
 	 (-let [(,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)]
-	   (let-alist (map-into ,alist 'alist)
+	   (let-alist (loopy (list (key . val) (map-into alist 'alist))
+			     (expr new (intern (xl-keyword-name key)))
+			     (collect (cons new val)))
 	     ,@body))))))
 #+end_src
 
