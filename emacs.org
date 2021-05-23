@@ -2132,7 +2132,6 @@ should run.
   "Define a hook."
   `(progn (defvar ,name nil ,docstring)
 	  (defadvice! ,run-<name>-hook ,args
-	    "Run hook after."
 	    ,@body)))
 #+end_src
 
