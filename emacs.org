@@ -2104,7 +2104,7 @@ This macro lets me define advices in a convenient syntax.
 		(collect `(defun ,advice ,.args ,docstring ,@.body))
 		(expr orig-fn advice))
 	       (t
-		(collect `(defalias ',advice ',xl--!name-advice))))
+		(collect `(defalias ',advice ',xl--<name>-advice))))
 	 (collect `(advice-add #',fn ,where #',advice ,.props))
 	 (collect `(xl-log-function #',advice))
 	 (finally-return (macroexp-progn loopy-result))))
