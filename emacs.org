@@ -6738,7 +6738,7 @@ and provides facilities for writing custom extensions. Also see our page on
 :END:
 
 #+begin_src emacs-lisp
-(defun! replace-motion-with-normal (orig-fn &rest args)
+(defadvice! replace-motion-with-normal (orig-fn &rest args)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
   (:around evil-make-overriding-map)
   (-let (((keymap state copy) args))
@@ -6755,7 +6755,7 @@ useless state]]. The code in this headline essentially just says =NO= to motion
 state and disables it everywhere in favor of normal state.
 
 #+begin_src emacs-lisp
-(defun! replace-motion-with-normal (orig-fn &rest args) 
+(defadvice! replace-motion-with-normal (orig-fn &rest args) 
   ""
   (:around evil-set-initial-state)
   (-let (((mode state) args))
@@ -7238,7 +7238,7 @@ one. For this reason, I make sure to disable any enabled themes before applying
 a new theme.
 
 #+begin_src emacs-lisp
-(defun! disable-old-themes (orig-fn &rest args)
+(defadvice! disable-old-themes (orig-fn &rest args)
   "Disable old themes before loading new ones."
   (:around load-theme)
   (mapc #'disable-theme custom-enabled-themes)
@@ -7557,9 +7557,8 @@ executable to run.
 :END:
 
 #+begin_src emacs-lisp
-(defun! build-pdf-into-program-maybe ()
+(defadvice! build-pdf-into-program-maybe (:before pdf-view-mode)
   "Build the pdf-info program if it hasn't already been built."
-  (:before pdf-view-mode)
   (unless (file-executable-p pdf-info-epdfinfo-program)
     (let ((wconf (current-window-configuration)))
       (pdf-tools-install)
