@@ -1910,7 +1910,7 @@ loading it. To remedy this I wrap the block with [[helpfn:condition-case][condit
          (message "Error in `eval-after-load': %S" error)))))
 #+end_src
 
-**** after! :defer:
+**** after!
 :PROPERTIES:
 :ID:       e209d256-86e0-4e30-a7d5-78a583729b42
 :END:
