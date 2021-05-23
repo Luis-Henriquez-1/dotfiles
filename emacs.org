@@ -873,6 +873,8 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 (defun xl-snoc (elt list)
   "Add elt to end of list."
   (-snoc list elt))
+
+(defalias 'xl-add-to-back 'xl-snoc)
 #+end_src
 
 **** true-list-p
