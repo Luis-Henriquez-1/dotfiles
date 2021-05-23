@@ -2058,15 +2058,13 @@ functions as well as declaring their indentation.
 #+begin_src emacs-lisp
 (defmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
-  (-let [(hooks alist) (-split-with (-not #'keywordp) hooks)]
-    (let-alist 
-	(loopy (list hook hooks)
-	       (expr fn (xl-hook-gen-name hook name))
-	       (collect `(defalias ',fn ,xl--!name-hook))
-	       (collect `(add-hook ',hook ',fn ,(or .append .depth) ,.local))
-	       (collect `(xl-log-function ',fn))
-	       (finally-return `(progn (defun ,xl--!name-hook ,.args ,@body)
-				       ,@loopy-result))))))
+  (loopy (list hook hooks)
+	 (expr fn (xl-hook-gen-name hook name))
+	 (collect `(defalias ',fn ,xl--!name-hook))
+	 (collect `(add-hook ',hook ',fn ,(or .append .depth) ,.local))
+	 (collect `(xl-log-function ',fn))
+	 (finally-return `(progn (defun ,xl--!name-hook ,.args ,@body)
+				 ,@loopy-result))))
 #+end_src
 
 **** defadvice!
