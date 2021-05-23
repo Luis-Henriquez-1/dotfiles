@@ -2139,7 +2139,7 @@ This macro lets me define advices in a convenient syntax.
 
 #+begin_src emacs-lisp
 (defhooksym! xl-before-load-hook (:before require)
-  (run-hook 'xl-before-load-hook))
+  (run-hooks 'xl-before-load-hook))
 #+end_src
 
 **** after-load-hook
@@ -2149,7 +2149,7 @@ This macro lets me define advices in a convenient syntax.
 
 #+begin_src emacs-lisp
 (defhooksym! xl-before-load-hook (:after provide)
-  (run-hook 'xl-before-load-hook))
+  (run-hooks 'xl-before-load-hook))
 #+end_src
 
 **** defafter!
