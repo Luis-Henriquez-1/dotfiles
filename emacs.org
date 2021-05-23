@@ -1980,8 +1980,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 (defmacro defmacro! (name args &rest body)
   "Define a macro."
   (declare (indent defun))
-  `(defmacro ,name ,args
-     ,@(xl-macro-format-form body)))
+  `(defmacro ,name ,args ,@(xl-macro-format-form body)))
 #+end_src
 
 **** font lock for
