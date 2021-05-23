@@ -2035,7 +2035,7 @@ functions as well as declaring their indentation.
      ;;   "Add font lock keywords for !name."
      ;;   (font-lock-add-keywords nil (xl-generate-defun-font-lock ,name)))
      ;; (add-hook 'emacs-lisp-mode-hook #',emacs-lisp-mode-hook&add-!name-font-lock-keywords)
-     (defmacro! ,name (name args &rest body)
+     (defmacro! ,name (,args &rest ,body)
        (declare (indent defun) (doc-string 3))
        (-let* ((,!docstring (when (stringp (car body)) (pop body)))
 	       ((args ,!alist) (-split-with (-not #'keywordp) args))
