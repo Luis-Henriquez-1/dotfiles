@@ -735,7 +735,8 @@ To avoid.
 #+begin_src emacs-lisp
 (defun xl-special-macro-symbol-p (obj)
   "Return non-nil if OBJ is a special macro symbol."
-  (s-matches-p (xl-special-macro-symbol-regexp) (symbol-name obj)))
+  (and (symbolp obj)
+       (s-matches-p (xl-special-macro-symbol-regexp) (symbol-name obj))))
 #+end_src
 
 ***** TODO xl-interactive-function-p
