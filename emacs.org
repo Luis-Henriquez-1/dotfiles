@@ -2051,7 +2051,7 @@ functions as well as declaring their indentation.
 :END:
 
 #+begin_src emacs-lisp
-(defunmacro! defhook! (hooks &rest body)
+(defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (loopy (list hook hooks)
 	 (expr fn (xl-hook-gen-name hook name))
