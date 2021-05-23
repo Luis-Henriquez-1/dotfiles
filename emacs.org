@@ -1948,19 +1948,6 @@ from pulling (or failing to pull) in autoloaded macros/features.
         (t (error "Invalid argument."))))
 #+end_src
 
-**** wrap!
-:PROPERTIES:
-:ID:       e8cd649a-0011-42ce-86d7-cbd342782309
-:END:
-
-#+begin_src emacs-lisp
-(defmacro wrap! (wrappers &rest body)
-  "Wrap WRAPPERS around BODY."
-  (declare (indent 1))
-  (loopy (list wrapper (reverse wrappers))
-	 (reduce wrapper #'xl-snoc :init (macroexp-progn body))))
-#+end_src
-
 **** with-map!
 :PROPERTIES:
 :ID:       02bc8acb-5be4-4772-96bc-79cd3392818f
