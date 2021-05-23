@@ -2038,7 +2038,7 @@ functions as well as declaring their indentation.
      (defmacro! ,name (name args &rest body)
        (declare (indent defun) (doc-string 3))
        (let* ((,!docstring (when (stringp (car body)) (pop body)))
-	      (,!alist ())
+	      (,!alist)
 	      (body (cons ,!docstring body)))
 	 (wrap! ((let-alist ,!alist))
 	   ,@body)))))
