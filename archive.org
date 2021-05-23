@@ -10,6 +10,26 @@ the headlines back searching my vcs history. Well, version control does not
 "know" about org headlines. And I don't know of a way to search through it
 painlessly.
 
+* with-map!
+:PROPERTIES:
+:ID:       02bc8acb-5be4-4772-96bc-79cd3392818f
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-map! (map &rest body)
+  "Let-bind dotted symbols to their values in BODY.
+This is similar to `let-alist' but map can be any key value structure."
+  (declare (indent 1))
+  (loopy (with (dot-regexp (rx bos "." (group (1+ (not white))) eos)))
+	 (for sym (-select #'symbolp (-flatten body)))
+	 (expr sym-name (symbol-name sym))
+	 (expr (_ group1) (s-match dot-regexp sym-name))
+	 (unless group1 (skip))
+	 (expr name (intern group1))
+	 (unioning bindings (list sym name))
+	 (finally-return `(map-let ,bindings ,map ,@body))))
+#+end_src
+
 * wrapping forms
 :PROPERTIES:
 :ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
