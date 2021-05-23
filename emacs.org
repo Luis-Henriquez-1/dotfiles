@@ -2093,7 +2093,8 @@ functions as well as declaring their indentation.
   (loopy (list fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
 	 (cond (loopy-first-iteration-p
-		(collect `(defun ,xl--!name-advice ,.args ,docstring ,@.body)))
+		(collect `(defun ,xl--!name-advice ,.args ,docstring ,@.body))
+		(expr orig-fn name))
 	       (t
 		(collect `(defalias ',advice ',xl--!name-advice))))
 	 (collect `(advice-add #',fn ,where #',advice ,.props))
