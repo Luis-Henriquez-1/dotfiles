@@ -2043,7 +2043,7 @@ functions as well as declaring their indentation.
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
 	 (-let (((,args-var ,alist) (-split-with (-not #'keywordp) ,args-var)))
-	   (with-map! ,(-map-when #'keywordp ( #'xl-keyword-name))
+	   (with-map! ,(-map-when #'keywordp)
 	     ,@body))))))
 #+end_src
 
