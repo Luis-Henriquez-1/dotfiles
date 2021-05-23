@@ -2574,7 +2574,7 @@ Sometimes I want to use =xl-log= instead of =message=.
 Log when an advice or hook is being called.
 
 #+begin_src emacs-lisp
-(defun! log-advices (orig-fn &rest args)
+(defadvice! log-advices (orig-fn &rest args)
   "Log ORIG-FN."
   (:around xl-hook-add xl-advice-add)
   (iter (with (symbols (apply orig-fn args)))
@@ -4283,7 +4283,7 @@ options. For this reason I wrote my own insert heading functions.
 :END:
 
 #+begin_src emacs-lisp
-(defun! use-pop-to-buffer (_ buf &optional norecord)
+(defadvice! use-pop-to-buffer (_ buf &optional norecord)
   "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
   (:around org-switch-to-buffer-other-window)
   (pop-to-buffer buf nil norecord))
@@ -4753,7 +4753,7 @@ Fortunately, there's a function =org-= that takes a =POM= (point or marker)
 which is perfect for getting the agenda.
 
 #+begin_src emacs-lisp
-(defun! org-agenda%skip-if-not-today ()
+(defun org-agenda%skip-if-not-today ()
   (let* ((time (org-entry-get (point) "DEADLINE"))
 	 (dtime (when time (ts-parse-org time)))
 	 (now (ts-now)))
@@ -7971,7 +7971,7 @@ of the problem. You can check out a more in-depth explanation looking at my
 [[https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of_quoted_lists/][reddit-post]] or looking at an answer I gave to [[https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned][this question]].
 
 #+begin_src emacs-lisp
-(defun! properly-calculate-indent (&optional parse-start)
+(defadvice! properly-calculate-indent (&optional parse-start)
   "Add better indentation for quoted and backquoted lists. "
   (:override calculate-lisp-indent)
   (defvar calculate-lisp-indent-last-sexp)
@@ -10248,7 +10248,7 @@ images which referred to by the symbols =official= and =logo=.
 When I'm using the dashboard.
 
 #+begin_src emacs-lisp
-(defun! open-dashboard-instead (&rest _)
+(defadvice! open-dashboard-instead (&rest _)
   (:around startup%initial-buffer-choice)
   (get-buffer-create "*dashboard*"))
 #+end_src
