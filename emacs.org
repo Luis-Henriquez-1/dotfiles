@@ -2025,10 +2025,12 @@ The font lock patters that I use are fairly regular.
 #+begin_src emacs-lisp
 (defun xl-generate-defun-font-lock (name)
   "Return the form to add to font lock for macro with NAME."
-  `((,(format "(\\(hello\\)[[:space:]]+\\([-[:word:]]+\\)[[:space:]]+(\\([-[:word:]]+\\)" name)
-     (1 font-lock-keyword-face)
-     (2 font-lock-function-name-face)
-     (3 font-lock-variable-name-face))))
+  (alet `(seq "(" (group ,(xl-to-string name)) (1+ space) (group (1+ (any "-" word))) (1+ space)
+	      "(" (group (+ (any "-" word))))
+    `((,it
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face)
+       (3 font-lock-variable-name-face)))))
 #+end_src
 
 **** defunmacro!
