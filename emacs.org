@@ -1858,15 +1858,6 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 (use-package ts)
 #+end_src
 
-**** list-utils
-:PROPERTIES:
-:ID:       f87d570a-4b06-42ea-acaa-a0bedba0e623
-:END:
-
-#+begin_src emacs-lisp
-(use-package list-utils)
-#+end_src
-
 **** map
 :PROPERTIES:
 :ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
