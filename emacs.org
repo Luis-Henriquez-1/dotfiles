@@ -2099,7 +2099,7 @@ functions as well as declaring their indentation.
 	 ((_ args-var) args)
 	 (alist (gensym "alist-")))
     `(progn
-       (with-eval-after-load 'lisp-extra-font-lock
+       (after! lisp-extra-font-lock
 	 (add-to-list 'lisp-extra-font-lock-defun-functions ',name))
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
