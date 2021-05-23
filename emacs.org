@@ -2051,9 +2051,7 @@ functions as well as declaring their indentation.
 	 ((_ args-var) args)
 	 (alist (gensym "alist-")))
     `(progn
-       (defhook! add-font-lock-keywords-for-!name (emacs-lisp-mode-hook)
-	 "Add font lock keyword."
-	 (font-lock-add-keywords (xl-generate-defun-font-lock ',name)))
+       (add-to-list)
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
