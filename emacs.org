@@ -5128,7 +5128,7 @@ down the alphabet. Fun fact, I actually contributed this feature to selectrum. :
 :END:
 
 #+begin_src emacs-lisp
-(defun! inhibit-filtering-and-highlighting (orig-fn &rest args)
+(defadvice! inhibit-filtering-and-highlighting (orig-fn &rest args)
   "Don't let `selectrum-prescient' filter or highlight. "
   (:around selectrum-prescient-mode)
   (let ((selectrum-refine-candidates-function selectrum-refine-candidates-function)
