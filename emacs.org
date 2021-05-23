@@ -2073,8 +2073,10 @@ functions as well as declaring their indentation.
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
-	 (-let [(,args-var ,<alist>) (-split-with (-not #'keywordp) ,args-var)]
-	   (with-map! ,@body))))))
+	 (-let (((,args-var ,<plist>) (-split-with (-not #'keywordp) ,args-var))
+		(body ,<alist>) (-split-with))
+	   (let ((.MAP (append ,<plist> ,<alist>)))
+	     (with-map! ,@body)))))))
 #+end_src
 
 **** defhook!
