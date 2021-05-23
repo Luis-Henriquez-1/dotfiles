@@ -1998,8 +1998,7 @@ https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
   "Define a macro."
   (declare (indent defun))
   `(defmacro ,name ,args
-     (mmt-with-unique-names ,(xl-special-macro-symbols body)
-       ,@(xl-macro-format-form body))))
+     ,@(xl-macro-format-form body)))
 #+end_src
 
 **** font lock for
@@ -2032,6 +2031,7 @@ functions as well as declaring their indentation.
   "Define a macro for defining function names."
   ;; (,!docstring )
   (-let ((docstring (when (stringp (car body)) (pop body)))
+	 (alist (gensym "alist"))
 	 ((_ args-var) args))
     `(progn
        ;; (defun emacs-lisp-mode-hook&add-!name-font-lock-keywords ()
@@ -2041,7 +2041,7 @@ functions as well as declaring their indentation.
        (defmacro! ,name ,args
 	 (declare (indent defun) (doc-string 3))
 	 ,@(when docstring (list docstring))
-	 (-let* (((,args-var ,!alist) (-split-with (-not #'keywordp) args)))
+	 (-let* (((,args-var ,alist) (-split-with (-not #'keywordp) args)))
 	   (let-alist ,!alist
 	     ,@body))))))
 #+end_src
