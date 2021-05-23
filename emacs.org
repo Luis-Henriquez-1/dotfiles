@@ -5684,7 +5684,7 @@ If there is no existing description return nil."
   (let* ((parse-tree (org-ml-parse-subtree-at (point)))
 	 (elements '(headline section property-drawer src-block paragraph))
 	 (nodes (->> (org-element-map parse-tree elements #'identity)
-		  (-split-when (eq (org-element-type it) 'headline))
+		  (--split-when (eq (org-element-type it) 'headline))
 		  (car))))
     (aif (car (--split-when (not (eq (org-element-type it) 'paragraph)) nodes))
 	(cons (org-element-property :begin (-first-item it))
