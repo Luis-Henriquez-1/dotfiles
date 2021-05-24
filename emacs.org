@@ -4537,7 +4537,6 @@ question]]. I need to disable =org-capture's= header-line.
 #+begin_src emacs-lisp
 (defhook! disable-header-line (org-capture-mode-hook)
   "Turn of the header line message."
-  ;; (:feature org)
   (setq-local header-line-format nil))
 #+end_src
 
