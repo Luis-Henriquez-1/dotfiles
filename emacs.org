@@ -2317,25 +2317,6 @@ Note that I may depreciate this in favor of setf.
 	  ,@(defun-macro%process-clauses rest state))))))
 #+end_src
 
-**** add syntax highlighting for special symbols
-:PROPERTIES:
-:ID:       500c7883-fcf6-4b6f-97ac-e89388748bcd
-:END:
-
-Symbols I've made that start with an exclamation point (=!=), will be used for
-special purposes. Specifically a symbol such as =!hello= will signal the
-creation of a =once-only!= variable binding. However, if such a symbol is within
-a string or part of a larger symbol, then it will single the replacement of a
-format string.
-
-I wasn't completely sure as to what the syntax of this variable should be.
-
-#+begin_src emacs-lisp
-(defhook add-syntax-highlighting-for-anaphoric-symbol (emacs-lisp-mode-hook)
-  ""
-  (alet))
-#+end_src
-
 **** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
