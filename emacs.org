@@ -2062,17 +2062,19 @@ many--then they can go in front of the body instead.
   (-let ((docstring (when (stringp (car body)) (pop body)))
 	 ((_ args-var) args))
     `(progn
-       (after! lisp-extra-font-lock
-	 (add-to-list 'lisp-extra-font-lock-defun-functions ',(symbol-name name)))
+       ;; (after! lisp-extra-font-lock
+       ;; 	 (add-to-list 'lisp-extra-font-lock-defun-functions ',(symbol-name name)))
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
+	 (loopy (for ))
 	 (-let* (((,args-var ,<plist>) (-split-with (-not #'keywordp) ,args-var))
-		 ((,<alist> body) (--split-with (and (listp it) (keyword (car it))) body))
-		 ((.MAP (loopy (map (key value) ,<alist>)
-			       (append (list key (xl-dwim-single value)))
-			       (finally-return (append ,<plist> loopy-result))))))
-	   (with-map! .MAP ,@body))))))
+		 ((,<alist> body) (--split-with (and (listp it) (keywordp (car it))) body))
+		 ;; ((.MAP (loopy (map (key value) ,<alist>)
+		 ;; 	       (append (list key (xl-dwim-single value)))
+		 ;; 	       (finally-return (append ,<plist> loopy-result)))))
+		 )
+	   (with-map! nil ,@body))))))
 #+end_src
 
 **** defhook!
@@ -2084,7 +2086,7 @@ This is a convenience macro for creating hooks. It allows me to define hooks in
 a concise, easily-readable, and familiar way. It has a similar syntax to =defun=.
 
 #+begin_src emacs-lisp
-(defunmacro! defhook! (name hooks &rest body)
+(defmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (loopy (list hook hooks)
 	 (expr fn (xl-hook-gen-name hook name))
