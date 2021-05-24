@@ -2069,7 +2069,9 @@ many--then they can go in front of the body instead.
 	 (declare (indent defun) (doc-string 3))
 	 (-let* (((,args-var ,<plist>) (-split-with (-not #'keywordp) ,args-var))
 		 ((,<alist> body) (--split-with (and (listp it) (keyword (car it))) body))
-		 ((.MAP (append ,<plist> ,<alist>))))
+		 ((.MAP (loopy (map (key value) ,<alist>)
+			       (append (list key (xl-dwim-single value)))
+			       (finally-return (append ,<plist> loopy-result))))))
 	   (with-map! .MAP ,@body))))))
 #+end_src
 
