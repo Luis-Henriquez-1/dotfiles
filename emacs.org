@@ -701,44 +701,6 @@ To avoid.
   (s-matches-p "\\`xl-.+" (symbol-name symbol)))
 #+end_src
 
-***** special macro symbols
-:PROPERTIES:
-:ID:       67e4ef77-587e-404b-9524-ee2881267b77
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-special-macro-symbols (form)
-  "Return the special macro symbols in FORM."
-  (->> form
-    (-flatten)
-    (-select #'xl-special-macro-symbol-p)
-    (-uniq)))
-#+end_src
-
-***** special macro symbol regexp
-:PROPERTIES:
-:ID:       a6d59c97-cd46-4f06-8c18-9b129b74b011
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-special-macro-symbol-regexp (&optional lax)
-  "Return regexp used for special symbols."
-  (alet '(bos "<" (group (1+ (not (any white "<" ">")))) ">" eos)
-    (rx-to-string (cons 'seq (if lax (-slice it 1 -1) it)))))
-#+end_src
-
-***** special macro symbol
-:PROPERTIES:
-:ID:       9f20c6a1-c18d-4585-ae55-b2febadb1095
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-special-macro-symbol-p (obj)
-  "Return non-nil if OBJ is a special macro symbol."
-  (and (symbolp obj)
-       (s-matches-p (xl-special-macro-symbol-regexp) (symbol-name obj))))
-#+end_src
-
 ***** TODO xl-interactive-function-p
 :PROPERTIES:
 :ID:       4994e720-e156-408b-b94c-19acbb684fe7
@@ -1970,6 +1932,44 @@ writting tendencies easier. Specifically, there are two common things done in
 macros that I want to facilitate. One is the creation of names. The other is the
 declaration of unique symbols.
 
+***** special macro symbols
+:PROPERTIES:
+:ID:       67e4ef77-587e-404b-9524-ee2881267b77
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-special-macro-symbols (form)
+  "Return the special macro symbols in FORM."
+  (->> form
+    (-flatten)
+    (-select #'xl-special-macro-symbol-p)
+    (-uniq)))
+#+end_src
+
+***** special macro symbol regexp
+:PROPERTIES:
+:ID:       a6d59c97-cd46-4f06-8c18-9b129b74b011
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-special-macro-symbol-regexp (&optional lax)
+  "Return regexp used for special symbols."
+  (alet '(bos "<" (group (1+ (not (any white "<" ">")))) ">" eos)
+    (rx-to-string (cons 'seq (if lax (-slice it 1 -1) it)))))
+#+end_src
+
+***** special macro symbol
+:PROPERTIES:
+:ID:       9f20c6a1-c18d-4585-ae55-b2febadb1095
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-special-macro-symbol-p (obj)
+  "Return non-nil if OBJ is a special macro symbol."
+  (and (symbolp obj)
+       (s-matches-p (xl-special-macro-symbol-regexp) (symbol-name obj))))
+#+end_src
+
 ***** format string
 :PROPERTIES:
 :ID:       1e70276c-ae37-41bd-9706-81baa5af3673
@@ -2067,7 +2067,7 @@ many--then they can go in front of the body instead.
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
-	 (-let* (((,args-var plist) (-split-with (-not #'keywordp) ,args-var))
+	 (-let* (((,args-var ,<plist>) (-split-with (-not #'keywordp) ,args-var))
 		 ((alist body) (--split-with (and (listp it) (keywordp (car it))) body))
 		 ;; ((.MAP plist;; plist(loopy (map (key value) alist)
 		 ;; 	;; 	    (append (list key (xl-dwim-single value)))
@@ -2075,7 +2075,7 @@ many--then they can go in front of the body instead.
 		 ;; 	))
 		 )
 	   (message "args: %S" ,args-var)
-	   (message "plist: %S" plist)
+	   (message "plist: %S" ,<plist>)
 	   (message "alist: %S" alist)
 	   (message "body: %S" body)
 	   ;; (message "map: %S" .MAP)
