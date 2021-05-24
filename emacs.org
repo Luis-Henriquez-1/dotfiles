@@ -2549,7 +2549,7 @@ is an example).
 #+begin_src emacs-lisp
 (defgadvice! assume-yes (orig-fn &rest args)
   "An advice that makes `y-or-n-p' return t without prompt."
-  (noflet ((y-or-n-p (prompt) t))
+  (with-temp-advice! ((y-or-n-p :override xl-true))
     (apply orig-fn args)))
 #+end_src
 
