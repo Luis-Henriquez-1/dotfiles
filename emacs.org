@@ -1621,7 +1621,7 @@ quintessential =once-only= and =with-gensyms= macros which are used to prevent
 variable leaking.
 
 #+begin_src emacs-lisp
-(use-package mmt)
+(use-package mmt :demand t)
 #+end_src
 
 **** dash 
