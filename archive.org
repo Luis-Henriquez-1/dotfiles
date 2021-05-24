@@ -10,6 +10,25 @@ the headlines back searching my vcs history. Well, version control does not
 "know" about org headlines. And I don't know of a way to search through it
 painlessly.
 
+* add syntax highlighting for special symbols
+:PROPERTIES:
+:ID:       500c7883-fcf6-4b6f-97ac-e89388748bcd
+:END:
+
+Symbols I've made that start with an exclamation point (=!=), will be used for
+special purposes. Specifically a symbol such as =!hello= will signal the
+creation of a =once-only!= variable binding. However, if such a symbol is within
+a string or part of a larger symbol, then it will single the replacement of a
+format string.
+
+I wasn't completely sure as to what the syntax of this variable should be.
+
+#+begin_src emacs-lisp
+(defhook add-syntax-highlighting-for-anaphoric-symbol (emacs-lisp-mode-hook)
+  ""
+  (alet))
+#+end_src
+
 * font lock
 :PROPERTIES:
 :ID:       0353d5ad-d937-4e7d-8f33-30624b1905de
