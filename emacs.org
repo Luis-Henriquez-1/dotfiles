@@ -2287,11 +2287,11 @@ Note that I may depreciate this in favor of setf.
 (defmacro set! (&rest args)
   "Set"
   (pcase (length args)
-    ((pred (= 1))
-     (alet (car (xl-anaphoric-symbols args))
-       `(set! ,(xl-anaphoric-true-symbol it)
-	      ,(--tree-map (if (xl-anaphoric-symbol-p it) (xl-anaphoric-true-symbol it) it)
-			   (car args)))))
+    ;; ((pred (= 1))
+    ;;  (alet (car (xl-anaphoric-symbols args))
+    ;;    `(set! ,(xl-anaphoric-true-symbol it)
+    ;; 	      ,(--tree-map (if (xl-anaphoric-symbol-p it) (xl-anaphoric-true-symbol it) it)
+    ;; 			   (car args)))))
     ((and (pred cl-evenp) (pred > 0))
      `(progn
 	,@(loopy (cons (sym val . _) args #'cddr)
