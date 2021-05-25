@@ -2320,7 +2320,7 @@ If FEATURES have already been loaded when this macro is evaluated."
      (defhook! ,name (xl-after-load-feature-hook :args (feature))
        ,@body)
      (when (-all-p #'featurep features)
-       (xl-call-hook-interactively hook name))))
+       (xl-call-hook hook name))))
 #+end_src
 
 **** defbefore!
