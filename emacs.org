@@ -3010,9 +3010,9 @@ after any file is loaded. We put use this hook so we can be sure to catch any
 new keymaps.
 
 #+begin_src emacs-lisp
-(defhook! eval-deferred-bindings (after-load-functions)
-  "Evaluate deferred bindings whose keymap is now bound."
-  (cl-callf xl-bind%update-deferred-bindings xl-bind%deferred-bindings))
+;; (defhook! eval-deferred-bindings (after-load-functions)
+;;   "Evaluate deferred bindings whose keymap is now bound."
+;;   (cl-callf xl-bind%update-deferred-bindings xl-bind%deferred-bindings))
 #+end_src
 
 ***** with-deferred-keymap!
