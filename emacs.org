@@ -2331,10 +2331,7 @@ should run.
 (defunmacro! defbefore! (name args &rest body)
   "Load feature before."
   `(defhook! ,name (xl-before-load-feature-hook :args (feature))
-     ,@body)
-  ;; (when (-all-p #'featurep features)
-  ;;   (xl-call-hook-interactively hook name))
-  )
+     ,@body))
 #+end_src
 
 **** config :defer:performance:usepackage:
