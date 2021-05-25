@@ -49,6 +49,30 @@ I wasn't completely sure as to what the syntax of this variable should be.
   (alet))
 #+end_src
 
+* defun font-lock functions
+:PROPERTIES:
+:ID:       1a416d99-e611-4013-b1a9-cb8949eb6c1b
+:HEADER-ARGS: :tangle no
+:END:
+
+#+begin_src emacs-lisp
+(defvar xl-font-lock-functions nil
+  "List of macros that should be font-locked like `defun'.")
+
+(defhook! add-font-lock-for-<name> (emacs-lisp-mode-hook)
+  (iterate (list function xl-font-lock-functions)
+	   (expr defun-keywords (xl-generate-defun-font-lock function))
+	   (collect (font-lock-add-keywords nil )))
+  (font-lock-add-keywords nil )
+  (->> `(seq "(" (group ,name) (1+ space) (group (1+ (any "-" word))) (1+ space)
+	     "(" (group (* (any "-" word))))
+    `((,(rx-to-string it)
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face)
+       (3 font-lock-variable-name-face))))
+  )
+#+end_src
+
 * font lock
 :PROPERTIES:
 :ID:       0353d5ad-d937-4e7d-8f33-30624b1905de
