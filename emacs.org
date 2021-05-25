@@ -2129,7 +2129,7 @@ This macro lets me define advices in a convenient syntax.
 	       (props (alist-get :props kargs))
 	       (fargs (alist-get :args kargs))
 	       ((where . functions) (--first (member (car it) XL-ADVICE-KEYWORDS) kargs)))
-	 (list fn functions)
+	 (list fn (-list functions))
 	 (expr advice (xl-advice-gen-symbol fn name))
 	 (cond (loopy-first-iteration-p
 		(collect `(defun ,advice ,(or fargs args nil) ,@body))
@@ -2138,7 +2138,7 @@ This macro lets me define advices in a convenient syntax.
 		(collect `(defalias ',advice ',orig-fn))))
 	 (collect `(advice-add #',fn ,where #',advice ,props))
 	 (collect `(xl-log-function #',advice))
-	 (finally-return (macroexp-progn loopy-result))))
+	 (finally-return (macroexpand progn))))
 #+end_src
 
 **** defhooksym!
