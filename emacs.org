@@ -2167,14 +2167,13 @@ many--then they can go in front of the body instead.
 #+begin_src emacs-lisp
 (defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
-  (-let ((docstring (when (stringp (car body)) (pop body))))
-    `(progn
-       (defhook! add-font-lock-for-<name> (emacs-lisp-mode-hook)
-	 (font-lock-add-keywords nil (xl-gen-font-lock-keywords ',name)))
-       (defmacro! ,name ,args
-	 ,@(when docstring (list docstring))
-	 (declare (indent defun) (doc-string 3))
-	 ,@body))))
+  `(progn
+     (defhook! add-font-lock-for-<name> (emacs-lisp-mode-hook)
+       (font-lock-add-keywords nil (xl-gen-font-lock-keywords ',name)))
+     (defmacro! ,name ,args
+       ,@(when (stringp (car body)) (list (pop body))) ; the docstring
+       (declare (indent defun) (doc-string 3))
+       ,@body)))
 #+end_src
 
 **** generate a logging function
