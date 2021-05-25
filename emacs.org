@@ -2456,6 +2456,7 @@ Note that I may depreciate this in favor of setf.
 
 #+begin_src emacs-lisp
 (defunmacro! defgadvice! (name args &rest body)
+  "Define a generic advice function."
   (declare (indent defun) (doc-string 3))
   `(progn (defun ,xl-gadvice-<name> (fn)
 	    (defalias (xl-symbol-intern fn '@ ',name) #',xl-gadvice--<name>-advice)
