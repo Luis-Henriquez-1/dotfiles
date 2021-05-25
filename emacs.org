@@ -2166,7 +2166,6 @@ should run.
     `(progn (defvar ,name nil ,docstring)
 	    (defadvice! ,run-<name> ,args
 	      ,docstring
-	      (message "Running %s..." ',name)
 	      ,@body))))
 #+end_src
 
