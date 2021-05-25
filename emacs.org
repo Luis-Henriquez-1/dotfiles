@@ -2311,9 +2311,8 @@ should run.
   `(progn
      (defhook! ,name (xl-after-load-feature-hook :args (feature))
        ,@body)
-     ;; (when (-all-p #'featurep features)
-     ;;   )
-     ))
+     (when (-all-p #'featurep features)
+       (xl-call-hook-interactively hook name))))
 #+end_src
 
 **** defbefore!
