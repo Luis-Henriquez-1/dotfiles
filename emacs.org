@@ -2142,7 +2142,7 @@ This macro lets me define advices in a convenient syntax.
 	 (list fn (-list functions))
 	 (expr advice (xl-advice-gen-symbol fn name))
 	 (cond (loopy-first-iteration-p
-		(collect `(defun ,advice ,(or fargs args nil) ,@body))
+		(collect `(defun ,advice ,(or fargs args (&rest _)) ,@body))
 		(expr orig-fn advice))
 	       (t
 		(collect `(defalias ',advice ',orig-fn))))
