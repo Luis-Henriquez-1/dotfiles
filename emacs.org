@@ -2334,11 +2334,10 @@ Note that I may depreciate this in favor of setf.
 #+begin_src emacs-lisp
 (defunmacro! defgadvice! (name args &rest body)
   (declare (indent defun) (doc-string 3))
-  (let ((advice-fn (xl-intern-format "xl-gadvice--%s-advice" name)))
-    `(progn (defun ,xl-gadvice-<name> (fn)
-	      (defalias (xl-symbol-intern fn '@ ',name) #',xl-gadvice--<name>-advice)
-	      (advice-add fn :around #',xl-gadvice--<name>-advice))
-	    (defun ,advice-fn ,args ,@body))))
+  `(progn (defun ,xl-gadvice-<name> (fn)
+	    (defalias (xl-symbol-intern fn '@ ',name) #',xl-gadvice--<name>-advice)
+	    (advice-add fn :around #',xl-gadvice--<name>-advice))
+	  (defun ,xl-gadvice--<name>-advice ,args ,@body)))
 #+end_src
 
 *** generate a logging function
