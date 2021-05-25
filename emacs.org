@@ -10244,6 +10244,11 @@ When I'm using the dashboard.
   (get-buffer-create "*dashboard*"))
 #+end_src
 
+*** init time
+:PROPERTIES:
+:ID:       2149b948-277f-4490-a11f-7f2fb140dea4
+:END:
+
 [[helpvar:xl-init-time][xl-init-time]] is more accurate than dashboard's init time measure. So I use it
 instead.
 
