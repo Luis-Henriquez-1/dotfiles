@@ -2212,6 +2212,7 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 #+begin_src emacs-lisp
 (defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
+  (declare (indent defun) (doc-string 3))
   (loopy (with ((hooks body kargs) (xl-process-args hooks body))
 	       ((&alist :append :depth :local :args) kargs))
 	 (list hook hooks)
