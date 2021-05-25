@@ -2125,7 +2125,8 @@ level.
 
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
-  "Define a macro."
+  "Define a macro.
+If an isolated special symbol."
   (declare (indent defun))
   `(defmacro ,name ,args
      ,(loopy (with (symbols (xl-special-macro-symbols body))
