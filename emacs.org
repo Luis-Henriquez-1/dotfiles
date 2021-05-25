@@ -4444,17 +4444,18 @@ diary/journal using =org-mode=.
 :END:
 
 #+begin_src emacs-lisp
+(defbefore! declare-settings-for-org-src (org-src)
+  (setq org-src-window-setup 'plain)
+  (setq org-src-ask-before-returning-to-edit-buffer nil)
+  (setq org-edit-src-persistent-message nil)
+  (setq org-src-preserve-indentation t)
+  (setq org-confirm-babel-evaluate nil)
+  (setq org-src-tab-acts-natively t)
+  (setq org-src-fontify-natively t))
+
 (use-package org-src
   :idle-require t
-  :rule ("bottom" "org source" :newname "\\*Org Src")
-  :set
-  (org-src-window-setup                        . 'plain)
-  (org-src-ask-before-returning-to-edit-buffer . nil)
-  (org-edit-src-persistent-message             . nil)
-  (org-src-preserve-indentation                . t)
-  (org-confirm-babel-evaluate                  . nil)
-  (org-src-tab-acts-natively                   . t)
-  (org-src-fontify-natively                    . t))
+  :rule ("bottom" "org source" :newname "\\*Org Src"))
 #+end_src
 
 *** bindings in source block
