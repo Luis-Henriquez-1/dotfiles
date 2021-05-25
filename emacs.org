@@ -2154,7 +2154,9 @@ should run.
   "Define a hook."
   (let ((docstring (when (stringp (car body)) (pop body))))
     `(progn (defvar ,name nil ,docstring)
-	    (defadvice! ,run-<name>-hook ,args
+	    (defadvice! ,run-<name> ,args
+	      ,docstring
+	      (message "Running %s..." ',name)
 	      ,@body))))
 #+end_src
 
