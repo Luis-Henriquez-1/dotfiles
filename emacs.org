@@ -2336,16 +2336,11 @@ Note that I may depreciate this in favor of setf.
   (declare (indent defun) (doc-string 3))
   (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" name))
 	(advice-fn (xl-intern-format "xl-gadvice--%s-advice" name)))
-    `(progn (defun ,name (fn)
+    `(progn (defun ,generic-advice-fn (fn)
 	      (defalias (xl-advice-gen-symbol fn name) #',advice-fn)
 	      (advice-add fn :around #',advice-fn))
 	    (defun ,advice-fn ,args ,@body))))
 #+end_src
-
-*** create a hook for adding font lock
-:PROPERTIES:
-:ID:       2f3b865c-6ef1-41e0-bde0-33a7bb7650b9
-:END:
 
 *** generate a logging function
 :PROPERTIES:
