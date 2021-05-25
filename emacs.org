@@ -2188,8 +2188,13 @@ should run.
 #+begin_src emacs-lisp
 (defunmacro! defafter! (name features &rest body)
   "Eval body after FEATURES are loaded."
-  `(defhook! ,name (xl-after-load-feature-hook :args (feature))
-     ,@body))
+  `(progn
+     (after! ,features ,@body)
+     ;; (defhook! ,name (xl-after-load-feature-hook :args (feature))
+     ;;   ,@body)
+     ;; (when (-all-p #'featurep features)
+     ;;   )
+     ))
 #+end_src
 
 **** defbefore!
