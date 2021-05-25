@@ -2422,11 +2422,6 @@ Note that I may depreciate this in favor of setf.
 (defmacro set! (&rest args)
   "Set"
   (pcase (length args)
-    ;; ((pred (= 1))
-    ;;  (alet (car (xl-anaphoric-symbols args))
-    ;;    `(set! ,(xl-anaphoric-true-symbol it)
-    ;; 	      ,(--tree-map (if (xl-anaphoric-symbol-p it) (xl-anaphoric-true-symbol it) it)
-    ;; 			   (car args)))))
     ((and (pred cl-evenp) (pred > 0))
      `(progn
 	,@(loopy (cons (sym val . _) args #'cddr)
@@ -7247,7 +7242,7 @@ echoing in the mode line makes the which-key prompt disappear prematurely.
 spells of inaccurate fontification immediately after scrolling."
 
 #+begin_src emacs-lisp
-(set! fast-but-imprecise-scrolling t)
+(setq fast-but-imprecise-scrolling t)
 #+end_src
 
 ** how to scroll :scroll:
@@ -7355,7 +7350,7 @@ code.
 https://stackoverflow.com/questions/8246483/emacs-how-to-disable-files-creation
 
 #+begin_src emacs-lisp
-(set! create-lockfiles nil)
+(setq create-lockfiles nil)
 #+end_src
 
 ** disable bi-directional text
@@ -9654,8 +9649,8 @@ most important.
 
 #+begin_src emacs-lisp
 (defafter! sort-newest-first (notmuch)
-  "Tell notmuch to sort by."
-  (set! notmuch-search-oldest-first nil))
+  "Tell notmuch to sort newest emails first."
+  (setq notmuch-search-oldest-first nil))
 #+end_src
 
 ** TODO gnus
