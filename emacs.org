@@ -2184,8 +2184,9 @@ This is a convenience macro for creating hooks. It allows me to define hooks in
 a concise, easily-readable, and familiar way. It has a similar syntax to =defun=.
 
 #+begin_src emacs-lisp
-(defunmacro! defhook! (name hooks &rest body)
+(defmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
+  (declare (indent defun))
   (loopy (with ((hooks body kargs) (xl-process-args hooks body))
 	       ((&alist :append :depth :local :args) kargs))
 	 (list hook hooks)
