@@ -1913,15 +1913,18 @@ ADVICE is an advice function that follows XL naming conventions."
 (defvar xl-font-lock-functions nil
   "List of macros that should be font-locked like `defun'.")
 
-(defhook! apply-font-lock-functions (emacs-lisp-mode-hook)
-  (loopy (list function xl-font-lock-functions)
-	 ())
-  (alet `(seq "(" (group ,(xl-to-string name)) (1+ space) (group (1+ (any "-" word))) (1+ space)
-	      "(" (group (* (any "-" word))))
+(defhook! add-font-lock-for-<name> (emacs-lisp-mode-hook)
+  (iterate (list function xl-font-lock-functions)
+	   (expr defun-keywords (xl-generate-defun-font-lock function))
+	   (collect (font-lock-add-keywords nil )))
+  (font-lock-add-keywords nil )
+  (->> `(seq "(" (group ,name) (1+ space) (group (1+ (any "-" word))) (1+ space)
+	     "(" (group (* (any "-" word))))
     `((,(rx-to-string it)
        (1 font-lock-keyword-face)
        (2 font-lock-function-name-face)
-       (3 font-lock-variable-name-face)))))
+       (3 font-lock-variable-name-face))))
+  )
 #+end_src
 
 *** custom macros
