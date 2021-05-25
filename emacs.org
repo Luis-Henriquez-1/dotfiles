@@ -2165,9 +2165,10 @@ should run.
 #+begin_src emacs-lisp
 (defunmacro! defhooksym! (name args &rest body)
   "Define a hook."
-  `(progn (defvar ,name nil ,docstring)
-	  (defadvice! ,run-<name>-hook ,args
-	    ,@body)))
+  (let ((docstring (when (stringp (car body)) (pop body))))
+    `(progn (defvar ,name nil ,docstring)
+	    (defadvice! ,run-<name>-hook ,args
+	      ,@body))))
 #+end_src
 
 **** before-load-hook
