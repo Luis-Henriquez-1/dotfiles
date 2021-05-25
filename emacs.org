@@ -2326,24 +2326,6 @@ Note that I may depreciate this in favor of setf.
   `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
 #+end_src
 
-**** parse generic advice
-:PROPERTIES:
-:ID:       73f153c5-b005-41c1-bc35-3aa47b4339f1
-:END:
-
-#+begin_src emacs-lisp
-(add-to-list 'defun-macro%handler-alist '(:gadvice . defun-macro%handle-gadvice))
-
-(cl-defun defun-macro%handle-gadvice (_ bool rest state)
-  (let-alist state
-    (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
-	  (advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
-      (when bool
-	`((defun ,generic-advice-fn (fn) (advice-add fn :around #',advice-fn))
-	  (defun ,advice-fn ,.args ,.docstring ,@.body)
-	  ,@(defun-macro%process-clauses rest state))))))
-#+end_src
-
 **** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
