@@ -2367,7 +2367,7 @@ https://emacs.stackexchange.com/questions/54500/how-to-add-a-locally-override-th
 (defmacro with-temp-advice! (advices &rest body)
   "Evaluate BODY with ADVICES enabled.
 Disable advices after BODY has been evaluated. ADVICES should take the form of
-(SYMBOL WHERE ADVICE)."
+(SYMBOL WHERE FUNCTION)."
   (declare (indent defun))
   (loopy (each (symbol where advice) advices)
 	 (collect before `(advice-add #',symbol ,where #',advice))
