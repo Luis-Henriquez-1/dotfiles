@@ -1944,6 +1944,16 @@ declaration of unique symbols.
     (rx-to-string (cons 'seq (if lax (-slice it 1 -1) it)))))
 #+end_src
 
+***** symbol-name
+:PROPERTIES:
+:ID:       4ce092a6-442e-487e-a031-2349ffdd352e
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-special-macro-symbol-name (special-symbol)
+  (intern (nth 1 (s-match (xl-special-macro-symbol-regexp) (symbol-name special-symbol)))))
+#+end_src
+
 ***** special macro symbols
 :PROPERTIES:
 :ID:       67e4ef77-587e-404b-9524-ee2881267b77
@@ -2035,13 +2045,37 @@ it replaces symbols of the form =<symbol>=.
 
 https://letoverlambda.com/textmode.cl/guest/chap3.html#sec_6
 
+Note that I intentionally create new names for the anaphoric symbols. The reason
+is that they will be inadvertantly picked up by another =macro!= in an upper
+level.
+
 #+begin_src emacs-lisp
 (defmacro defmacro! (name args &rest body)
   "Define a macro."
   (declare (indent defun))
   `(defmacro ,name ,args
-     (mmt-with-unique-names ,(xl-special-macro-symbols body)
-       ,@(xl-macro-format-form body))))
+     ,(loopy (with (symbols (xl-special-macro-symbols body))
+		   (body (macroexp-progn (xl-macro-format-form body))))
+	     (list symbol symbols)
+	     (expr new-name (xl-symbol-intern (xl-special-macro-symbol-name symbol) "-"))
+	     (collect names (list symbol new-name))
+	     (finally-return `(mmt-with-unique-names ,names ,body)))))
+#+end_src
+
+**** helper function to get args
+:PROPERTIES:
+:ID:       2bef90b5-21be-4ca6-b250-d16966e9126e
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-process-args (args body)
+  "Return (ARGS BODY KARGS)."
+  (loopy (with ((args plist) (-split-with (-not #'keywordp) args))
+	       (_ (when (stringp (car body)) (pop body)))
+	       ((alist body) (--split-with (and (listp it) (keywordp (car it))) body)))
+	 (map (key value) (append (-partition-before-pred #'keywordp plist) alist))
+	 (collect kargs (cons key (xl-dwim-single value)))
+	 (finally-return (list args body kargs))))
 #+end_src
 
 **** defunmacro!
@@ -2059,27 +2093,14 @@ many--then they can go in front of the body instead.
 #+begin_src emacs-lisp
 (defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
-  (-let ((docstring (when (stringp (car body)) (pop body)))
-	 ((_ args-var) args))
+  (-let ((docstring (when (stringp (car body)) (pop body))))
     `(progn
        ;; (after! lisp-extra-font-lock
        ;; 	 (add-to-list 'lisp-extra-font-lock-defun-functions ',(symbol-name name)))
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
-	 (-let* (((,args-var ,<plist>) (-split-with (-not #'keywordp) ,args-var))
-		 ((alist body) (--split-with (and (listp it) (keywordp (car it))) body))
-		 ;; ((.MAP plist;; plist(loopy (map (key value) alist)
-		 ;; 	;; 	    (append (list key (xl-dwim-single value)))
-		 ;; 	;; 	    (finally-return (append plist loopy-result)))
-		 ;; 	))
-		 )
-	   (message "args: %S" ,args-var)
-	   (message "plist: %S" ,<plist>)
-	   (message "alist: %S" alist)
-	   (message "body: %S" body)
-	   ;; (message "map: %S" .MAP)
-	   (with-map! plist ,@body))))))
+	 ,@body))))
 #+end_src
 
 **** defhook!
@@ -2093,14 +2114,16 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 #+begin_src emacs-lisp
 (defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
-  (loopy (list hook hooks)
+  (loopy (with ((hooks body kargs) (xl-process-args hooks body))
+	       ((&alist :append :depth :local :args) kargs))
+	 (list hook hooks)
 	 (expr fn (xl-hook-gen-name hook name))
 	 (cond (loopy-first-iteration-p
-		(collect `(defun ,fn ,.args ,@body))
+		(collect `(defun ,fn ,args ,@body))
 		(expr orig-fn fn))
 	       (t
 		(collect `(defalias ',fn ',orig-fn))))
-	 (collect `(add-hook ',hook #',fn ,(or .append .depth) ,.local))
+	 (collect `(add-hook ',hook #',fn ,(or append depth) ,local))
 	 (collect `(xl-log-function ',fn))
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
@@ -2115,15 +2138,18 @@ This macro lets me define advices in a convenient syntax.
 #+begin_src emacs-lisp
 (defunmacro! defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
-  (loopy (with (where (map-some (lambda (k _) (member k XL-ADVICE-KEYWORDS)) .MAP)))
+  (loopy (with ((args body kargs) (xl-process-args args body))
+	       (props (alist-get :props kargs))
+	       (fargs (alist-get :args kargs))
+	       ((where . functions) (--first (member (car it) XL-ADVICE-KEYWORDS) kargs)))
 	 (list fn functions)
 	 (expr advice (xl-advice-gen-symbol fn name))
 	 (cond (loopy-first-iteration-p
-		(collect `(defun ,advice ,(or args .args) ,docstring ,@.body))
+		(collect `(defun ,advice ,(or fargs args nil) ,@body))
 		(expr orig-fn advice))
 	       (t
 		(collect `(defalias ',advice ',orig-fn))))
-	 (collect `(advice-add #',fn ,where #',advice ,.props))
+	 (collect `(advice-add #',fn ,where #',advice ,props))
 	 (collect `(xl-log-function #',advice))
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
