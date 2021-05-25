@@ -2115,6 +2115,16 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
 
+**** gen symbol
+:PROPERTIES:
+:ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-gen-symbol (symbol name)
+  (xl-symbol-intern symbol '@ name))
+#+end_src
+
 **** defadvice!
 :PROPERTIES:
 :ID:       6dd44e4c-0f11-4a45-9ad0-9b5ac35d4e58
@@ -2439,16 +2449,6 @@ ADVICE is an advice function that follows XL naming conventions."
   "Return the function that ADVICE aliases.
 ADVICE is an advice function that follows XL naming conventions."
   (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
-#+end_src
-
-**** gen symbol
-:PROPERTIES:
-:ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-gen-symbol (symbol name)
-  (xl-symbol-intern symbol '@ name))
 #+end_src
 
 **** generic advices
