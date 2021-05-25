@@ -2148,7 +2148,7 @@ This macro lets me define advices in a convenient syntax.
 		(collect `(defalias ',advice ',orig-fn))))
 	 (collect `(advice-add #',fn ,where #',advice ,props))
 	 (collect `(xl-log-function #',advice))
-	 (finally-return (macroexpand progn))))
+	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
 
 **** defhooksym!
