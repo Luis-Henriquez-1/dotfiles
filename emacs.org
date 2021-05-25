@@ -2325,8 +2325,9 @@ should run.
   "Load feature before."
   `(defhook! ,name (xl-before-load-feature-hook :args (feature))
      ,@body)
-  (when (-all-p #'featurep features)
-    (xl-call-hook-interactively hook name)))
+  ;; (when (-all-p #'featurep features)
+  ;;   (xl-call-hook-interactively hook name))
+  )
 #+end_src
 
 **** config :defer:performance:usepackage:
