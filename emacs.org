@@ -2330,8 +2330,8 @@ immediately."
 
 #+begin_src emacs-lisp
 (defunmacro! defbefore! (name features &rest body)
-  "Execute body before FEATURES are loaded.
-If FEATURES have already been loaded, do nothing."
+  "Evaluate BODY before FEATURES are loaded.
+Do not evaluate BODY if features have already been loaded."
   `(defhook! ,name (xl-before-load-feature-hook :args (feature))
      ,@body))
 #+end_src
