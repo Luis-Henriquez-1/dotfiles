@@ -2334,8 +2334,8 @@ Note that I may depreciate this in favor of setf.
 #+begin_src emacs-lisp
 (defunmacro! defgadvice! (name args &rest body)
   (declare (indent defun) (doc-string 3))
-  (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
-	(advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
+  (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" name))
+	(advice-fn (xl-intern-format "xl-gadvice--%s-advice" name)))
     `(progn (defun ,name (fn)
 	      (defalias (xl-advice-gen-symbol fn name) #',advice-fn)
 	      (advice-add fn :around #',advice-fn))
