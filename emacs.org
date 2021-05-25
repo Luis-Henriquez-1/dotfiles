@@ -2058,11 +2058,11 @@ level.
 (defun xl-process-args (args body)
   "Return (ARGS BODY KARGS)."
   (loopy (with ((args plist) (-split-with (-not #'keywordp) args))
-	       (_ (when (stringp (car body)) (pop body)))
+	       (docstring (when (stringp (car body)) (pop body)))
 	       ((alist body) (--split-with (and (listp it) (keywordp (car it))) body)))
 	 (map (key value) (append (-partition-before-pred #'keywordp plist) alist))
 	 (collect kargs (cons key (xl-dwim-single value)))
-	 (finally-return (list args body kargs))))
+	 (finally-return (list args (cons docstring body) kargs))))
 #+end_src
 
 **** defunmacro!
