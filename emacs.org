@@ -2356,7 +2356,6 @@ Note that I may depreciate this in favor of setf.
 	  ()))
 #+end_src
 
-
 *** create a hook for adding font lock
 :PROPERTIES:
 :ID:       2f3b865c-6ef1-41e0-bde0-33a7bb7650b9
