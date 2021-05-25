@@ -8181,7 +8181,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 #+begin_src emacs-lisp
 (defhook! unpropertize-kill-ring (kill-emacs-hook :append t)
   "Remove text properties from `kill-ring'."
-  (set! (-map-when #'stringp #'substring-no-properties <kill-ring>)))
+  (setq kill-ring (-map-when #'stringp #'substring-no-properties kill-ring)))
 #+end_src
 
 ** ellocate :search:
