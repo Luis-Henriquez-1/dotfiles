@@ -2166,8 +2166,6 @@ many--then they can go in front of the body instead.
 (defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
   `(progn
-     (defhook! add-font-lock-for-<name> (emacs-lisp-mode-hook)
-       (font-lock-add-keywords nil (xl-gen-font-lock-keywords ',name)))
      (defmacro! ,name ,args
        ,@(when (stringp (car body)) (list (pop body))) ; the docstring
        (declare (indent defun) (doc-string 3))
@@ -2222,14 +2220,6 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 	 (collect `(add-hook ',hook #',fn ,(or append depth) ,local))
 	 (collect `(xl-log-function ',fn))
 	 (finally-return (macroexp-progn loopy-result))))
-#+end_src
-
-**** add font lock for
-:PROPERTIES:
-:ID:       8ee26e84-00ca-4fa1-9472-08b8b0a1f0e2
-:END:
-
-#+begin_src emacs-lisp
 #+end_src
 
 **** gen symbol

@@ -1489,7 +1489,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("which-key" "428aedfce0157920814fbb2ae5d00b4aea89df88" (which-key :type git :flavor melpa :host github :repo "justbur/emacs-which-key" :package "which-key" :local-repo "emacs-which-key"))
+("which-key" "428aedfce0157920814fbb2ae5d00b4aea89df88" (which-key :type git :flavor melpa :host github :repo "justbur/emacs-which-key"))
 #+end_src
 
 * with-editor
