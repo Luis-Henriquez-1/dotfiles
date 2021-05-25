@@ -2145,8 +2145,8 @@ many--then they can go in front of the body instead.
   "Define a macro for defining function names."
   (-let ((docstring (when (stringp (car body)) (pop body))))
     `(progn
-       ;; (after! lisp-extra-font-lock
-       ;; 	 (add-to-list 'lisp-extra-font-lock-defun-functions ',(symbol-name name)))
+       (after! lisp-extra-font-lock
+	 (add-to-list 'lisp-extra-font-lock-defun-functions ',(symbol-name name)))
        (defmacro! ,name ,args
 	 ,@(when docstring (list docstring))
 	 (declare (indent defun) (doc-string 3))
