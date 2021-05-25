@@ -2279,7 +2279,7 @@ should run.
 
 #+begin_src emacs-lisp
 (defunmacro! defhooksym! (name args &rest body)
-  "Define a hook."
+  "Define a hook symbol."
   `(progn (defvar ,name nil ,docstring)
 	  (defadvice! ,run-<name> ,args
 	    ,@(when (stringp (car body)) (list (pop body)))
