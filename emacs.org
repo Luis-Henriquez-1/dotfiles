@@ -2337,7 +2337,7 @@ Note that I may depreciate this in favor of setf.
   (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" name))
 	(advice-fn (xl-intern-format "xl-gadvice--%s-advice" name)))
     `(progn (defun ,generic-advice-fn (fn)
-	      (defalias ,(xl-advice-gen-symbol fn name) #',advice-fn)
+	      (defalias (xl-symbol-intern fn '@ ',name) #',advice-fn)
 	      (advice-add fn :around #',advice-fn))
 	    (defun ,advice-fn ,args ,@body))))
 #+end_src
