@@ -2350,9 +2350,10 @@ Note that I may depreciate this in favor of setf.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro defgadvice! (name args docstring &rest body)
+(defmacro defgadvice! (name args &rest body)
   (declare (indent defun) (doc-string 3))
-  `(defun! ,name ,args ,docstring (:gadvice t) ,@body))
+  `(progn (defun! ,name ,args ,@body)
+	  ()))
 #+end_src
 
 
