@@ -2226,6 +2226,11 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
 
+**** add font lock for
+:PROPERTIES:
+:ID:       8ee26e84-00ca-4fa1-9472-08b8b0a1f0e2
+:END:
+
 **** gen symbol
 :PROPERTIES:
 :ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
