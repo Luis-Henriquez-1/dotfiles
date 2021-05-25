@@ -5781,15 +5781,15 @@ where I don't do this.
 :END:
 
 #+begin_src emacs-lisp
-(dolist (mode (list #'auto-capitalize-mode
-		    #'aggressive-fill-paragraph-mode
-		    #'org-link-minor-mode))
-  (xl-hook-add 'org-edit-paragraph:mode-hook mode))
+(xl-hook-add 'org-edit-paragraph:mode-hook
+	     (list #'auto-capitalize-mode
+		   #'aggressive-fill-paragraph-mode
+		   #'org-link-minor-mode))
 #+end_src
 
 *** bindings inside edit-indirect
 :PROPERTIES:
-:ID: 42992d1e-5d65-4570-ba96-02b3be31b97b
+:ID:       6e735716-57ab-4d50-8d2f-b925f74ab178
 :END:
 
 I want quick, convenient bindings I can use to abort or commit (which is
