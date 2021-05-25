@@ -2309,9 +2309,8 @@ should run.
 (defunmacro! defafter! (name features &rest body)
   "Eval body after FEATURES are loaded."
   `(progn
-     (after! ,features ,@body)
-     ;; (defhook! ,name (xl-after-load-feature-hook :args (feature))
-     ;;   ,@body)
+     (defhook! ,name (xl-after-load-feature-hook :args (feature))
+       ,@body)
      ;; (when (-all-p #'featurep features)
      ;;   )
      ))
