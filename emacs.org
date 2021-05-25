@@ -2336,13 +2336,10 @@ Note that I may depreciate this in favor of setf.
   (declare (indent defun) (doc-string 3))
   (let ((generic-advice-fn (xl-intern-format "xl-gadvice-%s" .name))
 	(advice-fn (xl-intern-format "xl-gadvice--%s-advice" .name)))
-    `(progn (defun ,name ,args
-	      (advice-add fn :around #'))
-	    (defun ,advice-fn ,args ,@body))
-    (when bool
-      `((defun ,generic-advice-fn (fn) (advice-add fn :around #',advice-fn))
-	(defun ,advice-fn ,.args ,.docstring ,@.body)
-	,@(defun-macro%process-clauses rest state)))))
+    `(progn (defun ,name (fn)
+	      (defalias (xl-advice-gen-symbol fn name) #',advice-fn)
+	      (advice-add fn :around #',advice-fn))
+	    (defun ,advice-fn ,args ,@body))))
 #+end_src
 
 *** create a hook for adding font lock
