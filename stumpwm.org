@@ -1,6 +1,6 @@
 #+title: stumpwm.org
 #+author: Luis-Henriquez-Perez
-#+property: header-args :tangle ~/.config/stumwm/stumwmrc.lisp
+#+property: header-args :tangle ~/.config/stumpwm/stumpwmrc.lisp
 #+tags: stumwm
 
 [[file:multimedia/pictures/stumpwm-logo.png]]

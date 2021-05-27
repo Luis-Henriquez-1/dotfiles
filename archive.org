@@ -10,7 +10,38 @@ the headlines back searching my vcs history. Well, version control does not
 "know" about org headlines. And I don't know of a way to search through it
 painlessly.
 
-*** temporarily disable modes
+* set!
+
+One "gotcha" in Emacs is the existence of custom variables. Unlike typical
+variables custom variables sometimes rely on certain code being executed when
+they're initialized or when their values are changed. If you just set the
+variable normally with [[helpfn:setq][setq]] you'd change it's value but you wouldn't be running
+it's corresponding code so the change you think would happen, might not happen
+at all.
+
+Rather than keeping track of which variables have custom setters and which do
+not, I opt to just use this macro.
+
+For this reason I use =set!= as a replacement for =setq=.
+
+[[https://opensource.com/article/20/3/variables-emacs][This article]] provides a brilliant synopsis of emacs variables.
+
+Note that I may depreciate this in favor of setf.
+
+#+begin_src emacs-lisp
+(defmacro set! (&rest args)
+  "Set"
+  (pcase (length args)
+    ((and (pred cl-evenp) (pred > 0))
+     `(progn
+	,@(loopy (cons (sym val . _) args #'cddr)
+		 (expr setter `(or (get ',sym 'custom-set) 'set))
+		 (collect `(funcall ,setter ',sym ,val)))))
+    (_
+     (error "Invalid arguments."))))
+#+end_src
+
+* temporarily disable modes
 :PROPERTIES:
 :ID:       f18bf0e3-8704-443e-95ea-6c9d135f6b0c
 :END:
@@ -28,7 +59,7 @@ painlessly.
 			(--map (funcall it +1) ,to-re-enable)))))
 #+end_src
 
-*** set up Emacs service
+* set up Emacs service
 :PROPERTIES:
 :ID:       74734a2d-a089-49da-b857-425d2d52d582
 :HEADER-ARGS: :tangle no
@@ -43,3 +74,251 @@ systemctl --user start emacs.service   # Start service
 systemctl --user stop emacs.service    # Stop service
 journalctl --user -u emacs.service     # Service stdout
 #+end_src
+
+* with-map!
+:PROPERTIES:
+:ID:       02bc8acb-5be4-4772-96bc-79cd3392818f
+:END:
+
+#+begin_src emacs-lisp
+(defmacro with-map! (map &rest body)
+  "Let-bind dotted symbols to their values in BODY.
+This is similar to `let-alist' but map can be any key value structure."
+  (declare (indent 1))
+  (loopy (with (dot-regexp (rx bos "." (group (1+ (not white))) eos)))
+	 (for sym (-select #'symbolp (-flatten body)))
+	 (expr sym-name (symbol-name sym))
+	 (expr (_ group1) (s-match dot-regexp sym-name))
+	 (unless group1 (skip))
+	 (expr name (intern group1))
+	 (unioning bindings (list (list (macroexp-quote name) sym)))
+	 (finally-return `(map-let ,bindings ,map ,@body))))
+#+end_src
+
+* add syntax highlighting for special symbols
+:PROPERTIES:
+:ID:       500c7883-fcf6-4b6f-97ac-e89388748bcd
+:END:
+
+Symbols I've made that start with an exclamation point (=!=), will be used for
+special purposes. Specifically a symbol such as =!hello= will signal the
+creation of a =once-only!= variable binding. However, if such a symbol is within
+a string or part of a larger symbol, then it will single the replacement of a
+format string.
+
+I wasn't completely sure as to what the syntax of this variable should be.
+
+#+begin_src emacs-lisp
+(defhook add-syntax-highlighting-for-anaphoric-symbol (emacs-lisp-mode-hook)
+  ""
+  (alet))
+#+end_src
+
+* defun font-lock functions
+:PROPERTIES:
+:ID:       1a416d99-e611-4013-b1a9-cb8949eb6c1b
+:HEADER-ARGS: :tangle no
+:END:
+
+#+begin_src emacs-lisp
+(defvar xl-font-lock-functions nil
+  "List of macros that should be font-locked like `defun'.")
+
+(defhook! add-font-lock-for-<name> (emacs-lisp-mode-hook)
+  (iterate (list function xl-font-lock-functions)
+	   (expr defun-keywords (xl-generate-defun-font-lock function))
+	   (collect (font-lock-add-keywords nil )))
+  (font-lock-add-keywords nil )
+  (->> `(seq "(" (group ,name) (1+ space) (group (1+ (any "-" word))) (1+ space)
+	     "(" (group (* (any "-" word))))
+    `((,(rx-to-string it)
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face)
+       (3 font-lock-variable-name-face))))
+  )
+#+end_src
+
+* font lock
+:PROPERTIES:
+:ID:       0353d5ad-d937-4e7d-8f33-30624b1905de
+:END:
+
+The font lock patters that I use are fairly regular. Many macros I define have a
+"defun-like" syntax. Therefore, I create a helper that will allow me to generate
+the form list I need to register keywords for syntax highlighting.
+
+#+begin_src emacs-lisp
+(defun xl-generate-defun-font-lock (name)
+  "Return the form to add to font lock for macro with NAME."
+  (alet `(seq "(" (group ,(xl-to-string name)) (1+ space) (group (1+ (any "-" word))) (1+ space)
+	      "(" (group (* (any "-" word))))
+    `((,(rx-to-string it)
+       (1 font-lock-keyword-face)
+       (2 font-lock-function-name-face)
+       (3 font-lock-variable-name-face)))))
+#+end_src
+
+* wrap!
+:PROPERTIES:
+:ID:       e8cd649a-0011-42ce-86d7-cbd342782309
+:END:
+
+#+begin_src emacs-lisp
+(defmacro wrap! (wrappers &rest body)
+  "Wrap WRAPPERS around BODY."
+  (declare (indent 1))
+  (loopy (list wrapper (reverse wrappers))
+	 (reduce wrapper #'xl-snoc :init (macroexp-progn body))))
+#+end_src
+
+* fn!
+:PROPERTIES:
+:ID:       0ebd39d6-0f09-4a66-a6fc-5c259cab150d
+:END:
+
+This is a macro for writing anaphoric lambdas. It is based on [[https://github.com/troyp/fn.el][fn]], the main
+difference being that in a few special cases you can specify a named anaphoric
+variable. Also, I don't support the alternate =fn:= syntax.
+
+#+begin_src emacs-lisp
+(defmacro fn! (&rest body)
+  "Expand into an anaphoric macro with body BODY."
+  (let* ((argsym (make-symbol "ARGS"))
+	 (symbolic-placeholders (-uniq (xl-anaphoric-symbols body)))
+	 (number-fn (lambda (it) (s-matches-p "<[[:digit:]]>" (symbol-name it))))
+	 (numbers-p (-all-p number-fn symbolic-placeholders)))
+    (alet (if numbers-p
+	      (-sort (lambda (it other) (string-lessp (symbol-name it) (symbol-name other)))
+		     symbolic-placeholders)
+	    symbolic-placeholders)
+      `(lambda (&rest ,argsym)
+	 (-let [,it ,argsym] ,@body)))))
+#+end_src
+
+* email accounts :email:
+:PROPERTIES:
+:ID:       3a3c6778-dc5d-45cf-87d1-1c6aacbbae46
+:END:
+
+Whatever emails I may use, I'll be adding their password in my password store so
+why not use this as a way to get email information?
+
+#+begin_src emacs-lisp
+(defun password-store%email-accounts ()
+  "Return a list of email accounts."
+  (->> (expand-file-name "email/" (password-store-dir))
+       (directory-files)
+       (cddr)
+       (mapcar (fn! (s-chop-suffix ".gpg" <>)))))
+#+end_src
+
+* wrapping forms
+:PROPERTIES:
+:ID:       48e48c0f-7bb3-45c9-b4af-2da0ce84b64e
+:END:
+
+When writing macros in lisp it is not uncommon to need to write a macro that can
+nest a form within some number of other forms (for an example, see [[id][after!]]). This
+macro makes this problem much easier.
+
+The original idea for this macro came from [[https://gitlab.common-lisp.net/iterate/iterate/-/blob/master/iterate.lisp][iter's source code]].
+
+#+begin_src emacs-lisp
+(defun xl-wrap-form (wrappers form)
+  "Wrap FORM with each wrapper in WRAPPERS.
+WRAPPERS are a list of forms to wrap around FORM."
+  (declare (pure t) (side-effect-free t))
+  (setq wrappers (reverse wrappers))
+  (if (consp wrappers)
+      (xl-wrap-form (cdr wrappers)
+                    (append (car wrappers)
+                            (list form)))
+    form))
+#+end_src
+
+* anaphora :anaphora:
+:PROPERTIES:
+:ID:       9938b1e1-6c6e-4a45-a85e-1a7f2d0bf6df
+:END:
+
+Anaphora refers to the ability to refer to. I have decided it is best to use
+=<>= to denote the symbol referred to by anaphoric macros because it is easy to
+type (assuming parentheses completion), because such a symbol uncommon in lisp.
+A key advantage to this is that there is a consistent "syntax" for anaphoric
+variables as opposed to using =it=. A consequence of this is that you have more
+flexibility to name variables. Additionally, I like that it looks like a slot or
+placeholder.
+
+https://en.wikipedia.org/wiki/Anaphoric_macro
+
+** anaphoric symbol regexp :anaphora:core:library:emacs:config:
+:PROPERTIES:
+:ID:       40c97bd5-dab1-44df-86f7-90274d5a8ea0
+:END:
+
+#+begin_src emacs-lisp
+(defconst XL-ANAPHORIC-SYMBOL-REGEXP
+  (eval-when-compile (rx "<" (group (zero-or-more (not (any white ">" "<")))) ">"))
+  "Regular expression that matches an anaphoric symbol.")
+#+end_src
+
+** anaphoric symbol :anaphora:core:library:
+:PROPERTIES:
+:ID:       db8169ba-1630-42fe-9ab7-e29c110a18c3
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-symbol-p (obj)
+  "Return non-nil if OBJ is an anaphoric symbol."
+  (and (symbolp obj)
+       (string-match-p XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name obj))))
+#+end_src
+
+** true anaphora name :anaphora:
+:PROPERTIES:
+:ID:       2833cd75-9c85-4c0e-9523-4489d387150a
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-true-symbol (symbol)
+  "Return the symbol that corresponds to the anaphoric symbol."
+  (save-match-data
+    (string-match XL-ANAPHORIC-SYMBOL-REGEXP (symbol-name symbol))
+    (intern (match-string 1 (symbol-name symbol)))))
+#+end_src
+
+** take symbol and return anaphoric symbol :anaphora:
+:PROPERTIES:
+:ID:       4b89588e-f3c3-49d3-8851-fdd214cee563
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-symbol (symbol)
+  "Return anaphoric form of symbol."
+  (xl-symbol-intern '< symbol '>))
+#+end_src
+
+** body symbols :anaphora:
+:PROPERTIES:
+:ID:       2bae458e-404a-48e7-b57e-ce7f543f6e6d
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-symbols (body)
+  "Return all the anaphoric symbols in body."
+  (->> (-flatten body)
+       (-filter #'xl-anaphoric-symbol-p)
+       (-uniq)))
+#+end_src
+
+** all anaphoric symbols in obj :anaphora:
+:PROPERTIES:
+:ID:       e0c0eb8c-52b3-4411-ab0b-06255490dacf
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-anaphoric-symbols-in-obj (obj)
+  "Return a list of anaphoric symbols in OBJ."
+  (s-match-strings-all XL-ANAPHORIC-SYMBOL-REGEXP (xl-to-string obj)))
+#+end_src
+
