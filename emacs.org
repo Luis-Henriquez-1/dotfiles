@@ -5484,11 +5484,12 @@ another.
 
 #+begin_src emacs-lisp
 (defunmacro! evilem%defmotion! (name features &rest body)
-  `(after! evil
-     ,@(when .bind `((bind! ,@.bind)))
-     (evilem-make-motion
-      :scope ,.scope
-      :initial-point ,.initial-point)))
+  (-let ((bind ()))
+    `(defafter! ,name (evil evil-easymotion)
+       ,@(when bind `((bind! ,@.bind)))
+       (evilem-make-motion
+	:scope ,.scope
+	:initial-point ,.initial-point))))
 #+end_src
 
 *** custom motions
