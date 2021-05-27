@@ -5485,15 +5485,14 @@ another.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro evilem-defmotion! (name features &rest body)
+(defunmacro! evilem-defmotion! (name features &rest body)
   "Convenience macro for defining a motion."
   (declare (indent defun))
-  (-let (((&alist :bind :scope :initial-point)))
-    `(defafter! ,name (evil evil-easymotion ,@features)
-       ,@(when bind `((bind! ,@.bind)))
-       (evilem-make-motion
-	:scope scope
-	:initial-point initial-point))))
+  `(defafter! ,name (evil evil-easymotion ,@features)
+     ,@(when bind `((bind! ,@.bind)))
+     (evilem-make-motion
+      :scope ,.scope
+      :initial-point ,.initial-point)))
 #+end_src
 
 *** custom motions
