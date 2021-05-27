@@ -7421,8 +7421,8 @@ Disabling bidirectional text provides a small performance boost. Bidirectional
 text is useful for languages that read right to left.
 
 #+begin_src emacs-lisp
-(set-default! bidi-display-reordering 'left-to-right)
-(set-default! bidi-paragraph-direction 'left-to-right)
+(setq-default bidi-display-reordering 'left-to-right)
+(setq-default bidi-paragraph-direction 'left-to-right)
 #+end_src
 
 ** stop beeping :sound:
