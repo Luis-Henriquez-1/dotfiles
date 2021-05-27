@@ -7232,7 +7232,7 @@ situation where I use this feature is in the command [[helpfn:eval-expression][e
 typing an expression, I get completion from the minibuffer.
 
 #+begin_src emacs-lisp
-(set-default! enable-recursive-minibuffers t)
+(setq-default enable-recursive-minibuffers t)
 #+end_src
 
 ** clipboard
