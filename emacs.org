@@ -2145,6 +2145,7 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 
 #+begin_src emacs-lisp
 (defun xl-advice-gen-symbol (symbol name)
+  "Generate."
   (xl-symbol-intern symbol '@ name))
 #+end_src
 
