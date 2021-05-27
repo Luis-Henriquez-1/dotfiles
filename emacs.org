@@ -5583,7 +5583,7 @@ newline.
 :END:
 
 #+begin_src emacs-lisp
-(evilem%defmotion! headline-start (org)
+(evilem-defmotion! headline-start (org)
   (:scope 'page)
   (:initial-point #'point-min)
   (save-match-data (re-search-forward (rx bol (1+ "*") (1+ white)))))
