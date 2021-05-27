@@ -1823,89 +1823,6 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 (use-package map :demand t)
 #+end_src
 
-*** advice :advice:
-:PROPERTIES:
-:ID:       e498fc7d-03f1-4a69-9869-28c1b499fe1f
-:END:
-
-**** advice regexp
-:PROPERTIES:
-:ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
-:END:
-
-#+begin_src emacs-lisp
-(defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
-  "A regular expression that defines naming convention for advices.")
-#+end_src
-
-**** remove XL advice
-:PROPERTIES:
-:ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
-:END:
-
-Since we can get the advisee from the advise name, or remove advice only needs
-one argument--the advice to remove.
-
-#+begin_src emacs-lisp
-(defun xl-advice-remove (advices)
-  "Remove ADVICES from the functions they advise.
-ADVICES is an advice or a list of advices."
-  (iter (each advice (-list advices))
-	(advice-remove (xl-advice-orig-symbol advice) advice)))
-#+end_src
-
-**** adding an advice
-:PROPERTIES:
-:ID:       14e23074-10ea-41cc-88e5-bac600658b20
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-add (symbols where functions &optional props)
-  "Add ADVICES to FUNCTIONS.
-WHERE, DEPTH and LOCAL are the same as in `advice-add'."
-  (iter (each symbol (-list symbols))
-	(subloop (each function (-list functions))
-		 (expr advice (xl-symbol-intern symbol '@ function))
-		 (fset advice function)
-		 (advice-add symbol where advice props)
-		 (collect advice))))
-#+end_src
-
-**** advice-fn-p
-:PROPERTIES:
-:ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-symbol-p (fn)
-  "Return non-nil when FN is an advice."
-  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
-#+end_src
-
-**** original fn
-:PROPERTIES:
-:ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-orig-symbol (advice)
-  "Return the function ADVICE is advised to.
-ADVICE is an advice function that follows XL naming conventions."
-  (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
-#+end_src
-
-**** original advice
-:PROPERTIES:
-:ID:       49f49994-637a-4e26-b680-3535463ee8bf
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-orig-function (advice)
-  "Return the function that ADVICE aliases.
-ADVICE is an advice function that follows XL naming conventions."
-  (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
-#+end_src
-
 *** custom macros
 :PROPERTIES:
 :ID:       40a33da1-6d4b-4395-adfb-a4cdba7ec28c
@@ -2668,6 +2585,89 @@ not to have to specify the advice keyword.
        (advice-add fn :after name))
       (_
        nil))))
+#+end_src
+
+*** advice :advice:
+:PROPERTIES:
+:ID:       e498fc7d-03f1-4a69-9869-28c1b499fe1f
+:END:
+
+**** advice regexp
+:PROPERTIES:
+:ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
+:END:
+
+#+begin_src emacs-lisp
+(defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
+  "A regular expression that defines naming convention for advices.")
+#+end_src
+
+**** remove XL advice
+:PROPERTIES:
+:ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
+:END:
+
+Since we can get the advisee from the advise name, or remove advice only needs
+one argument--the advice to remove.
+
+#+begin_src emacs-lisp
+(defun xl-advice-remove (advices)
+  "Remove ADVICES from the functions they advise.
+ADVICES is an advice or a list of advices."
+  (iter (each advice (-list advices))
+	(advice-remove (xl-advice-orig-symbol advice) advice)))
+#+end_src
+
+**** adding an advice
+:PROPERTIES:
+:ID:       14e23074-10ea-41cc-88e5-bac600658b20
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-add (symbols where functions &optional props)
+  "Add ADVICES to FUNCTIONS.
+WHERE, DEPTH and LOCAL are the same as in `advice-add'."
+  (iter (each symbol (-list symbols))
+	(subloop (each function (-list functions))
+		 (expr advice (xl-symbol-intern symbol '@ function))
+		 (fset advice function)
+		 (advice-add symbol where advice props)
+		 (collect advice))))
+#+end_src
+
+**** advice-fn-p
+:PROPERTIES:
+:ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-symbol-p (fn)
+  "Return non-nil when FN is an advice."
+  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
+#+end_src
+
+**** original fn
+:PROPERTIES:
+:ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-symbol (advice)
+  "Return the function ADVICE is advised to.
+ADVICE is an advice function that follows XL naming conventions."
+  (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
+#+end_src
+
+**** original advice
+:PROPERTIES:
+:ID:       49f49994-637a-4e26-b680-3535463ee8bf
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-function (advice)
+  "Return the function that ADVICE aliases.
+ADVICE is an advice function that follows XL naming conventions."
+  (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
 *** hook :hook:
