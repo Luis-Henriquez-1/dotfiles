@@ -520,10 +520,15 @@ make sure packages are only loaded when they need to be. The major purpose of
 this library is to provide me the tools to configure these packages in a way
 that is concise and efficient.
 
-*** variables
+*** advice keywords
 :PROPERTIES:
 :ID:       3ddc2ff0-634c-4b1e-940e-1d8562d42ece
 :END:
+
+I put all the advice keywords in a variable. They're already available as the
+keys in [[][advice--where-alist], but this is an internal variable used in the
+inner workings of Emacs's advice--I cant rely on this. Having the advices like
+this is useful for adding advices programmatically.
 
 #+begin_src emacs-lisp
 (defconst XL-ADVICE-KEYWORDS '(:around :before :after
