@@ -2201,7 +2201,9 @@ should run.
 These are tools to control the evaluation of forms before or after features are
 loaded. Having control of when forms are evaluated are important for performance
 as well as for robustness. By evaluating "prepatory" code just before a feature
-is loaded we can make sure that.
+is loaded we can make sure that we only evaluate code when we need it, instead
+of doing it all at startup. It also ensures that we don't wastefully evaluate
+code we won't use. Controlling forms after a feature, lets us.
 
 ***** eval-after-load!
 :PROPERTIES:
