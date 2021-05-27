@@ -5490,8 +5490,8 @@ another.
     `(defafter! ,name (evil evil-easymotion)
        ,@(when bind `((bind! ,@.bind)))
        (evilem-make-motion
-	:scope ,.scope
-	:initial-point ,.initial-point))))
+	:scope scope
+	:initial-point initial-point))))
 #+end_src
 
 *** custom motions
