@@ -2157,7 +2157,7 @@ This macro lets me define advices in a concise, declarative and easy to read
 syntax. I use it extensively throughout this configuration.
 
 #+begin_src emacs-lisp
-(defunmacro! defadvice! (name args &rest body)
+(defunmacro defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
   (loopy (with ((args body kargs) (xl-process-args args body))
 	       (props (alist-get :props kargs))
