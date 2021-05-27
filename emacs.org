@@ -2259,8 +2259,8 @@ should run.
 :END:
 
 #+begin_src emacs-lisp
-(defhooksym! xl-before-load-hook (:before require)
-  (run-hooks 'xl-before-load-hook))
+(defhooksym! xl-after-load-feature-hook (:before require)
+  (run-hooks 'xl-before-load-feature-hook))
 #+end_src
 
 **** after-load-hook
@@ -2269,8 +2269,29 @@ should run.
 :END:
 
 #+begin_src emacs-lisp
-(defhooksym! xl-before-load-hook (:after provide)
-  (run-hooks 'xl-before-load-hook))
+(defhooksym! xl-before-load-feature-hook (:after provide)
+  (run-hooks 'xl-before-load-feature-hook))
+#+end_src
+
+**** feature logic
+:PROPERTIES:
+:ID:       dfc4ee16-5344-44e5-9146-00d2e487ab10
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-convert-to-form (condition)
+  "Convert the CONDITION to legal form."
+  (cond ((null condition)
+	 nil)
+	((xl-true-list-p condition)
+	 (mapcar #'xl-convert-to-form
+		 (if (not (member (car condition) '(and or not)))
+		     (cons 'and condition)
+		   condition)))
+	((member condition '(and or not))
+	 condition)
+	(t
+	 `(featurep ',condition))))
 #+end_src
 
 **** defafter!
@@ -2278,15 +2299,27 @@ should run.
 :ID:       892a40f9-7023-4cdc-a73c-c03d79037fca
 :END:
 
+The purpose of this macro is to allow me to evaluate a form once a number of
+features have been loaded. It is meant to be a replacement to =eval-after-load=,
+except with what I consider some improvements. The problem with
+=eval-after-load= is that it does not lend itself well to debugging or
+introspectability. For one thing, it creates a named hook function as opposed to
+adding.
+
 #+begin_src emacs-lisp
 (defunmacro! defafter! (name features &rest body)
   "Eval BODY after FEATURES are loaded.
 If FEATURES have already been loaded, evaluate BODY immediately."
-  `(progn (defhook! ,name (xl-after-load-feature-hook :args (feature))
-	    (when (-all-p #'featurep features)
-	      ,@body))
-	  (when (-all-p #'featurep features)
-	    (xl-call-hook hook name))))
+  (let ((condition (xl-convert-to-form features))
+	(hook-name (xl-hook-gen-name 'xl-after-load-feature-hook name)))
+    `(progn
+       (defhook! ,name (xl-after-load-feature-hook)
+	 ,@(when (stringp (car body)) (list (pop body)))
+	 (when ,condition
+	   (progn ,@body)
+	   (xl-log "Removing %s..." #',hook-name)
+	   (xl-hook-remove #',hook-name)))
+       (when ,condition (funcall #',hook-name)))))
 #+end_src
 
 **** defbefore!
