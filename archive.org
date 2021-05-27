@@ -10,6 +10,18 @@ the headlines back searching my vcs history. Well, version control does not
 "know" about org headlines. And I don't know of a way to search through it
 painlessly.
 
+* set-default!
+:PROPERTIES:
+:ID:       bc6b7560-fb71-4fc7-a53b-98f92c657d92
+:END:
+
+=set-default= is used for.
+
+#+begin_src emacs-lisp
+(defmacro set-default! (sym val)
+  `(funcall (or (get ',sym 'custom-set-default) 'set-default) ',sym ,val))
+#+end_src
+
 * set!
 
 One "gotcha" in Emacs is the existence of custom variables. Unlike typical
