@@ -427,12 +427,12 @@ Upon startup I read this file and register all the recipes in it with =straight=
   "Read and return recipes from RECIPE-FILE."
   (with-temp-buffer
     (insert-file-contents-literally recipe-file)
-    (let (forms form)
-      (setq form (ignore-errors (read (current-buffer))))
-      (while form
-	(push form forms)
-	(setq form (ignore-errors (read (current-buffer)))))
-      (nreverse forms))))
+    (goto-char (point-min))
+    (let (sexp sexps)
+      (ignore-errors
+	(while (setq sexp (read (current-buffer)))
+	  (push sexp sexps)))
+      (nreverse sexps))))
 #+end_src
 
 **** versions alist
