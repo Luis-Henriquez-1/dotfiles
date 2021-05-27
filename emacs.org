@@ -1537,11 +1537,11 @@ make sense. This is advice specifically designed to disable selectrum sorting.
 (defun use-package-normalize/:idle (_ _ args)
   (cl-assert (-all-p #'symbolp args))
   (loopy (each arg args)
-	 (collect (cons 10 arg))))
+	 (collect (cons 20 arg))))
 
 (defun use-package-handler/:idle (package _ args rest state)
   `(,(loopy (each (seconds . fn) args)
-	    (collect forms `(run-with-idle-timer 10 t #',fn))
+	    (collect forms `(run-with-idle-timer ,seconds t #',fn))
 	    (finally-return `(after! ,package ,@forms)))
     ,@(use-package-process-keywords package rest state)))
 #+end_src
