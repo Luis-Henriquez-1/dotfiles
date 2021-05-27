@@ -2331,13 +2331,16 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 (defunmacro! defbefore! (name features &rest body)
   "Evaluate BODY before FEATURES are loaded.
 Do not evaluate BODY if features have already been loaded."
-  (let ((condition (xl-convert-to-form features)
+  (let ((condition (xl-convert-to-form features))
 	(hook (xl-hook-gen-name 'xl-before-load-feature-hook name)))
-    `(defhook! ,name (xl-before-load-feature-hook)
+    `(progn
+       (defhook! ,name (xl-before-load-feature-hook)
+	 (when ,condition
+	   (progn ,@body)
+	   (xl-log "Removing %s..." #',hook)
+	   (xl-hook-remove #',hook)))
        (when ,condition
-	 (progn ,@body)
-	 (xl-log "Removing %s..." #',hook)
-	 (xl-hook-remove hook)))))
+	 (xl-hook-remove #',hook))))
 #+end_src
 
 **** config :defer:performance:usepackage:
