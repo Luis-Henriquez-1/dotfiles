@@ -2079,14 +2079,17 @@ deal with. Namely, automating adding syntax highlighting for such functions
 and well as declaring their indentation.
 
 #+begin_src emacs-lisp
-(defmacro! defunmacro! (name args &rest body)
+(defmacro defunmacro! (name args &rest body)
   "Define a macro for defining function names."
-  `(progn
-     (defmacro! ,name ,args
-       ,@(when (stringp (car body)) (list (pop body))) ; the docstring
-       (declare (indent defun) (doc-string 3))
-       (-let [(args body ,<alist>) (xl-process-args args body)]
-	 (let-alist ,<alist> ,@body)))))
+  (mmt-with-unique-names (alist)
+    `(progn
+       (defmacro! ,name ,args
+	 ,@(when (stringp (car body)) (list (pop body))) ; the docstring
+	 (declare (indent defun) (doc-string 3))
+	 (-let* (((,(-second-item args) body ,alist) (xl-process-args ,(-second-item args) body))
+		 (,alist (loopy (map (key val) ,alist)
+				(collect (cons (intern (xl-keyword-name key)) val)))))
+	   (let-alist ,alist ,@body))))))
 #+end_src
 
 **** generate a logging function
@@ -2122,19 +2125,17 @@ This is a convenience macro for creating hooks. It allows me to define hooks in
 a concise, easily-readable, and familiar way. It has a similar syntax to =defun=.
 
 #+begin_src emacs-lisp
-(defmacro defhook! (name hooks &rest body)
+(defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (declare (indent defun) (doc-string 3))
-  (loopy (with ((hooks body kargs) (xl-process-args hooks body))
-	       ((&alist :append :depth :local :args) kargs))
-	 (list hook hooks)
+  (loopy (list hook hooks)
 	 (expr fn (xl-hook-gen-name hook name))
 	 (cond (loopy-first-iteration-p
-		(collect `(defun ,fn ,(or args (&rest _)) ,@body))
+		(collect `(defun ,fn ,(or .args '(&rest _)) ,@body))
 		(expr orig-fn fn))
 	       (t
 		(collect `(defalias ',fn ',orig-fn))))
-	 (collect `(add-hook ',hook #',fn ,(or append depth) ,local))
+	 (collect `(add-hook ',hook #',fn ,(or .append .depth) ,.local))
 	 (collect `(xl-log-function ',fn))
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
