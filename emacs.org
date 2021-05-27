@@ -5483,9 +5483,9 @@ another.
 :END:
 
 #+begin_src emacs-lisp
-(defunmacro evilem-defmotion! (name features &rest body)
+(defunmacro! evilem-defmotion! (name features &rest body)
   "Convenience macro for defining a motion."
-  (-let ((bind ()))
+  (-let (((&alist :bind :scope :initial-point)))
     `(defafter! ,name (evil evil-easymotion)
        ,@(when bind `((bind! ,@.bind)))
        (evilem-make-motion
