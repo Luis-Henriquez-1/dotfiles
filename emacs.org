@@ -5487,7 +5487,7 @@ another.
   "Convenience macro for defining a motion."
   (declare (indent defun))
   (-let (((&alist :bind :scope :initial-point)))
-    `(defafter! ,name (evil evil-easymotion)
+    `(defafter! ,name (evil evil-easymotion ,@features)
        ,@(when bind `((bind! ,@.bind)))
        (evilem-make-motion
 	:scope scope
