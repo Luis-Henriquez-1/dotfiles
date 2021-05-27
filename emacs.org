@@ -2079,13 +2079,14 @@ deal with. Namely, automating adding syntax highlighting for such functions
 and well as declaring their indentation.
 
 #+begin_src emacs-lisp
-(defmacro defunmacro! (name args &rest body)
+(defmacro! defunmacro! (name args &rest body)
   "Define a macro for defining function names."
   `(progn
      (defmacro! ,name ,args
        ,@(when (stringp (car body)) (list (pop body))) ; the docstring
        (declare (indent defun) (doc-string 3))
-       ,@body)))
+       (-let [(args body ,<alist>) (xl-process-args args body)]
+	 (let-alist ,<alist> ,@body)))))
 #+end_src
 
 **** generate a logging function
