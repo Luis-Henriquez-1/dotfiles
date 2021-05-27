@@ -2331,8 +2331,10 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 (defunmacro! defbefore! (name features &rest body)
   "Evaluate BODY before FEATURES are loaded.
 Do not evaluate BODY if features have already been loaded."
-  `(defhook! ,name (xl-before-load-feature-hook)
-     ,@body))
+  (let ((condition)
+	(name))
+    `(defhook! ,name (xl-before-load-feature-hook)
+       (when ,condition ,@body))))
 #+end_src
 
 **** config :defer:performance:usepackage:
