@@ -5551,9 +5551,8 @@ newline.
 :END:
 
 #+begin_src emacs-lisp
-(bind! (:n "e" #'evilem%forward-word-end))
-
-(evilem%defmotion! forward-word-end ()
+(evilem-defmotion! forward-word-end ()
+  (:bind (:n "e" #'evilem%forward-word-end))
   (:scope 'page)
   (:initial-point #'point-min)
   (alet (rx (1+ alnum))
