@@ -528,7 +528,7 @@ that is concise and efficient.
 :END:
 
 I put all the advice keywords in a variable. They're already available as the
-keys in [[][advice--where-alist], but this is an internal variable used in the
+keys in [[helpfn:advice--where-alist][advice--where-alist]], but this is an internal variable used in the
 inner workings of Emacs's advice--I cant rely on this. Having the advices like
 this is useful for adding advices programmatically.
 
