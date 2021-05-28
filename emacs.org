@@ -496,6 +496,17 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 #+begin_src emacs-lisp
 (require 'cl-lib)
 (cl-callf2 append (cddr (directory-files (concat XL-PACKAGES-DIR "straight/build") t)) load-path)
+
+(loopy (with (recipes (xl-read-recipes (expand-file-name "recipes.el" user-emacs-directory)))
+	     ;; (build-dirs (cddr (directory-files (concat XL-PACKAGES-DIR "straight/build") t)))
+	     )
+       (list recipe recipes)
+       (expr local-repo (plist-get recipe :local-repo))
+       (count local-repo)
+       ;; (when (not (member file load-path)) (count file))
+       )
+;; (car (xl-read-recipes (expand-file-name "recipes.el" user-emacs-directory)))
+
 #+end_src
 
 ** load required packages
