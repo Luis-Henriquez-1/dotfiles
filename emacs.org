@@ -5317,7 +5317,7 @@ This is a macro for defining evil easymotions.
 (defunmacro! evilem-defmotion! (name features &rest body)
   "Convenience macro for defining a motion."
   (declare (indent defun))
-  `(defafter! define-,name (evil evil-easymotion ,@features)
+  `(defafter! ,(xl-symbol-format "define-evilem-motion-%s" name) (evil evil-easymotion ,@features)
      ,@(when .bind `((bind! ,.bind)))
      (evilem-make-motion ,(xl-symbol-intern 'evilem% name)
 			 (lambda () (interactive) ,@body)
