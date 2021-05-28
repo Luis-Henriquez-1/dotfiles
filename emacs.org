@@ -1381,7 +1381,7 @@ I should give credit. I got this idea from the leaf macro.
 (defun use-package-handler/:set (name _ values rest state)
   "Generate forms that set var to value."
   `(,@(loopy (list (var . val) values)
-	     (expr setter (if (listp var) 'setf 'set!))
+	     (expr setter (if (listp var) 'setf 'setq))
 	     (collect `(,setter ,var ,val)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
