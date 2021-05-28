@@ -2107,7 +2107,7 @@ This macro is for creating new hook variables and attaching them to where they
 should run.
 
 #+begin_src emacs-lisp
-(defmacro! defhooksym! (name args &rest body)
+(defmacro defhooksym! (name args &rest body)
   "Define a hook symbol."
   (let ((docstring (when (stringp (car body)) (list (pop body))))
 	(advice-name (xl-intern-format "run-%s" name)))
