@@ -2060,7 +2060,6 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 	       (t
 		(collect `(defalias ',fn ',orig-fn))))
 	 (collect `(add-hook ',hook #',fn ,(or .append .depth) ,.local))
-	 (collect `(xl-log-function ',fn))
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
 
@@ -2098,7 +2097,6 @@ syntax. I use it extensively throughout this configuration.
 	       (t
 		(collect `(defalias ',advice ',orig-fn))))
 	 (collect `(advice-add #',fn ,where #',advice ,props))
-	 (collect `(xl-log-function #',advice))
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
 
