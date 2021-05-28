@@ -1748,7 +1748,7 @@ garbage collection during this time.
 (use-package idle-require
   :demand t
   ;; :xl-use-xl-log idle-require-mode idle-require-load-next
-  :gc-pause idle-require-load-next
+  ;; :gc-pause idle-require-load-next
   :set
   (idle-require-load-break . 2)
   (idle-require-idle-delay . 10))
