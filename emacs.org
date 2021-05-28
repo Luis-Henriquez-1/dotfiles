@@ -1745,7 +1745,6 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
 	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
     (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
-
 #+end_src
 
 **** rule :usepackage:library:core:popup:
