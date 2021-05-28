@@ -1708,7 +1708,7 @@ clause because it would get confused with it and the built-in Emacs function
 (use-package loopy-iter
   :demand t
   :init
-  (callf2 cl-adjoin '+lax-names loopy-default-flags)
+  (add-to-list 'loopy-default-flags '+lax-names)
   (loopy-defalias 'for 'list)
   (loopy-defalias 'each 'list)
   :alias
@@ -1724,7 +1724,7 @@ clause because it would get confused with it and the built-in Emacs function
 #+begin_src emacs-lisp
 (use-package loopy-dash
   :init
-  (add-to-list '+dash loopy-default-flags))
+  (add-to-list loopy-default-flags '+dash))
 #+end_src
 
 **** dbc
