@@ -506,7 +506,6 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
        ;; (when (not (member file load-path)) (count file))
        )
 ;; (car (xl-read-recipes (expand-file-name "recipes.el" user-emacs-directory)))
-
 #+end_src
 
 ** load required packages
