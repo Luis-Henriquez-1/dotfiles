@@ -836,7 +836,7 @@ A generic advice should have a function.
 	(advising-fn (xl-intern-format "xl-gadvice-%s" name)))
     `(progn (defun ,advising-fn (fn)
 	      (defalias (xl-symbol-intern fn '@ ',name) #',internal-advice)
-	      (advice-add fn :around #',(xl-symbol-intern fn '@ ',name)))
+	      (advice-add fn :around (xl-symbol-intern fn '@ ',name)))
 	    (defun ,internal-advice ,args ,@body))))
 #+end_src
 
