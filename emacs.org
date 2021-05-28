@@ -468,8 +468,7 @@ advantage of doing it this way is that it is fool-proof.
 (defun xl-install-packages (recipe-file target-dir)
   "Install packages specified by RECIPE-FILE to TARGET-DIR.
 Return a list of load-paths for the install packages."
-  (let* ((recipes (xl-read-recipes recipe-file))
-	 (regexp (rx-to-string `(seq ,(expand-file-name target-dir)))))
+  (let* ((recipes (xl-read-recipes recipe-file)))
     (xl-install-straight recipe commit target-dir)
     (setq straight-base-dir target-dir)
     (xl-load-straight-bootstrap-file target-dir)
