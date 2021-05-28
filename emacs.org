@@ -1722,8 +1722,9 @@ clause because it would get confused with it and the built-in Emacs function
 :END:
 
 #+begin_src emacs-lisp
-(require 'loopy-dash)
-(add-to-list '+dash loopy-default-flags)
+(use-package loopy-dash
+  :init
+  (add-to-list '+dash loopy-default-flags)
 #+end_src
 
 **** noflet
