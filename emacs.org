@@ -2625,12 +2625,7 @@ HOOK is a hook function that follows XL naming conventions."
   (xl-symbol-intern fn '& name))
 #+end_src
 
-*** idle-require
-:PROPERTIES:
-:ID:       751b309f-aafc-4d11-ae0c-4d423713b52d
-:END:
-
-**** idle-require :defer:performance:
+*** idle-require :defer:performance:
 :PROPERTIES:
 :ID:       916f88bd-10e1-4030-a1d9-e42baf095492
 :END:
