@@ -2663,11 +2663,8 @@ Sometimes there are things that need tidying up after loading a theme. For
 example, if I'm using evil I need to update the cursor color.
 
 #+begin_src emacs-lisp
-(defvar xl-after-load-theme-hook nil
-  "Hook run after the theme is loaded with `load-theme'.")
-
-(defadvice! run-after-load-theme-hook (:after load-theme)
-  "Set up `xl-load-theme-hook' to run after `load-theme' is called."
+(defhooksym! xl-after-load-theme-hook (:after load-theme)
+  "Hook run after the theme is loaded with `load-theme'."
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
