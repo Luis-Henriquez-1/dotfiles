@@ -1577,7 +1577,7 @@ emacs packages spew messages. While I can see how in certain circumstances there
 messages can be useful, most of the time they are superfluous.
 
 #+begin_src emacs-lisp
-(require 'shut-up))
+(require 'shut-up)
 #+end_src
 
 **** mmt 
@@ -1619,18 +1619,6 @@ so I'll likely end up loading it anyway.
 (require 'subr-x)
 #+end_src
 
-**** ht 
-:PROPERTIES:
-:ID:       56bb0ff4-6ad1-44b7-a9a4-54abf48ed253
-:END:
-
-=ht= is a package that tries to provide a consistently named API for dealing with
-hash-tables.
-
-#+begin_src emacs-lisp
-(use-package ht)
-#+end_src
-
 **** s 
 :PROPERTIES:
 :ID:       b96acb97-3963-4713-a03b-6294c65903fd
@@ -1640,7 +1628,7 @@ hash-tables.
 that are not built-in to Emacs. Notably, it is functional.
 
 #+begin_src emacs-lisp
-(use-package s :demand t)
+(require 's)
 #+end_src
 
 **** f 
@@ -1649,7 +1637,7 @@ that are not built-in to Emacs. Notably, it is functional.
 :END:
 
 #+begin_src emacs-lisp
-(use-package f :demand t)
+(require 'f)
 #+end_src
 
 **** anaphora 
@@ -1662,7 +1650,7 @@ many other languages. In lisp this often requires assigning the variable a name.
 But if you're only.
 
 #+begin_src emacs-lisp
-(use-package anaphora :demand t)
+(require 'anaphora)
 #+end_src
 
 **** a 
