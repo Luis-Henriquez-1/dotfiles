@@ -2529,6 +2529,7 @@ Sometimes I want to use =xl-log= instead of =message=.
 **** log advices and hooks
 :PROPERTIES:
 :ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
+:header-args: :tangle no
 :END:
 
 Log when an advice or hook is being called.
