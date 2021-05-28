@@ -311,10 +311,6 @@ The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 :ID:       ea592f75-e8dd-4ee7-a44e-c2da9d76191b
 :END:
 
-I could just use the side-effect of [[helpfn:straight-use-package][straight-use-package]] to fill up the
-[[helpvar:load-path][load-path]]. However, I eventually want to compile this step away in the style of
-[[https://github.com/nilcons/emacs-use-package-fast][emacs-use-package-fast]].
-
 #+begin_src emacs-lisp
 (require 'cl-lib)
 (cl-callf2 append (cddr (directory-files (concat XL-PACKAGES-DIR "straight/build") t)) load-path)
