@@ -464,7 +464,6 @@ Perhaps, in the future I could figure out preciesly how straight generates its
 load paths and generate them without actually needing to call straight. The
 advantage of doing it this way is that it is fool-proof.
 
-#+name: generate-load-path
 #+begin_src emacs-lisp
 (defun xl-install-packages (recipe-file target-dir)
   "Install packages specified by RECIPE-FILE to TARGET-DIR.
