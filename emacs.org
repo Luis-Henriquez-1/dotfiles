@@ -1685,6 +1685,7 @@ play.
 (use-package loopy
   :demand t
   :init
+  (require 'loopy)
   (add-to-list 'loopy-default-flags '-split)
   (loopy-defalias 'fret 'finally-return)
   (loopy-defalias 'ret 'return))
