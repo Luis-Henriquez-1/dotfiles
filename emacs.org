@@ -1006,15 +1006,15 @@ that I need to add to many functions. I refer to these as "generic advices".
 A generic advice should have a function.
 
 #+begin_src emacs-lisp
-(defunmacro! defgadvice! (name args &rest body)
+(defunmacro defgadvice! (name args &rest body)
   "Define a generic advice function."
   (declare (indent defun) (doc-string 3))
-  (let ((internal-advice)
-	(advising-fn))
-    `(progn (defun ,xl-gadvice-<name> (fn)
-	      (defalias (xl-symbol-intern fn '@ ',name) #',xl-gadvice--<name>-advice)
-	      (advice-add fn :around #',xl-gadvice--<name>-advice))
-	    (defun ,xl-gadvice--<name>-advice ,args ,@body))))
+  (let ((internal-advice (xl-intern-format "xl-gadvice--%s-advice" name))
+	(advising-fn (xl-intern-format "xl-gadvice-%s")))
+    `(progn (defun ,advising-fn (fn)
+	      (defalias (xl-symbol-intern fn '@ ',name) #',internal-advice)
+	      (advice-add fn :around #',internal-advice))
+	    (defun ,advising-fn ,args ,@body))))
 #+end_src
 
 **** pause garbarge collection :advice:performance:
