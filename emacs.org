@@ -1738,13 +1738,6 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 
 #+begin_src emacs-lisp
 (use-package dbc :demand t)
-
-(defhook! set-up-basic-popup-rulesets (emacs-startup-hook)
-  (--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
-	    (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
-	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
-	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
-    (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
 #+end_src
 
 **** rule :usepackage:library:core:popup:
@@ -6888,6 +6881,20 @@ Why not just go to the end of the ="= like any other around operator?
 :PROPERTIES:
 :ID:       5e3d46da-33c5-4388-8111-85436d2a46d1
 :END:
+
+** set up base popup rules
+:PROPERTIES:
+:ID:       76d91f6d-3bdf-440c-a26e-e176557b984c
+:END:
+
+#+begin_src emacs-lisp
+(defhook! set-up-basic-popup-rulesets (emacs-startup-hook)
+  (--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
+	    (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
+	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
+	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
+    (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
+#+end_src
 
 ** maybe run server at startup :startup:
 :PROPERTIES:
