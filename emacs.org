@@ -5319,12 +5319,13 @@ This is a macro for defining evil easymotions.
   (declare (indent defun))
   `(defafter! define-,name (evil evil-easymotion ,@features)
      ,@(when .bind `((bind! ,.bind)))
-     (evilem-make-motion ,name (lambda () (interactive) ,@body)
-      :scope ,.scope
-      :pre-hook ,.pre-hook
-      :all-windows ,.all-windows
-      :push-jump ,.push-jump
-      :initial-point ,.initial-point)))
+     (evilem-make-motion ,(xl-symbol-intern 'evilem% name)
+			 (lambda () (interactive) ,@body)
+			 :scope ,.scope
+			 :pre-hook ,.pre-hook
+			 :all-windows ,.all-windows
+			 :push-jump ,.push-jump
+			 :initial-point ,.initial-point)))
 #+end_src
 
 *** custom motions
