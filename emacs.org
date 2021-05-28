@@ -1006,7 +1006,7 @@ that I need to add to many functions. I refer to these as "generic advices".
 A generic advice should have a function.
 
 #+begin_src emacs-lisp
-(defunmacro defgadvice! (name args &rest body)
+(defmacro defgadvice! (name args &rest body)
   "Define a generic advice function."
   (declare (indent defun) (doc-string 3))
   (let ((internal-advice (xl-intern-format "xl-gadvice--%s-advice" name))
