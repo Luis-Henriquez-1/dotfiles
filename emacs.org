@@ -477,6 +477,8 @@ Return a list of load-paths for the install packages."
     (setq straight-base-dir target-dir)
     (xl-load-straight-bootstrap-file target-dir)
     (pcase-dolist (`(,_ ,commit ,recipe) recipes)
+      (straight-register-package recipe))
+    (pcase-dolist (`(,_ ,_ ,recipe) recipes)
       (straight-use-package recipe))
     (cl-remove-if-not (apply-partially #'string-match-p regexp) load-path)))
 #+end_src
