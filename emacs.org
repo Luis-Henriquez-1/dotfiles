@@ -1724,19 +1724,7 @@ clause because it would get confused with it and the built-in Emacs function
 #+begin_src emacs-lisp
 (use-package loopy-dash
   :init
-  (add-to-list '+dash loopy-default-flags)
-#+end_src
-
-**** noflet
-:PROPERTIES:
-:ID:       27f06ae0-ed4d-45ca-b451-fa05a47b8fe0
-:END:
-
-This package provides an alternative to the built-in =cl-flet= called
-=noflet=. The [[][]] is that.
-
-#+begin_src emacs-lisp
-(use-package noflet :demand t)
+  (add-to-list '+dash loopy-default-flags))
 #+end_src
 
 **** dbc
