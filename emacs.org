@@ -1861,6 +1861,9 @@ This macro is for defining macros that have the same syntax as =defun= such as
 deal with. Namely, automating adding syntax highlighting for such functions
 and well as declaring their indentation.
 
+Also, I like sometimes providing options via keywords to such "defun-like"
+macros.
+
 #+begin_src emacs-lisp
 (defmacro defunmacro! (name args &rest body)
   "Define a macro for defining function names."
