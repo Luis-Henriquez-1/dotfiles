@@ -13,7 +13,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("a" "3d341eb7813ee02b00ab28e11c915295bfd4b5a7" (a :type git :flavor melpa :host github :repo "plexus/a.el" :package "a" :local-repo "a.el"))
+(a :type git :flavor melpa :host github :repo "plexus/a.el" :package "a" :local-repo "a.el" :commit "3d341eb7813ee02b00ab28e11c915295bfd4b5a7")
 #+end_src
 
 * ace-window
@@ -22,7 +22,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("ace-window" "c7cb315c14e36fded5ac4096e158497ae974bec9" (ace-window :type git :flavor melpa :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window"))
+(ace-window :type git :flavor melpa :host github :repo "abo-abo/ace-window" :package "ace-window" :local-repo "ace-window" :commit "c7cb315c14e36fded5ac4096e158497ae974bec9")
 #+end_src
 
 * aggressive-fill-paragraph
@@ -31,7 +31,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("aggressive-fill-paragraph" "4a620e62b5e645a48b0a818bf4eb19daea4977df" (aggressive-fill-paragraph :type git :flavor melpa :host github :repo "davidshepherd7/aggressive-fill-paragraph-mode" :package "aggressive-fill-paragraph" :local-repo "aggressive-fill-paragraph-mode"))
+(aggressive-fill-paragraph :type git :flavor melpa :host github :repo "davidshepherd7/aggressive-fill-paragraph-mode" :package "aggressive-fill-paragraph" :local-repo "aggressive-fill-paragraph-mode" :commit "4a620e62b5e645a48b0a818bf4eb19daea4977df")
 #+end_src
 
 * aggressive-indent
@@ -40,7 +40,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("aggressive-indent" "b0ec0047aaae071ad1647159613166a253410a63" (aggressive-indent :type git :flavor melpa :host github :repo "Malabarba/aggressive-indent-mode" :package "aggressive-indent" :local-repo "aggressive-indent-mode"))
+(aggressive-indent :type git :flavor melpa :host github :repo "Malabarba/aggressive-indent-mode" :package "aggressive-indent" :local-repo "aggressive-indent-mode" :commit "b0ec0047aaae071ad1647159613166a253410a63")
 #+end_src
 
 * all-the-icons
@@ -49,7 +49,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("all-the-icons" "9aa16ae198073fe839a0abfa9a7d3a9dc85ef5f9" (all-the-icons :type git :flavor melpa :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el" :package "all-the-icons" :local-repo "all-the-icons.el"))
+(all-the-icons :type git :flavor melpa :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el" :package "all-the-icons" :local-repo "all-the-icons.el" :commit "9aa16ae198073fe839a0abfa9a7d3a9dc85ef5f9")
 #+end_src
 
 * all-the-icons-dired
@@ -58,7 +58,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("all-the-icons-dired" "fc2dfa1e9eb8bf1c402a675e7089638d702a27a5" (all-the-icons-dired :type git :flavor melpa :host github :repo "jtbm37/all-the-icons-dired" :package "all-the-icons-dired" :local-repo "all-the-icons-dired"))
+(all-the-icons-dired :type git :flavor melpa :host github :repo "jtbm37/all-the-icons-dired" :package "all-the-icons-dired" :local-repo "all-the-icons-dired" :commit "fc2dfa1e9eb8bf1c402a675e7089638d702a27a5")
 #+end_src
 
 * anaphora
@@ -67,7 +67,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("anaphora" "3b2da3f759b244975852e79721c4a2dbad3905cf" (anaphora :type git :flavor melpa :host github :repo "rolandwalker/anaphora" :package "anaphora" :local-repo "anaphora"))
+(anaphora :type git :flavor melpa :host github :repo "rolandwalker/anaphora" :package "anaphora" :local-repo "anaphora" :commit "3b2da3f759b244975852e79721c4a2dbad3905cf")
 #+end_src
 
 * annalist
@@ -76,7 +76,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("annalist" "134fa3f0fb91a636a1c005c483516d4b64905a6d" (annalist :type git :flavor melpa :host github :repo "noctuid/annalist.el" :package "annalist" :local-repo "annalist.el"))
+(annalist :type git :flavor melpa :host github :repo "noctuid/annalist.el" :package "annalist" :local-repo "annalist.el" :commit "134fa3f0fb91a636a1c005c483516d4b64905a6d")
 #+end_src
 
 * async
@@ -85,7 +85,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("async" "14f48de586b0977e3470f053b810d77b07ea427a" (async :type git :flavor melpa :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async"))
+(async :type git :flavor melpa :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async" :commit "14f48de586b0977e3470f053b810d77b07ea427a")
 #+end_src
 
 * auth-source-pass
@@ -94,7 +94,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("auth-source-pass" "aa7f17116ec3f760eb414d655ba20016b11a4a0e" (auth-source-pass :type git :flavor melpa :host github :repo "DamienCassou/auth-source-pass" :package "auth-source-pass" :local-repo "auth-source-pass"))
+(auth-source-pass :type git :flavor melpa :host github :repo "DamienCassou/auth-source-pass" :package "auth-source-pass" :local-repo "auth-source-pass" :commit "aa7f17116ec3f760eb414d655ba20016b11a4a0e")
 #+end_src
 
 * auto-capitalize
@@ -103,7 +103,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("auto-capitalize" "0ee14c76d5771aaa84a004463f8b8b3a195c2fd8" (auto-capitalize :type git :host github :repo "emacsmirror/auto-capitalize" :package "auto-capitalize" :local-repo "auto-capitalize"))
+(auto-capitalize :type git :host github :repo "emacsmirror/auto-capitalize" :package "auto-capitalize" :local-repo "auto-capitalize" :commit "0ee14c76d5771aaa84a004463f8b8b3a195c2fd8")
 #+end_src
 
 * avy
@@ -112,16 +112,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("avy" "e92cb37457b43336b765630dbfbea8ba4be601fa" (avy :type git :flavor melpa :host github :repo "abo-abo/avy" :package "avy" :local-repo "avy"))
-#+end_src
-
-* berrys-theme
-:PROPERTIES:
-:ID:       b8e4c01c-2824-46ed-bfde-ddd2463a6598
-:END:
-
-#+begin_src emacs-lisp
-("berrys-theme" "888a14206b2fb3dc45b5273aeb05075f3e0b5f60" (berrys-theme :type git :flavor melpa :host github :repo "vbuzin/berrys-theme" :package "berrys-theme" :local-repo "berrys-theme"))
+(avy :type git :flavor melpa :host github :repo "abo-abo/avy" :package "avy" :local-repo "avy" :commit "e92cb37457b43336b765630dbfbea8ba4be601fa")
 #+end_src
 
 * bind-key
@@ -130,10 +121,10 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("bind-key" "365c73d2618dd0040a32c2601c5456ab5495b812" (bind-key :flavor melpa :files ("bind-key.el" "bind-key-pkg.el") :package "bind-key" :local-repo "use-package" :type git :repo "jwiegley/use-package" :host github))
+(bind-key :flavor melpa :files ("bind-key.el" "bind-key-pkg.el") :package "bind-key" :local-repo "use-package" :type git :repo "jwiegley/use-package" :host github :commit "365c73d2618dd0040a32c2601c5456ab5495b812")
 #+end_src
 
-* calfw
+* TODO calfw
 :PROPERTIES:
 :ID:       fd217695-9480-4587-86d3-3a9e524a0c59
 :END:
@@ -142,7 +133,7 @@ great precision.
 ("calfw" nil (calfw :type git :flavor melpa :files ("calfw.el" "calfw-pkg.el") :host github :repo "kiwanami/emacs-calfw" :package "calfw" :local-repo "emacs-calfw"))
 #+end_src
 
-* calfw-org
+* TODO calfw-org
 :PROPERTIES:
 :ID:       c9e16f8c-9430-4f5a-9c18-01c53612050c
 :END:
@@ -157,7 +148,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("chess" "b95b967293ee0df4869efb964b2cb730e9978a65" (chess :type git :host github :repo "emacs-straight/chess" :files ("*" (:exclude ".git")) :package "chess" :local-repo "chess"))
+(chess :type git :host github :repo "emacs-straight/chess" :files ("*" (:exclude ".git")) :package "chess" :local-repo "chess" :commit "b95b967293ee0df4869efb964b2cb730e9978a65")
 #+end_src
 
 * company
@@ -166,10 +157,10 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("company" "6116c4617a7934acfe84cb82a058e9b198f0f480" (company :type git :flavor melpa :host github :repo "company-mode/company-mode" :package "company" :local-repo "company-mode"))
+(company :type git :flavor melpa :host github :repo "company-mode/company-mode" :package "company" :local-repo "company-mode" :commit "6116c4617a7934acfe84cb82a058e9b198f0f480")
 #+end_src
 
-* company-prescient
+* TODO company-prescient
 :PROPERTIES:
 :ID:       cb7c6144-36a0-41b5-a4c0-4c4264fcef73
 :END:
@@ -178,7 +169,7 @@ great precision.
 ("company-prescient" nil (company-prescient :flavor melpa :files ("company-prescient.el" "company-prescient-pkg.el") :package "company-prescient" :local-repo "prescient.el" :type git :repo "raxod502/prescient.el" :host github))
 #+end_src
 
-* consult
+* TODO consult
 :PROPERTIES:
 :ID:       e9c1d67e-137f-4ee0-a736-dd3079675547
 :END:
@@ -193,10 +184,10 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("consult-selectrum" "ebf8ad9aa01a04c48f5af5aee41ee4d4e5fe57d6" (consult-selectrum :type git :host github :repo "minad/consult" :files ("consult-selectrum.el") :package "consult-selectrum" :local-repo "consult"))
+(consult-selectrum :type git :host github :repo "minad/consult" :files ("consult-selectrum.el") :package "consult-selectrum" :local-repo "consult" :commit "ebf8ad9aa01a04c48f5af5aee41ee4d4e5fe57d6")
 #+end_src
 
-* counsel
+* TODO counsel
 :PROPERTIES:
 :ID:       3bc65506-57f9-4233-b90c-c8ceae4fa8c6
 :END:
@@ -211,7 +202,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("dash" "7a9c9378772b687a452966ce4745c54afb19a2fc" (dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el"))
+(dash :type git :flavor melpa :files ("dash.el" "dash.texi" "dash-pkg.el") :host github :repo "magnars/dash.el" :package "dash" :local-repo "dash.el" :commit "7a9c9378772b687a452966ce4745c54afb19a2fc")
 #+end_src
 
 * dashboard
@@ -220,7 +211,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("dashboard" "2b1ef13392be2f07d2a52636edf578b89512d501" (dashboard :type git :flavor melpa :files (:defaults "banners" "dashboard-pkg.el") :host github :repo "emacs-dashboard/emacs-dashboard" :package "dashboard" :local-repo "emacs-dashboard"))
+(dashboard :type git :flavor melpa :files (:defaults "banners" "dashboard-pkg.el") :host github :repo "emacs-dashboard/emacs-dashboard" :package "dashboard" :local-repo "emacs-dashboard" :commit "2b1ef13392be2f07d2a52636edf578b89512d501")
 #+end_src
 
 * db
@@ -229,7 +220,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("db" "b3a423fb8e72f9013009cbe033d654df2ce31438" (db :type git :flavor melpa :files ("db.el" "db-pkg.el") :host github :repo "nicferrier/emacs-db" :package "db" :local-repo "emacs-db"))
+(db :type git :flavor melpa :files ("db.el" "db-pkg.el") :host github :repo "nicferrier/emacs-db" :package "db" :local-repo "emacs-db" :commit "b3a423fb8e72f9013009cbe033d654df2ce31438")
 #+end_src
 
 * dbc
@@ -238,7 +229,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("dbc" "6728e72f72347d098b7d75ac4c29a7d687cc9ed3" (dbc :host gitlab :type git :repo "matsievskiysv/display-buffer-control" :flavor melpa :package "dbc" :local-repo "display-buffer-control"))
+(dbc :host gitlab :type git :repo "matsievskiysv/display-buffer-control" :flavor melpa :package "dbc" :local-repo "display-buffer-control" :commit "6728e72f72347d098b7d75ac4c29a7d687cc9ed3")
 #+end_src
 
 * dmenu
@@ -247,7 +238,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("dmenu" "e8cc9b27c79d3ecc252267c082ab8e9c82eab264" (dmenu :type git :flavor melpa :host github :repo "lujun9972/el-dmenu" :package "dmenu" :local-repo "el-dmenu"))
+(dmenu :type git :flavor melpa :host github :repo "lujun9972/el-dmenu" :package "dmenu" :local-repo "el-dmenu" :commit "e8cc9b27c79d3ecc252267c082ab8e9c82eab264")
 #+end_src
 
 * doct
@@ -256,7 +247,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("doct" "36075595cf5cf6460f215735b1aa562d6a07a496" (doct :type git :flavor melpa :host github :repo "progfolio/doct" :package "doct" :local-repo "doct"))
+(doct :type git :flavor melpa :host github :repo "progfolio/doct" :package "doct" :local-repo "doct" :commit "36075595cf5cf6460f215735b1aa562d6a07a496")
 #+end_src
 
 * edit-indirect
@@ -265,7 +256,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("edit-indirect" "bdc8f542fe8430ba55f9a24a7910639d4c434422" (edit-indirect :type git :flavor melpa :host github :repo "Fanael/edit-indirect" :package #("edit-indirect" 0 13 (face font-lock-string-face)) :local-repo "edit-indirect"))
+(edit-indirect :type git :flavor melpa :host github :repo "Fanael/edit-indirect" :package #("edit-indirect" 0 13 (face font-lock-string-face)) :local-repo "edit-indirect" :commit "bdc8f542fe8430ba55f9a24a7910639d4c434422")
 #+end_src
 
 * el-get
@@ -274,7 +265,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("el-get" "84dd1837f9ac80a329ab0c2de6859777f445f8ff" (el-get :type git :host github :repo "dimitri/el-get" :build nil :files ("*.el" ("recipes" "recipes/el-get.rcp") "methods" "el-get-pkg.el") :flavor melpa :package "el-get" :local-repo "el-get"))
+(el-get :type git :host github :repo "dimitri/el-get" :build nil :files ("*.el" ("recipes" "recipes/el-get.rcp") "methods" "el-get-pkg.el") :flavor melpa :package "el-get" :local-repo "el-get" :commit "84dd1837f9ac80a329ab0c2de6859777f445f8ff")
 #+end_src
 
 * el-mock
@@ -283,7 +274,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("el-mock" "5df1d3a956544f1d3ad0bcd81daf47fff33ab8cc" (el-mock :type git :flavor melpa :host github :repo "rejeep/el-mock.el" :package "el-mock" :local-repo "el-mock.el"))
+(el-mock :type git :flavor melpa :host github :repo "rejeep/el-mock.el" :package "el-mock" :local-repo "el-mock.el" :commit "5df1d3a956544f1d3ad0bcd81daf47fff33ab8cc")
 #+end_src
 
 * elfeed
@@ -292,7 +283,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("elfeed" "de4b64b3f5d9fd41d9dc72023632ae535dc912e2" (elfeed :type git :flavor melpa :host github :repo "skeeto/elfeed" :package "elfeed" :local-repo "elfeed"))
+(elfeed :type git :flavor melpa :host github :repo "skeeto/elfeed" :package "elfeed" :local-repo "elfeed" :commit "de4b64b3f5d9fd41d9dc72023632ae535dc912e2")
 #+end_src
 
 * elfeed-org
@@ -301,7 +292,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("elfeed-org" "77b6bbf222487809813de260447d31c4c59902c9" (elfeed-org :type git :flavor melpa :host github :repo "remyhonig/elfeed-org" :package "elfeed-org" :local-repo "elfeed-org"))
+(elfeed-org :type git :flavor melpa :host github :repo "remyhonig/elfeed-org" :package "elfeed-org" :local-repo "elfeed-org" :commit "77b6bbf222487809813de260447d31c4c59902c9")
 #+end_src
 
 * elfeed-score
@@ -310,7 +301,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("elfeed-score" "5fff4152bdb2a5f38ab83f7fa6b2943647935f94" (elfeed-score :type git :flavor melpa :host github :repo "sp1ff/elfeed-score" :package "elfeed-score" :local-repo "elfeed-score"))
+(elfeed-score :type git :flavor melpa :host github :repo "sp1ff/elfeed-score" :package "elfeed-score" :local-repo "elfeed-score" :commit "5fff4152bdb2a5f38ab83f7fa6b2943647935f94")
 #+end_src
 
 * elisp-demos
@@ -319,7 +310,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("elisp-demos" "ed9578dfdbbdd6874d497fc9873ebfe09f869570" (elisp-demos :type git :flavor melpa :files (:defaults "*.org" "elisp-demos-pkg.el") :host github :repo "xuchunyang/elisp-demos" :package "elisp-demos" :local-repo "elisp-demos"))
+(elisp-demos :type git :flavor melpa :files (:defaults "*.org" "elisp-demos-pkg.el") :host github :repo "xuchunyang/elisp-demos" :package "elisp-demos" :local-repo "elisp-demos" :commit "ed9578dfdbbdd6874d497fc9873ebfe09f869570")
 #+end_src
 
 * elisp-refs
@@ -328,7 +319,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("elisp-refs" "b3634a4567c655a1cda51b217629849cba0ac6a7" (elisp-refs :type git :flavor melpa :files (:defaults (:exclude "elisp-refs-bench.el") "elisp-refs-pkg.el") :host github :repo "Wilfred/elisp-refs" :package "elisp-refs" :local-repo "elisp-refs"))
+(elisp-refs :type git :flavor melpa :files (:defaults (:exclude "elisp-refs-bench.el") "elisp-refs-pkg.el") :host github :repo "Wilfred/elisp-refs" :package "elisp-refs" :local-repo "elisp-refs" :commit "b3634a4567c655a1cda51b217629849cba0ac6a7")
 #+end_src
 
 * ellocate
@@ -337,7 +328,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("ellocate" "81405082f68f0577c9f176d3d4f034a7142aba59" (ellocate :type git :flavor melpa :host github :repo "walseb/ellocate" :package "ellocate" :local-repo "ellocate"))
+(ellocate :type git :flavor melpa :host github :repo "walseb/ellocate" :package "ellocate" :local-repo "ellocate" :commit "81405082f68f0577c9f176d3d4f034a7142aba59")
 #+end_src
 
 * emacsmirror-mirror
@@ -346,7 +337,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("emacsmirror-mirror" "73d68771488284cceb42f70fda551e0a516cb249" (emacsmirror-mirror :type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror"))
+(emacsmirror-mirror :type git :host github :repo "emacs-straight/emacsmirror-mirror" :build nil :package "emacsmirror-mirror" :local-repo "emacsmirror-mirror" :commit "73d68771488284cceb42f70fda551e0a516cb249")
 #+end_src
 
 * embark
@@ -355,7 +346,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("embark" "974a0d82103c6e8991b49275d160fb4d6abab852" (embark :type git :flavor melpa :files ("embark.el" "embark.texi" "embark-pkg.el") :host github :repo "oantolin/embark" :package "embark" :local-repo "embark"))
+(embark :type git :flavor melpa :files ("embark.el" "embark.texi" "embark-pkg.el") :host github :repo "oantolin/embark" :package "embark" :local-repo "embark" :commit "974a0d82103c6e8991b49275d160fb4d6abab852")
 #+end_src
 
 * emms
@@ -364,7 +355,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("emms" "5c3226bec64bc5ad6a496b1619144087ba400481" (emms :type git :flavor melpa :files ("*.el" "lisp/*.el" "doc/emms.texinfo" "emms-pkg.el") :repo "https://git.savannah.gnu.org/git/emms.git" :package "emms" :local-repo "emms"))
+(emms :type git :flavor melpa :files ("*.el" "lisp/*.el" "doc/emms.texinfo" "emms-pkg.el") :repo "https://git.savannah.gnu.org/git/emms.git" :package "emms" :local-repo "emms" :commit "5c3226bec64bc5ad6a496b1619144087ba400481")
 #+end_src
 
 * emojify
@@ -373,7 +364,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("emojify" "cfa00865388809363df3f884b4dd554a5d44f835" (emojify :type git :flavor melpa :files (:defaults "data" "images" "emojify-pkg.el") :host github :repo "iqbalansari/emacs-emojify" :package "emojify" :local-repo "emacs-emojify"))
+(emojify :type git :flavor melpa :files (:defaults "data" "images" "emojify-pkg.el") :host github :repo "iqbalansari/emacs-emojify" :package "emojify" :local-repo "emacs-emojify" :commit "cfa00865388809363df3f884b4dd554a5d44f835")
 #+end_src
 
 * engine-mode
@@ -382,7 +373,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("engine-mode" "e0910f141f2d37c28936c51c3c8bb8a9ca0c01d1" (engine-mode :type git :flavor melpa :host github :repo "hrs/engine-mode" :package "engine-mode" :local-repo "engine-mode"))
+(engine-mode :type git :flavor melpa :host github :repo "hrs/engine-mode" :package "engine-mode" :local-repo "engine-mode" :commit "e0910f141f2d37c28936c51c3c8bb8a9ca0c01d1")
 #+end_src
 
 * ert-expectations
@@ -391,7 +382,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("ert-expectations" "aed70e002c4305b66aed7f6d0d48e9addd2dc1e6" (ert-expectations :type git :flavor melpa :host github :repo "emacsorphanage/ert-expectations" :package "ert-expectations" :local-repo "ert-expectations"))
+(ert-expectations :type git :flavor melpa :host github :repo "emacsorphanage/ert-expectations" :package "ert-expectations" :local-repo "ert-expectations" :commit "aed70e002c4305b66aed7f6d0d48e9addd2dc1e6")
 #+end_src
 
 * eshell-up
@@ -400,7 +391,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("eshell-up" "9c100bae5c3020e8d9307e4332d3b64e7dc28519" (eshell-up :type git :flavor melpa :host github :repo "peterwvj/eshell-up" :package "eshell-up" :local-repo "eshell-up"))
+(eshell-up :type git :flavor melpa :host github :repo "peterwvj/eshell-up" :package "eshell-up" :local-repo "eshell-up" :commit "9c100bae5c3020e8d9307e4332d3b64e7dc28519")
 #+end_src
 
 * eshell-z
@@ -409,7 +400,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("eshell-z" "337cb241e17bd472bd3677ff166a0800f684213c" (eshell-z :type git :flavor melpa :host github :repo "xuchunyang/eshell-z" :package "eshell-z" :local-repo "eshell-z"))
+(eshell-z :type git :flavor melpa :host github :repo "xuchunyang/eshell-z" :package "eshell-z" :local-repo "eshell-z" :commit "337cb241e17bd472bd3677ff166a0800f684213c")
 #+end_src
 
 * evil
@@ -418,7 +409,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("evil" "cc9d6886b418389752a0591b9fcb270e83234cf9" (evil :type git :flavor melpa :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil" :package "evil" :local-repo "evil"))
+(evil :type git :flavor melpa :files (:defaults "doc/build/texinfo/evil.texi" (:exclude "evil-test-helpers.el") "evil-pkg.el") :host github :repo "emacs-evil/evil" :package "evil" :local-repo "evil" :commit "cc9d6886b418389752a0591b9fcb270e83234cf9")
 #+end_src
 
 * evil-collection
@@ -427,7 +418,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("evil-collection" "2d3d652cb51eeddc6c63ad9cbf251ecbd2f561d6" (evil-collection :type git :flavor melpa :files (:defaults "modes" "evil-collection-pkg.el") :host github :repo "emacs-evil/evil-collection" :package "evil-collection" :local-repo "evil-collection"))
+(evil-collection :type git :flavor melpa :files (:defaults "modes" "evil-collection-pkg.el") :host github :repo "emacs-evil/evil-collection" :package "evil-collection" :local-repo "evil-collection" :commit "2d3d652cb51eeddc6c63ad9cbf251ecbd2f561d6")
 #+end_src
 
 * evil-easymotion
@@ -436,7 +427,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("evil-easymotion" "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9" (evil-easymotion :type git :flavor melpa :host github :repo "PythonNut/evil-easymotion" :package "evil-easymotion" :local-repo "evil-easymotion"))
+(evil-easymotion :type git :flavor melpa :host github :repo "PythonNut/evil-easymotion" :package "evil-easymotion" :local-repo "evil-easymotion" :commit "f96c2ed38ddc07908db7c3c11bcd6285a3e8c2e9")
 #+end_src
 
 * evil-goggles
@@ -445,7 +436,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("evil-goggles" "08a22058fd6a167f9f1b684c649008caef571459" (evil-goggles :type git :flavor melpa :host github :repo "edkolev/evil-goggles" :package "evil-goggles" :local-repo "evil-goggles"))
+(evil-goggles :type git :flavor melpa :host github :repo "edkolev/evil-goggles" :package "evil-goggles" :local-repo "evil-goggles" :commit "08a22058fd6a167f9f1b684c649008caef571459")
 #+end_src
 
 * evil-lion
@@ -454,7 +445,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("evil-lion" "6b03593f5dd6e7c9ca02207f9a73615cf94c93ab" (evil-lion :type git :flavor melpa :files ("evil-lion.el" "evil-lion-pkg.el") :host github :repo "edkolev/evil-lion" :package "evil-lion" :local-repo "evil-lion"))
+(evil-lion :type git :flavor melpa :files ("evil-lion.el" "evil-lion-pkg.el") :host github :repo "edkolev/evil-lion" :package "evil-lion" :local-repo "evil-lion" :commit "6b03593f5dd6e7c9ca02207f9a73615cf94c93ab")
 #+end_src
 
 * evil-magit
@@ -463,7 +454,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("evil-magit" "f4a8c8d3a5a699baea9356be7c1c5fd8867f610c" (evil-magit :type git :flavor melpa :host github :repo "emacs-evil/evil-magit" :package #("evil-magit" 0 10 (face font-lock-string-face)) :local-repo "evil-magit"))
+(evil-magit :type git :flavor melpa :host github :repo "emacs-evil/evil-magit" :package #("evil-magit" 0 10 (face font-lock-string-face)) :local-repo "evil-magit" :commit "f4a8c8d3a5a699baea9356be7c1c5fd8867f610c")
 #+end_src
 
 * evil-surround
@@ -472,7 +463,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("evil-surround" "346d4d85fcf1f9517e9c4991c1efe68b4130f93a" (evil-surround :type git :flavor melpa :host github :repo "emacs-evil/evil-surround" :package "evil-surround" :local-repo "evil-surround"))
+(evil-surround :type git :flavor melpa :host github :repo "emacs-evil/evil-surround" :package "evil-surround" :local-repo "evil-surround" :commit "346d4d85fcf1f9517e9c4991c1efe68b4130f93a")
 #+end_src
 
 * evil-visualstar
@@ -481,7 +472,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("evil-visualstar" "06c053d8f7381f91c53311b1234872ca96ced752" (evil-visualstar :type git :flavor melpa :host github :repo "bling/evil-visualstar" :package "evil-visualstar" :local-repo "evil-visualstar"))
+(evil-visualstar :type git :flavor melpa :host github :repo "bling/evil-visualstar" :package "evil-visualstar" :local-repo "evil-visualstar" :commit "06c053d8f7381f91c53311b1234872ca96ced752")
 #+end_src
 
 * expand-region
@@ -490,7 +481,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("expand-region" "ea6b4cbb9985ddae532bd2faf9bb00570c9f2781" (expand-region :type git :flavor melpa :host github :repo "magnars/expand-region.el" :package "expand-region" :local-repo "expand-region.el"))
+(expand-region :type git :flavor melpa :host github :repo "magnars/expand-region.el" :package "expand-region" :local-repo "expand-region.el" :commit "ea6b4cbb9985ddae532bd2faf9bb00570c9f2781")
 #+end_src
 
 * exwm
@@ -499,7 +490,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("exwm" "45ac28cc9cffe910c3b70979bc321a1a60e002ea" (exwm :type git :host github :repo "emacs-straight/exwm" :files ("*" (:exclude ".git")) :package #("exwm" 0 4 (face font-lock-string-face)) :local-repo "exwm"))
+(exwm :type git :host github :repo "emacs-straight/exwm" :files ("*" (:exclude ".git")) :package #("exwm" 0 4 (face font-lock-string-face)) :local-repo "exwm" :commit "45ac28cc9cffe910c3b70979bc321a1a60e002ea")
 #+end_src
 
 * exwm-edit
@@ -508,7 +499,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("exwm-edit" "2fd9426922c8394ec8d21c50dcc20b7d03af21e4" (exwm-edit :type git :flavor melpa :host github :repo "agzam/exwm-edit" :package "exwm-edit" :local-repo "exwm-edit"))
+(exwm-edit :type git :flavor melpa :host github :repo "agzam/exwm-edit" :package "exwm-edit" :local-repo "exwm-edit" :commit "2fd9426922c8394ec8d21c50dcc20b7d03af21e4")
 #+end_src
 
 * exwm-firefox-core
@@ -517,7 +508,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("exwm-firefox-core" "e2fe2a895e8f973307ef52f8c9976b26e701cbd0" (exwm-firefox-core :type git :flavor melpa :host github :repo "walseb/exwm-firefox-core" :package "exwm-firefox-core" :local-repo "exwm-firefox-core"))
+(exwm-firefox-core :type git :flavor melpa :host github :repo "walseb/exwm-firefox-core" :package "exwm-firefox-core" :local-repo "exwm-firefox-core" :commit "e2fe2a895e8f973307ef52f8c9976b26e701cbd0")
 #+end_src
 
 * exwm-firefox-evil
@@ -526,7 +517,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("exwm-firefox-evil" "14643ee53a506ddcb5d2e06cb9f1be7310cd00b1" (exwm-firefox-evil :type git :flavor melpa :host github :repo "walseb/exwm-firefox-evil" :package #("exwm-firefox-evil" 0 17 (face font-lock-string-face)) :local-repo "exwm-firefox-evil"))
+(exwm-firefox-evil :type git :flavor melpa :host github :repo "walseb/exwm-firefox-evil" :package #("exwm-firefox-evil" 0 17 (face font-lock-string-face)) :local-repo "exwm-firefox-evil" :commit "14643ee53a506ddcb5d2e06cb9f1be7310cd00b1")
 #+end_src
 
 * exwm-float
@@ -535,7 +526,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("exwm-float" "eb1b60b4a65e1ca5e323ef68a284ec6af72e637a" (exwm-float :type git :flavor melpa :host gitlab :repo "mtekman/exwm-float.el" :package "exwm-float" :local-repo "exwm-float.el"))
+(exwm-float :type git :flavor melpa :host gitlab :repo "mtekman/exwm-float.el" :package "exwm-float" :local-repo "exwm-float.el" :commit "eb1b60b4a65e1ca5e323ef68a284ec6af72e637a")
 #+end_src
 
 * f
@@ -544,7 +535,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("f :type" "1814209e2ff43cf2e6d38c4cd476218915f550fb" (f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el"))
+(f :type git :flavor melpa :files ("f.el" "f-pkg.el") :host github :repo "rejeep/f.el" :package "f" :local-repo "f.el" :commit "1814209e2ff43cf2e6d38c4cd476218915f550fb")
 #+end_src
 
 * figlet
@@ -553,7 +544,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("figlet" "19a38783a90e151faf047ff233a21a729db0cea9" (figlet :type git :flavor melpa :host github :repo "jpkotta/figlet" :package "figlet" :local-repo "figlet"))
+(figlet :type git :flavor melpa :host github :repo "jpkotta/figlet" :package "figlet" :local-repo "figlet" :commit "19a38783a90e151faf047ff233a21a729db0cea9")
 #+end_src
 
 * fortune-cookie
@@ -562,7 +553,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("fortune-cookie" "6c1c08f5be83822c0b762872ab25e3dbee96f333" (fortune-cookie :type git :flavor melpa :host github :repo "andschwa/fortune-cookie" :package "fortune-cookie" :local-repo "fortune-cookie"))
+(fortune-cookie :type git :flavor melpa :host github :repo "andschwa/fortune-cookie" :package "fortune-cookie" :local-repo "fortune-cookie" :commit "6c1c08f5be83822c0b762872ab25e3dbee96f333")
 #+end_src
 
 * frame-cmds
@@ -571,7 +562,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("frame-cmds" "b803354c8cf7c9aafcea1ff4e67288bea0719599" (frame-cmds :type git :host github :repo "emacsmirror/frame-cmds" :package "frame-cmds" :local-repo "frame-cmds"))
+(frame-cmds :type git :host github :repo "emacsmirror/frame-cmds" :package "frame-cmds" :local-repo "frame-cmds" :commit "b803354c8cf7c9aafcea1ff4e67288bea0719599")
 #+end_src
 
 * frame-fns
@@ -580,7 +571,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("frame-fns" "b675ee568c0133709c2c39a125395486cdf1c610" (frame-fns :type git :host github :repo "emacsmirror/frame-fns" :package "frame-fns" :local-repo "frame-fns"))
+(frame-fns :type git :host github :repo "emacsmirror/frame-fns" :package "frame-fns" :local-repo "frame-fns" :commit "b675ee568c0133709c2c39a125395486cdf1c610")
 #+end_src
 
 * gcmh
@@ -589,7 +580,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("gcmh" "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9" (gcmh :type git :flavor melpa :host gitlab :repo "koral/gcmh" :package "gcmh" :local-repo "gcmh"))
+(gcmh :type git :flavor melpa :host gitlab :repo "koral/gcmh" :package "gcmh" :local-repo "gcmh" :commit "0089f9c3a6d4e9a310d0791cf6fa8f35642ecfd9")
 #+end_src
 
 * gif-screencast
@@ -598,7 +589,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("gif-screencast" "1145e676b160e7b1e5756f5b0f30dd31de252e1f" (gif-screencast :type git :flavor melpa :host gitlab :repo "Ambrevar/emacs-gif-screencast" :package "gif-screencast" :local-repo "emacs-gif-screencast"))
+(gif-screencast :type git :flavor melpa :host gitlab :repo "Ambrevar/emacs-gif-screencast" :package "gif-screencast" :local-repo "emacs-gif-screencast" :commit "1145e676b160e7b1e5756f5b0f30dd31de252e1f")
 #+end_src
 
 * git-auto-commit-mode
@@ -607,10 +598,10 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("git-auto-commit-mode" "a6b6e0fa183be381463e2b44ef128db1b6c4234b" (git-auto-commit-mode :type git :flavor melpa :host github :repo "ryuslash/git-auto-commit-mode" :package "git-auto-commit-mode" :local-repo "git-auto-commit-mode"))
+(git-auto-commit-mode :type git :flavor melpa :host github :repo "ryuslash/git-auto-commit-mode" :package "git-auto-commit-mode" :local-repo "git-auto-commit-mode" :commit "a6b6e0fa183be381463e2b44ef128db1b6c4234b")
 #+end_src
 
-* git-commit
+* TODO git-commit
 :PROPERTIES:
 :ID:       2cf8e3f0-e18e-4fc3-ab47-919ae974e895
 :END:
@@ -625,7 +616,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("git-gutter+" "b7726997806d9a2da9fe84ff00ecf21d62b6f975" (git-gutter+ :type git :flavor melpa :files ("git-gutter+.el" "git-gutter+-pkg.el") :host github :repo "nonsequitur/git-gutter-plus" :package "git-gutter+" :local-repo "git-gutter-plus"))
+(git-gutter+ :type git :flavor melpa :files ("git-gutter+.el" "git-gutter+-pkg.el") :host github :repo "nonsequitur/git-gutter-plus" :package "git-gutter+" :local-repo "git-gutter-plus" :commit "b7726997806d9a2da9fe84ff00ecf21d62b6f975")
 #+end_src
 
 * gnu-elpa-mirror
@@ -634,7 +625,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("gnu-elpa-mirror" "fcb3cf5ba5f16885f7851885c954222aee6f03ab" (gnu-elpa-mirror :type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror"))
+(gnu-elpa-mirror :type git :host github :repo "emacs-straight/gnu-elpa-mirror" :build nil :package "gnu-elpa-mirror" :local-repo "gnu-elpa-mirror" :commit "fcb3cf5ba5f16885f7851885c954222aee6f03ab")
 #+end_src
 
 * goto-chg
@@ -643,7 +634,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("goto-chg" "2af612153bc9f5bed135d25abe62f46ddaa9027f" (goto-chg :type git :flavor melpa :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg"))
+(goto-chg :type git :flavor melpa :host github :repo "emacs-evil/goto-chg" :package "goto-chg" :local-repo "goto-chg" :commit "2af612153bc9f5bed135d25abe62f46ddaa9027f")
 #+end_src
 
 * grugru
@@ -652,7 +643,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("grugru" "92e588e9749614ef6cb68b76b1d3aaadf7731406" (grugru :type git :flavor melpa :host github :repo "ROCKTAKEY/grugru" :package "grugru" :local-repo "grugru"))
+(grugru :type git :flavor melpa :host github :repo "ROCKTAKEY/grugru" :package "grugru" :local-repo "grugru" :commit "92e588e9749614ef6cb68b76b1d3aaadf7731406")
 #+end_src
 
 * helm
@@ -661,10 +652,10 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("helm" "77e5a433bfef84992c35f34de8211f84af536a10" (helm :type git :flavor melpa :files ("*.el" "emacs-helm.sh" (:exclude "helm.el" "helm-lib.el" "helm-source.el" "helm-multi-match.el" "helm-core-pkg.el") "helm-pkg.el") :host github :repo "emacs-helm/helm" :package "helm" :local-repo "helm"))
+(helm :type git :flavor melpa :files ("*.el" "emacs-helm.sh" (:exclude "helm.el" "helm-lib.el" "helm-source.el" "helm-multi-match.el" "helm-core-pkg.el") "helm-pkg.el") :host github :repo "emacs-helm/helm" :package "helm" :local-repo "helm" :commit "77e5a433bfef84992c35f34de8211f84af536a10")
 #+end_src
 
-* helm-core
+* TODO helm-core
 :PROPERTIES:
 :ID:       52dd029e-aa4d-48cd-9402-64c688bd654b
 :END:
@@ -679,7 +670,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("helm-system-packages" "c331c69de0a37d2bc4d6f882cc021a905e7e56f9" (helm-system-packages :type git :flavor melpa :host github :repo "emacs-helm/helm-system-packages" :package "helm-system-packages" :local-repo "helm-system-packages"))
+(helm-system-packages :type git :flavor melpa :host github :repo "emacs-helm/helm-system-packages" :package "helm-system-packages" :local-repo "helm-system-packages" :commit "c331c69de0a37d2bc4d6f882cc021a905e7e56f9")
 #+end_src
 
 * helpful
@@ -688,7 +679,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("helpful" "584ecc887bb92133119f93a6716cdf7af0b51dca" (helpful :type git :flavor melpa :host github :repo "Wilfred/helpful" :package "helpful" :local-repo "helpful"))
+(helpful :type git :flavor melpa :host github :repo "Wilfred/helpful" :package "helpful" :local-repo "helpful" :commit "584ecc887bb92133119f93a6716cdf7af0b51dca")
 #+end_src
 
 * hide-mode-line
@@ -697,7 +688,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("hide-mode-line" "88888825b5b27b300683e662fa3be88d954b1cea" (hide-mode-line :type git :flavor melpa :host github :repo "hlissner/emacs-hide-mode-line" :package "hide-mode-line" :local-repo "emacs-hide-mode-line"))
+(hide-mode-line :type git :flavor melpa :host github :repo "hlissner/emacs-hide-mode-line" :package "hide-mode-line" :local-repo "emacs-hide-mode-line" :commit "88888825b5b27b300683e662fa3be88d954b1cea")
 #+end_src
 
 * highlight-quoted
@@ -706,7 +697,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("highlight-quoted" "24103478158cd19fbcfb4339a3f1fa1f054f1469" (highlight-quoted :type git :flavor melpa :host github :repo "Fanael/highlight-quoted" :package "highlight-quoted" :local-repo "highlight-quoted"))
+(highlight-quoted :type git :flavor melpa :host github :repo "Fanael/highlight-quoted" :package "highlight-quoted" :local-repo "highlight-quoted" :commit "24103478158cd19fbcfb4339a3f1fa1f054f1469")
 #+end_src
 
 * ht
@@ -715,7 +706,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("ht" "2850301d19176b8d3bb6cc8d95af6ab7e529bd56" (ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el"))
+(ht :type git :flavor melpa :files ("ht.el" "ht-pkg.el") :host github :repo "Wilfred/ht.el" :package "ht" :local-repo "ht.el" :commit "2850301d19176b8d3bb6cc8d95af6ab7e529bd56")
 #+end_src
 
 * humanoid-themes
@@ -724,10 +715,10 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("humanoid-themes" "c1f9989bcecd1d93a2d7469d6b5c812bd35fe0f3" (humanoid-themes :type git :flavor melpa :host github :repo "humanoid-colors/emacs-humanoid-themes" :package "humanoid-themes" :local-repo "emacs-humanoid-themes"))
+(humanoid-themes :type git :flavor melpa :host github :repo "humanoid-colors/emacs-humanoid-themes" :package "humanoid-themes" :local-repo "emacs-humanoid-themes" :commit "c1f9989bcecd1d93a2d7469d6b5c812bd35fe0f3")
 #+end_src
 
-* hydra
+* TODO hydra
 :PROPERTIES:
 :ID:       6deff281-2804-4f64-b31b-9d0d02bd3b65
 :END:
@@ -742,7 +733,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("idle-require" "33592bb098223b4432d7a35a1d65ab83f47c1ec1" (idle-require :type git :flavor melpa :host github :repo "nschum/idle-require.el" :package "idle-require" :local-repo "idle-require.el"))
+(idle-require :type git :flavor melpa :host github :repo "nschum/idle-require.el" :package "idle-require" :local-repo "idle-require.el" :commit "33592bb098223b4432d7a35a1d65ab83f47c1ec1")
 #+end_src
 
 * iedit
@@ -751,10 +742,10 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("iedit" "6eb7ff8191b1d271b6f4e7feb608dc72ca203a39" (iedit :type git :flavor melpa :host github :repo "victorhge/iedit" :package "iedit" :local-repo "iedit"))
+(iedit :type git :flavor melpa :host github :repo "victorhge/iedit" :package "iedit" :local-repo "iedit" :commit "6eb7ff8191b1d271b6f4e7feb608dc72ca203a39")
 #+end_src
 
-* ivy
+* TODO ivy
 :PROPERTIES:
 :ID:       242a34aa-cc6d-4def-89f8-56129e296c7a
 :END:
@@ -769,7 +760,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("key-chord" "7f7fd7c5bd2b996fa054779357e1566f7989e07d" (key-chord :type git :flavor melpa :host github :repo "emacsorphanage/key-chord" :package #("key-chord" 0 9 (face font-lock-string-face)) :local-repo "key-chord"))
+(key-chord :type git :flavor melpa :host github :repo "emacsorphanage/key-chord" :package #("key-chord" 0 9 (face font-lock-string-face)) :local-repo "key-chord" :commit "7f7fd7c5bd2b996fa054779357e1566f7989e07d")
 #+end_src
 
 * keyfreq
@@ -778,7 +769,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("keyfreq" "e5fe9d585ce882f1ba9afa5d894eaa82c79be4f4" (keyfreq :type git :flavor melpa :host github :repo "dacap/keyfreq" :package "keyfreq" :local-repo "keyfreq"))
+(keyfreq :type git :flavor melpa :host github :repo "dacap/keyfreq" :package "keyfreq" :local-repo "keyfreq" :commit "e5fe9d585ce882f1ba9afa5d894eaa82c79be4f4")
 #+end_src
 
 * kv
@@ -787,7 +778,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("kv" "721148475bce38a70e0b678ba8aa923652e8900e" (kv :type git :flavor melpa :files ("kv.el" "kv-pkg.el") :host github :repo "nicferrier/emacs-kv" :package "kv" :local-repo "emacs-kv"))
+(kv :type git :flavor melpa :files ("kv.el" "kv-pkg.el") :host github :repo "nicferrier/emacs-kv" :package "kv" :local-repo "emacs-kv" :commit "721148475bce38a70e0b678ba8aa923652e8900e")
 #+end_src
 
 * leaf
@@ -796,7 +787,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("leaf" "e0c4b7484ab6ee3bbf8413f620ccb99af4328d2f" (leaf :type git :flavor melpa :host github :repo "conao3/leaf.el" :package "leaf" :local-repo "leaf.el"))
+(leaf :type git :flavor melpa :host github :repo "conao3/leaf.el" :package "leaf" :local-repo "leaf.el" :commit "e0c4b7484ab6ee3bbf8413f620ccb99af4328d2f")
 #+end_src
 
 * let-alist
@@ -805,7 +796,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("let-alist" "b299c78897cc307f9d5521927376fbd06a26f123" (let-alist :type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git")) :package "let-alist" :local-repo "let-alist"))
+(let-alist :type git :host github :repo "emacs-straight/let-alist" :files ("*" (:exclude ".git")) :package "let-alist" :local-repo "let-alist" :commit "b299c78897cc307f9d5521927376fbd06a26f123")
 #+end_src
 
 * lispy
@@ -814,7 +805,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("lispy" "1ad128be0afc04b58967c1158439d99931becef4" (lispy :type git :flavor melpa :files (:defaults "lispy-clojure.clj" "lispy-python.py" "lispy-pkg.el") :host github :repo "abo-abo/lispy" :package "lispy" :local-repo "lispy"))
+(lispy :type git :flavor melpa :files (:defaults "lispy-clojure.clj" "lispy-python.py" "lispy-pkg.el") :host github :repo "abo-abo/lispy" :package "lispy" :local-repo "lispy" :commit "1ad128be0afc04b58967c1158439d99931becef4")
 #+end_src
 
 * lispyville
@@ -823,16 +814,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("lispyville" "0f13f26cd6aa71f9fd852186ad4a00c4294661cd" (lispyville :type git :flavor melpa :host github :repo "noctuid/lispyville" :package "lispyville" :local-repo "lispyville"))
-#+end_src
-
-* list-utils
-:PROPERTIES:
-:ID:       f10dd738-b1ff-4d58-90fd-4db8cb201d6a
-:END:
-
-#+begin_src emacs-lisp
-("list-utils" "ca9654cd1418e874c876c6b3b7d4cd8339bfde77" (list-utils :type git :flavor melpa :host github :repo "rolandwalker/list-utils" :package "list-utils" :local-repo "list-utils"))
+(lispyville :type git :flavor melpa :host github :repo "noctuid/lispyville" :package "lispyville" :local-repo "lispyville" :commit "0f13f26cd6aa71f9fd852186ad4a00c4294661cd")
 #+end_src
 
 * log4e
@@ -841,7 +823,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("log4e" "7df0c1ff4656f8f993b87064b1567618eadb5546" (log4e :type git :flavor melpa :host github :repo "aki2o/log4e" :package "log4e" :local-repo "log4e"))
+(log4e :type git :flavor melpa :host github :repo "aki2o/log4e" :package "log4e" :local-repo "log4e" :commit "7df0c1ff4656f8f993b87064b1567618eadb5546")
 #+end_src
 
 * loopy
@@ -850,7 +832,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("loopy" "7d2d52f1b7191fe795adf0ee0adc5551e99d75f0" (loopy :host github :type git :repo "okamsn/loopy" :package "loopy" :local-repo "loopy"))
+(loopy :host github :type git :repo "okamsn/loopy" :package "loopy" :local-repo "loopy" :commit "7d2d52f1b7191fe795adf0ee0adc5551e99d75f0")
 #+end_src
 
 * lv
@@ -859,7 +841,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("lv" "2d553787aca1aceb3e6927e426200e9bb9f056f1" (lv :flavor melpa :files ("lv.el" "lv-pkg.el") :package "lv" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github))
+(lv :flavor melpa :files ("lv.el" "lv-pkg.el") :package "lv" :local-repo "hydra" :type git :repo "abo-abo/hydra" :host github :commit "2d553787aca1aceb3e6927e426200e9bb9f056f1")
 #+end_src
 
 * macrostep
@@ -868,7 +850,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("macrostep" "424e3734a1ee526a1bd7b5c3cd1d3ef19d184267" (macrostep :type git :flavor melpa :host github :repo "joddie/macrostep" :package "macrostep" :local-repo "macrostep"))
+(macrostep :type git :flavor melpa :host github :repo "joddie/macrostep" :package "macrostep" :local-repo "macrostep" :commit "424e3734a1ee526a1bd7b5c3cd1d3ef19d184267")
 #+end_src
 
 * magit
@@ -877,7 +859,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("magit" "86eec7ba39eb46fa1e4c2f37800d22c6dfd155c7" (magit :type git :flavor melpa :files ("lisp/magit" "lisp/magit*.el" "lisp/git-rebase.el" "Documentation/magit.texi" "Documentation/AUTHORS.md" "LICENSE" (:exclude "lisp/magit-libgit.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit"))
+(magit :type git :flavor melpa :files ("lisp/magit" "lisp/magit*.el" "lisp/git-rebase.el" "Documentation/magit.texi" "Documentation/AUTHORS.md" "LICENSE" (:exclude "lisp/magit-libgit.el") "magit-pkg.el") :host github :repo "magit/magit" :package "magit" :local-repo "magit" :commit "86eec7ba39eb46fa1e4c2f37800d22c6dfd155c7")
 #+end_src
 
 * map
@@ -886,7 +868,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("map" "dc4f657bcce6ec644ebf96fe52d8035aa33882c0" (map :type git :host github :repo "emacs-straight/map" :files ("*" (:exclude ".git")) :package "map" :local-repo "map"))
+(map :type git :host github :repo "emacs-straight/map" :files ("*" (:exclude ".git")) :package "map" :local-repo "map" :commit "dc4f657bcce6ec644ebf96fe52d8035aa33882c0")
 #+end_src
 
 * marginalia
@@ -895,7 +877,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("marginalia" "86c0461271d407f5676a8af3776e73832458364f" (marginalia :type git :flavor melpa :host github :repo "minad/marginalia" :package "marginalia" :local-repo "marginalia"))
+(marginalia :type git :flavor melpa :host github :repo "minad/marginalia" :package "marginalia" :local-repo "marginalia" :commit "86c0461271d407f5676a8af3776e73832458364f")
 #+end_src
 
 * melpa
@@ -904,7 +886,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("melpa" "1731327f28b2b47285a526b3ddd322d5b4a862e8" (melpa :type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa"))
+(melpa :type git :host github :repo "melpa/melpa" :build nil :package "melpa" :local-repo "melpa" :commit "1731327f28b2b47285a526b3ddd322d5b4a862e8")
 #+end_src
 
 * melpa-upstream-visit
@@ -913,7 +895,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("melpa-upstream-visit" "7310c74fdead3c0f86ad6eff76cf989e63f70f66" (melpa-upstream-visit :type git :flavor melpa :host github :repo "laynor/melpa-upstream-visit" :package "melpa-upstream-visit" :local-repo "melpa-upstream-visit"))
+(melpa-upstream-visit :type git :flavor melpa :host github :repo "laynor/melpa-upstream-visit" :package "melpa-upstream-visit" :local-repo "melpa-upstream-visit" :commit "7310c74fdead3c0f86ad6eff76cf989e63f70f66")
 #+end_src
 
 * memoize
@@ -922,7 +904,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("memoize" "51b075935ca7070f62fae1d69fe0ff7d8fa56fdd" (memoize :type git :flavor melpa :host github :repo "skeeto/emacs-memoize" :package "memoize" :local-repo "emacs-memoize"))
+(memoize :type git :flavor melpa :host github :repo "skeeto/emacs-memoize" :package "memoize" :local-repo "emacs-memoize" :commit "51b075935ca7070f62fae1d69fe0ff7d8fa56fdd")
 #+end_src
 
 * mini-modeline
@@ -931,7 +913,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("mini-modeline" "7dcd0ab81bb7c298377708061176f5c5a50f77db" (mini-modeline :type git :flavor melpa :host github :repo "kiennq/emacs-mini-modeline" :package "mini-modeline" :local-repo "emacs-mini-modeline"))
+(mini-modeline :type git :flavor melpa :host github :repo "kiennq/emacs-mini-modeline" :package "mini-modeline" :local-repo "emacs-mini-modeline" :commit "7dcd0ab81bb7c298377708061176f5c5a50f77db")
 #+end_src
 
 * minimal-theme
@@ -940,7 +922,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("minimal-theme" "221b43aad320d226863892dfe4d85465e8eb81ce" (minimal-theme :type git :flavor melpa :host github :repo "anler/minimal-theme" :package "minimal-theme" :local-repo "minimal-theme"))
+(minimal-theme :type git :flavor melpa :host github :repo "anler/minimal-theme" :package "minimal-theme" :local-repo "minimal-theme" :commit "221b43aad320d226863892dfe4d85465e8eb81ce")
 #+end_src
 
 * mmt
@@ -949,7 +931,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("mmt" "d7729563e656a3e8adef6bce60348861ba183c09" (mmt :type git :flavor melpa :host github :repo "mrkkrp/mmt" :package "mmt" :local-repo "mmt"))
+(mmt :type git :flavor melpa :host github :repo "mrkkrp/mmt" :package "mmt" :local-repo "mmt" :commit "d7729563e656a3e8adef6bce60348861ba183c09")
 #+end_src
 
 * modus-operandi-theme
@@ -958,16 +940,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("modus-operandi-theme" "98f1e973b9085b0db9e3a63782863c77625f6e01" (modus-operandi-theme :type git :host github :repo "emacs-straight/modus-operandi-theme" :files ("*" (:exclude ".git")) :package "modus-operandi-theme" :local-repo "modus-operandi-theme"))
-#+end_src
-
-* modus-themes
-:PROPERTIES:
-:ID:       79031c97-b820-4f2f-b19c-397311d2ffb3
-:END:
-
-#+begin_src emacs-lisp
-("modus-themes" "a3ff6dc9468296a00b6691768dfbcb7c5206073f" (modus-themes :type git :flavor melpa :branch "main" :host gitlab :repo "protesilaos/modus-themes" :package "modus-themes" :local-repo "modus-themes"))
+(modus-operandi-theme :type git :host github :repo "emacs-straight/modus-operandi-theme" :files ("*" (:exclude ".git")) :package "modus-operandi-theme" :local-repo "modus-operandi-theme" :commit "98f1e973b9085b0db9e3a63782863c77625f6e01")
 #+end_src
 
 * nameless
@@ -977,15 +950,6 @@ great precision.
 
 #+begin_src emacs-lisp
 ("nameless" "a3a1ce3ec0c5724bcbfe553d831bd4f6b3fe863a" (nameless :type git :flavor melpa :host github :repo "Malabarba/Nameless" :package "nameless" :local-repo "Nameless"))
-#+end_src
-
-* noflet
-:PROPERTIES:
-:ID:       ef89e732-9791-4d97-976a-242b2c7a1c22
-:END:
-
-#+begin_src emacs-lisp
-("noflet" "7ae84dc3257637af7334101456dafe1759c6b68a" (noflet :type git :flavor melpa :host github :repo "nicferrier/emacs-noflet" :package "noflet" :local-repo "emacs-noflet"))
 #+end_src
 
 * orderless
