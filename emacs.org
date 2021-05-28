@@ -2651,12 +2651,7 @@ If an element is t, convert it to PACKAGE."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-*** create additional hooks
-:PROPERTIES:
-:ID:       a88d6a5b-5b72-446d-a1ba-0ee153c26e0d
-:END:
-
-**** DOC loading theme :theme:
+*** DOC loading theme :theme:
 :PROPERTIES:
 :ID:       b4773208-5e96-46d2-90d0-1731f6581f1b
 :END:
