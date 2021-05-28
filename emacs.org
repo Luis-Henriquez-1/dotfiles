@@ -1577,7 +1577,7 @@ emacs packages spew messages. While I can see how in certain circumstances there
 messages can be useful, most of the time they are superfluous.
 
 #+begin_src emacs-lisp
-(require 'shut-up)
+(use-package shut-up :demand t)
 #+end_src
 
 **** mmt 
@@ -1590,7 +1590,7 @@ quintessential =once-only= and =with-gensyms= macros which are used to prevent
 variable leaking.
 
 #+begin_src emacs-lisp
-(require 'mmt)
+(use-package mmt :demand t)
 #+end_src
 
 **** dash 
@@ -1607,7 +1607,7 @@ functions. Additionally, it's already used as a dependency of very many packages
 so I'll likely end up loading it anyway.
 
 #+begin_src emacs-lisp
-(require 'dash)
+(use-package dash :demand t)
 #+end_src
 
 **** subr-x 
@@ -1616,7 +1616,7 @@ so I'll likely end up loading it anyway.
 :END:
 
 #+begin_src emacs-lisp
-(require 'subr-x)
+(use-package subr-x :demand t)
 #+end_src
 
 **** s 
@@ -1628,7 +1628,7 @@ so I'll likely end up loading it anyway.
 that are not built-in to Emacs. Notably, it is functional.
 
 #+begin_src emacs-lisp
-(require 's)
+(use-package s :demand t)
 #+end_src
 
 **** f 
@@ -1637,7 +1637,7 @@ that are not built-in to Emacs. Notably, it is functional.
 :END:
 
 #+begin_src emacs-lisp
-(require 'f)
+(use-package f :demand t)
 #+end_src
 
 **** anaphora 
@@ -1650,7 +1650,7 @@ many other languages. In lisp this often requires assigning the variable a name.
 But if you're only.
 
 #+begin_src emacs-lisp
-(require 'anaphora)
+(use-package anaphora :demand t)
 #+end_src
 
 **** a 
@@ -1685,7 +1685,6 @@ play.
 (use-package loopy
   :demand t
   :init
-  (require 'loopy)
   (add-to-list 'loopy-default-flags '-split)
   (loopy-defalias 'fret 'finally-return)
   (loopy-defalias 'ret 'return))
