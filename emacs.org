@@ -2588,7 +2588,7 @@ HOOKS is a list of hook functions that follow the XL naming convention."
 #+begin_src emacs-lisp
 (defun xl-hook-symbol-p (symbol)
   "Return non-nil if SYMBOL is defined with XL naming conventions."
-  (s-match XL-HOOK-REGEXP (symbol-name symbol)))
+  (s-match (xl-hook-regexp) (symbol-name symbol)))
 #+end_src
 
 **** original hook variable
