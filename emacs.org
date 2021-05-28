@@ -8698,6 +8698,7 @@ the frame approach is that it's easy to have a "gap" setup.
 *** exwm-outer-gaps
 :PROPERTIES:
 :ID:       6bf91f2b-a41b-43f9-bb22-4c01b27d1f07
+:header-args: :tangle no
 :END:
 
 This package provides exwm with outer gaps.
