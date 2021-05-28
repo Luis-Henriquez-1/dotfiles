@@ -1270,6 +1270,62 @@ not to have to specify the advice keyword.
        nil))))
 #+end_src
 
+*** advice keywords
+:PROPERTIES:
+:ID:       3ddc2ff0-634c-4b1e-940e-1d8562d42ece
+:END:
+
+I put all the advice keywords in a variable. They're already available as the
+keys in [[helpfn:advice--where-alist][advice--where-alist]], but this is an internal variable used in the
+inner workings of Emacs's advice--I cant rely on this. Having the advices like
+this is useful for adding advices programmatically.
+
+#+begin_src emacs-lisp
+(defconst XL-ADVICE-KEYWORDS '(:around :before :after
+			       :override :after-until :after-while
+			       :before-until :before-while :filter-args
+			       :filter-return)
+  "All possible advice keywords.")
+#+end_src
+
+*** advice :advice:
+:PROPERTIES:
+:ID:       e498fc7d-03f1-4a69-9869-28c1b499fe1f
+:END:
+
+**** remove XL advice
+:PROPERTIES:
+:ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
+:END:
+
+Since we can get the advisee from the advise name, or remove advice only needs
+one argument--the advice to remove.
+
+#+begin_src emacs-lisp
+(defun xl-advice-remove (advices)
+  "Remove ADVICES from the functions they advise.
+ADVICES is an advice or a list of advices."
+  (iter (each advice (-list advices))
+	(advice-remove (xl-advice-orig-symbol advice) advice)))
+#+end_src
+
+**** adding an advice
+:PROPERTIES:
+:ID:       14e23074-10ea-41cc-88e5-bac600658b20
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-add (symbols where functions &optional props)
+  "Add ADVICES to FUNCTIONS.
+WHERE, DEPTH and LOCAL are the same as in `advice-add'."
+  (iter (each symbol (-list symbols))
+	(subloop (each function (-list functions))
+		 (expr advice (xl-symbol-intern symbol '@ function))
+		 (fset advice function)
+		 (advice-add symbol where advice props)
+		 (collect advice))))
+#+end_src
+
 *** use-package :usepackage:
 :PROPERTIES:
 :ID:       e85cfde1-285a-4782-817d-8c9e9fadb48c
@@ -2080,62 +2136,6 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 
 #+begin_src emacs-lisp
 (use-package map :demand t)
-#+end_src
-
-*** advice keywords
-:PROPERTIES:
-:ID:       3ddc2ff0-634c-4b1e-940e-1d8562d42ece
-:END:
-
-I put all the advice keywords in a variable. They're already available as the
-keys in [[helpfn:advice--where-alist][advice--where-alist]], but this is an internal variable used in the
-inner workings of Emacs's advice--I cant rely on this. Having the advices like
-this is useful for adding advices programmatically.
-
-#+begin_src emacs-lisp
-(defconst XL-ADVICE-KEYWORDS '(:around :before :after
-			       :override :after-until :after-while
-			       :before-until :before-while :filter-args
-			       :filter-return)
-  "All possible advice keywords.")
-#+end_src
-
-*** advice :advice:
-:PROPERTIES:
-:ID:       e498fc7d-03f1-4a69-9869-28c1b499fe1f
-:END:
-
-**** remove XL advice
-:PROPERTIES:
-:ID:       3d13ea95-44aa-4261-8480-5ae9701d533d
-:END:
-
-Since we can get the advisee from the advise name, or remove advice only needs
-one argument--the advice to remove.
-
-#+begin_src emacs-lisp
-(defun xl-advice-remove (advices)
-  "Remove ADVICES from the functions they advise.
-ADVICES is an advice or a list of advices."
-  (iter (each advice (-list advices))
-	(advice-remove (xl-advice-orig-symbol advice) advice)))
-#+end_src
-
-**** adding an advice
-:PROPERTIES:
-:ID:       14e23074-10ea-41cc-88e5-bac600658b20
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-add (symbols where functions &optional props)
-  "Add ADVICES to FUNCTIONS.
-WHERE, DEPTH and LOCAL are the same as in `advice-add'."
-  (iter (each symbol (-list symbols))
-	(subloop (each function (-list functions))
-		 (expr advice (xl-symbol-intern symbol '@ function))
-		 (fset advice function)
-		 (advice-add symbol where advice props)
-		 (collect advice))))
 #+end_src
 
 *** custom macros
