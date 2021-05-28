@@ -2381,6 +2381,10 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
 :ID:       ba195f61-9b1c-4b51-835c-d1351f4d6301
 :END:
 
+Most times when I advise a function, the advice is unique and catered
+specifically for a single use case. However, sometimes there are common advices
+that I need to add to many functions. I refer to these as "generic advices".
+
 **** pause garbarge collection :advice:performance:
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
