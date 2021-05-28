@@ -989,6 +989,287 @@ for functions namespaced =frame=.
 (defalias 'find-file-get-create 'find-file-noselect)
 #+end_src
 
+*** generic advices
+:PROPERTIES:
+:ID:       ba195f61-9b1c-4b51-835c-d1351f4d6301
+:END:
+
+Most times when I advise a function, the advice is unique and catered
+specifically for a single use case. However, sometimes there are common advices
+that I need to add to many functions. I refer to these as "generic advices".
+
+**** defgadvice!
+:PROPERTIES:
+:ID:       141da0b0-f721-4576-921b-7d800291267a
+:END:
+
+A generic advice should have a function.
+
+#+begin_src emacs-lisp
+(defunmacro! defgadvice! (name args &rest body)
+  "Define a generic advice function."
+  (declare (indent defun) (doc-string 3))
+  (let ((internal-advice)
+	(advising-fn))
+    `(progn (defun ,xl-gadvice-<name> (fn)
+	      (defalias (xl-symbol-intern fn '@ ',name) #',xl-gadvice--<name>-advice)
+	      (advice-add fn :around #',xl-gadvice--<name>-advice))
+	    (defun ,xl-gadvice--<name>-advice ,args ,@body))))
+#+end_src
+
+**** pause garbarge collection :advice:performance:
+:PROPERTIES:
+:ID:       41e763bd-215f-4176-95c1-f41261864671
+:END:
+
+Sometimes you come across a function that is computationally expensive. An
+example is [[helpfn:helm-system-packages][helm-system-packages]], function that has to make a list of all system
+packages which can contain several thousand items.
+
+#+begin_src emacs-lisp
+(defgadvice! pause-garbage-collection (orig-fn &rest args)
+  "An around advice that pauses `gc-cons-threshold'."
+  (let ((gc-cons-threshold most-positive-fixnum))
+    (apply orig-fn args)))
+#+end_src
+
+**** catch errors
+:PROPERTIES:
+:ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
+:END:
+
+One important note here. I first wrote [[helpfn:xl-report-error-advice][xl-report-error-advice]] as an around
+advice that should be added to functions. The problem here is that sometimes I
+advise compiled functions; and when I do, the variable =orig-fn= is bound to a
+compiled function instead of a symbol. This is why this function has to
+pre-emptively insert FN. A similar situation occurs with [[][generic expiring
+advice]].
+
+#+begin_src emacs-lisp
+(defgadvice! catch-error (orig-fn &rest args)
+  "Catch and log any error."
+  (condition-case error
+      (apply orig-fn args)
+    (error
+     (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
+#+end_src
+
+**** advice regexp
+:PROPERTIES:
+:ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
+:END:
+
+#+begin_src emacs-lisp
+(defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
+  "A regular expression that defines naming convention for advices.")
+#+end_src
+
+**** original advice
+:PROPERTIES:
+:ID:       49f49994-637a-4e26-b680-3535463ee8bf
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-function (advice)
+  "Return the function that ADVICE aliases.
+ADVICE is an advice function that follows XL naming conventions."
+  (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
+#+end_src
+
+**** original fn
+:PROPERTIES:
+:ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-orig-symbol (advice)
+  "Return the function ADVICE is advised to.
+ADVICE is an advice function that follows XL naming conventions."
+  (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
+#+end_src
+
+**** advice-fn-p
+:PROPERTIES:
+:ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-symbol-p (fn)
+  "Return non-nil when FN is an advice."
+  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
+#+end_src
+
+**** log
+:PROPERTIES:
+:ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
+:END:
+
+#+begin_src emacs-lisp
+(defgadvice! log (fn &rest args)
+  (prog1 (apply fn args)
+    (cond ((not (symbolp fn))
+	   (xl-log "function is not a symbol: %S" fn))
+	  ((xl-hook-symbol-p fn)
+	   (xl-log "& %s -> %s" (xl-hook-orig-symbol fn) (xl-hook-action fn)))
+	  ((xl-advice-symbol-p fn)
+	   (xl-log "@ %s -> %s" (xl-advice-orig-function fn) (xl-advice-orig-function fn)))
+	  (t
+	   (xl-log "%s called" fn)))))
+#+end_src
+
+**** silence :gadvice:advice:library:core:
+:PROPERTIES:
+:ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
+:END:
+
+Many packages output to the messages buffer. Often, I either find these messages
+unecessary or, as an experienced user, I get it already. In these cases I prefer
+to silence the said messages.
+
+#+begin_src emacs-lisp
+(defgadvice! shut-up (orig-fn &rest args)
+  "Silence output of FN."
+  (shut-up (apply orig-fn args)))
+#+end_src
+
+**** assume yes in prompts :setting:
+:PROPERTIES:
+:ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
+:END:
+
+Once in a while I come across a function that a [[helpfn:y-or-n-p][y-or-n-p]] prompt for things I
+don't want to be prompted for. Or, in other words, for me the cost of the extra
+second I spend typing =y= or =n= is not worth the benefit ([[helpfn:ert-delete-all-tests][ert-delete-all-tests]]
+is an example).
+
+#+begin_src emacs-lisp
+(defgadvice! assume-yes (orig-fn &rest args)
+  "An advice that makes `y-or-n-p' return t without prompt."
+  (with-temp-advice! ((y-or-n-p :override xl-true))
+    (apply orig-fn args)))
+#+end_src
+
+**** log
+:PROPERTIES:
+:ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
+:END:
+
+Sometimes I want to use =xl-log= instead of =message=.
+
+#+begin_src emacs-lisp
+(defgadvice! use-xl-log (orig-fn &rest args)
+  (with-temp-advice! ((message :override xl-log))
+    (apply orig-fn args))
+#+end_src
+
+**** log advices and hooks
+:PROPERTIES:
+:ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
+:header-args: :tangle no
+:END:
+
+Log when an advice or hook is being called.
+
+#+begin_src emacs-lisp
+(defadvice! log-advices (orig-fn &rest args)
+  "Log ORIG-FN."
+  (:around xl-hook-add xl-advice-add)
+  (iter (with (symbols (apply orig-fn args)))
+	(each symbol symbols)
+	(xl-log-function symbol)
+	(when (xl-hook-symbol-p symbol)
+	  (xl-gadvice-catch-error symbol))
+	(finally-return symbols)))
+#+end_src
+
+**** loading on call
+:PROPERTIES:
+:ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
+:END:
+
+Instead of loading all features on startup, we want to load features only when
+we need them--just in time. And by "just in time" I mean at the last possible
+moment or in practice just before a function that uses this feature is called.
+While I could use =defadvice!= for defining these advices, doing this would
+quickly become repetative because it's something that is done so often in
+package configuration. The function =before-call= and =after-call= provide a fast
+and convenient way to do this.
+
+***** load-on-call
+:PROPERTIES:
+:ID:       324e707b-2f44-4168-a846-037f5401dedb
+:END:
+
+This is the internal function which I use to build the others. It loads a
+package before or after (you specify) a particular function is called. To do
+this it adds an =XL= advice that loads the feature to the function.
+
+#+begin_src emacs-lisp
+(defun xl-load-on-call (package where fn)
+  "Load PACKAGE before or after FN is called."
+  (alet (xl-intern-format "%s@load-%s-%s-call" fn package (xl-keyword-name where))
+    (fset it `(lambda (&rest _)
+                (xl-log "load %s" ',package)
+                (require ',package)))
+    (advice-add fn where it)
+    (xl-gadvice-expire it)))
+#+end_src
+
+***** load before call
+:PROPERTIES:
+:ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
+:END:
+
+For convenience, I provide [[helpfn:xl-load-before-call][xl-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
+not to have to specify the advice keyword.
+
+#+begin_src emacs-lisp
+(defun xl-load-before-call (package fn)
+  "Load PACKAGE before FN is called."
+  (xl-load-on-call package :before fn))
+#+end_src
+
+***** load after call
+:PROPERTIES:
+:ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-load-after-call (package fn)
+  "Load PACKAGE after FN is called."
+  (xl-load-on-call package :after fn))
+#+end_src
+
+**** ignore output
+:PROPERTIES:
+:ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
+:END:
+
+#+begin_src emacs-lisp
+(defgadvice! ignore (&rest _)
+  "Advice to ignore a function.")
+#+end_src
+
+**** expiration
+:PROPERTIES:
+:ID:       b531dc79-73d0-43eb-a600-b3075315acf0
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-gadvice-expire (fn)
+  "Cause FN to remove itself from any advice or hook."
+  (let ((name (xl-advice-gen-symbol fn 'expire)))
+    (pcase fn
+      ((pred xl-advice-symbol-p)
+       (fset name `(lambda (&rest _) (xl-advice-remove ',fn)))
+       (advice-add fn :after name))
+      ((pred xl-hook-symbol-p)
+       (fset name `(lambda (&rest _) (xl-hook-remove ',fn)))
+       (advice-add fn :after name))
+      (_
+       nil))))
+#+end_src
+
 *** use-package :usepackage:
 :PROPERTIES:
 :ID:       e85cfde1-285a-4782-817d-8c9e9fadb48c
@@ -1155,6 +1436,29 @@ forms.
 :PROPERTIES:
 :ID:       0b0c51a6-1b10-4bfd-bb0b-35cecd44217f
 :END:
+
+***** DOC gc-pause :performance:
+:PROPERTIES:
+:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
+:END:
+
+The keyword pauses emacs gargbage collection (e.g increases the
+[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
+it's passed in. It should be used on particularly computationally expensive
+functions that a package provides.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :gc-pause)
+
+(defalias 'use-package-normalize/:gc-pause 'use-package-normalize/:silence)
+
+(defun use-package-handler/:gc-pause (name _ fns rest state)
+  "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
+    ,@(use-package-process-keywords name rest state)))
+#+end_src
 
 ***** DOC silence
 :PROPERTIES:
@@ -1794,310 +2098,6 @@ this is useful for adding advices programmatically.
 			       :before-until :before-while :filter-args
 			       :filter-return)
   "All possible advice keywords.")
-#+end_src
-
-*** generic advices
-:PROPERTIES:
-:ID:       ba195f61-9b1c-4b51-835c-d1351f4d6301
-:END:
-
-Most times when I advise a function, the advice is unique and catered
-specifically for a single use case. However, sometimes there are common advices
-that I need to add to many functions. I refer to these as "generic advices".
-
-**** defgadvice!
-:PROPERTIES:
-:ID:       141da0b0-f721-4576-921b-7d800291267a
-:END:
-
-A generic advice should have a function.
-
-#+begin_src emacs-lisp
-(defunmacro! defgadvice! (name args &rest body)
-  "Define a generic advice function."
-  (declare (indent defun) (doc-string 3))
-  (let ((internal-advice)
-	(advising-fn))
-    `(progn (defun ,xl-gadvice-<name> (fn)
-	      (defalias (xl-symbol-intern fn '@ ',name) #',xl-gadvice--<name>-advice)
-	      (advice-add fn :around #',xl-gadvice--<name>-advice))
-	    (defun ,xl-gadvice--<name>-advice ,args ,@body))))
-#+end_src
-
-**** pause garbarge collection :advice:performance:
-:PROPERTIES:
-:ID:       41e763bd-215f-4176-95c1-f41261864671
-:END:
-
-Sometimes you come across a function that is computationally expensive. An
-example is [[helpfn:helm-system-packages][helm-system-packages]], function that has to make a list of all system
-packages which can contain several thousand items.
-
-#+begin_src emacs-lisp
-(defgadvice! pause-garbage-collection (orig-fn &rest args)
-  "An around advice that pauses `gc-cons-threshold'."
-  (let ((gc-cons-threshold most-positive-fixnum))
-    (apply orig-fn args)))
-#+end_src
-
-**** DOC gc-pause :performance:
-:PROPERTIES:
-:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
-:END:
-
-The keyword pauses emacs gargbage collection (e.g increases the
-[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
-it's passed in. It should be used on particularly computationally expensive
-functions that a package provides.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :gc-pause)
-
-(defalias 'use-package-normalize/:gc-pause 'use-package-normalize/:silence)
-
-(defun use-package-handler/:gc-pause (name _ fns rest state)
-  "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
-  `(,@(iter (for fn fns)
-	    (collect (use-package%autoload name fn))
-	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
-**** catch errors
-:PROPERTIES:
-:ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
-:END:
-
-One important note here. I first wrote [[helpfn:xl-report-error-advice][xl-report-error-advice]] as an around
-advice that should be added to functions. The problem here is that sometimes I
-advise compiled functions; and when I do, the variable =orig-fn= is bound to a
-compiled function instead of a symbol. This is why this function has to
-pre-emptively insert FN. A similar situation occurs with [[][generic expiring
-advice]].
-
-#+begin_src emacs-lisp
-(defgadvice! catch-error (orig-fn &rest args)
-  "Catch and log any error."
-  (condition-case error
-      (apply orig-fn args)
-    (error
-     (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
-#+end_src
-
-**** advice regexp
-:PROPERTIES:
-:ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
-:END:
-
-#+begin_src emacs-lisp
-(defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
-  "A regular expression that defines naming convention for advices.")
-#+end_src
-
-**** original advice
-:PROPERTIES:
-:ID:       49f49994-637a-4e26-b680-3535463ee8bf
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-orig-function (advice)
-  "Return the function that ADVICE aliases.
-ADVICE is an advice function that follows XL naming conventions."
-  (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
-#+end_src
-
-**** original fn
-:PROPERTIES:
-:ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-orig-symbol (advice)
-  "Return the function ADVICE is advised to.
-ADVICE is an advice function that follows XL naming conventions."
-  (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
-#+end_src
-
-**** advice-fn-p
-:PROPERTIES:
-:ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-symbol-p (fn)
-  "Return non-nil when FN is an advice."
-  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
-#+end_src
-
-**** log
-:PROPERTIES:
-:ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
-:END:
-
-#+begin_src emacs-lisp
-(defgadvice! log (fn &rest args)
-  (prog1 (apply fn args)
-    (cond ((not (symbolp fn))
-	   (xl-log "function is not a symbol: %S" fn))
-	  ((xl-hook-symbol-p fn)
-	   (xl-log "& %s -> %s" (xl-hook-orig-symbol fn) (xl-hook-action fn)))
-	  ((xl-advice-symbol-p fn)
-	   (xl-log "@ %s -> %s" (xl-advice-orig-function fn) (xl-advice-orig-function fn)))
-	  (t
-	   (xl-log "%s called" fn)))))
-#+end_src
-
-**** silence :gadvice:advice:library:core:
-:PROPERTIES:
-:ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
-:END:
-
-Many packages output to the messages buffer. Often, I either find these messages
-unecessary or, as an experienced user, I get it already. In these cases I prefer
-to silence the said messages.
-
-#+begin_src emacs-lisp
-(defgadvice! shut-up (orig-fn &rest args)
-  "Silence output of FN."
-  (shut-up (apply orig-fn args)))
-#+end_src
-
-**** assume yes in prompts :setting:
-:PROPERTIES:
-:ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
-:END:
-
-Once in a while I come across a function that a [[helpfn:y-or-n-p][y-or-n-p]] prompt for things I
-don't want to be prompted for. Or, in other words, for me the cost of the extra
-second I spend typing =y= or =n= is not worth the benefit ([[helpfn:ert-delete-all-tests][ert-delete-all-tests]]
-is an example).
-
-#+begin_src emacs-lisp
-(defgadvice! assume-yes (orig-fn &rest args)
-  "An advice that makes `y-or-n-p' return t without prompt."
-  (with-temp-advice! ((y-or-n-p :override xl-true))
-    (apply orig-fn args)))
-#+end_src
-
-**** log
-:PROPERTIES:
-:ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
-:END:
-
-Sometimes I want to use =xl-log= instead of =message=.
-
-#+begin_src emacs-lisp
-(defgadvice! use-xl-log (orig-fn &rest args)
-  (with-temp-advice! ((message :override xl-log))
-    (apply orig-fn args))
-#+end_src
-
-**** log advices and hooks
-:PROPERTIES:
-:ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
-:header-args: :tangle no
-:END:
-
-Log when an advice or hook is being called.
-
-#+begin_src emacs-lisp
-(defadvice! log-advices (orig-fn &rest args)
-  "Log ORIG-FN."
-  (:around xl-hook-add xl-advice-add)
-  (iter (with (symbols (apply orig-fn args)))
-	(each symbol symbols)
-	(xl-log-function symbol)
-	(when (xl-hook-symbol-p symbol)
-	  (xl-gadvice-catch-error symbol))
-	(finally-return symbols)))
-#+end_src
-
-**** loading on call
-:PROPERTIES:
-:ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
-:END:
-
-Instead of loading all features on startup, we want to load features only when
-we need them--just in time. And by "just in time" I mean at the last possible
-moment or in practice just before a function that uses this feature is called.
-While I could use =defadvice!= for defining these advices, doing this would
-quickly become repetative because it's something that is done so often in
-package configuration. The function =before-call= and =after-call= provide a fast
-and convenient way to do this.
-
-***** load-on-call
-:PROPERTIES:
-:ID:       324e707b-2f44-4168-a846-037f5401dedb
-:END:
-
-This is the internal function which I use to build the others. It loads a
-package before or after (you specify) a particular function is called. To do
-this it adds an =XL= advice that loads the feature to the function.
-
-#+begin_src emacs-lisp
-(defun xl-load-on-call (package where fn)
-  "Load PACKAGE before or after FN is called."
-  (alet (xl-intern-format "%s@load-%s-%s-call" fn package (xl-keyword-name where))
-    (fset it `(lambda (&rest _)
-                (xl-log "load %s" ',package)
-                (require ',package)))
-    (advice-add fn where it)
-    (xl-gadvice-expire it)))
-#+end_src
-
-***** load before call
-:PROPERTIES:
-:ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
-:END:
-
-For convenience, I provide [[helpfn:xl-load-before-call][xl-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
-not to have to specify the advice keyword.
-
-#+begin_src emacs-lisp
-(defun xl-load-before-call (package fn)
-  "Load PACKAGE before FN is called."
-  (xl-load-on-call package :before fn))
-#+end_src
-
-***** load after call
-:PROPERTIES:
-:ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-load-after-call (package fn)
-  "Load PACKAGE after FN is called."
-  (xl-load-on-call package :after fn))
-#+end_src
-
-**** ignore output
-:PROPERTIES:
-:ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
-:END:
-
-#+begin_src emacs-lisp
-(defgadvice! ignore (&rest _)
-  "Advice to ignore a function.")
-#+end_src
-
-**** expiration
-:PROPERTIES:
-:ID:       b531dc79-73d0-43eb-a600-b3075315acf0
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-gadvice-expire (fn)
-  "Cause FN to remove itself from any advice or hook."
-  (let ((name (xl-advice-gen-symbol fn 'expire)))
-    (pcase fn
-      ((pred xl-advice-symbol-p)
-       (fset name `(lambda (&rest _) (xl-advice-remove ',fn)))
-       (advice-add fn :after name))
-      ((pred xl-hook-symbol-p)
-       (fset name `(lambda (&rest _) (xl-hook-remove ',fn)))
-       (advice-add fn :after name))
-      (_
-       nil))))
 #+end_src
 
 *** advice :advice:
