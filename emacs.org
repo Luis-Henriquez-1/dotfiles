@@ -1740,6 +1740,37 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 (use-package dbc :demand t)
 #+end_src
 
+**** idle-require :defer:
+:PROPERTIES:
+:ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
+:END:
+
+Idle require is a tool for loading autoload functions, files or features during
+idle time. The way to use this is to idle-require many small packages that
+individually don't take too much time. This helps ensure that in emacs loading
+of big packages like org-mode is snappy.
+
+When emacs goes idle for [[helpvar:idle-require-idle-delay][idle-require-idle-delay]] seconds, the features will
+start loading. [[helpvar:idle-require-load-break][idle-require-load-break]] is the break between features idle
+require loads.
+
+=idle-require= messages us to tell us when a package is being idle required and
+when it has finished idle-requiring packages. I don't want to see the message
+unless I'm debugging.
+
+Since we're evaluating a good amount of lisp expressions, we should boost
+garbage collection during this time.
+
+#+begin_src emacs-lisp
+(use-package idle-require
+  :demand t
+  ;; :xl-use-xl-log idle-require-mode idle-require-load-next
+  :gc-pause idle-require-load-next
+  :set
+  (idle-require-load-break . 2)
+  (idle-require-idle-delay . 10))
+#+end_src
+
 **** rule :usepackage:library:core:popup:
 :PROPERTIES:
 :ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
@@ -2598,37 +2629,6 @@ HOOK is a hook function that follows XL naming conventions."
 :PROPERTIES:
 :ID:       751b309f-aafc-4d11-ae0c-4d423713b52d
 :END:
-
-**** idle-require :defer:
-:PROPERTIES:
-:ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
-:END:
-
-Idle require is a tool for loading autoload functions, files or features during
-idle time. The way to use this is to idle-require many small packages that
-individually don't take too much time. This helps ensure that in emacs loading
-of big packages like org-mode is snappy.
-
-When emacs goes idle for [[helpvar:idle-require-idle-delay][idle-require-idle-delay]] seconds, the features will
-start loading. [[helpvar:idle-require-load-break][idle-require-load-break]] is the break between features idle
-require loads.
-
-=idle-require= messages us to tell us when a package is being idle required and
-when it has finished idle-requiring packages. I don't want to see the message
-unless I'm debugging.
-
-Since we're evaluating a good amount of lisp expressions, we should boost
-garbage collection during this time.
-
-#+begin_src emacs-lisp
-(use-package idle-require
-  :demand t
-  ;; :xl-use-xl-log idle-require-mode idle-require-load-next
-  :gc-pause idle-require-load-next
-  :set
-  (idle-require-load-break . 2)
-  (idle-require-idle-delay . 10))
-#+end_src
 
 **** idle-require :defer:performance:
 :PROPERTIES:
