@@ -2219,9 +2219,9 @@ This is the counterpart to [[][]. =provide= is the convention that's used to
 declare that a feature has been loaded.
 
 #+begin_src emacs-lisp
-  (defhooksym! xl-before-load-feature-hook (:after provide :args (feature &rest _))
-    "Hook run just after a feature is provided."
-    (run-hook-with-args 'xl-before-load-feature-hook feature))
+(defhooksym! xl-before-load-feature-hook (:after provide :args (feature &rest _))
+  "Hook run just after a feature is provided."
+  (run-hook-with-args 'xl-before-load-feature-hook feature))
 #+end_src
 
 ***** feature logic
