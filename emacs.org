@@ -455,7 +455,7 @@ Upon startup I read this file and register all the recipes in it with =straight=
     versions-alist))
 #+end_src
 
-**** generate load-path
+**** install packages to directory
 :PROPERTIES:
 :ID:       498862a1-8491-4ec1-95ad-f0bafd818ddc
 :END:
