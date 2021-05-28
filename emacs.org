@@ -1880,7 +1880,14 @@ for working with [[helpfn:display-buffer-alist][display-buffer-alist]]. In a nut
 a Emacs's built in way of allowing the user to customize how windows are opened.
 
 #+begin_src emacs-lisp
-(use-package dbc :demand t)
+(use-package dbc
+  :demand t
+  :config
+  (--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
+	    (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
+	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
+	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
+    (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
 #+end_src
 
 **** idle-require :defer:
@@ -6701,13 +6708,7 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(defhook! bootstrap-base-popup-rulesets (emacs-startup-hook)
-  "Initialize the basic popup rulesets."
-  (--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
-	    (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
-	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
-	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
-    (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
+
 #+end_src
 
 ** maybe run server at startup :startup:
