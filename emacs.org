@@ -5487,14 +5487,19 @@ another.
 :ID:       bf5a38d5-3ccf-42f0-90f6-910312994163
 :END:
 
+This is a macro for defining evil easymotions.
+
 #+begin_src emacs-lisp
 (defunmacro! evilem-defmotion! (name features &rest body)
   "Convenience macro for defining a motion."
   (declare (indent defun))
-  `(defafter! ,name (evil evil-easymotion ,@features)
-     ,@(when .bind `((bind! ,@.bind)))
+  `(defafter! define-,name (evil evil-easymotion ,@features)
+     ,@(when .bind `((bind! ,.bind)))
      (evilem-make-motion ,name (lambda () (interactive) ,@body)
       :scope ,.scope
+      :pre-hook ,.pre-hook
+      :all-windows ,.all-windows
+      :push-jump ,.push-jump
       :initial-point ,.initial-point)))
 #+end_src
 
