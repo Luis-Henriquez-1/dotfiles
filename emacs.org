@@ -311,6 +311,10 @@ The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 :ID:       ea592f75-e8dd-4ee7-a44e-c2da9d76191b
 :END:
 
+Most other Emacs configurations install their packages in their configuration.
+Instead of doing this, I assume the packages are already present in the build
+directory.
+
 #+begin_src emacs-lisp
 (require 'cl-lib)
 (cl-callf2 append (cddr (directory-files (concat XL-PACKAGES-DIR "straight/build") t)) load-path)
