@@ -2223,7 +2223,7 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
     `(progn ,@body)))
 #+end_src
 
-**** defgadvice!
+*** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
