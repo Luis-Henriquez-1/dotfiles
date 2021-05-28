@@ -475,10 +475,8 @@ Return a list of load-paths for the install packages."
       (xl-install-straight recipe commit target-dir))
     (setq straight-base-dir target-dir)
     (xl-load-straight-bootstrap-file target-dir)
-    (dolist (recipe recipes)
-      (straight-register-package recipe))
-    (dolist (recipe recipes)
-      (straight-use-package recipe))))
+    (mapc #'straight-register-package recipes)
+    (mapc #'straight-use-package recipes)))
 #+end_src
 
 ** set the load-path
