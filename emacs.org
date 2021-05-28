@@ -1182,29 +1182,6 @@ FNS is a list of function symbols."
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
-***** DOC gc-pause :performance:
-:PROPERTIES:
-:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
-:END:
-
-The keyword pauses emacs gargbage collection (e.g increases the
-[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
-it's passed in. It should be used on particularly computationally expensive
-functions that a package provides.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :gc-pause)
-
-(defalias 'use-package-normalize/:gc-pause 'use-package-normalize/:silence)
-
-(defun use-package-handler/:gc-pause (name _ fns rest state)
-  "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
-  `(,@(iter (for fn fns)
-	    (collect (use-package%autoload name fn))
-	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
 ***** DOC ignore
 :PROPERTIES:
 :ID:       eeeaf89c-78e6-453d-bf3b-27091cc11bca
@@ -1861,6 +1838,29 @@ packages which can contain several thousand items.
   "An around advice that pauses `gc-cons-threshold'."
   (let ((gc-cons-threshold most-positive-fixnum))
     (apply orig-fn args)))
+#+end_src
+
+**** DOC gc-pause :performance:
+:PROPERTIES:
+:ID:       70dba953-1a83-4de8-9a63-43e20c50fe5a
+:END:
+
+The keyword pauses emacs gargbage collection (e.g increases the
+[[helpvar:gc-cons-threshold][gc-cons-threshold]] to [[helpvar:most-positive-fixnum][most-positive-fixnum]]) for the duration of functions that
+it's passed in. It should be used on particularly computationally expensive
+functions that a package provides.
+
+#+begin_src emacs-lisp
+(use-package%dwim-insert :gc-pause)
+
+(defalias 'use-package-normalize/:gc-pause 'use-package-normalize/:silence)
+
+(defun use-package-handler/:gc-pause (name _ fns rest state)
+  "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
+  `(,@(iter (for fn fns)
+	    (collect (use-package%autoload name fn))
+	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
+    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 **** catch errors
