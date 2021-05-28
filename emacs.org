@@ -1724,7 +1724,7 @@ clause because it would get confused with it and the built-in Emacs function
 #+begin_src emacs-lisp
 (use-package loopy-dash
   :init
-  (add-to-list loopy-default-flags '+dash))
+  (add-to-list 'loopy-default-flags '+dash))
 #+end_src
 
 **** dbc
