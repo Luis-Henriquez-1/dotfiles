@@ -1737,14 +1737,15 @@ for working with [[helpfn:display-buffer-alist][display-buffer-alist]]. In a nut
 a Emacs's built in way of allowing the user to customize how windows are opened.
 
 #+begin_src emacs-lisp
-(use-package dbc
-  :demand t
-  :config
+(use-package dbc :demand t)
+
+(defhook! set-up-basic-popup-rulesets (emacs-startup-hook)
   (--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
 	    (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
 	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
 	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
     (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
+
 #+end_src
 
 **** rule :usepackage:library:core:popup:
