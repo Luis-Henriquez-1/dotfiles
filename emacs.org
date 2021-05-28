@@ -1577,7 +1577,7 @@ emacs packages spew messages. While I can see how in certain circumstances there
 messages can be useful, most of the time they are superfluous.
 
 #+begin_src emacs-lisp
-(eval-when-compile (require 'shut-up))
+(require 'shut-up))
 #+end_src
 
 **** mmt 
@@ -1616,7 +1616,7 @@ so I'll likely end up loading it anyway.
 :END:
 
 #+begin_src emacs-lisp
-(use-package subr-x :demand t)
+(require 'subr-x)
 #+end_src
 
 **** ht 
