@@ -2546,8 +2546,9 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 :END:
 
 #+begin_src emacs-lisp
-(defconst XL-HOOK-REGEXP "\\`\\(.+\\)&\\(.+\\)\\'"
-  "Regular expression used to match `xl-' defined hooks.")
+(defun xl-hook-regexp ()
+  "Return regular expression used to match XL hooks."
+  "\\`\\(.+\\)&\\(.+\\)\\'")
 #+end_src
 
 **** add hook
