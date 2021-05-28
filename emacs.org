@@ -6882,7 +6882,7 @@ Why not just go to the end of the ="= like any other around operator?
 :ID:       5e3d46da-33c5-4388-8111-85436d2a46d1
 :END:
 
-** set up base popup rules
+** set up base popup rules :popup:
 :PROPERTIES:
 :ID:       76d91f6d-3bdf-440c-a26e-e176557b984c
 :END:
