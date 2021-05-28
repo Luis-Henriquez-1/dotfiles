@@ -2360,8 +2360,8 @@ Sometimes I want to use =xl-log= instead of =message=.
 
 #+begin_src emacs-lisp
 (defgadvice! use-xl-log (orig-fn &rest args)
-  (noflet ((message (&rest message-args) (apply #'xl-log message-args)))
-    (apply orig-fn args)))
+  (with-temp-advice! ((message :override xl-log))
+    (apply orig-fn args))
 #+end_src
 
 **** log advices and hooks
