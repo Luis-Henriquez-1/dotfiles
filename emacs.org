@@ -5476,10 +5476,9 @@ another.
 :END:
 
 #+begin_src emacs-lisp
-(use-package evil-easymotion
-  :set
-  (evilem-keys . (number-sequence ?a ?z))
-  (evilem-style . 'at))
+(defbefore! enable-evil-easymotion-settings (evil-easymotion)
+  (setq evilem-keys (number-sequence ?a ?z))
+  (setq evilem-style 'at))
 #+end_src
 
 *** convenience macro
