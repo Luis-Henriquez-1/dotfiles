@@ -2366,6 +2366,8 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
 
+A generic advice should have a function.
+
 #+begin_src emacs-lisp
 (defunmacro! defgadvice! (name args &rest body)
   "Define a generic advice function."
