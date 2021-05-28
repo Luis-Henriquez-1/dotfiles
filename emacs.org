@@ -2192,7 +2192,16 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
     `(progn ,@body)))
 #+end_src
 
-*** defgadvice!
+*** generic advices
+:PROPERTIES:
+:ID:       ba195f61-9b1c-4b51-835c-d1351f4d6301
+:END:
+
+Most times when I advise a function, the advice is unique and catered
+specifically for a single use case. However, sometimes there are common advices
+that I need to add to many functions. I refer to these as "generic advices".
+
+**** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
@@ -2210,15 +2219,6 @@ A generic advice should have a function.
 	      (advice-add fn :around #',xl-gadvice--<name>-advice))
 	    (defun ,xl-gadvice--<name>-advice ,args ,@body))))
 #+end_src
-
-*** generic advices
-:PROPERTIES:
-:ID:       ba195f61-9b1c-4b51-835c-d1351f4d6301
-:END:
-
-Most times when I advise a function, the advice is unique and catered
-specifically for a single use case. However, sometimes there are common advices
-that I need to add to many functions. I refer to these as "generic advices".
 
 **** pause garbarge collection :advice:performance:
 :PROPERTIES:
