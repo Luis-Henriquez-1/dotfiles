@@ -2234,8 +2234,7 @@ A generic advice should have a function.
 (defunmacro! defgadvice! (name args &rest body)
   "Define a generic advice function."
   (declare (indent defun) (doc-string 3))
-  (let (()
-	())
+  (let (() ())
     `(progn (defun ,xl-gadvice-<name> (fn)
 	      (defalias (xl-symbol-intern fn '@ ',name) #',xl-gadvice--<name>-advice)
 	      (advice-add fn :around #',xl-gadvice--<name>-advice))
