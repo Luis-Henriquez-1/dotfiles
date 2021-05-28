@@ -5044,7 +5044,6 @@ order which filtered candidates are displayed. In my current setup I use
   (setq selectrum-refine-candidates-function #'orderless-filter))
 #+end_src
 
-<<<<<<< HEAD
 *** highlight only visible characters
 :PROPERTIES:
 :ID:       09c4bacb-00e1-40e0-bf99-fd29ddd87f6e
@@ -5070,9 +5069,6 @@ matches are only highlighted when they need to be.
 #+end_src
 
 *** prescient :cache:
-=======
-** prescient :cache:
->>>>>>> decoupling-macros
 :PROPERTIES:
 :ID:       4445c814-9899-4d54-affe-0cee38642690
 :END:
