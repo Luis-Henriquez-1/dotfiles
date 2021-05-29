@@ -101,12 +101,13 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 [[https://github.com/raxod502/straight.el#bootstrapping-straightel][bootstrap code]]) from [[https://github.com/kinnala/diy-emacs][diy-emacs]].
 
 #+begin_src emacs-lisp
-(defun xl-install-straight (recipe commit target-dir)
+(defun xl-install-straight (recipe target-dir)
   "Install straight to TARGET-DIR."
   (let* ((repo (plist-get (cdr recipe) :repo))
 	 (repo-dir (expand-file-name "straight/repos/" target-dir))
-	 (github-link (format "https://github.com/%s.git" repo)))
-    (unless (directory-name-p repo-dir)
+	 (github-link (format "https://github.com/%s.git" repo))
+	 (commit (plist-get recipe :commit)))
+    (unless (xl-straight-installed-p)
       (make-directory repo-dir t)
       (shell-command (format "git -C %s clone %s" repo-dir github-link)))
     (shell-command (format "git -C %s checkout %s" repo-dir commit))))
@@ -206,13 +207,14 @@ Note that the packages need to all be "registered" before actually.
 (defun xl-install-packages (recipe-file target-dir)
   "Install packages as specified by RECIPE-FILE to TARGET-DIR."
   (let* ((recipes (xl-read-recipes recipe-file)))
-    ;; (xl-install-straight recipe commit target-dir)
-    ;; (setq straight-base-dir target-dir)
-    ;; (xl-load-straight-bootstrap-file target-dir)
-    ;; (mapc #'straight-register-package recipes)
+    (xl-install-straight (assoc 'straight recipes) target-dir)
+    (setq straight-base-dir target-dir)
+    (xl-load-straight-bootstrap-file target-dir)
+    (mapc #'straight-register-package recipes)
     (dolist (recipe recipes)
       (straight-use-package recipe)
-      (xl-straight-ensure-target-commit recipe))))
+      ;; (xl-straight-ensure-target-commit recipe)
+      )))
 #+end_src
 
 * noweb references
