@@ -333,7 +333,7 @@ conserves some disk space.
 (setq straight-use-package-by-default nil)
 (setq straight-check-for-modifications nil)
 (setq straight-recipes-emacsmirror-use-mirror t)
-(setq straight-vc-git-default-clone-depth 1)
+(setq straight-vc-git-default-clone-depth 'full)
 #+end_src
 
 *** handle autoloads for me
