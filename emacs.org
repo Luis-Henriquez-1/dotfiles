@@ -480,12 +480,12 @@ versions specified in the recipe file.
 	    (current-commit (straight-vc-get-commit type local-repo))
 	    (package (car recipe)))
       (if (string= current-commit recipe-commit)
-	  (message "%s is at correct commit: %s" package recipe-commit)
+	  (message "%s is at correct commit: %s\n" package recipe-commit)
 	(message "%s \\= %s" current-commit recipe-commit)
 	(message "checking out %s..." recipe-commit)
 	(straight-vc-check-out-commit recipe recipe-commit)
-	(message "%s is now at commit: %s" (straight-vc-get-commit type local-repo)))
-    (message "%s is not applicable..." package)))
+	(message "%s is now at commit: %s\n" (straight-vc-get-commit type local-repo)))
+    (message "%s is not applicable...\n" package)))
 #+end_src
 
 *** install packages to directory
