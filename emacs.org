@@ -473,14 +473,13 @@ versions specified in the recipe file.
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-commit (recipe)
   "Make sure the recipe is at the TARGET-COMMIT"
-  (if-let* ((type (plist-get (cdr recipe) :type))
-	    (local-repo (plist-get (cdr recipe) :local-repo))
-	    (current-commit (straight-vc-get-commit type local-repo))
-	    (target-commit (plist-get (cdr recipe) :commit)))
-      (progn
-	(message "%s %s %s" current-commit (if (string= current-commit target-commit) "=" "/=") target-commit)
-	(string= current-commit target-commit)
-	(message "new commit: %s" (straight-vc-get-commit type local-repo)))))
+  (let* ((type (plist-get (cdr recipe) :type))
+	 (local-repo (plist-get (cdr recipe) :local-repo))
+	 (recipe-commit (plist-get recipe :commit))
+	 (current-commit (straight-vc-get-commit type local-repo)))
+    (unless (string= current-commit recipe-commit)
+      (straight-vc-check-out-commit recipe recipe-commit)
+      (straight-rebuild-package recipe))))
 #+end_src
 
 *** install packages to directory
@@ -509,11 +508,8 @@ One issue to keep in mind is that building dependencies.
     (mapc #'straight-register-package recipes)
     (dolist (recipe recipes)
       (straight-use-package recipe nil :no-build nil nil)
-      (let ((recipe-commit (straight-vc-get-commit))
-	    (current-commit ()))
-	(unless (string= current-commit recipe-commit)
-	  (straight-vc-check-out-commit recipe recipe-commit)
-	  (straight-rebuild-package recipe)))
+      (xl-straight-ensure-recipe-commit recipe)
+      
       (straight-use-package recipe nil nil nil nil))))
 #+end_src
 
