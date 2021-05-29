@@ -497,6 +497,8 @@ my custom =org= recipe, it will complain saying that there are two recipes for
 the same package. Registering the package ensures things straight pulls org with
 the recipe I specified.
 
+One issue to keep in mind is that building dependencies.
+
 #+begin_src emacs-lisp
 (defun xl-install-packages (recipe-file target-dir)
   "Install packages as specified by RECIPE-FILE to TARGET-DIR."
