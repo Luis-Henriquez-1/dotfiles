@@ -49,7 +49,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-(all-the-icons :type git :flavor melpa :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el" :package "all-the-icons" :local-repo "all-the-icons.el" :commit "9aa16ae198073fe839a0abfa9a7d3a9dc85ef5f9")
+(all-the-icons :type git :flavor melpa :files (:defaults "data" "all-the-icons-pkg.el") :host github :repo "domtronn/all-the-icons.el" :package "all-the-icons" :local-repo "all-the-icons.el" :commit "be99987eda1ba3fdc490984b207849689599b858")
 #+end_src
 
 * all-the-icons-dired
@@ -85,7 +85,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-(async :type git :flavor melpa :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async" :commit "14f48de586b0977e3470f053b810d77b07ea427a")
+(async :type git :flavor melpa :host github :repo "jwiegley/emacs-async" :package "async" :local-repo "emacs-async" :commit "9a8cd0c3d5c120bfa03187c54dba6e33f6e3ca19")
 #+end_src
 
 * auth-source-pass
