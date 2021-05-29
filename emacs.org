@@ -509,7 +509,7 @@ the recipe I specified.
       (straight-use-package recipe nil :no-build nil nil)
       (unless (xl-straight-ensure-target-commit recipe)
 	(straight-vc-check-out-commit recipe (plist-get recipe :commit))
-	(straight--build-package recipe))
+	(straight-rebuild-package recipe))
       (straight-use-package recipe nil nil nil nil))))
 #+end_src
 
