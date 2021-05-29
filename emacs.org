@@ -472,6 +472,8 @@ versions specified in the recipe file. To do this we compare the commit of the
 package with the commit specified in the recipe file. If it isn't the same, we
 set it to the commit specified in the recipe file and rebuild the package.
 
+One thing to note is that if you changed the.
+
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-commit (recipe)
   "Ensure local-repo specified by RECIPE is at correct commit."
