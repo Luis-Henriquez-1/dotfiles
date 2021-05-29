@@ -417,14 +417,15 @@ The Emacs setup prescriped by =straight.el= is one where you can reproduce your
 config by using a combination of your init file and a lockfile. My complaint
 about this setup is that what's needed to reproduce a configuration is too
 scattered. Some of the recipes will be in your config, most will probably be
-stored with =straight= and the versions for all of these are in the lockfile.
+stored with =straight=, and the versions for all of these are in the lockfile.
 I'd rather have one file that has everything concerning the packages--all the
-recipes and all the commits. In fact, I think the recipes should be.
+recipes and all the commits. In fact, I think commits should be a part of the
+recipes.
 
-One of the goals is to be able to
-completely reproduce my Emacs configuration. To do this I store the recipes of
-all the package I install in [[helpvar:XL-RECIPE-FILE][XL-RECIPES-FILE]]. Upon startup I read this file and
-register all the recipes in it with =straight=.
+One of the goals is to be able to completely reproduce my Emacs configuration.
+To do this I store the recipes of all the package I install in [[helpvar:XL-RECIPE-FILE][XL-RECIPES-FILE]].
+Upon startup I read this file and register all the recipes in it with
+=straight=.
 
 #+begin_src emacs-lisp
 (defun xl-read-recipes (recipe-file)
