@@ -517,6 +517,17 @@ the recipe I specified.
       (straight-use-package recipe nil nil nil nil))))
 #+end_src
 
+*** autoloads file
+:PROPERTIES:
+:ID:       252538fa-635e-47e9-ba4b-785bd68086c4
+:END:
+
+The final step is to make sure that the autoloads are created.
+
+#+begin_src emacs-lisp
+#+end_src
+
+
 ** set the load-path
 :PROPERTIES:
 :ID:       ea592f75-e8dd-4ee7-a44e-c2da9d76191b
