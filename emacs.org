@@ -514,7 +514,7 @@ the recipe I specified.
       ;; Set the package to the correct commit.
       ;; (xl-straight-ensure-commit recipe)
       ;; Build it only after it's at the correct commit.
-      ;; (straight-use-package recipe nil nil nil nil)
+      (straight-use-package recipe nil nil nil nil)
       )))
 #+end_src
 
