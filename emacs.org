@@ -509,7 +509,7 @@ the recipe I specified.
       (straight-use-package recipe nil :no-build nil nil)
       ;; Set the package to the correct commit.
       (xl-straight-ensure-commit recipe)
-      ;; Build it only after it's at the correct version.
+      ;; Build it only after it's at the correct commit.
       (straight-use-package recipe nil nil nil nil))))
 #+end_src
 
