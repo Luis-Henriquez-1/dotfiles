@@ -468,12 +468,10 @@ An essential part of this process.
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-target-commit (recipe)
   "Make sure the recipe is at the TARGET-COMMIT"
-  (if-let* ((package (car recipe))
-	    (recipe (cdr recipe))
-	    (type (plist-get recipe :type))
-	    (local-repo (plist-get recipe :local-repo))
+  (if-let* ((type (plist-get (cdr recipe) :type))
+	    (local-repo (plist-get (cdr recipe) :local-repo))
 	    (current-commit (straight-vc-get-commit type local-repo))
-	    (target-commit (plist-get recipe :commit)))
+	    (target-commit (plist-get (cdr recipe) :commit)))
       (progn
 	(message "%s %s %s" current-commit (if (string= current-commit target-commit) "=" "/=") target-commit)
 	(unless (string= current-commit target-commit)
