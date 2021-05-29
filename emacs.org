@@ -463,7 +463,8 @@ register all the recipes in it with =straight=.
 :ID:       2b6d7825-24b7-429d-b5ad-7df9603dfd93
 :END:
 
-An essential part of this process.
+An essential part of this process is to ensure each package is built with the
+versions specified in the recipe file.
 
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-target-commit (recipe)
