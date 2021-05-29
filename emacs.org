@@ -478,8 +478,12 @@ versions specified in the recipe file.
 	      (recipe-commit (plist-get recipe :commit))
 	      (current-commit (straight-vc-get-commit type local-repo)))
     (unless (string= current-commit recipe-commit)
+      (message "%s \\= %s" current-commit recipe-commit)
+      (message "checking out %s..." recipe-commit)
       (straight-vc-check-out-commit recipe recipe-commit)
-      (straight-rebuild-package recipe))))
+      (message "current commit: %s" current-commit)
+      ;; (straight-rebuild-package recipe)
+      )))
 #+end_src
 
 *** install packages to directory
