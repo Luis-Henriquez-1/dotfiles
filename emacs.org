@@ -484,7 +484,7 @@ versions specified in the recipe file.
 	(message "%s is NOT at right commit %s \\= %s" package current-commit recipe-commit)
 	(message "checking out %s..." recipe-commit)
 	(straight-vc-check-out-commit recipe recipe-commit)
-	(message "%s is now at commit: %s\n" (straight-vc-get-commit type local-repo)))
+	(message "%s is now at commit: %s\n" package (straight-vc-get-commit type local-repo)))
     (message "%s is not applicable...\n" package)))
 #+end_src
 
