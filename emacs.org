@@ -510,7 +510,9 @@ the recipe I specified.
     (mapc #'straight-register-package recipes)
     (dolist (recipe recipes)
       (straight-use-package recipe nil :no-build nil nil)
-      (xl-straight-ensure-commit recipe)
+      (unless (xl-straight-ensure-commit recipe)
+	(straight-vc-check-out-commit recipe ())
+	(straight--build-package recipe))
       (straight-use-package recipe nil nil nil nil))))
 #+end_src
 
