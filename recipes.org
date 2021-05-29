@@ -1228,7 +1228,7 @@ great precision.
 :END:
 
 #+begin_src emacs-lisp
-("selectrum-prescient" nil (selectrum-prescient :type git :flavor melpa :files ("selectrum-prescient.el" "selectrum-prescient-pkg.el") :host github :repo "raxod502/prescient.el" :package "selectrum-prescient" :local-repo "prescient.el"))
+(selectrum-prescient :type git :flavor melpa :files ("selectrum-prescient.el" "selectrum-prescient-pkg.el") :host github :repo "raxod502/prescient.el" :package "selectrum-prescient" :local-repo "prescient.el")
 #+end_src
 
 * separedit
