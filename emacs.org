@@ -507,6 +507,7 @@ the recipe I specified.
     (dolist (recipe recipes)
       ;; Clone, but don't build the package.
       (straight-use-package recipe nil :no-build nil nil)
+      ;; Set the package to the correct commit.
       (xl-straight-ensure-commit recipe)
       ;; Build it only after it's at the correct version.
       (straight-use-package recipe nil nil nil nil))))
