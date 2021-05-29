@@ -454,8 +454,7 @@ Upon startup I read this file and register all the recipes in it with =straight=
 :ID:       2b6d7825-24b7-429d-b5ad-7df9603dfd93
 :END:
 
-We have to make sure that we're at the correct commit. Otherwise, we need to
-rebuild with the correct commit.
+An essential part of this process.
 
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-target-commit (recipe)
