@@ -317,6 +317,9 @@ that you have the history of every installed emacs package locally. Another
 consequence is that you can completely reproduce the state of your emacs on
 another machine by installing the same packages with the same versions.
 
+I use =straight= differently than others. I install the packages in bulk into a
+particular directory.
+
 *** variables :straight:pacman:core:
 :PROPERTIES:
 :ID:       9dff9894-667c-4e74-9624-8aee533f8f70
