@@ -509,7 +509,6 @@ One issue to keep in mind is that building dependencies.
     (dolist (recipe recipes)
       (straight-use-package recipe nil :no-build nil nil)
       (xl-straight-ensure-recipe-commit recipe)
-      
       (straight-use-package recipe nil nil nil nil))))
 #+end_src
 
