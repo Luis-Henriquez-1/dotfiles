@@ -472,11 +472,11 @@ versions specified in the recipe file.
 
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-commit (recipe)
-  "Make sure the recipe is at the TARGET-COMMIT"
-  (let* ((type (plist-get (cdr recipe) :type))
-	 (local-repo (plist-get (cdr recipe) :local-repo))
-	 (recipe-commit (plist-get recipe :commit))
-	 (current-commit (straight-vc-get-commit type local-repo)))
+  "Ensure local-repo specified by RECIPE is at correct commit."
+  (when-let* ((type (plist-get (cdr recipe) :type))
+	      (local-repo (plist-get (cdr recipe) :local-repo))
+	      (recipe-commit (plist-get recipe :commit))
+	      (current-commit (straight-vc-get-commit type local-repo)))
     (unless (string= current-commit recipe-commit)
       (straight-vc-check-out-commit recipe recipe-commit)
       (straight-rebuild-package recipe))))
