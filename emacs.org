@@ -479,11 +479,8 @@ versions specified in the recipe file.
 	    (target-commit (plist-get (cdr recipe) :commit)))
       (progn
 	(message "%s %s %s" current-commit (if (string= current-commit target-commit) "=" "/=") target-commit)
-	(unless (string= current-commit target-commit)
-	  (straight-vc-check-out-commit recipe target-commit)
-	  (straight-rebuild-package package))
-	(message "new commit: %s" (straight-vc-get-commit type local-repo)))
-    (message "%s doesn't have required shit (%s %s %s %s)." package type local-repo current-commit target-commit)))
+	(string= current-commit target-commit)
+	(message "new commit: %s" (straight-vc-get-commit type local-repo)))))
 #+end_src
 
 *** install packages to directory
