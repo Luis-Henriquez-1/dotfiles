@@ -1981,7 +1981,6 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 This helper is used for the common task of destructuring the body of a
 "defun-like" macro. The vanilla defun's signature does not provide a way to
 specify the docstring from the body (because the docstring is optional).
-Honestly, I shouldn't have to use this function.
 
 #+begin_src emacs-lisp
 (defun xl-process-args (args body)
