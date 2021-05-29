@@ -468,7 +468,9 @@ Upon startup I read this file and register all the recipes in it with
 :END:
 
 An essential part of this process is to ensure each package is built with the
-versions specified in the recipe file.
+versions specified in the recipe file. To do this we compare the commit of the
+package with the commit specified in the recipe file. If it isn't the same, we
+set it to the commit specified in the recipe file and rebuild the package.
 
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-commit (recipe)
