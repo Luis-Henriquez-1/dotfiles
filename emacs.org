@@ -505,7 +505,7 @@ the recipe I specified.
     (xl-load-straight-bootstrap-file target-dir)
     (mapc #'straight-register-package recipes)
     (dolist (recipe recipes)
-      (straight-use-package recipe)
+      (straight-use-package recipe nil t nil nil)
       ;; (xl-straight-ensure-target-commit recipe)
       )))
 #+end_src
