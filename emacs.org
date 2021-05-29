@@ -473,9 +473,10 @@ versions specified in the recipe file.
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-commit (recipe)
   "Ensure local-repo specified by RECIPE is at correct commit."
-  (if-let* ((type (plist-get (cdr recipe) :type))
-	    (local-repo (plist-get (cdr recipe) :local-repo))
-	    (recipe-commit (plist-get recipe :commit))
+  (if-let* ((plist (cdr recipe))
+	    (type (plist-get plist :type))
+	    (local-repo (plist-get plist :local-repo))
+	    (recipe-commit (plist-get plist :commit))
 	    (current-commit (straight-vc-get-commit type local-repo))
 	    (package (car recipe)))
       (if (string= current-commit recipe-commit)
