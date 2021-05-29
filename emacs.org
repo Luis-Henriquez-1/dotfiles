@@ -347,8 +347,8 @@ commands that are used to trigger the loading of the package. =straight=
 optionally handles this for us.
 
 #+begin_src emacs-lisp
-(setq straight-disable-autoloads nil)
-(setq straight-cache-autoloads t)
+(setq straight-disable-autoloads t)
+(setq straight-cache-autoloads nil)
 #+end_src
 
 *** package integration
