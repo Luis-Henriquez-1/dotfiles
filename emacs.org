@@ -443,6 +443,20 @@ Upon startup I read this file and register all the recipes in it with
       (nreverse sexps))))
 #+end_src
 
+*** iteratively compute depth
+:PROPERTIES:
+:ID:       1a71f0e2-fa7d-4acc-bf4f-9340d4ee2f5e
+:END:
+
+#+begin_src emacs-lisp
+(defun iteratively-get-depth ()
+  (iter (expr depth 1)
+	(with (current-depth ()))
+	(expr)
+	(until )
+	(shell-command (format "git fetch --depth=$%s" i))))
+#+end_src
+
 *** ensure depth
 :PROPERTIES:
 :ID:       4e53b0cb-f730-4fad-a92a-4f7877bf12b4
@@ -476,10 +490,6 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 	 ;; (when (= depth 1)
 	 ;;   (do (shell-command (format "cd %s && git pull --depth 100" dir))))
 	 ))
-(iter (expr i 1)
-      (expr)
-      (until )
-      (shell-command (format "git fetch --depth=$%s" i)))
 #+end_src
 
 *** ensure commit
