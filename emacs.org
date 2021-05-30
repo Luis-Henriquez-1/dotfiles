@@ -586,14 +586,15 @@ One issue to keep in mind is that building dependencies.
 The final step is to make sure that the autoloads are created.
 
 #+begin_src emacs-lisp
-(with-temp-buffer
-  (iter (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
-	(initially-do (goto-char (point-min)))
-	(for (package . plist) recipes)
-	(expr local-repo (plist-get plist :local-repo))
-	(when local-repo
-	  (insert-file-contents (straight--autoloads-file package)))
-	(finally ())))
+(defun xl-straight-write-autoloads-file ()
+  (with-temp-buffer
+    (iter (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
+	  (initially-do (goto-char (point-min)))
+	  (for (package . plist) recipes)
+	  (expr local-repo (plist-get plist :local-repo))
+	  (when local-repo
+	    (insert-file-contents (straight--autoloads-file package)))
+	  (finally (write-region (point-min) (point-max) autoload-file)))))
 #+end_src
 
 
