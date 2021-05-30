@@ -443,13 +443,18 @@ Upon startup I read this file and register all the recipes in it with
       (nreverse sexps))))
 #+end_src
 
-*** iteratively compute depth
+*** depth
+:PROPERTIES:
+:ID:       3407c7fc-9866-4014-8b19-7cbd306201a0
+:END:
+
+**** iteratively compute depth
 :PROPERTIES:
 :ID:       1a71f0e2-fa7d-4acc-bf4f-9340d4ee2f5e
 :END:
 
 #+begin_src emacs-lisp
-(defun iteratively-get-depth ()
+(defun iteratively-get-depth (recipe)
   (iter (expr depth 1)
 	(with (current-depth ()))
 	(expr)
@@ -457,7 +462,7 @@ Upon startup I read this file and register all the recipes in it with
 	(shell-command (format "git fetch --depth=$%s" i))))
 #+end_src
 
-*** ensure depth
+**** ensure depth
 :PROPERTIES:
 :ID:       4e53b0cb-f730-4fad-a92a-4f7877bf12b4
 :END:
