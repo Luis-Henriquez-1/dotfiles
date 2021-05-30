@@ -498,16 +498,15 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 	 ))
 #+end_src
 
-*** repos whose depth is not large enough
+*** repos whose version conflicts with recipe
 :PROPERTIES:
 :ID:       dce02b0c-5d3d-4f2a-b530-8dfd1c45eadb
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-straight-repos-not-same-version (args)
+(defun xl-straight-recipes-whose-version-conflitcs (recipes)
   "Return a list of recipes for repos do not correspond with their version."
-  (loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
-	 (list recipe recipes)
+  (loopy (list recipe recipes)
 	 (expr package (car recipe))
 	 (expr (&plist :type :local-repo :commit) (cdr recipe))
 	 (unless (and type local-repo commit) (skip))
