@@ -453,12 +453,16 @@ repository is cloned. Particularly for packages that have been around a long
 time, this can consume a lot of memory.
 
 #+begin_src emacs-lisp
-(loopy (list recipe recipes)
-       (expr local-repo (plist-get recipe :local-repo))
+(loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
+       (list recipe recipes)
+       (expr package (car recipe))
+       (expr local-repo (plist-get (cdr recipe) :local-repo))
        (when local-repo
+	 (count number-of-local-repos local-repo)
 	 (expr dir (straight--repos-dir local-repo))
-	 (expr command (format "cd %s && git log --oneline | wk -l" dir))
-	 (collect (shell-command-to-string command))))
+	 (expr command (format "cd %s && git log --oneline | wc -l" dir))
+	 (expr depth (string-to-number (shell-command-to-string command)))
+	 (when (> depth 1) (collect depth-not-1 (cons package depth)))))
 #+end_src
 
 *** ensure commit
