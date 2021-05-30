@@ -529,7 +529,8 @@ One issue to keep in mind is that building dependencies.
       (straight-use-package recipe nil :no-build nil nil)
       (message "ensuring commit for %s" (car recipe))
       (xl-straight-ensure-commit recipe)
-      (straight-use-package recipe nil nil nil nil))))
+      ;; (straight-use-package recipe nil nil nil nil)
+      )))
 #+end_src
 
 *** autoloads file
