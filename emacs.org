@@ -349,7 +349,7 @@ directory.
 
 #+begin_src emacs-lisp
 (dolist (recipe (xl-read-recipes XL-RECIPE-FILE))
-  (when-let ((package (car recipes))
+  (when-let ((package (car recipe))
 	     (repo-dir (plist-get (cdr recipe) :repo-dir))
 	     (path (concat XL-PACKAGES-DIR "straight/build/" repo-dir)))
     (push path load-path)
