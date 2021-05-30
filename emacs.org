@@ -448,6 +448,10 @@ Upon startup I read this file and register all the recipes in it with
 :ID:       3407c7fc-9866-4014-8b19-7cbd306201a0
 :END:
 
+By default the clone depth [[][] is =full=, meaning that all of the history of a
+repository is cloned. Particularly for packages that have been around a long
+time, this can consume a lot of memory.
+
 **** iteratively compute depth
 :PROPERTIES:
 :ID:       1a71f0e2-fa7d-4acc-bf4f-9340d4ee2f5e
@@ -472,10 +476,6 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 :PROPERTIES:
 :ID:       4e53b0cb-f730-4fad-a92a-4f7877bf12b4
 :END:
-
-By default the clone depth [[][] is =full=, meaning that all of the history of a
-repository is cloned. Particularly for packages that have been around a long
-time, this can consume a lot of memory.
 
 #+begin_src emacs-lisp
 (loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE))
