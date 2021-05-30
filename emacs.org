@@ -317,12 +317,13 @@ directory.
 
 #+begin_src emacs-lisp
 (dolist (recipe recipes)
-  (when-let ((repo-dir (plist-get (cdr recipe) :repo-dir))
+  (when-let ((package (car recipes))
+	     (repo-dir (plist-get (cdr recipe) :repo-dir))
 	     (path (concat XL-PACKAGES-DIR "straight/build/" repo-dir)))
     (push path load-path)
-    (let ((autoload-file))
-      (file-exists-p autoload-file)
-      (load-file autoload-file))))
+    (let ((autoload-file (format "%s/%s-autoloads.el" path package)))
+      (when (file-exists-p autoload-file)
+	(load-file autoload-file)))))
 #+end_src
 
 ** load required packages
