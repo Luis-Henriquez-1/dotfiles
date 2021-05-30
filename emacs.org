@@ -321,9 +321,10 @@ directory.
 (dolist (recipe recipes)
   (when-let ((repo-dir (plist-get (cdr recipe) :repo-dir))
 	     (path (concat XL-PACKAGES-DIR "straight/build/" repo-dir)))
-    (add-to-list 'load-path path nil #'string=)))
-
-(mapc #'xl-load-straight-autoload-f)
+    (push path load-path)
+    (let ((autoload-file))
+      (file-exists-p autoload-file)
+      (load-file autoload-file))))
 #+end_src
 
 ** load required packages
