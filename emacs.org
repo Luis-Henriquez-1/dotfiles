@@ -453,6 +453,12 @@ Upon startup I read this file and register all the recipes in it with
 :ID:       1a71f0e2-fa7d-4acc-bf4f-9340d4ee2f5e
 :END:
 
+I want a way to only clone a repository as much as I need to to get to the
+commit I have in my recipe file. To do this I'd need to get the depth of a
+specific commit.
+
+https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branch
+
 #+begin_src emacs-lisp
 (defun iteratively-get-depth (recipe)
   (iter (expr depth 1)
@@ -470,12 +476,6 @@ Upon startup I read this file and register all the recipes in it with
 By default the clone depth [[][] is =full=, meaning that all of the history of a
 repository is cloned. Particularly for packages that have been around a long
 time, this can consume a lot of memory.
-
-I want a way to only clone a repository as much as I need to to get to the
-commit I have in my recipe file. To do this I'd need to get the depth of a
-specific commit.
-
-https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branch
 
 #+begin_src emacs-lisp
 (loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE))
