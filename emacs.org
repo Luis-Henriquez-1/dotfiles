@@ -349,8 +349,8 @@ directory.
 
 #+begin_src emacs-lisp
 (dolist (recipe (xl-read-recipes XL-RECIPE-FILE))
-  (when-let ((package (car recipe))
-	     (path (concat XL-PACKAGES-DIR "straight/build/")))
+  (when-let* ((package (car recipe))
+	      (path (concat XL-PACKAGES-DIR "straight/build/" (symbol-name package))))
     (push path load-path)
     (let ((autoload-file (format "%s/%s-autoloads.el" path package)))
       (when (file-exists-p autoload-file)
