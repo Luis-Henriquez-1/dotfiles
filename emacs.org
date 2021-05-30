@@ -453,7 +453,10 @@ repository is cloned. Particularly for packages that have been around a long
 time, this can consume a lot of memory.
 
 I want a way to only clone a repository as much as I need to to get to the
-commit I have in my recipe file.
+commit I have in my recipe file. To do this I'd need to get the depth of a
+specific commit.
+
+https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branch
 
 #+begin_src emacs-lisp
 (loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE))
