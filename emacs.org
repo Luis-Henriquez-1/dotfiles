@@ -476,6 +476,10 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 	 ;; (when (= depth 1)
 	 ;;   (do (shell-command (format "cd %s && git pull --depth 100" dir))))
 	 ))
+(iter (expr i 1)
+      (expr)
+      (until )
+      (shell-command (format "git fetch --depth=$%s" i)))
 #+end_src
 
 *** ensure commit
