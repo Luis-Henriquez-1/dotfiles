@@ -504,7 +504,7 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-straight-recipes-whose-version-conflitcs (recipes)
+(defun xl-straight-recipes-whose-version-conflicts (recipes)
   "Return a list of recipes for repos do not correspond with their version."
   (loopy (list recipe recipes)
 	 (expr package (car recipe))
