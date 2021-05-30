@@ -448,7 +448,9 @@ Upon startup I read this file and register all the recipes in it with
 :ID:       4e53b0cb-f730-4fad-a92a-4f7877bf12b4
 :END:
 
-By default.
+By default the clone depth [[][] is =full=, meaning that all of the history of a
+repository is cloned. Particularly for packages that have been around a long
+time, this can consume a lot of memory.
 
 #+begin_src emacs-lisp
 #+end_src
