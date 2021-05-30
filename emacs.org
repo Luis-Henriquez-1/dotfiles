@@ -452,6 +452,9 @@ By default the clone depth [[][] is =full=, meaning that all of the history of a
 repository is cloned. Particularly for packages that have been around a long
 time, this can consume a lot of memory.
 
+I want a way to only clone a repository as much as I need to to get to the
+commit I have in my recipe file.
+
 #+begin_src emacs-lisp
 (loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE))
 	     (depth straight-vc-git-default-clone-depth))
@@ -464,10 +467,11 @@ time, this can consume a lot of memory.
 	 (expr dir (straight--repos-dir local-repo))
 	 (expr command (format "cd %s && git log --oneline | wc -l" dir))
 	 (expr depth (string-to-number (shell-command-to-string command)))
+	 (when (= 1 depth) (collect package))
 	 ;; (when (= depth 1)
 	 ;;   )
-	 (when (= depth 1)
-	   (do (shell-command (format "cd %s && git pull --depth 100" dir))))
+	 ;; (when (= depth 1)
+	 ;;   (do (shell-command (format "cd %s && git pull --depth 100" dir))))
 	 ))
 #+end_src
 
