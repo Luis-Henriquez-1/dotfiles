@@ -354,7 +354,7 @@ directory.
     (push path load-path)
     (let ((autoload-file (format "%s/%s-autoloads.el" path package)))
       (when (file-exists-p autoload-file)
-	(load-file autoload-file)))))
+	(load autoload-file nil t)))))
 #+end_src
 
 ** load required packages
