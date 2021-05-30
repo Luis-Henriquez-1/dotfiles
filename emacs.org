@@ -504,6 +504,16 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 :END:
 
 #+begin_src emacs-lisp
+(defun xl-straight-repos-with-too-small-depth (args)
+  "Return a list of repos whose depth is too small."
+  (loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
+	 (list recipe recipes)
+	 (expr package (car recipe))
+	 (expr (&plist :type :local-repo :commit) (cdr recipe))
+	 (unless (and type local-repo commit) (skip))
+	 (expr current-commit (straight-vc-get-commit type local-repo))
+	 (unless (string= current-commit commit)
+	   (collect package))))
 #+end_src
 
 *** ensure commit
