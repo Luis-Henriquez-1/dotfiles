@@ -488,12 +488,7 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 	 (expr dir (straight--repos-dir local-repo))
 	 (expr command (format "cd %s && git log --oneline | wc -l" dir))
 	 (expr depth (string-to-number (shell-command-to-string command)))
-	 (when (= 1 depth) (collect package))
-	 ;; (when (= depth 1)
-	 ;;   )
-	 ;; (when (= depth 1)
-	 ;;   (do (shell-command (format "cd %s && git pull --depth 100" dir))))
-	 ))
+	 (when (= 1 depth) (collect package))))
 #+end_src
 
 *** repos whose version conflicts with recipe
@@ -591,6 +586,14 @@ One issue to keep in mind is that building dependencies.
 The final step is to make sure that the autoloads are created.
 
 #+begin_src emacs-lisp
+(with-temp-buffer
+  (iter (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
+	(initially-do (goto-char (point-min)))
+	(for (package . plist) recipes)
+	(expr local-repo (plist-get plist :local-repo))
+	(when local-repo
+	  (insert-file-contents (straight--autoloads-file package)))
+	(finally ())))
 #+end_src
 
 
@@ -606,6 +609,7 @@ directory.
 #+begin_src emacs-lisp
 (require 'cl-lib)
 (cl-callf2 append (cddr (directory-files (concat XL-PACKAGES-DIR "straight/build") t)) load-path)
+(load-file )
 #+end_src
 
 ** load required packages
