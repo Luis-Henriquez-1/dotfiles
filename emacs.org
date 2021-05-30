@@ -505,7 +505,7 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 
 #+begin_src emacs-lisp
 (defun xl-straight-repos-with-too-small-depth (args)
-  "Return a list of repos whose depth is too small."
+  "Return a list of repos"
   (loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
 	 (list recipe recipes)
 	 (expr package (car recipe))
@@ -513,7 +513,15 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 	 (unless (and type local-repo commit) (skip))
 	 (expr current-commit (straight-vc-get-commit type local-repo))
 	 (unless (string= current-commit commit)
-	   (collect package))))
+	   (collect recipe))))
+#+end_src
+
+*** repos with
+:PROPERTIES:
+:ID:       79e88d96-e2e0-4198-b74f-875947c29e7b
+:END:
+
+#+begin_src emacs-lisp
 #+end_src
 
 *** ensure commit
