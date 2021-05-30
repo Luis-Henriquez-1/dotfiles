@@ -456,7 +456,9 @@ time, this can consume a lot of memory.
 (loopy (list recipe recipes)
        (expr local-repo (plist-get recipe :local-repo))
        (when local-repo
-	 (count ())))
+	 (expr dir (straight--repos-dir local-repo))
+	 (expr command (format "cd %s && git log --oneline | wk -l" dir))
+	 (collect (shell-command-to-string command))))
 #+end_src
 
 *** ensure commit
