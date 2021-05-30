@@ -589,7 +589,7 @@ The final step is to make sure that the autoloads are created.
 (defun xl-straight-write-autoloads-file ()
   (with-temp-buffer
     (iter (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
-	  (initially-do (goto-char (point-min)))
+	  (initially (goto-char (point-min)))
 	  (for (package . plist) recipes)
 	  (expr local-repo (plist-get plist :local-repo))
 	  (when local-repo
