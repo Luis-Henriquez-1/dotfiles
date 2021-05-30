@@ -498,6 +498,14 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 	 ))
 #+end_src
 
+*** repos whose depth is not large enough
+:PROPERTIES:
+:ID:       dce02b0c-5d3d-4f2a-b530-8dfd1c45eadb
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 *** ensure commit
 :PROPERTIES:
 :ID:       2b6d7825-24b7-429d-b5ad-7df9603dfd93
