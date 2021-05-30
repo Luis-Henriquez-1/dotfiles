@@ -453,7 +453,8 @@ repository is cloned. Particularly for packages that have been around a long
 time, this can consume a lot of memory.
 
 #+begin_src emacs-lisp
-()
+(dolist (recipe recipes)
+  (shell-command "git"))
 #+end_src
 
 *** ensure commit
