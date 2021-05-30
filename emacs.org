@@ -609,7 +609,7 @@ directory.
 #+begin_src emacs-lisp
 (require 'cl-lib)
 (cl-callf2 append (cddr (directory-files (concat XL-PACKAGES-DIR "straight/build") t)) load-path)
-(load-file )
+(load-file autoload-file)
 #+end_src
 
 ** load required packages
