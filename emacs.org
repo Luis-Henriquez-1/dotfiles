@@ -443,23 +443,12 @@ Upon startup I read this file and register all the recipes in it with
       (nreverse sexps))))
 #+end_src
 
-*** versions alist
+*** ensure depth
 :PROPERTIES:
-:ID:       3db31fa0-86e3-49e3-a13c-c3966bd7d6f7
+:ID:       4e53b0cb-f730-4fad-a92a-4f7877bf12b4
 :END:
 
 #+begin_src emacs-lisp
-(defun straight%versions-alist ()
-  "Return an alist of (package . version)."
-  (let ((versions-alist nil))
-    (straight--map-repos
-     (lambda (recipe)
-       (straight--with-plist recipe
-	   (package local-repo type)
-	 (when (and local-repo (not (assoc local-repo versions-alist)))
-	   (when-let ((commit (straight-vc-get-commit type local-repo)))
-	     (push (cons local-repo commit) versions-alist))))))
-    versions-alist))
 #+end_src
 
 *** ensure commit
