@@ -504,8 +504,8 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-straight-repos-with-too-small-depth (args)
-  "Return a list of repos"
+(defun xl-straight-repos-not-same-version (args)
+  "Return a list of recipes for repos do not correspond with their version."
   (loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
 	 (list recipe recipes)
 	 (expr package (car recipe))
