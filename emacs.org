@@ -466,10 +466,8 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 #+begin_src emacs-lisp
 (defun iteratively-get-depth (recipe)
   "Set recipe's depth to minimum needed for its commit."
-  (iter (expr depth 1)
-	(with (current-depth ()))
-	(expr)
-	(until )
+  (iter (with (current-depth ()))
+	(until (shell-command ""))
 	(shell-command (format "git fetch --depth=$%s" i))))
 #+end_src
 
