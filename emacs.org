@@ -347,7 +347,8 @@ Most other Emacs configurations install their packages in their configuration.
 Instead of doing this, I assume the packages are already present in the build
 directory.
 
-I wrote this code base off of [[][straight--add-package-to-load-path].
+I wrote this code base off of [[][straight--add-package-to-load-path]. Though
+I'm not sure whether I should be using local-repo instead.
 
 #+begin_src emacs-lisp
 (dolist (recipe (xl-read-recipes XL-RECIPE-FILE))
