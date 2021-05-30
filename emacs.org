@@ -316,8 +316,6 @@ Instead of doing this, I assume the packages are already present in the build
 directory.
 
 #+begin_src emacs-lisp
-(require 'cl-lib)
-
 (dolist (recipe recipes)
   (when-let ((repo-dir (plist-get (cdr recipe) :repo-dir))
 	     (path (concat XL-PACKAGES-DIR "straight/build/" repo-dir)))
