@@ -295,7 +295,7 @@ One issue to keep in mind is that building dependencies.
 Ensure package repos are the correct version and that build files are up to date
 with their corresponding repos."
   (let* ((recipes (xl-read-recipes recipe-file)))
-    (xl-straight-bootstrap target-dir)
+    (xl-straight-bootstrap target-dir t)
     ;; (xl-install-straight (assoc 'straight recipes) target-dir)
     ;; (setq straight-base-dir target-dir)
     ;; (xl-load-straight-bootstrap-file target-dir)
