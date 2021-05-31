@@ -195,7 +195,15 @@ One thing to note is that if you changed the.
 	(straight-vc-check-out-commit plist recipe-commit)))
 #+end_src
 
-** install packages to directory
+** ensure core packages
+:PROPERTIES:
+:ID:       faf3fd0b-2233-48ad-ba8f-aa94ea2ba4b9
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
+** ensure packages
 :PROPERTIES:
 :ID:       498862a1-8491-4ec1-95ad-f0bafd818ddc
 :END:
