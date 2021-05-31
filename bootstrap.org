@@ -206,9 +206,11 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 :ID:       dce02b0c-5d3d-4f2a-b530-8dfd1c45eadb
 :END:
 
+The easiest scenario for getting repos back.
+
 #+begin_src emacs-lisp
 (defun xl-straight-recipes-whose-version-conflicts (recipes)
-  "Return a list of recipes for repos do not correspond with their version."
+  "Return a list of recipes for repos that aren't the correct commit."
   (loopy (list recipe recipes)
 	 (expr package (car recipe))
 	 (expr (&plist :type :local-repo :commit) (cdr recipe))
@@ -277,19 +279,25 @@ the recipe I specified.
 One issue to keep in mind is that building dependencies.
 
 #+begin_src emacs-lisp
-(defun xl-install-packages (recipe-file target-dir)
+(defun xl-ensure-packages (recipe-file target-dir)
   "Install packages as specified by RECIPE-FILE to TARGET-DIR."
-  (let* ((recipes (xl-read-recipes recipe-file)))
-    (xl-install-straight (assoc 'straight recipes) target-dir)
-    (setq straight-base-dir target-dir)
-    (xl-load-straight-bootstrap-file target-dir)
-    (mapc #'straight-register-package recipes)
-    (dolist (recipe recipes)
-      (straight-use-package recipe nil :no-build nil nil)
-      (message "ensuring commit for %s" (car recipe))
-      (xl-straight-ensure-commit recipe)
-      ;; (straight-use-package recipe nil nil nil nil)
-      )))
+  (iter (initially (xl-load-straight-bootstrap-file)
+		   (mapc #'straight-register-package recipes))
+	(each recipe recipes)
+	(straight-use-package recipe nil :no-build nil nil)
+	(xl-straight-ensure-commit recipe)
+	)
+  ;; (let* ((recipes (xl-read-recipes recipe-file)))
+  ;;   (xl-install-straight (assoc 'straight recipes) target-dir)
+  ;;   (setq straight-base-dir target-dir)
+  ;;   (xl-load-straight-bootstrap-file target-dir)
+  ;;   (mapc #'straight-register-package recipes)
+  ;;   (dolist (recipe recipes)
+  ;;     (straight-use-package recipe nil :no-build nil nil)
+  ;;     (xl-straight-ensure-commit recipe)
+  ;;     ;; (straight-use-package recipe nil nil nil nil)
+  ;;     ))
+  )
 #+end_src
 
 ** autoloads file
