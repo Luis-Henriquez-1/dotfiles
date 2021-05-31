@@ -176,13 +176,14 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 #+begin_src emacs-lisp
 (defun xl-straight-set-depth (recipe)
   "Set recipe's depth to minimum needed for its commit."
-  (iter (with (local-repo (plist-get (cdr recipe) :local-repo))
+  (iter (with ((&plist :type :local-repo) (cdr recipe))
 	      (recipe-commit (plist-get (cdr recipe) :commit))
 	      (repo-dir (straight--repos-dir local-repo))
-	      (depth (shell-command (format "cd %s && git log --oneline | wc -l" repos-dir))))
-	(expr current-commit (straight-vc-get-commit type local-repo))
-	(until (string= recipe-commit current-commit))
-	(shell-command (format "cd %s && git fetch --depth=$%s" repos (cl-incf depth)))))
+	      (depth (string-to-number (shell-command-to-string (format "cd %s && git log --oneline | wc -l" repo-dir)))))
+	(until (straight-vc-commit-present-p (cdr recipe) recipe-commit))
+	(expr depth (1+ depth))
+	(message "Increasing depth of %s from %s to %s..." (car recipe) (1- depth) depth)
+	(shell-command (format "cd %s && git pull --depth %d" repo-dir depth))))
 #+end_src
 
 *** repos that are not deep enough
@@ -193,17 +194,11 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 #+begin_src emacs-lisp
 (defun xl-straight-repos-lacking-depth (recipes)
   "Return the recipes for packages who need greater depth."
-  (iter (for (recipe &as package . plist) recipes)
-	(expr (&plist :type :local-repo) plist)
-	(expr initial-commit (straight-vc-get-commit type local-repo))
-	(expr recipe-commit (plist-get plist :commit))
-	;; Try to set the target commit.
-	(straight-vc-check-out-commit recipe recipe-commit)
-	;; And if we're unable, that means it's not there.
-	(when (string= initial-commit (straight-vc-get-commit type local-repo))
-	  (collect recipe))
-	;; Reset the commit to what it was before.
-	(straight-vc-check-out-commit recipe initial-commit)))
+  (loopy (list (recipe &as package . plist) recipes)
+	 (expr (&plist :type :local-repo) plist)
+	 (expr recipe-commit (plist-get plist :commit))
+	 (unless (straight-vc-commit-present-p plist recipe-commit)
+	   (collect recipe))))
 #+end_src
 
 *** repos whose version conflicts with recipe
@@ -236,21 +231,15 @@ set it to the commit specified in the recipe file and rebuild the package.
 One thing to note is that if you changed the.
 
 #+begin_src emacs-lisp
-(defun xl-straight-ensure-commit (recipe)
+(defun xl-straight-ensure-commit (recipes)
   "Ensure local-repo specified by RECIPE is at correct commit."
-  (if-let* ((plist (cdr recipe))
-	    (type (plist-get plist :type))
-	    (local-repo (plist-get plist :local-repo))
-	    (recipe-commit (plist-get plist :commit))
-	    (current-commit (straight-vc-get-commit type local-repo))
-	    (package (car recipe)))
-      (if (string= current-commit recipe-commit)
-	  (message "%s is at correct commit: %s\n" package recipe-commit)
-	(message "%s is NOT at right commit %s \\= %s" package current-commit recipe-commit)
-	(message "checking out %s..." recipe-commit)
-	(straight-vc-check-out-commit recipe recipe-commit)
-	(message "%s is now at commit: %s\n" package (straight-vc-get-commit type local-repo)))
-    (message "%s is not applicable...\n" package)))
+  ;; (iter (for (recipe &as package . plist) (xl-read-recipes XL-RECIPE-FILE))
+  ;; 	(expr (&plist :type :local-repo :commit) plist)
+  ;; 	(unless (and (-all-p (-not #'null) (list type local-repo commit))
+  ;; 		     (straight-vc-commit-present-p plist recipe-commit))
+  ;; 	  (skip))
+  ;; 	(straight-vc-check-out-commit plist recipe-commit))
+  )
 #+end_src
 
 ** install packages to directory
