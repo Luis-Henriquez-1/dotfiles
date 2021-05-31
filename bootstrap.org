@@ -233,13 +233,12 @@ One thing to note is that if you changed the.
 #+begin_src emacs-lisp
 (defun xl-straight-ensure-commit (recipes)
   "Ensure local-repo specified by RECIPE is at correct commit."
-  ;; (iter (for (recipe &as package . plist) (xl-read-recipes XL-RECIPE-FILE))
-  ;; 	(expr (&plist :type :local-repo :commit) plist)
-  ;; 	(unless (and (-all-p (-not #'null) (list type local-repo commit))
-  ;; 		     (straight-vc-commit-present-p plist recipe-commit))
-  ;; 	  (skip))
-  ;; 	(straight-vc-check-out-commit plist recipe-commit))
-  )
+  (iter (for (recipe &as package . plist) recipes)
+	(expr (&plist :type :local-repo :commit) plist)
+	(unless (and (-all-p (-not #'null) (list type local-repo commit))
+		     (straight-vc-commit-present-p plist recipe-commit))
+	  (skip))
+	(straight-vc-check-out-commit plist recipe-commit)))
 #+end_src
 
 ** install packages to directory
