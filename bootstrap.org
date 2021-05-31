@@ -88,7 +88,7 @@ initialization. We don't need =straight= to do this for us because it is handled
     (load bootstrap-file nil 'nomessage)))
 #+end_src
 
-** install straight.el
+** ensure straight.el
 :PROPERTIES:
 :ID:       ab38beca-2f26-4718-ab73-e4e4409f1563
 :END:
@@ -109,13 +109,18 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
     (shell-command (format "git -C %s checkout %s" repo-dir commit))))
 #+end_src
 
+** ensure core packages
+:PROPERTIES:
+:ID:       8ffa747c-5c61-4500-864d-4bd7b067f8b0
+:END:
+
 ** bootstrap straight
 :PROPERTIES:
 :ID:       1c10e923-916c-41e1-9217-874eec28f3e3
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-straight-bootstrap (target-dir)
+(defun xl-ensure-straight (target-dir)
   "Install straight.el to TARGET-DIR and load bootstrap file."
   (setq straight-base-dir)
   )
