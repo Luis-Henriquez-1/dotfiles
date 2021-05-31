@@ -109,6 +109,17 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
     (shell-command (format "git -C %s checkout %s" repo-dir commit))))
 #+end_src
 
+** bootstrap straight
+:PROPERTIES:
+:ID:       1c10e923-916c-41e1-9217-874eec28f3e3
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-straight-bootstrap ()
+  "Bootstrap straight.el.
+Install straight.el to directory and load boostrap file.")
+#+end_src
+
 ** whether installed
 :PROPERTIES:
 :ID:       9216f0b9-93d5-43fe-aa96-3796674ab520
