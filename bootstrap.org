@@ -218,6 +218,22 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 	   (collect recipe))))
 #+end_src
 
+** repos that need rebuilding
+:PROPERTIES:
+:ID:       d55bd5b6-bfcb-4afe-a4e9-f2fe00fa1434
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-straight-repos-that-need-rebuilding ()
+  "Return a list of repos that need to be rebuilt."
+  (iter (for (recipe &as package . plist) recipes)
+	(expr (&plist :local-repo))
+	(expr source-file)
+	(expr byte-compiled-file)
+	(when (file-newer-than-file-p source-file byte-compiled-file)
+	  (collect package))))
+#+end_src
+
 ** ensure commit
 :PROPERTIES:
 :ID:       2b6d7825-24b7-429d-b5ad-7df9603dfd93
