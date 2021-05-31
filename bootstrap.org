@@ -223,6 +223,9 @@ https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branc
 :ID:       d55bd5b6-bfcb-4afe-a4e9-f2fe00fa1434
 :END:
 
+The repos that need rebuilding are the ones whose source files are newer than
+the byte-compiled files.
+
 #+begin_src emacs-lisp
 (defun xl-straight-repos-that-need-rebuilding ()
   "Return a list of repos that need to be rebuilt."
