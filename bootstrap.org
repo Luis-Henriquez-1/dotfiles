@@ -117,6 +117,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 #+begin_src emacs-lisp
 (defun xl-straight-bootstrap (target-dir)
   "Install straight.el to TARGET-DIR and load bootstrap file."
+  (setq straight-base-dir)
   )
 #+end_src
 
