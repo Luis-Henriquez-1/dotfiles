@@ -279,8 +279,10 @@ the recipe I specified.
 One issue to keep in mind is that building dependencies.
 
 #+begin_src emacs-lisp
-(defun xl-ensure-packages (recipe-file target-dir)
-  "Install packages to TARGET-DIR as specified by RECIPE-FILE."
+(defun xl-straight-install-packages (recipe-file target-dir)
+  "Install packages to TARGET-DIR as specified by RECIPE-FILE.
+Package repos should be the correct version. Built files should be up to date
+with their corresponding repos."
   (iter (initially (xl-load-straight-bootstrap-file)
 		   (mapc #'straight-register-package recipes))
 	(each recipe recipes)
