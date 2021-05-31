@@ -97,7 +97,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 [[https://github.com/raxod502/straight.el#bootstrapping-straightel][bootstrap code]]) from [[https://github.com/kinnala/diy-emacs][diy-emacs]]. What this function does is.
 
 #+begin_src emacs-lisp
-(defun xl-install-straight (recipe target-dir)
+(defun xl-ensure-straight (recipe target-dir)
   "Install straight to TARGET-DIR."
   (let* ((repo (plist-get (cdr recipe) :repo))
 	 (repo-dir (expand-file-name "straight/repos/" target-dir))
@@ -107,23 +107,6 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
       (make-directory repo-dir t)
       (shell-command (format "git -C %s clone %s" repo-dir github-link)))
     (shell-command (format "git -C %s checkout %s" repo-dir commit))))
-#+end_src
-
-** ensure core packages
-:PROPERTIES:
-:ID:       8ffa747c-5c61-4500-864d-4bd7b067f8b0
-:END:
-
-** bootstrap straight
-:PROPERTIES:
-:ID:       1c10e923-916c-41e1-9217-874eec28f3e3
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-ensure-straight (target-dir)
-  "Install straight.el to TARGET-DIR and load bootstrap file."
-  (setq straight-base-dir)
-  )
 #+end_src
 
 ** whether installed
@@ -168,73 +151,6 @@ Upon startup I read this file and register all the recipes in it with
 	(while (setq sexp (read (current-buffer)))
 	  (push sexp sexps)))
       (nreverse sexps))))
-#+end_src
-
-** depth
-:PROPERTIES:
-:ID:       3407c7fc-9866-4014-8b19-7cbd306201a0
-:END:
-
-By default the clone depth [[][] is =full=, meaning that all of the history of a
-repository is cloned. Particularly for packages that have been around a long
-time, this can consume a lot of memory.
-
-*** iteratively compute depth
-:PROPERTIES:
-:ID:       1a71f0e2-fa7d-4acc-bf4f-9340d4ee2f5e
-:END:
-
-I want a way to only clone a repository as much as I need to to get to the
-commit I have in my recipe file. To do this I'd need to get the depth of a
-specific commit.
-
-https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branch
-
-#+begin_src emacs-lisp
-(defun xl-straight-set-depth (recipe)
-  "Set recipe's depth to minimum needed for its commit."
-  (iter (with ((&plist :type :local-repo) (cdr recipe))
-	      (recipe-commit (plist-get (cdr recipe) :commit))
-	      (repo-dir (straight--repos-dir local-repo))
-	      (depth (string-to-number (shell-command-to-string (format "cd %s && git log --oneline | wc -l" repo-dir)))))
-	(until (straight-vc-commit-present-p (cdr recipe) recipe-commit))
-	(expr depth (1+ depth))
-	(message "Increasing depth of %s from %s to %s..." (car recipe) (1- depth) depth)
-	(shell-command (format "cd %s && git pull --depth %d" repo-dir depth))))
-#+end_src
-
-*** repos that are not deep enough
-:PROPERTIES:
-:ID:       8d8d817a-17e4-4c83-a12f-3a54c46e9dfd
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-straight-repos-lacking-depth (recipes)
-  "Return the recipes for packages who need greater depth."
-  (loopy (list (recipe &as package . plist) recipes)
-	 (expr (&plist :type :local-repo) plist)
-	 (expr recipe-commit (plist-get plist :commit))
-	 (unless (straight-vc-commit-present-p plist recipe-commit)
-	   (collect recipe))))
-#+end_src
-
-*** repos whose version conflicts with recipe
-:PROPERTIES:
-:ID:       dce02b0c-5d3d-4f2a-b530-8dfd1c45eadb
-:END:
-
-The easiest scenario for getting repos back.
-
-#+begin_src emacs-lisp
-(defun xl-straight-recipes-whose-version-conflicts (recipes)
-  "Return a list of recipes for repos that aren't the correct commit."
-  (loopy (list recipe recipes)
-	 (expr package (car recipe))
-	 (expr (&plist :type :local-repo :commit) (cdr recipe))
-	 (unless (and type local-repo commit) (skip))
-	 (expr current-commit (straight-vc-get-commit type local-repo))
-	 (unless (string= current-commit commit)
-	   (collect recipe))))
 #+end_src
 
 ** repos that need rebuilding
