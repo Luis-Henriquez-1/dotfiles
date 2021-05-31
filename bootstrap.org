@@ -283,23 +283,15 @@ One issue to keep in mind is that building dependencies.
   "Install packages to TARGET-DIR as specified by RECIPE-FILE.
 Ensure package repos are the correct version and that build files are up to date
 with their corresponding repos."
-  (iter (initially (xl-load-straight-bootstrap-file)
-		   (mapc #'straight-register-package recipes))
-	(each recipe recipes)
-	(straight-use-package recipe nil :no-build nil nil)
-	(xl-straight-ensure-commit recipe)
-	)
-  ;; (let* ((recipes (xl-read-recipes recipe-file)))
-  ;;   (xl-install-straight (assoc 'straight recipes) target-dir)
-  ;;   (setq straight-base-dir target-dir)
-  ;;   (xl-load-straight-bootstrap-file target-dir)
-  ;;   (mapc #'straight-register-package recipes)
-  ;;   (dolist (recipe recipes)
-  ;;     (straight-use-package recipe nil :no-build nil nil)
-  ;;     (xl-straight-ensure-commit recipe)
-  ;;     ;; (straight-use-package recipe nil nil nil nil)
-  ;;     ))
-  )
+  (let* ((recipes (xl-read-recipes recipe-file)))
+    (xl-install-straight (assoc 'straight recipes) target-dir)
+    (setq straight-base-dir target-dir)
+    (xl-load-straight-bootstrap-file target-dir)
+    (mapc #'straight-register-package recipes)
+    (dolist (recipe recipes)
+      (straight-use-package recipe nil :no-build nil nil)
+      (xl-straight-ensure-commit recipe)
+      (straight-use-package recipe nil nil nil nil))))
 #+end_src
 
 ** autoloads file
