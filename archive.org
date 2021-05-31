@@ -10,6 +10,25 @@ the headlines back searching my vcs history. Well, version control does not
 "know" about org headlines. And I don't know of a way to search through it
 painlessly.
 
+* recipes that have a depth of 1
+:PROPERTIES:
+:ID:       4e53b0cb-f730-4fad-a92a-4f7877bf12b4
+:END:
+
+#+begin_src emacs-lisp
+(loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE))
+	     (depth straight-vc-git-default-clone-depth))
+       (initially (unless (numberp depth) (error)))
+       (list recipe recipes)
+       (expr package (car recipe))
+       (expr local-repo (plist-get (cdr recipe) :local-repo))
+       (when local-repo
+	 (expr dir (straight--repos-dir local-repo))
+	 (expr command (format "cd %s && git log --oneline | wc -l" dir))
+	 (expr depth (string-to-number (shell-command-to-string command)))
+	 (when (= 1 depth) (collect package))))
+#+end_src
+
 * defmacro!
 :PROPERTIES:
 :ID:       5e7f7096-482f-45fd-8bc9-8e1c5c378b35
