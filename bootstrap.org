@@ -298,6 +298,7 @@ with their corresponding repos."
   (let* ((recipes (xl-read-recipes recipe-file)))
     (xl-straight-bootstrap target-dir)
     ;; (load bootstrap-file)
+    (require 'straight)
     (mapc #'straight-register-package recipes)
     (dolist (recipe recipes)
       (straight-use-package recipe nil :no-build nil nil)
