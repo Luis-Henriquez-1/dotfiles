@@ -115,9 +115,9 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-straight-bootstrap ()
-  "Bootstrap straight.el.
-Install straight.el to directory and load boostrap file.")
+(defun xl-straight-bootstrap (target-dir)
+  "Install straight.el to TARGET-DIR and load bootstrap file."
+  )
 #+end_src
 
 ** whether installed
