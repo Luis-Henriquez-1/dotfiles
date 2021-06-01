@@ -1185,7 +1185,7 @@ ADVICES is an advice or a list of advices."
 
 #+begin_src emacs-lisp
 (defun xl-advice-add (symbols where functions &optional props)
-  "Add ADVICES to FUNCTIONS.
+  "Advise SYMBOLS.
 WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (iter (each (symbol function) (-table-flat #'list (-list symbols) (-list functions)))
 	(expr advice (xl-advice-gen-symbol symbol function))
