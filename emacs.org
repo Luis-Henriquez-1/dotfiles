@@ -2572,6 +2572,7 @@ raise the void-function error.
      (loopy (each path load-path)
 	    (expr base (f-base path))
 	    (when (s-prefix-p base (symbol-name orig-fn))
+	      (maximizing )
 	      (collect base))))))
 #+end_src
 
