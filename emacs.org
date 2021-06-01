@@ -5950,6 +5950,24 @@ larger text objects. It's saves me keystrokes.
   (sp-local-pair 'minibuffer-inactive-mode "'" nil :actions nil))
 #+end_src
 
+*** smartparens settings
+:PROPERTIES:
+:ID:       6e1998f5-e88d-4a6f-9097-0a217345ea57
+:END:
+
+#+begin_src emacs-lisp
+(defbefore! enable-smartparens-settings (smartparens)
+  (setq sp-cancel-autoskip-on-backward-movement nil)
+  (setq sp-highlight-wrap-tag-overlay           nil)
+  (setq sp-highlight-pair-overlay               nil)
+  (setq sp-highlight-wrap-overlay               nil)
+  (setq sp-show-pair-from-inside                t)
+  (setq sp-show-pair-delay                      0.1)
+  (setq sp-max-pair-length                      4)
+  (setq sp-max-prefix-length                    50)
+  (setq sp-escape-quotes-after-insert           nil))
+#+end_src
+
 *** DOC smartparens
 :PROPERTIES:
 :ID:       e26f4c55-9585-4544-bed6-9733d50823e7
@@ -5959,16 +5977,7 @@ larger text objects. It's saves me keystrokes.
 (use-package smartparens
   :before-call evil-expression evil-ex
   :hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode)
-  :set
-  (sp-cancel-autoskip-on-backward-movement . nil)
-  (sp-highlight-wrap-tag-overlay           . nil)
-  (sp-highlight-pair-overlay               . nil)
-  (sp-highlight-wrap-overlay               . nil)
-  (sp-show-pair-from-inside                . t)
-  (sp-show-pair-delay                      . 0.1)
-  (sp-max-pair-length                      . 4)
-  (sp-max-prefix-length                    . 50)
-  (sp-escape-quotes-after-insert           . nil))
+  :set)
 #+end_src
 
 *** DOC autopairing :parens:edit:
