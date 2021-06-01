@@ -2558,8 +2558,9 @@ This is my ambitious attempt to do away with autoloading.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     ()))
-  )
+     (if ()
+	 ()
+       ()))))
 #+end_src
 
 ** keybinding :bind:
