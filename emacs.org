@@ -2556,6 +2556,10 @@ autoloading. Autoloading is a way of registering the existence functions
 a placeholder. When these "autoloaded" functions or macros are called, their
 parent package is loaded.
 
+I feel that there must be a better way to achieve autoloading than specifying
+each function we need to register one by one. My idea goes like this. Packages
+each have a unique prefix. When a function would be.
+
 #+begin_src emacs-lisp
 ;; Try to catch errors in advising.
 (defadvice! try-to-find-function-before (orig-fn &rest args :around eval)
