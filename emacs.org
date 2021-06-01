@@ -1187,12 +1187,11 @@ ADVICES is an advice or a list of advices."
 (defun xl-advice-add (symbols where functions &optional props)
   "Add ADVICES to FUNCTIONS.
 WHERE, DEPTH and LOCAL are the same as in `advice-add'."
-  (iter (each symbol (-list symbols))
-	(subloop (each function (-list functions))
-		 (expr advice (xl-symbol-intern symbol '@ function))
-		 (fset advice function)
-		 (advice-add symbol where advice props)
-		 (collect advice))))
+  (iter (each (symbol function) (-table-flat #'list (-list symbols) (-list functions)))
+	(expr advice (xl-advice-gen-symbol symbol function))
+	(fset advice function)
+	(advice-add symbol where advice props)
+	(collect advice))))
 #+end_src
 
 *** use-package :usepackage:
@@ -2435,12 +2434,11 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
 #+begin_src emacs-lisp
 (defun xl-hook-add (symbols functions &optional depth local)
   "Alias FUNCTIONS to follow XL naming convention and add them to SYMBOLS."
-  (iter (each symbol (-list symbols))
-	(subloop (each function (-list functions))
-		 (expr hook (xl-symbol-intern symbol '& function))
-		 (fset hook function)
-		 (add-hook symbol hook depth local)
-		 (collect hook))))
+  (iter (each (symbol function) (-table-flat #'list (-list symbols) (-list functions)))
+	(expr hook (xl-symbol-intern symbol '& function))
+	(fset hook function)
+	(add-hook symbol hook depth local)
+	(collect hook))))
 #+end_src
 
 **** remove hook
