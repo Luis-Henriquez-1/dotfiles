@@ -5185,7 +5185,7 @@ This is a macro for defining evil easymotions.
 
 #+begin_src emacs-lisp
 (defunmacro! evilem-defmotion! (name features &rest body)
-  "Convenience macro for defining a motion."
+  "Convenience macro for defining an `evil-easymotion' motion."
   (declare (indent defun))
   `(defafter! ,(xl-symbol-format "define-evilem-motion-%s" name) (evil evil-easymotion ,@features)
      ,@(when .bind `((bind! ,.bind)))
