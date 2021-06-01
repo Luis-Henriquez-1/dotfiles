@@ -2547,6 +2547,7 @@ example, if I'm using evil I need to update the cursor color.
 ** do away with autoloading
 :PROPERTIES:
 :ID:       91d28cee-60ea-400d-93ba-efabab82c90d
+:header-args: :tangle no
 :END:
 
 This is my ambitious attempt to do away with autoloading.
