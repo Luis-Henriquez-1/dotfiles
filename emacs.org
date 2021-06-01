@@ -2101,15 +2101,8 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 (defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (declare (indent defun) (doc-string 3))
-  (loopy (list hook hooks)
-	 (expr fn (xl-hook-gen-name hook name))
-	 (cond (loopy-first-iteration-p
-		(collect `(defun ,fn ,(or .args '(&rest _)) ,@body))
-		(expr orig-fn fn))
-	       (t
-		(collect `(defalias ',fn ',orig-fn))))
-	 (collect `(add-hook ',hook #',fn ,(or .append .depth) ,.local))
-	 (finally-return (macroexp-progn loopy-result))))
+  `(progn (defun ,orig-fn ,(or .args '(&rest _)) ,@body)
+	  (xl-hook-add ',(-list hooks) #',orig-fn ,.depth ,.local)))
 #+end_src
 
 **** gen symbol
@@ -2134,19 +2127,12 @@ syntax. I use it extensively throughout this configuration.
 #+begin_src emacs-lisp
 (defmacro defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
-  (loopy (with ((args body kargs) (xl-process-args args body))
-	       (props (alist-get :props kargs))
-	       (fargs (alist-get :args kargs))
-	       ((where . functions) (--first (member (car it) XL-ADVICE-KEYWORDS) kargs)))
-	 (list fn (-list functions))
-	 (expr advice (xl-advice-gen-symbol fn name))
-	 (cond (loopy-first-iteration-p
-		(collect `(defun ,advice ,(or fargs args '(&rest _)) ,@body))
-		(expr orig-fn advice))
-	       (t
-		(collect `(defalias ',advice ',orig-fn))))
-	 (collect `(advice-add #',fn ,where #',advice ,props))
-	 (finally-return (macroexp-progn loopy-result))))
+  (-let* (((args body kargs) (xl-process-args args body))
+	  (props (alist-get :props kargs))
+	  (fargs (alist-get :args kargs))
+	  ((where . functions) (--first (member (car it) XL-ADVICE-KEYWORDS) kargs)))
+    `(progn (defun ,advice ,(or fargs args '(&rest _)) ,@body)
+	    (xl-advice-add ',(-list functions) ,where #',orig-fn))))
 #+end_src
 
 **** defhooksym!
