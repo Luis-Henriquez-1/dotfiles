@@ -39,6 +39,9 @@ We don't need to clone everything from the git repos. Setting the depth to one
 conserves some disk space.
 
 #+begin_src emacs-lisp
+(setq straight-base-dir (file-truename XL-LOCAL-DIR))
+(setq straight-repository-branch "develop")
+(setq straight-build-dir (format "build-%s" (emacs-version)))
 (setq straight-use-package-version 'straight)
 (setq straight-use-package-by-default nil)
 (setq straight-check-for-modifications nil)
