@@ -162,13 +162,18 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 #+begin_src emacs-lisp
 (defun xl-ensure-straight (recipe target-dir)
   "Install straight to TARGET-DIR."
+  ;; Make sure that git is installed and that it is the correct version.
+  (cl-assert (executable-find "git") nil "Git isn't installed. Cannot proceed.")
+  ;; Make sure that git is the correct version.
+  ;; (cl-assert (call-process "git" "version"))
   (let* ((repo (plist-get (cdr recipe) :repo))
 	 (repo-dir (expand-file-name "straight/repos/" target-dir))
-	 (github-link (format "https://github.com/%s.git" repo))
+	 (repo-url (format "https://github.com/%s.git" repo))
+	 (branch (or (plist-get recipe :branch) straight-repository-branch))
 	 (commit (plist-get recipe :commit)))
     (unless (xl-straight-installed-p)
       (make-directory repo-dir t)
-      (shell-command (format "git -C %s clone %s" repo-dir github-link)))
+      (shell-command (format "git -C %s clone %s" repo-dir repo-url)))
     (shell-command (format "git -C %s checkout %s" repo-dir commit))))
 #+end_src
 
