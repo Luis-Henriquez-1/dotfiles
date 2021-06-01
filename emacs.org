@@ -5976,8 +5976,7 @@ larger text objects. It's saves me keystrokes.
 #+begin_src emacs-lisp
 (use-package smartparens
   :before-call evil-expression evil-ex
-  :hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode)
-  :set)
+  :hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode))
 #+end_src
 
 *** DOC autopairing :parens:edit:
