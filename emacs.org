@@ -2571,8 +2571,8 @@ raise the void-function error.
     (void-function
      (loopy (each path load-path)
 	    (expr base (f-base path))
-	    (unless (string-match-p ) (skip))
-	    (collect base)))))
+	    (when (s-prefix-p base (symbol-name orig-fn))
+	      (collect base))))))
 #+end_src
 
 ** keybinding :bind:
