@@ -2101,8 +2101,13 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 (defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (declare (indent defun) (doc-string 3))
-  `(progn (defun ,orig-fn ,(or .args '(&rest _)) ,@body)
-	  (xl-hook-add ',(-list hooks) #',orig-fn ,.depth ,.local)))
+  (let ((orig-fn (xl-symbol-intern 'xl-- name '-hook- (gensym)))
+	(error-sym (gensym "error")))
+    `(progn (defun ,orig-fn ,(or .args '(&rest _))
+	      (condition-case ,error-sym
+		  (progn ,@body)
+		()))
+	    (xl-hook-add ',(-list hooks) #',orig-fn ,.depth ,.local))))
 #+end_src
 
 **** gen symbol
@@ -2110,10 +2115,16 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 :ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
 :END:
 
+When a function is advising an xl symbol use a special syntax so it looks better.
+
 #+begin_src emacs-lisp
-(defun xl-advice-gen-symbol (symbol name)
-  "Generate."
-  (xl-symbol-intern symbol '@ name))
+(defun xl-advice-gen-symbol (symbol function)
+  "Generate.a function name for."
+  (xl-symbol-intern symbol '@)
+  (aif (s-match (rx ) (symbol-name function))
+      ()
+    name)
+  )
 #+end_src
 
 **** defadvice!
@@ -2130,8 +2141,9 @@ syntax. I use it extensively throughout this configuration.
   (-let* (((args body kargs) (xl-process-args args body))
 	  (props (alist-get :props kargs))
 	  (fargs (alist-get :args kargs))
-	  ((where . functions) (--first (member (car it) XL-ADVICE-KEYWORDS) kargs)))
-    `(progn (defun ,advice ,(or fargs args '(&rest _)) ,@body)
+	  ((where . functions) (--first (member (car it) XL-ADVICE-KEYWORDS) kargs))
+	  (orig-fn (xl-symbol-intern 'xl-- name '-advice- (gensym))))
+    `(progn (defun ,orig-fn ,(or fargs args '(&rest _)) ,@body)
 	    (xl-advice-add ',(-list functions) ,where #',orig-fn))))
 #+end_src
 
