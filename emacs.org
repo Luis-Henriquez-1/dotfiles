@@ -2550,7 +2550,9 @@ example, if I'm using evil I need to update the cursor color.
 :header-args: :tangle no
 :END:
 
-This is my ambitious attempt to do away with autoloading.
+This is my ambitious attempt to do away with autoloading. So, let me explain
+autoloading. Autoloading is a way of registering the existence functions
+(usually commands) or macros before they.
 
 #+begin_src emacs-lisp
 ;; Try to catch errors in advising.
@@ -2559,9 +2561,10 @@ This is my ambitious attempt to do away with autoloading.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     (if ()
-	 ()
-       ()))))
+     (loopy (each path load-path)
+	    (when ()
+	      ()))
+     )))
 #+end_src
 
 ** keybinding :bind:
