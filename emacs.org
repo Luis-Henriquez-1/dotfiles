@@ -701,7 +701,8 @@ the back =O(n)=, it is sometimes convenient to be able to do so. And is
 acceptable when the code in question is not dealing with lists that have
 thousands of items.
 
-I am aware of dash's [[][-snoc], but it has some inconveniences.
+I am aware of dash's [[][-snoc], but it has some inconveniences that I wish to
+address.
 
 #+begin_src emacs-lisp
 (defun xl-snoc (elt list)
