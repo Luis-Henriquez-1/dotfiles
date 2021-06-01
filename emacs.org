@@ -691,7 +691,7 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 	 (finally-return (list docstring plist body))))
 #+end_src
 
-**** xl-snoc
+**** snoc - opposite of cons
 :PROPERTIES:
 :ID:       faa5589c-864d-4920-9337-a7505b864d9f
 :END:
