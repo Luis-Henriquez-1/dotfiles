@@ -2099,7 +2099,8 @@ a concise, easily-readable, and familiar way. It has a similar syntax to
 =defun=.
 
 One difference this has from its advice counterpart is that I catch errors.
-That's because when you run hook functions in a symbols and one of them.
+That's because when you run functions in a hook and one of them has an error the
+whole hook short-circuits. Only the ones before.
 
 #+begin_src emacs-lisp
 (defunmacro! defhook! (name hooks &rest body)
