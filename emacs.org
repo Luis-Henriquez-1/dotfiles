@@ -696,7 +696,10 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 :ID:       faa5589c-864d-4920-9337-a7505b864d9f
 :END:
 
-This is similar to dash's [[][-snoc].
+Although it is more efficient to add things to the front of a list =O(1)= than
+the back =O(n)=, it is sometimes convenient to be able to do so. And is
+acceptable when the code in question is not dealing with lists that have
+thousands of items. I am aware of dash's [[][-snoc].
 
 #+begin_src emacs-lisp
 (defun xl-snoc (elt list)
