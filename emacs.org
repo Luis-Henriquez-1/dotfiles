@@ -2552,7 +2552,7 @@ example, if I'm using evil I need to update the cursor color.
 
 This is my ambitious attempt to do away with autoloading. So, let me explain
 autoloading. Autoloading is a way of registering the existence functions
-(usually commands) or macros before they.
+(usually commands) or macros before they are loaded via a package.
 
 #+begin_src emacs-lisp
 ;; Try to catch errors in advising.
