@@ -2126,10 +2126,9 @@ When a function is advising an xl symbol use a special syntax so it looks better
 (defun xl-advice-gen-symbol (symbol function)
   "Generate.a function name for."
   (xl-symbol-intern symbol '@)
-  (aif (s-match (rx ) (symbol-name function))
+  (aif (s-match (rx "xl--" (1+ alnum) "-advice-" ()) (symbol-name function))
       ()
-    name)
-  )
+    name))
 #+end_src
 
 **** defadvice!
