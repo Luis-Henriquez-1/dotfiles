@@ -2095,7 +2095,9 @@ macros.
 :END:
 
 This is a convenience macro for creating hooks. It allows me to define hooks in
-a concise, easily-readable, and familiar way. It has a similar syntax to =defun=.
+a concise, easily-readable, and familiar way. It has a similar syntax to
+=defun=. One difference this has from its advice counterpart is that I debug
+errors.
 
 #+begin_src emacs-lisp
 (defunmacro! defhook! (name hooks &rest body)
