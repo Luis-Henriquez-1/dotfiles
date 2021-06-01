@@ -2100,7 +2100,9 @@ a concise, easily-readable, and familiar way. It has a similar syntax to
 
 One difference this has from its advice counterpart is that I catch errors.
 That's because when you run functions in a hook and one of them has an error the
-whole hook short-circuits. Only the ones before.
+whole hook short-circuits. The functions before the erred function run
+successfully but the ones after it don't get to run. Most of the time, this is
+not what I'd like. Rather, I'd like it if.
 
 #+begin_src emacs-lisp
 (defunmacro! defhook! (name hooks &rest body)
