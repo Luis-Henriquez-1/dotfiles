@@ -2124,11 +2124,11 @@ When a function is advising an xl symbol use a special syntax so it looks better
 
 #+begin_src emacs-lisp
 (defun xl-advice-gen-symbol (symbol function)
-  "Generate.a function name for."
+  "Generate a function name for."
   (xl-symbol-intern symbol '@)
-  (aif (s-match (rx "xl--" (1+ alnum) "-advice-" ()) (symbol-name function))
-      ()
-    name))
+  (acond ((s-match (rx bos "xl--" (group (1+ alnum)) "-advice-" (1+ (not white)) eos) (symbol-name function))
+	  (xl-symbol-intern (nth 1 it)))
+	 name))
 #+end_src
 
 **** defadvice!
