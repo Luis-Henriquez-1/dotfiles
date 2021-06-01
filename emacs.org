@@ -395,7 +395,7 @@ that is concise and efficient.
 :ID:       5539293f-bd15-49ce-915a-37b3aea6ffb3
 :END:
 
-***** convert to string
+***** xl-to-string
 :PROPERTIES:
 :ID:       60f22f98-8204-45ae-9943-f19cdfe60459
 :END:
