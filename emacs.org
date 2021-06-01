@@ -5968,7 +5968,7 @@ larger text objects. It's saves me keystrokes.
   (setq sp-escape-quotes-after-insert           nil))
 #+end_src
 
-*** DOC smartparens
+*** DOC when to load
 :PROPERTIES:
 :ID:       e26f4c55-9585-4544-bed6-9733d50823e7
 :END:
