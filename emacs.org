@@ -2544,6 +2544,22 @@ example, if I'm using evil I need to update the cursor color.
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
+** do away with autoloading
+:PROPERTIES:
+:ID:       91d28cee-60ea-400d-93ba-efabab82c90d
+:END:
+
+#+begin_src emacs-lisp
+;; Try to catch errors in advising.
+(defadvice! try-to-find-function-before (orig-fn &rest args :around eval)
+  "Try to load feature that could contain function."
+  (condition-case err
+      (apply orig-fn args)
+    (void-function
+     ()))
+  )
+#+end_src
+
 ** keybinding :bind:
 :PROPERTIES:
 :ID:       b627fcf8-2f72-41a6-9ebe-08ff6c29fb54
