@@ -2101,8 +2101,7 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 (defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (declare (indent defun) (doc-string 3))
-  (let ((orig-fn (xl-symbol-intern 'xl-- name '-hook- (gensym)))
-	(error-sym (gensym "error")))
+  (let ((orig-fn (xl-symbol-intern 'xl-- name '-hook- (gensym))))
     `(progn (defun ,orig-fn ,(or .args '(&rest _)) ,@body)
 	    (xl-hook-add ',(-list hooks) #',orig-fn ,.depth ,.local))))
 #+end_src
