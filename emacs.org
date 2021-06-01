@@ -2103,7 +2103,8 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
   (declare (indent defun) (doc-string 3))
   (let ((orig-fn (xl-symbol-intern 'xl-- name '-hook- (gensym))))
     `(progn (defun ,orig-fn ,(or .args '(&rest _)) ,@body)
-	    (xl-hook-add ',(-list hooks) #',orig-fn ,.depth ,.local))))
+	    (xl-hook-add ',(-list hooks) #',orig-fn ,.depth ,.local)
+	    (mapc #'xl-gadvice-catch-error))))
 #+end_src
 
 **** gen symbol
