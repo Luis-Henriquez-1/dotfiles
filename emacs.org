@@ -2564,7 +2564,6 @@ in our load-path. If it does, we load it. If it doesn't then we go ahead and
 raise the void-function error.
 
 #+begin_src emacs-lisp
-;; Try to catch errors in advising.
 (defadvice! try-to-find-function-before (orig-fn &rest args :around eval)
   "Try to load feature that could contain function."
   (condition-case err
@@ -2572,7 +2571,7 @@ raise the void-function error.
     (void-function
      (loopy (each path load-path)
 	    (when ()
-	      ()))
+	      (string-match-p )))
      )))
 #+end_src
 
