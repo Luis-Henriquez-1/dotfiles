@@ -2498,12 +2498,12 @@ HOOK is a hook function that follows XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-gen-name (fn name)
+(defun xl-hook-gen-name (symbol hook)
   "Generate a hook name."
-  (acond ((s-match "\\`xl--\\([[:alnum:]]+\\)-hook-[^[:space:]]+\\'" (symbol-name function))
+  (acond ((s-match "\\`xl--\\([[:alnum:]]+\\)-hook-[^[:space:]]+\\'" (symbol-name hook))
 	  (xl-symbol-intern symbol '&& (nth 1 it)))
 	 (t
-	  (xl-symbol-intern symbol '& function))))
+	  (xl-symbol-intern symbol '& hook))))
 #+end_src
 
 *** idle keyword
