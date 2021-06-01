@@ -88,27 +88,6 @@ initialization. We don't need =straight= to do this for us because it is handled
     (load bootstrap-file nil 'nomessage)))
 #+end_src
 
-** ensure straight.el
-:PROPERTIES:
-:ID:       ab38beca-2f26-4718-ab73-e4e4409f1563
-:END:
-
-I got the inspiration of cloning straight's repo (as opposed to just using the
-[[https://github.com/raxod502/straight.el#bootstrapping-straightel][bootstrap code]]) from [[https://github.com/kinnala/diy-emacs][diy-emacs]]. What this function does is.
-
-#+begin_src emacs-lisp
-(defun xl-ensure-straight (recipe target-dir)
-  "Install straight to TARGET-DIR."
-  (let* ((repo (plist-get (cdr recipe) :repo))
-	 (repo-dir (expand-file-name "straight/repos/" target-dir))
-	 (github-link (format "https://github.com/%s.git" repo))
-	 (commit (plist-get recipe :commit)))
-    (unless (xl-straight-installed-p)
-      (make-directory repo-dir t)
-      (shell-command (format "git -C %s clone %s" repo-dir github-link)))
-    (shell-command (format "git -C %s checkout %s" repo-dir commit))))
-#+end_src
-
 ** whether installed
 :PROPERTIES:
 :ID:       9216f0b9-93d5-43fe-aa96-3796674ab520
@@ -172,6 +151,27 @@ the byte-compiled files.
 	  (collect package))))
 #+end_src
 
+** ensure straight.el
+:PROPERTIES:
+:ID:       ab38beca-2f26-4718-ab73-e4e4409f1563
+:END:
+
+I got the inspiration of cloning straight's repo (as opposed to just using the
+[[https://github.com/raxod502/straight.el#bootstrapping-straightel][bootstrap code]]) from [[https://github.com/kinnala/diy-emacs][diy-emacs]]. What this function does is.
+
+#+begin_src emacs-lisp
+(defun xl-ensure-straight (recipe target-dir)
+  "Install straight to TARGET-DIR."
+  (let* ((repo (plist-get (cdr recipe) :repo))
+	 (repo-dir (expand-file-name "straight/repos/" target-dir))
+	 (github-link (format "https://github.com/%s.git" repo))
+	 (commit (plist-get recipe :commit)))
+    (unless (xl-straight-installed-p)
+      (make-directory repo-dir t)
+      (shell-command (format "git -C %s clone %s" repo-dir github-link)))
+    (shell-command (format "git -C %s checkout %s" repo-dir commit))))
+#+end_src
+
 ** ensure commit
 :PROPERTIES:
 :ID:       2b6d7825-24b7-429d-b5ad-7df9603dfd93
@@ -201,6 +201,11 @@ One thing to note is that if you changed the.
 :END:
 
 #+begin_src emacs-lisp
+(defun xl-straight-ensure-core-packages (packages)
+  ""
+  (dolist (package packages)
+    )
+  )
 #+end_src
 
 ** ensure packages
