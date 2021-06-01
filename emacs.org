@@ -5974,6 +5974,8 @@ larger text objects. It's saves me keystrokes.
 :END:
 
 #+begin_src emacs-lisp
+;; (xl-hook-add (list 'prog-mode-hook 'eshell-mode-hook 'ielm-mode-hook) #'smartparens-strict-mode)
+;; (xl-load-before-call 'smartparnes)
 (use-package smartparens
   :before-call evil-expression evil-ex
   :hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode))
