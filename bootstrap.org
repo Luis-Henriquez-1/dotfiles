@@ -168,7 +168,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
   ;; Make sure that git is installed and that it is the correct version.
   (cl-assert (executable-find "git") nil "Git isn't installed. Cannot proceed.")
   ;; Make sure that git is the correct version.
-  ;; (cl-assert (call-process "git" "version"))
+  ;; (cl-assert ( (shell-command-to-string "git --version")))
   (let* ((repo (plist-get (cdr recipe) :repo))
 	 (repo-dir (expand-file-name "straight/repos/" target-dir))
 	 (repo-url (format "https://github.com/%s.git" repo))
