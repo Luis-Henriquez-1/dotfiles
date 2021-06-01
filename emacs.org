@@ -2120,8 +2120,6 @@ not what I'd like.
 :ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
 :END:
 
-When a function is advising an xl symbol use a special syntax.
-
 #+begin_src emacs-lisp
 (defun xl-advice-gen-symbol (symbol function)
   "Generate an advice name for symbol and function."
