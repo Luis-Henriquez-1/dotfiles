@@ -2558,7 +2558,9 @@ parent package is loaded.
 
 I feel that there must be a better way to achieve autoloading than specifying
 each function we need to register one by one. My idea goes like this. Packages
-each have a unique prefix. When a function would be.
+each have a unique prefix. When a function would be undefined before we raise an
+error, we check to see if the prefix of the function matches any of the packages
+in our load-path. If it does, we load it. If it doesn't.
 
 #+begin_src emacs-lisp
 ;; Try to catch errors in advising.
