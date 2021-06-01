@@ -699,7 +699,9 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 Although it is more efficient to add things to the front of a list =O(1)= than
 the back =O(n)=, it is sometimes convenient to be able to do so. And is
 acceptable when the code in question is not dealing with lists that have
-thousands of items. I am aware of dash's [[][-snoc].
+thousands of items.
+
+I am aware of dash's [[][-snoc], but it has some inconveniences.
 
 #+begin_src emacs-lisp
 (defun xl-snoc (elt list)
