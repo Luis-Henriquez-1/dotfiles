@@ -2491,6 +2491,8 @@ HOOK is a hook function that follows XL naming conventions."
 #+begin_src emacs-lisp
 (defun xl-hook-gen-name (fn name)
   "Generate a hook name."
+  (aif (s-match )
+      (xl-symbol-intern '& name))
   (xl-symbol-intern fn '& name))
 #+end_src
 
