@@ -2570,8 +2570,9 @@ raise the void-function error.
       (apply orig-fn args)
     (void-function
      (loopy (each path load-path)
+	    (expr base (f-base path))
 	    (unless (string-match-p ) (skip))
-	    (collect path)))))
+	    (collect base)))))
 #+end_src
 
 ** keybinding :bind:
