@@ -9091,6 +9091,7 @@ documentation. This includes using emojis. Also, using emojis makes
 documentation *much* more fun. :joy-cat:
 
 #+begin_src emacs-lisp
+(xl-hook-add 'org-mode-hook #'emojify-mode)
 (use-package emojify
   :hook org-mode-hook
   :set
