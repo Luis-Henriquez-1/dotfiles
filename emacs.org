@@ -9050,16 +9050,15 @@ them. By doing this you can "discover" the commands as you go along.
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook #'which-key-mode)
 
-(use-package which-key
-  :set
-  (which-key-sort-uppercase-first . nil)
-  (which-key-max-display-columns  . nil)
-  (which-key-add-column-padding   . 1)
-  (which-key-min-display-lines    . 6)
-  (which-key-side-window-slot     . -10)
-  (which-key-sort-order           . #'which-key-prefix-then-key-order)
-  (which-key-popup-type           . 'minibuffer)
-  (which-key-idle-delay           . 0.8))
+(defsetting! which-key ()
+  (setq which-key-sort-uppercase-first nil)
+  (setq which-key-max-display-columns nil)
+  (setq which-key-add-column-padding 1)
+  (setq which-key-min-display-lines 6)
+  (setq which-key-side-window-slot -10)
+  (setq which-key-sort-order #'which-key-prefix-then-key-order)
+  (setq which-key-popup-type 'minibuffer)
+  (setq which-key-idle-delay 0.8))
 #+end_src
 
 *** set line spacing :asthetic:
