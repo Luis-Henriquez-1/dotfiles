@@ -41,10 +41,8 @@ raise the void-function error.
 	    (unless (featurep feature)
 	      (collect feature)))
      ;; Load.
-     (loopy (each path load-path)
-	    (expr base (f-base path))
+     (loopy (list feature unloaded-features)
 	    (when (s-prefix-p base (symbol-name orig-fn))
-	      (maximizing )
 	      (collect base))))))
 #+end_src
 
