@@ -8669,10 +8669,9 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 :END:
 
 #+begin_src emacs-lisp
-(use-package sendmail
-  :set
-  (sendmail-program . (executable-find "msmtp"))
-  (send-mail-function . #'smtpmail-send-it))
+(defsetting! sendmail ()
+  (setq sendmail-program (executable-find "msmtp"))
+  (setq send-mail-function #'smtpmail-send-it))
 #+end_src
 
 ** message
