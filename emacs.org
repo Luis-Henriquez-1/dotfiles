@@ -4065,8 +4065,10 @@ working yet.
 This package lets you annotate files in a separate org file.
 
 #+begin_src emacs-lisp
-(use-package org-annotate-code
+(defbefore! org-annotate-code
   :set (org-annotate-code-org-file . (concat XL-ORG-DIR "annotations.org")))
+;; (defsetting! org-annotate-code (before)
+;;   )
 #+end_src
 
 ** org-archive
@@ -4106,15 +4108,6 @@ done.
 #+begin_src emacs-lisp
 (setq org-todo-keywords
       '((sequence "TODO" "NEXT" "|" "DONE" "CANCELLED")))
-#+end_src
-
-** org-ml
-:PROPERTIES:
-:ID:       7f3ec0ad-45f8-4100-970e-773cfb9a625b
-:END:
-
-#+begin_src emacs-lisp
-(use-package org-ml)
 #+end_src
 
 ** org-journal
