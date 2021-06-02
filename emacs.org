@@ -3949,10 +3949,10 @@ referenance org headlines.
 #+begin_src emacs-lisp
 (xl-hook-add 'org-insert-heading-hook #'org-id-get-create)
 
-(org-id-locations-file-relative . t)
-(org-id-link-to-org-use-id      . 'create-if-interactive-and-no-custom-id)
-(org-id-locations-file          . (concat XL-CACHE-DIR "org-id-locations"))
-(org-id-files                   . (list (f-full "~/README.org")))
+(setq org-id-locations-file-relative t)
+(setq org-id-link-to-org-use-id      'create-if-interactive-and-no-custom-id)
+(setq org-id-locations-file          (concat XL-CACHE-DIR "org-id-locations"))
+(setq org-id-files                   (list (f-full "~/README.org")))
 #+end_src
 
 ** asthetic :asthetic:
