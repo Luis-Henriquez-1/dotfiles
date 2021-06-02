@@ -8322,16 +8322,6 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
 	(concat XL-CACHE-DIR "tramp-auto-save/")))
 #+end_src
 
-** restart-emacs
-:PROPERTIES:
-:ID:       7412bc2f-0db1-44e9-8ea7-0dc595a04fca
-:END:
-
-#+begin_src emacs-lisp
-(use-package restart-emacs
-  :commands restart-emacs)
-#+end_src
-
 ** elisp-demos :interface:elisp:
 :PROPERTIES:
 :ID:       2c419004-a7c1-4de5-bada-8420505cea90
