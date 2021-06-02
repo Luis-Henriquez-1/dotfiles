@@ -9063,8 +9063,7 @@ something. Setting it to =nil= makes the frame start at the size you specified.
 [[https://github.com/Fanael/highlight-quoted][highlight-quoted]] highlights quotes, backticks and.
 
 #+begin_src emacs-lisp
-(use-package highlight-quoted
-  :hook emacs-lisp-mode-hook)
+(xl-hook-add 'emacs-lisp-mode-hook #'highlight-quoted-mode)
 #+end_src
 
 ** transient :interface:
