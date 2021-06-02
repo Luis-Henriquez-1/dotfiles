@@ -1780,27 +1780,6 @@ Do not evaluate BODY if features have already been loaded."
 	 (xl-hook-remove #',hook)))))
 #+end_src
 
-**** config :defer:performance:usepackage:
-:PROPERTIES:
-:ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
-:END:
-
-This keyword is meant to overwrite the built-in =:config= keyword. It does the
-same thing, except it uses =after!= instead of =with-eval-after-load=.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :xl-config)
-(use-package%override :config :xl-config)
-
-(defun use-package-normalize/:xl-config (_ _ args)
-  args)
-
-(defun use-package-handler/:xl-config (name _ forms rest state)
-  "Wrap FORMS in an `after!' block."
-  `((after! ,name ,@forms)
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
 **** with-temp-advice!
 :PROPERTIES:
 :ID:       5fb1f2e9-53d2-4830-b6b2-abef3477002d
@@ -3451,23 +3430,22 @@ various functions in org mode.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org
-  :set
-  (org-directory                      . (concat "~/Documents/org/"))
-  (org-default-notes-file             . (concat org-directory "notes.org"))
-  (org-fontify-emphasized-text        . t)
-  (org-hide-emphasis-markers          . t)
-  (org-pretty-entities                . t)
-  (org-fontify-whole-heading-line     . t)
-  (org-fontify-done-headline          . t)
-  (org-fontify-quote-and-verse-blocks . t)
-  (org-adapt-indentation              . nil)
-  (org-cycle-separator-lines          . 2)
-  (outline-blank-line                 . t)
-  (org-enforce-todo-dependencies      . t)
-  (org-use-fast-tag-selection         . nil)
-  (org-tags-column                    . 0)
-  (org-log-done                       . 'time))
+(defsetting! org ()
+  (setq org-directory (concat "~/Documents/org/"))
+  (setq org-default-notes-file (concat org-directory "notes.org"))
+  (setq org-fontify-emphasized-text t)
+  (setq org-hide-emphasis-markers t)
+  (setq org-pretty-entities t)
+  (setq org-fontify-whole-heading-line t)
+  (setq org-fontify-done-headline t)
+  (setq org-fontify-quote-and-verse-blocks t)
+  (setq org-adapt-indentation nil)
+  (setq org-cycle-separator-lines 2)
+  (setq outline-blank-line t)
+  (setq org-enforce-todo-dependencies t)
+  (setq org-use-fast-tag-selection nil)
+  (setq org-tags-column 0)
+  (setq org-log-done 'time))
 #+end_src
 
 ** tangld
