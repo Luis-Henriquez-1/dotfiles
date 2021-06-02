@@ -8525,13 +8525,13 @@ Note that I add gcmh mode hook at the end so that all the other hook commands
 are done before setting the =gc-cons-threshold= back to a normal value.
 
 #+begin_src emacs-lisp
-(use-package gcmh
-  :hook emacs-startup-hook
-  :set
-  (gcmh-idle-delay          . 5)
-  (gcmh-verbose             . xl-debug-p)
-  (gcmh-high-cons-threshold . XL-GC-CONS-THRESHOLD)
-  (gcmh-low-cons-threshold  . XL-GC-CONS-THRESHOLD-MIN))
+(xl-hook-add 'emacs-startup-hook #'gcmh-mode)
+
+(defsetting! gcmh
+  (setq gcmh-idle-delay 5)
+  (setq gcmh-verbose xl-debug-p)
+  (setq gcmh-high-cons-threshold XL-GC-CONS-THRESHOLD)
+  (setq gcmh-low-cons-threshold XL-GC-CONS-THRESHOLD-MIN))
 #+end_src
 
 ** readme org file
