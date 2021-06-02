@@ -8749,7 +8749,7 @@ how to automate this.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! mu4e-drafts
+(defsetting! mu4e-drafts ()
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-compose-format-flowed t))
 #+end_src
