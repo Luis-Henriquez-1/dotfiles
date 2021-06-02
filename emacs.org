@@ -4955,11 +4955,11 @@ Note that this is the same strategy employed by [[id:c550f82a-9608-47e6-972b-eca
 Saving files like this reduces the likelihood of user delays.
 
 #+begin_src emacs-lisp
+(xl-load-before-call 'super-save #'find-file)
+
 (use-package super-save
-  :before-call find-file
-  :set
-  (super-save-auto-save-when-idle . t)
-  (super-save-idle-duration       . 5))
+  (setq super-save-auto-save-when-idle t)
+  (setq super-save-idle-duration 5))
 #+end_src
 
 **** vc-hook
