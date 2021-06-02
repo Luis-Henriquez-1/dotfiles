@@ -5775,16 +5775,6 @@ and provides facilities for writing custom extensions. Also see our page on
 (xl-hook-add 'emacs-startup-hook #'evil-mode-hook)
 #+end_src
 
-**** evil-core :edit:evil:
-:PROPERTIES:
-:ID:       9aa26d2c-d15a-4f36-a024-3ca9ce568385
-:END:
-
-#+begin_src emacs-lisp
-(use-package evil-core
-  :hook (emacs-startup-hook . evil-mode))
-#+end_src
-
 **** evil-vars :edit:evil:
 :PROPERTIES:
 :ID:       af3a9791-76ac-4fd5-96fe-d361cef3b5b3
@@ -6079,9 +6069,6 @@ Why not just go to the end of the ="= like any other around operator?
 =evil-lion= provides a very useful way of aligning text.
 
 #+begin_src emacs-lisp
-(use-package evil-lion
-  :commands evil-lion-right evil-lion-left)
-
 (bind!
   (:prefix "g")
   (:nv "l" #'evil-lion-left)
