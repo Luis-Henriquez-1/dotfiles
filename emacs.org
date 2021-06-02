@@ -1904,15 +1904,15 @@ clause because it would get confused with it and the built-in Emacs function
 [[helpfn:list][list]]. For that reason we need to use one of lists aliases.
 
 #+begin_src emacs-lisp
-(use-package loopy-iter
-  :demand t
-  :init
-  (add-to-list 'loopy-default-flags '+lax-names)
-  (loopy-defalias 'for 'list)
-  (loopy-defalias 'each 'list)
-  :alias
-  (iter . loopy-iter)
-  (iterate . loopy-iter))
+(require 'loopy-iter)
+
+(add-to-list 'loopy-default-flags '+lax-names)
+
+(loopy-defalias 'for 'list)
+(loopy-defalias 'each 'list)
+
+(defalias 'iter 'loopy-iter)
+(defalias 'iterate 'loopy-iter)
 #+end_src
 
 ***** dash destructuring
