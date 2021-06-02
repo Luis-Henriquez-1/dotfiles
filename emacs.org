@@ -4026,8 +4026,6 @@ various functions in org mode.
 :END:
 
 #+begin_src emacs-lisp
-
-
 (use-package org
   :set
   (org-directory                      . (concat "~/Documents/org/"))
@@ -4077,9 +4075,9 @@ This package lets you annotate files in a separate org file.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-archive
-  :set
-  (org-archive-location . (concat org-directory "archive.org::")))
+(defbefore! set-settings-for-org-archive (org-archive)
+  (setq org-archive-tag "ARCHIVE")
+  (setq org-archive-location (concat org-directory "archive.org::")))
 #+end_src
 
 ** org-super-links
