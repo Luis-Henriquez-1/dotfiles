@@ -9148,21 +9148,6 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 (use-package page-break-lines :demand t)
 #+end_src
 
-*** random logo :dashboard:startup:asthetic:
-:PROPERTIES:
-:ID:       80e5fa17-d18a-4ec0-af8d-728d77843c69
-:END:
-
-=dashboard= provides three text pictures which are referred to by number and two
-images which referred to by the symbols =official= and =logo=.
-
-#+begin_src emacs-lisp
-(defun dashboard%random-logo ()
-  "Display a random logo."
-  (seq-random-elt (append '(1 2 3)
-			  (if (display-graphic-p) '(official logo)))))
-#+end_src
-
 *** require :dashboard:asthetic:
 :PROPERTIES:
 :ID:       73d00f99-4b70-44d1-8359-01bd2c94b330
