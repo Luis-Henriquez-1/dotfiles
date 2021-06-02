@@ -3510,11 +3510,10 @@ done.
 diary/journal using =org-mode=.
 
 #+begin_src emacs-lisp
-(use-package org-journal
-  :set
-  (org-journal-file-type . 'yearly)
-  (org-journal-find-file . 'find-file)
-  (org-journal-dir       . (concat org-directory "journal/")))
+(defsetting! org-journal ()
+  (setq org-journal-file-type 'yearly)
+  (setq org-journal-find-file 'find-file)
+  (setq org-journal-dir (concat org-directory "journal/")))
 #+end_src
 
 ** org-src
