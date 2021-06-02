@@ -4615,7 +4615,7 @@ referenance org headlines.
   (org-superstar-special-todo-items . t))
 #+end_src
 
-*** org-fancy-priorities
+*** asthetic
 :PROPERTIES:
 :ID:       c4ff4407-774c-4028-bb9d-01412fdfc8d2
 :END:
@@ -4625,23 +4625,6 @@ referenance org headlines.
 	     (list #'org-superstar-mode
 		   #'org-pretty-tags-mode
 		   #'org-fancy-priorities-mode))
-#+end_src
-
-*** org-pretty-tags
-:PROPERTIES:
-:ID:       7f024968-89ea-4e24-90a9-63771d8342b3
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
-*** org-babel-hide-markers-mode
-:PROPERTIES:
-:ID:       a7b3c769-985d-4ed1-90ec-f4923275ecd6
-:END:
-
-#+begin_src emacs-lisp
-(use-package org-babel-hide-markers-mode)
 #+end_src
 
 *** org-link-minor-mode
