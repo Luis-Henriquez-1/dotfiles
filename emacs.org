@@ -3497,6 +3497,19 @@ prompt asking me if I'm sure.
 :ID:       090ce452-80bc-4565-a591-2e3e4d30d718
 :END:
 
+** suppress window deletion
+:PROPERTIES:
+:ID:       14ea3fe9-1556-4b6d-865e-fea181884262
+:END:
+
+#+begin_src emacs-lisp
+(defafter! suppress-window-deletion (org)
+  "Stop org-mode from deleting windows."
+  (xl-gadvice-suppress-delete-windows #'org-add-log-note)
+  (xl-gadvice-suppress-delete-windows #'org-fast-tag-selection)
+  (xl-gadvice-suppress-delete-windows #'org-fast-todo-selection))
+#+end_src
+
 ** increase line spacing
 :PROPERTIES:
 :ID:       25614f23-f337-4092-8d3d-5c5d75efe90c
@@ -4013,11 +4026,9 @@ various functions in org mode.
 :END:
 
 #+begin_src emacs-lisp
+
+
 (use-package org
-  :gadvice
-  (org-add-log-note . suppress-delete-windows)
-  (org-fast-tag-selection . suppress-delete-windows)
-  (org-fast-todo-selection . suppress-delete-windows)
   :set
   (org-directory                      . (concat "~/Documents/org/"))
   (org-default-notes-file             . (concat org-directory "notes.org"))
