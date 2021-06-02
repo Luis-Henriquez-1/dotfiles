@@ -9094,16 +9094,6 @@ The font size that `xl/set-font-size' should never go above.")
 The font size that `xl/set-font-size' should never go below.")
 #+end_src
 
-** hide-mode-line :modeline:asthetic:
-:PROPERTIES:
-:ID:       e8f53422-9d24-4119-9b0f-9b6d1e10c1b0
-:END:
-
-#+begin_src emacs-lisp
-(use-package hide-mode-line
-  :commands hide-mode-line-mode)
-#+end_src
-
 ** themes
 :PROPERTIES:
 :ID:       376581c7-0b45-40c7-a10c-38fde7f9c7a4
