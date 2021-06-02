@@ -8007,15 +8007,6 @@ are benefits and drawbacks to making emacs your window manager. One benefit is
 that you get a super consistent window management experience. One drawback is
 that if Emacs hangs or crashes you need to restart your computer.
 
-*** exwm
-:PROPERTIES:
-:ID:       7b83cab0-d599-46c4-b20c-19ff33345ae3
-:END:
-
-#+begin_src emacs-lisp
-(with-os! linux (xl-load-before-call 'exwm #'browse-url))
-#+end_src
-
 *** trigger exwm on =browse-url= :advice:
 :PROPERTIES:
 :ID:       581b8529-00a0-4935-9363-60dba9dbe5f4
