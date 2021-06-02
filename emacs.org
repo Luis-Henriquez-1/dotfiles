@@ -4126,10 +4126,10 @@ The variable names can get really long, no? :joy: Maybe it's better to have sort
 of a =:nameless-set= keyword that implies a namespace the same as a package. :bulb:
 
 #+begin_src emacs-lisp
-(use-package selectrum-prescient
-  :hook selectrum-mode-hook
-  :set
-  (selectrum-preprocess-candidates-function . #'selectrum-prescient--preprocess))
+(xl-hook-add 'selectrum-mode-hook 'selectrum-prescient-mode)
+
+(defsetting! selectrum-prescient ()
+  (setq selectrum-preprocess-candidates-function #'selectrum-prescient--preprocess))
 #+end_src
 
 *** lettered candidate index :selectrum:
