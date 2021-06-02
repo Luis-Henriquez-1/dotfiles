@@ -8723,12 +8723,11 @@ how to automate this.
 :END:
 
 #+begin_src emacs-lisp
-(use-package mu4e-view
-  :set
-  (mu4e-view-show-images     . t)
-  (mu4e-view-image-max-width . 800)
-  (mu4e-view-show-addresses  . t)
-  (mu4e-date-format          . "%c"))
+(defsetting! mu4e-view ()
+  (setq mu4e-view-show-images t)
+  (setq mu4e-view-image-max-width 800)
+  (setq mu4e-view-show-addresses t)
+  (setq mu4e-date-format "%c"))
 #+end_src
 
 *** mu4e-compose
