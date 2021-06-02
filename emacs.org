@@ -8512,15 +8512,6 @@ gpg passphrase via emacs.
   (epg-pinentry-mode . 'loopback))
 #+end_src
 
-** chess :amusement:
-:PROPERTIES:
-:ID:       1197be6f-a2ff-4cf1-8b78-02ebceb43317
-:END:
-
-#+begin_src emacs-lisp
-(use-package chess)
-#+end_src
-
 ** gcmh :performance:core:
 :PROPERTIES:
 :ID:       86653a5a-f273-4ce4-b89b-f288d5d46d44
