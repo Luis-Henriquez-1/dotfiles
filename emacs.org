@@ -2000,11 +2000,10 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 :END:
 
 #+begin_src emacs-lisp
-(use-package log4e
-  :demand t
-  :alias (xl/popup-log-buffer . xl--log-open-log)
-  :init
-  (defalias 'xl-log 'xl--log-info))
+(require 'log4e)
+
+(defalias 'xl-log 'xl--log-info)
+(defalias 'xl/popup-log-buffer . xl--log-open-log)
 
 (log4e:deflogger "xl" "%t [%l] %m" "%H:%M:%S")
 (xl--log-enable-logging)
