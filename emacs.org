@@ -3886,7 +3886,7 @@ be exact. Therefore, I define a function I can use instead.
 =org-refile= is a built-in package that.
 
 #+begin_src emacs-lisp
-(use-package org-refile
+(defsetting! org-refile
   :idle-require t
   :set
   (org-refile-use-outline-path            . 'file)
@@ -3967,11 +3967,11 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-superstar
-  :hook org-mode-hook
-  :set
-  (org-superstar-leading-bullet     . ?\s)
-  (org-superstar-special-todo-items . t))
+(xl-hook-add 'org-mode-hook #'org-superstar-mode)
+
+(defsetting! org-superstar ()
+  (setq org-superstar-leading-bullet ?\s)
+  (setq org-superstar-special-todo-items t))
 #+end_src
 
 *** asthetic
