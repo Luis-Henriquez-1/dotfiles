@@ -7763,15 +7763,14 @@ afterwards.
 :END:
 
 #+begin_src emacs-lisp
-(use-package desktop
-  :set
-  (desktop-save                 . t)
-  (desktop-dirname              . XL-CACHE-DIR)
-  (desktop-auto-save-timeout    . auto-save-timeout)
-  (desktop-base-file-name       . "emacs.desktop")
-  (desktop-base-lock-name       . "emacs.desktop.lock")
-  (desktop-path                 . (list XL-CACHE-DIR))
-  (desktop-missing-file-warning . nil))
+(defsetting! desktop ()
+  (setq desktop-save t)
+  (setq desktop-dirname XL-CACHE-DIR)
+  (setq desktop-auto-save-timeout auto-save-timeout)
+  (setq desktop-base-file-name "emacs.desktop")
+  (setq desktop-base-lock-name "emacs.desktop.lock")
+  (setq desktop-path (list XL-CACHE-DIR))
+  (setq desktop-missing-file-warning nil))
 #+end_src
 
 **** allowing desktops to go in one directory
@@ -8014,9 +8013,7 @@ that if Emacs hangs or crashes you need to restart your computer.
 :END:
 
 #+begin_src emacs-lisp
-(use-package exwm
-  :os linux
-  :before-call browse-url)
+(with-os! linux (xl-load-before-call 'exwm #'browse-url))
 #+end_src
 
 *** trigger exwm on =browse-url= :advice:
