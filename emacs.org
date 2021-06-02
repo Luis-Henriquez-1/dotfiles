@@ -4211,9 +4211,11 @@ My capture templates use =ts= and =org-ml= so I make sure to load those library
 before org-capture is loaded.
 
 #+begin_src emacs-lisp
+(defafter! set-initial-state-for-org-capture (evil org-capture)
+  (evil-set-initial-state 'org-capture-mode 'insert))
+
 (use-package org-capture
   :idle-require t
-  :initial-state insert
   :before-call
   (ts     . org-capture)
   (org-ml . org-capture)
