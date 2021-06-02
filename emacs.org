@@ -8797,7 +8797,6 @@ pay the icon loading costs at startup.
 #+begin_src emacs-lisp
 (defbefore! set-mu4e-marks (mu4e-headers)
   "Set the mu4e marks."
-  (require 'all-the-icons)
   (setq mu4e-headers-draft-mark     (cons "D" (all-the-icons-faicon "pencil")))
   (setq mu4e-headers-flagged-mark   (cons "F" (all-the-icons-faicon "flag")))
   (setq mu4e-headers-new-mark       (cons "N" (all-the-icons-material "fiber_new")))
