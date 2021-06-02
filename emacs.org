@@ -9159,8 +9159,8 @@ images which referred to by the symbols =official= and =logo=.
 #+begin_src emacs-lisp
 (defun dashboard%random-logo ()
   "Display a random logo."
-  (seq-random-elt
-   (append '(1 2 3) (if (display-graphic-p) '(official logo)))))
+  (seq-random-elt (append '(1 2 3)
+			  (if (display-graphic-p) '(official logo)))))
 #+end_src
 
 *** require :dashboard:asthetic:
@@ -9174,7 +9174,8 @@ images which referred to by the symbols =official= and =logo=.
 
 (defsetting! dashboard ()
   (setq dashboard-items nil)
-  (setq dashboard-startup-banner (dashboard%random-logo))
+  (alet (seq-random-elt (append '(1 2 3) (if (display-graphic-p) '(official logo))))
+    (setq dashboard-startup-banner it))
   (setq dashboard-center-content t)
   (setq initial-buffer-choice #'startup%initial-buffer-choice))
 #+end_src
