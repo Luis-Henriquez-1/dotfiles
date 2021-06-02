@@ -5772,7 +5772,7 @@ and provides facilities for writing custom extensions. Also see our page on
 :END:
 
 #+begin_src emacs-lisp
-(add-hook 'emacs-startup-hook #'evil-mode-hook)
+(xl-hook-add 'emacs-startup-hook #'evil-mode-hook)
 #+end_src
 
 **** evil-core :edit:evil:
