@@ -5059,8 +5059,8 @@ address later.
 :END:
 
 #+begin_src emacs-lisp
-(use-package git-commit
-  :initial-state insert)
+(after! (evil git-commit)
+  (evil-set-initial-state 'git-commit-mode 'insert))
 #+end_src
 
 **** git-gutter+ :git:
