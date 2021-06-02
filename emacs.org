@@ -858,7 +858,12 @@ for functions namespaced =frame=.
 (defalias 'find-file-get-create 'find-file-noselect)
 #+end_src
 
-*** generic advices
+*** advice :advice:
+:PROPERTIES:
+:ID:       e498fc7d-03f1-4a69-9869-28c1b499fe1f
+:END:
+
+**** generic advices
 :PROPERTIES:
 :ID:       ba195f61-9b1c-4b51-835c-d1351f4d6301
 :END:
@@ -867,7 +872,7 @@ Most times when I advise a function, the advice is unique and catered
 specifically for a single use case. However, sometimes there are common advices
 that I need to add to many functions. I refer to these as "generic advices".
 
-**** defgadvice!
+***** defgadvice!
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
@@ -886,7 +891,7 @@ A generic advice should have a function.
 	    (defun ,internal-advice ,args ,@body))))
 #+end_src
 
-**** pause garbarge collection :advice:performance:
+***** pause garbarge collection :advice:performance:
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
@@ -902,7 +907,7 @@ packages which can contain several thousand items.
     (apply orig-fn args)))
 #+end_src
 
-**** catch errors
+***** catch errors
 :PROPERTIES:
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
@@ -923,7 +928,7 @@ advice]].
      (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
 #+end_src
 
-**** advice regexp
+***** advice regexp
 :PROPERTIES:
 :ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
 :END:
@@ -933,7 +938,7 @@ advice]].
   "A regular expression that defines naming convention for advices.")
 #+end_src
 
-**** original advice
+***** original advice
 :PROPERTIES:
 :ID:       49f49994-637a-4e26-b680-3535463ee8bf
 :END:
@@ -945,7 +950,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
-**** original fn
+***** original fn
 :PROPERTIES:
 :ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
 :END:
@@ -957,7 +962,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
-**** advice-fn-p
+***** advice-fn-p
 :PROPERTIES:
 :ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
 :END:
@@ -968,7 +973,7 @@ ADVICE is an advice function that follows XL naming conventions."
   (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
-**** log
+***** log
 :PROPERTIES:
 :ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
 :END:
@@ -986,7 +991,7 @@ ADVICE is an advice function that follows XL naming conventions."
 	   (xl-log "%s called" fn)))))
 #+end_src
 
-**** silence :gadvice:advice:library:core:
+***** silence :gadvice:advice:library:core:
 :PROPERTIES:
 :ID:       7eddba70-8597-4af7-bc93-6ebdcc06ee6c
 :END:
@@ -1001,7 +1006,7 @@ to silence the said messages.
   (shut-up (apply orig-fn args)))
 #+end_src
 
-**** assume yes in prompts :setting:
+***** assume yes in prompts :setting:
 :PROPERTIES:
 :ID:       82960e31-b0c5-4b79-8ac4-508629bd63a4
 :END:
@@ -1018,7 +1023,7 @@ is an example).
     (apply orig-fn args)))
 #+end_src
 
-**** log
+***** log
 :PROPERTIES:
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
@@ -1031,7 +1036,7 @@ Sometimes I want to use =xl-log= instead of =message=.
     (apply orig-fn args)))
 #+end_src
 
-**** log advices and hooks
+***** log advices and hooks
 :PROPERTIES:
 :ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
 :header-args: :tangle no
@@ -1051,7 +1056,7 @@ Log when an advice or hook is being called.
 	(finally-return symbols)))
 #+end_src
 
-**** loading on call
+***** loading on call
 :PROPERTIES:
 :ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
 :END:
@@ -1064,7 +1069,7 @@ quickly become repetative because it's something that is done so often in
 package configuration. The function =before-call= and =after-call= provide a fast
 and convenient way to do this.
 
-***** load-on-call
+****** load-on-call
 :PROPERTIES:
 :ID:       324e707b-2f44-4168-a846-037f5401dedb
 :END:
@@ -1084,7 +1089,7 @@ this it adds an =XL= advice that loads the feature to the function.
     (xl-gadvice-expire it)))
 #+end_src
 
-***** load before call
+****** load before call
 :PROPERTIES:
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
@@ -1098,7 +1103,7 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :before fn))
 #+end_src
 
-***** load after call
+****** load after call
 :PROPERTIES:
 :ID:       b0b294d0-15ac-42d9-9e4c-fd9da8a95206
 :END:
@@ -1109,7 +1114,7 @@ not to have to specify the advice keyword.
   (xl-load-on-call package :after fn))
 #+end_src
 
-**** ignore output
+***** ignore output
 :PROPERTIES:
 :ID:       5053afcc-7a44-44d4-80b6-f42c3ea87926
 :END:
@@ -1119,7 +1124,7 @@ not to have to specify the advice keyword.
   "Advice to ignore a function.")
 #+end_src
 
-**** expiration
+***** expiration
 :PROPERTIES:
 :ID:       b531dc79-73d0-43eb-a600-b3075315acf0
 :END:
@@ -1139,7 +1144,7 @@ not to have to specify the advice keyword.
        nil))))
 #+end_src
 
-*** advice keywords
+**** advice keywords
 :PROPERTIES:
 :ID:       3ddc2ff0-634c-4b1e-940e-1d8562d42ece
 :END:
@@ -1157,10 +1162,19 @@ this is useful for adding advices programmatically.
   "All possible advice keywords.")
 #+end_src
 
-*** advice :advice:
+**** gen symbol
 :PROPERTIES:
-:ID:       e498fc7d-03f1-4a69-9869-28c1b499fe1f
+:ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
 :END:
+
+#+begin_src emacs-lisp
+(defun xl-advice-gen-symbol (symbol function)
+  "Generate an advice name for symbol and function."
+  (acond ((s-match "\\`xl--\\([[:alnum:]]+\\)-advice-[^[:space:]]+\\'" (symbol-name function))
+	  (xl-symbol-intern symbol '@@ (nth 1 it)))
+	 (t
+	  (xl-symbol-intern symbol '@ function))))
+#+end_src
 
 **** remove XL advice
 :PROPERTIES:
@@ -2113,20 +2127,6 @@ not what I'd like.
     `(progn (defun ,orig-fn ,(or .args '(&rest _)) ,@body)
 	    (let ((,hooks (xl-hook-add ',(-list hooks) #',orig-fn ,.depth ,.local))) 
 	      (mapc #'xl-gadvice-catch-error ,hooks)))))
-#+end_src
-
-**** gen symbol
-:PROPERTIES:
-:ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-advice-gen-symbol (symbol function)
-  "Generate an advice name for symbol and function."
-  (acond ((s-match "\\`xl--\\([[:alnum:]]+\\)-advice-[^[:space:]]+\\'" (symbol-name function))
-	  (xl-symbol-intern symbol '@@ (nth 1 it)))
-	 (t
-	  (xl-symbol-intern symbol '@ function))))
 #+end_src
 
 **** defadvice!
