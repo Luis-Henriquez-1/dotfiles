@@ -3586,6 +3586,9 @@ My capture templates use =ts= and =org-ml= so I make sure to load those library
 before org-capture is loaded.
 
 #+begin_src emacs-lisp
+(defsetting! org-capture ()
+  (xl-load-before-call 'ts #'org-capture)
+  )
 (use-package org-capture
   :before-call
   (ts     . org-capture)
