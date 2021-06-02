@@ -8552,8 +8552,7 @@ are done before setting the =gc-cons-threshold= back to a normal value.
 :END:
 
 #+begin_src emacs-lisp
-(use-package hideshow
-  :hook (prog-mode-hook . hs-minor-mode))
+(xl-hook-add 'prog-mode-hook #'hs-minor-mode)
 #+end_src
 
 ** commands :command:
