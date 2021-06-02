@@ -4621,7 +4621,10 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(xl-hook-add 'org-mode-hook #'org-fancy-priorities-mode)
+(xl-hook-add 'org-mode-hook
+	     (list #'org-superstar-mode
+		   #'org-pretty-tags-mode
+		   #'org-fancy-priorities-mode))
 #+end_src
 
 *** org-pretty-tags
@@ -4630,8 +4633,6 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-pretty-tags
-  :hook org-mode-hook)
 #+end_src
 
 *** org-babel-hide-markers-mode
