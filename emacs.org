@@ -8776,8 +8776,10 @@ before sending--very interesting indeed :grinning:. I have yet to explore this f
 it is definitely on my list of things to try out.
 
 #+begin_src emacs-lisp
+(after! mu4e
+  (xl-hook-add 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode))
+
 (use-package mu4e-org
-  :hook (mu4e-compose-mode-hook . org-mu4e-compose-org-mode)
   :set
   (mu4e-org-link-query-in-headers-mode . nil)
   (mu4e-org-convert-to-html            . t))
