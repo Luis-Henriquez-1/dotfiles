@@ -4472,12 +4472,11 @@ useful functions which are written in such a way that they can be work across
 all the completion frameworks.
 
 #+begin_src emacs-lisp
-(use-package consult
-  :gc-pause consult-outline consult-line
-  :set
-  (consult-preview-key . nil)
-  :config
-  (bind! ([remap switch-to-buffer] #'consult-buffer)))
+(defsetting! consult ()
+  (bind! ([remap switch-to-buffer] #'consult-buffer))
+  (xl-gadvice-pause-garbage-collection #'consult-outline)
+  (xl-gadvice-pause-garbage-collection #'consult-line)
+  (setq consult-preview-key nil))
  #+end_src
 
 * editing :edit:
