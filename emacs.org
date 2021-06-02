@@ -7559,20 +7559,6 @@ which provides much more contextual information in a better format.
 :ID:       bb6bc4a5-6567-4fa8-b984-7175bd9fad31
 :END:
 
-** zoom-window
-:PROPERTIES:
-:ID:       d506fde5-d1bc-4807-a1d0-a8ed5c33def2
-:END:
-
-This package provides a command that temporarily makes a window occupy full
-screen. And then reverts the window configuration to what it was again
-afterwards.
-
-#+begin_src emacs-lisp
-(use-package zoom-window
-  :commands zoom-window)
-#+end_src
-
 ** window
 :PROPERTIES:
 :ID:       af27cd7e-2096-4f6d-a749-63e4c38d136c
@@ -8317,9 +8303,8 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(use-package uniquify
-  :set
-  (uniquify-buffer-name-style . 'forward))
+(defsetting! uniquify ()
+  (setq uniquify-buffer-name-style 'forward))
 #+end_src
 
 ** compile
