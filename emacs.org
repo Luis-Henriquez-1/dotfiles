@@ -3993,8 +3993,7 @@ referenance org headlines.
 This is a minor mode for displaying links in non-org buffers.
 
 #+begin_src emacs-lisp
-(use-package org-link-minor-mode
-  :hook outshine-mode-hook)
+(xl-hook-add 'outshine-mode-hook 'org-link-minor-mode)
 #+end_src
 
 ** org-toc
