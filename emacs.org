@@ -2159,6 +2159,17 @@ should run.
 	      ,@body))))
 #+end_src
 
+**** defsetting!
+:PROPERTIES:
+:ID:       805d2b77-86e1-4f43-85ec-0d98a8550a2d
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defsetting! (feature args &rest body)
+  `(defbefore! name (feature)
+     ,@body))
+#+end_src
+
 **** loading features
 :PROPERTIES:
 :ID:       af04e29b-fe1c-4245-ad9e-e0ab885f0ab6
