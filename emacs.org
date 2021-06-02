@@ -4640,15 +4640,6 @@ newline.
 =edit-indirect= is a package that provides a means to edit text in an indirect
 buffer. It's the same concept as org-src buffers but is not tied to org-mode.
 
-*** edit-indirect
-:PROPERTIES:
-:ID:       d08adcae-ab17-41f1-94c9-1d9a8cb385d7
-:END:
-
-#+begin_src emacs-lisp
-(use-package edit-indirect :commands edit-indirect)
-#+end_src
-
 *** editing org descriptions
 :PROPERTIES:
 :ID:       bdabe0b9-4116-423b-9fc0-049651bed58a
@@ -4893,10 +4884,10 @@ file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
 It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capitalize-words]].
 
 #+begin_src emacs-lisp
-(use-package auto-capitalize
-  :hook text-mode-hook
-  :set
-  (auto-capitalize-words . '("I" "English" "Emacs")))
+(xl-hook-add 'text-mode-hook #'auto-capitalize-mode)
+
+(defsetting! auto-capitalize ()
+  (setq auto-capitalize-words '("I" "English" "Emacs")))
 #+end_src
 
 *** plural :write:
