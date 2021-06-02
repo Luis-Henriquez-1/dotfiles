@@ -3448,18 +3448,6 @@ various functions in org mode.
   (setq org-log-done 'time))
 #+end_src
 
-** tangld
-:PROPERTIES:
-:ID:       03016895-7b3a-4809-a72d-ae635c3f0d01
-:END:
-
-=tangled= is currently in its early development stages--meaning it is not
-working yet.
-
-#+begin_src emacs-lisp
-(use-package tangld)
-#+end_src
-
 ** org-annotate-code
 :PROPERTIES:
 :ID:       a8c5199d-1f4d-44a5-b6f1-2f8f264b181d
