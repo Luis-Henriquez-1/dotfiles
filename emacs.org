@@ -2569,6 +2569,12 @@ raise the void-function error.
   (condition-case err
       (apply orig-fn args)
     (void-function
+     ;; Get list of unloaded features.
+     (loopy (each path load-path)
+	    (expr feature (intern (f-base path)))
+	    (unless (featurep feature)
+	      (collect feature)))
+     ;; Load.
      (loopy (each path load-path)
 	    (expr base (f-base path))
 	    (when (s-prefix-p base (symbol-name orig-fn))
