@@ -6147,15 +6147,6 @@ Why not just go to the end of the ="= like any other around operator?
 :ID:       5e3d46da-33c5-4388-8111-85436d2a46d1
 :END:
 
-** set up base popup rules :popup:
-:PROPERTIES:
-:ID:       76d91f6d-3bdf-440c-a26e-e176557b984c
-:END:
-
-#+begin_src emacs-lisp
-
-#+end_src
-
 ** maybe run server at startup :startup:
 :PROPERTIES:
 :ID:       a35d4b90-ac83-462d-83d7-5c86e79dfdc3
@@ -7734,9 +7725,8 @@ afterwards.
 :END:
 
 #+begin_src emacs-lisp
-(use-package window
-  :set
-  (split-width-threshold . 160))
+(defsetting! window ()
+  (setq split-width-threshold 160))
 #+end_src
 
 ** commands
