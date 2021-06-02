@@ -1767,7 +1767,7 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 #+begin_src emacs-lisp
 (defunmacro! defbefore! (name features &rest body)
   "Evaluate BODY before FEATURES are loaded.
-Do not evaluate BODY if features have already been loaded."
+If feature is already loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
 	(hook (xl-hook-gen-name 'xl-before-load-feature-hook name)))
     `(progn
@@ -1777,6 +1777,7 @@ Do not evaluate BODY if features have already been loaded."
 	   (xl-log "Removing %s..." #',hook)
 	   (xl-hook-remove #',hook)))
        (when ,condition
+	 (funcall #',name)
 	 (xl-hook-remove #',hook)))))
 #+end_src
 
