@@ -9169,14 +9169,14 @@ images which referred to by the symbols =official= and =logo=.
 :END:
 
 #+begin_src emacs-lisp
-(use-package dashboard
-  :demand t
-  :hook (window-setup-hook . dashboard-insert-startupify-lists)
-  :set
-  (dashboard-items . nil)
-  (dashboard-startup-banner . (dashboard%random-logo))
-  (dashboard-center-content . t)
-  (initial-buffer-choice . #'startup%initial-buffer-choice))
+(require 'dashboard)
+(xl-hook-add 'window-setup-hook #'dashboard-insert-startupify-lists)
+
+(defsetting! dashboard ()
+  (setq dashboard-items nil)
+  (setq dashboard-startup-banner (dashboard%random-logo))
+  (setq dashboard-center-content t)
+  (setq initial-buffer-choice #'startup%initial-buffer-choice))
 #+end_src
 
 *** open dashboard at startup :dashboard:startup:asthetic:
