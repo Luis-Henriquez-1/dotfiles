@@ -5652,7 +5652,7 @@ great idea! It makes it really easy to see which parentheses go together.
 :END:
 
 #+begin_src emacs-lisp
-(use-package lispyville :hook emacs-lisp-mode-hook)
+(xl-hook-add 'emacs-lisp-mode-hook 'lispyville-mode)
 #+end_src
 
 *** remappings :bind:
