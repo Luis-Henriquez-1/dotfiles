@@ -9004,12 +9004,11 @@ something. Setting it to =nil= makes the frame start at the size you specified.
 :END:
 
 #+begin_src emacs-lisp
-(use-package transient
-  :set
-  (transient-default-level . 5)
-  (transient-levels-file . (concat XL-CACHE-DIR "transient/levels"))
-  (transient-values-file . (concat XL-CACHE-DIR "transient/values"))
-  (transient-history-file . (concat XL-CACHE-DIR "transient/history")))
+(defsetting! transient
+  (setq transient-default-level 5)
+  (setq transient-levels-file (concat XL-CACHE-DIR "transient/levels"))
+  (setq transient-values-file (concat XL-CACHE-DIR "transient/values"))
+  (setq transient-history-file (concat XL-CACHE-DIR "transient/history")))
 #+end_src
 
 ** emojify :icon:appearance:
