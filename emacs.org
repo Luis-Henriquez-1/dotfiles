@@ -2166,6 +2166,7 @@ should run.
 
 #+begin_src emacs-lisp
 (defmacro defsetting! (feature args &rest body)
+  (declare (indent defun))
   `(defbefore! name (feature)
      ,@body))
 #+end_src
@@ -3574,6 +3575,7 @@ This keyword means I need to add documentation to a headline.
 ** TODO org-version
 :PROPERTIES:
 :ID:       0b2cfe2b-a75c-48ea-9470-19c92521e2cf
+:header-args: :tangle no
 :END:
 
 #+begin_src emacs-lisp
@@ -4144,7 +4146,10 @@ diary/journal using =org-mode=.
 :END:
 
 #+begin_src emacs-lisp
-(defbefore! declare-settings-for-org-src (org-src)
+(idle-require 'org-src nil t)
+
+(defsetting! org-src ()
+  (dbc-add-rule "bottom" "org source" :newname "\\*Org Src")
   (setq org-src-window-setup 'plain)
   (setq org-src-ask-before-returning-to-edit-buffer nil)
   (setq org-edit-src-persistent-message nil)
@@ -4152,10 +4157,6 @@ diary/journal using =org-mode=.
   (setq org-confirm-babel-evaluate nil)
   (setq org-src-tab-acts-natively t)
   (setq org-src-fontify-natively t))
-
-(use-package org-src
-  :idle-require t
-  :rule ("bottom" "org source" :newname "\\*Org Src"))
 #+end_src
 
 *** bindings in source block
