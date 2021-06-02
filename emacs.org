@@ -9139,15 +9139,6 @@ buffer and I've wanted to have the scratch buffer start off with
 =emacs-lisp-mode=, but I don't want it to trigger =company=, =yasnippet=, etc. on
 startup. If I start my emacs with =dashboard= I can avoid this.
 
-*** load page-break-lines
-:PROPERTIES:
-:ID:       b8fc0ee8-7e61-41df-b243-500b686bf2fd
-:END:
-
-#+begin_src emacs-lisp
-(use-package page-break-lines :demand t)
-#+end_src
-
 *** require :dashboard:asthetic:
 :PROPERTIES:
 :ID:       73d00f99-4b70-44d1-8359-01bd2c94b330
