@@ -8345,9 +8345,8 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-(use-package bookmark
-  :set
-  (bookmark-default-file . (concat XL-CACHE-DIR "bookmarks")))
+(defsetting! bookmark
+  (setq bookmark-default-file (concat XL-CACHE-DIR "bookmarks")))
 #+end_src
 
 ** nsm
