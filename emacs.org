@@ -8293,15 +8293,6 @@ redundant code.
   (setq avy-keys (number-sequence 97 122)))
 #+end_src
 
-** TODO zone :amusement:
-:PROPERTIES:
-:ID:       fe176959-3134-4b18-8abb-a962347b8df0
-:END:
-
-#+begin_src emacs-lisp
-(use-package zone)
-#+end_src
-
 ** zoom-frm :text:interface:
 :PROPERTIES:
 :ID:       15b8577e-3f98-420a-81a5-c7b91292aca3
