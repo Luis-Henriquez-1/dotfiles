@@ -4086,9 +4086,7 @@ This package lets you annotate files in a separate org file.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-superlinks
-  :commands org-super-links-link
-  :set
+(defbefore! settings-for-org-superlinks (org-superlinks)
   (org-super-links-backlink-prefix      . nil)
   (org-super-links-related-into-drawer  . "LINKS")
   (org-super-links-backlink-into-drawer . "LINKS"))
