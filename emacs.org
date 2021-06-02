@@ -4206,9 +4206,7 @@ address this I create this function. It displays letters next to the candidates.
 If I don't include this, I get an.
 
 #+begin_src emacs-lisp
-(use-package consult-selectrum
-  :after (consult)
-  :demand t)
+(after! (selectrum consult) (require 'consult-selectrum))
 #+end_src
 
 *** embark
