@@ -8404,9 +8404,8 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
 Non-nil means animated images loop forever, rather than playing once.
 
 #+begin_src emacs-lisp
-(use-package image-mode
-  :set
-  (image-animate-loop . t))
+(defsetting! image-mode ()
+  (setq image-animate-loop t))
 #+end_src
 
 ** uniquify :buffer:
