@@ -3586,7 +3586,6 @@ before org-capture is loaded.
 
 #+begin_src emacs-lisp
 (use-package org-capture
-  :idle-require t
   :before-call
   (ts     . org-capture)
   (org-ml . org-capture)
