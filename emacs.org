@@ -4260,8 +4260,9 @@ ivy packages in [[helpfn:straight-use-package][straight-use-package]] completion
 helm wrappers around existing commands.
 
 #+begin_src emacs-lisp
+(xl-hook-add 'emacs-startup-hook #'selectrum-mode)
+
 (use-package selectrum
-  :hook emacs-startup-hook
   :set
   (selectrum-max-window-height        . 15)
   (selectrum-num-candidates-displayed . 15)
