@@ -40,10 +40,18 @@ raise the void-function error.
 	    (expr feature (intern (f-base path)))
 	    (unless (featurep feature)
 	      (collect feature)))
-     ;; Load.
+
+     ;; Find candidates for loading.
      (loopy (list feature unloaded-features)
 	    (when (s-prefix-p base (symbol-name orig-fn))
-	      (collect base))))))
+	      (collect base)))
+     ;; Sort them by longest.
+
+     ;; Require each in turn and check if function is bound
+     (iter (for feature features)
+	   (require feature)
+	   (when (fboundp orig-fn)))
+     )))
 #+end_src
 
 * depth
