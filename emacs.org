@@ -1426,28 +1426,6 @@ garbage collection during this time.
 (setq idle-require-idle-delay 10)
 #+end_src
 
-**** rule :usepackage:library:core:popup:
-:PROPERTIES:
-:ID:       30ee0415-dccf-4742-9c31-bd33b900ab81
-:END:
-
-This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (display buffer control). What it does is.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :rule)
-
-(defun use-package-normalize/:rule (_ _ args)
-  "Ensure ARGS is a list of lists."
-  (cl-assert (-all-p #'xl-true-list-p args))
-  args)
-
-(defun use-package-handler/:rule (name _ rules rest state)
-  "Generate popup rule for each."
-  `(,@(loopy (list rule rules)
-	     (collect `(dbc-add-rule ,@rule)))
-    ,@(use-package-process-keywords name rest state)))
-#+end_src
-
 **** TODO log4e
 :PROPERTIES:
 :ID:       8360e875-61a6-46f8-a401-2a98c9e517fa
