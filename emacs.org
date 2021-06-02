@@ -4383,9 +4383,6 @@ tracking the time you spend on a particular task.
 :PROPERTIES:
 :ID:       efa9d237-b055-4bfb-a1f9-86d964b5f007
 :END:
-:LINKS:
-[[info:org#Weekly/daily agenda][info:org#Weekly/daily agenda]]
-:END:
 
 #+begin_src emacs-lisp
 (use-package org-agenda
