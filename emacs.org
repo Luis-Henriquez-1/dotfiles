@@ -4565,14 +4565,6 @@ be exact. Therefore, I define a function I can use instead.
     (call-interactively #'org-refile)))
 #+end_src
 
-** org-goto
-:PROPERTIES:
-:ID:       900250ad-ed09-4000-ab1c-be9f4d461951
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
 ** ox
 :PROPERTIES:
 :ID:       5f8eac7d-cc1f-4bba-bd65-77ead98c8e0c
@@ -4595,7 +4587,7 @@ storing universally unique IDs. This is primarily used to disguish and
 referenance org headlines.
 
 #+begin_src emacs-lisp
-(use-package org-id
+(defsetting! org-id ()
   :idle-require t
   :hook (org-insert-heading-hook . org-id-get-create)
   :set
