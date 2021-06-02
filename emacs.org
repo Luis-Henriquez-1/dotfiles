@@ -1966,13 +1966,11 @@ Since we're evaluating a good amount of lisp expressions, we should boost
 garbage collection during this time.
 
 #+begin_src emacs-lisp
-(use-package idle-require
-  :demand t
-  ;; :xl-use-xl-log idle-require-mode idle-require-load-next
-  ;; :gc-pause idle-require-load-next
-  :set
-  (idle-require-load-break . 2)
-  (idle-require-idle-delay . 10))
+(require 'idle-require)
+
+(setq idle-require-load-break 2)
+(setq idle-require-idle-delay 10)
+
 #+end_src
 
 **** rule :usepackage:library:core:popup:
