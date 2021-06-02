@@ -8304,9 +8304,8 @@ press jk really quickly to invoke escape.
 This is better than evil escape as it only binds in insert.
 
 #+begin_src emacs-lisp
-(use-package key-chord
-  :silence key-chord-mode
-  :before-call evil-insert-state evil-emacs-state)
+(xl-gadvice-shut-up #'key-chord-mode)
+(xl-load-before-call 'key-chord (list #'evil-insert-state #'evil-emacs-state))
 #+end_src
 
 ** TODO key-chord :bind:evil:
