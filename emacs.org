@@ -1970,7 +1970,6 @@ garbage collection during this time.
 
 (setq idle-require-load-break 2)
 (setq idle-require-idle-delay 10)
-
 #+end_src
 
 **** rule :usepackage:library:core:popup:
