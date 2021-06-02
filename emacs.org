@@ -9046,8 +9046,9 @@ them. By doing this you can "discover" the commands as you go along.
 :END:
 
 #+begin_src emacs-lisp
+(xl-hook-add 'emacs-startup-hook #'which-key-mode)
+
 (use-package which-key
-  :hook emacs-startup-hook
   :set
   (which-key-sort-uppercase-first . nil)
   (which-key-max-display-columns  . nil)
