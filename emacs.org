@@ -3519,7 +3519,9 @@ prompt asking me if I'm sure.
   "Stop org-mode from deleting windows."
   (xl-gadvice-suppress-delete-windows #'org-add-log-note)
   (xl-gadvice-suppress-delete-windows #'org-fast-tag-selection)
-  (xl-gadvice-suppress-delete-windows #'org-fast-todo-selection))
+  (xl-gadvice-suppress-delete-windows #'org-fast-todo-selection)
+  (xl-gadvice-suppress-delete-windows #'org-goto-location)
+  )
 #+end_src
 
 ** increase line spacing
@@ -4570,8 +4572,6 @@ be exact. Therefore, I define a function I can use instead.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-goto
-  :gadvice (org-goto-location . suppress-delete-windows))
 #+end_src
 
 ** ox
