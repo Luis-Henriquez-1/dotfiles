@@ -9373,10 +9373,9 @@ documentation. This includes using emojis. Also, using emojis makes
 documentation *much* more fun. :joy-cat:
 
 #+begin_src emacs-lisp
-(use-package emojify
-  :hook org-mode-hook
-  ;; :on-install (emojify-in)
-  :set
-  (emojify-emojis-dir . (concat XL-CACHE-DIR "emojis/")))
+(xl-hook-add 'org-mode-hook 'emojify-mode)
+
+(defsetting! emojify ()
+  (setq emojify-emojis-dir (concat XL-CACHE-DIR "emojis/")))
 #+end_src
 
