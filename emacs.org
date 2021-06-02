@@ -8308,7 +8308,6 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
   (setq zoom-frame/buffer 'buffer))
 #+end_src
 
-
 ** tramp :cache:
 :PROPERTIES:
 :ID:       a3ccfafa-dc88-4aac-bbe9-fc4ae0f00997
