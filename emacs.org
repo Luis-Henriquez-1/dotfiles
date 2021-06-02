@@ -8276,9 +8276,10 @@ in. Shortening aliases allows for more concise, easier to read, and less
 redundant code.
 
 #+begin_src emacs-lisp
-(use-package nameless
-  :hook emacs-lisp-mode-hook
-  :set (nameless-private-prefix . t))
+(xl-hook-add 'emacs-lisp-mode-hook 'nameless-mode)
+
+(defsetting! nameless ()
+  (setq nameless-private-prefix t))
 #+end_src
 
 ** avy :navigation:interface:
