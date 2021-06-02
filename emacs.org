@@ -8336,8 +8336,7 @@ a function and simultaneously add those tests as examples for how to use the
 function?
 
 #+begin_src emacs-lisp
-(use-package elisp-demos
-  :advice (:after (helpful-update . elisp-demos-advice-helpful-update)))
+(xl-advice-add #'helpful-update :after #'elisp-demos-advice-helpful-update)
 #+end_src
 
 ** bookmarks
