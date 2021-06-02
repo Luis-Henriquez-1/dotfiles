@@ -3588,13 +3588,8 @@ before org-capture is loaded.
 #+begin_src emacs-lisp
 (defsetting! org-capture ()
   (xl-load-before-call 'ts #'org-capture)
+  (xl-load-before-call 'org-ml #'org-capture)
   (dbc-add-rule "bottom" "capture" :newname "\\`CAPTURE-.+"))
-
-(use-package org-capture
-  :before-call
-  (ts     . org-capture)
-  (org-ml . org-capture)
-  :rule ("bottom" "capture" :newname "\\`CAPTURE-.+"))
 #+end_src
 
 *** initial state
