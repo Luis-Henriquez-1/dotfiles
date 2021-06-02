@@ -4137,7 +4137,6 @@ diary/journal using =org-mode=.
 
 #+begin_src emacs-lisp
 (use-package org-journal
-  :commands org-journal-new-entry
   :set
   (org-journal-file-type . 'yearly)
   (org-journal-find-file . 'find-file)
