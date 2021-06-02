@@ -6093,14 +6093,6 @@ Why not just go to the end of the ="= like any other around operator?
 (use-package evil-goggles)
 #+end_src
 
-*** evil-god-state :evil:
-:PROPERTIES:
-:ID:       4374e82c-bac1-4c9e-9ab9-70799140f5a7
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
 * settings :setting:
 :PROPERTIES:
 :ID:       5e3d46da-33c5-4388-8111-85436d2a46d1
