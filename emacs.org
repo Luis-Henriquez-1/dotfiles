@@ -1098,9 +1098,10 @@ For convenience, I provide [[helpfn:xl-load-before-call][xl-load-before-call]] a
 not to have to specify the advice keyword.
 
 #+begin_src emacs-lisp
-(defun xl-load-before-call (package fn)
-  "Load PACKAGE before FN is called."
-  (xl-load-on-call package :before fn))
+(defun xl-load-before-call (packages functions)
+  "Load PACKAGES before FUNCTIONS are called."
+  (iter (list (package fn) (-table-flat #'list (-list packages) (-list functions)))
+	(xl-load-on-call package :before fn)))
 #+end_src
 
 ****** load after call
