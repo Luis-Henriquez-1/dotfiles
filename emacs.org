@@ -4025,8 +4025,8 @@ As I've mentioned, org-babel is increadibly slow. So slow that I don't think
 even increasing the gc-cons-threshold will help enough. But here goes nothing.
 
 #+begin_src emacs-lisp
-(use-package ob-tangle
-  :gc-pause org-babel-tangle)
+(after! org
+  (xl-gadvice-pause-garbage-collection #'org-babel-tangle))
 #+end_src
 
 * completion :completion:
