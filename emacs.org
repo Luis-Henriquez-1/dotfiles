@@ -4010,10 +4010,8 @@ with the tag =:TOC:= on it. As you might have guessed [[helpvar:toc-org-max-dept
 maximum dept at which toc will make the table of contents.
 
 #+begin_src emacs-lisp
-(use-package toc-org
-  :hook org-mode-hook
-  :set
-  (toc-org-max-depth . 2))
+(setq toc-org-max-depth 2)
+(xl-hook-add 'org-mode-hook 'toc-org-mode)
 #+end_src
 
 ** org-babel
