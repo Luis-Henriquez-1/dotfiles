@@ -8288,10 +8288,9 @@ redundant code.
 :END:
 
 #+begin_src emacs-lisp
-(use-package avy
-  :set
-  (avy-style . 'pre)
-  (avy-keys . (number-sequence ?a ?z)))
+(defsetting! avy ()
+  (setq avy-style 'pre)
+  (setq avy-keys (number-sequence 97 122)))
 #+end_src
 
 ** TODO zone :amusement:
