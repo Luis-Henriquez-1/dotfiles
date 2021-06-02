@@ -3748,8 +3748,7 @@ tracking the time you spend on a particular task.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-agenda
-  :before-call (org-ql . org-agenda))
+(xl-load-before-call 'org-ql #'org-agenda)
 
 (defsetting! org-agenda ()
   (dbc-add-rule "top" "org agenda" :newname "\\*Org Agenda\\*")
