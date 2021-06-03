@@ -8711,10 +8711,9 @@ it is definitely on my list of things to try out.
 (after! mu4e
   (xl-hook-add 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode))
 
-(use-package mu4e-org
-  :set
-  (mu4e-org-link-query-in-headers-mode . nil)
-  (mu4e-org-convert-to-html            . t))
+(defsetting! mu4e-org
+  (setq mu4e-org-link-query-in-headers-mode nil)
+  (setq mu4e-org-convert-to-html            t))
 #+end_src
 
 *** set the mu4e icons
