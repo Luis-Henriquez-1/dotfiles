@@ -8372,7 +8372,7 @@ Setting these variables in coordination with [[id:58a65d49-cd9f-4b5d-86d7-d43209
 gpg passphrase via emacs.
 
 #+begin_src emacs-lisp
-(defsetting! epa-config
+(defsetting! epa-config ()
   (setq epg-gpg-program   "gpg2")
   (setq epg-pinentry-mode 'loopback))
 #+end_src
