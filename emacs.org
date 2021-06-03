@@ -5029,11 +5029,15 @@ address later.
 :END:
 
 #+begin_src emacs-lisp
+(mapc #'idle-require '(f s with-editor git-commit package eieio lv transient))
+
+(defsetting! magit
+  (xl-gadvice-pause-garbage-collection #'magit-status)
+  (xl-gadvice-pause-garbage-collection #'magit-commit)
+  (xl-hook-add 'magit-popup-mode-hook #'hide-mode-line))
+
 (use-package magit
-  :idle-require f s with-editor git-commit package eieio lv transient
-  :gc-pause magit-status magit-commit
   :rule ("bottom" "magit" :newname "magit: ")
-  :hook (magit-popup-mode-hook . hide-mode-line-hook)
   :set
   (magit-completing-read-function . #'completing-read)
   (magit-diff-refine-hunk . t)
