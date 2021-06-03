@@ -8336,10 +8336,9 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(use-package url
-  :set
-  (url-cache-directory         . (concat XL-CACHE-DIR "url/cache/"))
-  (url-configuration-directory . (concat XL-CACHE-DIR "url/configuration/")))
+(defsetting! url ()
+  (setq url-cache-directory         (concat XL-CACHE-DIR "url/cache/"))
+  (setq url-configuration-directory (concat XL-CACHE-DIR "url/configuration/")))
 #+end_src
 
 ** ffap
