@@ -8349,9 +8349,8 @@ Non-nil means animated images loop forever, rather than playing once.
 Don't ping things that look like domain names.
 
 #+begin_src emacs-lisp
-(use-package ffap
-  :set
-  (ffap-machine-p-known . 'reject))
+(defsetting! ffap ()
+  (setq ffap-machine-p-known 'reject))
 #+end_src
 
 ** passwords and security :security:
