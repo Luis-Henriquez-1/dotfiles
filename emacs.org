@@ -8254,9 +8254,8 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-(use-package mouse
-  :set
-  (mouse-yank-at-point . t))
+(defsetting! mouse
+  (setq mouse-yank-at-point t))
 #+end_src
 
 ** ansi-color
