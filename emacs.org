@@ -8136,7 +8136,7 @@ This is better than evil escape as it only binds in insert.
 (xl-load-before-call 'key-chord (list #'evil-insert-state #'evil-emacs-state))
 #+end_src
 
-** TODO key-chord :bind:evil:
+** TODO quickly go to normal state
 :PROPERTIES:
 :ID:       65bb49db-7df4-4503-977d-b1285c7a48f3
 :END:
