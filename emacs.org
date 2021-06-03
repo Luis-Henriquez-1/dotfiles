@@ -8907,13 +8907,11 @@ something. Setting it to =nil= makes the frame start at the size you specified.
 
 #+begin_src emacs-lisp
 (defsetting! mini-frame
-  ;; :hook emacs-startup-hook
-  :set
-  (mini-frame-resize . nil)
-  (mini-frame-show-parameters . '((top . 10)
-				  (width . 0.95)
-				  (left . 0.5)
-				  (height . 15))))
+  (setq mini-frame-resize nil)
+  (setq mini-frame-show-parameters '((top . 10)
+				     (width . 0.95)
+				     (left . 0.5)
+				     (height . 15))))
 #+end_src
 
 ** highlight-quoted :elisp:lang:prog:
