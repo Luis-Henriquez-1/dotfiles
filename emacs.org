@@ -8313,11 +8313,10 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(use-package compile
-  :set
-  (compilation-ask-about-save . nil)
-  (compilation-scroll-output  . 'first-error)
-  (compilation-always-kill    . t))
+(defsetting! compile ()
+  (setq compilation-ask-about-save nil)
+  (setq compilation-scroll-output  'first-error)
+  (setq compilation-always-kill    t))
 #+end_src
 
 ** bytecomp
@@ -8326,10 +8325,9 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(use-package bytecomp
-  :set
-  (byte-compile-warnings . '(not free-vars unresolved noruntime lexical make-local))
-  (byte-compile-verbose  . xl-debug-p))
+(defsetting! bytecomp ()
+  (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
+  (setq byte-compile-verbose  xl-debug-p))
 #+end_src
 
 ** url :cache:
