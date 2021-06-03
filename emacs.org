@@ -3933,8 +3933,7 @@ be exact. Therefore, I define a function I can use instead.
 This package stands for "org-export".
 
 #+begin_src emacs-lisp
-(use-package ox
-  :gadvice (org-export--dispatch-ui . suppress-delete-windows))
+(xl-gadvice-suppress-delete-windows #'org-export--dispatch-ui)
 #+end_src
 
 ** org-id
