@@ -8244,9 +8244,8 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-(use-package nsm
-  :set
-  (nsm-settings-file . (concat XL-CACHE-DIR "network-settings.data")))
+(defsetting! nsm
+  (setq nsm-settings-file (concat XL-CACHE-DIR "network-settings.data")))
 #+end_src
 
 ** mouse :mouse:
