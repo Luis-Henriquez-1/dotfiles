@@ -8906,7 +8906,7 @@ are not immediately visible. They are only visible when I type
 something. Setting it to =nil= makes the frame start at the size you specified.
 
 #+begin_src emacs-lisp
-(use-package! mini-frame
+(defsetting! mini-frame
   ;; :hook emacs-startup-hook
   :set
   (mini-frame-resize . nil)
