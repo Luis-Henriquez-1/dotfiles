@@ -4858,15 +4858,6 @@ file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
  ("a" #'edit-indirect-abort))
 #+end_src
 
-** separedit :interface:
-:PROPERTIES:
-:ID:       07021099-6cea-4016-929b-d9310ea305f8
-:END:
-
-#+begin_src emacs-lisp
-(use-package separedit :commands separedit)
-#+end_src
-
 ** writing :write:
 :PROPERTIES:
 :ID:       ec6f755f-5bce-4bff-a603-d4725e097cc5
@@ -4900,12 +4891,12 @@ My intended use for this package is to help automate prompts, docstrings or the
 like that concern N number of things, where N could be 1 or more things.
 
 #+begin_src emacs-lisp
-(use-package plural
-  :commands plural-make-plural
-  :xl-config
-  (push '("\\`is\\'" . "are") plural-knowledge)
-  (push '("\\`thas\\'" . "those") plural-knowledge)
-  (push '("\\`this\\'" . "these") plural-knowledge))
+;; (use-package plural
+;;   (setf (alist-get (rx )))
+;;   :xl-config
+;;   (push '("\\`is\\'" . "are") plural-knowledge)
+;;   (push '("\\`thas\\'" . "those") plural-knowledge)
+;;   (push '("\\`this\\'" . "these") plural-knowledge))
 #+end_src
 
 *** spell-number :write:spell:
