@@ -8552,7 +8552,7 @@ how to automate this.
 :END:
 
 #+begin_src emacs-lisp
-(before! mu4e-view ()
+(before! mu4e-view
   (setq mu4e-view-show-images t)
   (setq mu4e-view-image-max-width 800)
   (setq mu4e-view-show-addresses t)
