@@ -6436,9 +6436,9 @@ will change.
 
 #+begin_src emacs-lisp
 (defbefore! setup-backup-settings (file)
-  (backup-by-copying                  . t)
-  (backup-by-copying-when-linked      . t)
-  (backup-directory-alist             . (list (cons ".*" (concat XL-CACHE-DIR "backup/")))))
+  (setq backup-by-copying t)
+  (setq backup-by-copying-when-linked t)
+  (setq backup-directory-alist (list (cons ".*" (concat XL-CACHE-DIR "backup/")))))
 #+end_src
 
 ** loaddefs :core:setting:
