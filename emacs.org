@@ -1543,12 +1543,13 @@ not what I'd like.
 
 #+begin_src emacs-lisp
 (defunmacro! defhook! (name hooks &rest body)
-  "Define a hook that follows XL naming conventions."
+  "Define hooks that follow XL naming conventions."
   (declare (indent defun) (doc-string 3))
   (loopy (list hook hooks)
 	 (expr name (xl-hook-gen-name hook name))
 	 (collect `(defun ,name ,(or .args '(&rest _)) ,@body))
-	 (collect `(add-hook ',hook #',name ,.depth ,.local))))
+	 (collect `(add-hook ',hook #',name ,.depth ,.local))
+	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
 
 **** defadvice!
