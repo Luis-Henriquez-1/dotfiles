@@ -4415,8 +4415,9 @@ When the user
 :END:
 
 #+begin_src emacs-lisp
+(xl-hook-add 'prog-mode-hook 'yas-minor-mode-on)
+
 (use-package yasnippet
-  :hook (prog-mode-hook . yas-minor-mode-on)
   :set
   (yas-snippet-dirs . (list (concat XL-CACHE-DIR "snippets/")))
   (yas-verbosity . (if xl-debug-p 3 0))
