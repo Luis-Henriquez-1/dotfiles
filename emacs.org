@@ -3749,7 +3749,7 @@ tracking the time you spend on a particular task.
 #+begin_src emacs-lisp
 (xl-load-before-call 'org-ql #'org-agenda)
 
-(defsetting! org-agenda ()
+(defbefore! org-agenda
   (dbc-add-rule "top" "org agenda" :newname "\\*Org Agenda\\*")
   (xl-gadvice-pause-garbage-collection #'org-agenda-list)
   (xl-gadvice-suppress-delete-windows #'org-agenda-get-restriction-and-command)
