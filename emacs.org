@@ -7609,13 +7609,13 @@ that it's not a lisp object; implying that it is not.
 :END:
 
 #+begin_src emacs-lisp
-(use-package tab-bar-mode
-  :hook (tab-bar-mode-hook . tab-bar-history-mode)
-  :set
-  (tab-bar-new-tab-choice . "*scratch*")
-  (tab-bar-history-limit  . 25)
-  (tab-bar-tab-hints      . nil)
-  (tab-bar-show           . nil))
+(xl-hook-add 'tab-bar-mode-hook 'tab-bar-history-mode)
+
+(defbefore! tab-bar-mode
+  (setq tab-bar-new-tab-choice "*scratch*")
+  (setq tab-bar-history-limit 25)
+  (setq tab-bar-tab-hints nil)
+  (setq tab-bar-show nil))
 #+end_src
 
 **** dont actually display the tabs
