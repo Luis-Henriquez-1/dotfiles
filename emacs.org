@@ -7082,9 +7082,6 @@ of the problem. You can check out a more in-depth explanation looking at my
 :END:
 
 #+begin_src emacs-lisp
-(use-package macrostep
-  :commands macrostep-expand)
-
 (bind-localleader!
  (:map emacs-lisp-mode-map)
  (:prefix "m" :wk "macrostep")
