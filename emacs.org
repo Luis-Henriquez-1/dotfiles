@@ -5036,14 +5036,11 @@ address later.
 (defsetting! magit
   (xl-gadvice-pause-garbage-collection #'magit-status)
   (xl-gadvice-pause-garbage-collection #'magit-commit)
-  (xl-hook-add 'magit-popup-mode-hook #'hide-mode-line))
-
-(use-package magit
-  :rule ("bottom" "magit" :newname "magit: ")
-  :set
-  (magit-completing-read-function . #'completing-read)
-  (magit-diff-refine-hunk . t)
-  (magit-auto-revert-mode . t))
+  (xl-hook-add 'magit-popup-mode-hook #'hide-mode-line)
+  (after! dbc (dbc-add-rule "bottom" "magit" :newname "magit: "))
+  (setq magit-completing-read-function #'completing-read)
+  (setq magit-diff-refine-hunk t)
+  (setq magit-auto-revert-mode t))
 #+end_src
 
 **** git-commit :git:
