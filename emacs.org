@@ -5583,7 +5583,6 @@ state and disables it everywhere in favor of normal state.
 
 #+begin_src emacs-lisp
 (defadvice! replace-motion-with-normal (around evil-set-initial-state)
-  ""
   (:args orig-fn &rest args)
   (-let (((mode state) args))
     (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
