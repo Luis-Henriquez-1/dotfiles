@@ -5879,8 +5879,6 @@ Why not just go to the end of the ="= like any other around operator?
 [[https://github.com/bling/evil-visualstar][evil-visualstar]]
 
 #+begin_src emacs-lisp
-(use-package evil-visualstar)
-
 (bind! (:map evil-visual-state-map)
   ("#" #'evil-visualstar/begin-search-backward)
   ("*" #'evil-visualstar/begin-search-forward))
@@ -5907,15 +5905,6 @@ Why not just go to the end of the ="= like any other around operator?
 
 #+begin_src emacs-lisp
 (xl-hook-add (list #'prog-mode-hook #'text-mode-hook) 'evil-surround-mode)
-#+end_src
-
-*** evil-goggles :evil:
-:PROPERTIES:
-:ID:       30d19955-dabf-472f-a485-22114e1eaaa4
-:END:
-
-#+begin_src emacs-lisp
-(use-package evil-goggles)
 #+end_src
 
 * settings :setting:
