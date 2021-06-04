@@ -1723,12 +1723,12 @@ If feature is already loaded, evaluate BODY immediately."
 #+begin_src emacs-lisp
 (defmacro before! (features &rest body)
   (declare (indent defun))
-  (alet (cond ((or (atomp features) (= (length features) 1))
-	       (xl-symbol-intern "general-settings-for-"))
-	      (t
-	       ()))
-    `(defbefore! ,it ,features
-       ,@body)))
+  ;; (cond ((or (atomp features) (= (length features) 1))
+  ;; 	 (xl-symbol-intern "general-settings-for-"))
+  ;; 	(t
+  ;; 	 ()))
+  `(defbefore! ,(gensym "before-hook-") ,features
+     ,@body))
 #+end_src
 
 **** with-temp-advice!
