@@ -1205,7 +1205,7 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 	(expr advice (xl-advice-gen-symbol symbol function))
 	(fset advice function)
 	(advice-add symbol where advice props)
-	(collect advice))))
+	(collect advice)))
 #+end_src
 
 *** features :feature:
