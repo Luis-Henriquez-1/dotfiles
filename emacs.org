@@ -6628,11 +6628,9 @@ generally faster and more "modern".
 
 #+begin_src emacs-lisp
 (use-package elfeed
-  :rule ("right" "elfeed" :newname "\\*elfeed.+")
-  :commands elfeed
-  :set
-  (elfeed-db-directory           . (concat XL-CACHE-DIR "elfeed"))
-  (elfeed-search-title-max-width . 100))
+  (setq elfeed-db-directory (concat XL-CACHE-DIR "elfeed"))
+  (setq elfeed-search-title-max-width 100)
+  (dbc-add-rule "right" "elfeed" :newname "\\*elfeed.+"))
 #+end_src
 
 **** elfeed-score
@@ -6642,21 +6640,6 @@ generally faster and more "modern".
 
 #+begin_src emacs-lisp
 (use-package elfeed-score)
-#+end_src
-
-**** elfeed-org
-:PROPERTIES:
-:ID:       f646640b-6982-478f-bd1b-babd0ee00165
-:END:
-
-#+begin_src emacs-lisp
-(use-package elfeed-org
-  ;; :init
-  ;; (defvar elfeed-org%public-newsfeed-file (xl-org-dir "newsfeeds.org")
-  ;;   "Newsfeeds.")
-  ;; :set
-  ;; (rmh-elfeed-org-files . (list elfeed-org%public-newsfeed-file))
-  )
 #+end_src
 
 **** newsfeeds
