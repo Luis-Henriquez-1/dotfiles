@@ -8229,7 +8229,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(before! url ()
+(before! url
   (setq url-cache-directory         (concat XL-CACHE-DIR "url/cache/"))
   (setq url-configuration-directory (concat XL-CACHE-DIR "url/configuration/")))
 #+end_src
@@ -8242,7 +8242,7 @@ Non-nil means animated images loop forever, rather than playing once.
 Don't ping things that look like domain names.
 
 #+begin_src emacs-lisp
-(before! ffap ()
+(before! ffap
   (setq ffap-machine-p-known 'reject))
 #+end_src
 
@@ -8265,7 +8265,7 @@ Setting these variables in coordination with [[id:58a65d49-cd9f-4b5d-86d7-d43209
 gpg passphrase via emacs.
 
 #+begin_src emacs-lisp
-(before! epa-config ()
+(before! epa-config
   (setq epg-gpg-program   "gpg2")
   (setq epg-pinentry-mode 'loopback))
 #+end_src
