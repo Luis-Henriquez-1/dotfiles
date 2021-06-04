@@ -10,6 +10,99 @@ the headlines back searching my vcs history. Well, version control does not
 "know" about org headlines. And I don't know of a way to search through it
 painlessly.
 
+* after!
+:PROPERTIES:
+:ID:       e209d256-86e0-4e30-a7d5-78a583729b42
+:END:
+
+=after!= is yet another wrapper around that can accept multiple features or
+even a specification of features using =and= or =or=.
+
+The reason that we check for the feature is to prevent [[hvar:eval-after-load][eval-after-load]] from
+polluting the [[hvar:after-load-list][after-load-list]]. =eval-after-load= adds an entry to
+=after-load-list= whether or not it has been loaded.
+
+We intentionally avoid with-eval-after-load to prevent eager macro expansion
+from pulling (or failing to pull) in autoloaded macros/features.
+
+#+begin_src emacs-lisp
+(defmacro after! (features &rest body)
+  "Wrapper around `with-eval-after-load'."
+  (declare (indent defun) (debug t))
+  (cond ((eq 'or (car-safe features))
+	 (loopy (list feature (cdr features))
+		(collect form `(after! ,feature ,@body))
+		(finally-return `(progn ,@forms))))
+        ((eq 'and (car-safe features))
+	 (loopy (with ((first . rest) (cdr features))
+		      (forms `(after! ,first ,@body)))
+		(list feature (reverse rest))
+		(expr forms `(after! ,feature ,@(list forms)))
+		(finally-return forms)))
+        ((listp features)
+         `(after! (and ,@features) ,@body))
+        ((symbolp features)
+         `(if (featurep ',features)
+              (progn ,@body)
+            (eval-after-load! ,features ,@body)))
+        (t (error "Invalid argument."))))
+#+end_src
+
+* eval-after-load!
+:PROPERTIES:
+:ID:       8d831084-539b-4072-a86a-b55afb09bf02
+:END:
+
+=eval-after-load= is a macro that evaluates a lisp form after a file or feature
+has been loaded. It's syntax is a bit terse because you need to quote the
+feature as well as the form to be evaluated.
+
+Also, if an =eval-after-load= block contains an error and it is triggered by a
+feature, the error will happening. I think it might be that because the form was
+not successfully evaluated =eval-after-load= does not realize it should stop
+loading it. To remedy this I wrap the block with [[helpfn:condition-case][condition-case]].
+
+#+begin_src emacs-lisp
+(defmacro eval-after-load! (feature &rest body)
+  "A wrapper around `eval-after-load!' with error catching."
+  (declare (indent defun))
+  `(eval-after-load ',feature
+     '(condition-case error
+          (progn ,@body)
+        (error
+         (message "Error in `eval-after-load': %S" error)))))
+#+end_src
+
+* ppp
+:PROPERTIES:
+:ID:       82dbb88a-4bce-4ca3-90fe-38cfbea7abc6
+:END:
+
+This is a pretty printer.
+
+Sometimes you want to see what an object looks like represented as text so you
+know what you're dealing with. For example, I've wanted to see what a straight
+recipe looks like. The problem is by default [[][]] prints something on one
+line. And to avoid long lines, emacs truncates the output so you can't even see
+the whole thing.
+
+#+begin_src emacs-lisp
+(use-package ppp)
+#+end_src
+
+* defsetting!
+:PROPERTIES:
+:ID:       805d2b77-86e1-4f43-85ec-0d98a8550a2d
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defsetting! (feature args &rest body)
+  (declare (indent defun))
+  (let ((set-settings-for))
+    `(defbefore! name (feature)
+       ,@body)))
+#+end_src
+
 * do away with autoloading
 :PROPERTIES:
 :ID:       91d28cee-60ea-400d-93ba-efabab82c90d
