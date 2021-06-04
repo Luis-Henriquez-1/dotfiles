@@ -5092,19 +5092,6 @@ address later.
   (dbc-add-rule "bottom" "ert" :newname "\\*ert\\*"))
 #+end_src
 
-*** bug-hunter
-:PROPERTIES:
-:ID:       30196ef6-7b34-4a6c-b084-8e613010abd4
-:END:
-
-=bug-hunter= is a package that automates [[https://en.wikipedia.org/wiki/Bisection_(software_engineering)][code-bisection]], the process of trying
-parts of your code at a time until you find out where the bug is. You can find
-the culprit of a problem by [[][code bisection].
-
-#+begin_src emacs-lisp
-(use-package bug-hunter)
-#+end_src
-
 *** ppp
 :PROPERTIES:
 :ID:       82dbb88a-4bce-4ca3-90fe-38cfbea7abc6
