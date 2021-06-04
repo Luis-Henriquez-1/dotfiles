@@ -8098,8 +8098,7 @@ function?
 https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-plist-get
 
 #+begin_src emacs-lisp
-(use-package gv
-  :xl-config
+(after! gv
   (gv-define-simple-setter plist-get plist-put))
 #+end_src
 
