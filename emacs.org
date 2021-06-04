@@ -1691,11 +1691,8 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 
 #+begin_src emacs-lisp
 (defmacro after! (features &rest body)
-  ""
-  (alet (cond)
-    `(progn
-       (defafter! ,it ,features
-	 ,@body))))
+  `(defafter! ,(gensym "after-hook-") ,features
+     ,@body))
 #+end_src
 
 ***** defbefore!
