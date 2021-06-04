@@ -8522,7 +8522,7 @@ how to automate this.
 =mu4e-var= contains many miscellaneous variables. Some highlights.
 
 #+begin_src emacs-lisp
-(before! mu4e-vars ()
+(before! mu4e-vars
   (setq mu4e-completing-read-function #'completing-read)
   (setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-update-interval nil)
