@@ -9030,12 +9030,12 @@ makes emacs feel like a window manager with gaps.
 :END:
 
 #+begin_src emacs-lisp
-(use-package window-divider
-  :hook (window-setup-hook . window-divider-mode)
-  :set
-  (window-divider-default-bottom-width . 7)
-  (window-divider-default-right-width  . 7)
-  (window-divider-default-places       . t))
+(xl-hook-add 'window-setup-hook 'window-divider-mode)
+
+(defbefore! window-divider
+  (setq window-divider-default-bottom-width 7)
+  (setq window-divider-default-right-width 7)
+  (setq window-divider-default-places t))
 #+end_src
 
 *** window divider face :window:asthetic:
