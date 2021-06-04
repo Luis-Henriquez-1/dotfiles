@@ -6847,15 +6847,6 @@ These are my newsfeed for =elfeed-org=.
 (use-package grugru)
 #+end_src
 
-** figlet :exec:
-:PROPERTIES:
-:ID:       b5be9427-a814-4a91-92ab-ad393375ec41
-:END:
-
-#+begin_src emacs-lisp
-(use-package figlet :commands figlet)
-#+end_src
-
 ** system-packages :pacman:exec:
 :PROPERTIES:
 :ID:       74bd0e5a-f6b0-48eb-a91e-3932eae23516
