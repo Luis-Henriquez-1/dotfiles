@@ -4917,7 +4917,7 @@ like that concern N number of things, where N could be 1 or more things.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! spell-number
+(before! spell-number
   (setq spelln-language 'english-us)
   (setq spelln-country 'united-states)
   (setq spelln-period-character 44)
@@ -5071,8 +5071,7 @@ address later.
 =git-gutter= indicates which parts of a file has been modified.
 
 #+begin_src emacs-lisp
-(use-package git-gutter+
-  :alias (git-commit-mode-font-lock-keywords . ignore))
+(defalias 'git-commit-mode-font-lock-keywords #'ignore)
 #+end_src
 
 **** evil-magit :evil:bind:git:
