@@ -6506,12 +6506,7 @@ executable to run.
   (setq dmenu-save-file (concat XL-CACHE-DIR "dmenu-itmes")))
 #+end_src
 
-** TODO pdf-tools :pdf:exec:
-:PROPERTIES:
-:ID:       63343f9d-6b19-43de-8302-d1344d571949
-:END:
-
-*** pdf-tools
+** pdf-tools
 :PROPERTIES:
 :ID:       e19d0200-5e41-4295-ae54-fa71bfeadb06
 :END:
@@ -6522,7 +6517,7 @@ executable to run.
   (add-to-list 'magic-mode-alist '("%PDF" . pdf-view-mode)))
 #+end_src
 
-*** epd-pdf-info-program :startup:
+** epd-pdf-info-program :startup:
 :PROPERTIES:
 :ID:       25826061-a4a7-4f8a-8d3b-bdd5a80f70d0
 :END:
@@ -6549,7 +6544,7 @@ executable to run.
         (set-window-configuration wconf)))))
 #+end_src
 
-*** bindings :bind:
+** bindings :bind:
 :PROPERTIES:
 :ID:       506c568c-0473-4db6-82b6-cc91174b0ce4
 :END:
