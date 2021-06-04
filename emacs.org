@@ -1715,9 +1715,7 @@ If feature is already loaded, evaluate BODY immediately."
 	   (progn ,@body)
 	   (xl-log "Removing %s..." #',hook)
 	   (xl-hook-remove #',hook)))
-       (when ,condition
-	 (funcall #',name)
-	 (xl-hook-remove #',hook)))))
+       (when ,condition (funcall #',name)))))
 #+end_src
 
 ***** before!
