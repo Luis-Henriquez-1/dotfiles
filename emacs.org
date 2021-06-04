@@ -3343,9 +3343,9 @@ options. For this reason I wrote my own insert heading functions.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! use-pop-to-buffer (_ buf &optional norecord)
+(defadvice! use-pop-to-buffer (around org-switch-to-buffer-other-window)
   "Use `pop-to-buffer' instead of `switch-to-buffer' to open buffer.'"
-  (:around org-switch-to-buffer-other-window)
+  (:args _ buf &optional norecord)
   (pop-to-buffer buf nil norecord))
 #+end_src
 
