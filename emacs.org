@@ -1627,9 +1627,10 @@ potentially unintended behavior.
 
 #+begin_src emacs-lisp
 (defmacro after! (features &rest body)
-  (let (())
+  ""
+  (alet (cond)
     `(progn
-       (defafter! ,name ,features
+       (defafter! ,it ,features
 	 ,@body))))
 #+end_src
 
