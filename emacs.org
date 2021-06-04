@@ -1563,10 +1563,11 @@ syntax. I use it extensively throughout this configuration.
 #+begin_src emacs-lisp
 (defmacro defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
-  (loopy (list function functions)
+  (loopy (list symbol symbols)
 	 (expr advice (xl-advice-gen-symbol function name))
 	 (collect `(defun ,advice nil ,@body))
-	 (collect `(advice-add)))
+	 (collect `(advice-add ',symbol ,where #',function ,.props))
+	 (finally-return (macroexp-progn body)))
   ;; (-let* (((args body kargs) (xl-process-args args body))
   ;; 	  (props (alist-get :props kargs))
   ;; 	  (fargs (alist-get :args kargs))
