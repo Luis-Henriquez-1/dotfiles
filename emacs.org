@@ -3355,8 +3355,8 @@ options. For this reason I wrote my own insert heading functions.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! use-switch-to-buffer-instead (orig-fn &rest args)
-  (:around org-src-switch-to-buffer)
+(defadvice! use-switch-to-buffer-instead (around org-src-switch-to-buffer)
+  (:args orig-fn &rest args)
   (with-temp-advice! ((pop-to-buffer-same-window :override switch-to-buffer))
     (apply orig-fn args)))
 #+end_src
