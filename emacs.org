@@ -7255,10 +7255,9 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 :END:
 
 #+begin_src emacs-lisp
-(use-package eshell-z
-  :commands eshell-z
-  :set
-  (eshell-z-freq-dir-hash-table-file-name . (expand-file-name "z" eshell-directory-name)))
+(before! eshell-z
+  (setq eshell-z-freq-dir-hash-table-file-name
+	(expand-file-name "z" eshell-directory-name)))
 #+end_src
 
 *** eshell-up
