@@ -6633,15 +6633,6 @@ generally faster and more "modern".
   (dbc-add-rule "right" "elfeed" :newname "\\*elfeed.+"))
 #+end_src
 
-**** elfeed-score
-:PROPERTIES:
-:ID:       20d1a501-4a52-43b8-b124-be1f62265b73
-:END:
-
-#+begin_src emacs-lisp
-(use-package elfeed-score)
-#+end_src
-
 **** newsfeeds
 :PROPERTIES:
 :ID:       6d64a62c-a3f7-449c-833d-0738c1e5f28a
@@ -6660,14 +6651,12 @@ These are my newsfeed for =elfeed-org=.
 :END:
 
 #+begin_src emacs-lisp
-(use-package gif-screencast
-  :commands gif-screencast-start-or-stop
-  :set 
-  (gif-screencast-program . "scrot")
-  (gif-screencast-args . '("--quality" "25" "--focused"))
-  (gif-screencast-cropping-program . "mogrify")
-  (gif-screencast-optimize-program . "gifsicle")
-  (gif-screencast-capture-format . "png"))
+(before! gif-screencast
+  (setq gif-screencast-program "scrot")
+  (setq gif-screencast-args '("--quality" "25" "--focused"))
+  (setq gif-screencast-cropping-program "mogrify")
+  (setq gif-screencast-optimize-program "gifsicle")
+  (setq gif-screencast-capture-format "png"))
 #+end_src
 
 *** videos :video:
