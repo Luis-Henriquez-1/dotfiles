@@ -7019,20 +7019,23 @@ already have open using a [[id:f26bedb3-a172-4543-afd0-4c47f5872d15][completion-
 have to set out to look for a file with =dired=.
 
 #+begin_src emacs-lisp
-(use-package recentf
-  :before-call find-file
-  :idle-require easymenu tree-widget timer
-  :idle recentf-save-list
-  :hook (kill-emacs-hook . recentf-save-list)
-  :advice (:before (recentf-save-list . recentf-cleanup))
-  :silence recentf-mode recentf-cleanup recentf-save-list
-  :set
-  (recentf-max-menu-items    . 0)
-  (recentf-max-saved-items   . 700)
-  (recentf-save-file         . (concat XL-CACHE-DIR "recentf"))
-  (recentf-auto-cleanup      . (* 60 10))
-  (recentf-filename-handlers . '(file-truename abbreviate-file-name))
-  :config
+(mapc #'idle-require '(easymenu tree-widget timer))
+
+(xl-load-before-call 'recentf #'find-file)
+
+(after! recentf
+  (mapc #'xl-gadvice-shut-up
+	'(recentf-mode recentf-cleanup recentf-save-list))
+  (xl-advice-add #'recentf-save-list :before #'recentf-cleanup)
+  (xl-hook-add 'kill-emacs-hook #'recentf-save-list)
+  (setq recentf-max-menu-items 0)
+  (setq recentf-max-saved-items 700)
+  (setq recentf-save-file
+	(concat XL-CACHE-DIR "recentf"))
+  (setq recentf-auto-cleanup
+	(* 60 10))
+  (setq recentf-filename-handlers
+	'(file-truename abbreviate-file-name))
   (recentf-mode 1))
 #+end_src
 
