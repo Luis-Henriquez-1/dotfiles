@@ -6828,18 +6828,6 @@ These are my newsfeed for =elfeed-org=.
     (emms-stop)))
 #+end_src
 
-** xr :regexp:
-:PROPERTIES:
-:ID: 75c56163-9ce1-4726-969a-350fcc56395f
-:END:
-
-This package is the inverse of =rx=. It takes a regular expression and returns the
-=rx= representation.
-
-#+begin_src emacs-lisp
-(use-package xr :commands xr)
-#+end_src
-
 ** man :exec:
 :PROPERTIES:
 :ID:       3982b034-90e1-4961-90d9-224e913c0b8c
@@ -6848,15 +6836,6 @@ This package is the inverse of =rx=. It takes a regular expression and returns t
 #+begin_src emacs-lisp
 (use-package man
   :rule ("left" "man" :newname "\\*man.+"))
-#+end_src
-
-** eping :exec:
-:PROPERTIES:
-:ID:       37004f10-66d5-4b5a-a9eb-31107464e5a5
-:END:
-
-#+begin_src emacs-lisp
-(use-package eping)
 #+end_src
 
 ** grugru :write:edit:
