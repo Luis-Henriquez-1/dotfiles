@@ -5834,7 +5834,7 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! recenter-on-load (:after-while save-place-find-file-hook)
+(defadvice! recenter-on-load (after-while save-place-find-file-hook)
   "Recenter on cursor when loading a saved place."
   (when buffer-file-name (ignore-errors (recenter))))
 #+end_src
@@ -6031,9 +6031,9 @@ one. For this reason, I make sure to disable any enabled themes before applying
 a new theme.
 
 #+begin_src emacs-lisp
-(defadvice! disable-old-themes (orig-fn &rest args)
+(defadvice! disable-old-themes (around load-theme)
   "Disable old themes before loading new ones."
-  (:around load-theme)
+  (:args orig-fn &rest args)
   (mapc #'disable-theme custom-enabled-themes)
   (apply orig-fn args))
 #+end_src
