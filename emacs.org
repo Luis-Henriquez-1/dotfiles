@@ -4003,7 +4003,7 @@ maximum dept at which toc will make the table of contents.
 #+begin_src emacs-lisp
 (xl-hook-add 'org-mode-hook 'toc-org-mode)
 
-(defsetting! toc-org ()
+(before! toc-org ()
   (setq toc-org-max-depth 2))
 #+end_src
 
