@@ -6627,7 +6627,7 @@ generally faster and more "modern".
 :END:
 
 #+begin_src emacs-lisp
-(use-package elfeed
+(before! elfeed
   (setq elfeed-db-directory (concat XL-CACHE-DIR "elfeed"))
   (setq elfeed-search-title-max-width 100)
   (dbc-add-rule "right" "elfeed" :newname "\\*elfeed.+"))
