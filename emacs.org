@@ -3471,10 +3471,8 @@ various functions in org mode.
 This package lets you annotate files in a separate org file.
 
 #+begin_src emacs-lisp
-(defbefore! org-annotate-code
-  :set (org-annotate-code-org-file . (concat XL-ORG-DIR "annotations.org")))
-;; (defsetting! org-annotate-code (before)
-;;   )
+(before! org-annotate-code
+  (setq org-annotate-code-org-file (concat XL-ORG-DIR "annotations.org")))
 #+end_src
 
 ** org-archive
