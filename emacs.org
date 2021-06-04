@@ -5092,18 +5092,6 @@ address later.
   (dbc-add-rule "bottom" "ert" :newname "\\*ert\\*"))
 #+end_src
 
-*** ert-expectations
-:PROPERTIES:
-:ID:       3062b8a4-4261-49fc-9bdb-895ba75bbd19
-:END:
-
-#+begin_src emacs-lisp
-(use-package ert-expectations)
-
-(autoload 'expect "ert-expectations" nil nil 'macro)
-(autoload 'expectations "ert-expectations" nil nil 'macro)
-#+end_src
-
 *** el-mock
 :PROPERTIES:
 :ID:       46df66b0-5820-4550-aa99-c913d3022fe1
