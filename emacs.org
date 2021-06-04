@@ -3884,13 +3884,11 @@ be exact. Therefore, I define a function I can use instead.
 =org-refile= is a built-in package that.
 
 #+begin_src emacs-lisp
-(defsetting! org-refile
-  :idle-require t
-  :set
-  (org-refile-use-outline-path            . 'file)
-  (org-refile-allow-creating-parent-nodes . t)
-  (org-reverse-note-order                 . t)
-  (org-outline-path-complete-in-steps     . nil))
+(defbefore! org-refile
+  (setq org-refile-use-outline-path 'file)
+  (setq org-refile-allow-creating-parent-nodes t)
+  (setq org-reverse-note-order t)
+  (setq org-outline-path-complete-in-steps nil))
 #+end_src
 
 *** TODO allow refiling to any org file in Emacs dir :org:refile:xl:command:
