@@ -3884,7 +3884,7 @@ be exact. Therefore, I define a function I can use instead.
 =org-refile= is a built-in package that.
 
 #+begin_src emacs-lisp
-(defbefore! org-refile
+(before! org-refile
   (setq org-refile-use-outline-path 'file)
   (setq org-refile-allow-creating-parent-nodes t)
   (setq org-reverse-note-order t)
