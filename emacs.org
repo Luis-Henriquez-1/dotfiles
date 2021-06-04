@@ -1692,7 +1692,7 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 #+begin_src emacs-lisp
 (defmacro after! (features &rest body)
   (declare (indent 1))
-  `(defafter! ,(gensym "after-hook-") ,features
+  `(defafter! ,(gensym "after-hook-") ,(-list features)
      ,@body))
 #+end_src
 
