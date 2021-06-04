@@ -1202,8 +1202,8 @@ ADVICES is an advice or a list of advices."
   "Advise SYMBOLS.
 WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (iter (each (symbol function) (-table-flat #'list (-list symbols) (-list functions)))
-	;; (expr advice (xl-advice-gen-symbol symbol function))
-	;; (fset advice function)
+	(expr advice (xl-advice-gen-symbol symbol function))
+	(fset advice function)
 	(advice-add symbol where function props)
 	(collect advice)))
 #+end_src
