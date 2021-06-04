@@ -7090,20 +7090,15 @@ of the problem. You can check out a more in-depth explanation looking at my
  ("C" #'macrostep-collapse-all))
 #+end_src
 
-** savehist :cache:
+** savehist
 :PROPERTIES:
-:ID:       dd4b9da7-e54d-4d62-bb70-aa8f7f4a016f
+:ID:       54183df6-b4f5-4b01-9ddb-4054ef0583b0
 :END:
 
 =savehist= is a built-in feature for saving the minibuffer-history to a file--the
 [[helpvar:savehist][savehist]] file. Additionally, it provides the ability to save additional
 variables which may or may not be related to minibuffer history. You add the
 ones you want to save to [[helpvar:savehist-additional-variables][savehist-additional-variables]].
-
-*** savehist
-:PROPERTIES:
-:ID:       54183df6-b4f5-4b01-9ddb-4054ef0583b0
-:END:
 
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook 'savehist-mode)
@@ -7115,7 +7110,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
   (setq savehist-file (concat XL-CACHE-DIR "savehist")))
 #+end_src
 
-*** unpropertize kill ring
+** unpropertize kill ring
 :PROPERTIES:
 :ID:       da2b6c31-d251-48aa-a6ed-8f01b9fa0b8d
 :END:
