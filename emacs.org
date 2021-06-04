@@ -6410,8 +6410,6 @@ will change.
   (auto-mode-case-fold                . nil)
   (confirm-kill-emacs                 . #'y-or-n-p)
   (make-backup-files                  . nil)
-  (kept-old-versions                  . 2)
-  (kept-new-versions                  . 2)
   (trash-directory                    . (expand-file-name "Trash" "~"))
   (version-control                    . nil))
 #+end_src
@@ -6436,6 +6434,8 @@ will change.
 
 #+begin_src emacs-lisp
 (defbefore! setup-backup-settings (file)
+  (setq kept-old-versions 2)
+  (setq kept-new-versions 2)
   (setq backup-by-copying t)
   (setq backup-by-copying-when-linked t)
   (setq backup-directory-alist (list (cons ".*" (concat XL-CACHE-DIR "backup/")))))
