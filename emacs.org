@@ -5081,13 +5081,13 @@ address later.
 :END:
 
 #+begin_src emacs-lisp
-(use-package evil-magit
-  :silence evil-magit-init
-  :before-call magit-status
-  :xl-config
+(after! magit
+  (xl-load-before-call 'evil-magit #'magit-status))
+
+(after! evil-magit
+  (setq evil-magit-state 'normal)
   (evil-magit-init)
-  :set
-  (evil-magit-state . 'normal))
+  (xl-gadvice-shut-up #'magit-status))
 #+end_src
 
 ** debug :debug:
