@@ -7030,12 +7030,9 @@ have to set out to look for a file with =dired=.
   (xl-hook-add 'kill-emacs-hook #'recentf-save-list)
   (setq recentf-max-menu-items 0)
   (setq recentf-max-saved-items 700)
-  (setq recentf-save-file
-	(concat XL-CACHE-DIR "recentf"))
-  (setq recentf-auto-cleanup
-	(* 60 10))
-  (setq recentf-filename-handlers
-	'(file-truename abbreviate-file-name))
+  (setq recentf-save-file (concat XL-CACHE-DIR "recentf"))
+  (setq recentf-auto-cleanup (* 60 10))
+  (setq recentf-filename-handlers '(file-truename abbreviate-file-name))
   (recentf-mode 1))
 #+end_src
 
