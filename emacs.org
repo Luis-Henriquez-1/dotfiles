@@ -3964,7 +3964,7 @@ referenance org headlines.
 #+begin_src emacs-lisp
 (xl-hook-add 'org-mode-hook #'org-superstar-mode)
 
-(defsetting! org-superstar ()
+(before! org-superstar
   (setq org-superstar-leading-bullet ?\s)
   (setq org-superstar-special-todo-items t))
 #+end_src
