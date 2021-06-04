@@ -1545,11 +1545,10 @@ not what I'd like.
 (defunmacro! defhook! (name hooks &rest body)
   "Define a hook that follows XL naming conventions."
   (declare (indent defun) (doc-string 3))
-  (let ((orig-fn (xl-symbol-intern 'xl-- name '-hook- (gensym)))
-	(hooks (gensym "hooks")))
-    `(progn (defun ,orig-fn ,(or .args '(&rest _)) ,@body)
-	    (let ((,hooks (xl-hook-add ',(-list hooks) #',orig-fn ,.depth ,.local))) 
-	      (mapc #'xl-gadvice-catch-error ,hooks)))))
+  (loopy (list hook hooks)
+	 (expr name (xl-hook-gen-name hook name))
+	 (collect `(defun ,name ,(or .args '(&rest _)) ,@body))
+	 (collect `(add-hook ',hook #',name ,.depth ,.local))))
 #+end_src
 
 **** defadvice!
