@@ -5565,9 +5565,9 @@ and provides facilities for writing custom extensions. Also see our page on
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! replace-motion-with-normal (orig-fn &rest args)
+(defadvice! replace-motion-with-normal (around evil-make-overriding-map)
   "Advice for `evil-make-overriding-map' that inhibits motion state."
-  (:around evil-make-overriding-map)
+  (:args orig-fn &rest args)
   (-let (((keymap state copy) args))
     (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 #+end_src
