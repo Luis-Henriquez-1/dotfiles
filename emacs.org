@@ -8100,7 +8100,7 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
 :END:
 
 #+begin_src emacs-lisp
-(before! tramp ()
+(before! tramp
   (setq tramp-backup-directory-alist backup-directory-alist)
   (setq tramp-persistency-file-name
 	(concat XL-CACHE-DIR "tramp-persistency.el"))
