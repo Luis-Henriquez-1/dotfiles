@@ -8074,7 +8074,7 @@ redundant code.
 :END:
 
 #+begin_src emacs-lisp
-(before! avy ()
+(before! avy
   (setq avy-style 'pre)
   (setq avy-keys (number-sequence 97 122)))
 #+end_src
