@@ -7106,14 +7106,13 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 :END:
 
 #+begin_src emacs-lisp
-(use-package savehist
-  :idle-require custom
-  :hook emacs-startup-hook
-  :set
-  (savehist-save-minibuffer-history . t)
-  (savehist-additional-variables    . '(kill-ring search-ring regexp-search-ring))
-  (savehist-autosave-interval       . nil)
-  (savehist-file                    . (concat XL-CACHE-DIR "savehist")))
+(xl-hook-add 'emacs-startup-hook 'savehist-mode)
+
+(defsetting! savehist
+  (setq savehist-save-minibuffer-history t)
+  (setq savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
+  (setq savehist-autosave-interval nil)
+  (setq savehist-file (concat XL-CACHE-DIR "savehist")))
 #+end_src
 
 *** unpropertize kill ring
