@@ -6344,7 +6344,7 @@ executable to run.
 :END:
 
 #+begin_src emacs-lisp
-(defadvice! build-pdf-into-program-maybe (:before pdf-view-mode)
+(defadvice! build-pdf-into-program-maybe (before pdf-view-mode)
   "Build the pdf-info program if it hasn't already been built."
   (unless (file-executable-p pdf-info-epdfinfo-program)
     (let ((wconf (current-window-configuration)))
