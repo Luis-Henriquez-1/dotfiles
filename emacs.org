@@ -7130,7 +7130,6 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 
 #+begin_src emacs-lisp
 (use-package ellocate
-  :commands ellocate
   :set
   (ellocate-scan-dirs . `(("~/" . ,(concat XL-CACHE-DIR "ellocate"))))
   (ellocate-gc-mem    . most-positive-fixnum))
