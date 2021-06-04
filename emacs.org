@@ -8985,7 +8985,6 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 :END:
 
 #+begin_src emacs-lisp
-(require 'dashboard)
 (xl-hook-add 'window-setup-hook #'dashboard-insert-startupify-lists)
 
 (before! dashboard ()
