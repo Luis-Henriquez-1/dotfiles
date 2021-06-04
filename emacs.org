@@ -8448,7 +8448,7 @@ with the command =mu init --maildir=~/Maildir=.
 Make sure mail directories exist. =mbsync= will fail if they don't.
 
 #+begin_src emacs-lisp
-(defadvice! ensure-mail-dirs (:before mu4e)
+(defadvice! ensure-mail-dirs (before mu4e)
   "Create mail directories if they don't exist."
   (iter (with (dirs (mapcar #'mu4e%mail-dir (mu4e%mail-accounts))))
 	(each dir dirs)
