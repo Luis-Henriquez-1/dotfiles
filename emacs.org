@@ -8009,9 +8009,8 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-(use-package ansi-color
-  :set
-  (ansi-color-for-comint-mode . t))
+(before! ansi-color
+  (setq ansi-color-for-comint-mode t))
 #+end_src
 
 ** gv
