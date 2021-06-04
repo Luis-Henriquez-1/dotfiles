@@ -1620,6 +1620,14 @@ potentially unintended behavior.
        ,@body)))
 #+end_src
 
+***** after!
+:PROPERTIES:
+:ID:       933bf4dc-e0c0-427c-84c2-c51a4f9cdfa0
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 ***** after-load-hook
 :PROPERTIES:
 :ID:       296c2ea1-204c-4140-9e0c-e9037768b02e
