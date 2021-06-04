@@ -5667,7 +5667,7 @@ We want escape to be a "quit everything" keybinding.
 #+begin_src emacs-lisp
 (bind! (:ei [escape] #'evil-force-normal-state))
 
-(defadvice! exit-everything (:after evil-force-normal-state lispyville-normal-state)
+(defadvice! exit-everything (after evil-force-normal-state lispyville-normal-state)
   "Exits out of whatever is happening after escape."
   (cond ((minibuffer-window-active-p (minibuffer-window))
          (abort-recursive-edit))
