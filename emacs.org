@@ -6705,8 +6705,8 @@ These are my newsfeed for =elfeed-org=.
 :END:
 
 #+begin_src emacs-lisp
-(use-package man
-  :rule ("left" "man" :newname "\\*man.+"))
+(before! man
+  (dbc-add-rule "left" "man" :newname "\\*man.+"))
 #+end_src
 
 ** system-packages :pacman:exec:
