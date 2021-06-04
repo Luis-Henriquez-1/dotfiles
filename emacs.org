@@ -3601,7 +3601,7 @@ before org-capture is loaded.
 (xl-load-before-call 'ts #'org-capture)
 (xl-load-before-call 'org-ml #'org-capture)
 
-(defsetting! org-capture ()
+(before! org-capture
   (dbc-add-rule "bottom" "capture" :newname "\\`CAPTURE-.+"))
 #+end_src
 
