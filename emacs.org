@@ -6853,9 +6853,9 @@ packages
 :END:
 
 #+begin_src emacs-lisp
-(use-package system-packages
-  :rule ("bottom" "system-packages" :newname "\\*system-packages")
-  :set (system-packages-noconfirm . t))
+(defsetting! system-packages
+  (setq system-packages-noconfirm t)
+  (dbc-add-rule "bottom" "system-packages" :newname "\\*system-packages"))
 #+end_src
 
 *** use yay for arch
