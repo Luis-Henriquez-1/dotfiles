@@ -1807,7 +1807,7 @@ it could be useful for advising.
 	(expr hook (xl-symbol-intern symbol '& function))
 	(fset hook function)
 	(add-hook symbol hook depth local)
-	(collect hook))))
+	(collect hook)))
 #+end_src
 
 **** remove hook
