@@ -8983,9 +8983,8 @@ update with the theme. This is probably what the default value of this
 variable should be anyway.
 
 #+begin_src emacs-lisp
-(use-package mini-modeline
-  :set
-  (mini-modeline-face-attr . '(:inherit default)))
+(defbefore! mini-modeline
+  (setq mini-modeline-face-attr '(:inherit default)))
 #+end_src
 
 *** left format
