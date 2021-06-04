@@ -6288,10 +6288,9 @@ Emacs automatically creates a [[helpvar:custom-file][custom-file]] for customiza
 config file as opposed to having this file. Therefore, I set it to [[;][null-device]].
 
 #+begin_src emacs-lisp
-(use-package cus-edit
-  :set
-  (custom-file            . null-device)
-  (custom-theme-directory . (concat XL-LOCAL-DIR "themes/")))
+(defsetting! cus-edit
+  (setq custom-file null-device)
+  (setq custom-theme-directory (concat XL-LOCAL-DIR "themes/")))
 #+end_src
 
 ** startup :startup:
