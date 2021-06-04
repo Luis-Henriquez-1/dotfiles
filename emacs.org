@@ -6506,17 +6506,6 @@ executable to run.
   (setq dmenu-save-file (concat XL-CACHE-DIR "dmenu-itmes")))
 #+end_src
 
-** TODO origami
-:PROPERTIES:
-:ID:       ac2cc043-331f-435b-b903-39681b84fefe
-:END:
-
-=origami= is, as its name suggests, a package that handles folding.
-
-#+begin_src emacs-lisp
-(use-package origami)
-#+end_src
-
 ** TODO pdf-tools :pdf:exec:
 :PROPERTIES:
 :ID:       63343f9d-6b19-43de-8302-d1344d571949
@@ -6575,27 +6564,6 @@ executable to run.
   ("0" #'pdf-view-first-page)
   ("9" #'pdf-view-last-page)
   ("s" #'pdf-view-fit-width-to-window))
-#+end_src
-
-** ednc :notify:
-:PROPERTIES:
-:ID:       e72dfee2-3c80-4206-b2ea-d4a25fffc75c
-:END:
-
-This is a replacement for things like =dunst= except written completely en Emacs
-lisp.
-
-#+begin_src emacs-lisp
-(use-package ednc)
-#+end_src
-
-** egg-timer :notify:
-:PROPERTIES:
-:ID:       a98d0f06-5b2a-449d-8719-bcc8d3d0a241
-:END:
-
-#+begin_src emacs-lisp
-(use-package egg-timer)
 #+end_src
 
 ** multimedia :multimedia:
