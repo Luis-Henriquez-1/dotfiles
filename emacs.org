@@ -7070,10 +7070,10 @@ of the problem. You can check out a more in-depth explanation looking at my
 =eros= displays the result of evaluating elisp expressions as overlays.
 
 #+begin_src emacs-lisp
-(use-package eros
-  :hook emacs-lisp-mode-hook
-  :set (eros-eval-result-prefix . "⟹ ")
-  :config (bind! ([remap eval-last-sexp] #'eros-eval-last-sexp)))
+(xl-hook-add 'emacs-lisp-mode-hook 'eros-mode)
+(bind! ([remap eval-last-sexp] #'eros-eval-last-sexp))
+
+(setq eros-eval-result-prefix "⟹ ")
 #+end_src
 
 ** macrostep :elisp:lang:keybind:prog:
