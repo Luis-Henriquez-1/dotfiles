@@ -4048,7 +4048,7 @@ Marginalia adds descriptions to various commands.
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook #'marginalia-mode)
 
-(defsetting! marginalia ()
+(before! marginalia
   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
 #+end_src
 
