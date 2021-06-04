@@ -1570,15 +1570,7 @@ syntax. I use it extensively throughout this configuration.
 	 (expr advice (xl-advice-gen-symbol function name))
 	 (collect `(defun ,advice ,(or .args '(&rest _)) ,@body))
 	 (collect `(advice-add ',symbol ,where #',function ,.props))
-	 (finally-return (macroexp-progn body)))
-  ;; (-let* (((args body kargs) (xl-process-args args body))
-  ;; 	  (props (alist-get :props kargs))
-  ;; 	  (fargs (alist-get :args kargs))
-  ;; 	  ((where . functions) (--first (member (car it) XL-ADVICE-KEYWORDS) kargs))
-  ;; 	  (orig-fn (xl-symbol-intern 'xl-- name '-advice- (gensym))))
-  ;;   `(progn (defun ,orig-fn ,(or fargs args '(&rest _)) ,@body)
-  ;; 	    (xl-advice-add ',(-list functions) ,where #',orig-fn)))
-  )
+	 (finally-return (macroexp-progn body))))
 #+end_src
 
 **** defhooksym!
