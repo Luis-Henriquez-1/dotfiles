@@ -7091,7 +7091,7 @@ Ranger doesn't refresh the buffer after stuff like moving and pasting has
 happend. It results in a very jarring display.
 
 #+begin_src emacs-lisp
-(defadvice! refresh-contents (:after ranger-paste dired-do-rename)
+(defadvice! refresh-contents (after ranger-paste dired-do-rename)
   "Refresh contents."
   (when (eq major-mode 'ranger-mode)
     (ranger-refresh)))
