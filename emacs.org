@@ -6406,7 +6406,6 @@ will change.
   :set
   (confirm-nonexistent-file-or-buffer . nil)
   (require-final-newline              . nil)
-  (delete-old-versions                . t)
   (auto-mode-case-fold                . nil)
   (confirm-kill-emacs                 . #'y-or-n-p)
   (trash-directory                    . (expand-file-name "Trash" "~"))
@@ -6433,6 +6432,7 @@ will change.
 
 #+begin_src emacs-lisp
 (defbefore! enable-backup-settings (file)
+  (setq delete-old-versions t)
   (setq kept-old-versions 2)
   (setq kept-new-versions 2)
   (setq make-backup-files nil)
