@@ -6307,18 +6307,18 @@ As per [[https://emacs.stackexchange.com/questions/18677/prevent-auto-save-list-
 being created.
 
 #+begin_src emacs-lisp
-(use-package startup
-  :ignore display-startup-echo-area-message startup-echo-area-message
-  :set
-  (auto-save-list-file-prefix  . nil)
-  (inhibit-startup-buffer-menu . t)
-  (inhibit-startup-message     . t)
-  (inhibit-startup-screen      . t)
-  (inhibit-default-init        . t)
-  (inhibit-spash-screen        . t)
-  (initial-scratch-message     . nil)
-  (initial-buffer-choice       . #'startup%initial-buffer-choice)
-  (initial-major-mode          . 'fundamental-mode))
+(defsetting! startup
+  (xl-gadvice-ignore #'display-startup-echo-area-message)
+  (xl-gadvice-ignore #'startup-echo-area-message)
+  (setq auto-save-list-file-prefix nil)
+  (setq inhibit-startup-buffer-menu t)
+  (setq inhibit-startup-message t)
+  (setq inhibit-startup-screen t)
+  (setq inhibit-default-init t)
+  (setq inhibit-spash-screen t)
+  (setq initial-scratch-message nil)
+  (setq initial-buffer-choice #'startup%initial-buffer-choice)
+  (setq initial-major-mode 'fundamental-mode))
 #+end_src
 
 ** set the fill-column
