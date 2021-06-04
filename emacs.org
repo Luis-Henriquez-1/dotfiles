@@ -1648,8 +1648,8 @@ loading it. To remedy this I wrap the block with [[helpfn:condition-case][condit
 :END:
 
 #+begin_src emacs-lisp
-(defmacro before! ()
-  )
+(defmacro before! (features &rest body)
+  (declare (indent defun)))
 #+end_src
 
 ***** after!
