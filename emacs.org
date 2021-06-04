@@ -6694,9 +6694,9 @@ of the problem. You can check out a more in-depth explanation looking at my
 [[https://www.reddit.com/r/emacs/comments/d7x7x8/finally_fixing_indentation_of_quoted_lists/][reddit-post]] or looking at an answer I gave to [[https://emacs.stackexchange.com/questions/10230/how-to-indent-keywords-aligned][this question]].
 
 #+begin_src emacs-lisp
-(defadvice! properly-calculate-indent (&optional parse-start)
+(defadvice! properly-calculate-indent (:override calculate-lisp-indent)
   "Add better indentation for quoted and backquoted lists. "
-  (:override calculate-lisp-indent)
+  (:args &optional parse-start)
   (defvar calculate-lisp-indent-last-sexp)
   (save-excursion
     (beginning-of-line)
