@@ -7696,16 +7696,13 @@ manager. One is to use windows and the other is to use frames. The advantage of
 the frame approach is that it's easy to have a "gap" setup.
 
 #+begin_src emacs-lisp
-(setq exwm-float-modify-amount '(:move-slow 20 :move-fast 100 :resize 50))
-(setq exwm-float-border        '(:stationary ("navy" . 1) :moving ("maroon" . 2)))
+(after! exwm
+  (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode)
+  (exwm-float-setup))
 
-(use-package exwm-float
-  :set
-  (exwm-float-modify-amount . '(:move-slow 20 :move-fast 100 :resize 50))
-  (exwm-float-border        . '(:stationary ("navy" . 1) :moving ("maroon" . 2)))
-  :config
-  (exwm-float-setup)
-  (exwm-input-set-key (kbd "C-c M-f") #'exwm-float-mode))
+(before! exwm-float
+  (setq exwm-float-modify-amount '(:move-slow 20 :move-fast 100 :resize 50))
+  (setq exwm-float-border        '(:stationary ("navy" . 1) :moving ("maroon" . 2))))
 #+end_src
 
 *** exwm-outer-gaps
