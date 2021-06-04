@@ -8575,7 +8575,7 @@ how to automate this.
 :END:
 
 #+begin_src emacs-lisp
-(before! mu4e-drafts ()
+(before! mu4e-drafts
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-compose-format-flowed t))
 #+end_src
