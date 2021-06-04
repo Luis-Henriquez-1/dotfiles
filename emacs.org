@@ -1679,7 +1679,6 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 	 ,@(when (stringp (car body)) (list (pop body)))
 	 (when ,condition
 	   (progn ,@body)
-	   (xl-log "Removing %s..." #',hook-name)
 	   (xl-hook-remove #',hook-name)))
        (when ,condition (funcall #',hook-name)))))
 #+end_src
