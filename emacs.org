@@ -8844,10 +8844,9 @@ documentation *much* more fun. :joy-cat:
 
 #+begin_src emacs-lisp
 (xl-hook-add 'org-mode-hook #'emojify-mode)
-(use-package emojify
-  :hook org-mode-hook
-  :set
-  (emojify-emojis-dir . (concat XL-CACHE-DIR "emojis/")))
+
+(before! emojify
+  (setq emojify-emojis-dir (concat XL-CACHE-DIR "emojis/")))
 #+end_src
 
 ** which-key :interface:
