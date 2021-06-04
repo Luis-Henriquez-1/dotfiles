@@ -7803,13 +7803,10 @@ Concerning the loading of exwm-edit. Ideally, I should load it after
 certain applications where I'd use it need to be loaded.
 
 #+begin_src emacs-lisp
-(use-package exwm-edit
-  :commands exwm-edit
-  :init
-  (after! exwm
-    (funcall (get 'exwm-input-global-keys 'custom-set)
-	     'exwm-input-global-keys
-	     `((,(kbd "C-'") . exwm-edit)))))
+(after! exwm
+  (funcall (get 'exwm-input-global-keys 'custom-set)
+	   'exwm-input-global-keys
+	   `((,(kbd "C-'") . exwm-edit))))
 #+end_src
 
 *** TODO keybindings
