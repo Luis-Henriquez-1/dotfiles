@@ -1800,8 +1800,8 @@ it could be useful for advising.
 (defun xl-hook-add (symbols functions &optional depth local)
   "Alias FUNCTIONS to follow XL naming convention and add them to SYMBOLS."
   (iter (each (symbol function) (-table-flat #'list (-list symbols) (-list functions)))
-	(expr hook (xl-symbol-intern symbol '& function))
-	(fset hook function)
+	;; (expr hook (xl-symbol-intern symbol '& function))
+	;; (fset hook function)
 	(add-hook symbol hook depth local)
 	(collect hook)))
 #+end_src
