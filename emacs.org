@@ -8196,7 +8196,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(before! uniquify ()
+(before! uniquify
   (setq uniquify-buffer-name-style 'forward))
 #+end_src
 
