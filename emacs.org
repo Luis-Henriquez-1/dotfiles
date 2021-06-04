@@ -6409,7 +6409,6 @@ will change.
   (delete-old-versions                . t)
   (auto-mode-case-fold                . nil)
   (confirm-kill-emacs                 . #'y-or-n-p)
-  (backup-by-copying                  . t)
   (make-backup-files                  . nil)
   (kept-old-versions                  . 2)
   (kept-new-versions                  . 2)
@@ -6437,6 +6436,7 @@ will change.
 
 #+begin_src emacs-lisp
 (defbefore! setup-backup-settings (file)
+  (backup-by-copying                  . t)
   (backup-by-copying-when-linked      . t)
   (backup-directory-alist             . (list (cons ".*" (concat XL-CACHE-DIR "backup/")))))
 #+end_src
