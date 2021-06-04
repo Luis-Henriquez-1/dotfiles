@@ -5437,10 +5437,7 @@ Sometimes =evil-normal-state= enters visual state.
 great idea! It makes it really easy to see which parentheses go together.
 
 #+begin_src emacs-lisp
-(use-package rainbow-delimiters
-  :hook prog-mode-hook reb-mode-hook
-  :set
-  (rainbow-delimiters-max-face-count . 9))
+(xl-hook-add (list 'prog-mode-hook 'reb-mode-hook) #'rainbow-delimiters-mode)
 #+end_src
 
 ** paren :parens:emacs:asthetic:
