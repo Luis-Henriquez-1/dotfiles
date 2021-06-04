@@ -5087,9 +5087,9 @@ address later.
 :END:
 
 #+begin_src emacs-lisp
-(use-package ert
-  :rule ("bottom" "ert" :newname "\\*ert\\*")
-  :assume-yes ert-delete-all-tests)
+(before! ert
+  (xl-gadvice-assume-yes #'ert-delete-all-tests)
+  (dbc-add-rule "bottom" "ert" :newname "\\*ert\\*"))
 #+end_src
 
 *** ert-expectations
