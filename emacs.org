@@ -3445,7 +3445,7 @@ various functions in org mode.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! org ()
+(defbefore! org
   (setq org-directory (concat "~/Documents/org/"))
   (setq org-default-notes-file (concat org-directory "notes.org"))
   (setq org-fontify-emphasized-text t)
