@@ -1728,7 +1728,7 @@ If feature is already loaded, evaluate BODY immediately."
   ;; 	 (xl-symbol-intern "general-settings-for-"))
   ;; 	(t
   ;; 	 ()))
-  `(defbefore! ,(gensym "before-hook-") ,features
+  `(defbefore! ,(gensym "before-hook-") ,(-list features)
      ,@body))
 #+end_src
 
