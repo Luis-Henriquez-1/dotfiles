@@ -8879,14 +8879,12 @@ The font size that `xl/set-font-size' should never go below.")
 :END:
 
 #+begin_src emacs-lisp
-(use-package modus-themes
-  :set
-  (modus-themes-syntax . 'green-strings)
-  (modus-themes-slanted-constructs . t)
-  (modus-themes-bold-constructs . nil)
-  (modus-themes-region . 'no-extend)
-  (modus-themes-org-blocks . t)
-  (modus-themes-no-mixed-fonts . t))
+(setq modus-themes-syntax 'green-strings)
+(setq modus-themes-slanted-constructs t)
+(setq modus-themes-bold-constructs nil)
+(setq modus-themes-region 'no-extend)
+(setq modus-themes-org-blocks t)
+(setq modus-themes-no-mixed-fonts t)
 #+end_src
 
 ** dashboard :dashboard:startup:appearance:
