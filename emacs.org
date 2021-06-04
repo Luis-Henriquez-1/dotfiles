@@ -6409,7 +6409,6 @@ will change.
   (delete-old-versions                . t)
   (auto-mode-case-fold                . nil)
   (confirm-kill-emacs                 . #'y-or-n-p)
-  (make-backup-files                  . nil)
   (trash-directory                    . (expand-file-name "Trash" "~"))
   (version-control                    . nil))
 #+end_src
@@ -6436,6 +6435,7 @@ will change.
 (defbefore! enable-backup-settings (file)
   (setq kept-old-versions 2)
   (setq kept-new-versions 2)
+  (setq make-backup-files nil)
   (setq backup-by-copying t)
   (setq backup-by-copying-when-linked t)
   (setq backup-directory-alist (list (cons ".*" (concat XL-CACHE-DIR "backup/")))))
