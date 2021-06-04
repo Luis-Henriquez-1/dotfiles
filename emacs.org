@@ -1651,7 +1651,8 @@ loading it. To remedy this I wrap the block with [[helpfn:condition-case][condit
 (defmacro before! (features &rest body)
   (declare (indent defun))
   (let ((name))
-    `(defbefore! ,features ,@body)))
+    `(defbefore! ,name ,features
+       ,@body)))
 #+end_src
 
 ***** after!
