@@ -7583,7 +7583,6 @@ that it's not a lisp object; implying that it is not.
 
 #+begin_src emacs-lisp
 (use-package workgroups2
-  :commands wg-switch-workgroup
   :ignore wg-change-modeline
   :silence wg-create-workgroup wg-switch-workgroup
   :set
