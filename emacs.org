@@ -7269,11 +7269,9 @@ This is an Emacs package for quickly navigating to a specific parent directory
 in ~eshell~ without having to repeatedly typing ~cd ..~.
 
 #+begin_src emacs-lisp
-(use-package eshell-up
-  ;; :alias
-  ;; (eshell/up . eshell-up)
-  ;; (eshell/peek . eshell-up-peek)
-  )
+(defbefore! eshell-up
+  (defalias 'eshell/up 'eshell-up)
+  (defalias 'eshell/peek #'eshell-up-peek))
 #+end_src
 
 
