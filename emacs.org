@@ -1626,6 +1626,11 @@ potentially unintended behavior.
 :END:
 
 #+begin_src emacs-lisp
+(defmacro after! (features &rest body)
+  (let (())
+    `(progn
+       (defafter! ,name ,features
+	 ,@body))))
 #+end_src
 
 ***** after-load-hook
