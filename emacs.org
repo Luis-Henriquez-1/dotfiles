@@ -4258,7 +4258,7 @@ helm wrappers around existing commands.
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook #'selectrum-mode)
 
-(defsetting! selectrum
+(before! selectrum
   (setq selectrum-max-window-height 15)
   (setq selectrum-num-candidates-displayed 15)
   (setq selectrum-fix-vertical-window-height 15)
@@ -4280,7 +4280,7 @@ helm wrappers around existing commands.
 #+begin_src emacs-lisp
 (xl-hook-add 'prog-mode-hook 'company-mode)
 
-(defsetting! company ()
+(before! company ()
   (setq company-tooltip-align-annotations t)
   (setq company-minimum-prefix-length 1)
   (setq company-minimum-prefix-length 1)
@@ -4459,7 +4459,7 @@ useful functions which are written in such a way that they can be work across
 all the completion frameworks.
 
 #+begin_src emacs-lisp
-(defsetting! consult ()
+(before! consult ()
   (bind! ([remap switch-to-buffer] #'consult-buffer))
   (xl-gadvice-pause-garbage-collection #'consult-outline)
   (xl-gadvice-pause-garbage-collection #'consult-line)
@@ -4623,7 +4623,7 @@ newline.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! paragraph
+(before! paragraph
   (setq sentence-end-double-space nil))
 #+end_src
 
@@ -4872,7 +4872,7 @@ It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capi
 #+begin_src emacs-lisp
 (xl-hook-add 'text-mode-hook #'auto-capitalize-mode)
 
-(defsetting! auto-capitalize ()
+(before! auto-capitalize ()
   (setq auto-capitalize-words '("I" "English" "Emacs")))
 #+end_src
 
@@ -4942,7 +4942,7 @@ Saving files like this reduces the likelihood of user delays.
 #+begin_src emacs-lisp
 (xl-load-before-call 'super-save #'find-file)
 
-(defsetting! super-save
+(before! super-save
   (setq super-save-auto-save-when-idle t)
   (setq super-save-idle-duration 5))
 #+end_src
@@ -4953,7 +4953,7 @@ Saving files like this reduces the likelihood of user delays.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! vc-hooks ()
+(before! vc-hooks ()
   (setq vc-follow-symlinks t)
   (setq vc-follow-link     t))
 #+end_src
@@ -4993,7 +4993,7 @@ you save your file--which for me is all the time because I use [[id:bd455e73-403
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! git-auto-commit-mode ()
+(before! git-auto-commit-mode ()
   (setq gac-automatically-push-p   nil)
   (setq gac-ask-for-summary-p      nil)
   (setq gac-default-message        #'gac%commit-message)
@@ -5029,7 +5029,7 @@ address later.
 #+begin_src emacs-lisp
 (mapc #'idle-require '(f s with-editor git-commit package eieio lv transient))
 
-(defsetting! magit
+(before! magit
   (xl-gadvice-pause-garbage-collection #'magit-status)
   (xl-gadvice-pause-garbage-collection #'magit-commit)
   (xl-hook-add 'magit-popup-mode-hook #'hide-mode-line)
@@ -6173,7 +6173,7 @@ typing an expression, I get completion from the minibuffer.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! select
+(before! select
   (setq selection-coding-system 'utf-8)
   (setq select-enable-clipboard t)
   (setq select-enable-primary   t)
@@ -6269,7 +6269,7 @@ By default the cursor blinks. The point is so that it is easier to find on the
 screen. Usually, however, I have no trouble finding it so I disable it.
 
 #+begin_src emacs-lisp
-(defsetting! frame (after)
+(before! frame (after)
   (blink-cursor-mode -1))
 #+end_src
 
@@ -6283,7 +6283,7 @@ Emacs automatically creates a [[helpvar:custom-file][custom-file]] for customiza
 config file as opposed to having this file. Therefore, I set it to [[;][null-device]].
 
 #+begin_src emacs-lisp
-(defsetting! cus-edit
+(before! cus-edit
   (setq custom-file null-device)
   (setq custom-theme-directory (concat XL-LOCAL-DIR "themes/")))
 #+end_src
@@ -6302,7 +6302,7 @@ As per [[https://emacs.stackexchange.com/questions/18677/prevent-auto-save-list-
 being created.
 
 #+begin_src emacs-lisp
-(defsetting! startup
+(before! startup
   (xl-gadvice-ignore #'display-startup-echo-area-message)
   (xl-gadvice-ignore #'startup-echo-area-message)
   (setq auto-save-list-file-prefix nil)
@@ -6448,7 +6448,7 @@ users. Some such commands are the narrowing commands.
 I, however, know what I'm doing. So I enable all commands.
 
 #+begin_src emacs-lisp
-(defsetting! loaddefs
+(before! loaddefs
   (setq disabled-command-function nil))
 #+end_src
 
@@ -6479,7 +6479,7 @@ Loading a theme qualifies as an intensive operation as all the faces on the
 screen need to be redisplayed.
 
 #+begin_src emacs-lisp
-(defsetting! custom
+(before! custom
   (xl-gadvice-pause-garbage-collection #'load-theme)
   (setq custom-safe-themes t))
 #+end_src
@@ -6498,7 +6498,7 @@ screen need to be redisplayed.
 executable to run.
 
 #+begin_src emacs-lisp
-(defsetting! dmenu
+(before! dmenu
   (setq dmenu-save-file (concat XL-CACHE-DIR "dmenu-itmes")))
 #+end_src
 
@@ -6849,7 +6849,7 @@ packages
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! system-packages
+(before! system-packages
   (setq system-packages-noconfirm t)
   (dbc-add-rule "bottom" "system-packages" :newname "\\*system-packages"))
 #+end_src
@@ -7099,7 +7099,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook 'savehist-mode)
 
-(defsetting! savehist
+(before! savehist
   (setq savehist-save-minibuffer-history t)
   (setq savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
   (setq savehist-autosave-interval nil)
@@ -7125,7 +7125,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 =ellocate= is replacement for.
 
 #+begin_src emacs-lisp
-(defsetting! ellocate
+(before! ellocate
   (setq ellocate-scan-dirs `(("~/" ,(concat XL-CACHE-DIR "ellocate"))))
   (setq ellocate-gc-mem most-positive-fixnum))
 #+end_src
@@ -7462,7 +7462,7 @@ which provides much more contextual information in a better format.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! window ()
+(before! window
   (setq split-width-threshold 160))
 #+end_src
 
@@ -7549,7 +7549,7 @@ which provides much more contextual information in a better format.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! desktop ()
+(before! desktop
   (setq desktop-save t)
   (setq desktop-dirname XL-CACHE-DIR)
   (setq desktop-auto-save-timeout auto-save-timeout)
@@ -8064,7 +8064,7 @@ redundant code.
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-lisp-mode-hook 'nameless-mode)
 
-(defsetting! nameless ()
+(before! nameless
   (setq nameless-private-prefix t))
 #+end_src
 
@@ -8074,7 +8074,7 @@ redundant code.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! avy ()
+(before! avy ()
   (setq avy-style 'pre)
   (setq avy-keys (number-sequence 97 122)))
 #+end_src
@@ -8089,7 +8089,7 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
 "zooming" to the whole frame instead of the current buffer.
 
 #+begin_src emacs-lisp
-(defsetting! zoom-frm ()
+(before! zoom-frm ()
   (setq frame-zoom-font-difference 0.5)
   (setq zoom-frame/buffer 'buffer))
 #+end_src
@@ -8100,7 +8100,7 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! tramp ()
+(before! tramp ()
   (setq tramp-backup-directory-alist backup-directory-alist)
   (setq tramp-persistency-file-name
 	(concat XL-CACHE-DIR "tramp-persistency.el"))
@@ -8131,7 +8131,7 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! bookmark
+(before! bookmark
   (setq bookmark-default-file (concat XL-CACHE-DIR "bookmarks")))
 #+end_src
 
@@ -8141,7 +8141,7 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! nsm
+(before! nsm
   (setq nsm-settings-file (concat XL-CACHE-DIR "network-settings.data")))
 #+end_src
 
@@ -8151,7 +8151,7 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! mouse
+(before! mouse
   (setq mouse-yank-at-point t))
 #+end_src
 
@@ -8188,7 +8188,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
 Non-nil means animated images loop forever, rather than playing once.
 
 #+begin_src emacs-lisp
-(defsetting! image-mode ()
+(before! image-mode ()
   (setq image-animate-loop t))
 #+end_src
 
@@ -8198,7 +8198,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! uniquify ()
+(before! uniquify ()
   (setq uniquify-buffer-name-style 'forward))
 #+end_src
 
@@ -8208,7 +8208,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! compile ()
+(before! compile ()
   (setq compilation-ask-about-save nil)
   (setq compilation-scroll-output  'first-error)
   (setq compilation-always-kill    t))
@@ -8220,7 +8220,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! bytecomp ()
+(before! bytecomp ()
   (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
   (setq byte-compile-verbose  xl-debug-p))
 #+end_src
@@ -8231,7 +8231,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! url ()
+(before! url ()
   (setq url-cache-directory         (concat XL-CACHE-DIR "url/cache/"))
   (setq url-configuration-directory (concat XL-CACHE-DIR "url/configuration/")))
 #+end_src
@@ -8244,7 +8244,7 @@ Non-nil means animated images loop forever, rather than playing once.
 Don't ping things that look like domain names.
 
 #+begin_src emacs-lisp
-(defsetting! ffap ()
+(before! ffap ()
   (setq ffap-machine-p-known 'reject))
 #+end_src
 
@@ -8267,7 +8267,7 @@ Setting these variables in coordination with [[id:58a65d49-cd9f-4b5d-86d7-d43209
 gpg passphrase via emacs.
 
 #+begin_src emacs-lisp
-(defsetting! epa-config ()
+(before! epa-config ()
   (setq epg-gpg-program   "gpg2")
   (setq epg-pinentry-mode 'loopback))
 #+end_src
@@ -8287,7 +8287,7 @@ are done before setting the =gc-cons-threshold= back to a normal value.
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook #'gcmh-mode)
 
-(defsetting! gcmh
+(before! gcmh
   (setq gcmh-idle-delay 5)
   (setq gcmh-verbose xl-debug-p)
   (setq gcmh-high-cons-threshold XL-GC-CONS-THRESHOLD)
@@ -8429,7 +8429,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! sendmail ()
+(before! sendmail ()
   (setq sendmail-program (executable-find "msmtp"))
   (setq send-mail-function #'smtpmail-send-it))
 #+end_src
@@ -8440,7 +8440,7 @@ I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, bec
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! message ()
+(before! message ()
   (setq message-sendmail-f-is-evil t)
   (setq message-sendmail-extra-arguments '("--read-envelope-from"))
   (setq message-send-mail-function #'message-send-mail-with-sendmail))
@@ -8524,7 +8524,7 @@ how to automate this.
 =mu4e-var= contains many miscellaneous variables. Some highlights.
 
 #+begin_src emacs-lisp
-(defsetting! mu4e-vars ()
+(before! mu4e-vars ()
   (setq mu4e-completing-read-function #'completing-read)
   (setq mu4e-get-mail-command "mbsync -a")
   (setq mu4e-update-interval nil)
@@ -8554,7 +8554,7 @@ how to automate this.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! mu4e-view ()
+(before! mu4e-view ()
   (setq mu4e-view-show-images t)
   (setq mu4e-view-image-max-width 800)
   (setq mu4e-view-show-addresses t)
@@ -8567,7 +8567,7 @@ how to automate this.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! mu4e-compose
+(before! mu4e-compose
   (setq mu4e-compose-context-policy nil))
 #+end_src
 
@@ -8577,7 +8577,7 @@ how to automate this.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! mu4e-drafts ()
+(before! mu4e-drafts ()
   (setq mu4e-compose-signature-auto-include t)
   (setq mu4e-compose-format-flowed t))
 #+end_src
@@ -8608,7 +8608,7 @@ it is definitely on my list of things to try out.
 (after! mu4e
   (xl-hook-add 'mu4e-compose-mode-hook #'org-mu4e-compose-org-mode))
 
-(defsetting! mu4e-org
+(before! mu4e-org
   (setq mu4e-org-link-query-in-headers-mode nil)
   (setq mu4e-org-convert-to-html            t))
 #+end_src
@@ -8803,7 +8803,7 @@ are not immediately visible. They are only visible when I type
 something. Setting it to =nil= makes the frame start at the size you specified.
 
 #+begin_src emacs-lisp
-(defsetting! mini-frame
+(before! mini-frame
   (setq mini-frame-resize nil)
   (setf (alist-get 'top mini-frame-show-parameters) 10)
   (setf (alist-get 'width mini-frame-show-parameters) 0.95)
@@ -8828,7 +8828,7 @@ something. Setting it to =nil= makes the frame start at the size you specified.
 :END:
 
 #+begin_src emacs-lisp
-(defsetting! transient ()
+(before! transient ()
   (setq transient-default-level 5)
   (setq transient-levels-file (concat XL-CACHE-DIR "transient/levels"))
   (setq transient-values-file (concat XL-CACHE-DIR "transient/values"))
@@ -8873,7 +8873,7 @@ them. By doing this you can "discover" the commands as you go along.
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook #'which-key-mode)
 
-(defsetting! which-key ()
+(before! which-key ()
   (setq which-key-sort-uppercase-first nil)
   (setq which-key-max-display-columns nil)
   (setq which-key-add-column-padding 1)
@@ -8992,7 +8992,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 (require 'dashboard)
 (xl-hook-add 'window-setup-hook #'dashboard-insert-startupify-lists)
 
-(defsetting! dashboard ()
+(before! dashboard ()
   (setq dashboard-items nil)
   (alet (seq-random-elt (append '(1 2 3) (if (display-graphic-p) '(official logo))))
     (setq dashboard-startup-banner it))
@@ -9196,7 +9196,7 @@ documentation *much* more fun. :joy-cat:
 #+begin_src emacs-lisp
 (xl-hook-add 'org-mode-hook 'emojify-mode)
 
-(defsetting! emojify ()
+(before! emojify ()
   (setq emojify-emojis-dir (concat XL-CACHE-DIR "emojis/")))
 #+end_src
 
