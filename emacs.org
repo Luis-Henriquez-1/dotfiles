@@ -7237,16 +7237,6 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   (setq eshell-save-history-on-exit t))
 #+end_src
 
-*** em-term
-:PROPERTIES:
-:ID:       d2afb853-15c3-4d3f-b8fa-a1075f84bbac
-:END:
-
-#+begin_src emacs-lisp
-(use-package em-term
-  :idle-require t)
-#+end_src
-
 *** populate eshell visual commands
 :PROPERTIES:
 :ID:       e46d897d-eca5-43be-83d1-05eab1184965
@@ -7257,16 +7247,6 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
   "Add common commands to `eshell-visual-commands'."
   (iter (each command '("tmux" "htop" "bash" "zsh" "fish" "vim" "nvim" "ncmpcpp"))
 	(pushnew command eshell-visual-commands)))
-#+end_src
-
-*** em-alias
-:PROPERTIES:
-:ID:       694a8c17-8318-4222-b461-abfc1d8a78ea
-:END:
-
-#+begin_src emacs-lisp
-(use-package em-alias
-  :idle-require t)
 #+end_src
 
 *** eshell-z
