@@ -6483,10 +6483,9 @@ Loading a theme qualifies as an intensive operation as all the faces on the
 screen need to be redisplayed.
 
 #+begin_src emacs-lisp
-(use-package custom
-  :gc-pause load-theme
-  :set
-  (custom-safe-themes . t))
+(defsetting! custom
+  (xl-gadvice-pause-garbage-collection #'load-theme)
+  (setq custom-safe-themes t))
 #+end_src
 
 * utility :utility:
