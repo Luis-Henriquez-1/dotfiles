@@ -6404,10 +6404,6 @@ will change.
 #+begin_src emacs-lisp
 (use-package files
   :set
-  (auto-save-file-name-transforms . `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
-  (auto-save-interval                 . 300)
-  (auto-save-default                  . nil)
-  (auto-save-timeout                  . 30)
   (confirm-nonexistent-file-or-buffer . nil)
   (backup-by-copying-when-linked      . t)
   (backup-directory-alist             . (list (cons ".*" (concat XL-CACHE-DIR "backup/"))))
@@ -6429,6 +6425,11 @@ will change.
 :END:
 
 #+begin_src emacs-lisp
+(defbefore! setup-auto-save-stuff (file)
+  (setq auto-save-file-name-transforms `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
+  (setq auto-save-interval 300)
+  (setq auto-save-default nil)
+  (setq auto-save-timeout 30))
 #+end_src
 
 ** loaddefs :core:setting:
