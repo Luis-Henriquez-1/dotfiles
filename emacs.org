@@ -6847,16 +6847,6 @@ These are my newsfeed for =elfeed-org=.
 (use-package grugru)
 #+end_src
 
-** fortune-cookie :exec:
-:PROPERTIES:
-:ID:       8105dadd-4d4a-4f57-a5f9-5cae1b14ef3a
-:END:
-
-#+begin_src emacs-lisp
-(use-package fortune-cookie
-  :commands fortune-cookie)
-#+end_src
-
 ** figlet :exec:
 :PROPERTIES:
 :ID:       b5be9427-a814-4a91-92ab-ad393375ec41
