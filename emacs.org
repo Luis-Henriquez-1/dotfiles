@@ -6838,15 +6838,6 @@ These are my newsfeed for =elfeed-org=.
   :rule ("left" "man" :newname "\\*man.+"))
 #+end_src
 
-** grugru :write:edit:
-:PROPERTIES:
-:ID:       9d96a611-355a-4b62-bb0e-18e9d4af92c9
-:END:
-
-#+begin_src emacs-lisp
-(use-package grugru)
-#+end_src
-
 ** system-packages :pacman:exec:
 :PROPERTIES:
 :ID:       74bd0e5a-f6b0-48eb-a91e-3932eae23516
