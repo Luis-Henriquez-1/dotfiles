@@ -1564,6 +1564,7 @@ syntax. I use it extensively throughout this configuration.
 #+begin_src emacs-lisp
 (defmacro defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
+  (declare (indent defun) (doc-string 3))
   (loopy (list symbol symbols)
 	 (expr advice (xl-advice-gen-symbol function name))
 	 (collect `(defun ,advice nil ,@body))
