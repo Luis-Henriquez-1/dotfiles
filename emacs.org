@@ -7686,19 +7686,6 @@ the frame approach is that it's easy to have a "gap" setup.
   (setq exwm-float-border        '(:stationary ("navy" . 1) :moving ("maroon" . 2))))
 #+end_src
 
-*** exwm-outer-gaps
-:PROPERTIES:
-:ID:       6bf91f2b-a41b-43f9-bb22-4c01b27d1f07
-:HEADER-ARGS: :tangle no
-:END:
-
-This package provides exwm with outer gaps.
-
-#+begin_src emacs-lisp
-(use-package exwm-outer-gaps)
-(straight-use-package '(exwm-outer-gaps :host github :type git :repo "lucasgruss/exwm-outer-gaps"))
-#+end_src
-
 *** TODO org capture from an exwm buffer :exwm:org:capture:
 :PROPERTIES:
 :ID:       5428bdc1-c075-4387-b3ab-080d372c478f
