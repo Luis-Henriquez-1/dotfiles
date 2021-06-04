@@ -8218,7 +8218,7 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-(before! bytecomp ()
+(before! bytecomp
   (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
   (setq byte-compile-verbose  xl-debug-p))
 #+end_src
