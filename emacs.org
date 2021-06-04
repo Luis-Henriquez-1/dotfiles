@@ -6420,7 +6420,7 @@ will change.
 :END:
 
 #+begin_src emacs-lisp
-(defbefore! setup-auto-save (file)
+(defbefore! enable-auto-save-settings (file)
   (setq auto-save-file-name-transforms `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
   (setq auto-save-interval 300)
   (setq auto-save-default nil)
@@ -6433,7 +6433,7 @@ will change.
 :END:
 
 #+begin_src emacs-lisp
-(defbefore! setup-backup-settings (file)
+(defbefore! enable-backup-settings (file)
   (setq kept-old-versions 2)
   (setq kept-new-versions 2)
   (setq backup-by-copying t)
