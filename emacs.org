@@ -6093,12 +6093,11 @@ typing an expression, I get completion from the minibuffer.
 :END:
 
 #+begin_src emacs-lisp
-(use-package simple
-  :rule ("bottom" "messages" :newname "\\*Messages\\*")
-  :set
-  (delete-trailing-lines . nil)
-  (blink-matching-paren  . t)
-  (idle-update-delay     . 1))
+(before! simple
+  (setq delete-trailing-lines nil)
+  (setq blink-matching-paren t)
+  (setq idle-update-delay 1)
+  (dbc-add-rule "bottom" "messages" :newname "\\*Messages\\*"))
 #+end_src
 
 ** disable old themes first :theme:
