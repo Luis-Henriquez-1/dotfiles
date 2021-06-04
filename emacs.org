@@ -7188,8 +7188,7 @@ have to set out to look for a file with =dired=.
 :END:
 
 #+begin_src emacs-lisp
-(use-package all-the-icons-dired
-  :hook dired-mode-hook)
+(xl-hook-add 'dired-mode-hook 'all-the-icons-dired-mode)
 #+end_src
 
 ** dired :file:
