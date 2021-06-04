@@ -1705,8 +1705,7 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 (defunmacro! defbefore! (name features &rest body)
   "Evaluate BODY before FEATURES are loaded.
 If feature is already loaded, evaluate BODY immediately."
-  (let ((condition (xl-convert-to-form features))
-	(hook (xl-symbol-intern 'xl-before-load-feature-hook '& name)))
+  (let ((condition (xl-convert-to-form features)))
     `(progn
        (defhook! ,name (xl-before-load-feature-hook)
 	 (when ,condition
