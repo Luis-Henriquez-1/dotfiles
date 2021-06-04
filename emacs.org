@@ -8588,9 +8588,8 @@ how to automate this.
 These are custom icons used to spice up the =mu4e= display.
 
 #+begin_src emacs-lisp
-(use-package mu4e-headers
-  :set
-  (mu4e-headers-auto-update    . t))
+(defsetting! mu4e-headers
+  (setq mu4e-headers-auto-update t))
 #+end_src
 
 *** mu4e-org
