@@ -7130,7 +7130,7 @@ inspired file manager]] of also called =ranger=.
 :END:
 
 #+begin_src emacs-lisp
-(use-package ranger
+(before! ranger
   (xl-gadvice-shut-up #'ranger-window-check)
   (setq ranger-override-dired-mode t)
   (setq ranger-cleanup-eagerly t)
