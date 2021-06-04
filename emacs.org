@@ -6517,10 +6517,9 @@ executable to run.
 :END:
 
 #+begin_src emacs-lisp
-(use-package pdf-tools
-  :magic ("%PDF" . pdf-view-mode)
-  :init
-  (push '("\\.[pP][dD][fF]\\'" . pdf-view-mode) auto-mode-alist))
+(defsetting! pdf-tools
+  (add-to-list 'auto-mode-alist '("\\.[pP][dD][fF]\\'" . pdf-view-mode))
+  (add-to-list 'magic-mode-alist '("%PDF" . pdf-view-mode)))
 #+end_src
 
 *** epd-pdf-info-program :startup:
