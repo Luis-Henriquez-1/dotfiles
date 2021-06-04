@@ -7573,7 +7573,7 @@ ways. You could replace it with exwm without asking, ask whether to
 replace it, or abort the initialization of exwm.
 
 #+begin_src emacs-lisp
-(defadvice! init-exwm-maybe (:before browse-url)
+(defadvice! init-exwm-maybe (before browse-url)
   "Try to initialize exwm.
 If it's not possible, abort initialization gracefully."
   (require 'exwm)
