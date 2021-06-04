@@ -5092,27 +5092,6 @@ address later.
   (dbc-add-rule "bottom" "ert" :newname "\\*ert\\*"))
 #+end_src
 
-*** el-mock
-:PROPERTIES:
-:ID:       46df66b0-5820-4550-aa99-c913d3022fe1
-:END:
-
-#+begin_src emacs-lisp
-(use-package el-mock)
-#+end_src
-
-*** assess
-:PROPERTIES:
-:ID:       cea20fcd-0c75-42dc-be7f-e9eda7b932b1
-:END:
-
-=assess= is similar to =ert-expectations=. It is a wrapper around the built in
-[[][ert-deftest] that provides a cleaner syntax for writing tests.
-
-#+begin_src emacs-lisp
-(use-package assess)
-#+end_src
-
 *** bug-hunter
 :PROPERTIES:
 :ID:       30196ef6-7b34-4a6c-b084-8e613010abd4
