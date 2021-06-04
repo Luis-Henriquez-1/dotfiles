@@ -7678,9 +7678,9 @@ pressed. The only thing I find missing here is a way to quickly select links in
 an. One caveat is that mouse clicks only work in insert mode.
 
 #+begin_src emacs-lisp
-(use-package exwm-firefox-evil
-  :hook (exwm-manage-finished-hook . exwm-firefox-evil-activate-if-firefox)
-  :before-call browse-url-firefox)
+(after! exwm
+  (xl-hook-add 'exwm-manage-finished-hook 'exwm-firefox-evil-activate-if-firefox)
+  (xl-load-before-call 'exwm-firefox-evil #'browse-url-firefox))
 #+end_src
 
 *** exwm-float
