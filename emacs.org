@@ -1548,6 +1548,7 @@ not what I'd like.
   (loopy (list hook hooks)
 	 (expr hook-fn (xl-hook-gen-name hook hook-fn))
 	 (collect `(defun ,hook-fn ,(or .args '(&rest _)) ,@body))
+	 (collect `(xl-gadvice-catch-error #',hook-fn))
 	 (collect `(add-hook ',hook #',hook-fn ,.depth ,.local))
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
