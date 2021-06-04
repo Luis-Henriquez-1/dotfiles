@@ -1044,9 +1044,9 @@ Sometimes I want to use =xl-log= instead of =message=.
 Log when an advice or hook is being called.
 
 #+begin_src emacs-lisp
-(defadvice! log-advices (orig-fn &rest args)
+(defadvice! log-advices (around xl-hook-add xl-advice-add)
   "Log ORIG-FN."
-  (:around xl-hook-add xl-advice-add)
+  (:args orig-fn &rest args)
   (iter (with (symbols (apply orig-fn args)))
 	(each symbol symbols)
 	(xl-log-function symbol)
@@ -8763,7 +8763,7 @@ When I'm using the dashboard.
 instead.
 
 #+begin_src emacs-lisp :tangle no
-(defadvice! show-package-load-time (:before dashboard-insert-startupify-lists)
+(defadvice! show-package-load-time (before dashboard-insert-startupify-lists)
   (setq dashboard-init-info
         (format "%d packages loaded in %.2f seconds"
                 (cond ((featurep 'straight)
