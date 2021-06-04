@@ -7583,6 +7583,9 @@ that it's not a lisp object; implying that it is not.
 
 #+begin_src emacs-lisp
 (before! workgroups2
+  (xl-gadvice-ignore #'wg-change-modeline)
+  (xl-gadvice-shut-up #'wg-create-workgroup)
+  (xl-gadvice-shut-up #'wg-switch-workgroup)
   (setq wg-emacs-exit-save-behavior 'save)
   (setq wg-workgroups-mode-exit-save-behavior 'save)
   (setq wg-flag-modified nil)
@@ -7592,10 +7595,7 @@ that it's not a lisp object; implying that it is not.
   (setq wg-control-frames nil)
   (setq wg-session-load-on-start nil)
   (setq wg-flag-modified nil)
-  (setq wg-session-file
-	(concat XL-CACHE-DIR "wg-session"))
-  :ignore wg-change-modeline
-  :silence wg-create-workgroup wg-switch-workgroup)
+  (setq wg-session-file (concat XL-CACHE-DIR "wg-session")))
 #+end_src
 
 *** tab-bar-mode
