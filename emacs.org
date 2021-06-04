@@ -1599,8 +1599,9 @@ should run.
 #+begin_src emacs-lisp
 (defmacro defsetting! (feature args &rest body)
   (declare (indent defun))
-  `(defbefore! name (feature)
-     ,@body))
+  (let ((set-settings-for))
+    `(defbefore! name (feature)
+       ,@body)))
 #+end_src
 
 **** loading features
