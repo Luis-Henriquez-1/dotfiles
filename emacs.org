@@ -7582,20 +7582,20 @@ that it's not a lisp object; implying that it is not.
 :END:
 
 #+begin_src emacs-lisp
-(use-package workgroups2
+(before! workgroups2
+  (setq wg-emacs-exit-save-behavior 'save)
+  (setq wg-workgroups-mode-exit-save-behavior 'save)
+  (setq wg-flag-modified nil)
+  (setq wg-mode-line-display-on nil)
+  (setq wg-load-last-workgroup nil)
+  (setq wg-open-this-wg nil)
+  (setq wg-control-frames nil)
+  (setq wg-session-load-on-start nil)
+  (setq wg-flag-modified nil)
+  (setq wg-session-file
+	(concat XL-CACHE-DIR "wg-session"))
   :ignore wg-change-modeline
-  :silence wg-create-workgroup wg-switch-workgroup
-  :set
-  (wg-emacs-exit-save-behavior           . 'save)
-  (wg-workgroups-mode-exit-save-behavior . 'save)
-  (wg-flag-modified                      . nil)
-  (wg-mode-line-display-on               . nil)
-  (wg-load-last-workgroup                . nil)
-  (wg-open-this-wg                       . nil)
-  (wg-control-frames                     . nil)
-  (wg-session-load-on-start              . nil)
-  (wg-flag-modified                      . nil)
-  (wg-session-file                       . (concat XL-CACHE-DIR "wg-session")))
+  :silence wg-create-workgroup wg-switch-workgroup)
 #+end_src
 
 *** tab-bar-mode
