@@ -1706,7 +1706,7 @@ If FEATURES have already been loaded, evaluate BODY immediately."
   "Evaluate BODY before FEATURES are loaded.
 If feature is already loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
-	(hook (xl-symbol-intern 'xl-before-load-feature-hook & name)))
+	(hook (xl-symbol-intern 'xl-before-load-feature-hook '& name)))
     `(progn
        (defhook! ,name (xl-before-load-feature-hook)
 	 (when ,condition
