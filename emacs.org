@@ -360,16 +360,6 @@ I'm not sure whether I should be using local-repo instead.
 	(load autoload-file nil t)))))
 #+end_src
 
-** load required packages
-:PROPERTIES:
-:ID:       b2d85ac5-7150-4a76-b5f3-067f8040977a
-:END:
-
-#+begin_src emacs-lisp
-(require 'loopy)
-(require 'dash)
-#+end_src
-
 ** library :library:
 :PROPERTIES:
 :ID:       296e48e0-5b0d-4b13-8d51-3c2b8c294026
@@ -383,6 +373,248 @@ other packages. Additionally, if you care about startup time it's important to
 make sure packages are only loaded when they need to be. The major purpose of
 this library is to provide me the tools to configure these packages in a way
 that is concise and efficient.
+
+*** features :feature:
+:PROPERTIES:
+:ID:       67e54261-0b00-4daa-bbe9-a0f2fbbc1d9b
+:END:
+
+These are packages that I use to make writing lisp code more convenient. Emacs
+Lisp is a full-featured, turing-complete language. However, for some data
+structures like hash-tables and alists it is missing consistently named
+functions for performing operations on these data structures. This is improving
+slowly with the introduction of libraries like =seq.el= and =map.el= but still
+leaves much to be desired. This sounds like a complaint, but it actually
+highlights the advantage of the extensibility of Emacs.
+
+**** dash 
+:PROPERTIES:
+:ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
+:END:
+
+Dash is rich list manipulation library. Many of the functions it have already
+been found in some form or another in emacs in features such as =cl-lib= and
+=seq= and =subr=, but dash has some very convenient functions and macros over
+emacs (such as =-let)=. Moreover, a lot of work has been put into making it's
+functions efficient; some are even more efficient than built-in cl
+functions. Additionally, it's already used as a dependency of very many packages
+so I'll likely end up loading it anyway.
+
+#+begin_src emacs-lisp
+(require 'dash)
+#+end_src
+
+**** shut-up
+:PROPERTIES:
+:ID:       71681f9f-2760-4cee-95a0-4aeb71191a42
+:END:
+
+This package provides a macro named =shut-up= that as its name suggests,
+silences output of any forms within it :speak-no-evil:. Emacs itself and many
+emacs packages spew messages. While I can see how in certain circumstances there
+messages can be useful, most of the time they are superfluous.
+
+#+begin_src emacs-lisp
+(require 'shut-up)
+#+end_src
+
+**** mmt 
+:PROPERTIES:
+:ID:       a4377985-fe0e-4980-b839-08c334bde76c
+:END:
+
+=mmt= is a library of tools for writing macros. Specifically, it provides the
+quintessential =once-only= and =with-gensyms= macros which are used to prevent
+variable leaking.
+
+#+begin_src emacs-lisp
+(require 'mmt)
+#+end_src
+
+**** subr-x 
+:PROPERTIES:
+:ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
+:END:
+
+#+begin_src emacs-lisp
+(require 'subr-x)
+#+end_src
+
+**** s 
+:PROPERTIES:
+:ID:       b96acb97-3963-4713-a03b-6294c65903fd
+:END:
+
+=s= is an api for strings inspired by [[id:704fc35f-0ad0-4eb3-9eb5-d8335465dbd8][dash]]. It has many useful string functions
+that are not built-in to Emacs. Notably, it is functional.
+
+#+begin_src emacs-lisp
+(require 's)
+#+end_src
+
+**** f 
+:PROPERTIES:
+:ID:       f44da560-dc3f-4635-926e-eec4fd6d159d
+:END:
+
+#+begin_src emacs-lisp
+(require 'f)
+#+end_src
+
+**** anaphora 
+:PROPERTIES:
+:ID:       1c47bd8a-15f1-4b1c-9574-23547d27d968
+:END:
+
+It's common to want to refer to the thing you're operating on in lisp and in
+many other languages. In lisp this often requires assigning the variable a name.
+But if you're only.
+
+#+begin_src emacs-lisp
+(require 'anaphora)
+#+end_src
+
+**** a 
+:PROPERTIES:
+:ID:       32110690-9d0a-4e3d-a1d8-7695b42aeb30
+:END:
+
+=a= is an association list library.
+
+#+begin_src emacs-lisp
+(require 'a)
+#+end_src
+
+**** loopy 
+:PROPERTIES:
+:ID:       1c30099a-86b4-41f9-8390-e9e3c20b0257
+:END:
+
+=loopy= is an alternative to =cl-loop= that preserves lisp structure. It is akin
+to [[https://common-lisp.net/project/iterate/][Common Lisp's iter]]. dash's functions and macros are good for most
+cases. But they are not as good in my opinion when you're dealing with a complex
+loop that involves accumulating several variables or atypical control-flow (as
+in, break statements or return statements). This is where =loopy= comes into
+play.
+
+***** loopy
+:PROPERTIES:
+:ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
+:END:
+
+#+begin_src emacs-lisp
+(require 'loopy)
+(add-to-list 'loopy-default-flags '-split)
+(loopy-defalias 'fret 'finally-return)
+(loopy-defalias 'ret 'return)
+#+end_src
+
+***** iter
+:PROPERTIES:
+:ID:       cf3f024a-8bec-4f5a-bd63-38b09dc23ca5
+:END:
+
+I thought I'd be using this macro exclusively and that I'd never use =loopy= at
+all. However, =loopy= has the distinct advantage that it has more freedom to
+name its clauses without clobbering them with existing Emacs functions. So I'd
+say I use =loopy= when the loop doesn't need.
+
+For the same drawback as I've mentioned, =loopy-iter= can't use the =list=
+clause because it would get confused with it and the built-in Emacs function
+[[helpfn:list][list]]. For that reason we need to use one of lists aliases.
+
+#+begin_src emacs-lisp
+(require 'loopy-iter)
+
+(add-to-list 'loopy-default-flags '+lax-names)
+
+(loopy-defalias 'for 'list)
+(loopy-defalias 'each 'list)
+
+(defalias 'iter 'loopy-iter)
+(defalias 'iterate 'loopy-iter)
+#+end_src
+
+***** dash destructuring
+:PROPERTIES:
+:ID:       87615a1d-2790-44c4-ac95-90a36ff9c496
+:END:
+
+#+begin_src emacs-lisp
+(require 'loopy-dash)
+(add-to-list 'loopy-default-flags '+dash)
+#+end_src
+
+**** dbc
+:PROPERTIES:
+:ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
+:END:
+
+=dbc= stands for "display-buffer-control". This package provides an interface
+for working with [[helpfn:display-buffer-alist][display-buffer-alist]]. In a nutshell, =display-buffer-alist= is
+a Emacs's built in way of allowing the user to customize how windows are opened.
+
+#+begin_src emacs-lisp
+(require 'dbc)
+
+(--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
+	  (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
+	  (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
+	  (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
+  (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it))
+#+end_src
+
+**** idle-require :defer:
+:PROPERTIES:
+:ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
+:END:
+
+Idle require is a tool for loading autoload functions, files or features during
+idle time. The way to use this is to idle-require many small packages that
+individually don't take too much time. This helps ensure that in emacs loading
+of big packages like org-mode is snappy.
+
+When emacs goes idle for [[helpvar:idle-require-idle-delay][idle-require-idle-delay]] seconds, the features will
+start loading. [[helpvar:idle-require-load-break][idle-require-load-break]] is the break between features idle
+require loads.
+
+=idle-require= messages us to tell us when a package is being idle required and
+when it has finished idle-requiring packages. I don't want to see the message
+unless I'm debugging.
+
+Since we're evaluating a good amount of lisp expressions, we should boost
+garbage collection during this time.
+
+#+begin_src emacs-lisp
+(require 'idle-require)
+
+(setq idle-require-load-break 2)
+(setq idle-require-idle-delay 10)
+#+end_src
+
+**** TODO log4e
+:PROPERTIES:
+:ID:       8360e875-61a6-46f8-a401-2a98c9e517fa
+:END:
+
+#+begin_src emacs-lisp
+(require 'log4e)
+
+(defalias 'xl-log 'xl--log-info)
+(defalias 'xl/popup-log-buffer 'xl--log-open-log)
+
+(log4e:deflogger "xl" "%t [%l] %m" "%H:%M:%S")
+(xl--log-enable-logging)
+#+end_src
+
+**** map
+:PROPERTIES:
+:ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
+:END:
+
+#+begin_src emacs-lisp
+(require 'map)
+#+end_src
 
 *** helpers :helper:
 :PROPERTIES:
@@ -1259,248 +1491,6 @@ HOOK is a hook function that follows XL naming conventions."
 (defun xl-hook-gen-name (symbol hook)
   "Generate a hook name."
   (xl-symbol-intern symbol '& hook))
-#+end_src
-
-*** features :feature:
-:PROPERTIES:
-:ID:       67e54261-0b00-4daa-bbe9-a0f2fbbc1d9b
-:END:
-
-These are packages that I use to make writing lisp code more convenient. Emacs
-Lisp is a full-featured, turing-complete language. However, for some data
-structures like hash-tables and alists it is missing consistently named
-functions for performing operations on these data structures. This is improving
-slowly with the introduction of libraries like =seq.el= and =map.el= but still
-leaves much to be desired. This sounds like a complaint, but it actually
-highlights the advantage of the extensibility of Emacs.
-
-**** shut-up
-:PROPERTIES:
-:ID:       71681f9f-2760-4cee-95a0-4aeb71191a42
-:END:
-
-This package provides a macro named =shut-up= that as its name suggests,
-silences output of any forms within it :speak-no-evil:. Emacs itself and many
-emacs packages spew messages. While I can see how in certain circumstances there
-messages can be useful, most of the time they are superfluous.
-
-#+begin_src emacs-lisp
-(require 'shut-up)
-#+end_src
-
-**** mmt 
-:PROPERTIES:
-:ID:       a4377985-fe0e-4980-b839-08c334bde76c
-:END:
-
-=mmt= is a library of tools for writing macros. Specifically, it provides the
-quintessential =once-only= and =with-gensyms= macros which are used to prevent
-variable leaking.
-
-#+begin_src emacs-lisp
-(require 'mmt)
-#+end_src
-
-**** dash 
-:PROPERTIES:
-:ID:       7885c48d-0ead-4d77-8de1-e9faec58b583
-:END:
-
-Dash is rich list manipulation library. Many of the functions it have already
-been found in some form or another in emacs in features such as =cl-lib= and
-=seq= and =subr=, but dash has some very convenient functions and macros over
-emacs (such as =-let)=. Moreover, a lot of work has been put into making it's
-functions efficient; some are even more efficient than built-in cl
-functions. Additionally, it's already used as a dependency of very many packages
-so I'll likely end up loading it anyway.
-
-#+begin_src emacs-lisp
-(require 'dash)
-#+end_src
-
-**** subr-x 
-:PROPERTIES:
-:ID:       ee3ad1b5-920a-4337-9874-79e066ed53fe
-:END:
-
-#+begin_src emacs-lisp
-(require 'subr-x)
-#+end_src
-
-**** s 
-:PROPERTIES:
-:ID:       b96acb97-3963-4713-a03b-6294c65903fd
-:END:
-
-=s= is an api for strings inspired by [[id:704fc35f-0ad0-4eb3-9eb5-d8335465dbd8][dash]]. It has many useful string functions
-that are not built-in to Emacs. Notably, it is functional.
-
-#+begin_src emacs-lisp
-(require 's)
-#+end_src
-
-**** f 
-:PROPERTIES:
-:ID:       f44da560-dc3f-4635-926e-eec4fd6d159d
-:END:
-
-#+begin_src emacs-lisp
-(require 'f)
-#+end_src
-
-**** anaphora 
-:PROPERTIES:
-:ID:       1c47bd8a-15f1-4b1c-9574-23547d27d968
-:END:
-
-It's common to want to refer to the thing you're operating on in lisp and in
-many other languages. In lisp this often requires assigning the variable a name.
-But if you're only.
-
-#+begin_src emacs-lisp
-(require 'anaphora)
-#+end_src
-
-**** a 
-:PROPERTIES:
-:ID:       32110690-9d0a-4e3d-a1d8-7695b42aeb30
-:END:
-
-=a= is an association list library.
-
-#+begin_src emacs-lisp
-(require 'a)
-#+end_src
-
-**** loopy 
-:PROPERTIES:
-:ID:       1c30099a-86b4-41f9-8390-e9e3c20b0257
-:END:
-
-=loopy= is an alternative to =cl-loop= that preserves lisp structure. It is akin
-to [[https://common-lisp.net/project/iterate/][Common Lisp's iter]]. dash's functions and macros are good for most
-cases. But they are not as good in my opinion when you're dealing with a complex
-loop that involves accumulating several variables or atypical control-flow (as
-in, break statements or return statements). This is where =loopy= comes into
-play.
-
-***** loopy
-:PROPERTIES:
-:ID:       da17f1ea-7b0d-4d8c-a068-792ed58c6a79
-:END:
-
-#+begin_src emacs-lisp
-(require 'loopy)
-(add-to-list 'loopy-default-flags '-split)
-(loopy-defalias 'fret 'finally-return)
-(loopy-defalias 'ret 'return)
-#+end_src
-
-***** iter
-:PROPERTIES:
-:ID:       cf3f024a-8bec-4f5a-bd63-38b09dc23ca5
-:END:
-
-I thought I'd be using this macro exclusively and that I'd never use =loopy= at
-all. However, =loopy= has the distinct advantage that it has more freedom to
-name its clauses without clobbering them with existing Emacs functions. So I'd
-say I use =loopy= when the loop doesn't need.
-
-For the same drawback as I've mentioned, =loopy-iter= can't use the =list=
-clause because it would get confused with it and the built-in Emacs function
-[[helpfn:list][list]]. For that reason we need to use one of lists aliases.
-
-#+begin_src emacs-lisp
-(require 'loopy-iter)
-
-(add-to-list 'loopy-default-flags '+lax-names)
-
-(loopy-defalias 'for 'list)
-(loopy-defalias 'each 'list)
-
-(defalias 'iter 'loopy-iter)
-(defalias 'iterate 'loopy-iter)
-#+end_src
-
-***** dash destructuring
-:PROPERTIES:
-:ID:       87615a1d-2790-44c4-ac95-90a36ff9c496
-:END:
-
-#+begin_src emacs-lisp
-(require 'loopy-dash)
-(add-to-list 'loopy-default-flags '+dash)
-#+end_src
-
-**** dbc
-:PROPERTIES:
-:ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
-:END:
-
-=dbc= stands for "display-buffer-control". This package provides an interface
-for working with [[helpfn:display-buffer-alist][display-buffer-alist]]. In a nutshell, =display-buffer-alist= is
-a Emacs's built in way of allowing the user to customize how windows are opened.
-
-#+begin_src emacs-lisp
-(require 'dbc)
-
-(--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
-	  (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
-	  (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
-	  (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
-  (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it))
-#+end_src
-
-**** idle-require :defer:
-:PROPERTIES:
-:ID:       0d619336-e852-4c6a-89a8-38ccbb71a077
-:END:
-
-Idle require is a tool for loading autoload functions, files or features during
-idle time. The way to use this is to idle-require many small packages that
-individually don't take too much time. This helps ensure that in emacs loading
-of big packages like org-mode is snappy.
-
-When emacs goes idle for [[helpvar:idle-require-idle-delay][idle-require-idle-delay]] seconds, the features will
-start loading. [[helpvar:idle-require-load-break][idle-require-load-break]] is the break between features idle
-require loads.
-
-=idle-require= messages us to tell us when a package is being idle required and
-when it has finished idle-requiring packages. I don't want to see the message
-unless I'm debugging.
-
-Since we're evaluating a good amount of lisp expressions, we should boost
-garbage collection during this time.
-
-#+begin_src emacs-lisp
-(require 'idle-require)
-
-(setq idle-require-load-break 2)
-(setq idle-require-idle-delay 10)
-#+end_src
-
-**** TODO log4e
-:PROPERTIES:
-:ID:       8360e875-61a6-46f8-a401-2a98c9e517fa
-:END:
-
-#+begin_src emacs-lisp
-(require 'log4e)
-
-(defalias 'xl-log 'xl--log-info)
-(defalias 'xl/popup-log-buffer 'xl--log-open-log)
-
-(log4e:deflogger "xl" "%t [%l] %m" "%H:%M:%S")
-(xl--log-enable-logging)
-#+end_src
-
-**** map
-:PROPERTIES:
-:ID:       129b620e-62ab-40ca-ba8f-a5f7f64d6651
-:END:
-
-#+begin_src emacs-lisp
-(require 'map)
 #+end_src
 
 *** custom macros
