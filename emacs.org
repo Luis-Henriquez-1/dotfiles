@@ -1707,8 +1707,8 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 	 (defadvice! ,name (after provide :args (features &rest _))
 	   ,@(when (stringp (car body)) (list (pop body)))
 	   (when ,condition
-	     (ignore-errors ,@body)
-	     (xl-advice-remove #',advice)))))))
+	     (xl-advice-remove #',advice)
+	     (ignore-errors ,@body)))))))
 #+end_src
 
 ***** after!
@@ -1733,15 +1733,15 @@ If FEATURES have already been loaded, evaluate BODY immediately."
   "Evaluate BODY before FEATURES are loaded.
 If feature is already loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
-	(hook (xl-advice-gen-symbol 'require name))
+	(advice (xl-advice-gen-symbol 'require name))
 	(docstring (when (stringp (car body)) (list (pop body)))))
     `(if ,condition
 	 (progn ,@body)
        (defadvice! ,name (before require :args (feature &rest _))
 	 ,@docstring
 	 (when ,condition
-	   (ignore-errors ,@body)
-	   (xl-advice-remove ',name))))))
+	   (xl-advice-remove ',advice)
+	   (ignore-errors ,@body))))))
 #+end_src
 
 ***** before!
