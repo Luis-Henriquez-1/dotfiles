@@ -1619,6 +1619,14 @@ should run.
 #+begin_src emacs-lisp
 (defmacro without-advice! (symbols &rest body)
   "Remove all advices from symbols for duration of BODY."
+  (advice-mapc (lambda (advice props)
+		 (push )
+		 (advice-remove sym advice))
+	       )
+  (defun advice-unadvice (sym)
+    "Remove all advices from symbol SYM."
+    (interactive "aFunction symbol: ")
+    (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
   (unwind-protect))
 #+end_src
 
