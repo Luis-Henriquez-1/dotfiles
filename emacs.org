@@ -1782,7 +1782,8 @@ it could be useful for advising.
   "Alias FUNCTIONS to follow XL naming convention and add them to SYMBOLS."
   (iter (each (symbol function) (-table-flat #'list (-list symbols) (-list functions)))
 	(expr hook (xl-symbol-intern symbol '& function))
-	(fset hook function)
+	(expr args (gensym "args"))
+	(fset hook `(lambda (&rest ,args) (ignore-errors (apply #',function ,args))))
 	(add-hook symbol hook depth local)
 	(collect hook)))
 #+end_src
