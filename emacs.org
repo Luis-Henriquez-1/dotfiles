@@ -1689,13 +1689,13 @@ If feature is already loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
 	(hook (xl-hook-gen-name 'xl-before-load-feature-hook name))
 	(docstring (when (stringp (car body)) (list (pop body)))))
-    `(progn
+    `(if ,condition
+	 (progn ,@body)
        (defhook! ,name (xl-before-load-feature-hook)
 	 ,@docstring
 	 (when ,condition
 	   (progn ,@body)
-	   (xl-hook-remove ',hook)))
-       (when ,condition (funcall #',hook)))))
+	   (xl-hook-remove ',hook))))))
 #+end_src
 
 ***** before!
