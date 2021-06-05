@@ -1568,6 +1568,7 @@ syntax. I use it extensively throughout this configuration.
   (loopy (with ((where . functions) args))
 	 (list function functions)
 	 (expr advice (xl-advice-gen-symbol function name))
+	 (expr where (xl-keyword-intern where))
 	 (collect `(defun ,advice ,(or .args '(&rest _)) ,@body))
 	 (collect `(advice-add ',function ,where #',advice ,.props))
 	 (finally-return (macroexp-progn loopy-result))))
