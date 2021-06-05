@@ -1566,6 +1566,7 @@ syntax. I use it extensively throughout this configuration.
   "Define an advice that follows XL naming conventions."
   (declare (indent defun) (doc-string 3))
   (loopy (with (where . symbols) args)
+	 (initially (message "%S" symbols))
 	 (list symbol symbols)
 	 (expr advice (xl-advice-gen-symbol function name))
 	 (collect `(defun ,advice ,(or .args '(&rest _)) ,@body))
