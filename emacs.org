@@ -1572,18 +1572,6 @@ should run.
 	      ,@body))))
 #+end_src
 
-**** when!
-:PROPERTIES:
-:ID:       928002db-d80f-4c77-a729-ef9a19d8dce2
-:END:
-
-#+begin_src emacs-lisp
-(defmacro when! (condition &rest body)
-  ""
-  `(defhook! (gensym) (after-load-functions)
-     (when ,condition ,@body)))
-#+end_src
-
 **** loading features
 :PROPERTIES:
 :ID:       af04e29b-fe1c-4245-ad9e-e0ab885f0ab6
