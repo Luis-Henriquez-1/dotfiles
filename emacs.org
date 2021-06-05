@@ -1546,7 +1546,7 @@ not what I'd like.
   "Define hooks that follow XL naming conventions."
   (declare (indent defun) (doc-string 3))
   (loopy (list hook hooks)
-	 (expr hook-fn (xl-hook-gen-name hook hook-fn))
+	 (expr hook-fn (xl-hook-gen-name hook name))
 	 (collect `(defun ,hook-fn ,(or .args '(&rest _)) ,@body))
 	 (collect `(xl-gadvice-catch-error #',hook-fn))
 	 (collect `(add-hook ',hook #',hook-fn ,.depth ,.local))
