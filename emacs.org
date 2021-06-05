@@ -1611,25 +1611,6 @@ should run.
 	      ,@body))))
 #+end_src
 
-**** without-advice!
-:PROPERTIES:
-:ID:       2ac023e9-b4c8-4c88-8d1b-06f5edf0250a
-:END:
-
-#+begin_src emacs-lisp
-(defmacro without-advice! (symbols &rest body)
-  "Remove all advices from symbols for duration of BODY."
-  (advice-mapc (lambda (advice props)
-		 (push )
-		 (advice-remove sym advice))
-	       )
-  (defun advice-unadvice (sym)
-    "Remove all advices from symbol SYM."
-    (interactive "aFunction symbol: ")
-    (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
-  (unwind-protect))
-#+end_src
-
 **** loading features
 :PROPERTIES:
 :ID:       af04e29b-fe1c-4245-ad9e-e0ab885f0ab6
