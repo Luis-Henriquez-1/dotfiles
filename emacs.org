@@ -5485,6 +5485,7 @@ and provides facilities for writing custom extensions. Also see our page on
 
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook #'evil-mode-hook)
+(require 'evil)
 #+end_src
 
 **** evil-vars :edit:evil:
