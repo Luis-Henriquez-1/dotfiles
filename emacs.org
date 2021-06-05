@@ -1707,7 +1707,7 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 	 (defadvice! ,name (after require :args (features &rest _))
 	   ,@(when (stringp (car body)) (list (pop body)))
 	   (when ,condition
-	     (progn ,@body)
+	     (ignore-errors ,@body)
 	     (xl-advice-remove #',advice)))))))
 #+end_src
 
