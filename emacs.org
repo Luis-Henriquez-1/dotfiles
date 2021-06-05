@@ -1144,24 +1144,6 @@ not to have to specify the advice keyword.
        nil))))
 #+end_src
 
-**** advice keywords
-:PROPERTIES:
-:ID:       3ddc2ff0-634c-4b1e-940e-1d8562d42ece
-:END:
-
-I put all the advice keywords in a variable. They're already available as the
-keys in [[helpfn:advice--where-alist][advice--where-alist]], but this is an internal variable used in the
-inner workings of Emacs's advice--I cant rely on this. Having the advices like
-this is useful for adding advices programmatically.
-
-#+begin_src emacs-lisp
-(defconst XL-ADVICE-KEYWORDS '(:around :before :after
-			       :override :after-until :after-while
-			       :before-until :before-while :filter-args
-			       :filter-return)
-  "All possible advice keywords.")
-#+end_src
-
 **** gen symbol
 :PROPERTIES:
 :ID:       54e52ec5-c20f-48a3-abd7-13a695a45e75
