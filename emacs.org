@@ -1844,8 +1844,7 @@ raise the void-function error.
 	    (loopy (for feature features)
 		   (do (require 'feature))
 		   (when (fboundp orig-fn) (return (apply orig-fn args)))
-		   (after-do (signal (car err) (cdr err)))))
-     )))
+		   (after-do (signal (car err) (cdr err))))))))
 #+end_src
 
 ** keybinding :bind:
