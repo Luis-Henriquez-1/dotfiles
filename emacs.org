@@ -1647,10 +1647,6 @@ There is a problem with recursion here.
 #+begin_src emacs-lisp
 (defhooksym! xl-before-load-feature-hook (before require :args (feature &rest _))
   "Hook run just before a feature is required."
-  ;; Remove all advices from `require' temporarily to avoid recursion. As in, if
-  ;; a `require' is done within `xl-after-load-feature-hook', we'll run into
-  ;; recursion. But we should record all the features loaded during this time so
-  ;; that we can run the.
   (run-hook-with-args 'xl-before-load-feature-hook feature))
 #+end_src
 
