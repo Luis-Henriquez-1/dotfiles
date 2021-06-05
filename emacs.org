@@ -1700,11 +1700,11 @@ adding.
   "Eval BODY after FEATURES are loaded.
 If FEATURES have already been loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
-	(advice (xl-advice-gen-symbol 'require name)))
+	(advice (xl-advice-gen-symbol 'provide name)))
     `(progn
        (if ,condition
 	   (progn ,@body)
-	 (defadvice! ,name (after require :args (features &rest _))
+	 (defadvice! ,name (after provide :args (features &rest _))
 	   ,@(when (stringp (car body)) (list (pop body)))
 	   (when ,condition
 	     (ignore-errors ,@body)
