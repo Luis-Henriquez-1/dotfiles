@@ -1461,30 +1461,6 @@ macros.
 	   (let-alist ,alist ,@body))))))
 #+end_src
 
-**** generate a logging function
-:PROPERTIES:
-:ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-log-function (fn)
-  "Log a function."
-  (let ((name (xl-advice-gen-symbol fn 'log)))
-    (pcase fn
-      ((pred xl-advice-symbol-p)
-       (let ((symbol (xl-advice-orig-symbol fn))
-	     (function (xl-advice-orig-function fn)))
-	 (fset name `(lambda (&rest _) (xl-log "@ %s -> %s" ',symbol ',function)))
-	 (advice-add fn :after name)))
-      ((pred xl-hook-symbol-p)
-       (let ((symbol (xl-hook-orig-symbol fn))
-	     (function (xl-hook-orig-function fn)))
-	 (fset name `(lambda (&rest _) (xl-log "& %s -> %s" ',symbol ',function)))
-	 (advice-add fn :after name)))
-      (_
-       nil))))
-#+end_src
-
 **** defhook!
 :PROPERTIES:
 :ID:       8ea918ba-e25f-4296-a83d-dbb05c4f9130
