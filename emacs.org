@@ -1625,14 +1625,6 @@ of doing it all at startup. It also ensures that we don't wastefully evaluate
 code we won't use. Controlling forms after a feature, lets me avoid errors or
 potentially unintended behavior.
 
-***** recursively-run-hook-with-args
-:PROPERTIES:
-:ID:       282cefe0-24e9-426a-9d3a-b90234ae0484
-:END:
-
-#+begin_src emacs-lisp
-#+end_src
-
 ***** before-load-hook
 :PROPERTIES:
 :ID:       296c2ea1-204c-4140-9e0c-e9037768b02e
