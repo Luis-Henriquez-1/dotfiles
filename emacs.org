@@ -1656,12 +1656,13 @@ If FEATURES have already been loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
 	(hook-name (xl-hook-gen-name 'xl-after-load-feature-hook name)))
     `(progn
-       (defhook! ,name (xl-after-load-feature-hook)
-	 ,@(when (stringp (car body)) (list (pop body)))
-	 (when ,condition
+       (if ,condition
 	   (progn ,@body)
-	   (xl-hook-remove #',hook-name)))
-       (when ,condition (funcall #',hook-name)))))
+	 (defhook! ,name (xl-after-load-feature-hook)
+	   ,@(when (stringp (car body)) (list (pop body)))
+	   (when ,condition
+	     (progn ,@body)
+	     (xl-hook-remove #',hook-name)))))))
 #+end_src
 
 ***** after!
