@@ -1706,7 +1706,7 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 	 (defhook! ,name (xl-after-load-feature-hook)
 	   ,@(when (stringp (car body)) (list (pop body)))
 	   (when ,condition
-	     (xl-advice-remove #',hook)
+	     (xl-hook-remove #',hook)
 	     (ignore-errors ,@body)))))))
 #+end_src
 
