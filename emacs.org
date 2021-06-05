@@ -1627,6 +1627,7 @@ potentially unintended behavior.
 ***** after-load-hook
 :PROPERTIES:
 :ID:       296c2ea1-204c-4140-9e0c-e9037768b02e
+:header-args: :tangle no
 :END:
 
 The convention for loading a feature is by using =require=. Every package should
