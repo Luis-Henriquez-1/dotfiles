@@ -1526,7 +1526,7 @@ not what I'd like.
   (declare (indent defun) (doc-string 3))
   (loopy (list hook hooks)
 	 (expr hook-fn (xl-hook-gen-name hook name))
-	 (collect `(defun ,hook-fn ,(or .args '(&rest _)) (ignore-errors ,@body)))
+	 (collect `(defun ,hook-fn ,(or .args '(&rest _)) ,@body))
 	 (collect `(add-hook ',hook #',hook-fn ,.depth ,.local))
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
