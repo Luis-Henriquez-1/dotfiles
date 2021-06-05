@@ -1634,8 +1634,8 @@ potentially unintended behavior.
 (defun xl-recursively-run-hook-with-args (hook-var &rest args)
   "Run hook with arguments recursively."
   (awhen (symbol-value hook-var)
-    (apply it args)
-    (set hook-var (cdr (symbol-value hook-var)))
+    (set hook-var (cdr it))
+    (apply (car it) args)
     (xl-recursively-run-hook-with-args hook-var args)))
 #+end_src
 
