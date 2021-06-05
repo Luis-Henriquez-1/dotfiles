@@ -1631,6 +1631,11 @@ potentially unintended behavior.
 :END:
 
 #+begin_src emacs-lisp
+(defun xl-recursively-run-hook-with-args (hook &rest args)
+  "Run hook with arguments recursively."
+  (when hook
+    (apply (car hook) args)
+    (xl-recursively-run-hook-with-args (cdr hook) args)))
 #+end_src
 
 ***** before-load-hook
@@ -1651,7 +1656,11 @@ There is a problem with recursion here.
   ;; a `require' is done within `xl-after-load-feature-hook', we'll run into
   ;; recursion. But we should record all the features loaded during this time so
   ;; that we can run the.
-  (run-hook-with-args 'xl-before-load-feature-hook feature))
+  (cl-labels ((rrhwa (hook &rest args)
+		     (when hook
+		       (funcall (car hook) args)
+		       (rrhwa (cdr hook) args))))
+    (rrhwa xl-before-load-feature-hook feature)))
 #+end_src
 
 ***** after-load-feature
