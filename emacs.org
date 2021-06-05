@@ -1652,7 +1652,7 @@ There is a problem with recursion here.
 
 #+begin_src emacs-lisp
 (defhooksym! xl-before-load-feature-hook (before require :args (feature &rest _))
-  (xl-recursively-run-hook-with-args xl-before-load-feature-hook feature))
+  (xl-recursively-run-hook-with-args 'xl-before-load-feature-hook feature))
 #+end_src
 
 ***** after-load-feature
@@ -1666,7 +1666,7 @@ declare that a feature has been loaded.
 #+begin_src emacs-lisp
 (defhooksym! xl-after-load-feature-hook (after provide :args (feature &rest _))
   "Hook run just after a feature is provided."
-  (xl-recursively-run-hook-with-args xl-after-load-feature-hook feature))
+  (xl-recursively-run-hook-with-args 'xl-after-load-feature-hook feature))
 #+end_src
 
 ***** feature logic
