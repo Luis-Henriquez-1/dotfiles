@@ -1732,14 +1732,14 @@ If FEATURES have already been loaded, evaluate BODY immediately."
   "Evaluate BODY before FEATURES are loaded.
 If feature is already loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
-	(advice (xl-advice-gen-symbol 'require name))
+	(hook (xl-hook-gen-name 'xl-before-load-feature-hook name))
 	(docstring (when (stringp (car body)) (list (pop body)))))
     `(if ,condition
 	 (progn ,@body)
-       (defadvice! ,name (before require :args (feature &rest _))
+       (defhook! ,name (xl-before-load-feature-hook)
 	 ,@docstring
 	 (when ,condition
-	   (xl-advice-remove ',advice)
+	   (xl-advice-remove ',hook)
 	   (ignore-errors ,@body))))))
 #+end_src
 
