@@ -6830,7 +6830,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 #+begin_src emacs-lisp
 (xl-hook-add 'emacs-startup-hook 'savehist-mode)
 
-(before! savehist
+(after! savehist
   (setq savehist-save-minibuffer-history t)
   (setq savehist-additional-variables '(kill-ring search-ring regexp-search-ring))
   (setq savehist-autosave-interval nil)
