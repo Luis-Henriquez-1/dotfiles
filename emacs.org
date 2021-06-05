@@ -1645,7 +1645,7 @@ There is a problem with recursion here.
   (run-hook-with-args 'xl-after-load-feature-hook feature))
 #+end_src
 
-***** before-load-hook
+***** after-load-feature
 :PROPERTIES:
 :ID:       1cbc237b-b2f5-4a7d-a929-85887f8f76d1
 :END:
@@ -1654,8 +1654,9 @@ This is the counterpart to [[][]. =provide= is the convention that's used to
 declare that a feature has been loaded.
 
 #+begin_src emacs-lisp
-(defhooksym! xl-after-load-feature-hook (after provide :args (feature &rest _))
+(defhooksym! xl-after-load-feature-hook (after provide)
   "Hook run just after a feature is provided."
+  (:args (feature &rest _))
   (run-hook-with-args 'xl-after-load-feature-hook feature))
 #+end_src
 
