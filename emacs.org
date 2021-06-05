@@ -6080,7 +6080,7 @@ By default the cursor blinks. The point is so that it is easier to find on the
 screen. Usually, however, I have no trouble finding it so I disable it.
 
 #+begin_src emacs-lisp
-(before! frame (after)
+(before! frame
   (blink-cursor-mode -1))
 #+end_src
 
