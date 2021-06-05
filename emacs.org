@@ -1642,7 +1642,7 @@ There is a problem with recursion here.
   ;; a `require' is done within `xl-after-load-feature-hook', we'll run into
   ;; recursion. But we should record all the features loaded during this time so
   ;; that we can run the.
-  (run-hook-with-args 'xl-after-load-feature-hook feature))
+  (run-hook-with-args 'xl-before-load-feature-hook feature))
 #+end_src
 
 ***** after-load-feature
