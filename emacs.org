@@ -1700,15 +1700,15 @@ adding.
   "Eval BODY after FEATURES are loaded.
 If FEATURES have already been loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
-	(hook-name (xl-hook-gen-name 'xl-after-load-feature-hook name)))
+	(advice (xl-advice-gen-symbol 'require name)))
     `(progn
        (if ,condition
 	   (progn ,@body)
-	 (defhook! ,name (xl-after-load-feature-hook)
+	 (defadvice! ,name (after require :args (features &rest _))
 	   ,@(when (stringp (car body)) (list (pop body)))
 	   (when ,condition
 	     (progn ,@body)
-	     (xl-hook-remove #',hook-name)))))))
+	     (xl-advice-remove #',advice)))))))
 #+end_src
 
 ***** after!
