@@ -1035,26 +1035,6 @@ Sometimes I want to use =xl-log= instead of =message=.
     (apply orig-fn args)))
 #+end_src
 
-***** log advices and hooks
-:PROPERTIES:
-:ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
-:header-args: :tangle no
-:END:
-
-Log when an advice or hook is being called.
-
-#+begin_src emacs-lisp
-(defadvice! log-advices (around xl-hook-add xl-advice-add)
-  "Log ORIG-FN."
-  (:args orig-fn &rest args)
-  (iter (with (symbols (apply orig-fn args)))
-	(each symbol symbols)
-	(xl-log-function symbol)
-	(when (xl-hook-symbol-p symbol)
-	  (xl-gadvice-catch-error symbol))
-	(finally-return symbols)))
-#+end_src
-
 ***** loading on call
 :PROPERTIES:
 :ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
