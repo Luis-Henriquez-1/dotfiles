@@ -1834,19 +1834,17 @@ raise the void-function error.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     (let (())
-       ()
-       (loopy (with (fname (symbol-name fn)))
-	      (list path load-path)
-	      (expr base (f-base path))
-	      (expr feature (intern base))
-	      (when (s-prefix-p base fname)
-		(collect feature)))
-       ;; Require each in turn and check if function is bound
-       (iter (for feature features)
-	     (require 'feature)
-	     (when (fboundp orig-fn) (return (apply orig-fn args)))
-	     (after-do (signal (car err) (cdr err)))))
+     (progn (when)
+	    (loopy (with (fname (symbol-name fn)))
+		   (list path load-path)
+		   (expr base (f-base path))
+		   (expr feature (intern base))
+		   (when (s-prefix-p base fname)
+		     (collect feature)))
+	    (loopy (for feature features)
+		   (do (require 'feature))
+		   (when (fboundp orig-fn) (return (apply orig-fn args)))
+		   (after-do (signal (car err) (cdr err)))))
      )))
 #+end_src
 
