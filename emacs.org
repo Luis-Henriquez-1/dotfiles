@@ -1631,11 +1631,12 @@ potentially unintended behavior.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-recursively-run-hook-with-args (hook &rest args)
+(defun xl-recursively-run-hook-with-args (hook-var &rest args)
   "Run hook with arguments recursively."
-  (when hook
-    (apply (car hook) args)
-    (xl-recursively-run-hook-with-args (cdr hook) args)))
+  (awhen (symbol-value hook-var)
+    (apply it args)
+    (set hook-var (cdr (symbol-value hook-var)))
+    (xl-recursively-run-hook-with-args hook-var args)))
 #+end_src
 
 ***** before-load-hook
