@@ -1526,8 +1526,7 @@ not what I'd like.
   (declare (indent defun) (doc-string 3))
   (loopy (list hook hooks)
 	 (expr hook-fn (xl-hook-gen-name hook name))
-	 (collect `(defun ,hook-fn ,(or .args '(&rest _)) ,@body))
-	 (collect `(xl-gadvice-catch-error #',hook-fn))
+	 (collect `(defun ,hook-fn ,(or .args '(&rest _)) (ignore-errors ,@body)))
 	 (collect `(add-hook ',hook #',hook-fn ,.depth ,.local))
 	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
@@ -2585,10 +2584,10 @@ that have already been created by emacs (such as =*scratch*= and
 =*Messages*=). Instead, they will only work after you switch states once.
 
 #+begin_src emacs-lisp
-;; (bind!
-;;  (:map xl-override-mode-map)
-;;  (:ie XL-EMACS-LEADER-KEY 'xl/leader)
-;;  (:mnv XL-EVIL-LEADER-KEY 'xl/leader))
+(bind!
+  (:map xl-override-mode-map)
+  (:ie XL-EMACS-LEADER-KEY 'xl/leader)
+  (:mnv XL-EVIL-LEADER-KEY 'xl/leader))
 #+end_src
 
 *** execute extended command
