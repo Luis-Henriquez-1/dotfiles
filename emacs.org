@@ -1617,7 +1617,9 @@ should run.
 :END:
 
 #+begin_src emacs-lisp
-(defmacro without-advice! ())
+(defmacro without-advice! (symbols &rest body)
+  "Remove all advices form symbols for duration of BODY."
+  (unwind-protect))
 #+end_src
 
 **** loading features
