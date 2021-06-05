@@ -1740,7 +1740,7 @@ If feature is already loaded, evaluate BODY immediately."
        (defadvice! ,name (before require :args (feature &rest _))
 	 ,@docstring
 	 (when ,condition
-	   (progn ,@body)
+	   (ignore-errors ,@body)
 	   (xl-advice-remove ',name))))))
 #+end_src
 
