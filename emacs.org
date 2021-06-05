@@ -1636,13 +1636,12 @@ can potentially do some "preparation" before a feature is loaded.
 There is a problem with recursion here.
 
 #+begin_src emacs-lisp
-(defhooksym! xl-before-load-feature-hook (before require)
+(defhooksym! xl-before-load-feature-hook (before require :args (feature &rest _))
   "Hook run just before a feature is required."
   ;; Remove all advices from `require' temporarily to avoid recursion. As in, if
   ;; a `require' is done within `xl-after-load-feature-hook', we'll run into
   ;; recursion. But we should record all the features loaded during this time so
   ;; that we can run the.
-  (:args (feature &rest _))
   (run-hook-with-args 'xl-after-load-feature-hook feature))
 #+end_src
 
@@ -1655,9 +1654,8 @@ This is the counterpart to [[][]. =provide= is the convention that's used to
 declare that a feature has been loaded.
 
 #+begin_src emacs-lisp
-(defhooksym! xl-after-load-feature-hook (after provide)
+(defhooksym! xl-after-load-feature-hook (after provide :args (feature &rest _))
   "Hook run just after a feature is provided."
-  (:args (feature &rest _))
   (run-hook-with-args 'xl-after-load-feature-hook feature))
 #+end_src
 
