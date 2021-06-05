@@ -1152,10 +1152,7 @@ not to have to specify the advice keyword.
 #+begin_src emacs-lisp
 (defun xl-advice-gen-symbol (symbol function)
   "Generate an advice name for symbol and function."
-  (acond ((s-match "\\`xl--\\([[:alnum:]]+\\)-advice-[^[:space:]]+\\'" (symbol-name function))
-	  (xl-symbol-intern symbol '@@ (nth 1 it)))
-	 (t
-	  (xl-symbol-intern symbol '@ function))))
+  (xl-symbol-intern symbol '@ function))
 #+end_src
 
 **** remove XL advice
