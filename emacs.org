@@ -1565,13 +1565,12 @@ syntax. I use it extensively throughout this configuration.
 (defunmacro! defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
   (declare (indent defun) (doc-string 3))
-  (loopy (with (where . symbols) args)
-	 (initially (message "%S" symbols))
-	 (list symbol symbols)
+  (loopy (with ((where . functions) args))
+	 (list function functions)
 	 (expr advice (xl-advice-gen-symbol function name))
 	 (collect `(defun ,advice ,(or .args '(&rest _)) ,@body))
-	 (collect `(advice-add ',symbol ,where #',function ,.props))
-	 (finally-return (macroexp-progn body))))
+	 (collect `(advice-add ',function ,where #',advice ,.props))
+	 (finally-return (macroexp-progn loopy-result))))
 #+end_src
 
 **** defhooksym!
