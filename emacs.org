@@ -1809,6 +1809,47 @@ example, if I'm using evil I need to update the cursor color.
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
+** do away with autoloading
+:PROPERTIES:
+:ID:       91d28cee-60ea-400d-93ba-efabab82c90d
+:END:
+
+This is my ambitious attempt to do away with autoloading. So, let me explain
+autoloading. Autoloading is a way of registering the existence functions
+(usually commands) or macros before their parent package is loaded. It serves as
+a placeholder. When these "autoloaded" functions or macros are called, their
+parent package is loaded.
+
+I feel that there must be a better way to achieve autoloading than specifying
+each function we need to register one by one. My idea goes like this. Packages
+each have a unique prefix. When a function would be undefined before we raise an
+error, we check to see if the prefix of the function matches any of the packages
+in our load-path. If it does, we load it. If it doesn't then we go ahead and
+raise the void-function error.
+
+#+begin_src emacs-lisp
+(defadvice! try-to-find-function-before (around eval)
+  "Try to load feature that could contain function."
+  (:args orig-fn &rest args)
+  (condition-case err
+      (apply orig-fn args)
+    (void-function
+     (let (())
+       ()
+       (loopy (with (fname (symbol-name fn)))
+	      (list path load-path)
+	      (expr base (f-base path))
+	      (expr feature (intern base))
+	      (when (s-prefix-p base fname)
+		(collect feature)))
+       ;; Require each in turn and check if function is bound
+       (iter (for feature features)
+	     (require 'feature)
+	     (when (fboundp orig-fn) (return (apply orig-fn args)))
+	     (after-do (signal (car err) (cdr err)))))
+     )))
+#+end_src
+
 ** keybinding :bind:
 :PROPERTIES:
 :ID:       b627fcf8-2f72-41a6-9ebe-08ff6c29fb54
