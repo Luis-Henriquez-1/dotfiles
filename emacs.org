@@ -1707,9 +1707,11 @@ If FEATURES have already been loaded, evaluate BODY immediately."
   "Evaluate BODY before FEATURES are loaded.
 If feature is already loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
-	(hook (xl-hook-gen-name 'xl-before-load-feature-hook name)))
+	(hook (xl-hook-gen-name 'xl-before-load-feature-hook name))
+	(docstring (when (stringp (car body)) (list (pop body)))))
     `(progn
        (defhook! ,name (xl-before-load-feature-hook)
+	 ,@docstring
 	 (when ,condition
 	   (progn ,@body)
 	   (xl-hook-remove ',hook)))
@@ -4894,9 +4896,10 @@ Saving files like this reduces the likelihood of user delays.
 :END:
 
 #+begin_src emacs-lisp
-(before! vc-hooks
+(defbefore! before-hook-7336
+  (vc-hooks)
   (setq vc-follow-symlinks t)
-  (setq vc-follow-link     t))
+  (setq vc-follow-link t))
 #+end_src
 
 *** version control :vc:
