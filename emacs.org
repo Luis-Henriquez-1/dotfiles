@@ -440,6 +440,25 @@ variable leaking.
 (require 'subr-x)
 #+end_src
 
+**** dbc
+:PROPERTIES:
+:ID:       b3351a74-b2d0-42b8-9895-b6baad0adb0b
+:END:
+
+=dbc= stands for "display-buffer-control". This package provides an interface
+for working with [[helpfn:display-buffer-alist][display-buffer-alist]]. In a nutshell, =display-buffer-alist= is
+a Emacs's built in way of allowing the user to customize how windows are opened.
+
+#+begin_src emacs-lisp
+(require 'dbc)
+
+(--each '((display-buffer-in-side-window . ((side . bottom) (window-height . 0.5)))
+	  (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
+	  (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
+	  (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
+  (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it))
+#+end_src
+
 **** s 
 :PROPERTIES:
 :ID:       b96acb97-3963-4713-a03b-6294c65903fd
