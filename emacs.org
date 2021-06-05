@@ -1624,7 +1624,7 @@ of doing it all at startup. It also ensures that we don't wastefully evaluate
 code we won't use. Controlling forms after a feature, lets me avoid errors or
 potentially unintended behavior.
 
-***** after-load-hook
+***** before-load-hook
 :PROPERTIES:
 :ID:       296c2ea1-204c-4140-9e0c-e9037768b02e
 :END:
