@@ -1699,7 +1699,7 @@ adding.
   "Eval BODY after FEATURES are loaded.
 If FEATURES have already been loaded, evaluate BODY immediately."
   (let ((condition (xl-convert-to-form features))
-	(hook (xl-advice-gen-symbol 'provide name)))
+	(hook (xl-hook-gen-name 'xl-after-load-feature-hook name)))
     `(progn
        (if ,condition
 	   (progn ,@body)
