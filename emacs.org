@@ -4333,7 +4333,7 @@ When the user
 :END:
 
 #+begin_src emacs-lisp
-(xl-hook-add 'prog-mode-hook 'yas-minor-mode-on)
+;; (xl-hook-add 'prog-mode-hook 'yas-minor-mode-on)
 
 (before! yasnippet
   (setq yas-snippet-dirs (list (concat XL-CACHE-DIR "snippets/")))
