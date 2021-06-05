@@ -834,7 +834,7 @@ looking for function that involved the frame, the first thing you'd look for is
 for functions namespaced =frame=.
 
 #+begin_src emacs-lisp
-(require 'prefixed-core)
+;; (require 'prefixed-core)
 #+end_src
 
 **** custom aliases
