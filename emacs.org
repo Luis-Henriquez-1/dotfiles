@@ -1711,7 +1711,7 @@ If feature is already loaded, evaluate BODY immediately."
        (defhook! ,name (xl-before-load-feature-hook)
 	 (when ,condition
 	   (progn ,@body)
-	   (xl-hook-remove #',hook)))
+	   (xl-remove ',(xl-hook-gen-name 'xl-before-load-feature-hook name))))
        (when ,condition (funcall #',hook)))))
 #+end_src
 
