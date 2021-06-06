@@ -1813,16 +1813,6 @@ example, if I'm using evil I need to update the cursor color.
 :ID:       31436c22-3372-4842-b813-4300f13e6e56
 :END:
 
-*** abnormal packages
-:PROPERTIES:
-:ID:       f6d6430c-df05-438a-9f50-5121c8ac1a12
-:END:
-
-Not all packages have functions whose prefix coincides with their name.
-
-#+begin_src emacs-lisp
-#+end_src
-
 *** get a list of possible features
 :PROPERTIES:
 :ID:       796d9106-cc42-4c4e-a2a1-8c37373bcdca
