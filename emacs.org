@@ -1430,7 +1430,7 @@ it could be useful for advising.
   (iter (each (symbol function) (-table-flat #'list (-list symbols) (-list functions)))
 	(expr hook (xl-symbol-intern symbol '& function))
 	(expr args (gensym "args"))
-	(fset hook `(lambda (&rest ,args) (ignore-errors (apply #',function ,args))))
+	(fset hook `(lambda (&rest ,args) (with-demoted-errors (apply #',function ,args))))
 	(add-hook symbol hook depth local)
 	(collect hook)))
 #+end_src
