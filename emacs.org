@@ -1849,7 +1849,7 @@ in our load-path. If it does, we load it. If it doesn't then we go ahead and
 raise the void-function error.
 
 #+begin_src emacs-lisp
-(defadvice! try-to-find-function-before (around eval)
+(defadvice! try-load-feature (around eval)
   "Try to load feature that could contain function."
   (:args orig-fn &rest args)
   (condition-case err
