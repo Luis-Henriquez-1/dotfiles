@@ -1865,7 +1865,7 @@ raise the void-function error.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     (message "Triggering advice!!!")
+     (message "Triggering advice with %s!!!" (cadr err))
      (iter (with (fname (cadr err)))
 	   (for feature (xl-possible-features fname))
 	   (require feature)
