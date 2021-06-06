@@ -1869,7 +1869,7 @@ raise the void-function error.
      (iter (with (fname (cadr err)))
 	   (for feature (xl-possible-features fname))
 	   (require feature)
-	   (when (fboundp orig-fn)
+	   (when (fboundp fname)
 	     (message "Autoloading %s..." feature)
 	     (return (apply orig-fn args)))
 	   (after-do (signal (car err) (cdr err)))))))
