@@ -1866,7 +1866,7 @@ raise the void-function error.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     (loopy (with (fname (cadr args))
+     (loopy (with (fname (cadr err))
 		  (feature (xl-possible-features fname)))
 	    (for feature features)
 	    (do (require 'feature))
