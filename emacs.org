@@ -1814,6 +1814,14 @@ example, if I'm using evil I need to update the cursor color.
 :ID:       31436c22-3372-4842-b813-4300f13e6e56
 :END:
 
+*** abnormal packages
+:PROPERTIES:
+:ID:       f6d6430c-df05-438a-9f50-5121c8ac1a12
+:END:
+
+#+begin_src emacs-lisp
+#+end_src
+
 *** get a list of possible features
 :PROPERTIES:
 :ID:       796d9106-cc42-4c4e-a2a1-8c37373bcdca
@@ -1856,12 +1864,10 @@ raise the void-function error.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     (let (features)
-       
-       (loopy (for feature features)
-	      (do (require 'feature))
-	      (when (fboundp orig-fn) (return (apply orig-fn args)))
-	      (after-do (signal (car err) (cdr err))))))))
+     (loopy (for feature features)
+	    (do (require 'feature))
+	    (when (fboundp orig-fn) (return (apply orig-fn args)))
+	    (after-do (signal (car err) (cdr err)))))))
 #+end_src
 
 ** keybinding :bind:
