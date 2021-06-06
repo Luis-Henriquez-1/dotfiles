@@ -1834,13 +1834,16 @@ raise the void-function error.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     (cl-letf* (features)
+     (let (features)
        (loopy (with (fname (symbol-name fn)))
 	      (list path load-path)
 	      (expr base (f-base path))
 	      (expr feature (intern base))
 	      (when (s-prefix-p base fname)
 		(push-into features feature)))
+       (setq features (--sort (apply #'> (-map (-compose #'length #'symbol-name)
+					       (list it other)))
+			      features))
        (loopy (for feature features)
 	      (do (require 'feature))
 	      (when (fboundp orig-fn) (return (apply orig-fn args)))
