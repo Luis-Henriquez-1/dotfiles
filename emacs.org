@@ -1809,7 +1809,29 @@ example, if I'm using evil I need to update the cursor color.
   (run-hooks 'xl-after-load-theme-hook))
 #+end_src
 
-** do away with autoloading
+** autoloading
+:PROPERTIES:
+:ID:       31436c22-3372-4842-b813-4300f13e6e56
+:END:
+
+*** get a list of possible features
+:PROPERTIES:
+:ID:       796d9106-cc42-4c4e-a2a1-8c37373bcdca
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-possible-features (fn)
+  "Return a list of possible features available for FN"
+  (loopy (with (fname (symbol-name fn)))
+	 (list path load-path)
+	 (expr base (f-base path))
+	 (expr feature (intern base))
+	 (when (s-prefix-p base fname)
+	   (collect possible feature))
+	 (finally-return (seq-sort-by (-compose #'length #'symbol-name) #'> possible))))
+#+end_src
+
+*** do away with autoloading
 :PROPERTIES:
 :ID:       91d28cee-60ea-400d-93ba-efabab82c90d
 :END:
@@ -1835,15 +1857,7 @@ raise the void-function error.
       (apply orig-fn args)
     (void-function
      (let (features)
-       (loopy (with (fname (symbol-name fn)))
-	      (list path load-path)
-	      (expr base (f-base path))
-	      (expr feature (intern base))
-	      (when (s-prefix-p base fname)
-		(push-into features feature)))
-       (setq features (--sort (apply #'> (-map (-compose #'length #'symbol-name)
-					       (list it other)))
-			      features))
+       
        (loopy (for feature features)
 	      (do (require 'feature))
 	      (when (fboundp orig-fn) (return (apply orig-fn args)))
