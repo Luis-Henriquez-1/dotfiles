@@ -1865,15 +1865,14 @@ raise the void-function error.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     (iter (with (fname (cadr err))
-		 (feature (xl-possible-features fname)))
-	   (for feature features)
+     (message "Triggering advice!!!")
+     (iter (with (fname (cadr err)))
+	   (for feature (xl-possible-features fname))
 	   (require feature)
 	   (when (fboundp orig-fn)
 	     (message "Autoloading %s..." feature)
 	     (return (apply orig-fn args)))
-	   (after-do (signal (car err) (cdr err))))
-     )))
+	   (after-do (signal (car err) (cdr err)))))))
 #+end_src
 
 ** keybinding :bind:
