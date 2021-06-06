@@ -1819,6 +1819,8 @@ example, if I'm using evil I need to update the cursor color.
 :ID:       f6d6430c-df05-438a-9f50-5121c8ac1a12
 :END:
 
+Not all packages have functions whose prefix coincides with their name.
+
 #+begin_src emacs-lisp
 #+end_src
 
