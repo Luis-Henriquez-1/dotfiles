@@ -1866,15 +1866,18 @@ raise the void-function error.
   (condition-case err
       (apply orig-fn args)
     (void-function
-     (let ((fname (cadr args)))
-       (aif (and (alist-get ))
-	   (progn (require it)
-		  (apply orig-fn args))
-	 (loopy (with (feature (xl-possible-features fname)))
-		(for feature features)
-		(do (require 'feature))
-		(when (fboundp orig-fn) (return (apply orig-fn args)))
-		(after-do (signal (car err) (cdr err)))))))))
+     (loopy (with (fname (cadr args))
+		  (feature (xl-possible-features fname)))
+	    (for feature features)
+	    (do (require 'feature))
+	    (when (fboundp orig-fn) (return (apply orig-fn args)))
+	    (after-do (signal (car err) (cdr err))))
+     ;; (let ((fname (cadr args)))
+     ;;   (aif (and (alist-get ))
+     ;; 	   (progn (require it)
+     ;; 		  (apply orig-fn args))
+     ;; 	 ))
+     )))
 #+end_src
 
 ** keybinding :bind:
