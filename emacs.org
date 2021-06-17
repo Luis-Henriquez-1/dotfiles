@@ -5088,10 +5088,9 @@ Saving files like this reduces the likelihood of user delays.
 :END:
 
 #+begin_src emacs-lisp
-(use-package vc-hooks
-  :set
-  (vc-follow-symlinks . t)
-  (vc-follow-link     . t))
+(before! vc-hooks
+  (setq vc-follow-symlinks t)
+  (setq vc-follow-link t))
 #+end_src
 
 *** version control :vc:
