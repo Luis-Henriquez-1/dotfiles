@@ -1070,7 +1070,7 @@ so I'll likely end up loading it anyway.
 :END:
 
 #+begin_src emacs-lisp
-(use-package subr-x :demand t)
+(require 'subr-x)
 #+end_src
 
 **** ht 
