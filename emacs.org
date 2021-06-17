@@ -4099,7 +4099,9 @@ referenance org headlines.
 
 #+begin_src emacs-lisp
 (xx-hook-add 'org-mode-hook
-	     (list #'org-pretty-tags-mode #'org-fancy-priorities-mode))
+	     (list #'org-pretty-tags-mode
+		   #'org-fancy-priorities-mode
+		   #'org-babel-hide-markers-mode))
 #+end_src
 
 *** org-pretty-tags
