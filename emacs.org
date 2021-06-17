@@ -1061,7 +1061,7 @@ functions. Additionally, it's already used as a dependency of very many packages
 so I'll likely end up loading it anyway.
 
 #+begin_src emacs-lisp
-(use-package dash :demand t)
+(require 'dash)
 #+end_src
 
 **** subr-x 
