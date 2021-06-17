@@ -4787,11 +4787,10 @@ description and there's the case of a new one.
 **** init
 
 #+begin_src emacs-lisp
-(use-package org-edit-paragraph
-  :rule ("bottom" "org description" :newname "\\*Org Desc - .+")
-  :xx-config
-  (after! (evil evil-surround)
-    (xx-hook-add 'org-edit-paragraph:mode-hook #'evil-surround-mode)))
+(dbc-add-rule "bottom" "org description" :newname "\\*Org Desc - .+")
+
+(after! (evil evil-surround)
+  (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-surround-mode))
 #+end_src
 
 **** description bounds
