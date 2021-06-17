@@ -6220,12 +6220,11 @@ typing an expression, I get completion from the minibuffer.
 :END:
 
 #+begin_src emacs-lisp
-(use-package clipboard
-  :set
-  (selection-coding-system . 'utf-8)
-  (select-enable-clipboard . t)
-  (select-enable-primary   . t)
-  (x-select-request-type   . '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
+(before! select
+  (setq selection-coding-system 'utf-8)
+  (setq select-enable-clipboard t)
+  (setq select-enable-primary   t)
+  (setq x-select-request-type   '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
 
 ** simple :popup:
