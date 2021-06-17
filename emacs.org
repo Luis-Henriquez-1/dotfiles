@@ -6444,6 +6444,14 @@ files wherever you go. These are usually among the first things new Emacsers
 will change.
 
 #+begin_src emacs-lisp
+(before! files
+  (setq confirm-nonexistent-file-or-buffer nil)
+  (setq require-final-newline nil)
+  (setq auto-mode-case-fold nil)
+  (setq confirm-kill-emacs #'y-or-n-p)
+  (setq trash-directory (expand-file-name "Trash" "~"))
+  (setq version-control nil))
+
 (use-package files
   :set
   (auto-save-file-name-transforms . `((".*" ,(concat XX-CACHE-DIR "auto-save-list/") t)))
