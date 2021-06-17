@@ -4190,10 +4190,10 @@ codebase is less buggy.
 Marginalia adds descriptions to various commands.
 
 #+begin_src emacs-lisp
-(use-package marginalia
-  :hook emacs-startup-hook
-  :set
-  (marginalia-annotators . '(marginalia-annotators-heavy marginalia-annotators-light nil)))
+(xl-hook-add 'emacs-startup-hook #'marginalia-mode)
+
+(before! marginalia
+  (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
 #+end_src
 
 *** use orderless for filtering
