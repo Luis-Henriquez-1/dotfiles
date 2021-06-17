@@ -3663,10 +3663,6 @@ diary/journal using =org-mode=.
   (setq org-confirm-babel-evaluate nil)
   (setq org-src-tab-acts-natively t)
   (setq org-src-fontify-natively t))
-
-(use-package org-src
-  :idle-require t
-  :rule ("bottom" "org source" :newname "\\*Org Src"))
 #+end_src
 
 *** bindings in source block
