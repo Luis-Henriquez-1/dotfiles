@@ -3609,12 +3609,10 @@ This package lets you annotate files in a separate org file.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-superlinks
-  :commands org-super-links-link
-  :set
-  (org-super-links-backlink-prefix      . nil)
-  (org-super-links-related-into-drawer  . "LINKS")
-  (org-super-links-backlink-into-drawer . "LINKS"))
+(defbefore! settings-for-org-superlinks (org-superlinks)
+  (setq org-super-links-backlink-prefix      nil)
+  (setq org-super-links-related-into-drawer  "LINKS")
+  (setq org-super-links-backlink-into-drawer "LINKS"))
 #+end_src
 
 ** org-todo-keywords
