@@ -9146,7 +9146,7 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 :END:
 
 #+begin_src emacs-lisp
-(use-package page-break-lines :demand t)
+(require 'page-break-lines)
 #+end_src
 
 *** random logo :dashboard:startup:asthetic:
