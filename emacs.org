@@ -5931,7 +5931,7 @@ and provides facilities for writing custom extensions. Also see our page on
 :END:
 
 #+begin_src emacs-lisp
-(use-package evil :demand t)
+(require 'evil)
 #+end_src
 
 ***** evil-core :edit:evil:
