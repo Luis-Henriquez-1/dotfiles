@@ -3857,17 +3857,7 @@ tracking the time you spend on a particular task.
   (xl-hook-add 'kill-emacs-hook #'org-clock-save)
   (setq org-clock-persist 'history)
   (setq org-clock-persist-file (concat XL-CACHE-DIR "org-clock-save.el"))
-  (setq org-clock-in-resume t))
-
-(use-package org-clock
-  :idle-require t
-  :commands org-clock-in org-clock-goto
-  :hook (kill-emacs-hook . org-clock-save)
-  :set
-  (org-clock-persist      . 'history)
-  (org-clock-persist-file . (concat XX-CACHE-DIR "org-clock-save.el"))
-  (org-clock-in-resume    . t)
-  :config
+  (setq org-clock-in-resume t)
   (org-clock-persistence-insinuate))
 #+end_src
 
