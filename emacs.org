@@ -5941,22 +5941,21 @@ and provides facilities for writing custom extensions. Also see our page on
 :END:
 
 #+begin_src emacs-lisp
-(use-package evil-vars
-  :set
-  (evil-want-visual-char-semi-exclusive . t)
-  (evil-ex-search-vim-style-regexp      . t)
-  (evil-respect-visual-line-mode        . t)
-  (evil-insert-skip-empty-lines         . t)
-  (evil-want-C-w-in-emacs-state         . nil)
-  (evil-ex-substitute-global            . t)
-  (evil-ex-visual-char-range            . t)
-  (evil-move-beyond-eol                 . nil)
-  (evil-move-cursor-back                . nil)
-  (evil-indent-convert-tabs             . t)
-  (evil-symbol-word-search              . t)
-  (evil-mode-line-format                . nil)
-  (evil-echo-state                      . nil)
-  (evil-magic                           . t))
+(before! evil-vars
+  (setq evil-want-visual-char-semi-exclusive t)
+  (setq evil-ex-search-vim-style-regexp t)
+  (setq evil-respect-visual-line-mode t)
+  (setq evil-insert-skip-empty-lines t)
+  (setq evil-want-C-w-in-emacs-state nil)
+  (setq evil-ex-substitute-global t)
+  (setq evil-ex-visual-char-range t)
+  (setq evil-move-beyond-eol nil)
+  (setq evil-move-cursor-back nil)
+  (setq evil-indent-convert-tabs t)
+  (setq evil-symbol-word-search t)
+  (setq evil-mode-line-format nil)
+  (setq evil-echo-state nil)
+  (setq evil-magic t))
 #+end_src
 
 ***** custom :edit:evil:
