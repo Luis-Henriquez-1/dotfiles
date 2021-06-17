@@ -5026,9 +5026,7 @@ My intended use for this package is to help automate prompts, docstrings or the
 like that concern N number of things, where N could be 1 or more things.
 
 #+begin_src emacs-lisp
-(use-package plural
-  :commands plural-make-plural
-  :xx-config
+(before! plural
   (push '("\\`is\\'" . "are") plural-knowledge)
   (push '("\\`thas\\'" . "those") plural-knowledge)
   (push '("\\`this\\'" . "these") plural-knowledge))
