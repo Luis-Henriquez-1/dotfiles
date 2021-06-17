@@ -1199,7 +1199,7 @@ This package provides an alternative to the built-in =cl-flet= called
 =noflet=. The [[][]] is that.
 
 #+begin_src emacs-lisp
-(use-package noflet :demand t)
+(require 'noflet)
 #+end_src
 
 **** dbc
