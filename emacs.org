@@ -6880,43 +6880,6 @@ These are my newsfeed for =elfeed-org=.
   (dbc-add-rule "left" "man" :newname "\\*man.+"))
 #+end_src
 
-** eping :exec:
-:PROPERTIES:
-:ID:       37004f10-66d5-4b5a-a9eb-31107464e5a5
-:END:
-
-#+begin_src emacs-lisp
-(use-package eping)
-#+end_src
-
-** grugru :write:edit:
-:PROPERTIES:
-:ID:       9d96a611-355a-4b62-bb0e-18e9d4af92c9
-:END:
-
-#+begin_src emacs-lisp
-(use-package grugru)
-#+end_src
-
-** fortune-cookie :exec:
-:PROPERTIES:
-:ID:       8105dadd-4d4a-4f57-a5f9-5cae1b14ef3a
-:END:
-
-#+begin_src emacs-lisp
-(use-package fortune-cookie
-  :commands fortune-cookie)
-#+end_src
-
-** figlet :exec:
-:PROPERTIES:
-:ID:       b5be9427-a814-4a91-92ab-ad393375ec41
-:END:
-
-#+begin_src emacs-lisp
-(use-package figlet :commands figlet)
-#+end_src
-
 ** system-packages :pacman:exec:
 :PROPERTIES:
 :ID:       74bd0e5a-f6b0-48eb-a91e-3932eae23516
