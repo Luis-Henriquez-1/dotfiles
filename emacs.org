@@ -5192,8 +5192,8 @@ address later.
 =git-gutter= indicates which parts of a file has been modified.
 
 #+begin_src emacs-lisp
-(use-package git-gutter+
-  :alias (git-commit-mode-font-lock-keywords . ignore))
+(before! git-gutter+
+  (defalias 'git-commit-mode-font-lock-keywords #'ignore))
 #+end_src
 
 **** evil-magit :evil:bind:git:
