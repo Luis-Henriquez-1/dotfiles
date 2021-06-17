@@ -4993,15 +4993,6 @@ file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
  ("a" #'edit-indirect-abort))
 #+end_src
 
-** separedit :interface:
-:PROPERTIES:
-:ID:       07021099-6cea-4016-929b-d9310ea305f8
-:END:
-
-#+begin_src emacs-lisp
-(use-package separedit :commands separedit)
-#+end_src
-
 ** writing :write:
 :PROPERTIES:
 :ID:       ec6f755f-5bce-4bff-a603-d4725e097cc5
@@ -5016,10 +5007,10 @@ file, see [[helpfn:edit-indirect-commit][edit-indirect-commit]].
 It will also upcase any word I add to [[helpvar:auto-capitalize-words][auto-capitalize-words]].
 
 #+begin_src emacs-lisp
-(use-package auto-capitalize
-  :hook text-mode-hook
-  :set
-  (auto-capitalize-words . '("I" "English" "Emacs")))
+(xl-hook-add 'text-mode-hook #'auto-capitalize-mode)
+
+(before! auto-capitalize ()
+  (setq auto-capitalize-words '("I" "English" "Emacs")))
 #+end_src
 
 *** plural :write:
