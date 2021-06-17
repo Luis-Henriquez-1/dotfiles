@@ -5699,17 +5699,12 @@ Sometimes =evil-normal-state= enters visual state.
   (:nv "M-v" #'lispy-convolute-sexp))
 #+end_src
 
-** modal editing :modal:
-:PROPERTIES:
-:ID:       51826df5-8e16-4f4b-9814-cdcc6d5b7e7a
-:END:
-
-*** evil :evil:
+** evil :evil:
 :PROPERTIES:
 :ID:       5baaae49-7785-4b3e-99b9-7ad50e90ec43
 :END:
 
-**** evil :modal:evil:edit:
+*** evil :modal:evil:edit:
 :PROPERTIES:
 :ID:       9639633f-ec3d-4499-9615-db0dcc9650c9
 :END:
@@ -5718,7 +5713,7 @@ Sometimes =evil-normal-state= enters visual state.
 and provides facilities for writing custom extensions. Also see our page on
 [[emacswiki:Evil][EmacsWiki]]. See a brief [[https://bytebucket.org/lyro/evil/raw/default/doc/evil.pdf][manual]]. See the [[https://github.com/noctuid/evil-guide][evil-guide]] by noctuid.
 
-***** evil :edit:evil:
+**** evil :edit:evil:
 :PROPERTIES:
 :ID:       e472e5d3-2760-420b-bbe1-2eb043368f67
 :END:
@@ -5728,7 +5723,7 @@ and provides facilities for writing custom extensions. Also see our page on
 (xx-hook-add 'emacs-startup-hook #'evil-mode)
 #+end_src
 
-***** evil-vars :edit:evil:
+**** evil-vars :edit:evil:
 :PROPERTIES:
 :ID:       af3a9791-76ac-4fd5-96fe-d361cef3b5b3
 :END:
@@ -5751,7 +5746,7 @@ and provides facilities for writing custom extensions. Also see our page on
   (setq evil-magic t))
 #+end_src
 
-***** custom :edit:evil:
+**** custom :edit:evil:
 :PROPERTIES:
 :ID:       f7ece898-25e2-4b2c-94f3-e832a687114c
 :END:
@@ -5760,7 +5755,7 @@ and provides facilities for writing custom extensions. Also see our page on
 (setq-default evil-want-C-u-scroll t)
 #+end_src
 
-***** make normal state default :evil:edit:
+**** make normal state default :evil:edit:
 :PROPERTIES:
 :ID:       4940ad40-35a2-43ca-a005-da708aa44313
 :END:
@@ -5774,7 +5769,7 @@ and provides facilities for writing custom extensions. Also see our page on
   (setq evil-motion-state-modes nil))
 #+end_src
 
-***** replace normal with motion :evil:edit:
+**** replace normal with motion :evil:edit:
 :PROPERTIES:
 :ID:       69dc135f-0c4a-49ad-9801-ee45dc3ff20f
 :END:
@@ -5787,7 +5782,7 @@ and provides facilities for writing custom extensions. Also see our page on
     (funcall orig-fn keymap (if (eq state 'motion) 'normal state) copy)))
 #+end_src
 
-***** normal state everywhere :evil:edit:
+**** normal state everywhere :evil:edit:
 :PROPERTIES:
 :ID:       e6126bd7-94b8-4ce0-b547-0536b59437ea
 :END:
@@ -5806,7 +5801,7 @@ state and disables it everywhere in favor of normal state.
 (xx-advice-add #'evil-motion-state :override #'evil-normal-state)
 #+end_src
 
-***** cursors :cursor:
+**** cursors :cursor:
 :PROPERTIES:
 :ID: a5f558fb-221c-4b33-a7cd-29308ef74b0d
 :END:
@@ -5817,7 +5812,7 @@ some colors here. Evil has a cursor variable for each state. The cursor variable
 for insert state, for example, is [[helpvar:evil-insert-state-cursor][evil-insert-state-cursor]]. Its value is of the
 form: ~((CURSOR-SHAPE . CURSOR-WIDTH) COLOR)~.
 
-****** colors and shapes :evil:cursor:asthetic:
+***** colors and shapes :evil:cursor:asthetic:
 :PROPERTIES:
 :ID: 3f3cd5c9-1f6d-4c3b-b73f-82c9ee00395e
 :END:
@@ -5838,7 +5833,7 @@ modeline indicator for this but I find that the cursor suffices.
   (setq evil-motion-state-cursor   '( box        "plum3")))
 #+end_src
 
-****** updating cursors :evil:cursor:asthetic:
+***** updating cursors :evil:cursor:asthetic:
 :PROPERTIES:
 :ID: ea4da6d4-4a2c-42cf-b397-cea1555781ce
 :END:
@@ -5854,7 +5849,7 @@ cursor color will update.
     (evil-refresh-cursor)))
 #+end_src
 
-***** insert state in minibuffer :minibuffer:evil:
+**** insert state in minibuffer :minibuffer:evil:
 :PROPERTIES:
 :ID: a23137c5-62a0-4e77-9e51-6a7372dac703
 :END:
@@ -5880,7 +5875,7 @@ the correct one.
     (setq evil:state-before-minibuffer nil)))
 #+end_src
 
-***** escape :evil:
+**** escape :evil:
 :PROPERTIES:
 :ID: ea9378de-e5c5-482c-b53b-743a81e3bc8e
 :END:
@@ -5899,7 +5894,7 @@ We want escape to be a "quit everything" keybinding.
         (t (keyboard-quit))))
 #+end_src
 
-***** text objects :evil:textobj:
+**** text objects :evil:textobj:
 :PROPERTIES:
 :ID:       0edef735-cec9-4015-bfd5-cf36e816cbc3
 :END:
@@ -5908,7 +5903,7 @@ To edit text efficiently Vim has the concept of [[https://blog.carbonfive.com/20
 structures that are seen in text. For example, a set of words followed by a
 period is a sentence. A words between two closing parentheses is a sexp.
 
-****** general delimiter text object
+***** general delimiter text object
 :PROPERTIES:
 :ID:       0066093b-7991-4193-8ce2-ef9f17af211a
 :END:
@@ -5926,7 +5921,7 @@ want =[]= or ={=}= or =()= or =""=. The main drawback you cannot distinguish bet
 surround characters at multiple levels--it just takes the closest one. In
 practice, this is rarely an issue.
 
-****** inner :textobj:
+***** inner :textobj:
 :PROPERTIES:
 :ID:       dc06e55b-ce4d-4921-b478-ae7b7927df82
 :END:
@@ -5944,7 +5939,7 @@ practice, this is rarely an issue.
       (error "No surrounding form found."))))
 #+end_src
 
-****** outer :textobj:
+***** outer :textobj:
 :PROPERTIES:
 :ID:       6068a56f-d162-4da2-801f-6f72357fdd62
 :END:
@@ -5962,7 +5957,7 @@ practice, this is rarely an issue.
       (error "No surrounding form found."))))
 #+end_src
 
-****** bindings :textobj:
+***** bindings :textobj:
 :PROPERTIES:
 :ID:       4bf10f8e-2ae6-44b1-9087-5d1e2af028f1
 :END:
@@ -5973,7 +5968,7 @@ practice, this is rarely an issue.
   (:map evil-outer-text-objects-map "f" #'evil:textobj-outer-form))
 #+end_src
 
-****** fix vim/evil around =""= :textobj:
+***** fix vim/evil around =""= :textobj:
 :PROPERTIES:
 :ID:       b91726b4-7e7e-442a-9858-df5d51c751c8
 :END:
@@ -5998,7 +5993,7 @@ Why not just go to the end of the ="= like any other around operator?
     ("\"" #'evil:textobj-a-string)))
 #+end_src
 
-**** evil-visualstar :evil:edit:
+*** evil-visualstar :evil:edit:
 :PROPERTIES:
 :ID:       ae15f6a4-59a5-49ca-9add-1b90d393b09c
 :END:
@@ -6011,7 +6006,7 @@ Why not just go to the end of the ="= like any other around operator?
   ("*" #'evil-visualstar/begin-search-forward))
 #+end_src
 
-**** evil-lion :evil:bind:
+*** evil-lion :evil:bind:
 :PROPERTIES:
 :ID:       95d248be-601e-4dbd-b318-febcd0e49d71
 :END:
@@ -6025,7 +6020,7 @@ Why not just go to the end of the ="= like any other around operator?
   (:nv "L" #'evil-lion-right))
 #+end_src
 
-**** evil-surround :evil:edit:
+*** evil-surround :evil:edit:
 :PROPERTIES:
 :ID:       9ab88644-3c33-463c-8f24-3b048209e082
 :END:
