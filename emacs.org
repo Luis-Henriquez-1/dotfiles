@@ -5307,19 +5307,16 @@ larger text objects. It's saves me keystrokes.
 :END:
 
 #+begin_src emacs-lisp
-(use-package smartparens
-  :before-call evil-expression evil-ex
-  :hook ((prog-mode eshell-mode ielm-mode) . smartparens-strict-mode)
-  :set
-  (sp-cancel-autoskip-on-backward-movement . nil)
-  (sp-highlight-wrap-tag-overlay           . nil)
-  (sp-highlight-pair-overlay               . nil)
-  (sp-highlight-wrap-overlay               . nil)
-  (sp-show-pair-from-inside                . t)
-  (sp-show-pair-delay                      . 0.1)
-  (sp-max-pair-length                      . 4)
-  (sp-max-prefix-length                    . 50)
-  (sp-escape-quotes-after-insert           . nil))
+(defbefore! enable-smartparens-settings (smartparens)
+  (setq sp-cancel-autoskip-on-backward-movement nil)
+  (setq sp-highlight-wrap-tag-overlay           nil)
+  (setq sp-highlight-pair-overlay               nil)
+  (setq sp-highlight-wrap-overlay               nil)
+  (setq sp-show-pair-from-inside                t)
+  (setq sp-show-pair-delay                      0.1)
+  (setq sp-max-pair-length                      4)
+  (setq sp-max-prefix-length                    50)
+  (setq sp-escape-quotes-after-insert           nil))
 #+end_src
 
 *** DOC autopairing :parens:edit:
