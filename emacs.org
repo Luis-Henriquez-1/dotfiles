@@ -3759,7 +3759,7 @@ template element as you're writing it.
 #+begin_src emacs-lisp
 (defafter! register-capture-file (org-capture)
   "Add the file I use for capturing to `org-agenda-files'."
-  (callf2 cl-adjoin XX-CAPTURE-FILE org-agenda-files :test #'string=))
+  (add-to-list 'org-agenda-files XL-CAPTURE-FILE nil #'string=)))
 #+end_src
 
 *** DOC completing-read org-capture :bind:
