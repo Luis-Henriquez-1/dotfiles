@@ -6238,8 +6238,8 @@ Why not just go to the end of the ="= like any other around operator?
 :END:
 
 #+begin_src emacs-lisp
-(use-package evil-surround
-  :hook prog-mode-hook text-mode-hook)
+(xx-hook-add (list #'prog-mode-hook #'text-mode-hook)
+	     #'evil-surround-mode)
 #+end_src
 
 **** evil-goggles :evil:
