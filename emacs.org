@@ -3631,15 +3631,6 @@ done.
       '((sequence "TODO" "NEXT" "|" "DONE" "CANCELLED")))
 #+end_src
 
-** org-ml
-:PROPERTIES:
-:ID:       7f3ec0ad-45f8-4100-970e-773cfb9a625b
-:END:
-
-#+begin_src emacs-lisp
-(use-package org-ml)
-#+end_src
-
 ** org-journal
 :PROPERTIES:
 :ID:       c3056303-5fa1-49f9-ae2d-294942e25f54
