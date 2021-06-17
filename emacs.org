@@ -5128,14 +5128,12 @@ you save your file--which for me is all the time because I use [[id:bd455e73-403
 :END:
 
 #+begin_src emacs-lisp
-(use-package git-auto-commit-mode
-  :commands git-auto-commit-mode
-  :set
-  (gac-automatically-push-p   . nil)
-  (gac-ask-for-summary-p      . nil)
-  (gac-default-message        . #'gac%commit-message)
-  (gac-commit-additional-flag . "-S")
-  (gac-silent-message-p       . t))
+(before! git-auto-commit-mode ()
+  (setq gac-automatically-push-p   nil)
+  (setq gac-ask-for-summary-p      nil)
+  (setq gac-default-message        #'gac%commit-message)
+  (setq gac-commit-additional-flag "-S")
+  (setq gac-silent-message-p       t))
 #+end_src
 
 ***** commit message
