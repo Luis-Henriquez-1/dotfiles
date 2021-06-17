@@ -5434,17 +5434,6 @@ pairs, which lisps doesn't use for strings." - Doom Emacs
 :ID:       02ddb747-2a7c-4616-b6ff-a67018d79059
 :END:
 
-*** aggressive-fill-paragraph
-:PROPERTIES:
-:ID:       8bdaccca-a046-44c5-a41d-c0380d6fca83
-:END:
-
-Emacs is very minimal by default. Most reading this will likely be used to.
-
-#+begin_src emacs-lisp
-(use-package aggressive-fill-paragraph)
-#+end_src
-
 *** aggressive-indent
 :PROPERTIES:
 :ID: f1b9a36e-26e4-4305-99ae-cbcf6a90013d
@@ -5454,8 +5443,7 @@ Emacs is very minimal by default. Most reading this will likely be used to.
 it. It's pretty smart and very convenient.
 
 #+begin_src emacs-lisp
-(use-package aggressive-indent
-  :hook emacs-lisp-mode-hook)
+(xl-hook-add 'emacs-lisp-mode-hook 'aggressive-indent-mode)
 #+end_src
 
 ** lisp
