@@ -4113,8 +4113,7 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-pretty-tags
-  :hook org-mode-hook)
+(xl-hook-add 'outshine-mode-hook 'org-link-minor-mode)
 #+end_src
 
 *** org-babel-hide-markers-mode
