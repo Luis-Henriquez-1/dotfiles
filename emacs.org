@@ -3861,28 +3861,6 @@ tracking the time you spend on a particular task.
   (org-clock-persistence-insinuate))
 #+end_src
 
-** org-ql
-:PROPERTIES:
-:ID:       f2b2f464-f9f0-4ba4-9808-4bf5cb75aaf8
-:END:
-
-This package provides an org query language for looking up org headline.
-
-#+begin_src emacs-lisp
-(use-package org-ql)
-#+end_src
-
-** calfw
-:PROPERTIES:
-:ID:       4b317202-0f4c-40e9-b708-484cd995c9b8
-:END:
-
-This package displays a calendar.
-
-#+begin_src emacs-lisp
-(use-package calfw)
-#+end_src
-
 ** org-agenda
 :PROPERTIES:
 :ID:       72fba07e-df2e-420a-8ddd-40b9e27bf28f
