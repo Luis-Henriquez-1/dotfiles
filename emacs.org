@@ -4540,17 +4540,18 @@ When the user
 :END:
 
 #+begin_src emacs-lisp
-(use-package yasnippet
-  :hook (prog-mode-hook . yas-minor-mode-on)
-  :set
-  (yas-snippet-dirs . (list (concat XX-CACHE-DIR "snippets/")))
-  (yas-verbosity . (if xx-debug-p 3 0))
-  (yas-indent-line . 'auto)
-  (yas-prompt-functions . '(yas-completing-prompt yas-ido-prompt))
-  (yas-use-menu . nil)
-  (yas-triggers-in-field . t)
-  :config
-  (delq #'yas-dropdown-prompt yas-prompt-functions))
+(xl-hook-add 'prog-mode-hook 'yas-minor-mode-on)
+
+(before! yasnippet
+  (setq yas-snippet-dirs (list (concat XL-CACHE-DIR "snippets/")))
+  (setq yas-verbosity (if xl-debug-p 3 0))
+  (setq yas-indent-line 'auto)
+  (setq yas-prompt-functions '(yas-completing-prompt yas-ido-prompt))
+  (setq yas-use-menu nil)
+  (setq yas-triggers-in-field t))
+
+(after! yasnippet
+   (delq #'yas-dropdown-prompt yas-prompt-functions))
 #+end_src
 
 *** don't interfere with yasnippet bindings
