@@ -2125,16 +2125,7 @@ adding.
 (defunmacro! defafter! (name features &rest body)
   "Eval BODY after FEATURES are loaded.
 If FEATURES have already been loaded, evaluate BODY immediately."
-  (let ((condition (xl-convert-to-form features))
-	(hook-name (xl-hook-gen-name 'xl-after-load-feature-hook name)))
-    `(progn
-       (defhook! ,name (xl-after-load-feature-hook)
-	 ,@(when (stringp (car body)) (list (pop body)))
-	 (when ,condition
-	   (progn ,@body)
-	   (xl-log "Removing %s..." #',hook-name)
-	   (xl-hook-remove #',hook-name)))
-       (when ,condition (funcall #',hook-name)))))
+  `(after! ,features ,@body))
 #+end_src
 
 ***** defbefore!
@@ -2146,16 +2137,7 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 (defunmacro! defbefore! (name features &rest body)
   "Evaluate BODY before FEATURES are loaded.
 Do not evaluate BODY if features have already been loaded."
-  (let ((condition (xl-convert-to-form features))
-	(hook (xl-hook-gen-name 'xl-before-load-feature-hook name)))
-    `(progn
-       (defhook! ,name (xl-before-load-feature-hook)
-	 (when ,condition
-	   (progn ,@body)
-	   (xl-log "Removing %s..." #',hook)
-	   (xl-hook-remove #',hook)))
-       (when ,condition
-	 (xl-hook-remove #',hook)))))
+  `(progn ,@body))
 #+end_src
 
 **** config :defer:performance:usepackage:
