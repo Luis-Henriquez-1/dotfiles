@@ -10164,6 +10164,7 @@ When I'm using the dashboard.
 
 #+begin_src emacs-lisp
 (defadvice! open-dashboard-instead (&rest _)
+  "Open dashboard instead of the whatever the initia buffer is."
   (:around startup%initial-buffer-choice)
   (get-buffer-create "*dashboard*"))
 #+end_src
