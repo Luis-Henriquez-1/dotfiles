@@ -4049,16 +4049,6 @@ be exact. Therefore, I define a function I can use instead.
     (call-interactively #'org-refile)))
 #+end_src
 
-** org-goto
-:PROPERTIES:
-:ID:       900250ad-ed09-4000-ab1c-be9f4d461951
-:END:
-
-#+begin_src emacs-lisp
-(use-package org-goto
-  :gadvice (org-goto-location . suppress-delete-windows))
-#+end_src
-
 ** ox
 :PROPERTIES:
 :ID:       5f8eac7d-cc1f-4bba-bd65-77ead98c8e0c
