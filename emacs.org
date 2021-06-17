@@ -1249,7 +1249,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 :END:
 
 #+begin_src emacs-lisp
-(use-package map :demand t)
+(require 'map)
 #+end_src
 
 *** custom macros
@@ -1565,27 +1565,6 @@ If FEATURES have already been loaded, evaluate BODY immediately."
   "Evaluate BODY before FEATURES are loaded.
 Do not evaluate BODY if features have already been loaded."
   `(progn ,@body))
-#+end_src
-
-**** config :defer:performance:usepackage:
-:PROPERTIES:
-:ID:       fa0947a2-7f0c-447e-9b16-03edb2648ad6
-:END:
-
-This keyword is meant to overwrite the built-in =:config= keyword. It does the
-same thing, except it uses =after!= instead of =with-eval-after-load=.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :xx-config)
-(use-package%override :config :xx-config)
-
-(defun use-package-normalize/:xx-config (_ _ args)
-  args)
-
-(defun use-package-handler/:xx-config (name _ forms rest state)
-  "Wrap FORMS in an `after!' block."
-  `((after! ,name ,@forms)
-    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 **** with-temp-advice!
@@ -2070,30 +2049,6 @@ garbage collection during this time.
 
 (setq idle-require-load-break  2)
 (setq idle-require-idle-delay 10)
-#+end_src
-
-**** idle-require :defer:performance:
-:PROPERTIES:
-:ID:       916f88bd-10e1-4030-a1d9-e42baf095492
-:END:
-
-This keyword integrates with [[0d619336-e852-4c6a-89a8-38ccbb71a077][idle-require]]. It can accept a boolean.
-
-#+begin_src emacs-lisp
-(use-package%dwim-insert :idle-require)
-
-(defun use-package-normalize/:idle-require (package _ args)
-  "Ensure each elements in ARGS is a symbol.
-If an element is t, convert it to PACKAGE."
-  (loopy (list symbol args)
-	 (unless (symbolp symbol) (do (error "This key doesn't have this.")))
-	 (collect (if (eq t symbol) package symbol))))
-
-(defun use-package-handler/:idle-require (name _ features rest state)
-  "Generate forms that `idle-require' FEATURES."
-  `(,@(loopy (list feature features)
-	     (collect `(idle-require ',feature nil t)))
-    ,@(use-package-process-keywords name rest state)))
 #+end_src
 
 *** create additional hooks
