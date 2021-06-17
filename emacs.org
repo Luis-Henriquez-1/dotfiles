@@ -6226,9 +6226,6 @@ Why not just go to the end of the ="= like any other around operator?
 =evil-lion= provides a very useful way of aligning text.
 
 #+begin_src emacs-lisp
-(use-package evil-lion
-  :commands evil-lion-right evil-lion-left)
-
 (bind!
   (:prefix "g")
   (:nv "l" #'evil-lion-left)
