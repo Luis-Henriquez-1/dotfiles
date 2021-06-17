@@ -4504,8 +4504,7 @@ When the user
 [[https://github.com/raxod502/prescient.el][company-prescient]] is the same as =prescient= but for =company= instead of =ivy=.
 
 #+begin_src emacs-lisp
-(use-package company-prescient
-  :hook company-mode-hook)
+(xl-hook-add 'company-mode-hook 'company-prescient-mode)
 #+end_src
 
 *** close company on escape
