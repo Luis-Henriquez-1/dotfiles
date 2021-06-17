@@ -1227,14 +1227,13 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 :END:
 
 #+begin_src emacs-lisp
-(use-package log4e
-  :demand t
-  :alias (xx/popup-log-buffer . xx--log-open-log)
-  :init
-  (defalias 'xx-log 'xx--log-info))
+(require 'log4e)
 
-(log4e:deflogger "xx" "%t [%l] %m" "%H:%M:%S")
-(xx--log-enable-logging)
+(defalias 'xl-log 'xl--log-info)
+(defalias 'xl/popup-log-buffer 'xl--log-open-log)
+
+(log4e:deflogger "xl" "%t [%l] %m" "%H:%M:%S")
+(xl--log-enable-logging)
 #+end_src
 
 **** ts
