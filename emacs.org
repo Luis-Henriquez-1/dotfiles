@@ -3704,13 +3704,24 @@ My capture templates use =ts= and =org-ml= so I make sure to load those library
 before org-capture is loaded.
 
 #+begin_src emacs-lisp
-(use-package org-capture
-  :idle-require t
-  :initial-state insert
-  :before-call
-  (ts     . org-capture)
-  (org-ml . org-capture)
-  :rule ("bottom" "capture" :newname "\\`CAPTURE-.+"))
+(xl-load-before-call 'org-ql #'org-agenda)
+
+(defbefore! org-agenda
+  (dbc-add-rule "top" "org agenda" :newname "\\*Org Agenda\\*")
+  (xl-gadvice-pause-garbage-collection #'org-agenda-list)
+  (xl-gadvice-suppress-delete-windows #'org-agenda-get-restriction-and-command)
+  (setq org-agenda-include-diary t)
+  (setq org-agenda-text-search-extra-files
+	'(agenda-archives))
+  (setq org-agenda-skip-unavailable-files t)
+  (setq org-agenda-files
+	(list XL-CAPTURE-FILE))
+  (setq org-agenda-warning-days 10)
+  (setq org-agenda-start-on-weekday 0)
+  (setq org-agenda-timegrid-use-ampm nil)
+  (setq org-agenda-time-leading-zero t)
+  (setq org-agenda-dim-blocked-tasks t)
+  (setq org-agenda-inhibit-startup t))
 #+end_src
 
 *** TODO remove capture headerline
