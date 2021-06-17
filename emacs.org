@@ -4244,12 +4244,10 @@ matches are only highlighted when they need to be.
 This package.
 
 #+begin_src emacs-lisp
-(use-package prescient
-  :idle prescient--save
-  :set
-  (prescient-save-file . (concat XX-CACHE-DIR "prescient-save-file"))
-  :config
-  (prescient-persist-mode))
+(before! prescient
+  (setq prescient-save-file (concat XL-CACHE-DIR "prescient-save-file")))
+
+(add-hook 'prescient-persist-mode-hook #'prescient-persist-mode)
 #+end_src
 
 *** selectrum-prescient :cache:
