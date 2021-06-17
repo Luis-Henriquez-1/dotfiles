@@ -6464,9 +6464,8 @@ users. Some such commands are the narrowing commands.
 I, however, know what I'm doing. So I enable all commands.
 
 #+begin_src emacs-lisp
-(use-package loaddefs
-  :set
-  (disabled-command-function . nil))
+(before! loaddefs
+  (setq disabled-command-function nil))
 #+end_src
 
 ** move to trash instead of deleting :backup:
