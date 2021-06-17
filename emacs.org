@@ -1240,7 +1240,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 **** ts
 
 #+begin_src emacs-lisp
-(use-package ts)
+(require' ts)
 #+end_src
 
 **** map
