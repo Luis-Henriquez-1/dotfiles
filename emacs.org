@@ -4111,15 +4111,6 @@ referenance org headlines.
 (xx-hook-add 'outshine-mode-hook 'org-link-minor-mode)
 #+end_src
 
-*** org-babel-hide-markers-mode
-:PROPERTIES:
-:ID:       a7b3c769-985d-4ed1-90ec-f4923275ecd6
-:END:
-
-#+begin_src emacs-lisp
-(use-package org-babel-hide-markers-mode)
-#+end_src
-
 *** org-link-minor-mode
 :PROPERTIES:
 :ID:       25b93a1f-b105-47aa-9647-5015d23a4ac3
