@@ -6112,9 +6112,8 @@ According to Doom Emacs, when running emacs in terminal tty is *tremendously* sl
 :END:
 
 #+begin_src emacs-lisp
-(use-package server
-  :set
-  (server-auth-dir . (concat XX-CACHE-DIR "server/")))
+(before! server
+  (setq server-auth-dir (concat XL-CACHE-DIR "server/")))
 #+end_src
 
 ** prevent emacs from killing certain buffers
