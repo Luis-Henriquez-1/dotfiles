@@ -6616,27 +6616,6 @@ executable to run.
   ("s" #'pdf-view-fit-width-to-window))
 #+end_src
 
-** ednc :notify:
-:PROPERTIES:
-:ID:       e72dfee2-3c80-4206-b2ea-d4a25fffc75c
-:END:
-
-This is a replacement for things like =dunst= except written completely en Emacs
-lisp.
-
-#+begin_src emacs-lisp
-(use-package ednc)
-#+end_src
-
-** egg-timer :notify:
-:PROPERTIES:
-:ID:       a98d0f06-5b2a-449d-8719-bcc8d3d0a241
-:END:
-
-#+begin_src emacs-lisp
-(use-package egg-timer)
-#+end_src
-
 ** multimedia :multimedia:
 :PROPERTIES:
 :ID:       5675cbbc-beb1-4470-a1d2-08f253bb4535
@@ -6804,12 +6783,10 @@ generally faster and more "modern".
 :END:
 
 #+begin_src emacs-lisp
-(use-package elfeed
-  :rule ("right" "elfeed" :newname "\\*elfeed.+")
-  :commands elfeed
-  :set
-  (elfeed-db-directory           . (concat XX-CACHE-DIR "elfeed"))
-  (elfeed-search-title-max-width . 100))
+(before! elfeed
+  (setq elfeed-db-directory (concat XL-CACHE-DIR "elfeed"))
+  (setq elfeed-search-title-max-width 100)
+  (dbc-add-rule "right" "elfeed" :newname "\\*elfeed.+"))
 #+end_src
 
 **** elfeed-score
