@@ -1031,7 +1031,7 @@ emacs packages spew messages. While I can see how in certain circumstances there
 messages can be useful, most of the time they are superfluous.
 
 #+begin_src emacs-lisp
-(use-package shut-up :demand t)
+(require 'shut-up)
 #+end_src
 
 **** mmt 
