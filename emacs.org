@@ -4422,18 +4422,18 @@ helm wrappers around existing commands.
 :END:
 
 #+begin_src emacs-lisp
-(use-package company
-  :hook prog-mode-hook
-  :set
-  (company-tooltip-align-annotations . t)
-  (company-minimum-prefix-length     . 1)
-  (company-minimum-prefix-length     . 1)
-  (company-dabbrev-downcase          . nil)
-  (company-require-match             . 'never)
-  (company-tooltip-limit             . 14)
-  (company-show-numbers              . t)
-  (company-idle-delay                . 0.15)
-  (company-frontends                 . '(company-pseudo-tooltip-frontend)))
+(xl-hook-add 'prog-mode-hook 'company-mode)
+
+(before! company ()
+  (setq company-tooltip-align-annotations t)
+  (setq company-minimum-prefix-length 1)
+  (setq company-minimum-prefix-length 1)
+  (setq company-dabbrev-downcase nil)
+  (setq company-require-match 'never)
+  (setq company-tooltip-limit 14)
+  (setq company-show-numbers t)
+  (setq company-idle-delay 0.15)
+  (setq company-frontends '(company-pseudo-tooltip-frontend)))
 #+end_src
 
 *** bindings
