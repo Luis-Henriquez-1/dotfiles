@@ -6543,9 +6543,8 @@ screen need to be redisplayed.
 executable to run.
 
 #+begin_src emacs-lisp
-(use-package dmenu
-  :commands dmenu
-  :set (dmenu-save-file . (concat XX-CACHE-DIR "dmenu-itmes")))
+(before! dmenu
+  (setq dmenu-save-file (concat XL-CACHE-DIR "dmenu-itmes")))
 #+end_src
 
 ** TODO origami
