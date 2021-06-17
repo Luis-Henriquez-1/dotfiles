@@ -1094,7 +1094,7 @@ hash-tables.
 that are not built-in to Emacs. Notably, it is functional.
 
 #+begin_src emacs-lisp
-(use-package s :demand t)
+(require 's)
 #+end_src
 
 **** f 
