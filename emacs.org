@@ -9231,12 +9231,11 @@ modeline more visible. I do that myself with =window-divider= so I don't need
 this.
 
 #+begin_src emacs-lisp
-(use-package mini-modeline
-  :demand t
-  :hook (emacs-startup-hook . mini-modeline-mode)
-  :set
-  (mini-modeline-enhance-visual . nil)
-  (mini-modeline-display-gui-line . nil))
+(xl-hook-add 'emacs-startup-hook 'mini-modeline-mode)
+
+(before! mini-modeline
+  (setq mini-modeline-enhance-visual nil)
+  (setq mini-modeline-display-gui-line nil))
 #+end_src
 
 *** default face
