@@ -6546,17 +6546,6 @@ executable to run.
   (setq dmenu-save-file (concat XL-CACHE-DIR "dmenu-itmes")))
 #+end_src
 
-** TODO origami
-:PROPERTIES:
-:ID:       ac2cc043-331f-435b-b903-39681b84fefe
-:END:
-
-=origami= is, as its name suggests, a package that handles folding.
-
-#+begin_src emacs-lisp
-(use-package origami)
-#+end_src
-
 ** TODO pdf-tools :pdf:exec:
 :PROPERTIES:
 :ID:       63343f9d-6b19-43de-8302-d1344d571949
@@ -6786,21 +6775,6 @@ generally faster and more "modern".
   (setq elfeed-db-directory (concat XL-CACHE-DIR "elfeed"))
   (setq elfeed-search-title-max-width 100)
   (dbc-add-rule "right" "elfeed" :newname "\\*elfeed.+"))
-#+end_src
-
-**** elfeed-org
-:PROPERTIES:
-:ID:       f646640b-6982-478f-bd1b-babd0ee00165
-:END:
-
-#+begin_src emacs-lisp
-(use-package elfeed-org
-  ;; :init
-  ;; (defvar elfeed-org%public-newsfeed-file (xx-org-dir "newsfeeds.org")
-  ;;   "Newsfeeds.")
-  ;; :set
-  ;; (rmh-elfeed-org-files . (list elfeed-org%public-newsfeed-file))
-  )
 #+end_src
 
 **** newsfeeds
