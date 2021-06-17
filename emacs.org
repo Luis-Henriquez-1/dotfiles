@@ -1228,11 +1228,11 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 #+begin_src emacs-lisp
 (require 'log4e)
 
-(defalias 'xl-log 'xl--log-info)
-(defalias 'xl/popup-log-buffer 'xl--log-open-log)
+(defalias 'xx-log 'xl--log-info)
+(defalias 'xl/popup-log-buffer 'xx--log-open-log)
 
 (log4e:deflogger "xl" "%t [%l] %m" "%H:%M:%S")
-(xl--log-enable-logging)
+(xx--log-enable-logging)
 #+end_src
 
 **** ts
@@ -1621,7 +1621,7 @@ A generic advice should have a function.
   "Define a generic advice function."
   (declare (indent defun) (doc-string 3))
   `(progn (defun ,(xx-symbol-intern 'xx-gadvice- name) (fn)
-	    (defalias (xx-symbol-intern fn '@ ',name) #',(xx-symbol-intern 'xl-gadvice-- name '-advice))
+	    (defalias (xx-symbol-intern fn '@ ',name) #',(xx-symbol-intern 'xx-gadvice-- name '-advice))
 	    (advice-add fn :around #',(xx-symbol-intern 'xx-gadvice-- name '-advice)))
 	  (defun ,(xx-symbol-intern 'xx-gadvice-- name '-advice) ,args ,@body)))
 #+end_src
@@ -1728,9 +1728,9 @@ ADVICE is an advice function that follows XL naming conventions."
     (cond ((not (symbolp fn))
 	   (xx-log "function is not a symbol: %S" fn))
 	  ((xx-hook-symbol-p fn)
-	   (xx-log "& %s -> %s" (xx-hook-orig-symbol fn) (xl-hook-action fn)))
+	   (xx-log "& %s -> %s" (xx-hook-orig-symbol fn) (xx-hook-action fn)))
 	  ((xx-advice-symbol-p fn)
-	   (xx-log "@ %s -> %s" (xx-advice-orig-function fn) (xl-advice-orig-function fn)))
+	   (xx-log "@ %s -> %s" (xx-advice-orig-function fn) (xx-advice-orig-function fn)))
 	  (t
 	   (xx-log "%s called" fn)))))
 #+end_src
@@ -1838,7 +1838,7 @@ this it adds an =XL= advice that loads the feature to the function.
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
 
-For convenience, I provide [[helpfn:xx-load-before-call][xx-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
+For convenience, I provide [[helpfn:xx-load-before-call][xx-load-before-call]] and [[helpfn:xx-load-after-call][xl-load-after-call]]. It's nice
 not to have to specify the advice keyword.
 
 #+begin_src emacs-lisp
@@ -3576,7 +3576,7 @@ This package lets you annotate files in a separate org file.
 
 #+begin_src emacs-lisp
 (before! org-annotate-code
-  (setq org-annotate-code-org-file (concat XL-ORG-DIR "annotations.org")))
+  (setq org-annotate-code-org-file (concat XX-ORG-DIR "annotations.org")))
 #+end_src
 
 ** org-archive
@@ -3704,18 +3704,18 @@ My capture templates use =ts= and =org-ml= so I make sure to load those library
 before org-capture is loaded.
 
 #+begin_src emacs-lisp
-(xl-load-before-call 'org-ql #'org-agenda)
+(xx-load-before-call 'org-ql #'org-agenda)
 
 (defbefore! org-agenda
   (dbc-add-rule "top" "org agenda" :newname "\\*Org Agenda\\*")
-  (xl-gadvice-pause-garbage-collection #'org-agenda-list)
-  (xl-gadvice-suppress-delete-windows #'org-agenda-get-restriction-and-command)
+  (xx-gadvice-pause-garbage-collection #'org-agenda-list)
+  (xx-gadvice-suppress-delete-windows #'org-agenda-get-restriction-and-command)
   (setq org-agenda-include-diary t)
   (setq org-agenda-text-search-extra-files
 	'(agenda-archives))
   (setq org-agenda-skip-unavailable-files t)
   (setq org-agenda-files
-	(list XL-CAPTURE-FILE))
+	(list XX-CAPTURE-FILE))
   (setq org-agenda-warning-days 10)
   (setq org-agenda-start-on-weekday 0)
   (setq org-agenda-timegrid-use-ampm nil)
@@ -3852,9 +3852,9 @@ tracking the time you spend on a particular task.
 
 #+begin_src emacs-lisp
 (after! org-clock
-  (xl-hook-add 'kill-emacs-hook #'org-clock-save)
+  (xx-hook-add 'kill-emacs-hook #'org-clock-save)
   (setq org-clock-persist 'history)
-  (setq org-clock-persist-file (concat XL-CACHE-DIR "org-clock-save.el"))
+  (setq org-clock-persist-file (concat XX-CACHE-DIR "org-clock-save.el"))
   (setq org-clock-in-resume t)
   (org-clock-persistence-insinuate))
 #+end_src
@@ -4071,11 +4071,11 @@ storing universally unique IDs. This is primarily used to disguish and
 referenance org headlines.
 
 #+begin_src emacs-lisp
-(xl-hook-add 'org-insert-heading-hook #'org-id-get-create)
+(xx-hook-add 'org-insert-heading-hook #'org-id-get-create)
 
 (setq org-id-locations-file-relative t)
 (setq org-id-link-to-org-use-id 'create-if-interactive-and-no-custom-id)
-(setq org-id-locations-file (concat XL-CACHE-DIR "org-id-locations"))
+(setq org-id-locations-file (concat XX-CACHE-DIR "org-id-locations"))
 (setq org-id-files (list (f-full "~/README.org")))
 #+end_src
 
@@ -4090,7 +4090,7 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(xl-hook-add 'org-mode-hook #'org-superstar-mode)
+(xx-hook-add 'org-mode-hook #'org-superstar-mode)
 
 (before! org-superstar
   (setq org-superstar-leading-bullet ?\s)
@@ -4103,7 +4103,7 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(xl-hook-add 'org-mode-hook
+(xx-hook-add 'org-mode-hook
 	     (list #'org-pretty-tags-mode #'org-fancy-priorities-mode))
 #+end_src
 
@@ -4113,7 +4113,7 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(xl-hook-add 'outshine-mode-hook 'org-link-minor-mode)
+(xx-hook-add 'outshine-mode-hook 'org-link-minor-mode)
 #+end_src
 
 *** org-babel-hide-markers-mode
@@ -4147,7 +4147,7 @@ with the tag =:TOC:= on it. As you might have guessed [[helpvar:toc-org-max-dept
 maximum dept at which toc will make the table of contents.
 
 #+begin_src emacs-lisp
-(xl-hook-add 'org-mode-hook 'toc-org-mode)
+(xx-hook-add 'org-mode-hook 'toc-org-mode)
 
 (before! toc-org (setq toc-org-max-depth 2))
 #+end_src
@@ -4161,7 +4161,7 @@ As I've mentioned, org-babel is increadibly slow. So slow that I don't think
 even increasing the gc-cons-threshold will help enough. But here goes nothing.
 
 #+begin_src emacs-lisp
-(after! org (xl-gadvice-pause-garbage-collection #'org-babel-tangle))
+(after! org (xx-gadvice-pause-garbage-collection #'org-babel-tangle))
 #+end_src
 
 * completion :completion:
@@ -4190,7 +4190,7 @@ codebase is less buggy.
 Marginalia adds descriptions to various commands.
 
 #+begin_src emacs-lisp
-(xl-hook-add 'emacs-startup-hook #'marginalia-mode)
+(xx-hook-add 'emacs-startup-hook #'marginalia-mode)
 
 (before! marginalia
   (setq marginalia-annotators '(marginalia-annotators-heavy marginalia-annotators-light nil)))
@@ -4245,7 +4245,7 @@ This package.
 
 #+begin_src emacs-lisp
 (before! prescient
-  (setq prescient-save-file (concat XL-CACHE-DIR "prescient-save-file")))
+  (setq prescient-save-file (concat XX-CACHE-DIR "prescient-save-file")))
 
 (add-hook 'prescient-persist-mode-hook #'prescient-persist-mode)
 #+end_src
@@ -4259,7 +4259,7 @@ The variable names can get really long, no? :joy: Maybe it's better to have sort
 of a =:nameless-set= keyword that implies a namespace the same as a package. :bulb:
 
 #+begin_src emacs-lisp
-(xl-hook-add 'selectrum-mode-hook 'selectrum-prescient-mode)
+(xx-hook-add 'selectrum-mode-hook 'selectrum-prescient-mode)
 
 (before! selectrum-prescient
   (setq selectrum-preprocess-candidates-function #'selectrum-prescient--preprocess))
@@ -5867,7 +5867,7 @@ and provides facilities for writing custom extensions. Also see our page on
 
 #+begin_src emacs-lisp
 (require 'evil)
-(xl-hook-add 'emacs-startup-hook #'evil-mode)
+(xx-hook-add 'emacs-startup-hook #'evil-mode)
 #+end_src
 
 ***** evil-vars :edit:evil:
