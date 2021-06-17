@@ -4095,6 +4095,8 @@ referenance org headlines.
   :set
   (org-superstar-leading-bullet     . ?\s)
   (org-superstar-special-todo-items . t))
+
++(xl-hook-add 'org-mode-hook #'org-superstar-mode)
 #+end_src
 
 *** org-fancy-priorities
