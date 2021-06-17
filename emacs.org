@@ -5227,57 +5227,6 @@ address later.
   (dbc-add-rule "bottom" "ert" :newname "\\*ert\\*"))
 #+end_src
 
-*** el-mock
-:PROPERTIES:
-:ID:       46df66b0-5820-4550-aa99-c913d3022fe1
-:END:
-
-#+begin_src emacs-lisp
-(use-package el-mock)
-#+end_src
-
-*** assess
-:PROPERTIES:
-:ID:       cea20fcd-0c75-42dc-be7f-e9eda7b932b1
-:END:
-
-=assess= is similar to =ert-expectations=. It is a wrapper around the built in
-[[][ert-deftest] that provides a cleaner syntax for writing tests.
-
-#+begin_src emacs-lisp
-(use-package assess)
-#+end_src
-
-*** bug-hunter
-:PROPERTIES:
-:ID:       30196ef6-7b34-4a6c-b084-8e613010abd4
-:END:
-
-=bug-hunter= is a package that automates [[https://en.wikipedia.org/wiki/Bisection_(software_engineering)][code-bisection]], the process of trying
-parts of your code at a time until you find out where the bug is. You can find
-the culprit of a problem by [[][code bisection].
-
-#+begin_src emacs-lisp
-(use-package bug-hunter)
-#+end_src
-
-*** ppp
-:PROPERTIES:
-:ID:       82dbb88a-4bce-4ca3-90fe-38cfbea7abc6
-:END:
-
-This is a pretty printer.
-
-Sometimes you want to see what an object looks like represented as text so you
-know what you're dealing with. For example, I've wanted to see what a straight
-recipe looks like. The problem is by default [[][]] prints something on one
-line. And to avoid long lines, emacs truncates the output so you can't even see
-the whole thing.
-
-#+begin_src emacs-lisp
-(use-package ppp)
-#+end_src
-
 ** expand-region :region:
 :PROPERTIES:
 :ID:       b76eb685-37eb-4c58-8712-6b23f2e33d3f
