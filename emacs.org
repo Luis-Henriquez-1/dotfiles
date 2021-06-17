@@ -4261,7 +4261,7 @@ of a =:nameless-set= keyword that implies a namespace the same as a package. :bu
 #+begin_src emacs-lisp
 (xl-hook-add 'selectrum-mode-hook 'selectrum-prescient-mode)
 
-(before! selectrum-prescient ()
+(before! selectrum-prescient
   (setq selectrum-preprocess-candidates-function #'selectrum-prescient--preprocess))
 #+end_src
 
