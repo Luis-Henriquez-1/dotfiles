@@ -239,20 +239,20 @@ functions. This way I can reference the full path. Certain directories are
 important; and I end up referencing them alot.
 
 #+begin_src emacs-lisp
-(defvaralias 'XL-INIT-FILE 'user-init-file)
+(defvaralias 'XX-INIT-FILE 'user-init-file)
 
-(defvaralias 'XL-EMACS-DIR 'user-emacs-directory)
+(defvaralias 'XX-EMACS-DIR 'user-emacs-directory)
 
-(defconst XL-LOCAL-DIR (concat XL-EMACS-DIR ".local/")
+(defconst XX-LOCAL-DIR (concat XL-EMACS-DIR ".local/")
   "Directory where I store files that need to exist, but I don't want to see.")
 
-(defconst XL-CACHE-DIR (concat XL-LOCAL-DIR "cache/")
+(defconst XX-CACHE-DIR (concat XL-LOCAL-DIR "cache/")
   "Directory where I store files used for caching information.")
 
-(defconst XL-RECIPE-FILE (concat XL-EMACS-DIR "recipes.el")
+(defconst XX-RECIPE-FILE (concat XL-EMACS-DIR "recipes.el")
   "File that stores the recipes for all the packages I install.")
 
-(defconst XL-PACKAGES-DIR (concat XL-LOCAL-DIR "packages/")
+(defconst XX-PACKAGES-DIR (concat XL-LOCAL-DIR "packages/")
   "Directory where packages are stored.")
 #+end_src
 
@@ -277,16 +277,16 @@ I define three levels on frequency with which emacs should perform garbage
 collection.
 
 #+begin_src emacs-lisp
-(defconst XL-GC-CONS-THRESHOLD-MAX most-positive-fixnum
+(defconst XX-GC-CONS-THRESHOLD-MAX most-positive-fixnum
   "The upper limit for `gc-cons-threshold'.
 When VOID is performing computationally intensive operations,
 `gc-cons-threshold' is set to this value.")
 
-(defconst XL-GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
+(defconst XX-GC-CONS-THRESHOLD (eval-when-compile (* 16 1024 1024))
   "The default value for `gc-cons-threshold'.
 This is the value of `gc-cons-threshold' that should be used in typical usages.")
 
-(defconst XL-GC-CONS-THRESHOLD-MIN (eval-when-compile (* 4 1024 1024))
+(defconst XX-GC-CONS-THRESHOLD-MIN (eval-when-compile (* 4 1024 1024))
   "The value for `gc-cons-threshold'.")
 #+end_src
 
@@ -295,13 +295,13 @@ This is the value of `gc-cons-threshold' that should be used in typical usages."
 :ID:       39197346-c420-4518-b8f8-8ea247d6decb
 :END:
 
-[[helpvar:void-debug-p][xl-debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable is
+[[helpvar:void-debug-p][xx-debug]] is snatched from [[https://github.com/hlissner/doom-emacs][Doom's]] [[https://github.com/hlissner/doom-emacs/blob/develop/core/core.el][doom-debug-mode]]. The point of this variable is
 to serve as an indicator of whether the current Emacs instance is run for
 debugging. When Emacs is set up for debugging it prints out many messages about
-what its doing via [[hfn:void-log][xl-log]].
+what its doing via [[hfn:void-log][xx-log]].
 
 #+begin_src emacs-lisp
-(defvar xl-debug-p (or (getenv "DEBUG") init-file-debug)
+(defvar xx-debug-p (or (getenv "DEBUG") init-file-debug)
   "When non-nil print debug messages.
 The --debug-init flag and setting the DEBUG envar will enable this at startup.")
 #+end_src
@@ -374,7 +374,7 @@ initialization. We don't need =straight= to do this for us because it is handled
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-load-straight-bootstrap-file (target-dir)
+(defun xx-load-straight-bootstrap-file (target-dir)
   "Load the boostrap file from TARGET-DIR."
   (defvar bootstrap-version)
   (let ((bootstrap-version 5)
@@ -391,7 +391,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 [[https://github.com/raxod502/straight.el#bootstrapping-straightel][bootstrap code]]) from [[https://github.com/kinnala/diy-emacs][diy-emacs]].
 
 #+begin_src emacs-lisp
-(defun xl-install-straight (recipe commit target-dir)
+(defun xx-install-straight (recipe commit target-dir)
   "Install straight to TARGET-DIR."
   (let* ((repo (plist-get (cdr recipe) :repo))
 	 (repo-dir (expand-file-name "straight/repos/" target-dir))
@@ -407,7 +407,7 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-straight-installed-p (target-dir)
+(defun xx-straight-installed-p (target-dir)
   "Return non-nil if straight is installed."
   (and (file-exists-p (expand-file-name "straight/" target-dir))
        (file-exists-p (expand-file-name "straight/repos/straight.el/bootstrap.el" target-dir))))
@@ -419,11 +419,11 @@ I got the inspiration of cloning straight's repo (as opposed to just using the
 :END:
 
 One of the goals is to be able to completely reproduce my Emacs configuration.
-To do this I store the recipes of all the package I install in [[helpvar:XL-RECIPE-FILE][XL-RECIPES-FILE]].
+To do this I store the recipes of all the package I install in [[helpvar:XX-RECIPE-FILE][XL-RECIPES-FILE]].
 Upon startup I read this file and register all the recipes in it with =straight=.
 
 #+begin_src emacs-lisp
-(defun xl-read-recipes (recipe-file)
+(defun xx-read-recipes (recipe-file)
   "Read and return recipes from RECIPE-FILE."
   (with-temp-buffer
     (insert-file-contents-literally recipe-file)
@@ -465,17 +465,17 @@ advantage of doing it this way is that it is fool-proof.
 
 #+name: generate-load-path
 #+begin_src emacs-lisp
-(defun xl-install-packages (recipe-file target-dir)
+(defun xx-install-packages (recipe-file target-dir)
   "Install packages specified by RECIPE-FILE to TARGET-DIR.
 Return a list of load-paths for the install packages."
-  (pcase-let* ((recipes (xl-read-recipes recipe-file))
+  (pcase-let* ((recipes (xx-read-recipes recipe-file))
 	       (regexp (rx-to-string `(seq ,(expand-file-name target-dir))))
 	       (load-path load-path)
 	       (`(,_ ,commit ,recipe) (assoc "straight" recipes)))
-    (unless (xl-straight-installed-p target-dir)
-      (xl-install-straight recipe commit target-dir))
+    (unless (xx-straight-installed-p target-dir)
+      (xx-install-straight recipe commit target-dir))
     (setq straight-base-dir target-dir)
-    (xl-load-straight-bootstrap-file target-dir)
+    (xx-load-straight-bootstrap-file target-dir)
     (pcase-dolist (`(,_ ,commit ,recipe) recipes)
       (straight-register-package recipe))
     (pcase-dolist (`(,_ ,_ ,recipe) recipes)
@@ -494,7 +494,7 @@ I could just use the side-effect of [[helpfn:straight-use-package][straight-use-
 
 #+begin_src emacs-lisp
 (require 'cl-lib)
-(cl-callf2 append (xl-install-packages XL-RECIPE-FILE XL-PACKAGES-DIR) load-path)
+(cl-callf2 append (xx-install-packages XL-RECIPE-FILE XL-PACKAGES-DIR) load-path)
 #+end_src
 
 ** load required packages
@@ -533,7 +533,7 @@ inner workings of Emacs's advice--I cant rely on this. Having the advices like
 this is useful for adding advices programmatically.
 
 #+begin_src emacs-lisp
-(defconst XL-ADVICE-KEYWORDS '(:around :before :after
+(defconst XX-ADVICE-KEYWORDS '(:around :before :after
 			       :override :after-until :after-while
 			       :before-until :before-while :filter-args
 			       :filter-return)
@@ -556,17 +556,17 @@ this is useful for adding advices programmatically.
 :END:
 
 This function is for converting something to a string, no questions
-asked. Similar to [[id:06bfc6f7-4c51-44e7-b32e-1434a602b55b][xl-symbol-intern]], I use it when I don't want to be bothered
+asked. Similar to [[id:06bfc6f7-4c51-44e7-b32e-1434a602b55b][xx-symbol-intern]], I use it when I don't want to be bothered
 with details and just want a string.
 
 #+begin_src emacs-lisp
-(defun xl-to-string (&rest args)
+(defun xx-to-string (&rest args)
   "Return ARGS as a string."
   (declare (pure t) (side-effect-free t))
   (with-output-to-string (-each args #'princ)))
 #+end_src
 
-***** xl-keyword-name
+***** xx-keyword-name
 :PROPERTIES:
 :ID:       e853603a-851d-429f-9201-f2e93734dfaf
 :END:
@@ -576,13 +576,13 @@ sometimes we don't want the prepended colon on they keyword. This function is
 for that occasion.
 
 #+begin_src emacs-lisp
-(defun xl-keyword-name (keyword)
+(defun xx-keyword-name (keyword)
   "Return the name of the KEYWORD without the prepended `:'."
   (declare (pure t) (side-effect-free t))
-  (substring-no-properties (xl-to-string keyword) 1))
+  (substring-no-properties (xx-to-string keyword) 1))
 #+end_src
 
-***** xl-symbol-intern
+***** xx-symbol-intern
 :PROPERTIES:
 :ID:       06bfc6f7-4c51-44e7-b32e-1434a602b55b
 :END:
@@ -594,13 +594,13 @@ have a mix of different objects (usually strings and symbols) that you want to
 put together into one symbol. This function is meant to just do what I mean.
 
 #+begin_src emacs-lisp
-(defun xl-symbol-intern (&rest args)
+(defun xx-symbol-intern (&rest args)
   "Return ARGS as a symbol."
   (declare (pure t) (side-effect-free t))
-  (intern (apply #'xl-to-string args)))
+  (intern (apply #'xx-to-string args)))
 #+end_src
 
-***** xl-keyword-intern
+***** xx-keyword-intern
 :PROPERTIES:
 :ID:       0618b8d7-e0a4-4e3e-8d89-b7d0ebe43917
 :END:
@@ -609,25 +609,25 @@ Sometimes I want to create a keyword by interning a string or a symbol. This
 commands saves me having to add the colon at the beginning before interning.
 
 #+begin_src emacs-lisp
-(defun xl-keyword-intern (&rest args)
+(defun xx-keyword-intern (&rest args)
   "Return ARGS as a keyword."
   (declare (pure t) (side-effect-free t))
-  (apply #'xl-symbol-intern ":" args))
+  (apply #'xx-symbol-intern ":" args))
 #+end_src
 
-***** xl-intern-format
+***** xx-intern-format
 :PROPERTIES:
 :ID:       b371718f-2067-450c-8117-fb22f44be208
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-intern-format (format-string &rest args)
+(defun xx-intern-format (format-string &rest args)
   "Same as `format` but return result as a symbol."
   (declare (pure t) (side-effect-free t))
   (intern (apply #'format format-string args)))
 #+end_src
 
-***** xl-emacs-hook-symbol-p
+***** xx-emacs-hook-symbol-p
 :PROPERTIES:
 :ID:       7ae3dac1-058b-4b1b-a010-aeb5b121d3f6
 :END:
@@ -636,65 +636,65 @@ As I mentioned, the convention for hook symbols is that they are suffixed with
 =-hook=. This function checks for such variables.
 
 #+begin_src emacs-lisp
-(defun xl-emacs-hook-symbol-p (symbol)
+(defun xx-emacs-hook-symbol-p (symbol)
   "Return true if symbol is a hook symbol."
   (declare (pure t) (side-effect-free t))
   (s-matches-p ".+-hook\\'" (symbol-name symbol)))
 #+end_src
 
-***** xl-emacs-hookify
+***** xx-emacs-hookify
 :PROPERTIES:
 :ID:       b308a172-6e99-491c-a382-7ee28e9fc1ae
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-emacs-hookify (symbol)
+(defun xx-emacs-hookify (symbol)
   "Return SYMBOL converted to hook.
 If SYMBOL is already a hook symbol, return it unchanged."
   (declare (pure t) (side-effect-free t))
-  (xl-symbol-intern symbol (if (xl-emacs-hook-symbol-p symbol) "" '-hook)))
+  (xx-symbol-intern symbol (if (xl-emacs-hook-symbol-p symbol) "" '-hook)))
 #+end_src
 
-***** xl-emacs-mode-symbol-p
+***** xx-emacs-mode-symbol-p
 :PROPERTIES:
 :ID:       ec25e275-c36f-4cee-be04-1fdf8c974857
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-emacs-mode-symbol-p (symbol)
+(defun xx-emacs-mode-symbol-p (symbol)
   "Return non-nil if symbol is a mode symbol."
   (declare (pure t) (side-effect-free t))
   (s-matches-p ".+-mode\\'" (symbol-name symbol)))
 #+end_src
 
-***** xl-emacs-modeify
+***** xx-emacs-modeify
 :PROPERTIES:
 :ID:       61fa29a7-9697-4171-8b6f-f4c0b487c02c
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-emacs-modeify (symbol)
+(defun xx-emacs-modeify (symbol)
   "Return SYMBOL converted to hook.
 If SYMBOL is already a hook symbol, return it unchanged."
   (declare (pure t) (side-effect-free t))
-  (if (xl-emacs-mode-symbol-p symbol)
+  (if (xx-emacs-mode-symbol-p symbol)
       symbol
-    (xl-symbol-intern symbol '-mode)))
+    (xx-symbol-intern symbol '-mode)))
 #+end_src
 
-***** xl-emacs-map-symbol-p
+***** xx-emacs-map-symbol-p
 :PROPERTIES:
 :ID:       b7ab2b84-ebea-46fe-8494-89a2aed2f6e8
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-emacs-map-symbol-p (obj)
+(defun xx-emacs-map-symbol-p (obj)
   "Return non-nil if OBJ is an emacs map symbol."
   (and (symbolp obj)
        (s-suffix-p "-map" (symbol-name obj))))
 #+end_src
 
-***** xl-internal-symbol-p
+***** xx-internal-symbol-p
 :PROPERTIES:
 :ID:       72aa71bd-186b-47b3-b30e-1bf5da6b41b1
 :END:
@@ -702,31 +702,31 @@ If SYMBOL is already a hook symbol, return it unchanged."
 To avoid.
 
 #+begin_src emacs-lisp
-(defun xl-internal-symbol-p (symbol)
+(defun xx-internal-symbol-p (symbol)
   "Return non-nil if symbol is an internal XL symbol."
   (declare (pure t) (side-effect-free t))
-  (s-matches-p "\\`xl-.+" (symbol-name symbol)))
+  (s-matches-p "\\`xx-.+" (symbol-name symbol)))
 #+end_src
 
-***** TODO xl-interactive-function-p
+***** TODO xx-interactive-function-p
 :PROPERTIES:
 :ID:       4994e720-e156-408b-b94c-19acbb684fe7
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-interactive-function-symbol-p (symbol)
+(defun xx-interactive-function-symbol-p (symbol)
   "Return non-nil if SYMBOL is a non-interactive function symbol."
   (s-match (rx (group (1+ (not white))) "/" (group (1+ (not white))))
 	   (symbol-name symbol)))
 #+end_src
 
-***** TODO xl-extension-function-p
+***** TODO xx-extension-function-p
 :PROPERTIES:
 :ID:       4f86a625-12e1-4142-85b4-607602a8c8c2
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-extension-function-symbol-p (symbol)
+(defun xx-extension-function-symbol-p (symbol)
   "Return non-nil if symbol is an extension function symbol."
   (s-match (rx (group (1+ (not white))) (1+ "%") (group (1+ (not white))))
 	   (symbol-name symbol)))
@@ -756,7 +756,7 @@ just how emacs displays a quote for brevity. In reality something like ~'cat~ is
 ~(quote cat)~.
 
 #+begin_src emacs-lisp
-(defun xl-single-quoted-p (obj)
+(defun xx-single-quoted-p (obj)
   "Return non-nil if OBJ is sharp-quoted."
   (declare (pure t) (side-effect-free t))
   (pcase obj
@@ -775,7 +775,7 @@ same as =quote= except the former tells the compiler you're referring to the
 function symbol.
 
 #+begin_src emacs-lisp
-(defun xl-sharp-quoted-p (obj)
+(defun xx-sharp-quoted-p (obj)
   "Return non-nil if OBJ is sharp-quoted."
   (declare (pure t) (side-effect-free t))
   (pcase obj
@@ -789,7 +789,7 @@ function symbol.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-backquoted-p (obj)
+(defun xx-backquoted-p (obj)
   "Return non-nil if OBJ is backquoted."
   (declare (pure t) (side-effect-free t))
   (pcase obj
@@ -803,12 +803,12 @@ function symbol.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-quoted-p (symbol)
+(defun xx-quoted-p (symbol)
   "Return non-nil if symbol is quoted."
   (declare (pure t) (side-effect-free t))
-  (or (xl-single-quoted-p symbol)
-      (xl-sharp-quoted-p symbol)
-      (xl-backquoted-p symbol)))
+  (or (xx-single-quoted-p symbol)
+      (xx-sharp-quoted-p symbol)
+      (xx-backquoted-p symbol)))
 #+end_src
 
 ***** unquote
@@ -817,7 +817,7 @@ function symbol.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-unquote (obj)
+(defun xx-unquote (obj)
   "Return OBJ unquoted.
 If object is already unquoted, return OBJ."
   (declare (pure t) (side-effect-free t))
@@ -838,7 +838,7 @@ crowded. It doesn't help that emacs functions tend towards longer names due to a
 lack of namespaces. Therefore, I support keyword args in the function body.
 
 #+begin_src emacs-lisp
-(defun xl-keyword-macro-args (body)
+(defun xx-keyword-macro-args (body)
   "Return list of (docstring KEYWORD-ARGS BODY)."
   (loopy (with (docstring (when (stringp (car body)) (pop body))))
 	 (while (keywordp (car body)))
@@ -846,7 +846,7 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 	 (finally-return (list docstring plist body))))
 #+end_src
 
-**** xl-snoc
+**** xx-snoc
 :PROPERTIES:
 :ID:       faa5589c-864d-4920-9337-a7505b864d9f
 :END:
@@ -854,11 +854,11 @@ lack of namespaces. Therefore, I support keyword args in the function body.
 This is similar to dash's [[][-snoc].
 
 #+begin_src emacs-lisp
-(defun xl-snoc (elt list)
+(defun xx-snoc (elt list)
   "Add elt to end of list."
   (-snoc list elt))
 
-(defalias 'xl-add-to-back 'xl-snoc)
+(defalias 'xx-add-to-back 'xl-snoc)
 #+end_src
 
 **** true-list-p
@@ -871,7 +871,7 @@ cell. Usually, this happens when I want to know whether I can loop over
 something--you can loop over a list but not a cons cell.
 
 #+begin_src emacs-lisp
-(defun xl-true-list-p (obj)
+(defun xx-true-list-p (obj)
   "Return non-nil if OBJ is a list and not a cons cell."
   (declare (pure t) (side-effect-free t))
   (and (listp obj) (not (-cons-pair-p obj))))
@@ -889,7 +889,7 @@ we're dealing with. And, it may also be useful to be able to convert a normal
 symbol (by which I mean one that doesn't follow the conventions) to one of these
 particular kinds.
 
-**** xl-true
+**** xx-true
 :PROPERTIES:
 :ID:       25dcd81e-11a1-42b1-87a3-1df8c5a56cf1
 :END:
@@ -898,18 +898,18 @@ This is the opposite of [[helpfn:ignore][ignore]]. Like =ignore= it takes any nu
 arguments. Unlike it, it always returns =t= instead of always returning =nil=.
 
 #+begin_src emacs-lisp
-(defun xl-true (&rest _)
+(defun xx-true (&rest _)
   "Return t."
   t)
 #+end_src
 
-**** xl-false
+**** xx-false
 :PROPERTIES:
 :ID:       0d1349cc-8bd5-4830-9c3b-9b4f9ebe25d0
 :END:
 
 #+begin_src emacs-lisp
-(defalias 'xl-false 'ignore)
+(defalias 'xx-false 'ignore)
 #+end_src
 
 **** eval a form in a string
@@ -928,7 +928,7 @@ string at a time.
 This function came from [[https://emacs.stackexchange.com/questions/19877/how-to-evaluate-elisp-code-contained-in-a-string][this stackexchange question]].
 
 #+begin_src emacs-lisp
-(defun xl-eval-from-string (string)
+(defun xx-eval-from-string (string)
   "Eval from from string."
   (eval (car (read-from-string (format "(progn %s)" string)))))
 #+end_src
@@ -939,7 +939,7 @@ This function came from [[https://emacs.stackexchange.com/questions/19877/how-to
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-dwim-single (obj)
+(defun xx-dwim-single (obj)
   "If OBJ is a list of one element return CAR of OBJ.
 Otherwise, return OBJ."
   (declare (pure t) (side-effect-free t))
@@ -959,7 +959,7 @@ required to pattern match this. You'd need to add an ability to explicity
 specify optional matches for pcase.
 
 #+begin_src emacs-lisp
-(defun xl-parse-defun-body (body)
+(defun xx-parse-defun-body (body)
   "Return a list of (docstring alist body)."
   (loopy (with (docstring (when (stringp (car body)) (pop body))))
 	 (while (keywordp (car-safe (car body))))
@@ -1120,7 +1120,7 @@ Might be useful later. :shrug:
 #+begin_src emacs-lisp
 (defun use-package%normalize (key)
   "Return an appropriate normalize symbol for key."
-  (xl-symbol-intern 'use-package-normalize/ key))
+  (xx-symbol-intern 'use-package-normalize/ key))
 #+end_src
 
 ***** generate a handler :usepackage:core:emacs:config:helper:
@@ -1131,7 +1131,7 @@ Might be useful later. :shrug:
 #+begin_src emacs-lisp
 (defun use-package%handler (key)
   "Return an appropriate handler symbol for key."
-  (xl-symbol-intern 'use-package-handler/ key))
+  (xx-symbol-intern 'use-package-handler/ key))
 #+end_src
 
 ***** override keyword :usepackage:core:emacs:config:helper:
@@ -1196,7 +1196,7 @@ useful to receieve messages, often they can be telling you what you already know
 FNS is a list of function symbols."
   `(,@(iter (for fn fns)
 	    (collect (use-package%autoload fn name))
-	    (collect `(xl-gadvice-shut-up #',fn)))
+	    (collect `(xx-gadvice-shut-up #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1219,7 +1219,7 @@ functions that a package provides.
   "Generate forms that inhibit `gc-cons-threshold' for the duration of FNS."
   `(,@(iter (for fn fns)
 	    (collect (use-package%autoload name fn))
-	    (collect `(xl-gadvice-pause-garbage-collection #',fn)))
+	    (collect `(xx-gadvice-pause-garbage-collection #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1239,7 +1239,7 @@ Sometimes I want to ignore certain functions.
   "Generate forms that cause FNS to do nothing and return nil."
   `(,@(iter (for fn fns)
 	    (collect (use-package%autoload name fn))
-	    (collect `(xl-gadvice-ignore #',fn)))
+	    (collect `(xx-gadvice-ignore #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1259,7 +1259,7 @@ There are a number of functions in Emacs that prompt.
   "Ensure that FNS always assume yes for confirmation."
   `(,@(iter (for fn fns)
 	    (collect (use-package%autoload name fn))
-	    (collect `(xl-gadvice-assume-yes #',fn)))
+	    (collect `(xx-gadvice-assume-yes #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1287,29 +1287,29 @@ This keyword provides an concise and declarative way of using [[id:a3ea434a-3f70
 :ID:       02e42811-3b97-44f1-ad0c-d59787173ffb
 :END:
 
-Here I override the default hook keyword with my own which uses =xl-hook-add=
+Here I override the default hook keyword with my own which uses =xx-hook-add=
 instead of =add-hook=.
 
 #+begin_src emacs-lisp
-(use-package%dwim-insert :xl-hook)
-(use-package%override :hook :xl-hook)
+(use-package%dwim-insert :xx-hook)
+(use-package%override :hook :xx-hook)
 
-(defun use-package-normalize/:xl-hook (name _ args)
+(defun use-package-normalize/:xx-hook (name _ args)
   "Make sure that."
   (loopy (list elt args)
 	 (cond ((symbolp elt)
-		(collect (cons (xl-emacs-hookify elt) (xl-emacs-modeify name))))
+		(collect (cons (xx-emacs-hookify elt) (xl-emacs-modeify name))))
 	       ((-cons-pair-p elt)
 		(expr (hooks . mode) elt)
 		(subloop (list hook (-list hooks))
-			 (collect (cons (xl-emacs-hookify hook) mode))))
+			 (collect (cons (xx-emacs-hookify hook) mode))))
 	       (t
 		(do (error "%s requires %s" key elt))))))
 
-(defun use-package-handler/:xl-hook (name _ alist rest state)
-  "Use `xl-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
+(defun use-package-handler/:xx-hook (name _ alist rest state)
+  "Use `xx-hook-add' to add HOOK to FN for each (HOOK . FN) in HOOK-ALIST."
   `(,@(loopy (list (hook . fn) alist)
-	     (collect `(xl-hook-add ',hook ',fn))
+	     (collect `(xx-hook-add ',hook ',fn))
 	     (collect (use-package%autoload name fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
@@ -1339,7 +1339,7 @@ of this keyword is to load a package when a certain function is called.
   "Generate forms that load PACKAGE before FN is called."
   `(,@(iter (for (package . fn) alist)
 	    (collect (use-package%autoload package fn))
-	    (collect `(xl-load-before-call ',package #',fn)))
+	    (collect `(xx-load-before-call ',package #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1359,7 +1359,7 @@ The.
   "Generate form that loads package after fn is called."
   `(,@(iter (for (package . fn) alist)
 	    (collect (use-package%autoload name fn))
-	    (collect `(xl-load-after-call ',package #',fn)))
+	    (collect `(xx-load-after-call ',package #',fn)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1412,7 +1412,7 @@ Sometimes I want to alias certain.
 :END:
 
 A keyword specifically designed for =xl= advices, or advices of the form
-=xl-<name>-advice=. For convenience, it is assumed to use =around= advice.
+=xx-<name>-advice=. For convenience, it is assumed to use =around= advice.
 
 #+begin_src emacs-lisp
 (use-package%dwim-insert :advice)
@@ -1434,8 +1434,8 @@ and EXPIRE-FN are optional."
 (defun use-package-handler/:advice (name _ advices rest state)
   "Generate forms that add advice."
   `(,@(loopy (list (where fn advice) advices)
-	     (expr where (if (keywordp where) where (xl-keyword-intern where)))
-	     (collect `(xl-advice-add #',fn ,where #',advice)))
+	     (expr where (if (keywordp where) where (xx-keyword-intern where)))
+	     (collect `(xx-advice-add #',fn ,where #',advice)))
     ,@(use-package-process-keywords name rest state)))
 #+end_src
 
@@ -1455,7 +1455,7 @@ ADVICES should be of the form (WHERE SYMBOL ADVICE PROPS EXPIRE-FN) where PROPS
 and EXPIRE-FN are optional."
   (loopy (with (normalized (use-package-normalize/:advice _ _ advices)))
 	 (each (_ fn advice) normalized)
-	 (expr gadvice (xl-intern-format "xl-gadvice-%s" advice))
+	 (expr gadvice (xx-intern-format "xl-gadvice-%s" advice))
 	 (collect (cons fn gadvice))))
 
 (defun use-package-handler/:gadvice (name _ gadvices rest state)
@@ -1479,7 +1479,7 @@ packages.
   "Require series of symbols or cons of the form (MODE . STATE)."
   (loopy (list elt states)
 	 (cond ((symbolp elt)
-		(collect (cons (xl-emacs-modeify name) elt)))
+		(collect (cons (xx-emacs-modeify name) elt)))
 	       ((consp elt)
 		(expr (mode . state) elt)
 		(collect (cons mode state)))
@@ -1505,9 +1505,9 @@ make sense. This is advice specifically designed to disable selectrum sorting.
 #+begin_src emacs-lisp
 (defun selectrum%disable-sorting (fn)
   "Disable sorting for FN."
-  (let ((advice (xl-symbol-intern fn '@no-selectrum-sorting)))
+  (let ((advice (xx-symbol-intern fn '@no-selectrum-sorting)))
     (defalias advice #'selectrum%disable-selectrum-sorting-advice)
-    ;; (xl-gadvice-log advice)
+    ;; (xx-gadvice-log advice)
     (advice-add fn :around advice)))
 
 (defun selectrum%disable-selectrum-sorting-advice (orig-fn &rest args)
@@ -1769,7 +1769,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 	    (display-buffer-in-side-window . ((side . top) (window-height . 0.4)))
 	    (display-buffer-in-side-window . ((side . left) (window-width 0.4)))
 	    (display-buffer-in-side-window . ((side . right) (window-width 0.4))))
-    (dbc-add-ruleset (xl-to-string (alist-get 'side (cdr it))) it)))
+    (dbc-add-ruleset (xx-to-string (alist-get 'side (cdr it))) it)))
 #+end_src
 
 **** rule :usepackage:library:core:popup:
@@ -1784,7 +1784,7 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 
 (defun use-package-normalize/:rule (_ _ args)
   "Ensure ARGS is a list of lists."
-  (cl-assert (-all-p #'xl-true-list-p args))
+  (cl-assert (-all-p #'xx-true-list-p args))
   args)
 
 (defun use-package-handler/:rule (name _ rules rest state)
@@ -1802,12 +1802,12 @@ This keyword integrates with [[id:b3351a74-b2d0-42b8-9895-b6baad0adb0b][dbc]] (d
 #+begin_src emacs-lisp
 (use-package log4e
   :demand t
-  :alias (xl/popup-log-buffer . xl--log-open-log)
+  :alias (xl/popup-log-buffer . xx--log-open-log)
   :init
-  (defalias 'xl-log 'xl--log-info))
+  (defalias 'xx-log 'xl--log-info))
 
 (log4e:deflogger "xl" "%t [%l] %m" "%H:%M:%S")
-(xl--log-enable-logging)
+(xx--log-enable-logging)
 #+end_src
 
 **** ts
@@ -1841,13 +1841,13 @@ specify the docstring from the body (because the docstring is optional).
 Honestly, I shouldn't have to use this function.
 
 #+begin_src emacs-lisp
-(defun xl-process-args (args body)
+(defun xx-process-args (args body)
   "Return (ARGS BODY KARGS)."
   (loopy (with ((args plist) (-split-with (-not #'keywordp) args))
 	       (docstring (when (stringp (car body)) (pop body)))
 	       ((alist body) (--split-with (and (listp it) (keywordp (car it))) body)))
 	 (map (key value) (append (-partition-before-pred #'keywordp plist) alist))
-	 (collect kargs (cons key (xl-dwim-single value)))
+	 (collect kargs (cons key (xx-dwim-single value)))
 	 (finally-return (list args (cons docstring body) kargs))))
 #+end_src
 
@@ -1872,9 +1872,9 @@ macros.
        (defmacro ,name ,args
 	 ,@(when (stringp (car body)) (list (pop body))) ; the docstring
 	 (declare (indent defun) (doc-string 3))
-	 (-let* (((,(-second-item args) body ,alist) (xl-process-args ,(-second-item args) body))
+	 (-let* (((,(-second-item args) body ,alist) (xx-process-args ,(-second-item args) body))
 		 (,alist (loopy (map (key val) ,alist)
-				(collect (cons (intern (xl-keyword-name key)) val)))))
+				(collect (cons (intern (xx-keyword-name key)) val)))))
 	   (let-alist ,alist ,@body))))))
 #+end_src
 
@@ -1884,19 +1884,19 @@ macros.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-log-function (fn)
+(defun xx-log-function (fn)
   "Log a function."
-  (let ((name (xl-advice-gen-symbol fn 'log)))
+  (let ((name (xx-advice-gen-symbol fn 'log)))
     (pcase fn
-      ((pred xl-advice-symbol-p)
-       (let ((symbol (xl-advice-orig-symbol fn))
-	     (function (xl-advice-orig-function fn)))
-	 (fset name `(lambda (&rest _) (xl-log "@ %s -> %s" ',symbol ',function)))
+      ((pred xx-advice-symbol-p)
+       (let ((symbol (xx-advice-orig-symbol fn))
+	     (function (xx-advice-orig-function fn)))
+	 (fset name `(lambda (&rest _) (xx-log "@ %s -> %s" ',symbol ',function)))
 	 (advice-add fn :after name)))
-      ((pred xl-hook-symbol-p)
-       (let ((symbol (xl-hook-orig-symbol fn))
-	     (function (xl-hook-orig-function fn)))
-	 (fset name `(lambda (&rest _) (xl-log "& %s -> %s" ',symbol ',function)))
+      ((pred xx-hook-symbol-p)
+       (let ((symbol (xx-hook-orig-symbol fn))
+	     (function (xx-hook-orig-function fn)))
+	 (fset name `(lambda (&rest _) (xx-log "& %s -> %s" ',symbol ',function)))
 	 (advice-add fn :after name)))
       (_
        nil))))
@@ -1915,7 +1915,7 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
   "Define a hook that follows XL naming conventions."
   (declare (indent defun) (doc-string 3))
   (loopy (list hook hooks)
-	 (expr fn (xl-hook-gen-name hook name))
+	 (expr fn (xx-hook-gen-name hook name))
 	 (cond (loopy-first-iteration-p
 		(collect `(defun ,fn ,(or .args '(&rest _)) ,@body))
 		(expr orig-fn fn))
@@ -1931,9 +1931,9 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-gen-symbol (symbol name)
+(defun xx-advice-gen-symbol (symbol name)
   "Generate."
-  (xl-symbol-intern symbol '@ name))
+  (xx-symbol-intern symbol '@ name))
 #+end_src
 
 **** defadvice!
@@ -1947,12 +1947,12 @@ syntax. I use it extensively throughout this configuration.
 #+begin_src emacs-lisp
 (defmacro defadvice! (name args &rest body)
   "Define an advice that follows XL naming conventions."
-  (loopy (with ((args body kargs) (xl-process-args args body))
+  (loopy (with ((args body kargs) (xx-process-args args body))
 	       (props (alist-get :props kargs))
 	       (fargs (alist-get :args kargs))
-	       ((where . functions) (--first (member (car it) XL-ADVICE-KEYWORDS) kargs)))
+	       ((where . functions) (--first (member (car it) XX-ADVICE-KEYWORDS) kargs)))
 	 (list fn (-list functions))
-	 (expr advice (xl-advice-gen-symbol fn name))
+	 (expr advice (xx-advice-gen-symbol fn name))
 	 (cond (loopy-first-iteration-p
 		(collect `(defun ,advice ,(or fargs args '(&rest _)) ,@body))
 		(expr orig-fn advice))
@@ -1974,7 +1974,7 @@ should run.
 (defmacro defhooksym! (name args &rest body)
   "Define a hook symbol."
   (let ((docstring (when (stringp (car body)) (list (pop body))))
-	(advice-name (xl-intern-format "run-%s" name)))
+	(advice-name (xx-intern-format "run-%s" name)))
     `(progn (defvar ,name nil ,@docstring)
 	    (defadvice! ,advice-name ,args
 	      ,@docstring
@@ -2067,9 +2067,9 @@ be doing this if they want to load a feature. We advise it beforehand so that we
 can potentially do some "preparation" before a feature is loaded.
 
 #+begin_src emacs-lisp
-(defhooksym! xl-after-load-feature-hook (:before require :args (feature &rest _))
+(defhooksym! xx-after-load-feature-hook (:before require :args (feature &rest _))
   "Hook run just before a feature is required."
-  (run-hook-with-args 'xl-after-load-feature-hook feature))
+  (run-hook-with-args 'xx-after-load-feature-hook feature))
 #+end_src
 
 ***** before-load-hook
@@ -2081,9 +2081,9 @@ This is the counterpart to [[][]. =provide= is the convention that's used to
 declare that a feature has been loaded.
 
 #+begin_src emacs-lisp
-(defhooksym! xl-before-load-feature-hook (:after provide :args (feature &rest _))
+(defhooksym! xx-before-load-feature-hook (:after provide :args (feature &rest _))
   "Hook run just after a feature is provided."
-  (run-hook-with-args 'xl-before-load-feature-hook feature))
+  (run-hook-with-args 'xx-before-load-feature-hook feature))
 #+end_src
 
 ***** feature logic
@@ -2094,12 +2094,12 @@ declare that a feature has been loaded.
 This function is a helper for [[][defbefore] and [[][defafter]. It is inteded to.
 
 #+begin_src emacs-lisp
-(defun xl-convert-to-form (condition)
+(defun xx-convert-to-form (condition)
   "Convert the CONDITION to legal form."
   (cond ((null condition)
 	 nil)
-	((xl-true-list-p condition)
-	 (mapcar #'xl-convert-to-form
+	((xx-true-list-p condition)
+	 (mapcar #'xx-convert-to-form
 		 (if (not (member (car condition) '(and or not)))
 		     (cons 'and condition)
 		   condition)))
@@ -2149,13 +2149,13 @@ This keyword is meant to overwrite the built-in =:config= keyword. It does the
 same thing, except it uses =after!= instead of =with-eval-after-load=.
 
 #+begin_src emacs-lisp
-(use-package%dwim-insert :xl-config)
-(use-package%override :config :xl-config)
+(use-package%dwim-insert :xx-config)
+(use-package%override :config :xx-config)
 
-(defun use-package-normalize/:xl-config (_ _ args)
+(defun use-package-normalize/:xx-config (_ _ args)
   args)
 
-(defun use-package-handler/:xl-config (name _ forms rest state)
+(defun use-package-handler/:xx-config (name _ forms rest state)
   "Wrap FORMS in an `after!' block."
   `((after! ,name ,@forms)
     ,@(use-package-process-keywords name rest state)))
@@ -2216,10 +2216,10 @@ A generic advice should have a function.
 (defunmacro! defgadvice! (name args &rest body)
   "Define a generic advice function."
   (declare (indent defun) (doc-string 3))
-  `(progn (defun ,(xl-symbol-intern 'xl-gadvice- name) (fn)
-	    (defalias (xl-symbol-intern fn '@ ',name) #',(xl-symbol-intern 'xl-gadvice-- name '-advice))
-	    (advice-add fn :around #',(xl-symbol-intern 'xl-gadvice-- name '-advice)))
-	  (defun ,(xl-symbol-intern 'xl-gadvice-- name '-advice) ,args ,@body)))
+  `(progn (defun ,(xx-symbol-intern 'xl-gadvice- name) (fn)
+	    (defalias (xx-symbol-intern fn '@ ',name) #',(xl-symbol-intern 'xl-gadvice-- name '-advice))
+	    (advice-add fn :around #',(xx-symbol-intern 'xl-gadvice-- name '-advice)))
+	  (defun ,(xx-symbol-intern 'xl-gadvice-- name '-advice) ,args ,@body)))
 #+end_src
 
 *** generic advices
@@ -2252,7 +2252,7 @@ packages which can contain several thousand items.
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
 
-One important note here. I first wrote [[helpfn:xl-report-error-advice][xl-report-error-advice]] as an around
+One important note here. I first wrote [[helpfn:xx-report-error-advice][xl-report-error-advice]] as an around
 advice that should be added to functions. The problem here is that sometimes I
 advise compiled functions; and when I do, the variable =orig-fn= is bound to a
 compiled function instead of a symbol. This is why this function has to
@@ -2265,7 +2265,7 @@ advice]].
   (condition-case error
       (apply orig-fn args)
     (error
-     (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
+     (xx-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
 #+end_src
 
 **** advice regexp
@@ -2274,7 +2274,7 @@ advice]].
 :END:
 
 #+begin_src emacs-lisp
-(defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
+(defconst XX-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
   "A regular expression that defines naming convention for advices.")
 #+end_src
 
@@ -2284,10 +2284,10 @@ advice]].
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-orig-function (advice)
+(defun xx-advice-orig-function (advice)
   "Return the function that ADVICE aliases.
 ADVICE is an advice function that follows XL naming conventions."
-  (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
+  (intern (nth 2 (s-match XX-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
 **** original fn
@@ -2296,10 +2296,10 @@ ADVICE is an advice function that follows XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-orig-symbol (advice)
+(defun xx-advice-orig-symbol (advice)
   "Return the function ADVICE is advised to.
 ADVICE is an advice function that follows XL naming conventions."
-  (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
+  (intern (nth 1 (s-match XX-ADVICE-REGEXP (symbol-name advice)))))
 #+end_src
 
 **** advice-fn-p
@@ -2308,9 +2308,9 @@ ADVICE is an advice function that follows XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-symbol-p (fn)
+(defun xx-advice-symbol-p (fn)
   "Return non-nil when FN is an advice."
-  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
+  (s-matches-p XX-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
 **** log
@@ -2322,13 +2322,13 @@ ADVICE is an advice function that follows XL naming conventions."
 (defgadvice! log (fn &rest args)
   (prog1 (apply fn args)
     (cond ((not (symbolp fn))
-	   (xl-log "function is not a symbol: %S" fn))
-	  ((xl-hook-symbol-p fn)
-	   (xl-log "& %s -> %s" (xl-hook-orig-symbol fn) (xl-hook-action fn)))
-	  ((xl-advice-symbol-p fn)
-	   (xl-log "@ %s -> %s" (xl-advice-orig-function fn) (xl-advice-orig-function fn)))
+	   (xx-log "function is not a symbol: %S" fn))
+	  ((xx-hook-symbol-p fn)
+	   (xx-log "& %s -> %s" (xl-hook-orig-symbol fn) (xl-hook-action fn)))
+	  ((xx-advice-symbol-p fn)
+	   (xx-log "@ %s -> %s" (xl-advice-orig-function fn) (xl-advice-orig-function fn)))
 	  (t
-	   (xl-log "%s called" fn)))))
+	   (xx-log "%s called" fn)))))
 #+end_src
 
 **** silence :gadvice:advice:library:core:
@@ -2359,7 +2359,7 @@ is an example).
 #+begin_src emacs-lisp
 (defgadvice! assume-yes (orig-fn &rest args)
   "An advice that makes `y-or-n-p' return t without prompt."
-  (with-temp-advice! ((y-or-n-p :override xl-true))
+  (with-temp-advice! ((y-or-n-p :override xx-true))
     (apply orig-fn args)))
 #+end_src
 
@@ -2368,11 +2368,11 @@ is an example).
 :ID:       843d4ca9-ea52-46ea-9d77-bfd9e7222669
 :END:
 
-Sometimes I want to use =xl-log= instead of =message=.
+Sometimes I want to use =xx-log= instead of =message=.
 
 #+begin_src emacs-lisp
-(defgadvice! use-xl-log (orig-fn &rest args)
-  (noflet ((message (&rest message-args) (apply #'xl-log message-args)))
+(defgadvice! use-xx-log (orig-fn &rest args)
+  (noflet ((message (&rest message-args) (apply #'xx-log message-args)))
     (apply orig-fn args)))
 #+end_src
 
@@ -2387,12 +2387,12 @@ Log when an advice or hook is being called.
 #+begin_src emacs-lisp
 (defadvice! log-advices (orig-fn &rest args)
   "Log ORIG-FN."
-  (:around xl-hook-add xl-advice-add)
+  (:around xx-hook-add xl-advice-add)
   (iter (with (symbols (apply orig-fn args)))
 	(each symbol symbols)
-	(xl-log-function symbol)
-	(when (xl-hook-symbol-p symbol)
-	  (xl-gadvice-catch-error symbol))
+	(xx-log-function symbol)
+	(when (xx-hook-symbol-p symbol)
+	  (xx-gadvice-catch-error symbol))
 	(finally-return symbols)))
 #+end_src
 
@@ -2419,14 +2419,14 @@ package before or after (you specify) a particular function is called. To do
 this it adds an =XL= advice that loads the feature to the function.
 
 #+begin_src emacs-lisp
-(defun xl-load-on-call (package where fn)
+(defun xx-load-on-call (package where fn)
   "Load PACKAGE before or after FN is called."
-  (alet (xl-intern-format "%s@load-%s-%s-call" fn package (xl-keyword-name where))
+  (alet (xx-intern-format "%s@load-%s-%s-call" fn package (xl-keyword-name where))
     (fset it `(lambda (&rest _)
-                (xl-log "load %s" ',package)
+                (xx-log "load %s" ',package)
                 (require ',package)))
     (advice-add fn where it)
-    (xl-gadvice-expire it)))
+    (xx-gadvice-expire it)))
 #+end_src
 
 ***** load before call
@@ -2434,13 +2434,13 @@ this it adds an =XL= advice that loads the feature to the function.
 :ID:       cc0e92bc-cd6d-4994-82ea-eb065fc3ad89
 :END:
 
-For convenience, I provide [[helpfn:xl-load-before-call][xl-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
+For convenience, I provide [[helpfn:xx-load-before-call][xl-load-before-call]] and [[helpfn:xl-load-after-call][xl-load-after-call]]. It's nice
 not to have to specify the advice keyword.
 
 #+begin_src emacs-lisp
-(defun xl-load-before-call (package fn)
+(defun xx-load-before-call (package fn)
   "Load PACKAGE before FN is called."
-  (xl-load-on-call package :before fn))
+  (xx-load-on-call package :before fn))
 #+end_src
 
 ***** load after call
@@ -2449,9 +2449,9 @@ not to have to specify the advice keyword.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-load-after-call (package fn)
+(defun xx-load-after-call (package fn)
   "Load PACKAGE after FN is called."
-  (xl-load-on-call package :after fn))
+  (xx-load-on-call package :after fn))
 #+end_src
 
 **** ignore output
@@ -2470,15 +2470,15 @@ not to have to specify the advice keyword.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-gadvice-expire (fn)
+(defun xx-gadvice-expire (fn)
   "Cause FN to remove itself from any advice or hook."
-  (let ((name (xl-advice-gen-symbol fn 'expire)))
+  (let ((name (xx-advice-gen-symbol fn 'expire)))
     (pcase fn
-      ((pred xl-advice-symbol-p)
-       (fset name `(lambda (&rest _) (xl-advice-remove ',fn)))
+      ((pred xx-advice-symbol-p)
+       (fset name `(lambda (&rest _) (xx-advice-remove ',fn)))
        (advice-add fn :after name))
-      ((pred xl-hook-symbol-p)
-       (fset name `(lambda (&rest _) (xl-hook-remove ',fn)))
+      ((pred xx-hook-symbol-p)
+       (fset name `(lambda (&rest _) (xx-hook-remove ',fn)))
        (advice-add fn :after name))
       (_
        nil))))
@@ -2498,11 +2498,11 @@ Since we can get the advisee from the advise name, or remove advice only needs
 one argument--the advice to remove.
 
 #+begin_src emacs-lisp
-(defun xl-advice-remove (advices)
+(defun xx-advice-remove (advices)
   "Remove ADVICES from the functions they advise.
 ADVICES is an advice or a list of advices."
   (iter (each advice (-list advices))
-	(advice-remove (xl-advice-orig-symbol advice) advice)))
+	(advice-remove (xx-advice-orig-symbol advice) advice)))
 #+end_src
 
 **** adding an advice
@@ -2511,12 +2511,12 @@ ADVICES is an advice or a list of advices."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-advice-add (symbols where functions &optional props)
+(defun xx-advice-add (symbols where functions &optional props)
   "Add ADVICES to FUNCTIONS.
 WHERE, DEPTH and LOCAL are the same as in `advice-add'."
   (iter (each symbol (-list symbols))
 	(subloop (each function (-list functions))
-		 (expr advice (xl-symbol-intern symbol '@ function))
+		 (expr advice (xx-symbol-intern symbol '@ function))
 		 (fset advice function)
 		 (advice-add symbol where advice props)
 		 (collect advice))))
@@ -2533,8 +2533,8 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 :END:
 
 #+begin_src emacs-lisp
-(defconst XL-HOOK-REGEXP "\\`\\(.+\\)&\\(.+\\)\\'"
-  "Regular expression used to match `xl-' defined hooks.")
+(defconst XX-HOOK-REGEXP "\\`\\(.+\\)&\\(.+\\)\\'"
+  "Regular expression used to match `xx-' defined hooks.")
 #+end_src
 
 **** add hook
@@ -2543,11 +2543,11 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-add (symbols functions &optional depth local)
+(defun xx-hook-add (symbols functions &optional depth local)
   "Alias FUNCTIONS to follow XL naming convention and add them to SYMBOLS."
   (iter (each symbol (-list symbols))
 	(subloop (each function (-list functions))
-		 (expr hook (xl-symbol-intern symbol '& function))
+		 (expr hook (xx-symbol-intern symbol '& function))
 		 (fset hook function)
 		 (add-hook symbol hook depth local)
 		 (collect hook))))
@@ -2559,11 +2559,11 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-remove (&rest hooks)
+(defun xx-hook-remove (&rest hooks)
   "Remove HOOKS from their correponding symbols.
 HOOKS is a list of hook functions that follow the XL naming convention."
   (iter (each hook hooks)
-	(remove-hook (xl-hook-orig-symbol hook) hook)))
+	(remove-hook (xx-hook-orig-symbol hook) hook)))
 #+end_src
 
 **** hook function
@@ -2572,9 +2572,9 @@ HOOKS is a list of hook functions that follow the XL naming convention."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-symbol-p (symbol)
+(defun xx-hook-symbol-p (symbol)
   "Return non-nil if SYMBOL is defined with XL naming conventions."
-  (s-match XL-HOOK-REGEXP (symbol-name symbol)))
+  (s-match XX-HOOK-REGEXP (symbol-name symbol)))
 #+end_src
 
 **** original hook variable
@@ -2583,10 +2583,10 @@ HOOKS is a list of hook functions that follow the XL naming convention."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-orig-symbol (hook)
+(defun xx-hook-orig-symbol (hook)
   "Return hook variable for HOOK.
 HOOK is a hook function defined with XL naming conventions."
-  (intern (nth 1 (xl-hook-symbol-p hook))))
+  (intern (nth 1 (xx-hook-symbol-p hook))))
 #+end_src
 
 **** original hook function
@@ -2595,10 +2595,10 @@ HOOK is a hook function defined with XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-orig-function (hook)
+(defun xx-hook-orig-function (hook)
   "Return the hook function for HOOK.
 HOOK is a hook function that follows XL naming conventions."
-  (intern (nth 2 (xl-hook-symbol-p hook))))
+  (intern (nth 2 (xx-hook-symbol-p hook))))
 #+end_src
 
 **** generate hook name
@@ -2607,9 +2607,9 @@ HOOK is a hook function that follows XL naming conventions."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-hook-gen-name (fn name)
+(defun xx-hook-gen-name (fn name)
   "Generate a hook name."
-  (xl-symbol-intern fn '& name))
+  (xx-symbol-intern fn '& name))
 #+end_src
 
 *** idle-require
@@ -2641,7 +2641,7 @@ garbage collection during this time.
 #+begin_src emacs-lisp
 (use-package idle-require
   :demand t
-  ;; :xl-use-xl-log idle-require-mode idle-require-load-next
+  ;; :xx-use-xl-log idle-require-mode idle-require-load-next
   :gc-pause idle-require-load-next
   :set
   (idle-require-load-break . 2)
@@ -2686,12 +2686,12 @@ Sometimes there are things that need tidying up after loading a theme. For
 example, if I'm using evil I need to update the cursor color.
 
 #+begin_src emacs-lisp
-(defvar xl-after-load-theme-hook nil
+(defvar xx-after-load-theme-hook nil
   "Hook run after the theme is loaded with `load-theme'.")
 
 (defadvice! run-after-load-theme-hook (:after load-theme)
-  "Set up `xl-load-theme-hook' to run after `load-theme' is called."
-  (run-hooks 'xl-after-load-theme-hook))
+  "Set up `xx-load-theme-hook' to run after `load-theme' is called."
+  (run-hooks 'xx-after-load-theme-hook))
 #+end_src
 
 ** keybinding :bind:
@@ -2731,14 +2731,14 @@ want to shorten a key binding. Although obviously not as easy to remember as
 =m=, it provides me with one shorter keypress in certain situations.
 
 #+begin_src emacs-lisp
-(defconst XL-EVIL-LEADER-KEY "SPC"
+(defconst XX-EVIL-LEADER-KEY "SPC"
   "The evil leader prefix key.")
 
-(defconst XL-EVIL-LOCALLEADER-KEY "SPC m"
+(defconst XX-EVIL-LOCALLEADER-KEY "SPC m"
   "The localleader prefix key for major-mode specific commands.")
 
-(defconst XL-EVIL-LOCALLEADER-SHORT-KEY ","
-  "A shorter alternative `xl-localleader-key'.")
+(defconst XX-EVIL-LOCALLEADER-SHORT-KEY ","
+  "A shorter alternative `xx-localleader-key'.")
 #+end_src
 
 **** emacs leaders
@@ -2754,14 +2754,14 @@ state--or even vanilla Emacs. The choice behind the bindings is the same as
 [[id:][before]], except I just prepended the =Meta= (a.k.a. the =Alt= key) to everything.
 
 #+begin_src emacs-lisp
-(defconst XL-EMACS-LEADER-KEY "M-SPC"
+(defconst XX-EMACS-LEADER-KEY "M-SPC"
   "The leader prefix key used for Insert and Emacs states.")
 
-(defconst XL-EMACS-LOCALLEADER-KEY "M-SPC m"
+(defconst XX-EMACS-LOCALLEADER-KEY "M-SPC m"
   "The localleader prefix key for major-mode specific commands.")
 
-(defconst XL-EMACS-LOCALLEADER-SHORT-KEY "M-,"
-  "A short non-normal  `xl-localleader-key'.")
+(defconst XX-EMACS-LOCALLEADER-SHORT-KEY "M-,"
+  "A short non-normal  `xx-localleader-key'.")
 #+end_src
 
 *** prefix commands
@@ -2776,9 +2776,9 @@ properties because general is incredibly slow binding keys en mass with them in
 conjunction with :states -- an effective doubling of Doom's startup time!
 
 #+begin_src emacs-lisp
-(defvar xl-leader-map (make-sparse-keymap))
+(defvar xx-leader-map (make-sparse-keymap))
 
-(define-prefix-command 'xl/leader 'xl-leader-map)
+(define-prefix-command 'xl/leader 'xx-leader-map)
 #+end_src
 
 *** bind! :extension:
@@ -2805,13 +2805,13 @@ it is more concise than naming the actual states and (2) it allows us to specify
 bindings of different states in the same form as opposed to [[helpfn:evil-define-key*][evil-define-key*]].
 
 #+begin_src emacs-lisp
-(defun xl-bind%evil-keyword-to-states (evil-keyword)
+(defun xx-bind%evil-keyword-to-states (evil-keyword)
   "Return list of evil states specified by EVIL-KEYWORD.
 EVIL-KEYWORD is a keyword whose letters correspond to the first letters of evil
 states (e.g. :i \"i\" would correspond to \"insert\" state).
 If any letter in EVIL-KEYWORD does not correspond to an evil state, return nil."
   (loopy (with (evil-states '(normal visual emacs insert operator motion)))
-	 (seq char (seq-uniq (xl-keyword-name evil-keyword)))
+	 (seq char (seq-uniq (xx-keyword-name evil-keyword)))
 	 (expr state (--first (->> (symbol-name it)
 				   (seq-first)
 				   (char-equal char))
@@ -2838,7 +2838,7 @@ To do this, the first step is creating a variable that will store the binding
 forms that need to be evaluated when a keymap is loaded.
 
 #+begin_src emacs-lisp
-(defvar xl-bind%deferred-bindings nil
+(defvar xx-bind%deferred-bindings nil
   "Alist of deferred bindings.
 Each element is of the form (KEYMAP . BINDING-FORMS).
 KEYMAP is a keymap that has not yet been bound. BINDING-FORMS are the forms to
@@ -2854,12 +2854,12 @@ This hook will traverse the alist of deferred bindings, checking to see whether
 a keymap in the alist is bound. If it is we evaluate its corresponding forms.
 
 #+begin_src emacs-lisp
-(defun xl-bind%update-deferred-bindings (deferred-bindings)
+(defun xx-bind%update-deferred-bindings (deferred-bindings)
   "Evaluate bindings whose keymap now exist.
 Return any keymaps whose keymaps still don't exist."
   (iter (each (elt &as keymap . forms) deferred-bindings)
 	(cond ((boundp keymap)
-	       (xl-log "bind %s keys" keymap)
+	       (xx-log "bind %s keys" keymap)
 	       (funcall `(lambda () (progn ,@forms))))
 	      (t
 	       (collect elt)))))
@@ -2878,7 +2878,7 @@ new keymaps.
 #+begin_src emacs-lisp
 (defhook! eval-deferred-bindings (after-load-functions)
   "Evaluate deferred bindings whose keymap is now bound."
-  (cl-callf xl-bind%update-deferred-bindings xl-bind%deferred-bindings))
+  (cl-callf xx-bind%update-deferred-bindings xl-bind%deferred-bindings))
 #+end_src
 
 ***** with-deferred-keymap!
@@ -2888,7 +2888,7 @@ new keymaps.
 
 The final touch is to create a macro that evaluates its body only if a specified
 keymap is already bound. If the keymap is not bound then it simply updates
-[[helpvar:xl-bind%deferred-bindings][xl-bind:deferred-bindings]]. I wrap every individual binding with this form.
+[[helpvar:xx-bind%deferred-bindings][xl-bind:deferred-bindings]]. I wrap every individual binding with this form.
 
 #+begin_src emacs-lisp
 (defmacro with-deferred-map! (map &rest forms)
@@ -2899,7 +2899,7 @@ If MAP is already loaded, evaluate forms immediately."
     ((or (pred boundp) 'local-map 'global-map)
      `(progn ,@forms))
     (_
-     `(cl-callf a-update xl-bind%deferred-bindings ',map #'append ',forms))))
+     `(cl-callf a-update xx-bind%deferred-bindings ',map #'append ',forms))))
 #+end_src
 
 **** read a clause
@@ -2908,12 +2908,12 @@ If MAP is already loaded, evaluate forms immediately."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%read-clause (clauses)
+(defun xx-bind%read-clause (clauses)
   "Return CLAUSES."
-  (loopy (with (clauses (--splice (listp (car it)) (xl-bind%read-clause it) clauses)))
+  (loopy (with (clauses (--splice (listp (car it)) (xx-bind%read-clause it) clauses)))
 	 (list clause clauses)
-	 (cond ((or (xl-bind%binding-p clause)
-		    (xl-bind%binding-p (-butlast clause)))
+	 (cond ((or (xx-bind%binding-p clause)
+		    (xx-bind%binding-p (-butlast clause)))
 		(collect bindings clause))
 	       (t
 		(append common-args clause)))
@@ -2926,10 +2926,10 @@ If MAP is already loaded, evaluate forms immediately."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%binding-p (clause)
+(defun xx-bind%binding-p (clause)
   "Return non-nil if CLAUSE contains a keybinding."
   (pcase (-take-last 2 clause)
-    (`(,(or (pred stringp) (pred vectorp) (pred symbolp)) ,(pred xl-quoted-p)) t)
+    (`(,(or (pred stringp) (pred vectorp) (pred symbolp)) ,(pred xx-quoted-p)) t)
     (_ nil)))
 #+end_src
 
@@ -2949,7 +2949,7 @@ that is easily.
 This means that the keybinding should always be last.
 
 #+begin_src emacs-lisp
-(defun xl-bind%normalize-keybinding (clause)
+(defun xx-bind%normalize-keybinding (clause)
   "Return clause with proper keybinding."
   (append (-drop-last 2 clause)
 	  (-interleave '(:key :def) (-take-last 2 clause))))
@@ -2961,11 +2961,11 @@ This means that the keybinding should always be last.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%normalize-evil-state (clause)
+(defun xx-bind%normalize-evil-state (clause)
   "Return clause with proper evil-state."
   (pcase (-take-last 5 clause)
     (`(,(and (pred keywordp) ekey) :key ,_ :def ,_) t
-     `(,@(-drop-last 5 clause) :states ,(xl-bind%evil-keyword-to-states ekey)
+     `(,@(-drop-last 5 clause) :states ,(xx-bind%evil-keyword-to-states ekey)
        ,@(-take-last 4 clause)))
     (_ clause)))
 #+end_src
@@ -2978,15 +2978,15 @@ This means that the keybinding should always be last.
 Remember, that the goal of normalization is to end up with a list of plists with.
 
 #+begin_src emacs-lisp
-(defun xl-bind%flatten-plist-values (plist)
+(defun xx-bind%flatten-plist-values (plist)
   "Expand clause."
   (loopy (cons (key val . rest) plist #'cddr)
-	 (cond ((or (atom val) (xl-quoted-p val))
+	 (cond ((or (atom val) (xx-quoted-p val))
 		(append new (list key val)))
 	       ((= 1 (length val))
 		(append new (list key (car val))))
 	       (t
-		(expr tails (xl-bind%flatten-plist-values `(,key ,(cdr val) ,@rest)))
+		(expr tails (xx-bind%flatten-plist-values `(,key ,(cdr val) ,@rest)))
 		(subloop (list tail tails)
 			 (collect flattened (append new tail)))
 		(append new (list key (car val)))))
@@ -2999,7 +2999,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%make-proper-plist (list)
+(defun xx-bind%make-proper-plist (list)
   "Ensure every key in LIST has only one value."
   (loopy (with (list `(,@list :done)))
 	 (while list)
@@ -3010,7 +3010,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	       (t
 		(collect values elt)))
 	 (when (keywordp next)
-	   (append plist (list key (xl-dwim-single values)))
+	   (append plist (list key (xx-dwim-single values)))
 	   (expr values nil))
 	 (finally-return plist)))
 #+end_src
@@ -3021,7 +3021,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%merge-duplicate-plist-keys (plist)
+(defun xx-bind%merge-duplicate-plist-keys (plist)
   "Merge duplicate keys in PLIST."
   (iter (conses (key val . _) plist #'cddr)
 	(cond ((assoc key alist)
@@ -3032,7 +3032,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 	       (set var (list val))
 	       (collect alist (cons key var))))
 	(fret (loopy (list (key . var) alist)
-		     (append (list key (xl-dwim-single (symbol-value var))))))))
+		     (append (list key (xx-dwim-single (symbol-value var))))))))
 #+end_src
 
 ***** normalize the list
@@ -3041,7 +3041,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%normalize-plist (plist)
+(defun xx-bind%normalize-plist (plist)
   "Return the list normalized."
   (loopy (while plist)
 	 (expr key (pop plist))
@@ -3057,7 +3057,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%ensure-keymap (token)
+(defun xx-bind%ensure-keymap (token)
   (if (not (plist-get token :map))
       `(:map global-map ,@token)
     token))
@@ -3069,7 +3069,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%apply-prefix (token)
+(defun xx-bind%apply-prefix (token)
   (-let [(&plist :prefix :key) token]
     (if (and prefix key (stringp key))
 	`(:key ,(concat prefix "\s" key) ,@token)
@@ -3082,7 +3082,7 @@ Remember, that the goal of normalization is to end up with a list of plists with
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%process-prefix (plist)
+(defun xx-bind%process-prefix (plist)
   (loopy (cons (key val . _) plist #'cddr)
 	 (cond ((and (eq key :prefix) (listp val))
 		(append (list key (s-join "\s" val))))
@@ -3109,7 +3109,7 @@ itself. Some converters imply not using others. Some should only be used in
 certain circumstances.
 
 #+begin_src emacs-lisp
-(defvar xl-bind%converters
+(defvar xx-bind%converters
   '((evil-which-key which-key)
     which-key
     defer-map
@@ -3126,12 +3126,12 @@ certain circumstances.
 Code that is split into appropriate parts is easier to read and write.
 
 #+begin_src emacs-lisp
-(defun xl-bind%converters (token)
+(defun xx-bind%converters (token)
   "Return a list of converters for TOKEN."
-  (loopy (with (converters xl-bind%converters))
+  (loopy (with (converters xx-bind%converters))
 	 (list (name . exclude) (-map #'-list converters))
-	 (expr convert-fn (xl-symbol-intern 'xl-bind%convert- name))
-	 (expr pred (xl-symbol-intern 'xl-bind%predicate- name))
+	 (expr convert-fn (xx-symbol-intern 'xl-bind%convert- name))
+	 (expr pred (xx-symbol-intern 'xl-bind%predicate- name))
 	 (when (and (funcall pred token) (not (member name excluded)))
 	   (collect fns convert-fn)
 	   (append excluded exclude))
@@ -3144,7 +3144,7 @@ Code that is split into appropriate parts is easier to read and write.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%convert-token-to-forms (token converters)
+(defun xx-bind%convert-token-to-forms (token converters)
   "Convert TOKEN to a list of forms."
   (-let [(converter . rest) converters]
     (funcall (or converter #'ignore) token rest)))
@@ -3156,12 +3156,12 @@ Code that is split into appropriate parts is easier to read and write.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%binding-forms (tokens)
+(defun xx-bind%binding-forms (tokens)
   "Convert BIND-TOKENS to binding forms.
 Return a list of forms that binds keys specified by BIND-TOKENS."
   (loopy (list token tokens)
-	 (expr converters (xl-bind%converters token))
-	 (expr forms (xl-bind%convert-token-to-forms token converters))
+	 (expr converters (xx-bind%converters token))
+	 (expr forms (xx-bind%convert-token-to-forms token converters))
 	 (append forms)))
 #+end_src
 
@@ -3176,16 +3176,16 @@ Return a list of forms that binds keys specified by BIND-TOKENS."
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%predicate-which-key (token)
+(defun xx-bind%predicate-which-key (token)
   "Return non-nil if TOKEN has a which-key."
   (--all-p (plist-get token it) '(:key :map :wk :prefix)))
 
-(defun xl-bind%convert-which-key (token converters)
+(defun xx-bind%convert-which-key (token converters)
   "Add needed which-key form."
   (-let* (((&plist :key :map :wk :prefix) token))
     `((after! which-key
 	(which-key-add-keymap-based-replacements ,map ,prefix ,wk))
-      ,@(xl-bind%convert-token-to-forms token converters))))
+      ,@(xx-bind%convert-token-to-forms token converters))))
 #+end_src
 
 ****** evil which-key :evil:
@@ -3199,14 +3199,14 @@ priority over original keymap when the given state is enabled. You can access
 this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxiliary-keymap]].
 
 #+begin_src emacs-lisp
-(defun xl-bind%predicate-evil-which-key (token)
-  (and (xl-bind%predicate-which-key token)
-       (xl-bind%predicate-evil-bind token)))
+(defun xx-bind%predicate-evil-which-key (token)
+  (and (xx-bind%predicate-which-key token)
+       (xx-bind%predicate-evil-bind token)))
 
-(defun xl-bind%convert-evil-which-key (token converters)
+(defun xx-bind%convert-evil-which-key (token converters)
   "Return which key forms for an evil token."
   (loopy (with ((&plist :states :map :prefix :key :wk) token)
-	       (rest (xl-bind%convert-token-to-forms token converters)))
+	       (rest (xx-bind%convert-token-to-forms token converters)))
 	 (list state states)
 	 (expr keymap `(evil-get-auxiliary-keymap ,map ',state))
 	 (collect forms `(which-key-add-keymap-based-replacements ,keymap ,prefix ,wk))
@@ -3219,17 +3219,17 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%predicate-evil-bind (token)
+(defun xx-bind%predicate-evil-bind (token)
   "Return non-nil if TOKEN."
-  (and (xl-bind%predicate-bind token)
+  (and (xx-bind%predicate-bind token)
        (plist-get token :states)
        t))
 
-(cl-defun xl-bind%convert-evil-bind (token converters)
+(cl-defun xx-bind%convert-evil-bind (token converters)
   "Return evil binding form for TOKEN."
   (-let [(&plist :states :map :key :def) token]
     `((after! evil (evil-define-key* ',states ,map ,key ,def))
-      ,@(xl-bind%convert-token-to-forms token converters))))
+      ,@(xx-bind%convert-token-to-forms token converters))))
 #+end_src
 
 ****** bind
@@ -3238,14 +3238,14 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%predicate-bind (token)
+(defun xx-bind%predicate-bind (token)
   (-all-p (-partial #'plist-get token) '(:map :key :def)))
 
-(defun xl-bind%convert-bind (token converters)
+(defun xx-bind%convert-bind (token converters)
   "Add binding form for token."
   (-let [(&plist :prefix :map :key :def :states) token]
     `((define-key ,map ,key ,def)
-      ,@(xl-bind%convert-token-to-forms token converters))))
+      ,@(xx-bind%convert-token-to-forms token converters))))
 #+end_src
 
 ****** defer binding
@@ -3254,12 +3254,12 @@ this keymap via the function [[helpfn:evil-get-auxiliary-keymap][evil-get-auxili
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-bind%predicate-defer-map (token)
-  (xl-bind%predicate-bind token))
+(defun xx-bind%predicate-defer-map (token)
+  (xx-bind%predicate-bind token))
 
-(defun xl-bind%convert-defer-map (token converters)
+(defun xx-bind%convert-defer-map (token converters)
   `((with-deferred-map! ,(plist-get token :map)
-      ,@(xl-bind%convert-token-to-forms token converters))))
+      ,@(xx-bind%convert-token-to-forms token converters))))
 #+end_src
 
 ****** kbd
@@ -3272,13 +3272,13 @@ provide the data needed about each binding so that we can write our own custom
 function to generate binding forms. Obviously, this is very customizable.
 
 #+begin_src emacs-lisp
-(defun xl-bind%predicate-kbd (token)
+(defun xx-bind%predicate-kbd (token)
   (and (plist-get token :kbd) (not (vectorp (plist-get token :key))) t))
 
-(defun xl-bind%convert-kbd (token converters)
+(defun xx-bind%convert-kbd (token converters)
   (-let [(&plist :kbd :key) token]
     (-> (if kbd (map-insert token :key `(kbd ,key)) token)
-	(xl-bind%convert-token-to-forms converters))))
+	(xx-bind%convert-token-to-forms converters))))
 #+end_src
 
 ***** localleader :evil:
@@ -3294,12 +3294,12 @@ implement this macro as a =:localleader= keyword, so I can use just one macro,
 (defmacro bind-localleader! (&rest clause)
   "Apply localleader to bindings."
   `(bind!
-     ((:prefix ,XL-EMACS-LOCALLEADER-KEY ,XL-EMACS-LOCALLEADER-SHORT-KEY)
+     ((:prefix ,XX-EMACS-LOCALLEADER-KEY ,XL-EMACS-LOCALLEADER-SHORT-KEY)
       ,@clause)
-     ((:prefix ,XL-EMACS-LOCALLEADER-KEY ,XL-EMACS-LOCALLEADER-SHORT-KEY)
+     ((:prefix ,XX-EMACS-LOCALLEADER-KEY ,XL-EMACS-LOCALLEADER-SHORT-KEY)
       (:states insert emacs)
       ,@clause)
-     ((:prefix ,XL-EVIL-LOCALLEADER-KEY ,XL-EVIL-LOCALLEADER-SHORT-KEY)
+     ((:prefix ,XX-EVIL-LOCALLEADER-KEY ,XL-EVIL-LOCALLEADER-SHORT-KEY)
       (:states normal visual motion)
       ,@clause)))
 #+end_src
@@ -3316,17 +3316,17 @@ Finally, our main macro is here.
   "Define bindings based on CLAUSES."
   (declare (indent defun))
   `(progn
-     ,@(->> (xl-bind%read-clause (cons '(:kbd t) clauses))
-	    (-map #'xl-bind%normalize-keybinding)
-	    (-map #'xl-bind%normalize-evil-state)
-	    (-map #'xl-bind%make-proper-plist)
-	    (-mapcat #'xl-bind%flatten-plist-values)
-	    (-map #'xl-bind%merge-duplicate-plist-keys)
-	    (-map #'xl-bind%process-prefix)
-	    (-map #'xl-bind%apply-prefix)
-	    (-mapcat #'xl-bind%flatten-plist-values)
-	    (-map #'xl-bind%ensure-keymap)
-	    (xl-bind%binding-forms))))
+     ,@(->> (xx-bind%read-clause (cons '(:kbd t) clauses))
+	    (-map #'xx-bind%normalize-keybinding)
+	    (-map #'xx-bind%normalize-evil-state)
+	    (-map #'xx-bind%make-proper-plist)
+	    (-mapcat #'xx-bind%flatten-plist-values)
+	    (-map #'xx-bind%merge-duplicate-plist-keys)
+	    (-map #'xx-bind%process-prefix)
+	    (-map #'xx-bind%apply-prefix)
+	    (-mapcat #'xx-bind%flatten-plist-values)
+	    (-map #'xx-bind%ensure-keymap)
+	    (xx-bind%binding-forms))))
 #+end_src
 
 *** ensuring high keymap precedence
@@ -3352,14 +3352,14 @@ keybindings like evil. Otherwise, your bindings might not take effect
 immediately. This is why I set the advice dept to =-100=.
 
 #+begin_src emacs-lisp
-(defvar xl-override-mode-map (make-sparse-keymap))
+(defvar xx-override-mode-map (make-sparse-keymap))
 
-(define-minor-mode xl-override-mode
+(define-minor-mode xx-override-mode
   "Global minor mode for higher precedence evil keybindings."
-  :keymap xl-override-mode-map
+  :keymap xx-override-mode-map
   :global t)
 
-(xl-hook-add 'emacs-startup-hook #'xl-override-mode -100)
+(xx-hook-add 'emacs-startup-hook #'xl-override-mode -100)
 #+end_src
 
 **** take precedence over Emacs bindings
@@ -3371,7 +3371,7 @@ Looking at the [[https://www.gnu.org/software/emacs/manual/html_node/elisp/Searc
 there. The [[helpvar:emulation-mode-map-alists][emulation-mode-map-alists]] takes an ali.
 
 #+begin_src emacs-lisp
-(push '((xl-override-mode . xl-override-mode-map)) emulation-mode-map-alists)
+(push '((xx-override-mode . xl-override-mode-map)) emulation-mode-map-alists)
 #+end_src
 
 **** make an overriding map
@@ -3382,10 +3382,10 @@ there. The [[helpvar:emulation-mode-map-alists][emulation-mode-map-alists]] take
 The whole point of the leader bindings is that they be available everywhere and
 at all times. Accordingly, we want to ensure our leaders and all their child
 bindings take precedence over other Emacs bindings. To do this I create a keymap
-that will override all other keymaps, aptly named =XL-OVERRIDE-MAP=.
+that will override all other keymaps, aptly named =XX-OVERRIDE-MAP=.
 
 #+begin_src emacs-lisp
-(define-key xl-override-mode-map (kbd XL-EMACS-LEADER-KEY) #'xl/leader)
+(define-key xx-override-mode-map (kbd XL-EMACS-LEADER-KEY) #'xl/leader)
 #+end_src
 
 **** registering override map with evil :evil:
@@ -3393,7 +3393,7 @@ that will override all other keymaps, aptly named =XL-OVERRIDE-MAP=.
 :ID:       23b55b9c-ea38-485a-b986-ac62d60a6f75
 :END:
 
-To ensure that =xl-override-mode-map= takes priority over evil states, we need
+To ensure that =xx-override-mode-map= takes priority over evil states, we need
 to make it an intercept map for all evil states. In evil, intercept maps are
 maps that take priority (intercept) evil bindings when they have a different
 binding for the same key (this is opposed to =overriding-maps=, which completely
@@ -3401,9 +3401,9 @@ override an evil keymap).
 
 #+begin_src emacs-lisp
 (defhook! make-intercept-map (evil-mode-hook)
-  "Register `xl-override-map' as an intercept map."
+  "Register `xx-override-map' as an intercept map."
   (iter (each state '(normal motion visual insert emacs))
-	(evil-make-intercept-map xl-override-mode-map state t)))
+	(evil-make-intercept-map xx-override-mode-map state t)))
 #+end_src
 
 **** binding the leader keys to the prefix map :evil:
@@ -3418,9 +3418,9 @@ that have already been created by emacs (such as =*scratch*= and
 
 #+begin_src emacs-lisp
 (bind!
- (:map xl-override-mode-map)
- (:ie XL-EMACS-LEADER-KEY 'xl/leader)
- (:mnv XL-EVIL-LEADER-KEY 'xl/leader))
+ (:map xx-override-mode-map)
+ (:ie XX-EMACS-LEADER-KEY 'xl/leader)
+ (:mnv XX-EVIL-LEADER-KEY 'xl/leader))
 #+end_src
 
 *** execute extended command
@@ -3438,7 +3438,7 @@ super fast to press as well and even faster than =SPC SPC=.
 
 #+begin_src emacs-lisp
 (bind!
-  (:map xl-leader-map "SPC" #'execute-extended-command)
+  (:map xx-leader-map "SPC" #'execute-extended-command)
   (:n ";" #'execute-extended-command)
   ("A-x" #'execute-extended-command)
   ("M-x" #'execute-extended-command))
@@ -3457,7 +3457,7 @@ super fast to press as well and even faster than =SPC SPC=.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "a" :wk "app")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("c" #'org-capture)
   ((:prefix "o" :wk "arg")
    ("a" #'org-agenda)
@@ -3465,7 +3465,7 @@ super fast to press as well and even faster than =SPC SPC=.
    ("i" #'org-clock-in-last)
    ("o" #'org-clock-out)
    ("c" #'org-capture))
-  ("l" #'xl--log-open-log)
+  ("l" #'xx--log-open-log)
   ("e" #'eshell)
   ("E" #'xl/open-emacs-instance)
   ("d" #'deer)
@@ -3479,7 +3479,7 @@ super fast to press as well and even faster than =SPC SPC=.
 
 #+begin_src emacs-lisp
 (bind!
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   (:prefix "h" :wk "help")
   ("i" #'info)
   ("m" #'describe-mode)
@@ -3501,7 +3501,7 @@ I have kind of a loose definition of "toggle" in this headline.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "t" :wk "toggle")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("r" #'read-only-mode)
   ("t" #'load-theme)
   ("c" #'caps-lock-mode)
@@ -3518,7 +3518,7 @@ I have kind of a loose definition of "toggle" in this headline.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "b" :wk "buffer")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("w" #'save-buffer)
   ((:prefix "k" :wk "kill")
    ("c" #'kill-current-buffer)
@@ -3537,7 +3537,7 @@ I have kind of a loose definition of "toggle" in this headline.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "f" :wk "file")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("s" #'save-buffer)
   ("f" #'find-file)
   ("i" #'xl/switch-to-init-file)
@@ -3552,7 +3552,7 @@ I have kind of a loose definition of "toggle" in this headline.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "c" :wk "code")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("l" #'lispyville-comment-or-uncomment)
   ("c" #'lispyville-comment-or-uncomment))
 #+end_src
@@ -3565,7 +3565,7 @@ I have kind of a loose definition of "toggle" in this headline.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "e" :wk "eval")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("e" #'eval-expression))
 
 (bind-localleader!
@@ -3582,7 +3582,7 @@ I have kind of a loose definition of "toggle" in this headline.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "s" :wk "search")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ((:prefix "w" :wk "web")
    ("d" #'engine/search-duckduckgo)
    ("q" #'engine/search-qwant)
@@ -3602,7 +3602,7 @@ I have kind of a loose definition of "toggle" in this headline.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "v" :wk "version control")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ((:prefix "g" :wk "git-gutter+")
    ("u" #'git-gutter+-unstage-whole-buffer)
    ("n" #'git-gutter+-next-hunk)
@@ -3620,7 +3620,7 @@ I have kind of a loose definition of "toggle" in this headline.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "p" :wk "packages")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("i" #'straight-use-package)
   ("u" #'straight-pull-package)
   ("r" #'straight-rebuild-package)
@@ -3642,7 +3642,7 @@ prompt asking me if I'm sure.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "q" :wk "quit")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("q" #'save-buffers-kill-emacs)
   ("s" #'xl/quit-emacs-no-prompt)
   ("Q" #'evil-save-and-quit)     
@@ -3681,7 +3681,7 @@ which I find unnecessary and disorienting. This code suppresses this behavior.
 #+begin_src emacs-lisp
 (defafter! suppress-the-deletion-of-windows (org-capture)
   "Don't let the `org-capture' popup delete other windows."
-  (xl-gadvice-suppress-delete-windows #'org-capture))
+  (xx-gadvice-suppress-delete-windows #'org-capture))
 #+end_src
 
 ** TODO add a todo-keyword for adding a doc :doc:todo:
@@ -3986,16 +3986,16 @@ For now, I define these variables after org mode. These are important files and
 directories that I need to reference multiple times.
 
 #+begin_src emacs-lisp
-(defconst XL-ORG-DIR (f-full "~/Documents/org/")
+(defconst XX-ORG-DIR (f-full "~/Documents/org/")
   "Directory where org files are kept.")
 
-(defconst XL-CAPTURE-FILE (concat XL-ORG-DIR "capture.org")
+(defconst XX-CAPTURE-FILE (concat XL-ORG-DIR "capture.org")
   "Org file where capture template captures should go.")
 
-(defconst XL-CODE-FILE (concat XL-ORG-DIR "capture.org")
+(defconst XX-CODE-FILE (concat XL-ORG-DIR "capture.org")
   "Org file where code snippets should go.")
 
-(defconst XL-TEST-FILE (concat XL-ORG-DIR "test.org")
+(defconst XX-TEST-FILE (concat XL-ORG-DIR "test.org")
   "Org file tests should go.")
 #+end_src
 
@@ -4216,7 +4216,7 @@ This package lets you annotate files in a separate org file.
 
 #+begin_src emacs-lisp
 (use-package org-annotate-code
-  :set (org-annotate-code-org-file . (concat XL-ORG-DIR "annotations.org")))
+  :set (org-annotate-code-org-file . (concat XX-ORG-DIR "annotations.org")))
 #+end_src
 
 ** org-archive
@@ -4405,7 +4405,7 @@ template element as you're writing it.
 #+begin_src emacs-lisp
 (defafter! register-capture-file (org-capture)
   "Add the file I use for capturing to `org-agenda-files'."
-  (callf2 cl-adjoin XL-CAPTURE-FILE org-agenda-files :test #'string=))
+  (callf2 cl-adjoin XX-CAPTURE-FILE org-agenda-files :test #'string=))
 #+end_src
 
 *** DOC completing-read org-capture :bind:
@@ -4479,7 +4479,7 @@ Instead of passing in the string I use =org-ml= to print the string.
   (alet (doct '(("todo"
 		 :keys "t"
 		 :template org-capture%todo-template
-		 :file XL-CAPTURE-FILE
+		 :file XX-CAPTURE-FILE
 		 :prepend t
 		 :empty-lines 1)))
     (add-to-list 'org-capture-templates (car it))))
@@ -4500,7 +4500,7 @@ tracking the time you spend on a particular task.
   :hook (kill-emacs-hook . org-clock-save)
   :set
   (org-clock-persist      . 'history)
-  (org-clock-persist-file . (concat XL-CACHE-DIR "org-clock-save.el"))
+  (org-clock-persist-file . (concat XX-CACHE-DIR "org-clock-save.el"))
   (org-clock-in-resume    . t)
   :config
   (org-clock-persistence-insinuate))
@@ -4552,7 +4552,7 @@ This package displays a calendar.
   (org-agenda-include-diary . t)
   (org-agenda-text-search-extra-files . '(agenda-archives))
   (org-agenda-skip-unavailable-files  . t)
-  (org-agenda-files                   . (list XL-CAPTURE-FILE))
+  (org-agenda-files                   . (list XX-CAPTURE-FILE))
   (org-agenda-warning-days . 10)
   (org-agenda-start-on-weekday        . 0)
   (org-agenda-timegrid-use-ampm       . nil)
@@ -4697,7 +4697,7 @@ be exact. Therefore, I define a function I can use instead.
   "Refile to any file in my emacs config."
   (interactive)
   (let ((org-refile-targets))
-    (callf2 cl-adjoin (cons (xl-tangle-files) (cons :level 0)) org-refile-targets)
+    (callf2 cl-adjoin (cons (xx-tangle-files) (cons :level 0)) org-refile-targets)
     (call-interactively #'org-refile)))
 #+end_src
 
@@ -4756,7 +4756,7 @@ referenance org headlines.
   :set
   (org-id-locations-file-relative . t)
   (org-id-link-to-org-use-id      . 'create-if-interactive-and-no-custom-id)
-  (org-id-locations-file          . (concat XL-CACHE-DIR "org-id-locations"))
+  (org-id-locations-file          . (concat XX-CACHE-DIR "org-id-locations"))
   (org-id-files                   . (list (f-full "~/README.org"))))
 #+end_src
 
@@ -4917,7 +4917,7 @@ matches are only highlighted when they need to be.
 :END:
 
 #+begin_src emacs-lisp
-(xl-load-before-call 'orderless #'selectrum-mode)
+(xx-load-before-call 'orderless #'selectrum-mode)
 #+end_src
 
 *** prescient :cache:
@@ -4931,7 +4931,7 @@ This package.
 (use-package prescient
   :idle prescient--save
   :set
-  (prescient-save-file . (concat XL-CACHE-DIR "prescient-save-file"))
+  (prescient-save-file . (concat XX-CACHE-DIR "prescient-save-file"))
   :config
   (prescient-persist-mode))
 #+end_src
@@ -5144,7 +5144,7 @@ helm wrappers around existing commands.
 [[https://stackoverflow.com/questions/1511737/how-do-you-list-the-active-minor-modes-in-emacs][listing active minor modes]]
 
 #+begin_src emacs-lisp
-(defun xl-active-minor-modes ()
+(defun xx-active-minor-modes ()
   "Return active minor modes in current buffer."
   (-select (-andfn #'boundp #'symbol-value) minor-mode-list))
 #+end_src
@@ -5172,7 +5172,7 @@ When the user
 (defhook! setup-company-backends (company-mode-hook)
   "Set `company-backends' for the current buffer."
   (alet (company:backends-for-mode major-mode)
-    (xl-log "set up %S backends: %S" major-mode it)
+    (xx-log "set up %S backends: %S" major-mode it)
     (set (make-local-variable 'company-backends) it)))
 #+end_src
 
@@ -5184,7 +5184,7 @@ When the user
 #+begin_src emacs-lisp
 (cl-defun company:backends-for-mode (&optional (current-major-mode major-mode))
   "Return a list of company backends for major-mode."
-  (loopy (with (active-minor-modes (xl-active-minor-modes)))
+  (loopy (with (active-minor-modes (xx-active-minor-modes)))
 	 (list (mode type backends) company:backend-alist)
 	 (expr derived-p (and (eq type :derived) (derived-mode-p mode)))
 	 (expr mm-enabled-p (or (eq current-major-mode mode)
@@ -5215,7 +5215,7 @@ When the user
 :END:
 
 #+begin_src emacs-lisp
-(defhook! close-tooltip (xl-escape-hook)
+(defhook! close-tooltip (xx-escape-hook)
   "Close company tooltip."
   (when (and (boundp 'company-mode) (eq company-mode t))
     (company-abort)
@@ -5245,8 +5245,8 @@ When the user
 (use-package yasnippet
   :hook (prog-mode-hook . yas-minor-mode-on)
   :set
-  (yas-snippet-dirs . (list (concat XL-CACHE-DIR "snippets/")))
-  (yas-verbosity . (if xl-debug-p 3 0))
+  (yas-snippet-dirs . (list (concat XX-CACHE-DIR "snippets/")))
+  (yas-verbosity . (if xx-debug-p 3 0))
   (yas-indent-line . 'auto)
   (yas-prompt-functions . '(yas-completing-prompt yas-ido-prompt))
   (yas-use-menu . nil)
@@ -5510,9 +5510,9 @@ description and there's the case of a new one.
 #+begin_src emacs-lisp
 (use-package org-edit-paragraph
   :rule ("bottom" "org description" :newname "\\*Org Desc - .+")
-  :xl-config
+  :xx-config
   (after! (evil evil-surround)
-    (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-surround-mode)))
+    (xx-hook-add 'org-edit-paragraph:mode-hook #'evil-surround-mode)))
 #+end_src
 
 **** description bounds
@@ -5635,8 +5635,8 @@ know if this is the best way to declare these dependencies. It certaintly is
 efficient.
 
 #+begin_src emacs-lisp
-(xl-load-before-call 'org-ml #'org/dwim-edit-description)
-(xl-load-before-call 'edit-indirect #'org/dwim-edit-description)
+(xx-load-before-call 'org-ml #'org/dwim-edit-description)
+(xx-load-before-call 'edit-indirect #'org/dwim-edit-description)
 #+end_src
 
 **** edit description
@@ -5683,7 +5683,7 @@ where I don't do this.
 
 #+begin_src emacs-lisp
 (after! evil
-  (xl-hook-add 'org-edit-paragraph:mode-hook #'evil-insert-state))
+  (xx-hook-add 'org-edit-paragraph:mode-hook #'evil-insert-state))
 #+end_src
 
 **** custom hooks
@@ -5692,7 +5692,7 @@ where I don't do this.
 :END:
 
 #+begin_src emacs-lisp
-(xl-hook-add 'org-edit-paragraph:mode-hook
+(xx-hook-add 'org-edit-paragraph:mode-hook
 	     (list #'auto-capitalize-mode
 		   #'aggressive-fill-paragraph-mode
 		   #'org-link-minor-mode))
@@ -5759,7 +5759,7 @@ like that concern N number of things, where N could be 1 or more things.
 #+begin_src emacs-lisp
 (use-package plural
   :commands plural-make-plural
-  :xl-config
+  :xx-config
   (push '("\\`is\\'" . "are") plural-knowledge)
   (push '("\\`thas\\'" . "those") plural-knowledge)
   (push '("\\`this\\'" . "these") plural-knowledge))
@@ -5941,7 +5941,7 @@ address later.
 (use-package evil-magit
   :silence evil-magit-init
   :before-call magit-status
-  :xl-config
+  :xx-config
   (evil-magit-init)
   :set
   (evil-magit-state . 'normal))
@@ -6339,7 +6339,7 @@ commands (like [[helpfn:lispyville-delete][lispyville-delete]]) which preserve p
 :ID:       53a208ee-4389-4edd-ad46-02cd811f8d81
 :END:
 
-=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =xl-escape-hook=
+=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =xx-escape-hook=
 to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]] as advice to
 =lispyville-normal-state=.
 
@@ -6476,7 +6476,7 @@ great idea! It makes it really easy to see which parentheses go together.
 :ID:       6469110b-e5bf-4276-a9de-a5c1e1eb2385
 :END:
 
-=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =xl-escape-hook=
+=lispyville= binds escape to [[helpfn:lipyville-normal-state][lispyville-normal-state]]. So for =xx-escape-hook=
 to still happen on escape, I need to add [[helpfn:evil:escape-a][evil:escape-a]] as advice to
 =lispyville-normal-state=.
 
@@ -6641,7 +6641,7 @@ state and disables it everywhere in favor of normal state.
   (-let (((mode state) args))
     (funcall orig-fn mode (if (eq state 'motion) 'normal state))))
 
-(xl-advice-add #'evil-motion-state :override #'evil-normal-state)
+(xx-advice-add #'evil-motion-state :override #'evil-normal-state)
 #+end_src
 
 ***** cursors :cursor:
@@ -6682,11 +6682,11 @@ modeline indicator for this but I find that the cursor suffices.
 :END:
 
 After a theme is loaded, the cursor color won't automatically update. Therefore,
-I add a hook in [[helpvar:xl-after-load-theme-hook][xl-after-load-theme-hook]]. Now after a new theme is loaded, the
+I add a hook in [[helpvar:xx-after-load-theme-hook][xl-after-load-theme-hook]]. Now after a new theme is loaded, the
 cursor color will update.
 
 #+begin_src emacs-lisp
-(defhook! refresh-evil-cursor (xl-after-load-theme-hook)
+(defhook! refresh-evil-cursor (xx-after-load-theme-hook)
   "Enable cursor refreshing after theme change."
   (when (bound-and-true-p evil-mode)
     (evil-refresh-cursor)))
@@ -6732,7 +6732,7 @@ We want escape to be a "quit everything" keybinding.
   "Exits out of whatever is happening after escape."
   (cond ((minibuffer-window-active-p (minibuffer-window))
          (abort-recursive-edit))
-        ((run-hook-with-args-until-success 'xl-escape-hook))
+        ((run-hook-with-args-until-success 'xx-escape-hook))
         ((or defining-kbd-macro executing-kbd-macro) nil)
         (t (keyboard-quit))))
 #+end_src
@@ -6948,12 +6948,12 @@ hook variables use action verbs in their names not nouns. So the =exit= in
 
 #+begin_src emacs-lisp
 (defhook! boost-garbage-collection (minibuffer-setup-hook)
-  "Boost garbage collection settings to `XL-GC-CONS-THRESHOLD-MAX'."
-  (setq gc-cons-threshold XL-GC-CONS-THRESHOLD-MAX))
+  "Boost garbage collection settings to `XX-GC-CONS-THRESHOLD-MAX'."
+  (setq gc-cons-threshold XX-GC-CONS-THRESHOLD-MAX))
 
 (defhook! defer-garbage-collection (minibuffer-exit-hook :append t)
-  "Reset garbage collection settings to `xl-gc-cons-threshold' after delay."
-  (setq gc-cons-threshold XL-GC-CONS-THRESHOLD))
+  "Reset garbage collection settings to `xx-gc-cons-threshold' after delay."
+  (setq gc-cons-threshold XX-GC-CONS-THRESHOLD))
 #+end_src
 
 ** disable terminal initialization :setting:core:
@@ -6965,7 +6965,7 @@ According to Doom Emacs, when running emacs in terminal tty is *tremendously* sl
 
 #+begin_src emacs-lisp
 (unless (display-graphic-p)
-  (xl-advice-add #'tty-run-terminal-initialization :override #'ignore)
+  (xx-advice-add #'tty-run-terminal-initialization :override #'ignore)
   (defhook! init-tty (window-setup-hook)
     (advice-remove #'tty-run-terminal-initialization #'ignore)
     (tty-run-terminal-initialization (selected-frame) nil t)))
@@ -6979,7 +6979,7 @@ According to Doom Emacs, when running emacs in terminal tty is *tremendously* sl
 #+begin_src emacs-lisp
 (use-package server
   :set
-  (server-auth-dir . (concat XL-CACHE-DIR "server/")))
+  (server-auth-dir . (concat XX-CACHE-DIR "server/")))
 #+end_src
 
 ** prevent emacs from killing certain buffers
@@ -7006,7 +7006,7 @@ to [[https://github.com/rememberYou/.emacs.d][rememberYou's Emacs]].
 (defun startup%initial-buffer-choice ()
   "Return the initial buffer to be displayed.
 This function is meant to be used as the value of `initial-buffer-choice'."
-  (alet (if xl-debug-p "*xl-log*" "*scratch*")
+  (alet (if xx-debug-p "*xl-log*" "*scratch*")
     (get-buffer-create it)))
 #+end_src
 
@@ -7015,7 +7015,7 @@ This function is meant to be used as the value of `initial-buffer-choice'."
 :ID:       36e2113f-a28f-4ef2-bb90-141f82291c91
 :END:
 
-I find it convenient to be able to view the init time in the =*xl-log*=
+I find it convenient to be able to view the init time in the =*xx-log*=
 buffer. Speed is important to me and I want to know how fast my Emacs is at
 initializing. :race-car:
 
@@ -7025,7 +7025,7 @@ circumstances. The one I'm referring to now is with general prefix bindings.
 #+begin_src emacs-lisp
 (defhook! log-init-time (emacs-startup-hook)
   "Log the init time."
-  (xl-log "emacs-init-time: %s" (emacs-init-time)))
+  (xx-log "emacs-init-time: %s" (emacs-init-time)))
 #+end_src
 
 ** utf-8 text encoding
@@ -7064,7 +7064,7 @@ or =no= to instead allow me to type =y= or =p=. [[helpfn:yes-or-no-p][yes-or-no-
 source code.
 
 #+begin_src emacs-lisp
-(xl-advice-add #'yes-or-no-p :override #'y-or-n-p)
+(xx-advice-add #'yes-or-no-p :override #'y-or-n-p)
 #+end_src
 
 ** recursive minibuffers :minibuffer:
@@ -7201,7 +7201,7 @@ config file as opposed to having this file. Therefore, I set it to [[;][null-dev
 (use-package cus-edit
   :set
   (custom-file            . null-device)
-  (custom-theme-directory . (concat XL-LOCAL-DIR "themes/")))
+  (custom-theme-directory . (concat XX-LOCAL-DIR "themes/")))
 #+end_src
 
 ** startup :startup:
@@ -7316,13 +7316,13 @@ will change.
 #+begin_src emacs-lisp
 (use-package files
   :set
-  (auto-save-file-name-transforms . `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
+  (auto-save-file-name-transforms . `((".*" ,(concat XX-CACHE-DIR "auto-save-list/") t)))
   (auto-save-interval                 . 300)
   (auto-save-default                  . nil)
   (auto-save-timeout                  . 30)
   (confirm-nonexistent-file-or-buffer . nil)
   (backup-by-copying-when-linked      . t)
-  (backup-directory-alist             . (list (cons ".*" (concat XL-CACHE-DIR "backup/"))))
+  (backup-directory-alist             . (list (cons ".*" (concat XX-CACHE-DIR "backup/"))))
   (require-final-newline              . nil)
   (delete-old-versions                . t)
   (auto-mode-case-fold                . nil)
@@ -7400,7 +7400,7 @@ executable to run.
 #+begin_src emacs-lisp
 (use-package dmenu
   :commands dmenu
-  :set (dmenu-save-file . (concat XL-CACHE-DIR "dmenu-itmes")))
+  :set (dmenu-save-file . (concat XX-CACHE-DIR "dmenu-itmes")))
 #+end_src
 
 ** TODO origami
@@ -7531,19 +7531,19 @@ The name for the screenshot.
 :END:
 
 #+begin_src emacs-lisp
-(defvar xl-screenshot-dir "~/.tangld/multimedia/screenshots/")
-(defun xl-screenshot-dir () xl-screenshot-dir)
+(defvar xx-screenshot-dir "~/.tangld/multimedia/screenshots/")
+(defun xx-screenshot-dir () xl-screenshot-dir)
 #+end_src
 
-***** xl-screenshot-path
+***** xx-screenshot-path
 :PROPERTIES:
 :ID:       a6a75a8c-8d00-4f26-9df0-7f24af577e87
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-screenshot-path (name)
+(defun xx-screenshot-path (name)
   "Return the full path where screenshot named NAME should go."
-  (format "%s%s.png" (xl-screenshot-dir) name))
+  (format "%s%s.png" (xx-screenshot-dir) name))
 #+end_src
 
 ***** whether to prompt for screenshots
@@ -7552,7 +7552,7 @@ The name for the screenshot.
 :END:
 
 #+begin_src emacs-lisp
-(defvar xl-prompt-for-screenshot-name-p t
+(defvar xx-prompt-for-screenshot-name-p t
   "If non-nil, prompt for screenshot name.")
 #+end_src
 
@@ -7562,12 +7562,12 @@ The name for the screenshot.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-prompt-screenshot-name ()
+(defun xx-prompt-screenshot-name ()
   "Prompt for screenshot name."
-  (when xl-prompt-for-screenshot-name-p
+  (when xx-prompt-for-screenshot-name-p
     (alet (read-string "Image Name: ")
       (unless (string-empty-p it)
-	(xl-screenshot-path it)))))
+	(xx-screenshot-path it)))))
 #+end_src
 
 ***** default screenshot name
@@ -7576,10 +7576,10 @@ The name for the screenshot.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-default-screenshot-name ()
+(defun xx-default-screenshot-name ()
   "Return the default screenshot name."
   (alet (format-time-string "%Y-%m-%d-%H%M%S" (current-time))
-    (xl-screenshot-path it)))
+    (xx-screenshot-path it)))
 #+end_src
 
 **** interactive screenshot functions
@@ -7601,7 +7601,7 @@ and then prompt to rename the file afterwards.
 (defun xl/prompt-screenshot-name-toggle ()
   "Toggle whether to prompt for screenshot name."
   (interactive)
-  (setq xl-prompt-for-screenshot-name-p (not xl-prompt-for-screenshot-name-p)))
+  (setq xx-prompt-for-screenshot-name-p (not xl-prompt-for-screenshot-name-p)))
 #+end_src
 
 ***** fullscreen
@@ -7620,8 +7620,8 @@ otherwise you.
 (defun xl/take-fullscreen-screenshot ()
   "Take a fullscreen screenshot."
   (interactive)
-  (let* ((name (or (xl-prompt-screenshot-name) (xl-default-screenshot-name)))
-	 (path (f-expand name (xl-screenshot-dir))))
+  (let* ((name (or (xx-prompt-screenshot-name) (xl-default-screenshot-name)))
+	 (path (f-expand name (xx-screenshot-dir))))
     (alet `(lambda ()
 	     (call-process "maim" nil nil nil "-u" ,path)
 	     (when (file-exists-p ,path)
@@ -7638,8 +7638,8 @@ otherwise you.
 (defun xl/take-window-screenshot ()
   "Take a screenshot of the current Emacs window."
   (interactive)
-  (-let* ((name (or (xl-prompt-screenshot-name) (xl-default-screenshot-name)))
-	  (path (f-expand name (xl-screenshot-dir)))
+  (-let* ((name (or (xx-prompt-screenshot-name) (xl-default-screenshot-name)))
+	  (path (f-expand name (xx-screenshot-dir)))
 	  ((x y w h) (window-pixel-edges))
 	  (geometry (format "%dx%d+%d+%d" w h x y)))
     (sleep-for 1)
@@ -7666,7 +7666,7 @@ generally faster and more "modern".
   :rule ("right" "elfeed" :newname "\\*elfeed.+")
   :commands elfeed
   :set
-  (elfeed-db-directory           . (concat XL-CACHE-DIR "elfeed"))
+  (elfeed-db-directory           . (concat XX-CACHE-DIR "elfeed"))
   (elfeed-search-title-max-width . 100))
 #+end_src
 
@@ -7687,7 +7687,7 @@ generally faster and more "modern".
 #+begin_src emacs-lisp
 (use-package elfeed-org
   ;; :init
-  ;; (defvar elfeed-org%public-newsfeed-file (xl-org-dir "newsfeeds.org")
+  ;; (defvar elfeed-org%public-newsfeed-file (xx-org-dir "newsfeeds.org")
   ;;   "Newsfeeds.")
   ;; :set
   ;; (rmh-elfeed-org-files . (list elfeed-org%public-newsfeed-file))
@@ -7746,7 +7746,7 @@ These are my newsfeed for =elfeed-org=.
   (emms-source-file-default-directory       . "~/Multimedia/music")
   (emms-playlist-buffer-name                . "*EMMS-PLAYLIST*")
   (emms-seek-seconds                        . 5)
-  (emms-directory                           . (concat XL-CACHE-DIR "emms/"))
+  (emms-directory                           . (concat XX-CACHE-DIR "emms/"))
   (emms-player-list                         . '(emms-player-mpv)))
 #+end_src
 
@@ -8101,7 +8101,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
   (savehist-save-minibuffer-history . t)
   (savehist-additional-variables    . '(kill-ring search-ring regexp-search-ring))
   (savehist-autosave-interval       . nil)
-  (savehist-file                    . (concat XL-CACHE-DIR "savehist")))
+  (savehist-file                    . (concat XX-CACHE-DIR "savehist")))
 #+end_src
 
 *** unpropertize kill ring
@@ -8126,7 +8126,7 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 (use-package ellocate
   :commands ellocate
   :set
-  (ellocate-scan-dirs . `(("~/" . ,(concat XL-CACHE-DIR "ellocate"))))
+  (ellocate-scan-dirs . `(("~/" . ,(concat XX-CACHE-DIR "ellocate"))))
   (ellocate-gc-mem    . most-positive-fixnum))
 #+end_src
 
@@ -8142,10 +8142,10 @@ again, you are taken to the location you left off. This is very convenient.
 #+begin_src emacs-lisp
 (use-package saveplace
   :after-call after-find-file
-  :xl-config
+  :xx-config
   (save-place-mode)
   :set
-  (save-place-file . (concat XL-CACHE-DIR "saveplace"))
+  (save-place-file . (concat XX-CACHE-DIR "saveplace"))
   (save-place-limit . nil))
 #+end_src
 
@@ -8171,7 +8171,7 @@ have to set out to look for a file with =dired=.
   :set
   (recentf-max-menu-items    . 0)
   (recentf-max-saved-items   . 700)
-  (recentf-save-file         . (concat XL-CACHE-DIR "recentf"))
+  (recentf-save-file         . (concat XX-CACHE-DIR "recentf"))
   (recentf-auto-cleanup      . (* 60 10))
   (recentf-filename-handlers . '(file-truename abbreviate-file-name))
   :config
@@ -8336,7 +8336,7 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 (use-package eshell
   :rule ("bottom" "eshell" :newname "\\*eshell\\*")
   :set
-  (eshell-directory-name             . (concat XL-CACHE-DIR "eshell/"))
+  (eshell-directory-name             . (concat XX-CACHE-DIR "eshell/"))
   (eshell-history-file-name          . (concat eshell-directory-name "history"))
   (eshell-banner-message             . "")
   (eshell-prefer-lisp-functions      . nil)
@@ -8496,7 +8496,7 @@ afterwards.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "w" :wk "window")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("h" #'windmove-left)
   ("j" #'windmove-down)
   ("k" #'windmove-up)
@@ -8541,7 +8541,7 @@ afterwards.
 #+begin_src emacs-lisp
 (bind!
   (:prefix "w")
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   ("M" #'maximize-window)
   ("m" #'minimize-window)
   ("b" #'window-balance)
@@ -8569,11 +8569,11 @@ afterwards.
 (use-package desktop
   :set
   (desktop-save                 . t)
-  (desktop-dirname              . XL-CACHE-DIR)
+  (desktop-dirname              . XX-CACHE-DIR)
   (desktop-auto-save-timeout    . auto-save-timeout)
   (desktop-base-file-name       . "emacs.desktop")
   (desktop-base-lock-name       . "emacs.desktop.lock")
-  (desktop-path                 . (list XL-CACHE-DIR))
+  (desktop-path                 . (list XX-CACHE-DIR))
   (desktop-missing-file-warning . nil))
 #+end_src
 
@@ -8592,7 +8592,7 @@ really have been done by =desktop.el= but oh well.
 :END:
 
 #+begin_src emacs-lisp
-(defvar desktop:base-dir (concat XL-CACHE-DIR "desktops/")
+(defvar desktop:base-dir (concat XX-CACHE-DIR "desktops/")
   "Directory where desktops should go.")
 #+end_src
 
@@ -8729,7 +8729,7 @@ that it's not a lisp object; implying that it is not.
 
 #+begin_src emacs-lisp
 (bind!
-  (:map xl-leader-map)
+  (:map xx-leader-map)
   (:prefix "r" :wk "workspace")
   ("c" #'wg-create-workgroup)
   ("b" #'wg-switch-to-workgroup)
@@ -8763,7 +8763,7 @@ that it's not a lisp object; implying that it is not.
   (wg-control-frames                     . nil)
   (wg-session-load-on-start              . nil)
   (wg-flag-modified                      . nil)
-  (wg-session-file                       . (concat XL-CACHE-DIR "wg-session")))
+  (wg-session-file                       . (concat XX-CACHE-DIR "wg-session")))
 #+end_src
 
 *** tab-bar-mode
@@ -8843,7 +8843,7 @@ If it's not possible, abort initialization gracefully."
 	;; Enable the clipboard.
 	(progn (require 'exwm-systemtray)
 	       (exwm-systemtray-enable))
-      (xl-log "Another window manager is present (or something went wrong)."))))
+      (xx-log "Another window manager is present (or something went wrong)."))))
 #+end_src
 
 *** exwm-evil-firefox :browser:
@@ -9142,8 +9142,8 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
 (use-package tramp
   :set
   (tramp-backup-directory-alist . backup-directory-alist)
-  (tramp-persistency-file-name  . (concat XL-CACHE-DIR "tramp-persistency.el"))
-  (tramp-auto-save-directory    . (concat XL-CACHE-DIR "tramp-auto-save/")))
+  (tramp-persistency-file-name  . (concat XX-CACHE-DIR "tramp-persistency.el"))
+  (tramp-auto-save-directory    . (concat XX-CACHE-DIR "tramp-auto-save/")))
 #+end_src
 
 ** restart-emacs
@@ -9182,7 +9182,7 @@ function?
 #+begin_src emacs-lisp
 (use-package bookmark
   :set
-  (bookmark-default-file . (concat XL-CACHE-DIR "bookmarks")))
+  (bookmark-default-file . (concat XX-CACHE-DIR "bookmarks")))
 #+end_src
 
 ** nsm
@@ -9193,7 +9193,7 @@ function?
 #+begin_src emacs-lisp
 (use-package nsm
   :set
-  (nsm-settings-file . (concat XL-CACHE-DIR "network-settings.data")))
+  (nsm-settings-file . (concat XX-CACHE-DIR "network-settings.data")))
 #+end_src
 
 ** mouse :mouse:
@@ -9228,7 +9228,7 @@ https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-pl
 
 #+begin_src emacs-lisp
 (use-package gv
-  :xl-config
+  :xx-config
   (gv-define-simple-setter plist-get plist-put))
 #+end_src
 
@@ -9278,7 +9278,7 @@ Non-nil means animated images loop forever, rather than playing once.
 (use-package bytecomp
   :set
   (byte-compile-warnings . '(not free-vars unresolved noruntime lexical make-local))
-  (byte-compile-verbose  . xl-debug-p))
+  (byte-compile-verbose  . xx-debug-p))
 #+end_src
 
 ** url :cache:
@@ -9289,8 +9289,8 @@ Non-nil means animated images loop forever, rather than playing once.
 #+begin_src emacs-lisp
 (use-package url
   :set
-  (url-cache-directory         . (concat XL-CACHE-DIR "url/cache/"))
-  (url-configuration-directory . (concat XL-CACHE-DIR "url/configuration/")))
+  (url-cache-directory         . (concat XX-CACHE-DIR "url/cache/"))
+  (url-configuration-directory . (concat XX-CACHE-DIR "url/configuration/")))
 #+end_src
 
 ** ffap
@@ -9375,9 +9375,9 @@ are done before setting the =gc-cons-threshold= back to a normal value.
   :hook emacs-startup-hook
   :set
   (gcmh-idle-delay          . 5)
-  (gcmh-verbose             . xl-debug-p)
-  (gcmh-high-cons-threshold . XL-GC-CONS-THRESHOLD)
-  (gcmh-low-cons-threshold  . XL-GC-CONS-THRESHOLD-MIN))
+  (gcmh-verbose             . xx-debug-p)
+  (gcmh-high-cons-threshold . XX-GC-CONS-THRESHOLD)
+  (gcmh-low-cons-threshold  . XX-GC-CONS-THRESHOLD-MIN))
 #+end_src
 
 ** readme org file
@@ -9444,14 +9444,14 @@ Inhibit accidentally setting font size too high or too low."
   (let* ((old-size (/ (face-attribute 'default :height) 10))
          (prompt "The font size is currently %d. What do you want to change it to? ")
          (new-size (string-to-number (read-string (format prompt old-size)))))
-    (cond ((> new-size XL-FONT-MAX-SIZE)
-	   ;; (message "That font size is too large. It should be below %d." XL-FONT-MAX-SIZE)
+    (cond ((> new-size XX-FONT-MAX-SIZE)
+	   ;; (message "That font size is too large. It should be below %d." XX-FONT-MAX-SIZE)
 	   (call-interactively #'xl/set-font-size))
-	  ((< new-size XL-FONT-MIN-SIZE)
-	   ;; (message "That font size is too small. It should be above %d." XL-FONT-MIN-SIZE)
+	  ((< new-size XX-FONT-MIN-SIZE)
+	   ;; (message "That font size is too small. It should be above %d." XX-FONT-MIN-SIZE)
 	   (call-interactively #'xl/set-font-size))
 	  (t
-	   (xl-set-font-size new-size)
+	   (xx-set-font-size new-size)
 	   (message "Font set from %d to %d." old-size new-size)))))
 #+end_src
 
@@ -9478,7 +9478,7 @@ Inhibit accidentally setting font size too high or too low."
 
 There is also no interactive function for setting the font face.
 
-I will note that I use [[helpfn:xl-list-fonts][x-list-fonts]] intentionally, because it gives you options.
+I will note that I use [[helpfn:xx-list-fonts][x-list-fonts]] intentionally, because it gives you options.
 
 #+begin_src emacs-lisp
 (defun xl/set-font-face ()
@@ -9604,10 +9604,10 @@ This is annoying, but minor. =mu4e= itself is a great package.
 :END:
 
 #+begin_src emacs-lisp
-(defun xl-mail-dir (&rest others)
+(defun xx-mail-dir (&rest others)
   (apply #'concat (f-full "~/.mail") others))
 
-(defalias 'mu4e%mail-dir 'xl-mail-dir)
+(defalias 'mu4e%mail-dir 'xx-mail-dir)
 #+end_src
 
 *** BUG list email accounts
@@ -9899,7 +9899,7 @@ a headline is folded. But that's a bit complicated. It's easier to do away with
 the colors for now.
 
 #+begin_src emacs-lisp
-(defhook! remove-org-block-line-background (xl-after-load-theme-hook)
+(defhook! remove-org-block-line-background (xx-after-load-theme-hook)
   "Remove org block delimiter color.
 Set the background of the faces `org-block-begin-line' and `org-block-end-line'
 to the default face background."
@@ -9953,9 +9953,9 @@ something. Setting it to =nil= makes the frame start at the size you specified.
 (use-package transient
   :set
   (transient-default-level . 5)
-  (transient-levels-file . (concat XL-CACHE-DIR "transient/levels"))
-  (transient-values-file . (concat XL-CACHE-DIR "transient/values"))
-  (transient-history-file . (concat XL-CACHE-DIR "transient/history")))
+  (transient-levels-file . (concat XX-CACHE-DIR "transient/levels"))
+  (transient-values-file . (concat XX-CACHE-DIR "transient/values"))
+  (transient-history-file . (concat XX-CACHE-DIR "transient/history")))
 #+end_src
 
 ** emojify :icon:appearance:
@@ -9972,7 +9972,7 @@ documentation *much* more fun. :joy-cat:
 (use-package emojify
   :hook org-mode-hook
   :set
-  (emojify-emojis-dir . (concat XL-CACHE-DIR "emojis/")))
+  (emojify-emojis-dir . (concat XX-CACHE-DIR "emojis/")))
 #+end_src
 
 ** which-key :interface:
@@ -10040,7 +10040,7 @@ Otherwise, you might find (as I did) that switching themes might reset your font
 size to its default value.
 
 #+begin_src emacs-lisp
-(defun xl-set-font-size (size)
+(defun xx-set-font-size (size)
   "Set the font size for the current frame."
   (let ((fs (font-spec :name (frame-parameter nil 'font))))
     (font-put fs :size size)
@@ -10061,11 +10061,11 @@ I could not read anything. Here I declare font size bounds I should never go
 outside of.
 
 #+begin_src emacs-lisp
-(defconst XL-FONT-MAX-SIZE 30
+(defconst XX-FONT-MAX-SIZE 30
   "Maximum font size.
 The font size that `xl/set-font-size' should never go above.")
 
-(defconst XL-FONT-MIN-SIZE 11
+(defconst XX-FONT-MIN-SIZE 11
   "Minimum font size.
 The font size that `xl/set-font-size' should never go below.")
 #+end_src
@@ -10174,7 +10174,7 @@ When I'm using the dashboard.
 :ID:       2149b948-277f-4490-a11f-7f2fb140dea4
 :END:
 
-[[helpvar:xl-init-time][xl-init-time]] is more accurate than dashboard's init time measure. So I use it
+[[helpvar:xx-init-time][xl-init-time]] is more accurate than dashboard's init time measure. So I use it
 instead.
 
 #+begin_src emacs-lisp :tangle no
@@ -10295,7 +10295,7 @@ makes emacs feel like a window manager with gaps.
 :END:
 
 #+begin_src emacs-lisp
-(defhook! update-window-divider (xl-after-load-theme-hook)
+(defhook! update-window-divider (xx-after-load-theme-hook)
   "Ensure window divider persists after theme change."
   (unless (bound-and-true-p window-divider-mode)
     (window-divider-mode 1)))
@@ -10354,6 +10354,6 @@ documentation *much* more fun. :joy-cat:
   :hook org-mode-hook
   ;; :on-install (emojify-in)
   :set
-  (emojify-emojis-dir . (concat XL-CACHE-DIR "emojis/")))
+  (emojify-emojis-dir . (concat XX-CACHE-DIR "emojis/")))
 #+end_src
 
