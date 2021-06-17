@@ -5040,12 +5040,11 @@ like that concern N number of things, where N could be 1 or more things.
 :END:
 
 #+begin_src emacs-lisp
-(use-package spell-number
-  :set
-  (spelln-language          . 'english-us)
-  (spelln-country           . 'united-states)
-  (spelln-period-character  . ?,)
-  (spelln-decimal-character . ?.))
+(before! spell-number
+  (setq spelln-language 'english-us)
+  (setq spelln-country 'united-states)
+  (setq spelln-period-character 44)
+  (setq spelln-decimal-character 46))
 #+end_src
 
 ** backups and saving :backup:
