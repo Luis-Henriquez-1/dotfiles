@@ -1148,12 +1148,10 @@ play.
 :END:
 
 #+begin_src emacs-lisp
-(use-package loopy
-  :demand t
-  :init
-  (add-to-list 'loopy-default-flags '-split)
-  (loopy-defalias 'fret 'finally-return)
-  (loopy-defalias 'ret 'return))
+(require 'loopy)
+(add-to-list 'loopy-default-flags '-split)
+(loopy-defalias 'fret 'finally-return)
+(loopy-defalias 'ret 'return)
 #+end_src
 
 ***** iter
