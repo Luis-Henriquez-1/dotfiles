@@ -6213,8 +6213,6 @@ Why not just go to the end of the ="= like any other around operator?
 [[https://github.com/bling/evil-visualstar][evil-visualstar]]
 
 #+begin_src emacs-lisp
-(use-package evil-visualstar)
-
 (bind! (:map evil-visual-state-map)
   ("#" #'evil-visualstar/begin-search-backward)
   ("*" #'evil-visualstar/begin-search-forward))
