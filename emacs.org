@@ -3870,23 +3870,24 @@ tracking the time you spend on a particular task.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-agenda
-  :idle-require t
-  :rule ("top" "org agenda" :newname "\\*Org Agenda\\*")
-  :before-call (org-ql . org-agenda)
-  :gc-pause org-agenda-list
-  :gadvice (org-agenda-get-restriction-and-command . suppress-delete-windows)
-  :set
-  (org-agenda-include-diary . t)
-  (org-agenda-text-search-extra-files . '(agenda-archives))
-  (org-agenda-skip-unavailable-files  . t)
-  (org-agenda-files                   . (list XX-CAPTURE-FILE))
-  (org-agenda-warning-days . 10)
-  (org-agenda-start-on-weekday        . 0)
-  (org-agenda-timegrid-use-ampm       . nil)
-  (org-agenda-time-leading-zero       . t)
-  (org-agenda-dim-blocked-tasks       . t)
-  (org-agenda-inhibit-startup         . t))
+(xl-load-before-call 'org-ql #'org-agenda)
+
+(defbefore! org-agenda
+  (dbc-add-rule "top" "org agenda" :newname "\\*Org Agenda\\*")
+  (xl-gadvice-pause-garbage-collection #'org-agenda-list)
+  (xl-gadvice-suppress-delete-windows #'org-agenda-get-restriction-and-command)
+  (setq org-agenda-include-diary t)
+  (setq org-agenda-text-search-extra-files
+	'(agenda-archives))
+  (setq org-agenda-skip-unavailable-files t)
+  (setq org-agenda-files
+	(list XL-CAPTURE-FILE))
+  (setq org-agenda-warning-days 10)
+  (setq org-agenda-start-on-weekday 0)
+  (setq org-agenda-timegrid-use-ampm nil)
+  (setq org-agenda-time-leading-zero t)
+  (setq org-agenda-dim-blocked-tasks t)
+  (setq org-agenda-inhibit-startup t))
 #+end_src
 
 *** respect display-buffer :popup:
