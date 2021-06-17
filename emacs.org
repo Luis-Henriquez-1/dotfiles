@@ -4752,9 +4752,8 @@ newline.
 :END:
 
 #+begin_src emacs-lisp
-(use-package paragraph
-  :set
-  (sentence-end-double-space . nil))
+(before! paragraph
+  (setq sentence-end-double-space nil))
 #+end_src
 
 ** edit-indirect :interface:extension:
