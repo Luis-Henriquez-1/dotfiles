@@ -5278,6 +5278,17 @@ larger text objects. It's saves me keystrokes.
 :ID:       1c370582-6d30-44fb-a421-47885b99d110
 :END:
 
+*** when to load
+:PROPERTIES:
+:ID:       e045187a-a1d4-4bc3-bb6e-6d0d3168baef
+:END:
+
+#+begin_src emacs-lisp
+(xl-hook-add (list 'prog-mode-hook 'eshell-mode-hook 'ielm-mode-hook) #'smartparens-strict-mode)
+(xl-load-before-call 'smartparens #'evil-expression)
+(xl-load-before-call 'smartparens #'ielm-mode)
+#+end_src
+
 *** DOC disable =smartparens-navigate-skip-match=
 :PROPERTIES:
 :ID:       512a1623-d5ec-4af4-8fc3-471f4fe3dcde
