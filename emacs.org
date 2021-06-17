@@ -5584,10 +5584,9 @@ great idea! It makes it really easy to see which parentheses go together.
 :END:
 
 #+begin_src emacs-lisp
-(use-package paren
-  :hook (prog-mode . show-paren-mode)
-  :set
-  (show-paren-delay . 0))
+(xl-hook-add 'prog-mode-hook 'show-paren-mode)
+
+(before! paren (setq show-paren-delay 0))
 #+end_src
 
 ** lispyville :parens:lisp:navigation:
