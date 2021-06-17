@@ -3748,8 +3748,7 @@ it easy to forget what a certain element meant or to accidentally omit a capture
 template element as you're writing it.
 
 #+begin_src emacs-lisp
-(use-package doct
-  :before-call org-capture)
+(xl-load-before-call 'doct #'org-capture)
 #+end_src
 
 *** register org capture files
