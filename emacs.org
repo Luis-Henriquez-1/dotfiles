@@ -4090,13 +4090,11 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-superstar
-  :hook org-mode-hook
-  :set
-  (org-superstar-leading-bullet     . ?\s)
-  (org-superstar-special-todo-items . t))
+(xl-hook-add 'org-mode-hook #'org-superstar-mode)
 
-+(xl-hook-add 'org-mode-hook #'org-superstar-mode)
+(before! org-superstar
+  (setq org-superstar-leading-bullet ?\s)
+  (setq org-superstar-special-todo-items t))
 #+end_src
 
 *** org-fancy-priorities
