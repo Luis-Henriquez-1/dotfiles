@@ -6451,26 +6451,6 @@ will change.
   (setq confirm-kill-emacs #'y-or-n-p)
   (setq trash-directory (expand-file-name "Trash" "~"))
   (setq version-control nil))
-
-(use-package files
-  :set
-  (auto-save-file-name-transforms . `((".*" ,(concat XX-CACHE-DIR "auto-save-list/") t)))
-  (auto-save-interval                 . 300)
-  (auto-save-default                  . nil)
-  (auto-save-timeout                  . 30)
-  (confirm-nonexistent-file-or-buffer . nil)
-  (backup-by-copying-when-linked      . t)
-  (backup-directory-alist             . (list (cons ".*" (concat XX-CACHE-DIR "backup/"))))
-  (require-final-newline              . nil)
-  (delete-old-versions                . t)
-  (auto-mode-case-fold                . nil)
-  (confirm-kill-emacs                 . #'y-or-n-p)
-  (backup-by-copying                  . t)
-  (make-backup-files                  . nil)
-  (kept-old-versions                  . 2)
-  (kept-new-versions                  . 2)
-  (trash-directory                    . (expand-file-name "Trash" "~"))
-  (version-control                    . nil))
 #+end_src
 
 ** loaddefs :core:setting:
