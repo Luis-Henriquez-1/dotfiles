@@ -4103,8 +4103,7 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-(use-package org-fancy-priorities
-  :hook org-mode-hook)
+(xl-hook-add 'org-mode-hook (list #'org-pretty-tags-mode #'org-fancy-priorities-mode))
 #+end_src
 
 *** org-pretty-tags
