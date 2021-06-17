@@ -6453,6 +6453,35 @@ will change.
   (setq version-control nil))
 #+end_src
 
+** autosaving
+:PROPERTIES:
+:ID:       d8cc1b8f-8ce2-4d79-b93b-55d457fb3229
+:END:
+
+#+begin_src emacs-lisp
+(defbefore! enable-auto-save-settings (file)
+  (setq auto-save-file-name-transforms `((".*" ,(concat XL-CACHE-DIR "auto-save-list/") t)))
+  (setq auto-save-interval 300)
+  (setq auto-save-default nil)
+  (setq auto-save-timeout 30))
+#+end_src
+
+** backup settings
+:PROPERTIES:
+:ID:       a88a860a-a65a-457a-81c5-cec3c44c486a
+:END:
+
+#+begin_src emacs-lisp
+(defbefore! enable-backup-settings (file)
+  (setq delete-old-versions t)
+  (setq kept-old-versions 2)
+  (setq kept-new-versions 2)
+  (setq make-backup-files nil)
+  (setq backup-by-copying t)
+  (setq backup-by-copying-when-linked t)
+  (setq backup-directory-alist (list (cons ".*" (concat XL-CACHE-DIR "backup/")))))
+ #+end_src
+
 ** loaddefs :core:setting:
 :PROPERTIES:
 :ID:       5af4faf8-47e3-4db2-9d13-47fc828b8fca
