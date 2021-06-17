@@ -1127,7 +1127,7 @@ But if you're only.
 =a= is an association list library.
 
 #+begin_src emacs-lisp
-(use-package a :demand t)
+(require 'a)
 #+end_src
 
 **** loopy 
