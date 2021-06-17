@@ -1103,7 +1103,7 @@ that are not built-in to Emacs. Notably, it is functional.
 :END:
 
 #+begin_src emacs-lisp
-(use-package f :demand t)
+(require 'f)
 #+end_src
 
 **** anaphora 
@@ -1116,7 +1116,7 @@ many other languages. In lisp this often requires assigning the variable a name.
 But if you're only.
 
 #+begin_src emacs-lisp
-(use-package anaphora :demand t)
+(require 'anaphora)
 #+end_src
 
 **** a 
