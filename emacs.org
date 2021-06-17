@@ -5704,29 +5704,6 @@ Sometimes =evil-normal-state= enters visual state.
 :ID:       51826df5-8e16-4f4b-9814-cdcc6d5b7e7a
 :END:
 
-*** TODO multistate :disabled:
-:PROPERTIES:
-:ID:       3af402ee-9fe4-4d2e-b859-22e3b6e8a324
-:END:
-
-#+begin_src emacs-lisp
-(use-package multistate)
-#+end_src
-
-*** TODO meow :meow:disabled:
-:PROPERTIES:
-:ID:       47c5cad9-2ba3-40ee-a872-0d90ba438601
-:END:
-
-**** bindings :bind:
-:PROPERTIES:
-:ID:       c90a8647-0199-4cbe-bfb4-6487de53f380
-:END:
-
-#+begin_src emacs-lisp
-;; (bind! ())
-#+end_src
-
 *** evil :evil:
 :PROPERTIES:
 :ID:       5baaae49-7785-4b3e-99b9-7ad50e90ec43
