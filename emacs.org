@@ -1340,6 +1340,29 @@ declare that a feature has been loaded.
   (run-hook-with-args 'xx-before-load-feature-hook feature))
 #+end_src
 
+***** feature logic
+:PROPERTIES:
+:ID:       dfc4ee16-5344-44e5-9146-00d2e487ab10
+:END:
+
+This function is a helper for [[][defbefore] and [[][defafter]. It is inteded to.
+
+#+begin_src emacs-lisp
+(defun xx-convert-to-form (condition)
+  "Convert the CONDITION to legal form."
+  (cond ((null condition)
+	 nil)
+	((xx-true-list-p condition)
+	 (mapcar #'xx-convert-to-form
+		 (if (not (member (car condition) '(and or not)))
+		     (cons 'and condition)
+		   condition)))
+	((member condition '(and or not))
+	 condition)
+	(t
+	 `(featurep ',condition))))
+#+end_src
+
 ***** defafter!
 :PROPERTIES:
 :ID:       892a40f9-7023-4cdc-a73c-c03d79037fca
