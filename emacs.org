@@ -8714,7 +8714,7 @@ Also, if I for some reason decide not to use the dashboard icons I don't want to
 pay the icon loading costs at startup.
 
 #+begin_src emacs-lisp
-(defbefore! set-mu4e-marks (mu4e-headers)
+(defafter! set-mu4e-marks (mu4e-headers)
   "Set the mu4e marks."
   (setq mu4e-headers-draft-mark     (cons "D" (all-the-icons-faicon "pencil")))
   (setq mu4e-headers-flagged-mark   (cons "F" (all-the-icons-faicon "flag")))
