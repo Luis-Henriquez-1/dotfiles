@@ -1893,7 +1893,7 @@ raise the void-function error.
 (defvar xx-after-load-theme-hook nil
   "Hook run after the theme is loaded with `load-theme'.")
 
-(defadvice! run-after-load-theme-hook (:after load-theme)
+(defadvice! run-after-load-theme-hook (after load-theme)
   "Set up `xx-load-theme-hook' to run after `load-theme' is called."
   (run-hooks 'xx-after-load-theme-hook))
 #+end_src
