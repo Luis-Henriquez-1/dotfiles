@@ -10,6 +10,365 @@ the headlines back searching my vcs history. Well, version control does not
 "know" about org headlines. And I don't know of a way to search through it
 painlessly.
 
+* autoloading
+:PROPERTIES:
+:ID:       31436c22-3372-4842-b813-4300f13e6e56
+:END:
+
+** abnormal packages
+:PROPERTIES:
+:ID:       f6d6430c-df05-438a-9f50-5121c8ac1a12
+:END:
+
+Not all packages have functions whose prefix coincides with their name.
+
+#+begin_src emacs-lisp
+#+end_src
+
+** get a list of possible features
+:PROPERTIES:
+:ID:       796d9106-cc42-4c4e-a2a1-8c37373bcdca
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-possible-features (fn)
+  "Return a list of possible features available for FN"
+  (loopy (with (fname (symbol-name fn)))
+	 (list path load-path)
+	 (expr base (f-base path))
+	 (expr feature (intern base))
+	 (when (s-prefix-p base fname)
+	   (collect possible feature))
+	 (finally-return (seq-sort-by (-compose #'length #'symbol-name) #'> possible))))
+#+end_src
+
+** do away with autoloading
+:PROPERTIES:
+:ID:       91d28cee-60ea-400d-93ba-efabab82c90d
+:END:
+
+This is my ambitious attempt to do away with autoloading. So, let me explain
+autoloading. Autoloading is a way of registering the existence functions
+(usually commands) or macros before their parent package is loaded. It serves as
+a placeholder. When these "autoloaded" functions or macros are called, their
+parent package is loaded.
+
+I feel that there must be a better way to achieve autoloading than specifying
+each function we need to register one by one. My idea goes like this. Packages
+each have a unique prefix. When a function would be undefined before we raise an
+error, we check to see if the prefix of the function matches any of the packages
+in our load-path. If it does, we load it. If it doesn't then we go ahead and
+raise the void-function error.
+
+#+begin_src emacs-lisp
+(defadvice! try-to-find-function-before (around eval)
+  "Try to load feature that could contain function."
+  (:args orig-fn &rest args)
+  (condition-case err
+      (apply orig-fn args)
+    (void-function
+     (iter (with (fname (cadr err))
+		 (feature (xl-possible-features fname)))
+	   (for feature features)
+	   (require feature)
+	   (when (fboundp orig-fn)
+	     (message "Autoloading %s..." feature)
+	     (return (apply orig-fn args)))
+	   (after-do (signal (car err) (cdr err))))
+     ;; (let ((fname (cadr args)))
+     ;;   (aif (and (alist-get ))
+     ;; 	   (progn (require it)
+     ;; 		  (apply orig-fn args))
+     ;; 	 ))
+     )))
+#+end_src
+
+* finding eager macroexpansion errors
+:PROPERTIES:
+:ID:       0bb5d528-724f-41f6-98c8-43577e7c77ac
+:END:
+
+#+begin_src emacs-lisp
+(bug-hunter-init-file
+ '(with-current-buffer "*Messages*"
+   (save-excursion
+     (save-match-data
+       (goto-char (point-min))
+       (re-search-forward (rx bol "Eager macro-expansion") nil t)))))
+#+end_src
+
+* without-advice!
+:PROPERTIES:
+:ID:       2ac023e9-b4c8-4c88-8d1b-06f5edf0250a
+:END:
+
+#+begin_src emacs-lisp
+(defmacro without-advice! (symbols &rest body)
+  "Remove all advices from symbols for duration of BODY."
+  (advice-mapc (lambda (advice props)
+		 (push )
+		 (advice-remove sym advice))
+	       )
+  (defun advice-unadvice (sym)
+    "Remove all advices from symbol SYM."
+    (interactive "aFunction symbol: ")
+    (advice-mapc (lambda (advice _props) (advice-remove sym advice)) sym))
+  (unwind-protect))
+#+end_src
+
+* generate a logging function
+:PROPERTIES:
+:ID:       08fe76f4-fd35-45fd-9fbe-1bd21c7c5233
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-log-function (fn)
+  "Log a function."
+  (let ((name (xl-advice-gen-symbol fn 'log)))
+    (pcase fn
+      ((pred xl-advice-symbol-p)
+       (let ((symbol (xl-advice-orig-symbol fn))
+	     (function (xl-advice-orig-function fn)))
+	 (fset name `(lambda (&rest _) (xl-log "@ %s -> %s" ',symbol ',function)))
+	 (advice-add fn :after name)))
+      ((pred xl-hook-symbol-p)
+       (let ((symbol (xl-hook-orig-symbol fn))
+	     (function (xl-hook-orig-function fn)))
+	 (fset name `(lambda (&rest _) (xl-log "& %s -> %s" ',symbol ',function)))
+	 (advice-add fn :after name)))
+      (_
+       nil))))
+#+end_src
+
+* log advices and hooks
+:PROPERTIES:
+:ID:       8c34086d-67b8-4b7d-a52c-24c4090a73c9
+:header-args: :tangle no
+:END:
+
+Log when an advice or hook is being called.
+
+#+begin_src emacs-lisp
+(defadvice! log-advices (around xl-hook-add xl-advice-add)
+  "Log ORIG-FN."
+  (:args orig-fn &rest args)
+  (iter (with (symbols (apply orig-fn args)))
+	(each symbol symbols)
+	(xl-log-function symbol)
+	(when (xl-hook-symbol-p symbol)
+	  (xl-gadvice-catch-error symbol))
+	(finally-return symbols)))
+#+end_src
+
+* when!
+:PROPERTIES:
+:ID:       928002db-d80f-4c77-a729-ef9a19d8dce2
+:END:
+
+#+begin_src emacs-lisp
+(defmacro when! (condition &rest body)
+  ""
+  `(defhook! (gensym) (after-load-functions)
+     (when ,condition ,@body)))
+#+end_src
+
+* advice keywords
+:PROPERTIES:
+:ID:       3ddc2ff0-634c-4b1e-940e-1d8562d42ece
+:END:
+
+I put all the advice keywords in a variable. They're already available as the
+keys in [[helpfn:advice--where-alist][advice--where-alist]], but this is an internal variable used in the
+inner workings of Emacs's advice--I cant rely on this. Having the advices like
+this is useful for adding advices programmatically.
+
+#+begin_src emacs-lisp
+(defconst XL-ADVICE-KEYWORDS '(:around :before :after
+			       :override :after-until :after-while
+			       :before-until :before-while :filter-args
+			       :filter-return)
+  "All possible advice keywords.")
+#+end_src
+
+* after!
+:PROPERTIES:
+:ID:       e209d256-86e0-4e30-a7d5-78a583729b42
+:END:
+
+=after!= is yet another wrapper around that can accept multiple features or
+even a specification of features using =and= or =or=.
+
+The reason that we check for the feature is to prevent [[hvar:eval-after-load][eval-after-load]] from
+polluting the [[hvar:after-load-list][after-load-list]]. =eval-after-load= adds an entry to
+=after-load-list= whether or not it has been loaded.
+
+We intentionally avoid with-eval-after-load to prevent eager macro expansion
+from pulling (or failing to pull) in autoloaded macros/features.
+
+#+begin_src emacs-lisp
+(defmacro after! (features &rest body)
+  "Wrapper around `with-eval-after-load'."
+  (declare (indent defun) (debug t))
+  (cond ((eq 'or (car-safe features))
+	 (loopy (list feature (cdr features))
+		(collect form `(after! ,feature ,@body))
+		(finally-return `(progn ,@forms))))
+        ((eq 'and (car-safe features))
+	 (loopy (with ((first . rest) (cdr features))
+		      (forms `(after! ,first ,@body)))
+		(list feature (reverse rest))
+		(expr forms `(after! ,feature ,@(list forms)))
+		(finally-return forms)))
+        ((listp features)
+         `(after! (and ,@features) ,@body))
+        ((symbolp features)
+         `(if (featurep ',features)
+              (progn ,@body)
+            (eval-after-load! ,features ,@body)))
+        (t (error "Invalid argument."))))
+#+end_src
+
+* eval-after-load!
+:PROPERTIES:
+:ID:       8d831084-539b-4072-a86a-b55afb09bf02
+:END:
+
+=eval-after-load= is a macro that evaluates a lisp form after a file or feature
+has been loaded. It's syntax is a bit terse because you need to quote the
+feature as well as the form to be evaluated.
+
+Also, if an =eval-after-load= block contains an error and it is triggered by a
+feature, the error will happening. I think it might be that because the form was
+not successfully evaluated =eval-after-load= does not realize it should stop
+loading it. To remedy this I wrap the block with [[helpfn:condition-case][condition-case]].
+
+#+begin_src emacs-lisp
+(defmacro eval-after-load! (feature &rest body)
+  "A wrapper around `eval-after-load!' with error catching."
+  (declare (indent defun))
+  `(eval-after-load ',feature
+     '(condition-case error
+          (progn ,@body)
+        (error
+         (message "Error in `eval-after-load': %S" error)))))
+#+end_src
+
+* ppp
+:PROPERTIES:
+:ID:       82dbb88a-4bce-4ca3-90fe-38cfbea7abc6
+:END:
+
+This is a pretty printer.
+
+Sometimes you want to see what an object looks like represented as text so you
+know what you're dealing with. For example, I've wanted to see what a straight
+recipe looks like. The problem is by default [[][]] prints something on one
+line. And to avoid long lines, emacs truncates the output so you can't even see
+the whole thing.
+
+#+begin_src emacs-lisp
+(use-package ppp)
+#+end_src
+
+* defsetting!
+:PROPERTIES:
+:ID:       805d2b77-86e1-4f43-85ec-0d98a8550a2d
+:END:
+
+#+begin_src emacs-lisp
+(defmacro defsetting! (feature args &rest body)
+  (declare (indent defun))
+  (let ((set-settings-for))
+    `(defbefore! name (feature)
+       ,@body)))
+#+end_src
+
+* depth
+:PROPERTIES:
+:ID:       3407c7fc-9866-4014-8b19-7cbd306201a0
+:END:
+
+By default the clone depth [[][] is =full=, meaning that all of the history of a
+repository is cloned. Particularly for packages that have been around a long
+time, this can consume a lot of memory.
+
+** iteratively compute depth
+:PROPERTIES:
+:ID:       1a71f0e2-fa7d-4acc-bf4f-9340d4ee2f5e
+:END:
+
+I want a way to only clone a repository as much as I need to to get to the
+commit I have in my recipe file. To do this I'd need to get the depth of a
+specific commit.
+
+https://stackoverflow.com/questions/39935546/get-git-sha-depth-on-a-remote-branch
+
+#+begin_src emacs-lisp
+(defun xl-straight-set-depth (recipe)
+  "Set recipe's depth to minimum needed for its commit."
+  (iter (with ((&plist :type :local-repo) (cdr recipe))
+	      (recipe-commit (plist-get (cdr recipe) :commit))
+	      (repo-dir (straight--repos-dir local-repo))
+	      (depth (string-to-number (shell-command-to-string (format "cd %s && git log --oneline | wc -l" repo-dir)))))
+	(until (straight-vc-commit-present-p (cdr recipe) recipe-commit))
+	(expr depth (1+ depth))
+	(message "Increasing depth of %s from %s to %s..." (car recipe) (1- depth) depth)
+	(shell-command (format "cd %s && git pull --depth %d" repo-dir depth))))
+#+end_src
+
+** repos that are not deep enough
+:PROPERTIES:
+:ID:       8d8d817a-17e4-4c83-a12f-3a54c46e9dfd
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-straight-repos-lacking-depth (recipes)
+  "Return the recipes for packages who need greater depth."
+  (loopy (list (recipe &as package . plist) recipes)
+	 (expr (&plist :type :local-repo) plist)
+	 (expr recipe-commit (plist-get plist :commit))
+	 (unless (straight-vc-commit-present-p plist recipe-commit)
+	   (collect recipe))))
+#+end_src
+
+** repos whose version conflicts with recipe
+:PROPERTIES:
+:ID:       dce02b0c-5d3d-4f2a-b530-8dfd1c45eadb
+:END:
+
+The easiest scenario for getting repos back.
+
+#+begin_src emacs-lisp
+(defun xl-straight-recipes-whose-version-conflicts (recipes)
+  "Return a list of recipes for repos that aren't the correct commit."
+  (loopy (list recipe recipes)
+	 (expr package (car recipe))
+	 (expr (&plist :type :local-repo :commit) (cdr recipe))
+	 (unless (and type local-repo commit) (skip))
+	 (expr current-commit (straight-vc-get-commit type local-repo))
+	 (unless (string= current-commit commit)
+	   (collect recipe))))
+#+end_src
+
+* recipes that have a depth of 1
+:PROPERTIES:
+:ID:       4e53b0cb-f730-4fad-a92a-4f7877bf12b4
+:END:
+
+#+begin_src emacs-lisp
+(loopy (with (recipes (xl-read-recipes XL-RECIPE-FILE))
+	     (depth straight-vc-git-default-clone-depth))
+       (initially (unless (numberp depth) (error)))
+       (list recipe recipes)
+       (expr package (car recipe))
+       (expr local-repo (plist-get (cdr recipe) :local-repo))
+       (when local-repo
+	 (expr dir (straight--repos-dir local-repo))
+	 (expr command (format "cd %s && git log --oneline | wc -l" dir))
+	 (expr depth (string-to-number (shell-command-to-string command)))
+	 (when (= 1 depth) (collect package))))
+#+end_src
+
 * defmacro!
 :PROPERTIES:
 :ID:       5e7f7096-482f-45fd-8bc9-8e1c5c378b35

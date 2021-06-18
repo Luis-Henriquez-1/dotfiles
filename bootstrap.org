@@ -16,6 +16,257 @@ Emacs config.
 
 To bootstrap my dotfiles run ~emacs --script bootstrap.sh~.
 
+* straight :straight:
+:PROPERTIES:
+:ID:       2e251cc7-04de-43f8-a31f-1574a54ad576
+:END:
+
+[[straight][straight.el]] is a package manager that installs packages by cloning their git
+repositories from online and building them from source. A consequence of this is
+that you have the history of every installed emacs package locally. Another
+consequence is that you can completely reproduce the state of your emacs on
+another machine by installing the same packages with the same versions.
+
+I use =straight= differently than others. I install the packages in bulk into a
+particular directory.
+
+** variables :straight:pacman:core:
+:PROPERTIES:
+:ID:       9dff9894-667c-4e74-9624-8aee533f8f70
+:END:
+
+We don't need to clone everything from the git repos. Setting the depth to one
+conserves some disk space.
+
+#+begin_src emacs-lisp
+(setq straight-base-dir (file-truename XL-LOCAL-DIR))
+(setq straight-repository-branch "develop")
+(setq straight-build-dir (format "build-%s" (emacs-version)))
+(setq straight-use-package-version 'straight)
+(setq straight-use-package-by-default nil)
+(setq straight-check-for-modifications nil)
+(setq straight-recipes-emacsmirror-use-mirror t)
+(setq straight-vc-git-default-clone-depth 100)
+#+end_src
+
+** handle autoloads for me
+:PROPERTIES:
+:ID:       d3b052e4-fc7e-4b64-bd53-a6aa4b8abd16
+:END:
+
+To save startup time, we don't want to load packages unnecessarily. Many
+packages have what I like to call (I just made this up :smirk-cat:) "entry-points", or
+commands that are used to trigger the loading of the package. =straight=
+optionally handles this for us.
+
+#+begin_src emacs-lisp
+(setq straight-disable-autoloads t)
+(setq straight-cache-autoloads nil)
+#+end_src
+
+** package integration
+:PROPERTIES:
+:ID:       db1f9042-5b6c-41a9-a69c-d05d0493fdb0
+:END:
+
+By "integration" this variable means that it disables =package.el='s
+initialization. We don't need =straight= to do this for us because it is handled in
+[[id][early-init]].
+
+#+begin_src emacs-lisp
+(setq straight-enable-package-integration nil)
+#+end_src
+
+** load bootstrap file
+:PROPERTIES:
+:ID:       544f1bbe-3981-4d1b-8b24-3395b27890b2
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-load-straight-bootstrap-file (target-dir)
+  "Load the boostrap file from TARGET-DIR."
+  (defvar bootstrap-version)
+  (let ((bootstrap-version 5)
+	(bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" target-dir)))
+    (load bootstrap-file nil 'nomessage)))
+#+end_src
+
+** whether installed
+:PROPERTIES:
+:ID:       9216f0b9-93d5-43fe-aa96-3796674ab520
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-straight-installed-p (target-dir)
+  "Return non-nil if straight is installed."
+  (and (file-exists-p (expand-file-name "straight/" target-dir))
+       (file-exists-p (expand-file-name "straight/repos/straight.el/bootstrap.el" target-dir))))
+#+end_src
+
+** read recipes
+:PROPERTIES:
+:ID:       f7a3baa6-d876-40d3-84f5-74b1d9b4f432
+:END:
+
+The Emacs setup prescriped by =straight.el= is one where you can reproduce your
+config by using a combination of your init file and a lockfile. My complaint
+about this setup is that what's needed to reproduce a configuration is too
+scattered. Some of the recipes will be in your config, most will probably be
+stored with =straight=, and the versions for all of these are in the lockfile.
+I'd rather have one file that has everything concerning the packages--all the
+recipes and all the commits. In fact, I think commits should be a part of the
+recipes.
+
+One of the goals is to be able to completely reproduce my Emacs configuration.
+To do this I store the recipes of all the package I install in [[helpvar:XL-RECIPE-FILE][XL-RECIPES-FILE]].
+Upon startup I read this file and register all the recipes in it with
+=straight=.
+
+#+begin_src emacs-lisp
+(defun xl-read-recipes (recipe-file)
+  "Read and return recipes from RECIPE-FILE."
+  (with-temp-buffer
+    (insert-file-contents-literally recipe-file)
+    (goto-char (point-min))
+    (let (sexp sexps)
+      (ignore-errors
+	(while (setq sexp (read (current-buffer)))
+	  (push sexp sexps)))
+      (nreverse sexps))))
+#+end_src
+
+** repos that need rebuilding
+:PROPERTIES:
+:ID:       d55bd5b6-bfcb-4afe-a4e9-f2fe00fa1434
+:END:
+
+The repos that need rebuilding are the ones whose source files are newer than
+the byte-compiled files.
+
+#+begin_src emacs-lisp
+(defun xl-straight-repos-that-need-rebuilding ()
+  "Return a list of repos that need to be rebuilt."
+  (iter (for (recipe &as package . plist) recipes)
+	(expr (&plist :local-repo))
+	(expr source-file)
+	(expr byte-compiled-file)
+	(when (file-newer-than-file-p source-file byte-compiled-file)
+	  (collect package))))
+#+end_src
+
+** ensure straight.el
+:PROPERTIES:
+:ID:       ab38beca-2f26-4718-ab73-e4e4409f1563
+:END:
+
+I got the inspiration of cloning straight's repo (as opposed to just using the
+[[https://github.com/raxod502/straight.el#bootstrapping-straightel][bootstrap code]]) from [[https://github.com/kinnala/diy-emacs][diy-emacs]]. What this function does is.
+
+#+begin_src emacs-lisp
+(defun xl-ensure-straight (recipe target-dir)
+  "Install straight to TARGET-DIR."
+  ;; Make sure that git is installed and that it is the correct version.
+  (cl-assert (executable-find "git") nil "Git isn't installed. Cannot proceed.")
+  ;; Make sure that git is the correct version.
+  ;; (cl-assert ( (shell-command-to-string "git --version")))
+  (let* ((repo (plist-get (cdr recipe) :repo))
+	 (repo-dir (expand-file-name "straight/repos/" target-dir))
+	 (repo-url (format "https://github.com/%s.git" repo))
+	 (branch (or (plist-get recipe :branch) straight-repository-branch))
+	 (commit (plist-get recipe :commit)))
+    (unless (xl-straight-installed-p)
+      (make-directory repo-dir t)
+      (shell-command (format "git -C %s clone %s" repo-dir repo-url)))
+    (shell-command (format "git -C %s checkout %s" repo-dir commit))))
+#+end_src
+
+** ensure commit
+:PROPERTIES:
+:ID:       2b6d7825-24b7-429d-b5ad-7df9603dfd93
+:END:
+
+An essential part of this process is to ensure each package is built with the
+versions specified in the recipe file. To do this we compare the commit of the
+package with the commit specified in the recipe file. If it isn't the same, we
+set it to the commit specified in the recipe file and rebuild the package.
+
+One thing to note is that if you changed the.
+
+#+begin_src emacs-lisp
+(defun xl-straight-ensure-commit (recipes)
+  "Ensure local-repo specified by RECIPE is at correct commit."
+  (iter (for (recipe &as package . plist) recipes)
+	(expr (&plist :type :local-repo :commit) plist)
+	(unless (and (-all-p (-not #'null) (list type local-repo commit))
+		     (straight-vc-commit-present-p plist recipe-commit))
+	  (skip))
+	(straight-vc-check-out-commit plist recipe-commit)))
+#+end_src
+
+** ensure core packages
+:PROPERTIES:
+:ID:       faf3fd0b-2233-48ad-ba8f-aa94ea2ba4b9
+:END:
+
+#+begin_src emacs-lisp
+(defun xl-straight-ensure-core-packages (packages)
+  ""
+  (dolist (package packages)
+    )
+  )
+#+end_src
+
+** ensure packages
+:PROPERTIES:
+:ID:       498862a1-8491-4ec1-95ad-f0bafd818ddc
+:END:
+
+Note that the packages need to all be "registered" before actually installed.
+The reason is that I want my recipes to override straight's. Suppose I installed
+the package =elfeed-org= and then =org= via a custom recipe. =elfeed-org= pulls
+in =org=, but since I haven't told straight I provided a custom recipee for
+=org= yet it pulls in =org= via the default recipe. By the time straight gets to
+my custom =org= recipe, it will complain saying that there are two recipes for
+the same package. Registering the package ensures things straight pulls org with
+the recipe I specified.
+
+One issue to keep in mind is that building dependencies.
+
+#+begin_src emacs-lisp
+(defun xl-straight-install-packages (recipe-file target-dir)
+  "Install packages to TARGET-DIR as specified by RECIPE-FILE.
+Ensure package repos are the correct version and that build files are up to date
+with their corresponding repos."
+  (let* ((recipes (xl-read-recipes recipe-file)))
+    (xl-straight-bootstrap target-dir)
+    ;; (load bootstrap-file)
+    (require 'straight)
+    (mapc #'straight-register-package recipes)
+    (dolist (recipe recipes)
+      (straight-use-package recipe nil :no-build nil nil)
+      (xl-straight-ensure-commit recipe)
+      (straight-use-package recipe nil nil nil nil))))
+#+end_src
+
+** autoloads file
+:PROPERTIES:
+:ID:       252538fa-635e-47e9-ba4b-785bd68086c4
+:END:
+
+The final step is to make sure that the autoloads are created.
+
+#+begin_src emacs-lisp
+(defun xl-straight-write-autoloads-file ()
+  (with-temp-buffer
+    (iter (with (recipes (xl-read-recipes XL-RECIPE-FILE)))
+	  (initially (goto-char (point-min)))
+	  (for (package . plist) recipes)
+	  (expr local-repo (plist-get plist :local-repo))
+	  (when local-repo
+	    (insert-file-contents (straight--autoloads-file package)))
+	  (finally (write-region (point-min) (point-max) autoload-file)))))
+#+end_src
+
 * a note about Emacs scripts
 :PROPERTIES:
 :ID:       9e2ea0bd-b233-4e74-b451-9ae0686c50df
