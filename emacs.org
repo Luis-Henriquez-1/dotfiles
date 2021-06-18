@@ -7140,11 +7140,9 @@ ones you want to save to [[helpvar:savehist-additional-variables][savehist-addit
 =ellocate= is replacement for.
 
 #+begin_src emacs-lisp
-(use-package ellocate
-  :commands ellocate
-  :set
-  (ellocate-scan-dirs . `(("~/" . ,(concat XX-CACHE-DIR "ellocate"))))
-  (ellocate-gc-mem    . most-positive-fixnum))
+(before! ellocate
+  (setq ellocate-scan-dirs `(("~/" ,(concat XL-CACHE-DIR "ellocate"))))
+  (setq ellocate-gc-mem most-positive-fixnum))
 #+end_src
 
 ** saveplace :cache:
