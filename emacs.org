@@ -438,16 +438,12 @@ variable leaking.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-load-straight-bootstrap-file (target-dir)
   "Load the boostrap file from TARGET-DIR."
   (defvar bootstrap-version)
   (let ((bootstrap-version 5)
 	(bootstrap-file (expand-file-name "straight/repos/straight.el/bootstrap.el" target-dir)))
     (load bootstrap-file nil 'nomessage)))
-=======
-(require 'subr-x)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** s 
@@ -459,7 +455,6 @@ variable leaking.
 that are not built-in to Emacs. Notably, it is functional.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-install-straight (recipe commit target-dir)
   "Install straight to TARGET-DIR."
   (let* ((repo (plist-get (cdr recipe) :repo))
@@ -468,9 +463,6 @@ that are not built-in to Emacs. Notably, it is functional.
     (make-directory repo-dir t)
     (shell-command (format "git -C %s clone %s" repo-dir github-link))
     (shell-command (format "git -C %s checkout %s" repo-dir commit))))
-=======
-(require 's)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** f 
@@ -479,14 +471,10 @@ that are not built-in to Emacs. Notably, it is functional.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-straight-installed-p (target-dir)
   "Return non-nil if straight is installed."
   (and (file-exists-p (expand-file-name "straight/" target-dir))
        (file-exists-p (expand-file-name "straight/repos/straight.el/bootstrap.el" target-dir))))
-=======
-(require 'f)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** anaphora 
@@ -494,7 +482,6 @@ that are not built-in to Emacs. Notably, it is functional.
 :ID:       1c47bd8a-15f1-4b1c-9574-23547d27d968
 :END:
 
-<<<<<<< HEAD
 One of the goals is to be able to completely reproduce my Emacs configuration.
 To do this I store the recipes of all the package I install in [[helpvar:XX-RECIPE-FILE][XX-RECIPES-FILE]].
 Upon startup I read this file and register all the recipes in it with =straight=.
@@ -510,14 +497,6 @@ Upon startup I read this file and register all the recipes in it with =straight=
 	(while (setq sexp (read (current-buffer)))
 	  (push sexp sexps)))
       (nreverse sexps))))
-=======
-It's common to want to refer to the thing you're operating on in lisp and in
-many other languages. In lisp this often requires assigning the variable a name.
-But if you're only.
-
-#+begin_src emacs-lisp
-(require 'anaphora)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** a 
@@ -549,7 +528,6 @@ play.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-install-packages (recipe-file target-dir)
   "Install packages specified by RECIPE-FILE to TARGET-DIR.
 Return a list of load-paths for the install packages."
@@ -566,12 +544,6 @@ Return a list of load-paths for the install packages."
     (pcase-dolist (`(,_ ,_ ,recipe) recipes)
       (straight-use-package recipe))
     (cl-remove-if-not (apply-partially #'string-match-p regexp) load-path)))
-=======
-(require 'loopy)
-(add-to-list 'loopy-default-flags '-split)
-(loopy-defalias 'fret 'finally-return)
-(loopy-defalias 'ret 'return)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ***** iter
@@ -589,20 +561,8 @@ clause because it would get confused with it and the built-in Emacs function
 [[helpfn:list][list]]. For that reason we need to use one of lists aliases.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (require 'cl-lib)
 (cl-callf2 append (xx-install-packages XX-RECIPE-FILE XX-PACKAGES-DIR) load-path)
-=======
-(require 'loopy-iter)
-
-(add-to-list 'loopy-default-flags '+lax-names)
-
-(loopy-defalias 'for 'list)
-(loopy-defalias 'each 'list)
-
-(defalias 'iter 'loopy-iter)
-(defalias 'iterate 'loopy-iter)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ***** dash destructuring
@@ -611,13 +571,8 @@ clause because it would get confused with it and the built-in Emacs function
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (require 'loopy)
 (require 'dash)
-=======
-(require 'loopy-dash)
-(add-to-list 'loopy-default-flags '+dash)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** idle-require :defer:
@@ -669,15 +624,7 @@ garbage collection during this time.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(defconst XX-ADVICE-KEYWORDS '(:around :before :after
-			       :override :after-until :after-while
-			       :before-until :before-while :filter-args
-			       :filter-return)
-  "All possible advice keywords.")
-=======
 (require 'map)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 *** helpers :helper:
@@ -1172,7 +1119,6 @@ for functions namespaced =frame=.
 (defalias 'find-file-get-create 'find-file-noselect)
 #+end_src
 
-<<<<<<< HEAD
 *** features :feature:
 :PROPERTIES:
 :ID:       67e54261-0b00-4daa-bbe9-a0f2fbbc1d9b
@@ -1777,23 +1723,6 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
 #+end_src
 
 **** defgadvice!
-=======
-*** advice :advice:
-:PROPERTIES:
-:ID:       e498fc7d-03f1-4a69-9869-28c1b499fe1f
-:END:
-
-**** generic advices
-:PROPERTIES:
-:ID:       ba195f61-9b1c-4b51-835c-d1351f4d6301
-:END:
-
-Most times when I advise a function, the advice is unique and catered
-specifically for a single use case. However, sometimes there are common advices
-that I need to add to many functions. I refer to these as "generic advices".
-
-***** defgadvice!
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       141da0b0-f721-4576-921b-7d800291267a
 :END:
@@ -2514,16 +2443,9 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-hook-symbol-p (symbol)
   "Return non-nil if SYMBOL is defined with XL naming conventions."
   (s-match XX-HOOK-REGEXP (symbol-name symbol)))
-=======
-(defmacro after! (features &rest body)
-  (declare (indent 1))
-  `(defafter! ,(gensym "after-hook-") ,(-list features)
-     ,@body))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ***** defbefore!
@@ -7928,11 +7850,7 @@ have to set out to look for a file with =dired=.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (xx-hook-add 'dired-mode-hook #'all-the-icons-dired-mode)
-=======
-(xl-hook-add 'dired-mode-hook 'all-the-icons-dired-mode)
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** dired :file:
@@ -8270,17 +8188,6 @@ which provides much more contextual information in a better format.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package desktop
-  :set
-  (desktop-save                 . t)
-  (desktop-dirname              . XX-CACHE-DIR)
-  (desktop-auto-save-timeout    . auto-save-timeout)
-  (desktop-base-file-name       . "emacs.desktop")
-  (desktop-base-lock-name       . "emacs.desktop.lock")
-  (desktop-path                 . (list XX-CACHE-DIR))
-  (desktop-missing-file-warning . nil))
-=======
 (before! desktop
   (setq desktop-save t)
   (setq desktop-dirname XL-CACHE-DIR)
@@ -8289,7 +8196,6 @@ which provides much more contextual information in a better format.
   (setq desktop-base-lock-name "emacs.desktop.lock")
   (setq desktop-path (list XL-CACHE-DIR))
   (setq desktop-missing-file-warning nil))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** allowing desktops to go in one directory
@@ -8464,23 +8370,6 @@ that it's not a lisp object; implying that it is not.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package workgroups2
-  :commands wg-switch-workgroup
-  :ignore wg-change-modeline
-  :silence wg-create-workgroup wg-switch-workgroup
-  :set
-  (wg-emacs-exit-save-behavior           . 'save)
-  (wg-workgroups-mode-exit-save-behavior . 'save)
-  (wg-flag-modified                      . nil)
-  (wg-mode-line-display-on               . nil)
-  (wg-load-last-workgroup                . nil)
-  (wg-open-this-wg                       . nil)
-  (wg-control-frames                     . nil)
-  (wg-session-load-on-start              . nil)
-  (wg-flag-modified                      . nil)
-  (wg-session-file                       . (concat XX-CACHE-DIR "wg-session")))
-=======
 (before! workgroups2
   (xl-gadvice-ignore #'wg-change-modeline)
   (xl-gadvice-shut-up #'wg-create-workgroup)
@@ -8495,7 +8384,6 @@ that it's not a lisp object; implying that it is not.
   (setq wg-session-load-on-start nil)
   (setq wg-flag-modified nil)
   (setq wg-session-file (concat XL-CACHE-DIR "wg-session")))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 *** tab-bar-mode
@@ -8832,28 +8720,10 @@ from [[helpfn:text-scale-increase][text-scale-increase]] and [[helpfn:text-scale
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package tramp
-  :set
-  (tramp-backup-directory-alist . backup-directory-alist)
-  (tramp-persistency-file-name  . (concat XX-CACHE-DIR "tramp-persistency.el"))
-  (tramp-auto-save-directory    . (concat XX-CACHE-DIR "tramp-auto-save/")))
-#+end_src
-
-** restart-emacs
-:PROPERTIES:
-:ID:       7412bc2f-0db1-44e9-8ea7-0dc595a04fca
-:END:
-
-#+begin_src emacs-lisp
-(use-package restart-emacs
-  :commands restart-emacs)
-=======
 (before! tramp
   (setq tramp-backup-directory-alist backup-directory-alist)
   (setq tramp-persistency-file-name (concat XL-CACHE-DIR "tramp-persistency.el"))
   (setq tramp-auto-save-directory (concat XL-CACHE-DIR "tramp-auto-save/")))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** elisp-demos :interface:elisp:
@@ -8879,14 +8749,8 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package bookmark
-  :set
-  (bookmark-default-file . (concat XX-CACHE-DIR "bookmarks")))
-=======
 (before! bookmark
   (setq bookmark-default-file (concat XL-CACHE-DIR "bookmarks")))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** nsm
@@ -8895,14 +8759,8 @@ function?
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package nsm
-  :set
-  (nsm-settings-file . (concat XX-CACHE-DIR "network-settings.data")))
-=======
 (before! nsm
   (setq nsm-settings-file (concat XL-CACHE-DIR "network-settings.data")))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** mouse :mouse:
@@ -8934,12 +8792,7 @@ function?
 https://emacs.stackexchange.com/questions/59314/how-can-i-make-setf-work-with-plist-get
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package gv
-  :xx-config
-=======
 (after! gv
->>>>>>> develop-depth-no-use-package
   (gv-define-simple-setter plist-get plist-put))
 #+end_src
 
@@ -8983,16 +8836,9 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package bytecomp
-  :set
-  (byte-compile-warnings . '(not free-vars unresolved noruntime lexical make-local))
-  (byte-compile-verbose  . xx-debug-p))
-=======
 (before! bytecomp
   (setq byte-compile-warnings '(not free-vars unresolved noruntime lexical make-local))
   (setq byte-compile-verbose  xl-debug-p))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** url :cache:
@@ -9001,16 +8847,9 @@ Non-nil means animated images loop forever, rather than playing once.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package url
-  :set
-  (url-cache-directory         . (concat XX-CACHE-DIR "url/cache/"))
-  (url-configuration-directory . (concat XX-CACHE-DIR "url/configuration/")))
-=======
 (before! url
   (setq url-cache-directory         (concat XL-CACHE-DIR "url/cache/"))
   (setq url-configuration-directory (concat XL-CACHE-DIR "url/configuration/")))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** ffap
@@ -9062,15 +8901,6 @@ Note that I add gcmh mode hook at the end so that all the other hook commands
 are done before setting the =gc-cons-threshold= back to a normal value.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package gcmh
-  :hook emacs-startup-hook
-  :set
-  (gcmh-idle-delay          . 5)
-  (gcmh-verbose             . xx-debug-p)
-  (gcmh-high-cons-threshold . XX-GC-CONS-THRESHOLD)
-  (gcmh-low-cons-threshold  . XX-GC-CONS-THRESHOLD-MIN))
-=======
 (xl-hook-add 'emacs-startup-hook #'gcmh-mode)
 
 (before! gcmh
@@ -9078,7 +8908,6 @@ are done before setting the =gc-cons-threshold= back to a normal value.
   (setq gcmh-verbose xl-debug-p)
   (setq gcmh-high-cons-threshold XL-GC-CONS-THRESHOLD)
   (setq gcmh-low-cons-threshold XL-GC-CONS-THRESHOLD-MIN))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** readme org file
@@ -9614,20 +9443,11 @@ something. Setting it to =nil= makes the frame start at the size you specified.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package transient
-  :set
-  (transient-default-level . 5)
-  (transient-levels-file . (concat XX-CACHE-DIR "transient/levels"))
-  (transient-values-file . (concat XX-CACHE-DIR "transient/values"))
-  (transient-history-file . (concat XX-CACHE-DIR "transient/history")))
-=======
 (before! transient
   (setq transient-default-level 5)
   (setq transient-levels-file (concat XL-CACHE-DIR "transient/levels"))
   (setq transient-values-file (concat XL-CACHE-DIR "transient/values"))
   (setq transient-history-file (concat XL-CACHE-DIR "transient/history")))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** emojify :icon:appearance:
@@ -9641,17 +9461,10 @@ documentation. This includes using emojis. Also, using emojis makes
 documentation *much* more fun. :joy-cat:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
-(use-package emojify
-  :hook org-mode-hook
-  :set
-  (emojify-emojis-dir . (concat XX-CACHE-DIR "emojis/")))
-=======
 (xl-hook-add 'org-mode-hook #'emojify-mode)
 
 (before! emojify
   (setq emojify-emojis-dir (concat XL-CACHE-DIR "emojis/")))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** which-key :interface:
@@ -9782,33 +9595,6 @@ buffer and I've wanted to have the scratch buffer start off with
 =emacs-lisp-mode=, but I don't want it to trigger =company=, =yasnippet=, etc. on
 startup. If I start my emacs with =dashboard= I can avoid this.
 
-<<<<<<< HEAD
-*** load page-break-lines
-:PROPERTIES:
-:ID:       b8fc0ee8-7e61-41df-b243-500b686bf2fd
-:END:
-
-#+begin_src emacs-lisp
-(require 'page-break-lines)
-#+end_src
-
-*** random logo :dashboard:startup:asthetic:
-:PROPERTIES:
-:ID:       80e5fa17-d18a-4ec0-af8d-728d77843c69
-:END:
-
-=dashboard= provides three text pictures which are referred to by number and two
-images which referred to by the symbols =official= and =logo=.
-
-#+begin_src emacs-lisp
-(defun dashboard%random-logo ()
-  "Display a random logo."
-  (seq-random-elt
-   (append '(1 2 3) (if (display-graphic-p) '(official logo)))))
-#+end_src
-
-=======
->>>>>>> develop-depth-no-use-package
 *** require :dashboard:asthetic:
 :PROPERTIES:
 :ID:       73d00f99-4b70-44d1-8359-01bd2c94b330
@@ -10024,13 +9810,8 @@ documentation *much* more fun. :joy-cat:
 
 #+begin_src emacs-lisp
 (xl-hook-add 'org-mode-hook 'emojify-mode)
-<<<<<<< HEAD
  
 (before! emojify
-=======
-
-(before! emojify ()
->>>>>>> develop-depth-no-use-package
   (setq emojify-emojis-dir (concat XL-CACHE-DIR "emojis/")))
 #+end_src
 
