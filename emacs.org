@@ -7418,7 +7418,7 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
 It's easy to underestimate how much of a difference having an asthetically
 pleasing Emacs configuration can have. Ugliness really can take its toll.
 
-** helpful :help:bind:interface:
+** helpful
 :PROPERTIES:
 :ID:       5340ddb3-92bc-42e5-bf0e-9f9650c41cd9
 :END:
