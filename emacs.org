@@ -8072,7 +8072,7 @@ Concerning the loading of exwm-edit. Ideally, I should load it after
 certain applications where I'd use it need to be loaded.
 
 #+begin_src emacs-lisp
-(before! exwm
+(after! exwm
   (push (cons '(kbd "C-'") #'exwm-edit) exwm-input-global-keys))
 #+end_src
 
