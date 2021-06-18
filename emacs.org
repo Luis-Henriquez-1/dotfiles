@@ -5255,16 +5255,6 @@ address later.
     (er/contract-region 0)))
 #+end_src
 
-*** expand region :edit:emacs:config:
-:PROPERTIES:
-:ID:       41a1cebc-8da8-4e5c-8258-2ce440f1af50
-:END:
-
-#+begin_src emacs-lisp
-(use-package expand-region
-  :commands er/expand-region er/contract-region er/mark-symbol)
-#+end_src
-
 *** expand-region :edit:emacs:config:desc:
 :PROPERTIES:
 :ID:       7e873fba-33ea-4720-ad79-bd8d557cc4b3
