@@ -1395,7 +1395,8 @@ adding.
 Do not evaluate BODY if features have already been loaded."
   `(progn ,@body))
 
-(defalias 'before! 'defbefore!)
+(defmacro before! (features &rest body)
+  `(progn ,@body))
 #+end_src
 
 **** with-temp-advice!
