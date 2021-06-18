@@ -7385,16 +7385,6 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 	(pushnew command eshell-visual-commands)))
 #+end_src
 
-*** em-alias
-:PROPERTIES:
-:ID:       694a8c17-8318-4222-b461-abfc1d8a78ea
-:END:
-
-#+begin_src emacs-lisp
-(use-package em-alias
-  :idle-require t)
-#+end_src
-
 *** eshell-z
 :PROPERTIES:
 :ID: 497798a0-7b62-4779-bf15-f67500528f03
