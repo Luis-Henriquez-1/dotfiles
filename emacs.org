@@ -1730,7 +1730,6 @@ OS can be either `mac', `linux' or `windows' (unquoted)."
 A generic advice should have a function.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defunmacro! defgadvice! (name args &rest body)
   "Define a generic advice function."
   (declare (indent defun) (doc-string 3))
@@ -1750,20 +1749,6 @@ specifically for a single use case. However, sometimes there are common advices
 that I need to add to many functions. I refer to these as "generic advices".
 
 **** pause garbarge collection :advice:performance:
-=======
-(defmacro defgadvice! (name args &rest body)
-  "Define a generic advice function."
-  (declare (indent defun) (doc-string 3))
-  (let ((internal-advice (xl-intern-format "xl-gadvice--%s-advice" name))
-	(advising-fn (xl-intern-format "xl-gadvice-%s" name)))
-    `(progn (defun ,advising-fn (fn)
-	      (defalias (xl-symbol-intern fn '@ ',name) #',internal-advice)
-	      (advice-add fn :around (xl-symbol-intern fn '@ ',name)))
-	    (defun ,internal-advice ,args ,@body))))
-#+end_src
-
-***** pause garbarge collection :advice:performance:
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       41e763bd-215f-4176-95c1-f41261864671
 :END:
@@ -1779,20 +1764,12 @@ packages which can contain several thousand items.
     (apply orig-fn args)))
 #+end_src
 
-<<<<<<< HEAD
 **** catch errors
-=======
-***** catch errors
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       3ac98fde-fe86-4221-abc7-d8bdfee4a58b
 :END:
 
-<<<<<<< HEAD
 One important note here. I first wrote [[helpfn:xx-report-error-advice][xx-report-error-advice]] as an around
-=======
-One important note here. I first wrote [[helpfn:xl-report-error-advice][xl-report-error-advice]] as an around
->>>>>>> develop-depth-no-use-package
 advice that should be added to functions. The problem here is that sometimes I
 advise compiled functions; and when I do, the variable =orig-fn= is bound to a
 compiled function instead of a symbol. This is why this function has to
@@ -1805,41 +1782,25 @@ advice]].
   (condition-case error
       (apply orig-fn args)
     (error
-<<<<<<< HEAD
      (xx-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
 #+end_src
 
 **** advice regexp
-=======
-     (xl-log "Failed calling %s because %s" orig-fn (error-message-string error)))))
-#+end_src
-
-***** advice regexp
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       22a4ff2c-27b7-4938-802f-5b669caa3f12
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defconst XX-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
   "A regular expression that defines naming convention for advices.")
 #+end_src
 
 **** original advice
-=======
-(defconst XL-ADVICE-REGEXP "\\([^[:space:]]+\\)@\\([^[:space:]]+\\)"
-  "A regular expression that defines naming convention for advices.")
-#+end_src
-
-***** original advice
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       49f49994-637a-4e26-b680-3535463ee8bf
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-advice-orig-function (advice)
   "Return the function that ADVICE aliases.
 ADVICE is an advice function that follows XL naming conventions."
@@ -1847,21 +1808,11 @@ ADVICE is an advice function that follows XL naming conventions."
 #+end_src
 
 **** original fn
-=======
-(defun xl-advice-orig-function (advice)
-  "Return the function that ADVICE aliases.
-ADVICE is an advice function that follows XL naming conventions."
-  (intern (nth 2 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
-#+end_src
-
-***** original fn
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       eb5e771f-243b-4645-8be7-59fe2dcf1978
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-advice-orig-symbol (advice)
   "Return the function ADVICE is advised to.
 ADVICE is an advice function that follows XL naming conventions."
@@ -1869,35 +1820,17 @@ ADVICE is an advice function that follows XL naming conventions."
 #+end_src
 
 **** advice-fn-p
-=======
-(defun xl-advice-orig-symbol (advice)
-  "Return the function ADVICE is advised to.
-ADVICE is an advice function that follows XL naming conventions."
-  (intern (nth 1 (s-match XL-ADVICE-REGEXP (symbol-name advice)))))
-#+end_src
-
-***** advice-fn-p
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       0ee2c179-39e9-4faa-8952-9440cfa46bca
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-advice-symbol-p (fn)
   "Return non-nil when FN is an advice."
   (s-matches-p XX-ADVICE-REGEXP (symbol-name fn)))
 #+end_src
 
 **** log
-=======
-(defun xl-advice-symbol-p (fn)
-  "Return non-nil when FN is an advice."
-  (s-matches-p XL-ADVICE-REGEXP (symbol-name fn)))
-#+end_src
-
-***** log
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       25ea174f-af84-49e3-ad13-c797ef4ee6b2
 :END:
@@ -1955,7 +1888,6 @@ is an example).
 Sometimes I want to use =xx-log= instead of =message=.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defgadvice! use-xx-log (orig-fn &rest args)
   (noflet ((message (&rest message-args) (apply #'xx-log message-args)))
     (apply orig-fn args)))
@@ -1982,14 +1914,6 @@ Log when an advice or hook is being called.
 #+end_src
 
 **** loading on call
-=======
-(defgadvice! use-xl-log (orig-fn &rest args)
-  (with-temp-advice! ((message :override xl-log))
-    (apply orig-fn args)))
-#+end_src
-
-***** loading on call
->>>>>>> develop-depth-no-use-package
 :PROPERTIES:
 :ID:       fa6583aa-5e7c-4212-be8a-b90b4c08aa31
 :END:
@@ -2031,16 +1955,9 @@ For convenience, I provide [[helpfn:xx-load-before-call][xx-load-before-call]] a
 not to have to specify the advice keyword.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-load-before-call (package fn)
   "Load PACKAGE before FN is called."
   (xx-load-on-call package :before fn))
-=======
-(defun xl-load-before-call (packages functions)
-  "Load PACKAGES before FUNCTIONS are called."
-  (iter (for (package fn) (-table-flat #'list (-list packages) (-list functions)))
-	(xl-load-on-call package :before fn)))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ****** load after call
@@ -2138,14 +2055,8 @@ WHERE, DEPTH and LOCAL are the same as in `advice-add'."
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defconst XX-HOOK-REGEXP "\\`\\(.+\\)&\\(.+\\)\\'"
   "Regular expression used to match `xx-' defined hooks.")
-=======
-(defun xl-hook-regexp ()
-  "Return regular expression used to match XL hooks."
-  "\\`\\(.+\\)&\\(.+\\)\\'")
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** add hook
@@ -2454,26 +2365,10 @@ If FEATURES have already been loaded, evaluate BODY immediately."
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-hook-orig-symbol (hook)
   "Return hook variable for HOOK.
 HOOK is a hook function defined with XL naming conventions."
   (intern (nth 1 (xx-hook-symbol-p hook))))
-=======
-(defunmacro! defbefore! (name features &rest body)
-  "Evaluate BODY before FEATURES are loaded.
-If feature is already loaded, evaluate BODY immediately."
-  (let ((condition (xl-convert-to-form features))
-	(hook (xl-hook-gen-name 'xl-before-load-feature-hook name))
-	(docstring (when (stringp (car body)) (list (pop body)))))
-    `(if ,condition
-	 (progn ,@body)
-       (defhook! ,name (xl-before-load-feature-hook)
-	 ,@docstring
-	 (when ,condition
-	   (xl-hook-remove ',hook)
-	   (ignore-errors ,@body))))))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ***** before!
@@ -2482,17 +2377,10 @@ If feature is already loaded, evaluate BODY immediately."
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-hook-orig-function (hook)
   "Return the hook function for HOOK.
 HOOK is a hook function that follows XL naming conventions."
   (intern (nth 2 (xx-hook-symbol-p hook))))
-=======
-(defmacro before! (features &rest body)
-  (declare (indent 1))
-  `(defbefore! ,(gensym "before-hook-") ,(-list features)
-     ,@body))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** with-temp-advice!
@@ -2503,21 +2391,9 @@ HOOK is a hook function that follows XL naming conventions."
 https://emacs.stackexchange.com/questions/54500/how-to-add-a-locally-override-the-message-function
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defun xx-hook-gen-name (fn name)
   "Generate a hook name."
   (xx-symbol-intern fn '& name))
-=======
-(defmacro with-temp-advice! (advices &rest body)
-  "Evaluate BODY with ADVICES enabled.
-Disable advices after BODY has been evaluated. ADVICES should take the form of
-(SYMBOL WHERE FUNCTION)."
-  (declare (indent defun))
-  (loopy (each (symbol where advice) advices)
-	 (collect before `(advice-add #',symbol ,where #',advice))
-	 (collect after `(advice-remove #',symbol #',advice))
-	 (finally-return `(unwind-protect (progn ,@before ,@body) ,@after))))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 **** with-os!
@@ -2554,38 +2430,10 @@ Sometimes there are things that need tidying up after loading a theme. For
 example, if I'm using evil I need to update the cursor color.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (require 'idle-require)
 
 (setq idle-require-load-break  2)
 (setq idle-require-idle-delay 10)
-=======
-(defhooksym! xl-after-load-theme-hook (:after load-theme)
-  "Hook run after the theme is loaded with `load-theme'."
-  (run-hooks 'xl-after-load-theme-hook))
-#+end_src
-
-** autoloading
-:PROPERTIES:
-:ID:       31436c22-3372-4842-b813-4300f13e6e56
-:END:
-
-*** get a list of possible features
-:PROPERTIES:
-:ID:       796d9106-cc42-4c4e-a2a1-8c37373bcdca
-:END:
-
-#+begin_src emacs-lisp
-(defun xl-possible-features (fn)
-  "Return a list of possible features available for FN"
-  (loopy (with (fname (symbol-name fn)))
-	 (list path load-path)
-	 (expr base (f-base path))
-	 (expr feature (intern base))
-	 (when (s-prefix-p base fname)
-	   (collect possible feature))
-	 (finally-return (seq-sort-by (-compose #'length #'symbol-name) #'> possible))))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 *** do away with autoloading
@@ -2607,29 +2455,12 @@ in our load-path. If it does, we load it. If it doesn't then we go ahead and
 raise the void-function error.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defvar xx-after-load-theme-hook nil
   "Hook run after the theme is loaded with `load-theme'.")
 
 (defadvice! run-after-load-theme-hook (:after load-theme)
   "Set up `xx-load-theme-hook' to run after `load-theme' is called."
   (run-hooks 'xx-after-load-theme-hook))
-=======
-(defadvice! try-load-feature (around eval)
-  "Try to load feature that could contain function."
-  (:args orig-fn &rest args)
-  (condition-case err
-      (apply orig-fn args)
-    (void-function
-     (iter (with (fname (cadr err)))
-	   (initially (message "Triggering advice with %s!!!" (cadr err)))
-	   (for feature (xl-possible-features fname))
-	   (require feature)
-	   (when (fboundp fname)
-	     (message "Autoloading %s..." feature)
-	     (return (apply orig-fn args)))
-	   (else (signal (car err) (cdr err)))))))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** keybinding :bind:
@@ -3356,15 +3187,9 @@ that have already been created by emacs (such as =*scratch*= and
 
 #+begin_src emacs-lisp
 (bind!
-<<<<<<< HEAD
  (:map xx-override-mode-map)
  (:ie XX-EMACS-LEADER-KEY 'xx/leader)
  (:mnv XX-EVIL-LEADER-KEY 'xx/leader))
-=======
-  (:map xl-override-mode-map)
-  (:ie XL-EMACS-LEADER-KEY 'xl/leader)
-  (:mnv XL-EVIL-LEADER-KEY 'xl/leader))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 *** execute extended command
@@ -3736,11 +3561,7 @@ Notably, I do not try to conserve the return value of =xx/goto-line= or
 their side-effects.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defadvice! show-current-branch-in-org-mode (:after xx/goto-line org/goto-headline)
-=======
-(defadvice! show-current-branch-in-org-mode (after xl/goto-line org/goto-headline)
->>>>>>> develop-depth-no-use-package
   "Properly unfold nearby headlines and reveal current headline."
   (when (eq major-mode 'org-mode)
     (org%show-branch)))
@@ -4165,11 +3986,7 @@ This package lets you annotate files in a separate org file.
 
 #+begin_src emacs-lisp
 (before! org-annotate-code
-<<<<<<< HEAD
   (setq org-annotate-code-org-file (concat XX-ORG-DIR "annotations.org")))
-=======
-  (setq org-annotate-code-org-file (concat XL-ORG-DIR "annotations.org")))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** org-archive
@@ -4295,7 +4112,6 @@ My capture templates use =ts= and =org-ml= so I make sure to load those library
 before org-capture is loaded.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (xx-load-before-call 'org-ql #'org-agenda)
 
 (defbefore! org-agenda
@@ -4314,23 +4130,6 @@ before org-capture is loaded.
   (setq org-agenda-time-leading-zero t)
   (setq org-agenda-dim-blocked-tasks t)
   (setq org-agenda-inhibit-startup t))
-=======
-(xl-load-before-call 'ts #'org-capture)
-(xl-load-before-call 'org-ml #'org-capture)
-
-(before! org-capture
-  (dbc-add-rule "bottom" "capture" :newname "\\`CAPTURE-.+"))
-#+end_src
-
-*** initial state
-:PROPERTIES:
-:ID:       53731daa-9932-46c5-aca8-acd54f99307a
-:END:
-
-#+begin_src emacs-lisp
-(defafter! set-initial-state-for-org-capture (evil org-capture)
-  (evil-set-initial-state 'org-capture-mode 'insert))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 *** TODO remove capture headerline
@@ -4370,11 +4169,7 @@ template element as you're writing it.
 #+begin_src emacs-lisp
 (defafter! register-capture-file (org-capture)
   "Add the file I use for capturing to `org-agenda-files'."
-<<<<<<< HEAD
   (add-to-list 'org-agenda-files XL-CAPTURE-FILE nil #'string=)))
-=======
-  (add-to-list 'org-agenda-files XL-CAPTURE-FILE nil #'string=))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 *** DOC completing-read org-capture :bind:
@@ -4697,7 +4492,6 @@ referenance org headlines.
 :END:
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (xx-hook-add 'org-mode-hook #'org-superstar-mode)
 
 (before! org-superstar
@@ -4724,24 +4518,6 @@ referenance org headlines.
 
 #+begin_src emacs-lisp
 (xx-hook-add 'outshine-mode-hook 'org-link-minor-mode)
-=======
-(xl-hook-add 'org-mode-hook #'org-superstar-mode)
-
-(before! org-superstar
-  (setq org-superstar-leading-bullet ?\s)
-  (setq org-superstar-special-todo-items t))
-#+end_src
-
-*** asthetic
-:PROPERTIES:
-:ID:       c4ff4407-774c-4028-bb9d-01412fdfc8d2
-:END:
-
-#+begin_src emacs-lisp
-(xl-hook-add 'org-mode-hook
-	     (list #'org-pretty-tags-mode
-		   #'org-fancy-priorities-mode))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 *** org-link-minor-mode
@@ -5877,7 +5653,6 @@ address later.
     (er/contract-region 0)))
 #+end_src
 
-<<<<<<< HEAD
 *** expand-region :edit:emacs:config:desc:
 :PROPERTIES:
 :ID:       7e873fba-33ea-4720-ad79-bd8d557cc4b3
@@ -5886,8 +5661,6 @@ address later.
 [[https://github.com/magnars/expand-region.el][expand-region]] allows me to toggle a key ("v" in my case) to select progressively
 larger text objects. It's saves me keystrokes.
 
-=======
->>>>>>> develop-depth-no-use-package
 ** DOC smartparens :parens:
 :PROPERTIES:
 :ID:       1c370582-6d30-44fb-a421-47885b99d110
@@ -7095,25 +6868,6 @@ will change.
   (setq auto-save-interval 300)
   (setq auto-save-default nil)
   (setq auto-save-timeout 30))
-<<<<<<< HEAD
-=======
-#+end_src
-
-** backup settings
-:PROPERTIES:
-:ID:       a88a860a-a65a-457a-81c5-cec3c44c486a
-:END:
-
-#+begin_src emacs-lisp
-(defbefore! enable-backup-settings (file)
-  (setq delete-old-versions t)
-  (setq kept-old-versions 2)
-  (setq kept-new-versions 2)
-  (setq make-backup-files nil)
-  (setq backup-by-copying t)
-  (setq backup-by-copying-when-linked t)
-  (setq backup-directory-alist (list (cons ".*" (concat XL-CACHE-DIR "backup/")))))
->>>>>>> develop-depth-no-use-package
 #+end_src
 
 ** backup settings
@@ -9620,13 +9374,9 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 When I'm using the dashboard.
 
 #+begin_src emacs-lisp
-<<<<<<< HEAD
 (defadvice! open-dashboard-instead (&rest _)
   "Open dashboard instead of the whatever the initia buffer is."
   (:around startup%initial-buffer-choice)
-=======
-(defadvice! open-dashboard-instead (around startup%initial-buffer-choice)
->>>>>>> develop-depth-no-use-package
   (get-buffer-create "*dashboard*"))
 #+end_src
 
