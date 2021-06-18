@@ -355,10 +355,9 @@ I'm not sure whether I should be using local-repo instead.
   (let* ((package (car recipe))
 	 (path (concat XX-PACKAGES-DIR "straight/build/" (symbol-name package))))
     (push path load-path)
-    ;; (let ((autoload-file (format "%s/%s-autoloads.el" path package)))
-    ;;   (when (file-exists-p autoload-file)
-    ;; 	(load autoload-file nil t)))
-    ))
+    (let ((autoload-file (format "%s/%s-autoloads.el" path package)))
+      (when (file-exists-p autoload-file)
+	(load autoload-file nil t)))))
 #+end_src
 
 ** library :library:
