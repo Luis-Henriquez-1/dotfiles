@@ -1203,7 +1203,7 @@ syntax. I use it extensively throughout this configuration.
 	 (expr advice (xl-advice-gen-symbol function name))
 	 (expr where (xl-symbol-intern ': place))
 	 (collect `(defun ,advice ,(or .args '(&rest _)) ,@body))
-	 (collect `(advice-add ',function ,where #',advice ,.props)))
+	 (collect `(advice-add ',function ,where #',advice ,.props))))
 #+end_src
 
 **** defhooksym!
