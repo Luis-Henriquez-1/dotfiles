@@ -7420,7 +7420,6 @@ in ~eshell~ without having to repeatedly typing ~cd ..~.
   (defalias 'eshell/peek #'eshell-up-peek))
 #+end_src
 
-
 ** shrink-path :file:
 :PROPERTIES:
 :ID:       7edc1484-1e21-45b7-8db6-904b1ef913a6
