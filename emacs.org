@@ -7316,7 +7316,7 @@ have to set out to look for a file with =dired=.
   (setq recentf-max-saved-items 700)
   (setq recentf-save-file (concat XX-CACHE-DIR "recentf"))
   (setq recentf-auto-cleanup (* 60 10))
-  (setq recentf-filename-handlers '(file-truename abbreviate-file-name))
+  (setq recentf-filename-handlers '(file-truename abbreviate-file-name)))
 #+end_src
 
 ** all-the-icons-dired :icon:asthetic:
