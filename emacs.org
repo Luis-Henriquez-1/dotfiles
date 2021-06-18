@@ -7217,12 +7217,11 @@ prevent accidental deletion, but I set [[helpvar:delete-by-moving-to-trash][dele
 worst case I'll accidentally move a directory to the trash folder.
 
 #+begin_src emacs-lisp
-(use-package dired
-  :set
-  (dired-recursive-copies                      . 'always)
-  (dired-recursive-deletes                     . 'always)
-  (dired-hide-details-hide-symlink-targets     . nil)
-  (dired-clean-confirm-killing-deleted-buffers . nil))
+(before! dired
+  (setq dired-recursive-copies 'always)
+  (setq dired-recursive-deletes 'always)
+  (setq dired-hide-details-hide-symlink-targets nil)
+  (setq dired-clean-confirm-killing-deleted-buffers nil))
 #+end_src
 
 *** sort directories first
