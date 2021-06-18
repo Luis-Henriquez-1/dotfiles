@@ -1390,7 +1390,7 @@ adding.
 :END:
 
 #+begin_src emacs-lisp
-(defunmacro! defbefore! (name features &rest body)
+(defmacro defbefore! (name features &rest body)
   "Evaluate BODY before FEATURES are loaded.
 Do not evaluate BODY if features have already been loaded."
   `(progn ,@body))
