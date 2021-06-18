@@ -1396,6 +1396,7 @@ Do not evaluate BODY if features have already been loaded."
   `(progn ,@body))
 
 (defmacro before! (features &rest body)
+  (ignore features)
   `(progn ,@body))
 #+end_src
 
