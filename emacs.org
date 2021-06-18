@@ -3680,7 +3680,7 @@ various functions in org mode.
 
 #+begin_src emacs-lisp
 (before! org
-  (setq org-directory (concat "~/Documents/org/"))
+  (defvar org-directory (concat "~/Documents/org/"))
   (setq org-default-notes-file (concat org-directory "notes.org"))
   (setq org-fontify-emphasized-text t)
   (setq org-hide-emphasis-markers t)
