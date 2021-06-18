@@ -1169,7 +1169,7 @@ a concise, easily-readable, and familiar way. It has a similar syntax to =defun=
   "Define a hook that follows XX naming conventions."
   (declare (indent defun) (doc-string 3))
   (loopy (list hook hooks)
-	 (expr hook-fn (xl-hook-gen-name hook name))
+	 (expr hook-fn (xx-hook-gen-name hook name))
 	 (collect `(defun ,hook-fn ,(or .args '(&rest _)) ,@body))
 	 (collect `(add-hook ',hook #',hook-fn ,.depth ,.local))
 	 (finally-return (macroexp-progn loopy-result))))
@@ -1200,8 +1200,8 @@ syntax. I use it extensively throughout this configuration.
   (declare (indent defun) (doc-string 3))
   (loopy (with ((place . functions) args))
 	 (list function functions)
-	 (expr advice (xl-advice-gen-symbol function name))
-	 (expr where (xl-symbol-intern ': place))
+	 (expr advice (xx-advice-gen-symbol function name))
+	 (expr where (xx-symbol-intern ': place))
 	 (collect `(defun ,advice ,(or .args '(&rest _)) ,@body))
 	 (collect `(advice-add ',function ,where #',advice ,.props))))
 #+end_src
