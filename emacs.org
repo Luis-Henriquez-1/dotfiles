@@ -8125,7 +8125,8 @@ This is better than evil escape as it only binds in insert.
 
 #+begin_src emacs-lisp
 (xx-gadvice-shut-up #'key-chord-mode)
-(xx-load-before-call 'key-chord (list #'evil-insert-state #'evil-emacs-state))
+(xx-load-before-call 'key-chord #'evil-insert-state)
+(xx-load-before-call 'key-chord #'evil-emacs-state)
 #+end_src
 
 ** TODO quickly go to normal state
