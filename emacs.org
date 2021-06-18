@@ -7342,21 +7342,22 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 :END:
 
 #+begin_src emacs-lisp
-(use-package eshell
-  :rule ("bottom" "eshell" :newname "\\*eshell\\*")
-  :set
-  (eshell-directory-name             . (concat XX-CACHE-DIR "eshell/"))
-  (eshell-history-file-name          . (concat eshell-directory-name "history"))
-  (eshell-banner-message             . "")
-  (eshell-prefer-lisp-functions      . nil)
-  (eshell-scroll-to-bottom-on-input  . 'all)
-  (eshell-scroll-to-bottom-on-output . 'all)
-  (eshell-buffer-shorthand           . t)
-  (eshell-kill-processes-on-exit     . t)
-  (eshell-hist-ignoredups            . t)
-  (eshell-input-filter               . #'eshell-input-filter-initial-space)
-  (eshell-glob-case-insensitive      . t)
-  (eshell-error-if-no-glob           . t))
+(before! eshell
+  (dbc-add-rule "bottom" "eshell" :newname "\\*eshell\\*")
+  (setq eshell-directory-name
+	(concat XL-CACHE-DIR "eshell/"))
+  (setq eshell-history-file-name
+	(concat eshell-directory-name "history"))
+  (setq eshell-banner-message "")
+  (setq eshell-prefer-lisp-functions nil)
+  (setq eshell-scroll-to-bottom-on-input 'all)
+  (setq eshell-scroll-to-bottom-on-output 'all)
+  (setq eshell-buffer-shorthand t)
+  (setq eshell-kill-processes-on-exit t)
+  (setq eshell-hist-ignoredups t)
+  (setq eshell-input-filter #'eshell-input-filter-initial-space)
+  (setq eshell-glob-case-insensitive t)
+  (setq eshell-error-if-no-glob t))
 #+end_src
 
 *** em-hist
