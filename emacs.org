@@ -4079,6 +4079,8 @@ The variable names can get really long, no? :joy: Maybe it's better to have sort
 of a =:nameless-set= keyword that implies a namespace the same as a package. :bulb:
 
 #+begin_src emacs-lisp
+(xl-load-before-call 'selectrum-prescient #'selectrum-mode)
+
 (xx-hook-add 'selectrum-mode-hook 'selectrum-prescient-mode)
 
 (before! selectrum-prescient
