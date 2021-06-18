@@ -1081,7 +1081,7 @@ so I'll likely end up loading it anyway.
 hash-tables.
 
 #+begin_src emacs-lisp
-(use-package ht)
+(require 'ht)
 #+end_src
 
 **** s 
