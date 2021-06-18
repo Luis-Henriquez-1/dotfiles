@@ -1195,7 +1195,7 @@ This macro lets me define advices in a concise, declarative and easy to read
 syntax. I use it extensively throughout this configuration.
 
 #+begin_src emacs-lisp
-(defmacro defadvice! (name args &rest body)
+(defunmacro! defadvice! (name args &rest body)
   "Define an advice that follows XX naming conventions."
   (declare (indent defun) (doc-string 3))
   (loopy (with ((place . functions) args))
