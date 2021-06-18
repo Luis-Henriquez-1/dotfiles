@@ -1376,11 +1376,10 @@ introspectability. For one thing, it creates a named hook function as opposed to
 adding.
 
 #+begin_src emacs-lisp
-(defalias 'defafter! 'after!)
-;; (defmacro defafter! (name features &rest body)
-;;   "Eval BODY after FEATURES are loaded.
-;; If FEATURES have already been loaded, evaluate BODY immediately."
-;;   `(after! ,features ,@body))
+(defmacro defafter! (name features &rest body)
+  "Eval BODY after FEATURES are loaded.
+If FEATURES have already been loaded, evaluate BODY immediately."
+  `(after! ,features ,@body))
 #+end_src
 
 ***** defbefore!
