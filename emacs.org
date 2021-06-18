@@ -2996,7 +2996,7 @@ Notably, I do not try to conserve the return value of =xx/goto-line= or
 their side-effects.
 
 #+begin_src emacs-lisp
-(defadvice! show-current-branch-in-org-mode (:after xx/goto-line org/goto-headline)
+(defadvice! show-current-branch-in-org-mode (after xx/goto-line org/goto-headline)
   "Properly unfold nearby headlines and reveal current headline."
   (when (eq major-mode 'org-mode)
     (org%show-branch)))
