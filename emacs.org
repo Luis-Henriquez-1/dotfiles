@@ -1018,7 +1018,7 @@ a Emacs's built in way of allowing the user to customize how windows are opened.
 #+begin_src emacs-lisp
 (require 'log4e)
 
-(defalias 'xx-log 'xl--log-info)
+(defalias 'xx-log 'xx--log-info)
 (defalias 'xl/popup-log-buffer 'xx--log-open-log)
 
 (log4e:deflogger "xx" "%t [%l] %m" "%H:%M:%S")
