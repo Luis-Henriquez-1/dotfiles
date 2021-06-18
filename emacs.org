@@ -8810,9 +8810,9 @@ startup. If I start my emacs with =dashboard= I can avoid this.
 When I'm using the dashboard.
 
 #+begin_src emacs-lisp
-(defadvice! open-dashboard-instead (&rest _)
+(defadvice! open-dashboard-instead (around startup%initial-buffer-choice)
   "Open dashboard instead of the whatever the initia buffer is."
-  (:around startup%initial-buffer-choice)
+  (:args (&rest _))
   (get-buffer-create "*dashboard*"))
 #+end_src
 
