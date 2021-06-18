@@ -7437,8 +7437,8 @@ pleasing Emacs configuration can have. Ugliness really can take its toll.
 which provides much more contextual information in a better format.
 
 #+begin_src emacs-lisp
-(use-package helpful
-  :rule ("bottom" "help" :newname "\\*help.+"))
+(defbefore! helpful
+  (dbc-add-rule "bottom" "help" :newname "\\*help.+"))
 
 (bind!
  ([remap describe-function] #'helpful-callable)
