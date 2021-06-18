@@ -7322,8 +7322,8 @@ happend. It results in a very jarring display.
 This headline is for customizing info nodes.
 
 #+begin_src emacs-lisp
-(use-package info
-  :rule ("top" "info" :newname "\\*info"))
+(before! info
+  (dbc-add-rule "top" "info" :newname "\\*info"))
 #+end_src
 
 ** eshell :shell:
