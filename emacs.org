@@ -7366,13 +7366,11 @@ have like about eshell: [[https://ambrevar.xyz/emacs-eshell/][ambrevar's eshell 
 :END:
 
 #+begin_src emacs-lisp
-(use-package em-hist
-  :idle-require t
-  :set
-  (eshell-history-file-name    . (concat eshell-directory-name "history"))
-  (eshell-history-size         . 2000)
-  (eshell-hist-ignoredups      . nil)
-  (eshell-save-history-on-exit . t))
+(before! em-hist
+  (setq eshell-history-file-name (concat eshell-directory-name "history"))
+  (setq eshell-history-size 2000)
+  (setq eshell-hist-ignoredups nil)
+  (setq eshell-save-history-on-exit t))
 #+end_src
 
 *** em-term
