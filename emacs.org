@@ -1201,19 +1201,13 @@ syntax. I use it extensively throughout this configuration.
 #+begin_src emacs-lisp
 (defmacro defadvice! (name args &rest body)
   "Define an advice that follows XX naming conventions."
-  (loopy (with ((args body kargs) (xx-process-args args body))
-	       (props (alist-get :props kargs))
-	       (fargs (alist-get :args kargs))
-	       ((where . functions) (--first (member (car it) '(:around :after :before :override)) kargs)))
-	 (list fn (-list functions))
-	 (expr advice (xx-advice-gen-symbol fn name))
-	 (cond (loopy-first-iteration-p
-		(collect `(defun ,advice ,(or fargs args '(&rest _)) ,@body))
-		(expr orig-fn advice))
-	       (t
-		(collect `(defalias ',advice ',orig-fn))))
-	 (collect `(advice-add #',fn ,where #',advice ,props))
-	 (finally-return (macroexp-progn loopy-result))))
+  (declare (indent defun) (doc-string 3))
+  (loopy (with ((place . functions) args))
+	 (list function functions)
+	 (expr advice (xl-advice-gen-symbol function name))
+	 (expr where (xl-symbol-intern ': place))
+	 (collect `(defun ,advice ,(or .args '(&rest _)) ,@body))
+	 (collect `(advice-add ',function ,where #',advice ,.props)))
 #+end_src
 
 **** defhooksym!
