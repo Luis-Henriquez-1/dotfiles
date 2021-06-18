@@ -4067,7 +4067,7 @@ This package.
 (before! prescient
   (setq prescient-save-file (concat XX-CACHE-DIR "prescient-save-file")))
 
-(xx-hook-add 'prescient-persist-mode-hook #'prescient-persist-mode)
+(xx-hook-add 'selectrum-prescient-mode-hook #'prescient-persist-mode)
 #+end_src
 
 *** selectrum-prescient :cache:
