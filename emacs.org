@@ -4443,7 +4443,7 @@ all the completion frameworks.
 =easymotion= is an Emacs package that allows you to move from one character to
 another.
 
-*** TODO evil-easymotion
+*** evil-easymotion
 :PROPERTIES:
 :ID:       9be10754-3975-49d4-afa7-08a122161c19
 :END:
